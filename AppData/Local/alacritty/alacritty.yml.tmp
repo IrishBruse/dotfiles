@@ -7,7 +7,13 @@ colors:
     background: "#1E1E1E"
 
 shell:
+{{ if eq .chezmoi.os "linux" }}
   program: zsh
+{{ else }}
+  program: powershell
+  args: ["-nologo"]
+{{ end }}
+
 
 cursor:
   style: Beam
