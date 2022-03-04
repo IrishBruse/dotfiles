@@ -1,6 +1,7 @@
 {{ if ne .chezmoi.os "windows" }}
 AppData/Roaming/alacritty/alacritty.yml.tmpl
 Documents/**
+AppData/**
 {{ end }}
 
 {{ if ne .chezmoi.os "linux" }}
