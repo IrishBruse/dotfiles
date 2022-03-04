@@ -1,0 +1,11 @@
+{{ if ne .chezmoi.os "windows" }}
+AppData/Roaming/alacritty/alacritty.yml.tmpl
+Documents/*
+{{ end }}
+
+{{ if ne .chezmoi.os "linux" }}
+.config/*
+alacritty.yml.tmpl
+{{ end }}
+
+Readme.md
