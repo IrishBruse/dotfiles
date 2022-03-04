@@ -9,4 +9,4 @@ dot_config/**
 alacritty.yml.tmpl
 {{ end }}
 
-Readme.md
+README.md
