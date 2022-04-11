@@ -5,9 +5,6 @@ $ENV:VISUAL = "code"
 Clear-Host
 
 function prompt {
-    # Assign Windows Title Text
-    $host.ui.RawUI.WindowTitle = "Powershell - $pwd";
-
     Write-Host "$pwd " -NoNewline
 
     # Print -> arrow pompt
