@@ -4,9 +4,6 @@ $ENV:VISUAL = "code"
 
 Clear-Host
 
-# Remove useless ugly beep
-Set-PSReadlineOption -BellStyle None
-
 function prompt {
     # Assign Windows Title Text
     $host.ui.RawUI.WindowTitle = "Powershell - $pwd";
@@ -31,6 +28,7 @@ function Test-IsAdmin() {
     }
 }
 
+$ui = (Get-Host).UI.RawUI
 If (Test-IsAdmin) {
     $ui.WindowTitle = "Administrator: M$ PowerShell"
 }
