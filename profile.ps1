@@ -27,10 +27,10 @@ function Test-IsAdmin() {
 
 $ui = (Get-Host).UI.RawUI
 If (Test-IsAdmin) {
-    $ui.WindowTitle = "Administrator: M$ PowerShell"
+    $ui.WindowTitle = "Administrator PowerShell - $pwd"
 }
 else {
-    $ui.WindowTitle = "M$ PowerShell"
+    $ui.WindowTitle = "PowerShell - $pwd"
 }
 
 # Import the Chocolatey Profile that contains the necessary code to enable
