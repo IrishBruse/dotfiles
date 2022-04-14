@@ -3,6 +3,7 @@ $ENV:EDITOR = "code"
 $ENV:VISUAL = "code"
 
 function prompt {
+
     Write-Host "$pwd " -NoNewline
 
     # Print -> arrow pompt

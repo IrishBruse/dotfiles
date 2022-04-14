@@ -4,7 +4,8 @@ font:
 
 shell:
   program: powershell
-  args: ["-nologo"]
+  args:
+    - "-nologo"
 
 colors:
   primary:
