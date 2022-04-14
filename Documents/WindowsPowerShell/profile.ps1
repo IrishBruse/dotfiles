@@ -32,6 +32,8 @@ else {
     $ui.WindowTitle = "PowerShell - $pwd"
 }
 
+#test
+
 # Remove useless ugly beep
 Set-PSReadlineOption -BellStyle None
 
