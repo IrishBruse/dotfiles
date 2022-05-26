@@ -3,7 +3,6 @@ $ENV:EDITOR = "code"
 $ENV:VISUAL = "code"
 
 function prompt {
-
     Write-Host "$pwd " -NoNewline
 
     # Print -> arrow pompt
@@ -31,8 +30,6 @@ If (Test-IsAdmin) {
 else {
     $ui.WindowTitle = "PowerShell - $pwd"
 }
-
-#test
 
 # Remove useless ugly beep
 Set-PSReadlineOption -BellStyle None
