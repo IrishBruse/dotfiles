@@ -101,7 +101,8 @@ module.exports = {
     plugins: [],
     localPlugins: [],
     keymaps: {
-        "editor:deletePreviousWord": "ctrl+backspace",
+        'editor:deletePreviousWord': 'ctrl+backspace',
+        'editor:deleteNextWord': 'ctrl+del',
     },
 };
 //# sourceMappingURL=config-default.js.map

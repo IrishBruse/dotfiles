@@ -1,4 +1,6 @@
 # Modules
+. $PSScriptRoot/RemoveAlias.ps1
+
 $ENV:EDITOR = "code"
 $ENV:VISUAL = "code"
 
@@ -10,21 +12,16 @@ function prompt {
     return " "
 }
 
-# Determine if PowerShell launched with admin priveleges
-# Thanks https://stackoverflow.com/questions/9999963/powershell-test-admin-rights-within-powershell-script#10000292
-function Test-IsAdmin() {
-    try {
-        $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
-        $principal = New-Object Security.Principal.WindowsPrincipal -ArgumentList $identity
-        return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-    }
-    catch {
-        throw "Failed to determine if the current user has elevated privileges. The error was: '{0}'." -f $_
-    }
+$isAdmin=$false
+try {
+    $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = New-Object Security.Principal.WindowsPrincipal -ArgumentList $identity
+    $isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
+catch { }
 
 $ui = (Get-Host).UI.RawUI
-If (Test-IsAdmin) {
+If ($isAdmin) {
     $ui.WindowTitle = "Administrator PowerShell - $pwd"
 }
 else {
@@ -36,3 +33,38 @@ Set-PSReadlineOption -BellStyle None
 
 # Close terminal on EOF
 Set-PSReadlineKeyHandler -Chord 'Ctrl+D' -ScriptBlock { Stop-Process -Id $PID }
+
+# Custom Functions
+
+# git
+function clone { git clone --recursive "$args" }
+
+# chezmoi
+function config { chezmoi "$args" }
+
+# winget
+function install { winget install --accept-package-agreements --accept-source-agreements -silent -s winget "$args" }
+function search { winget search -s winget "$args" }
+function update { winget upgrade --all }
+
+# custom builtin
+function $ { powershell -Command "$args" } # Ignore $
+
+function echo { Write-Host "$args" }
+
+function cd {
+    if (Test-Path $args) {
+        Set-Location $args[0]
+    }else{
+        Write-Host "No folder $pwd$args found"
+    }
+}
+
+function ls     { Get-ChildItem "$args" -name }
+function pwd    { Get-Location }
+function clear  { Clear-Host }
+
+function copy   { Copy-Item "$args" }
+function cp     { copy "$args" }
+
+function ..     { cd .. }
