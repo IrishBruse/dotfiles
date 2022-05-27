@@ -41,6 +41,7 @@ function clone { git clone --recursive "$args" }
 
 # chezmoi
 function config { chezmoi "$args" }
+function editconfig { $path = chezmoi source-path ; code $path  }
 
 # winget
 function install { winget install --accept-package-agreements --accept-source-agreements -silent -s winget "$args" }

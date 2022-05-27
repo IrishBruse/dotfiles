@@ -51,7 +51,7 @@ module.exports = {
             background-color: #78726C;
         }
         `,
-        padding: "1rem",
+        padding: "0",
         // custom CSS to embed in the terminal window
         termCSS: "",
         // set custom startup directory (must be an absolute path)
