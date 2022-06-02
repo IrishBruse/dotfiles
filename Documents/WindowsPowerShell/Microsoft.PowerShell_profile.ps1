@@ -64,8 +64,9 @@ function cd {
 function ls     { Get-ChildItem "$args" -name }
 function pwd    { Get-Location }
 function clear  { Clear-Host }
+function cls    { Clear-Host }
 
-function copy   { Copy-Item "$args" }
-function cp     { copy "$args" }
+function copy   { Copy-Item -Path $args[0] -Destination $args[1] }
+function cp     { Copy-Item -Path $args[0] -Destination $args[1] }
 
 function ..     { cd .. }
