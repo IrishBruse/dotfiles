@@ -12,22 +12,6 @@ function prompt {
     return " "
 }
 
-$isAdmin=$false
-try {
-    $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
-    $principal = New-Object Security.Principal.WindowsPrincipal -ArgumentList $identity
-    $isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-}
-catch { }
-
-$ui = (Get-Host).UI.RawUI
-If ($isAdmin) {
-    $ui.WindowTitle = "Administrator PowerShell - $pwd"
-}
-else {
-    $ui.WindowTitle = "PowerShell - $pwd"
-}
-
 # Remove useless ugly beep
 Set-PSReadlineOption -BellStyle None
 
