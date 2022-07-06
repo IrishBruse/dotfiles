@@ -1,0 +1,27 @@
+[Added Associations]
+application/octet-stream=org.xfce.mousepad.desktop;
+application/x-shellscript=visual-studio-code.desktop;
+inode/directory=org.kde.dolphin.desktop;
+text/calendar=visual-studio-code.desktop;
+text/css=visual-studio-code.desktop;
+text/plain=visual-studio-code.desktop;
+x-scheme-handler/geo=google-maps-geo-handler.desktop;
+x-scheme-handler/http=microsoft-edge.desktop;
+x-scheme-handler/https=microsoft-edge.desktop;
+
+[Default Applications]
+application/x-shellscript=visual-studio-code.desktop;
+inode/directory=org.kde.dolphin.desktop;
+text/calendar=visual-studio-code.desktop;
+text/css=visual-studio-code.desktop;
+text/plain=visual-studio-code.desktop;
+x-scheme-handler/geo=google-maps-geo-handler.desktop;
+x-scheme-handler/http=microsoft-edge.desktop;
+x-scheme-handler/https=microsoft-edge.desktop;
+x-scheme-handler/fdm=freedownloadmanager_fdm_up.desktop
+x-scheme-handler/magnet=freedownloadmanager_magnet_up.desktop
+application/x-bittorrent=freedownloadmanager_torrent.desktop
+
+[Removed Associations]
+text/calendar=libreoffice-writer.desktop;micro.desktop;
+text/css=libreoffice-writer.desktop;micro.desktop;

@@ -3,7 +3,7 @@ font:
     family: Cascadia Code
 
 shell:
-  program: "powershell"
+  program: "zsh"
 
 colors:
   primary:

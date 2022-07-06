@@ -1,0 +1,10 @@
+[Show]
+compressfileitemaction=true
+extractfileitemaction=true
+installFont=true
+kactivitymanagerd_fileitem_linking_plugin=false
+openInVSCode=true
+plasmavaultfileitemaction=false
+setAsWallpaper=false
+sharefileitemaction=false
+tagsfileitemaction=false

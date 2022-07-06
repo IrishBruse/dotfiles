@@ -1,0 +1,17 @@
+[ExtractDialog]
+DirHistory[$e]=$HOME/Desktop/
+
+[KFileDialog Settings]
+Recent Files[$e]=file:$HOME,file:$HOME
+Recent URLs[$e]=file:$HOME/Desktop/
+detailViewIconSize=16
+
+[MainWindow]
+DVI-I-1 DVI-D-1 HDMI-1 XPosition 1920x1080=2530
+DVI-I-1 DVI-D-1 HDMI-1 YPosition 1920x1080=285
+DVI-I-1 HDMI-0 DVI-D-0 XPosition 1920x1080=984
+DVI-I-1 HDMI-0 DVI-D-0 YPosition 1920x1080=379
+State=AAAA/wAAAAD9AAAAAAAAArwAAAGoAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAEAAAAWAG0AYQBpAG4AVABvAG8AbABCAGEAcgEAAAAA/////wAAAAAAAAAA
+StatusBar=Disabled
+ToolBarsMovable=Disabled
+splitterSizes=466,233
