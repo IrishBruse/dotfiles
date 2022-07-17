@@ -1,0 +1,119 @@
+clear
+ls
+help
+help commands
+ls
+clear
+echo $nu.env-pathasdasd
+echo $nu.env-path
+echo $nu.config-path
+code C:\Users\Econn\AppData\Roaming\nushell\config.nu
+code C:\\Users\Econn\AppData\Roaming\nushell\env.nu
+cklear
+ckear
+clear
+ks
+clear
+clear 
+ls
+neofetch
+clear
+ansi
+ansi strip 
+ansi strip test
+clear
+dotnet
+complete 
+help complete
+clear
+c;ear
+clear
+4+3=
+4+3
+=4+2
+ls
+open Apply.js
+open
+..
+Monoboy\
+\Monoboy\
+ls
+clear 
+ls
+dir
+dir.exe
+clear
+overlay list
+overlay add spam
+clear
+ls
+cd Monoboy\
+ls
+touch test.txt
+code test.txt
+rm test.txt
+ls
+clear
+ls
+clear
+ls
+clear
+ls
+ls -g
+ls -G
+clear
+help ls
+ls =d
+clone
+ls
+rm CSharp-Utilities-old\
+rm -f CSharp-Utilities-old\
+help rm
+rmdir
+rmdir \CSharp-Utilities-old\
+rmdir -f \CSharp-Utilities-old\
+rmdir \CSharp-Utilities-old\ -f
+rmdir \CSharp-Utilities-old\ --force
+rmdir --force \CSharp-Utilities-old\
+rm --force \CSharp-Utilities-old\
+rm
+help rm
+rm -rf \CSharp-Utilities-old\
+date 
+date now
+date now | format
+date format
+date format --list
+date format "%X"
+date format "%X" | table
+date format "%X" 
+clear
+date to-table 
+date
+date now
+date now -
+let $temp = date now
+$temp
+date now
+$temp
+$temp - (date now)
+(date now) - $temp
+refres
+refresh
+reloadconfig
+config nu 
+$env.EDITOR
+$env.EDITOR = code
+format --help
+format --list
+$env.CMD_DURATION_MS
+tree
+clear
+ls
+cwd
+$cwd 
+$env.CMD_DURATION_MS | format --list
+$env.CMD_DURATION_MS | date format --list
+$env.CMD_DURATION_MS | date format "%S"
+$env.CMD_DURATION_MS | date format "%s"
+$env.CMD_DURATION_MS | date format "%S"

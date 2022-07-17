@@ -1,23 +1,25 @@
 const fs = require("fs")
 const path = require("path")
 
-let folders = [
-    { target: __dirname + "/Alacritty/", source: process.env.APPDATA + "/Alacritty/", type: "dir" },
+let symlinks = [
+    { target: __dirname + "/alacritty/", source: process.env.APPDATA + "/alacritty/", type: "dir" },
+    { target: __dirname + "/nushell/", source: process.env.APPDATA + "/nushell/", type: "dir" },
     { target: __dirname + "/WindowsPowerShell/", source: process.env.USERPROFILE + "/Documents/WindowsPowerShell/", type: "dir" },
+    { target: __dirname + "/files/.gitconfig", source: process.env.USERPROFILE + "/.gitconfig", type: "file" },
 ]
 
-for (const folder of folders)
+for (const symlink of symlinks)
 {
-    console.log(`Linking ${folder.type} ${folder.target} to ${folder.source}`);
+    console.log(`Linking ${symlink.type} ${symlink.target} to ${symlink.source}`);
 
-    if (fs.existsSync(folder.source))
+    if (symlink.type == "dir" && fs.existsSync(symlink.source))
     {
-        fs.rmSync(folder.source, { recursive: true });
+        fs.rmSync(symlink.source, { recursive: true });
     }
 
     try
     {
-        fs.symlinkSync(folder.target, folder.source, folder.type);
+        fs.symlinkSync(symlink.target, symlink.source, symlink.type);
     }
-    catch (error) { }
+    catch (e) { }
 }
