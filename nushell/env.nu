@@ -1,10 +1,15 @@
 def create_right_prompt [] {
-  $env.CMD_DURATION_MS
+  let milis = ($env.CMD_DURATION_MS | into int)
+  if ($milis) < 1000 {
+    ($milis | into string) + " ms"
+  } else  {
+    (($milis / 1000) | into string) + " s"
+  }
 }
 
 # Use nushell functions to define your right and left prompt
 let-env PROMPT_COMMAND = { $"(ansi light_gray)($env.PWD)" }
-let-env PROMPT_COMMAND_RIGHT = { create_right_prompt }
+let-env PROMPT_COMMAND_RIGHT = { $"(ansi green)(create_right_prompt)" }
 
 # The prompt indicators are environmental variables that represent
 # the state of the prompt
