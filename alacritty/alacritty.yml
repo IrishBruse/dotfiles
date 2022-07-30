@@ -6,8 +6,6 @@ shell:
   program: "nu"
   # program: "zsh"
 
-working_directory: "A:"
-
 window:
   dynamic_title: true
 

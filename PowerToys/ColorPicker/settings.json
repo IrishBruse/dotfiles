@@ -1,0 +1,52 @@
+{
+  "properties": {
+    "ActivationShortcut": {
+      "win": true,
+      "ctrl": false,
+      "alt": false,
+      "shift": false,
+      "code": 80,
+      "key": ""
+    },
+    "changecursor": {
+      "value": false
+    },
+    "copiedcolorrepresentation": 0,
+    "activationaction": 2,
+    "colorhistory": [
+      "255|32|32|32",
+      "255|30|34|41",
+      "255|84|93|115",
+      "255|83|92|114",
+      "255|234|165|108",
+      "255|139|155|180",
+      "255|118|59|54",
+      "255|35|39|42",
+      "255|30|34|36",
+      "255|25|29|31",
+      "255|43|43|43",
+      "255|3|104|208"
+    ],
+    "colorhistorylimit": 20,
+    "visiblecolorformats": {
+      "HEX": true,
+      "RGB": true,
+      "HSL": true,
+      "HSV": false,
+      "CMYK": false,
+      "HSB": false,
+      "HSI": false,
+      "HWB": false,
+      "NCol": false,
+      "CIELAB": false,
+      "CIEXYZ": false,
+      "VEC4": false,
+      "Decimal": false
+    },
+    "showcolorname": {
+      "value": false
+    }
+  },
+  "name": "ColorPicker",
+  "version": "1.0"
+}

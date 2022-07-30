@@ -122,6 +122,16 @@ module completions {
     --verbose(-v)                                   # be more verbose
     --help                                          # Display this help message
   ]
+
+  export extern "dotnet run" [
+    --release
+    --help                                          # Display this help message
+  ]
+
+  export extern "dotnet build" [
+
+    --help                                          # Display this help message
+  ]
 }
 
 # Get just the extern definitions without the custom completion commands
@@ -188,7 +198,7 @@ let-env config = {
   rm_always_trash: true
   color_config: $dark_theme   # if you want a light theme, replace `$dark_theme` to `$light_theme`
   use_grid_icons: true
-  footer_mode: "25" # always, never, number_of_rows, auto
+  footer_mode: "always" # always, never, number_of_rows, auto
   quick_completions: true  # set this to false to prevent auto-selecting completions when only one remains
   partial_completions: true  # set this to false to prevent partial filling of the prompt
   completion_algorithm: "prefix"  # prefix, fuzzy
@@ -216,7 +226,8 @@ let-env config = {
     }]
     env_change: {
       PWD: [{|before, after|
-        cd $after  # replace with source code to run if the PWD environment is different since the last repl input
+        cd $after
+        title $after
       }]
     }
   }

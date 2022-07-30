@@ -3,3 +3,5 @@
 	email = Econn50@outlook.com
 [init]
 	defaultBranch = main
+[gui]
+	recentrepo = A:/ldtk
