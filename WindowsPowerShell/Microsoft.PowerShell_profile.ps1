@@ -17,15 +17,6 @@ Set-PSReadlineKeyHandler -Chord 'Ctrl+D' -ScriptBlock { Stop-Process -Id $PID }
 # git
 function clone { git clone --recursive "$args" }
 
-# chezmoi
-function config { chezmoi "$args" }
-function editconfig { $path = chezmoi source-path ; code $path  }
-
-# winget
-function install { winget install --accept-package-agreements --accept-source-agreements -silent -s winget "$args" }
-function search { winget search -s winget "$args" }
-function update { winget upgrade --all }
-
 # custom builtin
 function $ { powershell -Command "$args" } # Ignore $
 
