@@ -6,6 +6,8 @@ function prompt {
     return " "
 }
 
+Set-Location A:
+
 # Remove useless ugly beep
 Set-PSReadlineOption -BellStyle None
 

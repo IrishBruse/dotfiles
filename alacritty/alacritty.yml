@@ -6,8 +6,6 @@ shell:
   program: "powershell"
   args: ["-NoLogo"]
 
-working_directory: A:/
-
 window:
   dynamic_title: true
 
