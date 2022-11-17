@@ -9,6 +9,8 @@ shell:
 window:
   dynamic_title: true
 
+working_directory: "A:"
+
 colors:
   primary:
     background: "#191D1F"
@@ -55,3 +57,4 @@ key_bindings:
   - { key: PageUp, mods: Control, chars: "\x1b[5;5~" }
   - { key: PageUp, chars: "\x1b[5~" }
   - { key: PageDown, mods: Shift, chars: "\x1b[6;2~" }
+  - { key: Return, mods: Control|Shift, action: SpawnNewInstance }
