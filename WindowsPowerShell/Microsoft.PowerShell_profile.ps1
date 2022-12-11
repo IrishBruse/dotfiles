@@ -35,6 +35,8 @@ function clear  { Clear-Host }
 function copy   { Copy-Item -Path $args[0] -Destination $args[1] }
 function cp     { copy $args}
 
+function choco     { sudo choco $args}
+
 function ..     { cd .. }
 
 $ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
