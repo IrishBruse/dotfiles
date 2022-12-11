@@ -9,8 +9,6 @@ shell:
 window:
   dynamic_title: true
 
-working_directory: "A:"
-
 colors:
   primary:
     background: "#191D1F"

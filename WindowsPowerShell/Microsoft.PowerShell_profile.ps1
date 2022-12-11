@@ -6,37 +6,34 @@ function prompt {
     return " "
 }
 
-# Remove useless ugly beep
-Set-PSReadlineOption -BellStyle None
+$win = "C:\Windows\System32"
 
-# Close terminal on EOF
-Set-PSReadlineKeyHandler -Chord 'Ctrl+D' -ScriptBlock { Stop-Process -Id $PID }
+if ($pwd.path.equals($win))
+{
+    cd "A:/"
+}
+else
+{
+    cd $pwd
+}
 
 # Custom Functions
 
 # git
-function clone { git clone --recursive "$args" }
+function clone { git clone --recursive $args }
 
 # custom builtin
-function $ { powershell -Command "$args" } # Ignore $
+function $ { powershell -Command $args } # Ignore $
 
-function echo { Write-Host "$args" }
+function echo { Write-Host $args }
 
-function cd {
-    if (Test-Path $args) {
-        Set-Location $args[0]
-    }else{
-        Write-Host "No folder $pwd$args found"
-    }
-}
-
-function ls     { Get-ChildItem "$args" -name }
+function ls     { Get-ChildItem $args -name }
 function pwd    { Get-Location }
+function cls    { clear }
 function clear  { Clear-Host }
-function cls    { Clear-Host }
 
 function copy   { Copy-Item -Path $args[0] -Destination $args[1] }
-function cp     { Copy-Item -Path $args[0] -Destination $args[1] }
+function cp     { copy $args}
 
 function ..     { cd .. }
 
