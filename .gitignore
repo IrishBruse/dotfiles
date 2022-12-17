@@ -1,10 +1,17 @@
-nushell/history.txt
 PowerToys/**/*log*
 PowerToys/Updates
 PowerToys/*.json
+
 !PowerToys/settings.json
 PowerToys/**/*version*
-PowerToys/**/*version*
-PowerToys/**/power-rename-ui-flags
-PowerToys/PowerToys Run/Settings/
-PowerToys/PowerToys Run/settings.json
+
+PowerToys/FancyZones/**/*
+PowerToys/Hosts/**/*
+PowerToys/Image Resizer/**/*
+PowerToys/Keyboard Manager/**/*
+PowerToys/Measure Tool/**/*
+PowerToys/MouseHighlighter/**/*
+PowerToys/MousePointerCrosshairs/**/*
+PowerToys/PowerToys Run/**/*
+PowerToys/Shortcut Guide/**/*
+PowerToys/Video Conference/**/*
