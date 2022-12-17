@@ -23,8 +23,9 @@ function clone { git clone --recursive $args }
 
 function $ { powershell -Command $args }
 
-function echo { Write-Host $args }
+function echo      { Write-Host $args }
 
+function ..        { cd .. }
 function ls        { Get-ChildItem $args -name }
 function pwd       { Get-Location }
 function cls       { clear }
@@ -37,7 +38,7 @@ function choco     { sudo choco $args}
 
 function grep      { rg $args }
 
-function edit      {
+function edit {
     if($args.Count -eq 0){
         code .
     }else{
@@ -45,7 +46,7 @@ function edit      {
     }
 }
 
-function open      {
+function open {
     if($args.Count -eq 0){
         explorer .
     }else{
@@ -53,4 +54,12 @@ function open      {
     }
 }
 
-function ..        { cd .. }
+function touch {
+    $item = $args[0]
+
+    if($item[-1] -eq '/' -or $item[-1] -eq '\\'){
+        New-Item "$item\\" -ItemType directory
+    }else{
+        New-Item $item -ItemType file
+    }
+}
