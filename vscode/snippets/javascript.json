@@ -1,0 +1,32 @@
+{
+    "Lamda Function": {
+        "prefix": "lamda",
+        "body": [
+            "($1)=>{$0}"
+        ],
+        "description": "funcation shorthand"
+    },
+    "token": {
+        "prefix": "scope",
+        "body": [
+            "{",
+            "\t\"scope\": [",
+            "\t\t\"$1\",",
+            "\t],",
+            "\t\"settings\": {",
+            "\t\t\"foreground\": \"<$2>\",",
+            "\t},",
+            "},$0"
+        ],
+        "description": "scope"
+    },
+    "ctor": {
+        "prefix": "ctor",
+        "body": [
+            "constructor()",
+            "{",
+            "$0",
+            "}",
+        ]
+    }
+}

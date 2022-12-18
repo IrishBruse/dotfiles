@@ -1,0 +1,51 @@
+{
+	"csproj": {
+		"prefix": "csproj",
+		"body": [
+			"<Project Sdk=\"Microsoft.NET.Sdk\">",
+			"",
+			"\t<PropertyGroup>",
+			"\t\t<OutputType>${1|Library,Exe,WinExe,Module|}</OutputType>",
+			"\t\t<TargetFramework>${2|net6.0,net5.0,netcoreapp3.1,netstandard2.1,net48,net472|}</TargetFramework>",
+			"\t\t<RootNamespace>${3:$WORKSPACE_NAME}</RootNamespace>",
+			"\t\t<ImplicitUsings>${4|disable,enable|}</ImplicitUsings>",
+			"\t\t<Nullable>${5|disable,enable|}</Nullable>",
+			"\t\t<AllowUnsafeBlocks>${6|false,true|}</AllowUnsafeBlocks>",
+			"\t</PropertyGroup>",
+			"",
+			"\t<ItemGroup>",
+			"\t\t<PackageReference Include=\"$7\" Version=\"$8\" />",
+			"\t</ItemGroup>",
+			"",
+			"</Project>",
+		],
+	},
+	"Include": {
+		"prefix": "Content",
+		"body": [
+			"<Content Include=\"${1:file}\" CopyToOutputDirectory=\"Always\" CopyToPublishDirectory=\"Always\"/>",
+		]
+	},
+	"Package": {
+		"prefix": "Package",
+		"body": [
+			"<PackageReference Include=\"${1:package}\" Version=\"${2:version}\" />",
+		]
+	},
+	"PropertyGroup": {
+		"prefix": "PropertyGroup",
+		"body": [
+			"<PropertyGroup>",
+			"\t$0",
+			"</PropertyGroup>",
+		]
+	},
+	"ItemGroup": {
+		"prefix": "ItemGroup",
+		"body": [
+			"<ItemGroup>",
+			"\t$0",
+			"</ItemGroup>",
+		]
+	},
+}

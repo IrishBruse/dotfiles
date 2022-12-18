@@ -1,0 +1,34 @@
+{
+    "function": {
+        "prefix": "func",
+        "body": [
+            "public ${1:void} ${2:myFunction}(${3:})",
+            "{",
+            "\t$0",
+            "}"
+        ]
+    },
+    "constructor": {
+        "prefix": "ctor",
+        "body": [
+            "public $TM_FILENAME_BASE(${2:})",
+            "{",
+            "\t$0",
+            "}"
+        ]
+    },
+    "scanner": {
+        "prefix": "scanner",
+        "body": [
+            "Scanner scanner = new Scanner(System.in);",
+            "$0",
+            "scanner.close();"
+        ]
+    },
+    "log": {
+        "prefix": "log",
+        "body": [
+            "System.out.println($0);",
+        ]
+    }
+}

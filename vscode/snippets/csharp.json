@@ -1,0 +1,55 @@
+{
+    "Print to console": {
+        "prefix": "log",
+        "body": [
+            "Console.WriteLine($1);$0"
+        ],
+        "description": "Log output to console"
+    },
+    "New File": {
+        "prefix": "file",
+        "body": [
+            "namespace $WORKSPACE_NAME;",
+            "",
+            "public class $TM_FILENAME_BASE",
+            "{",
+            "\t$0",
+            "}",
+            "",
+        ],
+        "description": "Log output to console"
+    },
+    "main": {
+        "prefix": "main",
+        "body": [
+            "public static void Main(string[] args)",
+            "{",
+            "\t$0",
+            "}",
+        ],
+        "description": "Create main method"
+    },
+    "Fixed": {
+        "prefix": "fixedPtr",
+        "body": [
+            "fixed(${1:type}* ${2:variable} = ${3:array})",
+            "{",
+            "\t$0",
+            "}"
+        ],
+        "description": "Create a fixed pointer"
+    },
+    "for X Y": {
+        "prefix": "forxy",
+        "body": [
+            "for(int x = 0;x < ${1:.Length}; x++)",
+            "{",
+            "\tfor(int y = 0;y < ${2:.Length}; y++)",
+            "\t{",
+            "\t\t$0",
+            "\t}",
+            "}"
+        ],
+        "description": "Create a forloop for x any y"
+    },
+}

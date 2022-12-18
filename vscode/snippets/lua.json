@@ -1,0 +1,50 @@
+{
+    "log": {
+        "prefix": "log",
+        "body": [
+            "log($1)",
+        ],
+        "description": "Log output to console"
+    },
+    "IF": {
+        "prefix": "if",
+        "body": [
+            "if $1 then",
+            "",
+            "end$0",
+        ],
+        "description": "If"
+    },
+    "IFELSE": {
+        "prefix": "ifelse",
+        "body": [
+            "if $1 then",
+            "",
+            "else",
+            "",
+            "end$0",
+        ],
+        "description": "If else"
+    },
+    "t": {
+        "prefix": "t",
+        "body": [
+            "---@type ${1:number}",
+        ],
+        "description": "type annotate"
+    },
+    "r": {
+        "prefix": "r",
+        "body": [
+            "---@return ${1:number}",
+        ],
+        "description": "type annotate"
+    },
+    "p": {
+        "prefix": "p",
+        "body": [
+            "---@param ${1:number}",
+        ],
+        "description": "type annotate"
+    }
+}

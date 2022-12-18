@@ -1,0 +1,24 @@
+{
+    "Vue Template": {
+        "prefix": "vue",
+        "body": [
+            "<template>",
+            "\t<h1>Hello, World!</h1>",
+            "</template>",
+            "",
+            "<script setup lang=\"ts\">",
+            "\t$0",
+            "</script>",
+            ""
+        ],
+        "description": "Vue default component template"
+    },
+    "ts": {
+        "prefix": "ts",
+        "body": [
+            "<script lang=\"ts\">",
+            "\t$0",
+            "</script>",
+        ]
+    }
+}

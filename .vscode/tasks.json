@@ -5,7 +5,15 @@
             "label": "Run Apply.js",
             "type": "shell",
             "command": "sudo node Apply.js",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": true
+            }
         }
     ]
 }
