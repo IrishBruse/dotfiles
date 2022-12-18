@@ -1,25 +1,43 @@
 const fs = require("fs")
 const path = require("path")
 
-let symlinks = [
-    { target: __dirname + "/alacritty/", source: process.env.APPDATA + "/alacritty/", type: "dir" },
-    { target: __dirname + "/PowerToys/", source: process.env.LOCALAPPDATA + "/Microsoft/PowerToys/", type: "dir" },
-    { target: __dirname + "/WindowsPowerShell/", source: process.env.USERPROFILE + "/Documents/WindowsPowerShell/", type: "dir" },
-    { target: __dirname + "/files/.gitconfig", source: process.env.USERPROFILE + "/.gitconfig", type: "file" },
-]
+const APPDATA = process.env.APPDATA
+const LOCALAPPDATA = process.env.LOCALAPPDATA
+const USERPROFILE = process.env.USERPROFILE
 
-for (const symlink of symlinks)
+// Source, Base, Target
+link("/alacritty/", APPDATA, "/alacritty/");
+link("/PowerToys/", LOCALAPPDATA, "/Microsoft/PowerToys/");
+link("/WindowsPowerShell/", USERPROFILE, "/Documents/WindowsPowerShell/");
+
+link("/files/.gitconfig", USERPROFILE, "/.gitconfig");
+
+link("/vscode/", APPDATA, "/Code/User/");
+
+function link(local, base, target)
 {
-    console.log(`Linking ${symlink.type} ${symlink.target} to ${symlink.source}`);
+    let source = path.join(__dirname, local);
+    let dest = path.join(base, target);
+    let type = (dest.charAt(dest.length - 1) == '/' || dest.charAt(dest.length - 1) == '\\') ? "dir" : "file";
 
-    if (symlink.type == "dir" && fs.existsSync(symlink.source))
+    if (type == "dir" && fs.existsSync(dest))
     {
-        fs.rmSync(symlink.source, { recursive: true });
+        fs.rmdirSync(dest);
+    }
+    else if (type == "file" && fs.existsSync(dest))
+    {
+        fs.rmSync(dest);
     }
 
     try
     {
-        fs.symlinkSync(symlink.target, symlink.source, symlink.type);
+        fs.symlinkSync(source, dest, type);
     }
-    catch (e) { }
+    catch (e)
+    {
+        console.log(e.message);
+        return
+    }
+
+    console.log(`Linked ${type} ${source} to ${dest}`);
 }
