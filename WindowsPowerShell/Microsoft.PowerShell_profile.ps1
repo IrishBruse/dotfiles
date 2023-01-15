@@ -38,6 +38,8 @@ function choco     { sudo choco $args}
 
 function grep      { rg $args }
 
+function ldtkgen   { dotnet A:\LDtkMonogame\LDtk.Codegen\bin\Debug\net6.0\LDtk.Codegen.dll $args }
+
 function edit {
     if($args.Count -eq 0){
         code .
