@@ -6,7 +6,7 @@
         ],
         "description": "Log output to console"
     },
-    "New File": {
+    "New File Template": {
         "prefix": "file",
         "body": [
             "namespace $WORKSPACE_NAME;",
@@ -19,7 +19,7 @@
         ],
         "description": "Log output to console"
     },
-    "main": {
+    "Static Main": {
         "prefix": "main",
         "body": [
             "public static void Main(string[] args)",
@@ -29,7 +29,7 @@
         ],
         "description": "Create main method"
     },
-    "Fixed": {
+    "Unsafe Fixed Pointer": {
         "prefix": "fixedPtr",
         "body": [
             "fixed(${1:type}* ${2:variable} = ${3:array})",
@@ -51,5 +51,12 @@
             "}"
         ],
         "description": "Create a forloop for x any y"
+    },
+    "Doc Comment": {
+        "prefix": "///",
+        "body": [
+            "/// <summary> $1 </summary>$0"
+        ],
+        "description": "Doc Comment summary"
     },
 }

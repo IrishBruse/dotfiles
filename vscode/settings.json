@@ -15,6 +15,17 @@
             "other": "off"
         }
     },
+    "[yaml]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "editor.formatOnSave": false,
+        "editor.autoIndent": "keep",
+        "editor.quickSuggestions": {
+            "other": true,
+            "comments": false,
+            "strings": true
+        }
+    },
     // Rust
     "rust-analyzer.inlayHints.bindingModeHints.enable": true,
     "rust-analyzer.inlayHints.lifetimeElisionHints.useParameterNames": true,
@@ -43,7 +54,6 @@
     "css.validate": false,
     // Debugging
     "debug.autoExpandLazyVariables": true,
-    "debug.inlineValues": "on",
     "debug.internalConsoleOptions": "neverOpen",
     "debug.onTaskErrors": "abort",
     "debug.openDebug": "neverOpen",
@@ -129,7 +139,7 @@
     "explorer.copyRelativePathSeparator": "/",
     "explorer.decorations.colors": false,
     "explorer.incrementalNaming": "smart",
-    "extensions.autoUpdate": false,
+    "extensions.autoUpdate": "onlyEnabledExtensions",
     "files.associations": {
         "*.ib": "go",
         "*.ldtk": "json",
@@ -229,7 +239,7 @@
     "security.workspace.trust.enabled": false,
     "settingsSync.keybindingsPerPlatform": false,
     "smartersemicolon.autoLineChange": false,
-    "smartersemicolon.enable": true,
+    "smartersemicolon.enable": false,
     "sortJSON.contextMenu": {
         "sortJSONAlphaNum": false,
         "sortJSONAlphaNumReverse": false,
@@ -393,16 +403,31 @@
     // Theme testing settings
     //
     "editor.semanticTokenColorCustomizations": {
-        "rules": {}
+        "rules": {},
     },
+    "workbench.colorCustomizations": {},
     "editor.tokenColorCustomizations": {
         "[IrishBruse's Dark Theme]": {
-            "textMateRules": [],
+            "textMateRules": [
+                {
+                    "scope": "text markup.inline",
+                    "settings": {
+                        "foreground": "#86c332"
+                    }
+                }
+            ],
         }
     },
     "explorer.excludeGitIgnore": true,
     "svelte.enable-ts-plugin": true,
     "svelte.plugin.svelte.note-new-transformation": false,
+    "xml.format.maxLineWidth": 10000,
+    "liveshare.populateGitCoAuthors": "never",
+    "workbench.editorAssociations": {
+        "*.png": "imagePreview.previewEditor"
+    },
+    "yaml.format.printWidth": 10000,
+    "yaml.format.proseWrap": "never",
     //
     // Unsorted
     //
