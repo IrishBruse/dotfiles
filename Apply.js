@@ -1,18 +1,20 @@
 const fs = require("fs")
 const path = require("path")
 
-const APPDATA = process.env.APPDATA
-const LOCALAPPDATA = process.env.LOCALAPPDATA
+const APPDATA_ROAMING = process.env.APPDATA
+const APPDATA_LOCAL = process.env.LOCALAPPDATA
 const USERPROFILE = process.env.USERPROFILE
 
 // Source, Base, Target
-link("/alacritty/", APPDATA, "/alacritty/");
-link("/PowerToys/", LOCALAPPDATA, "/Microsoft/PowerToys/");
+link("/alacritty/", APPDATA_ROAMING, "/alacritty/");
+link("/PowerToys/", APPDATA_LOCAL, "/Microsoft/PowerToys/");
 link("/WindowsPowerShell/", USERPROFILE, "/Documents/WindowsPowerShell/");
+link("/Startup/", APPDATA_ROAMING, "/Microsoft/Windows/Start Menu/Programs/Setup/");
+link("/Ditto/", APPDATA_ROAMING, "/Ditto/");
+
+link("/vscode/", APPDATA_ROAMING, "/Code/User/");
 
 link("/files/.gitconfig", USERPROFILE, "/.gitconfig");
-
-link("/vscode/", APPDATA, "/Code/User/");
 
 function link(local, base, target)
 {

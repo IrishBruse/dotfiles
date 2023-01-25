@@ -34,11 +34,13 @@ function clear     { Clear-Host }
 function copy      { Copy-Item -Path $args[0] -Destination $args[1] }
 function cp        { copy $args}
 
+function installed { choco.exe list -li }
 function choco     { sudo choco $args}
+function update    { sudo choco upgrade all }
 
 function grep      { rg $args }
 
-function ldtkgen   { dotnet A:\LDtkMonogame\LDtk.Codegen\bin\Debug\net6.0\LDtk.Codegen.dll $args }
+function ldtkgen   { dotnet A:/LDtkMonogame/LDtk.Codegen/bin/Debug/net6.0/LDtk.Codegen.dll $args }
 
 function edit {
     if($args.Count -eq 0){

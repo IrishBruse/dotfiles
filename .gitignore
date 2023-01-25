@@ -18,7 +18,7 @@ PowerToys/Video Conference/
 
 vscode/History/
 vscode/globalStorage/
-vscode/sync/
 vscode/workspaceStorage/
 vscode/profiles/
 PowerToys/ColorPicker/settings.json
+vscode/sync/**/
