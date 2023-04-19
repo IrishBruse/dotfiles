@@ -31,8 +31,25 @@ function link(local, base, target)
     {
         fs.symlinkSync(source, dest, type);
         console.log(`Linked ${type} ${source} to ${dest}`);
-
         return;
     }
+    else
+    {
+        let stat = fs.statSync(dest);
 
+        if (stat.isSymbolicLink())
+        {
+            fs.unlinkSync(dest);
+            fs.symlinkSync(source, dest, type);
+            return;
+        }
+        else if (stat.isFile())
+        {
+            fs.rmSync(dest)
+        }
+        else if (!stat.isFile())
+        {
+            console.log(dest + " " + type + " is not a file");
+        }
+    }
 }
