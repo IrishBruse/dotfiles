@@ -13,7 +13,9 @@
         "Keyboard Manager": false,
         "Measure Tool": false,
         "MouseHighlighter": true,
+        "MouseJump": false,
         "MousePointerCrosshairs": false,
+        "PastePlain": true,
         "PowerRename": false,
         "PowerToys Run": true,
         "QuickAccent": false,
@@ -24,8 +26,9 @@
     "is_elevated": false,
     "run_elevated": false,
     "download_updates_automatically": true,
+    "enable_experimentation": true,
     "is_admin": true,
     "theme": "system",
     "system_theme": "dark",
-    "powertoys_version": "v0.64.1"
+    "powertoys_version": "v0.68.0"
 }

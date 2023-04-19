@@ -4,6 +4,7 @@ const path = require("path")
 const APPDATA_ROAMING = process.env.APPDATA
 const APPDATA_LOCAL = process.env.LOCALAPPDATA
 const USERPROFILE = process.env.USERPROFILE
+const ProgramFiles = process.env.ProgramFiles
 
 // Source, Base, Target
 link("/alacritty/", APPDATA_ROAMING, "/alacritty/");
@@ -15,31 +16,23 @@ link("/Ditto/", APPDATA_ROAMING, "/Ditto/");
 link("/vscode/", APPDATA_ROAMING, "/Code/User/");
 
 link("/files/.gitconfig", USERPROFILE, "/.gitconfig");
+link("/shell/shell.nss", ProgramFiles, "/Nilesoft Shell/shell.nss");
 
 function link(local, base, target)
 {
     let source = path.join(__dirname, local);
     let dest = path.join(base, target);
-    let type = (dest.charAt(dest.length - 1) == '/' || dest.charAt(dest.length - 1) == '\\') ? "dir" : "file";
+    let typeCondition = dest.charAt(dest.length - 1) == '/' | dest.charAt(dest.length - 1) == '\\';
+    let type = typeCondition ? "dir" : "file";
 
-    if (type == "dir" && fs.existsSync(dest))
-    {
-        fs.rmdirSync(dest);
-    }
-    else if (type == "file" && fs.existsSync(dest))
-    {
-        fs.rmSync(dest);
-    }
+    console.log(dest + " " + type);
 
-    try
+    if (!fs.existsSync(dest))
     {
         fs.symlinkSync(source, dest, type);
-    }
-    catch (e)
-    {
-        console.log(e.message);
-        return
+        console.log(`Linked ${type} ${source} to ${dest}`);
+
+        return;
     }
 
-    console.log(`Linked ${type} ${source} to ${dest}`);
 }

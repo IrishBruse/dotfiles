@@ -4,9 +4,9 @@
     "files.associations": {
         "*.ib": "go",
         "*.ldtk": "json",
-        "*.ldtkl": "json"
+        "*.ldtkl": "json",
+        "*.nss": "groovy"
     },
-    "explorer.excludeGitIgnore": true,
     "files.exclude": {
         "**/.config": true,
         "**/.gitkeep": true,
@@ -140,9 +140,7 @@
     "editor.acceptSuggestionOnCommitCharacter": false,
     "editor.acceptSuggestionOnEnter": "smart",
     "editor.accessibilitySupport": "off",
-    "editor.bracketPairColorization.enabled": false,
-    "editor.cursorBlinking": "expand",
-    "editor.cursorSmoothCaretAnimation": true,
+    "editor.cursorSmoothCaretAnimation": "on",
     "editor.cursorSurroundingLinesStyle": "all",
     "editor.cursorWidth": 2,
     "editor.fastScrollSensitivity": 3,
@@ -180,7 +178,7 @@
     "editor.scrollbar.verticalScrollbarSize": 14,
     "editor.selectionHighlight": false,
     "editor.semanticHighlighting.enabled": true,
-    "editor.snippetSuggestions": "bottom",
+    "editor.snippetSuggestions": "none",
     "editor.stickyScroll.enabled": true,
     "editor.suggest.localityBonus": true,
     "editor.suggest.preview": true,
@@ -211,7 +209,6 @@
     "explorer.confirmDelete": false,
     "explorer.confirmDragAndDrop": false,
     "explorer.copyRelativePathSeparator": "/",
-    "explorer.decorations.colors": false,
     "explorer.incrementalNaming": "smart",
     "files.hotExit": "onExitAndWindowClose",
     "files.insertFinalNewline": true,
@@ -256,7 +253,7 @@
     "security.workspace.trust.enabled": false,
     "settingsSync.keybindingsPerPlatform": false,
     "smartersemicolon.autoLineChange": false,
-    "smartersemicolon.enable": true,
+    "smartersemicolon.enable": false,
     "task.showDecorations": false,
     "telemetry.telemetryLevel": "crash",
     "terminal.integrated.persistentSessionReviveProcess": "never",
@@ -268,7 +265,7 @@
     "terminal.integrated.enablePersistentSessions": false,
     "terminal.integrated.environmentChangesIndicator": "off",
     "terminal.integrated.environmentChangesRelaunch": false,
-    "terminal.integrated.fontFamily": "Cascadia Mono",
+    "terminal.integrated.fontFamily": "Cascadia Code",
     "terminal.integrated.profiles.windows": {
         "Command Prompt": null,
         "Git Bash": null,
@@ -279,14 +276,8 @@
             "icon": "terminal-powershell",
             "path": "pwsh"
         },
-        "Alacritty": {
-            "args": [
-                "-NoLogo"
-            ],
-            "icon": "terminal-powershell",
-            "path": "alacritty"
-        }
     },
+    "terminal.external.windowsExec": "alacritty",
     "terminal.integrated.rightClickBehavior": "nothing",
     "terminal.integrated.shellIntegration.decorationsEnabled": "never",
     "testing.automaticallyOpenPeekView": "never",
@@ -410,7 +401,20 @@
     "editor.semanticTokenColorCustomizations": {
         "rules": {}
     },
-    "workbench.colorCustomizations": {},
+    "workbench.colorCustomizations": {
+        "[IrishBruse's Dark Theme]": {
+            "gitDecoration.modifiedResourceForeground": "#d4d4d4",
+            "gitDecoration.deletedResourceForeground": "#d4d4d4",
+            "gitDecoration.stageDeletedResourceForeground": "#d4d4d4",
+            "gitDecoration.stageModifiedResourceForeground": "#d4d4d4",
+            "gitDecoration.addedResourceForeground": "#d4d4d4",
+            "gitDecoration.ignoredResourceForeground": "#d4d4d4",
+            "gitDecoration.renamedResourceForeground": "#d4d4d4",
+            "gitDecoration.submoduleResourceForeground": "#d4d4d4",
+            "gitDecoration.untrackedResourceForeground": "#d4d4d4",
+            "gitDecoration.conflictingResourceForeground": "#d4d4d4"
+        }
+    },
     "editor.tokenColorCustomizations": {
         "[IrishBruse's Dark Theme]": {
             "textMateRules": [
@@ -431,12 +435,38 @@
     "yaml.format.proseWrap": "never",
     "terminal.integrated.tabs.showActiveTerminal": "always",
     "terminal.integrated.useWslProfiles": false,
-    "workbench.panel.defaultLocation": "right",
     // Misc
     "liveshare.populateGitCoAuthors": "never",
     "diffEditor.codeLens": true,
     "diffEditor.wordWrap": "off",
-    "discord.removeTimestamp": true
+    "discord.removeTimestamp": true,
+    "notebook.lineNumbers": "on",
+    "notebook.kernelPicker.type": "mru",
+    "git.openRepositoryInParentFolders": "always",
+    "debug.console.fontFamily": "Cascadia Code",
+    "settingsSync.ignoredSettings": [
+        "-omnisharp.enableDecompilationSupport"
+    ],
+    "terminal.explorerKind": "external",
+    "spring.dashboard.enableGutter": "off",
+    "cSpell.userWords": [
+        "bijective",
+        "Conneely",
+        "Hololens",
+        "Moverio"
+    ],
+    "editor.fontWeight": "normal",
+    "explorer.decorations.badges": false,
+    "todo-tree.filtering.ignoreGitSubmodules": true,
+    "notebook.cellToolbarLocation": {
+        "default": "right",
+        "jupyter-notebook": "right"
+    },
+    "task.problemMatchers.neverPrompt": {
+        "shell": true
+    },
+    "editor.cursorBlinking": "expand",
+    "errorLens.editorHoverEnabled": false,
     //
     // Unsorted
     //

@@ -1,27 +1,21 @@
+Import-Module "A:\dotfiles\WindowsPowerShell\ferium.psm1" -Force
+
+Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
+
 function prompt {
-    Write-Host "$pwd " -NoNewline
+    $branch = git branch
+    if ($branch) {
+        $branch = $branch -replace '^\*\s+'
+        $branch = " ($branch)"
+    }
 
-    # Print -> arrow pompt
-    $Host.UI.Write($([char]0x2192))
-    return " "
-}
-
-$win = "C:\Windows\system32"
-
-if ($pwd.path.equals($win))
-{
-    cd "A:/"
-}
-else
-{
-    cd $pwd
+    # specify your custom prompt, e.g. the default PowerShell:
+    "$($executionContext.SessionState.Path.CurrentLocation)$($branch) $([char]0x2192) "
 }
 
 # Custom Functions
 
 function clone { git clone --recursive $args }
-
-function $ { powershell -Command $args }
 
 function echo      { Write-Host $args }
 
@@ -66,4 +60,14 @@ function touch {
     }else{
         New-Item $item -ItemType file
     }
+}
+
+# Import the Chocolatey Profile that contains the necessary code to enable
+# tab-completions to function for `choco`.
+# Be aware that if you are missing these lines from your profile, tab completion
+# for `choco` will not function.
+# See https://ch0.co/tab-completion for details.
+$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+if (Test-Path($ChocolateyProfile)) {
+  Import-Module "$ChocolateyProfile"
 }
