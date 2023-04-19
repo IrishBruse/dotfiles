@@ -109,8 +109,6 @@ shell
         item(find="New" vis=vis.remove)
         item(find="Open With Visual Studio" vis=vis.remove)
 
-        item(find="*" pos=0)
-
         // Remove Taskbar
         item(find="Toolbars" type="Taskbar" vis=vis.remove)
         item(find="Search" type="Taskbar" vis=vis.remove)
