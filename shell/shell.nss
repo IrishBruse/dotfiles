@@ -90,80 +90,103 @@ shell
     static
     {
         // remove default items
-        item(vis=vis.remove find='View')
-        item(vis=vis.remove find='Sort by')
-        item(vis=vis.remove find='Group by')
-        item(vis=vis.remove find='Git')
-        item(vis=vis.remove find='Paste')
-        item(vis=vis.remove find='Undo Delete')
-        item(vis=vis.remove find='Scan with defender')
-        item(vis=vis.remove find='Git')
+
+        item(mode=mode.multiple menu=title.more_options find='Git')
+        item(mode=mode.multiple menu=title.more_options find='Scan with defender')
+        item(mode=mode.multiple menu=title.more_options find='Test')
+        item(mode=mode.multiple menu=title.more_options find='"Undo Delete"')
+        item(mode=mode.multiple menu=title.more_options find='Give Access to')
+        item(mode=mode.multiple menu=title.more_options find='Customise this folder*')
+        item(mode=mode.multiple menu=title.more_options find='Scan With Microsoft *')
+        item(mode=mode.multiple menu=title.more_options find='Open With Visual Studio')
+        item(mode=mode.multiple menu=title.more_options find='"Open Linux shell here"')
+
+        // Remove Application shortcuts
+        item(mode=mode.multiple menu=title.more_options find='Open With Visual Studio')
+        item(mode=mode.multiple menu=title.more_options find='Git')
+
+        // New
+        item(mode=mode.multiple menu=title.more_options find='Rich Text Document')
+        item(mode=mode.multiple menu=title.more_options find='AutoHotKey Script')
+
+        // Drive
+        item(mode=mode.multiple menu=title.more_options find='Pin to Quick access')
+        item(mode=mode.multiple menu=title.more_options find='Pin to Start')
+        item(mode=mode.multiple menu=title.more_options find='Send to')
+        item(mode=mode.multiple menu=title.more_options find='Include in library')
+	    item(pos=pos.middle mode=mode.multiple where=this.id(
+            id.restore_previous_versions,
+            id.cast_to_device,
+            id.delete,
+            id.rename,
+            id.copy,
+            id.cut,
+            id.paste,
+            id.paste_shortcut,
+            id.edit,
+            id.redo,
+            id.sort_by,
+            id.group_by,
+            id.undo,
+            id.view,
+            id.share,
+            id.open_powershell_window_here,
+            id.create_shortcut,
+            id.create_shortcuts_here,
+            id.open_new_window
+        ) mode=mode.multiple menu=title.more_options)
+
+        // Reorder items
+        item(mode=mode.multiple menu=title.more_options find='"Open"')
+        item(pos=-1 sep=None find='*') // Default to middle
+
+        item(pos=top image=\uE272 find='Open with Code')
+        item(pos=top image=\uE0AC find='Open Alacritty here')
+        item(pos=middle find='"Open With"')
+
+        item(pos=pos.middle image=icon.new_folder sep="none" menu=null find='Folder')
+        item(pos=pos.middle image=icon.new_file sep="none" menu=null find='Text Document')
+        item(pos=-1 find='Paste Into File')
+
+        item(pos=-1 image=\uE19B title="File Lockpick" find="What's using this file?")
+        item(pos=-99 find='Refresh')
+        item(pos=-100 find='Properties')
+
+        // Taskbar
+        item(pos=-1 type='Taskbar' mode=mode.multiple menu=title.more_options find='Toolbars')
+        item(pos=-1 type='Taskbar' mode=mode.multiple menu=title.more_options find='Search')
+        item(pos=-1 type='Taskbar' mode=mode.multiple menu=title.more_options find='Show window*')
+        item(pos=-1 type='Taskbar' mode=mode.multiple menu=title.more_options find='Show task')
+        item(pos=-1 type='Taskbar' mode=mode.multiple menu=title.more_options find='Show people')
+        item(pos=-1 type='Taskbar' mode=mode.multiple menu=title.more_options find='Taskbar settings')
+        item(pos=-1 type='Taskbar' mode=mode.multiple menu=title.more_options find='Show touch')
+        item(pos=-1 type='Taskbar' mode=mode.multiple menu=title.more_options find='Show the desk')
+        item(pos=-1 type='Taskbar' mode=mode.multiple menu=title.more_options find='Cascade windows')
+        item(pos=-1 type='Taskbar' mode=mode.multiple menu=title.more_options find='Exit Explorer')
+        item(pos=-1 type='Taskbar' mode=mode.multiple menu=title.more_options find='Lock all taskbars')
+
+        // Remove
+        item(vis=vis.remove type='Taskbar' mode=mode.multiple menu=title.more_options find='Task Manager')
         item(vis=vis.remove find='Test')
-        item(vis=vis.remove find='Give Access to')
-        item(vis=vis.remove find='Customise this folder*')
-        item(vis=vis.remove find='Scan With Microsoft *')
-        item(vis=vis.remove find='Open With Visual Studio')
-        item(vis=vis.remove find='Edit')
-        item(vis=vis.remove find='Share')
-        item(vis=vis.remove find='"Open in new window"')
 
-        item(vis=vis.remove find='Rich Text Document')
-        item(vis=vis.remove find='Pin to Quick access')
-        item(vis=vis.remove find='Pin to Start')
-        item(vis=vis.remove find='Send to')
-        item(vis=vis.remove find='Include in library')
-
-	    item(mode=mode.multiple where=this.id(id.restore_previous_versions,id.cast_to_device) vis=vis.remove)
-
-        // Hide shortcuts
-        item(vis=vis.remove find='Delete')
-        item(vis=vis.remove find='Rename')
-        item(vis=vis.remove find='Copy')
-        item(vis=vis.remove find='Cut')
-        item(vis=vis.remove find='Redo')
-        item(vis=vis.remove find='Paste')
-
-        item(pos=pos.middle find='*')
-
-        item(image=\uE136 pos=pos.bottom title="File Lockpick" find="What's using this file?")
-        item(pos=pos.bottom sep=sep.top find='Refresh')
-        item(pos=pos.bottom find='Properties')
-
-        item(pos=pos.top find='Open')
-
-        item(find='Folder' image=icon.new_folder sep="none")
-        item(find='Text Document' image=icon.new_file sep="none")
-
-        // Remove Taskbar
-        item(type='Taskbar' vis=vis.remove find='Toolbars')
-        item(type='Taskbar' vis=vis.remove find='Search')
-        item(type='Taskbar' vis=vis.remove find='Show window*')
-        item(type='Taskbar' vis=vis.remove find='Show task')
-        item(type='Taskbar' vis=vis.remove find='Show people')
-        item(type='Taskbar' vis=vis.remove find='Taskbar settings')
-        item(type='Taskbar' vis=vis.remove find='Show touch')
-        item(type='Taskbar' vis=vis.remove find='Show the desk')
-        item(type='Taskbar' vis=vis.remove find='Cascade windows')
-        item(type='Taskbar' vis=vis.remove find='Lock all taskbars')
-        item(type='Taskbar' vis=vis.remove find='Task Manager')
-
-        item(type='Taskbar' pos=0 find='Task manager')
-        item(type='Taskbar' pos=0 find='Taskbar settings')
+        item(pos=-1 type='Taskbar' find='Task manager')
+        item(pos=-1 type='Taskbar' find='Taskbar settings')
     }
 
     dynamic
     {
-        // item(title="New Folder" image=icon.new_folder cmd=io.dir.create pos=pos.top sep=sep.bottom)
-        // item(title="New File" image=icon.new_file cmd=io.file.create('@(dt).txt', 'Hello World!') pos=pos.top)
+		menu(pos=middle type='*' mode=mode.multiple title=title.more_options image=icon.more_options) { }
 
-        item(title='Add to @sel.parent.name .zip' mode='multiple' image=icon.compressed type='file|dir' cmd='7zG' args='a -tzip @sel.parent.name .zip @sel(true," ")')
+        item(pos=-1 title='Add to @sel.parent.name .zip' mode='multiple' image=icon.compressed type='file|dir' cmd='7zG' args='a -tzip @sel.parent.name.zip @sel(true," ")')
+        item(pos=-1 title='Extract to @sel.title/' where=str.end(sel.name,".zip") image=icon.compressed type='file' cmd='7zG' args=('e -y @sel.name -o@sel.title/'))
 
-        item(title='Enviroment Vars' image=icon.manage type='Taskbar' pos=0 cmd='C:/Windows/system32/rundll32.exe' args='sysdm.cpl,EditEnvironmentVariables')
-        item(title='Task Manager' image=icon.task_manager type='Taskbar' pos=0 cmd='Taskmgr.exe')
-        item(title='Settings' image=icon.settings type='Taskbar' pos=-102 cmd='ms-settings:')
-        item(title='Restart Explorer' image=icon.refresh type='Taskbar' pos=-104 cmd-line='/k taskkill /f /im explorer.exe & start explorer.exe & exit')
+        item(pos=8 title='Settings' image=icon.settings type='Taskbar' cmd='ms-settings:')
+        item(pos=7 title='Restart Explorer' image=icon.refresh type='Taskbar' cmd-line='/k taskkill /f /im explorer.exe & start explorer.exe & exit')
 
-        menu(title='Dotnet' type="back.dir" sep=sep.bottom image=\uE24C pos=pos.middle)
+        item(pos=9 title='Enviroment Vars' image=icon.manage type='Taskbar' cmd='C:/Windows/system32/rundll32.exe' args='sysdm.cpl,EditEnvironmentVariables')
+        item(pos=10 title='Task Manager' image=icon.task_manager type='Taskbar' cmd='Taskmgr.exe')
+
+        menu(pos=pos.middle title='Dotnet' type="back.dir" image=\uE24C )
         {
             item(title='run' cmd="alacritty" args='--hold -e "dotnet run"' image=\uE149)
             item(title='clean' image=\uE0CE cmd='alacritty' args='--hold -e "dotnet clean"')
@@ -186,6 +209,5 @@ shell
             item(title='help' image=\uE136 cmd="alacritty" args='--hold -e "dotnet -h"')
             item(title='version' cmd="alacritty" args='--hold -e "dotnet --info"')
         }
-
     }
 }
