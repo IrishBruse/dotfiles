@@ -5,16 +5,7 @@ PowerToys/*.json
 !PowerToys/settings.json
 PowerToys/**/*version*
 
-PowerToys/FancyZones/
-PowerToys/Hosts/
-PowerToys/Image Resizer/
-PowerToys/Keyboard Manager/
-PowerToys/Measure Tool/
-PowerToys/MouseHighlighter/
-PowerToys/MousePointerCrosshairs/
 PowerToys/PowerToys Run/
-PowerToys/Shortcut Guide/
-PowerToys/Video Conference/
 
 vscode/History/
 vscode/globalStorage/

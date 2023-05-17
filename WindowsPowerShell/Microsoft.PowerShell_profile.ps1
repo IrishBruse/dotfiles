@@ -1,4 +1,5 @@
 Import-Module "A:\dotfiles\WindowsPowerShell\ferium.psm1" -Force
+Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
 
 Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 
@@ -15,7 +16,7 @@ function prompt {
 
 # Custom Functions
 
-function clone { git clone --recursive $args }
+function clone     { git clone --recursive $args }
 
 function echo      { Write-Host $args }
 
@@ -34,15 +35,10 @@ function update    { sudo choco upgrade all }
 
 function grep      { rg $args }
 
-function ldtkgen   { dotnet A:/LDtkMonogame/LDtk.Codegen/bin/Debug/net6.0/LDtk.Codegen.dll $args }
+function dot       { code A:/dotfiles/ }
+function term      { alacritty --hold -e powershell -Command "$args" }
 
-function edit {
-    if($args.Count -eq 0){
-        code .
-    }else{
-        code $args
-    }
-}
+function ldtkgen   { dotnet A:/LDtkMonogame/LDtk.Codegen/bin/Debug/net6.0/LDtk.Codegen.dll $args }
 
 function open {
     if($args.Count -eq 0){
@@ -60,14 +56,4 @@ function touch {
     }else{
         New-Item $item -ItemType file
     }
-}
-
-# Import the Chocolatey Profile that contains the necessary code to enable
-# tab-completions to function for `choco`.
-# Be aware that if you are missing these lines from your profile, tab completion
-# for `choco` will not function.
-# See https://ch0.co/tab-completion for details.
-$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-if (Test-Path($ChocolateyProfile)) {
-  Import-Module "$ChocolateyProfile"
 }

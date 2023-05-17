@@ -1681,5 +1681,49 @@
         "key": "ctrl+enter",
         "command": "-github.copilot.generate",
         "when": "editorTextFocus && github.copilot.activated && !inInteractiveInput && !interactiveEditorFocused"
+    },
+    {
+        "key": "ctrl+n",
+        "command": "-workbench.action.files.newUntitledFile"
+    },
+    {
+        "key": "ctrl+n",
+        "command": "extension.advancedNewFile"
+    },
+    {
+        "key": "ctrl+alt+n",
+        "command": "-extension.advancedNewFile"
+    },
+    {
+        "key": "ctrl+shift+5",
+        "command": "-coverage-gutters.toggleCoverage"
+    },
+    {
+        "key": "ctrl+shift+7",
+        "command": "-coverage-gutters.displayCoverage"
+    },
+    {
+        "key": "ctrl+shift+6",
+        "command": "-coverage-gutters.previewCoverageReport"
+    },
+    {
+        "key": "ctrl+shift+backspace",
+        "command": "-coverage-gutters.removeCoverage"
+    },
+    {
+        "key": "ctrl+shift+9",
+        "command": "-coverage-gutters.removeWatch"
+    },
+    {
+        "key": "ctrl+shift+8",
+        "command": "-coverage-gutters.watchCoverageAndVisibleEditors"
+    },
+    {
+        "key": "shift+oem_1",
+        "command": "workbench.action.showCommands"
+    },
+    {
+        "key": "ctrl+shift+p",
+        "command": "-workbench.action.showCommands"
     }
 ]

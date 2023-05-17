@@ -10,14 +10,15 @@
         "prefix": "file",
         "body": [
             "namespace $WORKSPACE_NAME;",
-            "",
+            "test",
             "public class $TM_FILENAME_BASE",
             "{",
             "\t$0",
             "}",
             ""
         ],
-        "description": "Log output to console"
+        "description": "Log output to console",
+        "isFileTemplate": true
     },
     "Static Main": {
         "prefix": "main",
@@ -58,5 +59,15 @@
             "/// <summary> $1 </summary>$0"
         ],
         "description": "Doc Comment summary"
+    },
+    "Switch statement": {
+        "prefix": "switch",
+        "body": [
+            "switch(${1:variable})",
+            "{",
+            "\tcase ${2:case}: break;",
+            "\tdefault: break;",
+            "}"
+        ]
     }
 }

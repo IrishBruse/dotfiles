@@ -48,4 +48,8 @@
 			"</ItemGroup>",
 		]
 	},
+	"Project": {
+		"prefix": "ProjectReference",
+		"body": "<ProjectReference Include=\"../$0\" />"
+	}
 }

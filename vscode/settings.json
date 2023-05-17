@@ -5,7 +5,7 @@
         "*.ib": "go",
         "*.ldtk": "json",
         "*.ldtkl": "json",
-        "*.nss": "plaintext"
+        "*.nss": "c"
     },
     "files.exclude": {
         "**/.config": true,
@@ -289,8 +289,6 @@
     "window.enableMenuBarMnemonics": false,
     "window.experimental.windowControlsOverlay.enabled": true,
     "workbench.enableExperiments": true,
-    "extensions.experimental.useUtilityProcess": true,
-    "application.experimental.rendererProfiling": true,
     "window.menuBarVisibility": "hidden",
     "window.newWindowDimensions": "maximized",
     "window.openFilesInNewWindow": "off",
@@ -302,6 +300,7 @@
     },
     "workbench.editor.decorations.badges": false,
     "workbench.editor.decorations.colors": false,
+    "workbench.commandPalette.experimental.useSemanticSimilarity": true,
     "workbench.editor.limit.enabled": true,
     "workbench.editor.limit.value": 15,
     "workbench.editor.splitInGroupLayout": "vertical",
@@ -414,7 +413,9 @@
             "gitDecoration.renamedResourceForeground": "#d4d4d4",
             "gitDecoration.submoduleResourceForeground": "#d4d4d4",
             "gitDecoration.untrackedResourceForeground": "#d4d4d4",
-            "gitDecoration.conflictingResourceForeground": "#d4d4d4"
+            "gitDecoration.conflictingResourceForeground": "#d4d4d4",
+            "terminal.ansiBrightMagenta": "#b6a4ee",
+            "terminal.ansiMagenta": "#8A76CC",
         }
     },
     "editor.tokenColorCustomizations": {
@@ -467,7 +468,19 @@
         "buttonsEnabled": false
     },
     "liveServer.settings.donotVerifyTags": true,
-    "liveServer.settings.donotShowInfoMsg": true
+    "liveServer.settings.donotShowInfoMsg": true,
+    "advancedNewFile.convenienceOptions": [
+        "last",
+        "current",
+        "root"
+    ],
+    "dotnet-test-explorer.autoExpandTree": true,
+    "dotnet-test-explorer.autoWatch": true,
+    "coverage-gutters.showLineCoverage": true,
+    "dotnet-test-explorer.testArguments": "/p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./lcov.info",
+    "dotnet-test-explorer.testProjectPath": "**/*.Tests.csproj",
+    "coverage-gutters.customizable.context-menu": false,
+    "workbench.editor.enablePreview": false
     //
     // Unsorted
     //
