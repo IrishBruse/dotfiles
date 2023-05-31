@@ -1,15 +1,7 @@
 [
     {
-        "key": "alt",
-        "command": "columnSelect"
-    },
-    {
         "key": "ctrl+t",
         "command": "-workbench.action.showAllSymbols"
-    },
-    {
-        "key": "ctrl+t",
-        "command": "workbench.action.tasks.runTask"
     },
     {
         "key": "ctrl+oem_comma",
@@ -25,17 +17,8 @@
         "command": "-workbench.action.toggleSidebarVisibility"
     },
     {
-        "key": "ctrl+b",
-        "command": "workbench.action.tasks.build"
-    },
-    {
         "key": "ctrl+shift+b",
         "command": "-workbench.action.tasks.build"
-    },
-    {
-        "key": "ctrl+shift+b",
-        "command": "markdown.extension.editing.toggleBold",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == 'markdown'"
     },
     {
         "key": "ctrl+b",
@@ -1399,20 +1382,8 @@
     },
     {
         "key": "ctrl+o",
-        "command": "workbench.action.files.openFolder"
-    },
-    {
-        "key": "ctrl+o",
         "command": "-workbench.action.files.openFile",
         "when": "true"
-    },
-    {
-        "key": "ctrl+oem_8",
-        "command": "workbench.action.terminal.new"
-    },
-    {
-        "key": "ctrl+`",
-        "command": "workbench.action.terminal.new"
     },
     {
         "key": "ctrl+q",
@@ -1422,10 +1393,6 @@
         "key": "ctrl+q",
         "command": "-workbench.action.quickOpenNavigateNextInViewPicker",
         "when": "inQuickOpen && inViewsPicker"
-    },
-    {
-        "key": "ctrl+r",
-        "command": "o.restart"
     },
     {
         "key": "ctrl+r",
@@ -1481,17 +1448,9 @@
         "when": "inFilesPicker && inQuickOpen"
     },
     {
-        "key": "ctrl+e",
-        "command": "editor.action.marker.next"
-    },
-    {
         "key": "ctrl+shift+e",
         "command": "-workbench.view.explorer",
         "when": "viewContainer.workbench.view.explorer.enabled"
-    },
-    {
-        "key": "ctrl+shift+e",
-        "command": "extension.changeCase.pascal"
     },
     {
         "key": "alt+s",
@@ -1501,11 +1460,6 @@
         "key": "alt+s",
         "command": "-markdown.extension.editing.toggleStrikethrough",
         "when": "editorTextFocus && !editorReadonly && editorLangId == 'markdown'"
-    },
-    {
-        "key": "ctrl+j",
-        "command": "github.copilot.generate",
-        "when": "editorTextFocus && github.copilot.activated"
     },
     {
         "key": "ctrl+enter",
@@ -1541,10 +1495,6 @@
     {
         "key": "ctrl+shift+alt+o",
         "command": "-smartsemicolon.toggle"
-    },
-    {
-        "key": "ctrl+q",
-        "command": "o.fixAll.document"
     },
     {
         "key": "ctrl+m",
@@ -1597,11 +1547,6 @@
         "key": "f12",
         "command": "-editor.action.revealDefinition",
         "when": "editorHasDefinitionProvider && editorTextFocus && !isInEmbeddedEditor"
-    },
-    {
-        "key": "ctrl+i",
-        "command": "editor.action.organizeImports",
-        "when": "editorTextFocus && !editorReadonly && supportedCodeAction =~ /(\\s|^)source\\.organizeImports\\b/"
     },
     {
         "key": "shift+alt+o",
@@ -1674,10 +1619,6 @@
         "command": "-workbench.action.gotoLine"
     },
     {
-        "key": "ctrl+alt+s",
-        "command": "workbench.action.files.saveAs"
-    },
-    {
         "key": "ctrl+enter",
         "command": "-github.copilot.generate",
         "when": "editorTextFocus && github.copilot.activated && !inInteractiveInput && !interactiveEditorFocused"
@@ -1685,10 +1626,6 @@
     {
         "key": "ctrl+n",
         "command": "-workbench.action.files.newUntitledFile"
-    },
-    {
-        "key": "ctrl+n",
-        "command": "extension.advancedNewFile"
     },
     {
         "key": "ctrl+alt+n",
@@ -1719,11 +1656,433 @@
         "command": "-coverage-gutters.watchCoverageAndVisibleEditors"
     },
     {
-        "key": "shift+oem_1",
-        "command": "workbench.action.showCommands"
+        "key": "ctrl+shift+p",
+        "command": "-workbench.action.showCommands"
+    },
+    {
+        "key": "f11",
+        "command": "-workbench.action.toggleFullScreen",
+        "when": "!isIOS"
+    },
+    {
+        "key": "f1",
+        "command": "-workbench.action.showCommands"
+    },
+    {
+        "key": "f3",
+        "command": "-editor.action.nextMatchFindAction",
+        "when": "editorFocus"
+    },
+    {
+        "key": "ctrl+f3",
+        "command": "-editor.action.nextSelectionMatchFindAction",
+        "when": "editorFocus"
+    },
+    {
+        "key": "shift+f3",
+        "command": "-editor.action.previousMatchFindAction",
+        "when": "editorFocus"
+    },
+    {
+        "key": "ctrl+shift+f3",
+        "command": "-editor.action.previousSelectionMatchFindAction",
+        "when": "editorFocus"
+    },
+    {
+        "key": "alt+f3",
+        "command": "-editor.action.dirtydiff.next",
+        "when": "editorTextFocus && !textCompareEditorActive"
+    },
+    {
+        "key": "shift+alt+f3",
+        "command": "-editor.action.dirtydiff.previous",
+        "when": "editorTextFocus && !textCompareEditorActive"
+    },
+    {
+        "key": "f3",
+        "command": "-workbench.action.terminal.findNext",
+        "when": "terminalFindFocused && terminalHasBeenCreated || terminalFindFocused && terminalProcessSupported || terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
+    },
+    {
+        "key": "shift+f3",
+        "command": "-workbench.action.terminal.findPrevious",
+        "when": "terminalFindFocused && terminalHasBeenCreated || terminalFindFocused && terminalProcessSupported || terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
+    },
+    {
+        "key": "f3",
+        "command": "-list.find",
+        "when": "listFocus && listSupportsFind"
+    },
+    {
+        "key": "alt+f3",
+        "command": "-notebook.diff.action.next",
+        "when": "activeEditor == 'workbench.editor.notebookTextDiffEditor'"
+    },
+    {
+        "key": "shift+alt+f3",
+        "command": "-notebook.diff.action.previous",
+        "when": "activeEditor == 'workbench.editor.notebookTextDiffEditor'"
+    },
+    {
+        "key": "shift+insert",
+        "command": "-editor.action.clipboardPasteAction"
     },
     {
         "key": "ctrl+shift+p",
-        "command": "-workbench.action.showCommands"
-    }
+        "command": "workbench.action.showCommands"
+    },
+    {
+        "key": "shift+alt+oem_period",
+        "command": "-editor.action.autoFix",
+        "when": "textInputFocus && !editorReadonly && supportedCodeAction =~ /(\\s|^)quickfix\\b/"
+    },
+    {
+        "key": "shift+alt+0",
+        "command": "-workbench.action.toggleEditorGroupLayout"
+    },
+    {
+        "key": "ctrl+shift+w",
+        "command": "workbench.action.closeAllGroups"
+    },
+    {
+        "key": "f6",
+        "command": "-workbench.action.debug.pause",
+        "when": "debugState == 'running'"
+    },
+    {
+        "key": "f6",
+        "command": "-workbench.action.focusNextPart"
+    },
+    {
+        "key": "f6",
+        "command": "workbench.action.debug.stepOver",
+        "when": "debugState == 'stopped'"
+    },
+    {
+        "key": "f10",
+        "command": "-workbench.action.debug.stepOver",
+        "when": "debugState == 'stopped'"
+    },
+    {
+        "key": "ctrl+i",
+        "command": "editor.action.insertSnippet",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+alt+j",
+        "command": "-editor.action.insertSnippet",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == 'powershell'"
+    },
+    {
+        "key": "ctrl+i",
+        "command": "-interactiveEditor.start",
+        "when": "interactiveEditorHasProvider && !editorReadonly"
+    },
+    {
+        "key": "ctrl+k i",
+        "command": "-interactiveEditor.start",
+        "when": "interactiveEditorHasProvider && !editorReadonly"
+    },
+    {
+        "key": "ctrl+k ctrl+i",
+        "command": "-workbench.action.terminal.focusHover",
+        "when": "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalIsOpen || terminalFocus && terminalProcessSupported || terminalHasBeenCreated && terminalTabsFocus || terminalIsOpen && terminalTabsFocus || terminalProcessSupported && terminalTabsFocus"
+    },
+    {
+        "key": "ctrl+i",
+        "command": "-editor.action.triggerSuggest",
+        "when": "editorHasCompletionItemProvider && textInputFocus && !editorReadonly && !suggestWidgetVisible"
+    },
+    {
+        "key": "alt+oem_5",
+        "command": "-editor.action.inlineSuggest.trigger",
+        "when": "config.github.copilot.inlineSuggest.enable && editorTextFocus && !editorHasSelection && !inlineSuggestionsVisible"
+    },
+    {
+        "key": "f11",
+        "command": "workbench.action.toggleZenMode"
+    },
+    {
+        "key": "ctrl+shift+e",
+        "command": "workbench.view.explorer"
+    },
+    {
+        "key": "ctrl+shift+x",
+        "command": "-workbench.view.extensions",
+        "when": "viewContainer.workbench.view.extensions.enabled"
+    },
+    {
+        "key": "ctrl+a",
+        "command": "editor.action.smartSelect.grow",
+        "when": "!listFocus"
+    },
+    {
+        "key": "shift+alt+left",
+        "command": "-editor.action.smartSelect.shrink",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+a",
+        "command": "editor.action.selectAll",
+        "when": "!editorTextFocus"
+    },
+    {
+        "key": "shift+alt+f8",
+        "command": "-editor.action.marker.prev",
+        "when": "editorFocus"
+    },
+    {
+        "key": "shift+f8",
+        "command": "-editor.action.marker.prevInFiles",
+        "when": "editorFocus"
+    },
+    {
+        "key": "ctrl+e",
+        "command": "editor.action.marker.next"
+    },
+    {
+        "key": "ctrl+e",
+        "command": "-thunder-client.change-env",
+        "when": "activeWebviewPanelId == 'tc.env-view' || activeWebviewPanelId == 'tc.request-view' || activeWebviewPanelId == 'tc.runcol-view'"
+    },
+    {
+        "key": "ctrl+k shift+oem_comma",
+        "command": "-extension.selectAngleBrackets",
+        "when": "editorFocus"
+    },
+    {
+        "key": "ctrl+k oem_3",
+        "command": "-extension.selectBackTick",
+        "when": "editorFocus"
+    },
+    {
+        "key": "ctrl+k shift+oem_4",
+        "command": "-extension.selectCurlyBrackets",
+        "when": "editorFocus"
+    },
+    {
+        "key": "ctrl+k shift+oem_7",
+        "command": "-extension.selectDoubleQuote",
+        "when": "editorFocus"
+    },
+    {
+        "key": "ctrl+k oem_1",
+        "command": "-extension.selectEitherQuote",
+        "when": "editorFocus"
+    },
+    {
+        "key": "ctrl+k shift+9",
+        "command": "-extension.selectParenthesis",
+        "when": "editorFocus"
+    },
+    {
+        "key": "ctrl+k oem_7",
+        "command": "-extension.selectSingleQuote",
+        "when": "editorFocus"
+    },
+    {
+        "key": "ctrl+k oem_4",
+        "command": "-extension.selectSquareBrackets",
+        "when": "editorFocus"
+    },
+    {
+        "key": "ctrl+k shift+oem_period",
+        "command": "-extension.selectInTag",
+        "when": "editorFocus"
+    },
+    {
+        "key": "oem_1",
+        "command": "smartersemicolon.insert",
+        "when": "textInputFocus"
+    },
+    {
+        "key": "oem_1",
+        "command": "-smartersemicolon.insert"
+    },
+    {
+        "key": "f7",
+        "command": "workbench.action.debug.stepInto",
+        "when": "debugState != 'inactive'"
+    },
+    {
+        "key": "f11",
+        "command": "-workbench.action.debug.stepInto",
+        "when": "debugState != 'inactive'"
+    },
+    {
+        "key": "f8",
+        "command": "workbench.action.debug.stepOut",
+        "when": "debugState == 'stopped'"
+    },
+    {
+        "key": "shift+f11",
+        "command": "-workbench.action.debug.stepOut",
+        "when": "debugState == 'stopped'"
+    },
+    {
+        "key": "ctrl+f6",
+        "command": "workbench.action.debug.continue"
+    },
+    {
+        "key": "f3",
+        "command": "editor.action.goToImplementation",
+        "when": "editorHasImplementationProvider && editorTextFocus && !isInEmbeddedEditor"
+    },
+    {
+        "key": "ctrl+f12",
+        "command": "-editor.action.goToImplementation",
+        "when": "editorHasImplementationProvider && editorTextFocus && !isInEmbeddedEditor"
+    },
+    {
+        "key": "shift+f12",
+        "command": "-editor.action.goToReferences",
+        "when": "editorHasReferenceProvider && editorTextFocus && !inReferenceSearchEditor && !isInEmbeddedEditor"
+    },
+    {
+        "key": "f4",
+        "command": "-goToNextReference",
+        "when": "inReferenceSearchEditor || referenceSearchVisible"
+    },
+    {
+        "key": "f4",
+        "command": "-search.action.focusNextSearchResult",
+        "when": "hasSearchResult || inSearchEditor"
+    },
+    {
+        "key": "ctrl+oem_5",
+        "command": "-workbench.action.splitEditor"
+    },
+    {
+        "key": "ctrl+k ctrl+oem_5",
+        "command": "-workbench.action.splitEditorDown"
+    },
+    {
+        "key": "ctrl+k ctrl+oem_5",
+        "command": "-workbench.action.splitEditorLeft"
+    },
+    {
+        "key": "ctrl+k ctrl+oem_5",
+        "command": "-workbench.action.splitEditorRight"
+    },
+    {
+        "key": "ctrl+k ctrl+oem_5",
+        "command": "-workbench.action.splitEditorUp"
+    },
+    {
+        "key": "ctrl+shift+oem_period",
+        "command": "-breadcrumbs.focusAndSelect",
+        "when": "breadcrumbsPossible && breadcrumbsVisible"
+    },
+    {
+        "key": "ctrl+shift+oem_1",
+        "command": "-breadcrumbs.focus",
+        "when": "breadcrumbsPossible && breadcrumbsVisible"
+    },
+    {
+        "key": "ctrl+right",
+        "command": "-breadcrumbs.focusNext",
+        "when": "breadcrumbsActive && breadcrumbsVisible"
+    },
+    {
+        "key": "right",
+        "command": "-breadcrumbs.focusNext",
+        "when": "breadcrumbsActive && breadcrumbsVisible"
+    },
+    {
+        "key": "ctrl+right",
+        "command": "-breadcrumbs.focusNextWithPicker",
+        "when": "breadcrumbsActive && breadcrumbsVisible && listFocus && !inputFocus"
+    },
+    {
+        "key": "ctrl+left",
+        "command": "-breadcrumbs.focusPrevious",
+        "when": "breadcrumbsActive && breadcrumbsVisible"
+    },
+    {
+        "key": "left",
+        "command": "-breadcrumbs.focusPrevious",
+        "when": "breadcrumbsActive && breadcrumbsVisible"
+    },
+    {
+        "key": "ctrl+left",
+        "command": "-breadcrumbs.focusPreviousWithPicker",
+        "when": "breadcrumbsActive && breadcrumbsVisible && listFocus && !inputFocus"
+    },
+    {
+        "key": "ctrl+enter",
+        "command": "-breadcrumbs.revealFocused",
+        "when": "breadcrumbsActive && breadcrumbsVisible"
+    },
+    {
+        "key": "space",
+        "command": "-breadcrumbs.revealFocused",
+        "when": "breadcrumbsActive && breadcrumbsVisible"
+    },
+    {
+        "key": "ctrl+enter",
+        "command": "-breadcrumbs.revealFocusedFromTreeAside",
+        "when": "breadcrumbsActive && breadcrumbsVisible && listFocus && !inputFocus"
+    },
+    {
+        "key": "escape",
+        "command": "-breadcrumbs.selectEditor",
+        "when": "breadcrumbsActive && breadcrumbsVisible"
+    },
+    {
+        "key": "down",
+        "command": "-breadcrumbs.selectFocused",
+        "when": "breadcrumbsActive && breadcrumbsVisible"
+    },
+    {
+        "key": "enter",
+        "command": "-breadcrumbs.selectFocused",
+        "when": "breadcrumbsActive && breadcrumbsVisible"
+    },
+    {
+        "key": "ctrl+shift+oem_period",
+        "command": "-breadcrumbs.toggleToOn",
+        "when": "!config.breadcrumbs.enabled"
+    },
+    {
+        "key": "ctrl+g",
+        "command": "workbench.action.gotoSymbol",
+        "when": "textInputFocus"
+    },
+    {
+        "key": "ctrl+shift+o",
+        "command": "-workbench.action.gotoSymbol"
+    },
+    {
+        "key": "ctrl+a",
+        "command": "-editor.action.selectAll"
+    },
+    {
+        "key": "f4",
+        "command": "references-view.findReferences",
+        "when": "editorHasReferenceProvider"
+    },
+    {
+        "key": "shift+alt+f12",
+        "command": "-references-view.findReferences",
+        "when": "editorHasReferenceProvider"
+    },
+    {
+        "key": "shift+f4",
+        "command": "-references-view.prev",
+        "when": "reference-list.hasResult && references-view.canNavigate"
+    },
+    {
+        "key": "ctrl+f4",
+        "command": "-workbench.action.closeActiveEditor"
+    },
+    {
+        "key": "ctrl+w",
+        "command": "workbench.action.terminal.killEditor",
+        "when": "terminalEditorFocus && terminalFocus && terminalHasBeenCreated && resourceScheme == 'vscode-terminal' || terminalEditorFocus && terminalFocus && terminalProcessSupported && resourceScheme == 'vscode-terminal'"
+    },
+    {
+        "key": "ctrl+f4",
+        "command": "-workbench.action.terminal.killEditor",
+        "when": "terminalEditorFocus && terminalFocus && terminalHasBeenCreated && resourceScheme == 'vscode-terminal' || terminalEditorFocus && terminalFocus && terminalProcessSupported && resourceScheme == 'vscode-terminal'"
+    },
 ]

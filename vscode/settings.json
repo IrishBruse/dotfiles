@@ -8,14 +8,10 @@
         "*.nss": "c"
     },
     "files.exclude": {
-        "**/.config": true,
-        "**/.gitkeep": true,
-        "**/LDtkTypes/": true,
         "**/bin/": true,
         "**/obj/": true
     },
     "search.exclude": {
-        "**/*.code-search": false,
         "**/bower_components": false,
         "**/node_modules": false
     },
@@ -80,7 +76,6 @@
     "omnisharp.defaultLaunchSolution": "${workspaceFolder}.sln",
     "omnisharp.enableDecompilationSupport": true,
     "omnisharp.enableRoslynAnalyzers": true,
-    "omnisharp.organizeImportsOnFormat": true,
     // Haxe
     "haxe.enableCodeLens": true,
     // Web
@@ -136,7 +131,6 @@
     "debug.showInStatusBar": "never",
     "debug.terminal.clearBeforeReusing": true,
     "debug.toolBarLocation": "docked",
-    // Editor
     "editor.acceptSuggestionOnCommitCharacter": false,
     "editor.acceptSuggestionOnEnter": "smart",
     "editor.accessibilitySupport": "off",
@@ -162,7 +156,6 @@
     "editor.inlineSuggest.enabled": true,
     "editor.lineNumbers": "relative",
     "editor.linkedEditing": true,
-    "editor.minimap.enabled": false,
     "editor.parameterHints.cycle": true,
     "editor.parameterHints.enabled": true,
     "editor.peekWidgetDefaultFocus": "editor",
@@ -178,7 +171,6 @@
     "editor.scrollbar.verticalScrollbarSize": 14,
     "editor.selectionHighlight": false,
     "editor.semanticHighlighting.enabled": true,
-    "editor.snippetSuggestions": "none",
     "editor.stickyScroll.enabled": true,
     "editor.suggest.localityBonus": true,
     "editor.suggest.preview": true,
@@ -194,7 +186,13 @@
     "editor.unicodeHighlight.invisibleCharacters": false,
     "editor.wordBasedSuggestions": false,
     "editor.wordWrapColumn": 16000,
-    "breadcrumbs.enabled": false,
+    // Zen
+    "zenMode.fullScreen": false,
+    "zenMode.hideLineNumbers": false,
+    "zenMode.hideTabs": false,
+    "zenMode.silentNotifications": false,
+    "zenMode.restore": false,
+    "diffEditor.ignoreTrimWhitespace": false,
     // Error Lens
     "errorLens.enabledDiagnosticLevels": [
         "warning",
@@ -224,15 +222,7 @@
     "hexeditor.defaultEndianness": "little",
     "hexeditor.inspectorType": "aside",
     "hexeditor.showDecodedText": true,
-    "mdb.confirmRunAll": false,
-    "mdb.showMongoDBConnectionExplorer": false,
-    "mdb.showMongoDBHelpExplorer": false,
     "problems.defaultViewMode": "table",
-    "python.analysis.autoImportCompletions": true,
-    "python.formatting.autopep8Args": [
-        "--max-line-length=2000"
-    ],
-    "python.formatting.provider": "autopep8",
     "redhat.telemetry.enabled": false,
     "scm.alwaysShowRepositories": true,
     "scm.countBadge": "focused",
@@ -289,7 +279,6 @@
     "window.enableMenuBarMnemonics": false,
     "window.experimental.windowControlsOverlay.enabled": true,
     "workbench.enableExperiments": true,
-    "window.menuBarVisibility": "hidden",
     "window.newWindowDimensions": "maximized",
     "window.openFilesInNewWindow": "off",
     "window.restoreWindows": "none",
@@ -416,6 +405,7 @@
             "gitDecoration.conflictingResourceForeground": "#d4d4d4",
             "terminal.ansiBrightMagenta": "#b6a4ee",
             "terminal.ansiMagenta": "#8A76CC",
+            "list.focusOutline": "#384d20"
         }
     },
     "editor.tokenColorCustomizations": {
@@ -463,7 +453,6 @@
         "shell": true
     },
     "editor.cursorBlinking": "expand",
-    "errorLens.editorHoverEnabled": false,
     "errorLens.editorHoverPartsEnabled": {
         "buttonsEnabled": false
     },
@@ -476,11 +465,17 @@
     ],
     "dotnet-test-explorer.autoExpandTree": true,
     "dotnet-test-explorer.autoWatch": true,
-    "coverage-gutters.showLineCoverage": true,
     "dotnet-test-explorer.testArguments": "/p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./lcov.info",
     "dotnet-test-explorer.testProjectPath": "**/*.Tests.csproj",
-    "coverage-gutters.customizable.context-menu": false,
-    "workbench.editor.enablePreview": false
+    "editor.minimap.size": "fill",
+    "editor.minimap.showSlider": "always",
+    "editor.minimap.renderCharacters": false,
+    "editor.minimap.enabled": false,
+    "settingsSync.ignoredExtensions": [
+        "icrawl.discord-vscode"
+    ],
+    "window.menuBarVisibility": "toggle",
+    "breadcrumbs.enabled": false
     //
     // Unsorted
     //
