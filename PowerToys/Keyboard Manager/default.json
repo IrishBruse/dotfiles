@@ -8,7 +8,12 @@
         ]
     },
     "remapShortcuts": {
-        "global": [],
+        "global": [
+            {
+                "originalKeys": "91;32",
+                "newRemapKeys": "164;32"
+            }
+        ],
         "appSpecific": []
     }
 }
