@@ -1,7 +1,8 @@
 // Zip
-menu(type="file|dir" expanded=true)
+menu(type="file|dir" mode=multiple expanded=true)
 {
-	item(pos=indexof('Code',1,pos.top) title='Add to @sel.parent.name .zip' mode='multiple' image=icon.compressed type='file|dir' cmd='7zG' args='a -tzip @sel.parent.name .zip @sel(true," ")')
+	$test = @sel.parent.name+".zip"
+	item(pos=indexof('Code',1,pos.top) title='Add to @test' image=icon.compressed type='file|dir' cmd='7zG' args='a -tzip @sel.parent.name .zip @sel(true," ")')
 	item(pos=indexof('Code',1,pos.top) title='Extract to @sel.title/' where=str.end(sel.name,".zip") image=icon.compressed type='file' cmd='7zG' args=('e -y @sel.name -o@sel.title/'))
 }
 
