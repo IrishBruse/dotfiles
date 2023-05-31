@@ -20,14 +20,14 @@ function clone     { git clone --recursive $args }
 
 function echo      { Write-Host $args }
 
-function ..        { cd .. }
+function ..        { Set-Location .. }
 function ls        { Get-ChildItem $args -name }
 function pwd       { Get-Location }
-function cls       { clear }
+function cls       { Clear-Host }
 function clear     { Clear-Host }
 
 function copy      { Copy-Item -Path $args[0] -Destination $args[1] }
-function cp        { copy $args}
+function cp        { Copy-Item $args}
 
 function installed { choco.exe list -li }
 function choco     { sudo choco $args}
@@ -38,7 +38,7 @@ function grep      { rg $args }
 function dot       { code A:/dotfiles/ }
 function term      { alacritty --hold -e powershell -Command "$args" }
 
-function ldtkgen   { dotnet A:/LDtkMonogame/LDtk.Codegen/bin/Debug/net6.0/LDtk.Codegen.dll $args }
+function ldtkgen   { dotnet "A:/LDtkMonogame/LDtk.Codegen/bin/Debug/net6.0/LDtk.Codegen.dll" $args }
 
 function open {
     if($args.Count -eq 0){
