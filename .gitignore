@@ -13,3 +13,6 @@ vscode/workspaceStorage/
 vscode/profiles/
 PowerToys/ColorPicker/settings.json
 vscode/sync/**/
+nushell/history.txt
+
+node_modules/

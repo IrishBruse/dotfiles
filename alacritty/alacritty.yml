@@ -3,8 +3,7 @@ font:
     family: Cascadia Code
 
 shell:
-  program: "powershell"
-  args: ["-NoLogo"]
+  program: "nu"
 
 window:
   dynamic_title: true
@@ -37,22 +36,45 @@ colors:
     white: "#ffffff"
 
 cursor:
-  style: Beam
+  style:
+    shape: Beam
+    blinking: Always
+  unfocused_hollow: false
+  thickness: 1
 
 key_bindings:
-  - { key: V, mods: Control, action: Paste }
+  - { key: Paste, action: Paste }
+  - { key: Copy, action: Copy }
+  - { key: L, mods: Control, action: ClearLogNotice }
+  - { key: L, mods: Control, mode: ~Search, chars: "\x0c" }
+  - { key: PageUp, mods: Shift, mode: ~Alt, action: ScrollPageUp }
+  - { key: PageDown, mods: Shift, mode: ~Alt, action: ScrollPageDown }
+  - { key: Home, mods: Shift, mode: ~Alt, action: ScrollToTop }
+  - { key: End, mods: Shift, mode: ~Alt, action: ScrollToBottom }
+
+  # Search Mode
+  - { key: Return, mode: Search, action: SearchConfirm }
+  - { key: Escape, mode: Search, action: SearchCancel }
+  - { key: C, mods: Control, mode: Search, action: SearchCancel }
+  - { key: U, mods: Control, mode: Search, action: SearchClear }
+  - { key: W, mods: Control, mode: Search, action: SearchDeleteWord }
+  - { key: P, mods: Control, mode: Search, action: SearchHistoryPrevious }
+  - { key: N, mods: Control, mode: Search, action: SearchHistoryNext }
+  - { key: Up, mode: Search, action: SearchHistoryPrevious }
+  - { key: Down, mode: Search, action: SearchHistoryNext }
+  - { key: Return, mode: Search, action: SearchFocusNext }
+  - { key: Return, mods: Shift, mode: Search, action: SearchFocusPrevious }
+
+  # (Windows, Linux, and BSD only)
+  - { key: V, mods: Control, mode: ~Vi, action: Paste }
   - { key: C, mods: Control, action: Copy }
-  - { key: F, mods: Control, action: SearchForward, mode: ~Search }
-  - { key: Q, mods: Control, chars: "\x03" }
-  - { key: Home, chars: "\x1bOH", mode: AppCursor }
-  - { key: Home, chars: "\x1b[H", mode: ~AppCursor }
-  - { key: End, chars: "\x1bOF", mode: AppCursor }
-  - { key: End, chars: "\x1b[F", mode: ~AppCursor }
-  - { key: Key0, mods: Command, action: ResetFontSize }
-  - { key: Equals, mods: Command, action: IncreaseFontSize }
-  - { key: Minus, mods: Command, action: DecreaseFontSize }
-  - { key: PageUp, mods: Shift, chars: "\x1b[5;2~" }
-  - { key: PageUp, mods: Control, chars: "\x1b[5;5~" }
-  - { key: PageUp, chars: "\x1b[5~" }
-  - { key: PageDown, mods: Shift, chars: "\x1b[6;2~" }
-  - { key: Return, mods: Control|Shift, action: SpawnNewInstance }
+  - { key: F, mods: Control, mode: ~Search, action: SearchForward }
+  - { key: B, mods: Control|Shift, mode: ~Search, action: SearchBackward }
+  - { key: C, mods: Control|Shift, mode: ~Search, action: ClearSelection }
+  - { key: Insert, mods: Shift, action: PasteSelection }
+  - { key: Key0, mods: Control, action: ResetFontSize }
+  - { key: Equals, mods: Control, action: IncreaseFontSize }
+  - { key: Plus, mods: Control, action: IncreaseFontSize }
+  - { key: NumpadAdd, mods: Control, action: IncreaseFontSize }
+  - { key: Minus, mods: Control, action: DecreaseFontSize }
+  - { key: NumpadSubtract, mods: Control, action: DecreaseFontSize }

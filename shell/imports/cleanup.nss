@@ -38,9 +38,9 @@ modify(where=this.id(
 // Remove
 modify(vis=vis.remove find="Scan with Microsoft Defender*")
 modify(vis=vis.remove find='"Test"')
-modify(vis=vis.remove find='"Git Bash Here"')
-modify(vis=vis.remove find='"Git GUI Here"')
-modify(vis=vis.remove find='"Customise this folder..."')
+modify(vis=vis.remove find='"Open Git Bash Here"')
+modify(vis=vis.remove find='"Open Git GUI Here"')
+modify(vis=vis.remove find='"Customise this folder"*')
 modify(vis=vis.remove find='"Open in new window"')
 modify(vis=vis.remove find='"Open Linux shell here"')
 modify(vis=vis.remove find='"Shortcut"')
