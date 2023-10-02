@@ -1,0 +1,252 @@
+{
+    "winget": {
+        "$schema": "https://aka.ms/winget-packages.schema.2.0.json",
+        "CreationDate": "2023-10-02 20:48:44.871504",
+        "Sources": [
+            {
+                "Packages": [
+                    {
+                        "PackageIdentifier": "WiresharkFoundation.Wireshark"
+                    },
+                    {
+                        "PackageIdentifier": "SomePythonThings.WingetUIStore"
+                    },
+                    {
+                        "PackageIdentifier": "MicrosoftCorporationII.WindowsSubsystem\u2026"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.WindowsSDK.10.0.22000"
+                    },
+                    {
+                        "PackageIdentifier": "wez.wezterm"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.VisualStudio.2022.BuildTools"
+                    },
+                    {
+                        "PackageIdentifier": "Unity.UnityHub"
+                    },
+                    {
+                        "PackageIdentifier": "Unity.Unity.2020"
+                    },
+                    {
+                        "PackageIdentifier": "Unity.Unity.2020"
+                    },
+                    {
+                        "PackageIdentifier": "Canonical.Ubuntu.2204"
+                    },
+                    {
+                        "PackageIdentifier": "Valve.Steam"
+                    },
+                    {
+                        "PackageIdentifier": "Rustlang.Rustup"
+                    },
+                    {
+                        "PackageIdentifier": "Python.Python.3.11"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.PowerToys"
+                    },
+                    {
+                        "PackageIdentifier": "JohnMacFarlane.Pandoc"
+                    },
+                    {
+                        "PackageIdentifier": "dotPDNLLC.paintdotnet"
+                    },
+                    {
+                        "PackageIdentifier": "OBSProject.OBSStudio"
+                    },
+                    {
+                        "PackageIdentifier": "Nvidia.PhysX"
+                    },
+                    {
+                        "PackageIdentifier": "Nvidia.GeForceExperience"
+                    },
+                    {
+                        "PackageIdentifier": "Nushell.Nushell"
+                    },
+                    {
+                        "PackageIdentifier": "Nilesoft.Shell"
+                    },
+                    {
+                        "PackageIdentifier": "MPC-BE.MPC-BE"
+                    },
+                    {
+                        "PackageIdentifier": "MiKTeX.MiKTeX"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.DotNet.DesktopRuntime.7"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.DotNet.DesktopRuntime.7"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.DotNet.DesktopRuntime.6"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.DotNet.DesktopRuntime.6"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.VisualStudioCode"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.VCRedist.2015+.x86"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.VCRedist.2015+.x64"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.VCRedist.2012.x86"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.VCRedist.2008.x64"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.VCRedist.2008.x86"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.Teams"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.NetMon"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.EdgeWebView2Runtime"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.Edge"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.DotNet.SDK.7"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.DotNet.SDK.6"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.DotNet.Runtime.7"
+                    },
+                    {
+                        "PackageIdentifier": "Microsoft.DotNet.Runtime.7"
+                    },
+                    {
+                        "PackageIdentifier": "LLVM.LLVM"
+                    },
+                    {
+                        "PackageIdentifier": "deepnight.LDtk"
+                    },
+                    {
+                        "PackageIdentifier": "jqlang.jq"
+                    },
+                    {
+                        "PackageIdentifier": "AppWork.JDownloader"
+                    },
+                    {
+                        "PackageIdentifier": "HandBrake.HandBrake"
+                    },
+                    {
+                        "PackageIdentifier": "Google.Chrome"
+                    },
+                    {
+                        "PackageIdentifier": "GoLang.Go"
+                    },
+                    {
+                        "PackageIdentifier": "Git.Git"
+                    },
+                    {
+                        "PackageIdentifier": "SoftDeluxe.FreeDownloadManager"
+                    },
+                    {
+                        "PackageIdentifier": "EclipseAdoptium.Temurin.8.JDK"
+                    },
+                    {
+                        "PackageIdentifier": "Ditto.Ditto"
+                    },
+                    {
+                        "PackageIdentifier": "Discord.Discord"
+                    },
+                    {
+                        "PackageIdentifier": "CPUID.CPU-Z"
+                    },
+                    {
+                        "PackageIdentifier": "Kitware.CMake"
+                    },
+                    {
+                        "PackageIdentifier": "BlenderFoundation.Blender"
+                    },
+                    {
+                        "PackageIdentifier": "BlenderFoundation.Blender"
+                    },
+                    {
+                        "PackageIdentifier": "Audacity.Audacity"
+                    },
+                    {
+                        "PackageIdentifier": "7zip.7zip"
+                    }
+                ],
+                "SourceDetails": {
+                    "Argument": "https://cdn.winget.microsoft.com/cache",
+                    "Identifier": "Microsoft.Winget.Source_8wekyb3d8bbwe",
+                    "Name": "winget",
+                    "Type": "Microsoft.PreIndexed.Package"
+                }
+            }
+        ],
+        "WinGetVersion": "v1.5.1881  "
+    },
+    "scoop": {
+        "apps": []
+    },
+    "chocolatey": {
+        "apps": []
+    },
+    "pip": {
+        "apps": []
+    },
+    "npm": {
+        "apps": [
+            {
+                "Name": "yarn"
+            },
+            {
+                "Name": "tsx"
+            },
+            {
+                "Name": "quicktype"
+            },
+            {
+                "Name": "npm"
+            },
+            {
+                "Name": "nodemon"
+            },
+            {
+                "Name": "node-brainfuck-compiler"
+            },
+            {
+                "Name": "@angular/cli"
+            }
+        ]
+    },
+    ".net tool": {
+        "apps": [
+            {
+                "Name": "ldtkmonogame.codegen"
+            },
+            {
+                "Name": "dotnet-trace"
+            },
+            {
+                "Name": "dotnet-tools-outdated"
+            },
+            {
+                "Name": "dotnet-serve"
+            },
+            {
+                "Name": "dotnet-mgcb-editor"
+            },
+            {
+                "Name": "dotnet-mgcb"
+            }
+        ]
+    }
+}
