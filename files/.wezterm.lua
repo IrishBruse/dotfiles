@@ -101,7 +101,9 @@ config.colors = {
 
 config.font = wezterm.font {
     family = 'Cascadia Mono',
-    harfbuzz_features = { 'ss01=0', 'ss02=0', 'ss03=0', 'ss04=0', 'ss05=0', 'ss06=0', 'zero=0', 'onum=0' },
+    weight = 'Bold',
+    italic = false,
+    harfbuzz_features = { 'ss01=1', 'ss02=1', 'ss03=1', 'ss04=1', 'ss05=1', 'ss06=1', 'zero=1', 'onum=1' },
 }
 
 config.keys = {
