@@ -2737,5 +2737,24 @@
   {
     "key": "ctrl+shift+w",
     "command": "workbench.action.closeOtherEditors"
+  },
+  {
+    "key": "shift+space",
+    "command": "editor.action.showHover"
+  },
+  {
+    "key": "ctrl+o",
+    "command": "editor.action.organizeImports",
+    "when": "textInputFocus && !editorReadonly && supportedCodeAction =~ /(\\s|^)source\\.organizeImports\\b/"
+  },
+  {
+    "key": "shift+alt+o",
+    "command": "-editor.action.organizeImports",
+    "when": "textInputFocus && !editorReadonly && supportedCodeAction =~ /(\\s|^)source\\.organizeImports\\b/"
+  },
+  {
+    "key": "ctrl+o",
+    "command": "-workbench.action.files.openFolderViaWorkspace",
+    "when": "!openFolderWorkspaceSupport && workbenchState == 'workspace'"
   }
 ]

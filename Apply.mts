@@ -10,7 +10,6 @@ console.log("\n");
 
 async function main() {
   link("./alacritty/", APPDATA_ROAMING + "/alacritty/");
-  link("./PowerToys/", APPDATA_LOCAL + "/Microsoft/PowerToys/");
   link("./WindowsPowerShell/", USERPROFILE + "/Documents/WindowsPowerShell/");
   link("./Ditto/", APPDATA_ROAMING + "/Ditto/");
   link("./nushell/", APPDATA_ROAMING + "/nushell/");
