@@ -1,4 +1,3 @@
-// -- Ethan's/IrishBruse's Vscode settings --
 {
   "[css]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -15,7 +14,10 @@
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "[jsonc]": {
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[markdown]": {
@@ -24,15 +26,6 @@
     "editor.unicodeHighlight.invisibleCharacters": false,
     "files.trimFinalNewlines": false,
     "files.trimTrailingWhitespace": false
-  },
-  "[sql]": {
-    "editor.defaultFormatter": "adpyke.vscode-sql-formatter"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[yaml]": {
     "editor.autoIndent": "keep",
@@ -48,25 +41,50 @@
   },
   "editor.semanticTokenColorCustomizations": {
     "rules": {
-      "interface:typescript": "#4EC9B0",
-      "interface:typescriptreact": "#4EC9B0",
-      "variable.local.readonly:typescript": "#9CDCFE",
-      "variable.local.readonly:typescriptreact": "#9CDCFE"
+      "variable.local.readonly:typescriptreact": "#C0C0C0"
     }
   },
-
   "editor.tokenColorCustomizations": {
-    "textMateRules": [
-      {
-        "scope": "variable.other.readwrite.alias",
-        "settings": {
-          "foreground": "#4EC9B0"
+    "[IrishBruse's Dark Theme(Green)]": {
+      "textMateRules": [
+        {
+          "scope": ["variable.other.property.go"],
+          "settings": {
+            "foreground": "#9CDCFE"
+          }
+        },
+        {
+          "scope": "storage.type.primitive",
+          "settings": {
+            "foreground": "#569CD6"
+          }
+        },
+        {
+          "scope": ["support.variable", "string.unquoted.argument.shell"],
+          "settings": {
+            "foreground": "#C0C0C0"
+          }
+        },
+        {
+          "scope": ["source.go punctuation.other"],
+          "settings": {
+            "foreground": "#C94E67"
+          }
         }
-      }
-    ]
+      ]
+    }
   },
   "workbench.colorCustomizations": {
-    "tree.tableColumnsBorder": "#2d3336"
+    "[IrishBruse's Dark Theme(Green)]": {
+      "tree.tableColumnsBorder": "#2d3336",
+      "diffEditorGutter.insertedLineBackground": "#00000000",
+      "diffEditorGutter.removedLineBackground": "#00000000",
+
+      "diffEditor.unchangedCodeBackground": "#ff00ff",
+
+      "diffEditorOverview.insertedForeground": "#00000000",
+      "diffEditorOverview.removedForeground": "#00000000"
+    }
   },
   "explorer.fileNesting.patterns": {
     "//": "Last update at 11/2/2023, 7:06:57 PM",
@@ -124,7 +142,7 @@
     "flake.nix": "flake.lock",
     "gatsby-config.*": "*.env, .babelrc*, .codecov, .cssnanorc*, .env.*, .envrc, .htmlnanorc*, .lighthouserc.*, .mocha*, .postcssrc*, .terserrc*, api-extractor.json, ava.config.*, babel.config.*, contentlayer.config.*, cssnano.config.*, cypress.*, env.d.ts, formkit.config.*, formulate.config.*, gatsby-browser.*, gatsby-node.*, gatsby-ssr.*, gatsby-transformer.*, histoire.config.*, htmlnanorc.*, i18n.config.*, jasmine.*, jest.config.*, jsconfig.*, karma*, lighthouserc.*, playwright.config.*, postcss.config.*, puppeteer.config.*, rspack.config.*, svgo.config.*, tailwind.config.*, tsconfig.*, tsdoc.*, uno.config.*, unocss.config.*, vitest.config.*, vuetify.config.*, webpack.config.*, windi.config.*",
     "gemfile": ".ruby-version, gemfile.lock",
-    "go.mod": ".air*, go.sum",
+    "go.mod": ".air*, *.env, tygo.yaml, go.sum",
     "go.work": "go.work.sum",
     "hatch.toml": ".editorconfig, .flake8, .isort.cfg, .python-version, hatch.toml, requirements*.in, requirements*.pip, requirements*.txt, tox.ini",
     "mix.exs": ".credo.exs, .dialyzer_ignore.exs, .formatter.exs, .iex.exs, .tool-versions, mix.lock",
@@ -163,9 +181,8 @@
   "gopls": {
     "ui.completion.experimentalPostfixCompletions": true,
     "ui.documentation.hoverKind": "SynopsisDocumentation",
-    "ui.semanticTokens": true
+    "ui.semanticTokens": false
   },
-  "breadcrumbs.enabled": false,
   "color-highlight.markerType": "underline",
   "color-highlight.markRuler": false,
   "comments.visible": false,
@@ -254,6 +271,7 @@
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
   "explorer.incrementalNaming": "smart",
+  "extensions.autoCheckUpdates": false,
   "extensions.ignoreRecommendations": true,
   "files.hotExit": "onExitAndWindowClose",
   "files.insertFinalNewline": true,
@@ -313,7 +331,7 @@
   "sqltools.results.reuseTabs": "connection",
   "task.autoDetect": "off",
   "telemetry.telemetryLevel": "crash",
-  "terminal.external.windowsExec": "wezterm-gui.exe",
+  "terminal.external.windowsExec": "wezterm.exe",
   "terminal.integrated.cursorStyle": "line",
   "terminal.integrated.defaultProfile.windows": "Nushell",
   "terminal.integrated.persistentSessionReviveProcess": "never",
@@ -331,11 +349,10 @@
   "typescript.updateImportsOnFileMove.enabled": "always",
   "update.mode": "start",
   "window.closeWhenEmpty": false,
-  "window.commandCenter": false,
   "window.dialogStyle": "native",
-  "window.menuBarVisibility": "toggle",
   "window.openFilesInNewWindow": "off",
   "window.title": "${rootName} - ${activeEditorShort}",
+  "window.menuBarVisibility": "hidden",
   "workbench.colorTheme": "IrishBruse's Dark Theme(Green)",
   "workbench.editor.decorations.badges": false,
   "workbench.editor.decorations.colors": false,
@@ -349,7 +366,10 @@
   "workbench.tree.indent": 6,
   "zenMode.fullScreen": false,
   "zenMode.hideLineNumbers": false,
-  "zenMode.hideTabs": true,
   "zenMode.restore": false,
-  "zenMode.silentNotifications": true
+  "zenMode.silentNotifications": true,
+  "zenMode.showTabs": "single",
+  "workbench.activityBar.location": "top",
+  "breadcrumbs.filePath": "off",
+  "breadcrumbs.enabled": false
 }
