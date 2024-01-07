@@ -14,11 +14,16 @@
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.semanticHighlighting.enabled": false
   },
   "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.semanticHighlighting.enabled": false
   },
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -32,12 +37,11 @@
     "editor.defaultFormatter": "redhat.vscode-yaml",
     "editor.formatOnSave": false,
     "editor.insertSpaces": true,
-    "editor.quickSuggestions": {
-      "comments": false,
-      "other": true,
-      "strings": true
-    },
     "editor.tabSize": 2
+  },
+  "[csharp]": {
+    "editor.maxTokenizationLineLength": 2500,
+    "editor.semanticHighlighting.enabled": true
   },
   "editor.semanticTokenColorCustomizations": {
     "rules": {
@@ -48,25 +52,60 @@
     "[IrishBruse's Dark Theme(Green)]": {
       "textMateRules": [
         {
-          "scope": ["variable.other.property.go"],
+          "scope": [
+            "variable.other.property.go",
+            "source.editorconfig keyword.other.definition"
+          ],
           "settings": {
             "foreground": "#9CDCFE"
           }
         },
         {
-          "scope": "storage.type.primitive",
+          "scope": [
+            "storage.type.primitive",
+            "keyword.type",
+            "source.editorconfig string"
+          ],
           "settings": {
             "foreground": "#569CD6"
           }
         },
         {
-          "scope": ["support.variable", "string.unquoted.argument.shell"],
+          "scope": [
+            "constant.language.charset",
+            "constant.language.space",
+          ],
+          "settings": {
+            "foreground": "#D7957F"
+          }
+        },
+        {
+          "scope": [
+            "variable.other.constant.object"
+          ],
+          "settings": {
+            "foreground": "#4EC9B0"
+          }
+        },
+        {
+          "scope": [],
+          "settings": {
+            "foreground": "#DCDCAA"
+          }
+        },
+        {
+          "scope": [
+            "support.variable",
+            "string.unquoted.argument.shell"
+          ],
           "settings": {
             "foreground": "#C0C0C0"
           }
         },
         {
-          "scope": ["source.go punctuation.other"],
+          "scope": [
+            "source.go punctuation.other",
+          ],
           "settings": {
             "foreground": "#C94E67"
           }
@@ -76,14 +115,16 @@
   },
   "workbench.colorCustomizations": {
     "[IrishBruse's Dark Theme(Green)]": {
+      "inputOption.activeBackground": "#557d1c",
+      "inlineChat.regionHighlight": "#00000000",
+      "editorInlayHint.foreground": "#727272",
+      "editorInlayHint.parameterForeground": "#727272",
+      "editorInlayHint.typeForeground": "#727272",
       "tree.tableColumnsBorder": "#2d3336",
       "diffEditorGutter.insertedLineBackground": "#00000000",
       "diffEditorGutter.removedLineBackground": "#00000000",
-
-      "diffEditor.unchangedCodeBackground": "#ff00ff",
-
-      "diffEditorOverview.insertedForeground": "#00000000",
-      "diffEditorOverview.removedForeground": "#00000000"
+      "diffEditorOverview.insertedForeground": "#91b85933",
+      "diffEditorOverview.removedForeground": "#e5393544"
     }
   },
   "explorer.fileNesting.patterns": {
@@ -174,8 +215,9 @@
     "path": "nu.exe"
   },
   "github.copilot.enable": {
-    "markdown": false,
+    "*": true,
     "plaintext": false,
+    "markdown": true,
     "scminput": false
   },
   "gopls": {
@@ -183,14 +225,34 @@
     "ui.documentation.hoverKind": "SynopsisDocumentation",
     "ui.semanticTokens": false
   },
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "cSpell.enableFiletypes": [
+    "!python",
+    "!jsonc",
+    "!json"
+  ],
+  "files.watcherExclude": {
+    "**/bin/**": true,
+    "**/obj/**": true
+  },
+  "files.exclude": {
+    "**/obj": true
+  },
+  "errorLens.enabledDiagnosticLevels": [
+    "error",
+    "warning"
+  ],
+  "jupyter.toc.tableOfContentsHeader": "Table of contents",
   "color-highlight.markerType": "underline",
   "color-highlight.markRuler": false,
   "comments.visible": false,
   "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": true,
   "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": true,
   "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": true,
-  "disable-default-keybinding.extensionsToPreserve": ["^vscode\\..+$"],
   "debug.autoExpandLazyVariables": true,
+  "workbench.editor.showTabs": "multiple",
   "debug.console.fontFamily": "Cascadia Mono",
   "debug.internalConsoleOptions": "neverOpen",
   "debug.onTaskErrors": "abort",
@@ -198,9 +260,9 @@
   "debug.saveBeforeStart": "nonUntitledEditorsInActiveGroup",
   "debug.showInStatusBar": "never",
   "debug.toolBarLocation": "docked",
+  "zenMode.hideStatusBar": false,
   "diffEditor.codeLens": false,
-  "diffEditor.experimental.showMoves": true,
-  "diffEditor.ignoreTrimWhitespace": false,
+  "diffEditor.experimental.showMoves": false,
   "diffEditor.useInlineViewWhenSpaceIsLimited": false,
   "diffEditor.wordWrap": "off",
   "dotnet.inlayHints.enableInlayHintsForLiteralParameters": true,
@@ -232,7 +294,7 @@
   "editor.guides.bracketPairs": "active",
   "editor.guides.bracketPairsHorizontal": false,
   "editor.guides.highlightActiveIndentation": true,
-  "editor.inlayHints.enabled": "offUnlessPressed",
+  "editor.inlayHints.enabled": "onUnlessPressed",
   "editor.inlayHints.padding": true,
   "editor.inlineSuggest.enabled": true,
   "editor.linkedEditing": true,
@@ -245,7 +307,6 @@
   "editor.renderLineHighlightOnlyWhenFocus": true,
   "editor.renderWhitespace": "trailing",
   "editor.scrollbar.verticalScrollbarSize": 15,
-  "editor.semanticHighlighting.enabled": true,
   "editor.snippetSuggestions": "none",
   "editor.stickyScroll.enabled": true,
   "editor.suggest.localityBonus": true,
@@ -256,7 +317,6 @@
   "editor.suggestSelection": "recentlyUsed",
   "editor.tabSize": 4,
   "editor.wordSeparators": "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?_",
-  "errorLens.enabledDiagnosticLevels": ["error", "warning"],
   "errorLens.fontSize": "12",
   "errorLens.fontWeight": "bold",
   "errorLens.gutterIconsEnabled": false,
@@ -278,7 +338,6 @@
   "files.trimFinalNewlines": true,
   "files.trimTrailingWhitespace": true,
   "git.autofetch": true,
-  "git.autoStash": true,
   "git.confirmSync": false,
   "git.decorations.enabled": false,
   "git.enableSmartCommit": true,
@@ -353,11 +412,9 @@
   "window.openFilesInNewWindow": "off",
   "window.title": "${rootName} - ${activeEditorShort}",
   "window.menuBarVisibility": "hidden",
-  "workbench.colorTheme": "IrishBruse's Dark Theme(Green)",
   "workbench.editor.decorations.badges": false,
   "workbench.editor.decorations.colors": false,
   "workbench.editor.enablePreview": false,
-  "workbench.iconTheme": "material-icon-theme",
   "workbench.layoutControl.enabled": false,
   "workbench.preferredDarkColorTheme": "IrishBruse's Dark Theme(Green)",
   "workbench.productIconTheme": "material-product-icons",
@@ -368,8 +425,54 @@
   "zenMode.hideLineNumbers": false,
   "zenMode.restore": false,
   "zenMode.silentNotifications": true,
-  "zenMode.showTabs": "single",
+  "zenMode.showTabs": "none",
   "workbench.activityBar.location": "top",
   "breadcrumbs.filePath": "off",
-  "breadcrumbs.enabled": false
+  "editor.accessibilitySupport": "off",
+  "editor.defaultColorDecorators": true,
+  "editor.scrollbar.ignoreHorizontalScrollbarInContentHeight": true,
+  "errorLens.scrollbarHackEnabled": true,
+  "errorLens.messageMaxChars": 80,
+  "jupyter.askForKernelRestart": false,
+  "workbench.editor.limit.value": 10,
+  "explorer.openEditors.visible": 10,
+  "workbench.editor.limit.enabled": true,
+  "editor.fontVariations": true,
+  "thunder-client.indentSize": 4,
+  "thunder-client.sidebar.defaultTab": "Collections",
+  "thunder-client.sidebar.layout": "compact",
+  "breadcrumbs.enabled": false,
+  "java.codeGeneration.useBlocks": true,
+  "security.promptForLocalFileProtocolHandling": false,
+  "security.allowedUNCHosts": [
+    "src",
+    "192.168.15.30"
+  ],
+  "workbench.colorTheme": "IrishBruse's Dark Theme(Green)",
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "workbench.iconTheme": "material-icon-theme",
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.semanticHighlighting.enabled": true,
+  "js/ts.implicitProjectConfig.checkJs": true,
+  "[sql]": {
+    "editor.defaultFormatter": "mtxr.sqltools"
+  },
+  "remoteHub.commitDirectlyWarning": "off",
+  "editor.inlineSuggest.suppressSuggestions": true,
+  "cody.commandCodeLenses": false,
+  "editor.pasteAs.enabled": false,
+  "terminal.integrated.enableMultiLinePasteWarning": false,
+  "java.jdt.ls.java.home": "C:\\Program Files\\Java\\jdk-21",
+  "java.configuration.runtimes": [
+    {
+      "default": true,
+      "name": "JavaSE-21",
+      "path": "C:\\Program Files\\Java\\jdk-21"
+    }
+  ],
+  "java.maven.downloadSources": true,
 }
