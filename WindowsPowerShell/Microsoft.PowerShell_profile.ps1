@@ -12,9 +12,9 @@ Register-ArgumentCompleter -Native -CommandName dotnet -ScriptBlock {
 Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 
 function prompt {
-    $branch = git branch
+    $branch = git branch --show-current
+
     if ($branch) {
-        $branch = $branch -replace '^\*\s+'
         $branch = " ($branch)"
     }
 
