@@ -20,6 +20,7 @@ async function main() {
 
   link("./shell/imports/", ProgramFiles + "/Nilesoft Shell/imports/");
   link("./shell/shell.nss", ProgramFiles + "/Nilesoft Shell/shell.nss", "file");
+  link("./shell/shell.log", ProgramFiles + "/Nilesoft Shell/shell.log", "file");
 
   const completitions = [
     {

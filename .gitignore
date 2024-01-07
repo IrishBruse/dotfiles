@@ -16,3 +16,4 @@ vscode/sync/**/
 nushell/history.txt
 
 node_modules/
+shell/shell.log
