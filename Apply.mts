@@ -32,7 +32,7 @@ async function main() {
       file: "npm.nu",
     },
     {
-      url: "https://raw.githubusercontent.com/nushell/nu_scripts/main/custom-completions/yarn/yarn-completion.nu",
+      url: "https://raw.githubusercontent.com/nushell/nu_scripts/main/custom-completions/yarn/yarn-v4-completions.nu",
       file: "yarn.nu",
     },
     {
