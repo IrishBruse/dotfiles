@@ -26,7 +26,13 @@
             "constructor()",
             "{",
             "$0",
-            "}",
+            "}"
+        ]
+    },
+    "jsdoc-type": {
+        "prfix": "",
+        "body": [
+            "/** @type {${1:any}} */"
         ]
     }
 }
