@@ -1,0 +1,38 @@
+git:
+  skipHookPrefix: WIP
+  autoFetch: true
+  autoRefresh: true
+  fetchAll: true
+  branchLogCmd: git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=medium {{branchName} --}
+  allBranchesLogCmd: git log --graph --all --color=always --abbrev-commit --decorate --date=relative  --pretty=medium
+
+update:
+  method: never
+
+notARepository: skip
+
+gui:
+  scrollHeight: 2
+  scrollPastBottom: true
+  scrollOffMargin: 2
+  scrollOffBehavior: margin
+  mouseEvents: true
+  sidePanelWidth: 0.3333
+  mainPanelSplitMode: flexible
+  enlargedSideViewLocation: left
+  language: auto
+  timeFormat: "02 Jan 06"
+  shortTimeFormat: "3:04PM"
+  showListFooter: true
+  showFileTree: true
+  showRandomTip: true
+  showCommandLog: true
+  showBottomLine: true
+  showPanelJumps: true
+  showFileIcons: true
+  commandLogSize: 8
+  splitDiff: auto
+  border: rounded
+  animateExplosion: true
+  portraitMode: auto
+  showIcons: true

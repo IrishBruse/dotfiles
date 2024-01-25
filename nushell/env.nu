@@ -20,6 +20,8 @@ def create_left_prompt [] {
     $path_segment | str replace --all (char path_sep) $"($separator_color)/($path_color)"
 }
 
+cmd /c title -
+
 def create_right_prompt [] {
     let git_command = do { ^git branch --show-current } | complete
     let git_branch  = if ($git_command.exit_code == 0) {

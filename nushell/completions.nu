@@ -1,7 +1,6 @@
 source A:/dotfiles/nushell/completions/git.nu
 source A:/dotfiles/nushell/completions/npm.nu
 source A:/dotfiles/nushell/completions/yarn.nu
-source A:/dotfiles/nushell/completions/dotnet.nu
 
 let external_completer = { |spans|
     {

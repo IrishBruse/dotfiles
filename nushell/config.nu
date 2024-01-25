@@ -166,14 +166,14 @@ $env.config = {
     use_ansi_coloring: true
     bracketed_paste: true # enable bracketed paste, currently useless on windows
     edit_mode: emacs # emacs, vi
-    shell_integration: true # enables terminal shell integration. Off by default, as some terminals have issues with this.
+    shell_integration: false # enables terminal shell integration. Off by default, as some terminals have issues with this.
     render_right_prompt_on_last_line: false # true or false to enable or disable right prompt to be rendered on last line of the prompt.
 
     hooks: {
         pre_prompt: [{ null }] # run before the prompt is shown
-        pre_execution: [{ null }] # run before the repl input is run
+        pre_execution: [{ $'(commandline) - (pwd)' | title $in  }] # run before the repl input is run
         env_change: {
-            PWD: [{|before, after| null }] # run if the PWD environment is different since the last repl input
+            PWD: [{|before, after| if $before == nothing {}}] # run if the PWD environment is different since the last repl input
         }
         display_output: "if (term size).columns >= 100 { table -e } else { table }" # run to display the output of a pipeline
         command_not_found: { null } # return an error message when a command is not found
@@ -246,7 +246,7 @@ $env.config = {
                 ]
             }
         }
-                {
+        {
             name: help_menu
             modifier: none
             keycode: f1
@@ -370,6 +370,16 @@ $env.config = {
             mode: [emacs, vi_normal, vi_insert]
             event: {edit: movewordleft}
         }
+        {
+            name: reload_config
+            modifier: none
+            keycode: f5
+            mode: [ emacs vi_insert vi_normal ]
+            event: [
+              { edit: clear }
+              { send: executehostcommand cmd: $"source A:\\dotfiles\\nushell\\commands.nu; source ($nu.env-path); source ($nu.config-path); print 'Reloading config...'" }
+            ]
+          }
         {
             name: move_one_word_right_or_take_history_hint
             modifier: control

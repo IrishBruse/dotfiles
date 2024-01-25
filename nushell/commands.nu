@@ -1,5 +1,5 @@
 def clone [url: string] {
-    git clone --recursive $url
+    ^git clone --recursive $url
 }
 
 def exp [path: string = "."] {
@@ -7,9 +7,25 @@ def exp [path: string = "."] {
 }
 
 def cat [file: string ] {
-   open $file | lines
+   open $file --raw | nu-highlight
+}
+
+def term [] {
+    wezterm
 }
 
 def --wrapped ldtkgen [...args:string] {
     dotnet "A:/LDtkMonogame/LDtk.Codegen/bin/Debug/net6.0/LDtk.Codegen.dll" ...$args
+}
+
+def --wrapped git [...args:string] {
+    if ($args | length) == 0 {
+        lazygit
+    } else {
+        ^git ...$args
+    }
+}
+
+def title [title: string] {
+    run-external cmd "/c" "title" ($title)
 }
