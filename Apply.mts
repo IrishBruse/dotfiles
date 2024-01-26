@@ -17,6 +17,7 @@ async function main() {
 
   link("./files/.gitconfig", USERPROFILE + "/.gitconfig", "file");
   link("./files/.wezterm.lua", USERPROFILE + "/.wezterm.lua", "file");
+  link("./lazygit/config.yml", APPDATA_ROAMING + "/lazygit/config.yml", "file");
 
   link("./shell/imports/", ProgramFiles + "/Nilesoft Shell/imports/");
   link("./shell/shell.nss", ProgramFiles + "/Nilesoft Shell/shell.nss", "file");

@@ -13,14 +13,14 @@ config.hide_tab_bar_if_only_one_tab = true
 config.window_background_opacity = 1
 config.enable_scroll_bar = true
 config.anti_alias_custom_block_glyphs = true
+config.window_close_confirmation = "NeverPrompt"
 
 config.default_cursor_style = 'BlinkingBar'
 config.animation_fps = 1
 config.cursor_blink_ease_in = 'Constant'
 config.cursor_blink_ease_out = 'Constant'
-
-config.default_cwd = "A:\\"
 config.disable_default_key_bindings = true
+config.default_gui_startup_args = { 'start', '--position', 'main:638,324' }
 
 config.colors = {
     -- The default text color

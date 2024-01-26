@@ -26,10 +26,6 @@
 			item(title='single-file' cmd-line='/K @publish /p:PublishSingleFile=true /p:PublishTrimmed=false')
 			item(title='single-file-trimmed' cmd-line='/K @publish /p:PublishSingleFile=true /p:PublishTrimmed=true')
 		}
-
-		item(title='ef migrations add InitialCreate' cmd-line='/K dotnet ef migrations add InitialCreate')
-		item(title='ef database update' cmd-line='/K dotnet ef database update')
-		separator
 		item(title='help' image=\uE136 cmd-line='/k dotnet -h')
 		item(title='version' cmd-line='/k dotnet --info')
 	}

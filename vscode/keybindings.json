@@ -48,7 +48,7 @@
         "key": "ctrl+r",
         "command": "workbench.action.quickOpen",
         "args": "task ",
-        "when": "editorTextFocus"
+        "when": "editorTextFocus&&!isDevelopment"
     },
     {
         "key": "ctrl+g",
@@ -552,11 +552,6 @@
         "command": "editor.action.fixAll"
     },
     {
-        "key": "ctrl+t",
-        "command": "workbench.action.terminal.toggleTerminal",
-        "when": "terminal.active"
-    },
-    {
         "key": "ctrl+oem_3",
         "command": "-workbench.action.terminal.toggleTerminal",
         "when": "terminal.active"
@@ -592,11 +587,6 @@
         "when": "python.hasActiveTensorBoardSession"
     },
     {
-        "key": "ctrl+r",
-        "command": "-workbench.action.reloadWindow",
-        "when": "isDevelopment && !isAuxiliaryWindowFocusedContext"
-    },
-    {
         "key": "ctrl+g",
         "command": "-workbench.action.gotoLine"
     },
@@ -618,5 +608,44 @@
         "key": "ctrl+shift+a",
         "command": "-notification.acceptPrimaryAction",
         "when": "notificationFocus || notificationToastsVisible"
+    },
+    {
+        "key": "ctrl+t",
+        "command": "ib-utilities.runExternalCommand",
+        "args": {
+            "command": "wezterm start --position main:638,324 --cwd ${workspaceFolder}"
+        },
+        "when": "!terminalFocus"
+    },
+    {
+        "key": "ctrl+shift+c",
+        "command": "-workbench.action.terminal.openNativeConsole",
+        "when": "!terminalFocus"
+    },
+    {
+        "key": "ctrl+shift+g",
+        "command": "ib-utilities.runExternalCommand",
+        "args": {
+            "command": "wezterm start --position main:638,324 --cwd ${workspaceFolder} -- lazygit"
+        }
+    },
+    {
+        "key": "ctrl+shift+g",
+        "command": "-workbench.action.terminal.openDetectedLink",
+        "when": "accessibleViewIsShown && terminalHasBeenCreated && accessibleViewCurrentProviderId == 'terminal'"
+    },
+    {
+        "key": "ctrl+shift+r",
+        "command": "-workbench.view.extension.thunder-client"
+    },
+    {
+        "key": "ctrl+shift+r",
+        "command": "-editor.action.refactor",
+        "when": "editorHasCodeActionsProvider && textInputFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+shift+r",
+        "command": "-rerunSearchEditorSearch",
+        "when": "inSearchEditor"
     },
 ]

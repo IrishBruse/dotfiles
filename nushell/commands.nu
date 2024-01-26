@@ -3,7 +3,7 @@ def clone [url: string] {
 }
 
 def exp [path: string = "."] {
-    explorer $path
+    ^explorer $path
 }
 
 def cat [file: string ] {
@@ -11,11 +11,11 @@ def cat [file: string ] {
 }
 
 def term [] {
-    wezterm
+    ^wezterm-gui.exe
 }
 
 def --wrapped ldtkgen [...args:string] {
-    dotnet "A:/LDtkMonogame/LDtk.Codegen/bin/Debug/net6.0/LDtk.Codegen.dll" ...$args
+    ^dotnet "A:/LDtkMonogame/LDtk.Codegen/bin/Debug/net6.0/LDtk.Codegen.dll" ...$args
 }
 
 def --wrapped git [...args:string] {
@@ -28,4 +28,26 @@ def --wrapped git [...args:string] {
 
 def title [title: string] {
     run-external cmd "/c" "title" ($title)
+}
+
+# Git shortcuts
+
+def --wrapped gstat [...args:string] {
+    ^git status ...$args
+}
+
+def --wrapped gs [...args:string] {
+    ^git stash ...$args
+}
+
+def --wrapped gsp [...args:string] {
+    ^git stash pop ...$args
+}
+
+def --wrapped ga [...args:string] {
+    ^git add ...$args
+}
+
+def --wrapped gp [...args:string] {
+    ^git pull ...$args
 }
