@@ -36,17 +36,16 @@ wezterm.on("gui-startup", function(cmd)
     gui_window:set_position(active.width / 2 - term_size.pixel_width / 2, active.height / 2 - term_size.pixel_height / 2)
 end)
 
-local font =
-    wezterm.font_with_fallback {
-        {
-            family = "Cascadia Mono",
-            weight = "Bold",
-            italic = false,
-        },
-        {
-            family = "Symbols Nerd Font Mono",
-        },
-    }
+local font = wezterm.font_with_fallback {
+    {
+        family = "Cascadia Mono",
+        weight = "Bold",
+        italic = false,
+    },
+    {
+        family = "Symbols Nerd Font Mono",
+    },
+}
 
 config.font = font
 

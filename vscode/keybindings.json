@@ -612,9 +612,6 @@
     {
         "key": "ctrl+t",
         "command": "ib-utilities.runExternalCommand",
-        "args": {
-            "command": "wezterm"
-        },
         "when": "!terminalFocus"
     },
     {
@@ -626,7 +623,7 @@
         "key": "ctrl+shift+g",
         "command": "ib-utilities.runExternalCommand",
         "args": {
-            "command": "wezterm start -- lazygit"
+            "command": "lazygit"
         }
     },
     {

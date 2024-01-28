@@ -60,10 +60,7 @@ def title [...args: string] {
 
 def displayTitle [] {
     let command = commandline
-
     let cwd = pwd | str replace --all (char path_sep) "/"
-    print $cwd
-
     let sep = -
 
     title $command $sep $cwd
