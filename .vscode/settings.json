@@ -9,5 +9,10 @@
     "vscode/globalStorage": true,
     "vscode/profiles": true,
     "vscode/workspaceStorage": true
-  }
+  },
+  "Lua.runtime.version": "LuaJIT",
+  "Lua.workspace.checkThirdParty": false,
+  "Lua.workspace.library": [
+    "A:/wezterm-types/"
+  ]
 }

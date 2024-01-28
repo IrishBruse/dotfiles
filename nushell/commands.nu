@@ -1,38 +1,6 @@
-def clone [url: string] {
-    ^git clone --recursive $url
-}
-
-def exp [path: string = "."] {
-    ^explorer $path
-}
-
-def cat [file: string ] {
-   open $file --raw | nu-highlight
-}
-
-def term [] {
-    ^wezterm-gui.exe
-}
-
-def --wrapped ldtkgen [...args:string] {
-    ^dotnet "A:/LDtkMonogame/LDtk.Codegen/bin/Debug/net6.0/LDtk.Codegen.dll" ...$args
-}
-
-def --wrapped git [...args:string] {
-    if ($args | length) == 0 {
-        lazygit
-    } else {
-        ^git ...$args
-    }
-}
-
-def title [title: string] {
-    run-external cmd "/c" "title" ($title)
-}
-
 # Git shortcuts
 
-def --wrapped gstat [...args:string] {
+def --wrapped gst [...args:string] {
     ^git status ...$args
 }
 
@@ -50,4 +18,60 @@ def --wrapped ga [...args:string] {
 
 def --wrapped gp [...args:string] {
     ^git pull ...$args
+}
+
+def clone [url: string] {
+    ^git clone --recursive $url
+}
+
+# General shortcuts
+
+def e [path: string = "."] {
+    ^explorer $path
+}
+
+def c [path: string = "."] {
+    ^code $path
+}
+
+def term [] {
+    ^wezterm-gui.exe
+}
+
+def cat [file: string ] {
+   ^bat $file
+}
+
+def --wrapped ldtkgen [...args:string] {
+    ^dotnet "A:/LDtkMonogame/LDtk.Codegen/bin/Debug/net6.0/LDtk.Codegen.dll" ...$args
+}
+
+def --wrapped git [...args:string] {
+    if ($args | length) == 0 {
+        ^lazygit
+    } else {
+        ^git ...$args
+    }
+}
+
+def title [...args: string] {
+    run-external cmd /c title ...$args
+}
+
+def displayTitle [] {
+    let command = commandline
+
+    let cwd = pwd | str replace --all (char path_sep) "/"
+    print $cwd
+
+    let sep = -
+
+    title $command $sep $cwd
+}
+
+def startTitle [before:string,after:string] {
+    if ($before|describe) == nothing {
+        let cwd = pwd | str replace --all (char path_sep) "/"
+        title Nushell - $cwd
+    }
 }

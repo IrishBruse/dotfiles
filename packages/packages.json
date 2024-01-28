@@ -1,0 +1,3661 @@
+{
+    "export_version": 2.0,
+    "packages": [
+        {
+            "Id": "dotnet-mgcb",
+            "Name": "Dotnet Mgcb",
+            "Version": "3.8.1.303",
+            "Source": ".NET Tool",
+            "ManagerName": ".NET Tool",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "dotnet-mgcb-editor",
+            "Name": "Dotnet Mgcb Editor",
+            "Version": "3.8.1.303",
+            "Source": ".NET Tool",
+            "ManagerName": ".NET Tool",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "dotnet-serve",
+            "Name": "Dotnet Serve",
+            "Version": "1.10.172",
+            "Source": ".NET Tool",
+            "ManagerName": ".NET Tool",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "dotnet-tools-outdated",
+            "Name": "Dotnet Tools Outdated",
+            "Version": "0.6.0",
+            "Source": ".NET Tool",
+            "ManagerName": ".NET Tool",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "dotnet-trace",
+            "Name": "Dotnet Trace",
+            "Version": "8.0.452401",
+            "Source": ".NET Tool",
+            "ManagerName": ".NET Tool",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "grazedocs",
+            "Name": "Grazedocs",
+            "Version": "2.0.2",
+            "Source": ".NET Tool",
+            "ManagerName": ".NET Tool",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "ldtkmonogame.codegen",
+            "Name": "Ldtkmonogame Codegen",
+            "Version": "1.2.0",
+            "Source": ".NET Tool",
+            "ManagerName": ".NET Tool",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "roslynator.dotnet.cli",
+            "Name": "Roslynator Dotnet Cli",
+            "Version": "0.8.2",
+            "Source": ".NET Tool",
+            "ManagerName": ".NET Tool",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "adb",
+            "Name": "Adb",
+            "Version": "34.0.5",
+            "Source": "Chocolatey",
+            "ManagerName": "Chocolatey",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "filezilla",
+            "Name": "Filezilla",
+            "Version": "3.66.4",
+            "Source": "Chocolatey",
+            "ManagerName": "Chocolatey",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "@angular/cli",
+            "Name": "Angular/cli",
+            "Version": "17.0.5",
+            "Source": "Npm@global",
+            "ManagerName": "Npm",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "@dbml/cli",
+            "Name": "Dbml/cli",
+            "Version": "3.0.0",
+            "Source": "Npm@global",
+            "ManagerName": "Npm",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "@ionic/cli",
+            "Name": "Ionic/cli",
+            "Version": "7.1.5",
+            "Source": "Npm@global",
+            "ManagerName": "Npm",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "@vscode/vsce",
+            "Name": "Vscode/vsce",
+            "Version": "2.22.0",
+            "Source": "Npm@global",
+            "ManagerName": "Npm",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "docsify-cli",
+            "Name": "Docsify Cli",
+            "Version": "4.4.4",
+            "Source": "Npm@global",
+            "ManagerName": "Npm",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "firebase-tools",
+            "Name": "Firebase Tools",
+            "Version": "13.0.2",
+            "Source": "Npm@global",
+            "ManagerName": "Npm",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "markdown-pdf",
+            "Name": "Markdown Pdf",
+            "Version": "11.0.0",
+            "Source": "Npm@global",
+            "ManagerName": "Npm",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "node-brainfuck-compiler",
+            "Name": "Node Brainfuck Compiler",
+            "Version": "1.0.0",
+            "Source": "Npm@global",
+            "ManagerName": "Npm",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "nodemon",
+            "Name": "Nodemon",
+            "Version": "3.0.2",
+            "Source": "Npm@global",
+            "ManagerName": "Npm",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "npm",
+            "Name": "Npm",
+            "Version": "10.2.4",
+            "Source": "Npm@global",
+            "ManagerName": "Npm",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "quicktype",
+            "Name": "Quicktype",
+            "Version": "23.0.81",
+            "Source": "Npm@global",
+            "ManagerName": "Npm",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "ts-node",
+            "Name": "Ts Node",
+            "Version": "10.9.1",
+            "Source": "Npm@global",
+            "ManagerName": "Npm",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "tsx",
+            "Name": "Tsx",
+            "Version": "4.6.2",
+            "Source": "Npm@global",
+            "ManagerName": "Npm",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "yarn",
+            "Name": "Yarn",
+            "Version": "1.22.21",
+            "Source": "Npm@global",
+            "ManagerName": "Npm",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "01D4AA89568B59E5941907D403E3B682EE413A\u2026",
+            "Name": "Windows Driver Package - Microsoft US\u2026",
+            "Version": "02/19/2016",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "50620ZigHM.PureWriter_tg7mbfdxx73f0",
+            "Name": "WritePlus",
+            "Version": "2.0.1.2",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "7zip.7zip",
+            "Name": "7-Zip 23.01 (x64)",
+            "Version": "23.01",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Abdelrhman-AK.WinPaletter",
+            "Name": "WinPaletter",
+            "Version": "1.0.8.1",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "AltDrag.AltDrag",
+            "Name": "AltDrag",
+            "Version": "1.1",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Audacity.Audacity",
+            "Name": "Audacity 3.4.2",
+            "Version": "3.4.2",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Canonical.Ubuntu.2204",
+            "Name": "Ubuntu",
+            "Version": "2204.3.49.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "DenoLand.Deno",
+            "Name": "deno",
+            "Version": "1.38.4",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Discord.Discord",
+            "Name": "Discord",
+            "Version": "1.0.9018",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": true,
+                "IgnoredVersion": "*"
+            }
+        },
+        {
+            "Id": "Ditto.Ditto",
+            "Name": "Ditto 3.24.246.0",
+            "Version": "3.24.246.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "FileZilla Client",
+            "Name": "FileZilla 3.66.4",
+            "Version": "3.66.4",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Git.Git",
+            "Name": "Git",
+            "Version": "2.43.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "GodotEngine.GodotEngine.Mono",
+            "Name": "Godot Engine (Mono)",
+            "Version": "4.1.2",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Google.Chrome",
+            "Name": "Google Chrome",
+            "Version": "120.0.6099.227",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Graphviz.Graphviz",
+            "Name": "Graphviz",
+            "Version": "9.0.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "HandBrake.HandBrake",
+            "Name": "HandBrake 1.7.1",
+            "Version": "1.7.1",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "JesseDuffield.lazygit",
+            "Name": "lazygit",
+            "Version": "0.40.2",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "LLVM.LLVM",
+            "Name": "LLVM",
+            "Version": "17.0.6",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "MenuMaid",
+            "Name": "MenuMaid 1.2",
+            "Version": "1.2",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "MiKTeX.MiKTeX",
+            "Name": "MiKTeX",
+            "Version": "23.4",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.Edge",
+            "Name": "Microsoft Edge",
+            "Version": "121.0.2277.83",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft Edge Update",
+            "Name": "Microsoft Edge Update",
+            "Version": "1.3.181.5",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.EdgeWebView2Runtime",
+            "Name": "Microsoft Edge WebView2 Runtime",
+            "Version": "120.0.2210.144",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.4297127D64EC6_8wekyb3d8bbwe",
+            "Name": "Minecraft Launcher",
+            "Version": "1.7.2.0",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.AppInstaller",
+            "Name": "App Installer",
+            "Version": "1.21.3482.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.DirectXRuntime_8wekyb3d8bbwe",
+            "Name": "DirectX",
+            "Version": "9.29.1974.0",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.GamingServices_8wekyb3d8bbwe",
+            "Name": "Gaming Services",
+            "Version": "17.85.5002.0",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.LanguageExperiencePacken-GB_\u2026",
+            "Name": "English (United Kingdom) Local Experi\u2026",
+            "Version": "19041.53.185.0",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.Microsoft3DViewer_8wekyb3d8b\u2026",
+            "Name": "3D Viewer",
+            "Version": "7.2311.30032.0",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.MicrosoftEdge.Stable_8wekyb3\u2026",
+            "Name": "Microsoft Edge",
+            "Version": "121.0.2277.83",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.NET.Native.Framework.2.2_8we\u2026",
+            "Name": "Microsoft .Net Native Framework Packa\u2026",
+            "Version": "2.2.29512.0",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.NET.Native.Runtime.2.2_8weky\u2026",
+            "Name": "Microsoft .Net Native Runtime Package\u2026",
+            "Version": "2.2.28604.0",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.UI.Xaml.2.7",
+            "Name": "Microsoft.UI.Xaml.2.7",
+            "Version": "7.2208.15002.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.VCLibs.110.00.UWPDesktop_8we\u2026",
+            "Name": "Microsoft Visual C++ 2012 UWP Desktop\u2026",
+            "Version": "11.0.61135.0",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.VCLibs.120.00.UWPDesktop_8we\u2026",
+            "Name": "Microsoft Visual C++ 2013 UWP Desktop\u2026",
+            "Version": "12.0.40653.0",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.VCLibs.Desktop.14",
+            "Name": "Microsoft Visual C++ 2015 UWP Desktop\u2026",
+            "Version": "14.0.32530.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.VCLibs.140.00_8wekyb3d8bbwe",
+            "Name": "Microsoft Visual C++ 2015 UWP Runtime\u2026",
+            "Version": "14.0.32530.0",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.WinJS.2.0_8wekyb3d8bbwe",
+            "Name": "Microsoft Windows Library for JavaScr\u2026",
+            "Version": "1.0.9600.17018",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.Winget.Source_8wekyb3d8bbwe",
+            "Name": "Windows Package Manager Source (winge\u2026",
+            "Version": "2024.127.1229.999",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.Xbox.TCUI_8wekyb3d8bbwe",
+            "Name": "Xbox TCUI",
+            "Version": "1.24.10001.0",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.XboxIdentityProvider_8wekyb3\u2026",
+            "Name": "Xbox Identity Provider",
+            "Version": "12.95.3001.0",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "MicrosoftCorporationII.WindowsSubsyste\u2026",
+            "Name": "Windows Subsystem for Linux",
+            "Version": "2.0.9.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "NVIDIACorp.NVIDIAControlPanel_56jybvy8\u2026",
+            "Name": "NVIDIA Control Panel",
+            "Version": "8.1.964.0",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "OBSProject.OBSStudio",
+            "Name": "OBS Studio",
+            "Version": "30.0.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "OUTPATH_",
+            "Name": "OUTPATH",
+            "Version": "Unknown",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Oculus",
+            "Name": "Oculus",
+            "Version": "<3",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Overwolf",
+            "Name": "Overwolf",
+            "Version": "0.234.0.8",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Overwolf_cchhcaiapeikjbdbpfplgmpobbcdk\u2026",
+            "Name": "CurseForge",
+            "Version": "0.235.2.1",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Parsec.Parsec",
+            "Name": "Parsec",
+            "Version": "150-91a",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "ParsecVUD",
+            "Name": "Parsec Virtual USB Adapter Driver",
+            "Version": "0.2.5.0",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Quixel Mixer 2022.1.1",
+            "Name": "Quixel Mixer",
+            "Version": "2022.1.1",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Rustlang.Rustup",
+            "Name": "Rustup: the Rust toolchain installer",
+            "Version": "1.26.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "SQLite.SQLite",
+            "Name": "SQLite",
+            "Version": "3.42.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Shadow of the Tomb Raider Definitive E\u2026",
+            "Name": "Shadow of the Tomb Raider Definitive \u2026",
+            "Version": "Unknown",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Valve.Steam",
+            "Name": "Steam",
+            "Version": "2.10.91.91",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "SteelSeries.GG",
+            "Name": "SteelSeries GG 53.0.0",
+            "Version": "53.0.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "LizardByte.Sunshine",
+            "Name": "Sunshine",
+            "Version": "0.21.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.Teams",
+            "Name": "Microsoft Teams classic",
+            "Version": "1.6.00.27573",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Thorium",
+            "Name": "Thorium",
+            "Version": "119.0.6045.214",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "USBHelperLauncher",
+            "Name": "USBHelperLauncher",
+            "Version": "1.0",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Unity.Unity.2020",
+            "Name": "Unity 2019.4.40f1",
+            "Version": "2019.4.40f1",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Unity.Unity.2020",
+            "Name": "Unity 2021.3.20f1",
+            "Version": "2021.3.20f1",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Unity.UnityHub",
+            "Name": "Unity Hub 3.6.1",
+            "Version": "3.6.1",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Wilfred.difftastic",
+            "Name": "Difftastic",
+            "Version": "0.54.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Abdelrhman-AK.WinPaletter",
+            "Name": "WinPaletter",
+            "Version": "1.0.8.1",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "WinPcapInst",
+            "Name": "WinPcap 4.1.3",
+            "Version": "4.1.0.2980",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "WiresharkFoundation.Wireshark",
+            "Name": "Wireshark 4.2.2 x64",
+            "Version": "4.2.2",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "dandavison.delta",
+            "Name": "delta",
+            "Version": "0.16.5",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "deepnight.LDtk",
+            "Name": "LDtk 1.5.3",
+            "Version": "1.5.3",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "excalidraw.com-3151CD7A_v2mdq74wtmey8",
+            "Name": "Excalidraw",
+            "Version": "1.0.0.0",
+            "Source": "Microsoft Store",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "AppWork.JDownloader",
+            "Name": "JDownloader 2",
+            "Version": "2.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "melonDS.melonDS",
+            "Name": "melonDS",
+            "Version": "0.9.5",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "sharkdp.bat",
+            "Name": "bat",
+            "Version": "0.24.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "WinSCP.WinSCP",
+            "Name": "WinSCP 6.1.2",
+            "Version": "6.1.2",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{010792BA-551A-3AC0-A7EF-0FAB4156C382}",
+            "Name": "Microsoft Visual C++ 2013 x64 Additio\u2026",
+            "Version": "12.0.40664",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "SoftDeluxe.FreeDownloadManager",
+            "Name": "Free Download Manager",
+            "Version": "6.19.1.5263",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{15941C7F-810D-41DF-8C5A-8D0490277AFB}",
+            "Name": "Windows SDK AddOn",
+            "Version": "10.1.0.0",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.DotNet.DesktopRuntime.6",
+            "Name": "Microsoft Windows Desktop Runtime - 6\u2026",
+            "Version": "6.0.26",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{1CA7421F-A225-4A9C-B320-A36981A2B789}",
+            "Name": "Microsoft Visual C++ 2022 X64 Minimum\u2026",
+            "Version": "14.38.33130",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.VCRedist.2010.x64",
+            "Name": "Microsoft Visual C++ 2010 x64 Redist\u2026",
+            "Version": "10.0.40219",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{1F2B6AF3-C260-8666-5950-E3FEDBC851D6}",
+            "Name": "Microsoft GameInput",
+            "Version": "10.1.22621.3036",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.PowerToys",
+            "Name": "PowerToys (Preview) x64",
+            "Version": "0.77.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.VCRedist.2015+.x64",
+            "Name": "Microsoft Visual C++ 2015-2022 Redist\u2026",
+            "Version": "14.38.33130.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{21BF582C-F2F1-4321-98E1-54C8C2809D7E}",
+            "Name": "vs_CoreEditorFonts",
+            "Version": "17.5.33306",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{2397CAD4-2263-4CD0-96BE-E43A980B9C9A}\u2026",
+            "Name": "Geeks3D FurMark 1.35.0.0",
+            "Version": "1.35.0.0",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{29BAAF65-09E5-4F52-8D15-2FAF2E23A8DC}",
+            "Name": "WinUSB Drivers ext",
+            "Version": "1.1.24.1544",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "MoonlightGameStreamingProject.Moonlight",
+            "Name": "Moonlight Game Streaming Client",
+            "Version": "5.0.1.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Malwarebytes.Malwarebytes",
+            "Name": "Malwarebytes version 4.6.7.301",
+            "Version": "4.6.7.301",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{37B8F9C7-03FB-3253-8781-2517C99D7C00}",
+            "Name": "Microsoft Visual C++ 2012 x64 Additio\u2026",
+            "Version": "11.0.61135",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "OpenJS.NodeJS.LTS",
+            "Name": "Node.js",
+            "Version": "20.10.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{408A5C50-34F2-4025-968E-A21D6A515D48}",
+            "Name": "Windows Subsystem for Linux",
+            "Version": "2.0.9.0",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "dotPDNLLC.paintdotnet",
+            "Name": "paint.net",
+            "Version": "5.0.12",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.DotNet.SDK.6",
+            "Name": "Microsoft .NET SDK 6.0.418 (x64)",
+            "Version": "6.0.418",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "JohnMacFarlane.Pandoc",
+            "Name": "Pandoc 3.1.9",
+            "Version": "3.1.9",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{53CF6934-A98D-3D84-9146-FC4EDF3D5641}",
+            "Name": "Microsoft Visual C++ 2013 x64 Minimum\u2026",
+            "Version": "12.0.40664",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{5686C5E9-A3B3-451E-A2EA-4C246CDE5CC9}",
+            "Name": "Microsoft .NET Framework 4.7.1 Target\u2026",
+            "Version": "4.7.02558",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.DotNet.Runtime.8",
+            "Name": "Microsoft .NET Runtime - 8.0.1 (x64)",
+            "Version": "8.0.1",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{57bbbfaf-7576-4e59-bec4-c1c606e3aa2c}",
+            "Name": "Vulkan SDK 1.3.261.1",
+            "Version": "1.3.261.1",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{5CA9AE7B-2EFC-4F02-81CD-32ABE173C755}",
+            "Name": "Microsoft Visual C++ 2022 X86 Additio\u2026",
+            "Version": "14.38.33130",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "BlenderFoundation.Blender",
+            "Name": "blender",
+            "Version": "3.6.5",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.VCRedist.2008.x64",
+            "Name": "Microsoft Visual C++ 2008 Redistribut\u2026",
+            "Version": "9.0.30729.7523",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{6F320B93-EE3C-4826-85E0-ADF79F8D4C61}",
+            "Name": "Microsoft Visual Studio Installer",
+            "Version": "3.7.2181.36443",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.VCRedist.2005.x86",
+            "Name": "Microsoft Visual C++ 2005 Redistribut\u2026",
+            "Version": "8.0.61187",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{71324AE4-039E-4CA4-87B4-2F32180391F0}",
+            "Name": "Java 8 Update 391",
+            "Version": "8.0.3910.13",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{7209d085-ed88-4a08-beb2-c49db2b9e838}",
+            "Name": "FFU Loader Driver 1.0.0",
+            "Version": "1.0.0",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Oracle.JDK.21",
+            "Name": "Java(TM) SE Development Kit 21.0.1 (6\u2026",
+            "Version": "21.0.1.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{8122DAB1-ED4D-3676-BB0A-CA368196543E}",
+            "Name": "Microsoft Visual C++ 2013 x86 Minimum\u2026",
+            "Version": "12.0.40664",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.VCRedist.2005.x86",
+            "Name": "Microsoft Visual C++ 2005 Redistribut\u2026",
+            "Version": "8.0.59193",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "GoLang.Go",
+            "Name": "Go Programming Language amd64 go1.21.4",
+            "Version": "1.21.4",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "SomePythonThings.WingetUIStore",
+            "Name": "WingetUI",
+            "Version": "2.2.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.DotNet.SDK.8",
+            "Name": "Microsoft .NET SDK 8.0.101 (x64)",
+            "Version": "8.0.101",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Oracle.MySQLWorkbench",
+            "Name": "MySQL Workbench 8.0 CE",
+            "Version": "8.0.31",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.NetMon",
+            "Name": "Microsoft Network Monitor 3.4",
+            "Version": "3.4",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{963E5FEB-1367-46B9-851D-A957F1A3747F}",
+            "Name": "Microsoft Network Monitor: NetworkMon\u2026",
+            "Version": "3.4.2350.0",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "ViGEm.ViGEmBus",
+            "Name": "ViGEm Bus Driver",
+            "Version": "1.22.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Nushell.Nushell",
+            "Name": "nu",
+            "Version": "0.89.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{9755918A-CDF8-4F1E-8453-6359CF1A330A}",
+            "Name": "WinUsb CoInstallers",
+            "Version": "1.1.12.1526",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.VCRedist.2008.x86",
+            "Name": "Microsoft Visual C++ 2008 Redistribut\u2026",
+            "Version": "9.0.30729.7523",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{9D2A75FE-8CE1-4297-AEC1-A097D47BACE9}",
+            "Name": "Lumia UEFI Blue Driver",
+            "Version": "1.1.10.1526",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{A4A0B236-6046-4CAB-8177-1EAF61112C75}",
+            "Name": "WinUSB Compatible ID Drivers",
+            "Version": "1.1.11.1526",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Nilesoft.Shell",
+            "Name": "Nilesoft Shell",
+            "Version": "1.9.10",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{A6CD7E8F-BACC-42D5-A36D-D40D6EAC5E87}\u2026",
+            "Name": "Fire Toolbox V32.4 version \ufffd",
+            "Version": "\ufffd",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{ABE94A82-C89E-4ACA-8B30-41E0C6165A23}",
+            "Name": "Microsoft .NET Framework 4.7.1 Target\u2026",
+            "Version": "4.7.02558",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{B175520C-86A2-35A7-8619-86DC379688B9}",
+            "Name": "Microsoft Visual C++ 2012 x86 Additio\u2026",
+            "Version": "11.0.61135",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Python.Launcher",
+            "Name": "Python Launcher",
+            "Version": "< 3.12.0",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\u2026",
+            "Name": "NVIDIA Graphics Driver 551.23",
+            "Version": "551.23",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Nvidia.GeForceExperience",
+            "Name": "NVIDIA GeForce Experience 3.27.0.120",
+            "Version": "3.27.0.120",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Nvidia.PhysX",
+            "Name": "NVIDIA PhysX System Software 9.21.0713",
+            "Version": "9.21.0713",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\u2026",
+            "Name": "NVIDIA FrameView SDK 1.3.8513.32290073",
+            "Version": "1.3.8513.32290073",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\u2026",
+            "Name": "NVIDIA HD Audio Driver 1.3.40.14",
+            "Version": "1.3.40.14",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{B9DCCDB9-FCE9-48AD-B534-A7AD270BD52B}",
+            "Name": "Microsoft .NET Framework 4.7.1 SDK",
+            "Version": "4.7.02558",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "wez.wezterm",
+            "Name": "WezTerm version 20230712-072601-f4abf\u2026",
+            "Version": "20230712-072601-f\u2026",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{BD95A8CD-1D9F-35AD-981A-3E7925026EBB}",
+            "Name": "Microsoft Visual C++ 2012 x86 Minimum\u2026",
+            "Version": "11.0.61135",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{C31777DB-51C1-4B19-9F80-38EF5C1D7C89}",
+            "Name": "Microsoft Visual C++ 2022 X64 Additio\u2026",
+            "Version": "14.38.33130",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{C5E3A69D-D391-45A6-A8FB-00B01E2B010D}",
+            "Name": "Microsoft Visual Basic/C++ Runtime (x\u2026",
+            "Version": "1.1.0",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.VSTOR",
+            "Name": "Microsoft Visual Studio 2010 Tools fo\u2026",
+            "Version": "10.0.60915",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{CF2BEA3C-26EA-32F8-AA9B-331F7E34BA97}",
+            "Name": "Microsoft Visual C++ 2012 x64 Minimum\u2026",
+            "Version": "11.0.61135",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{D401961D-3A20-3AC7-943B-6139D5BD490A}",
+            "Name": "Microsoft Visual C++ 2013 x86 Additio\u2026",
+            "Version": "12.0.40664",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Kitware.CMake",
+            "Name": "CMake",
+            "Version": "3.27.9",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{DF1B52DF-C88E-4DDF-956B-6E7A03327F46}",
+            "Name": "Microsoft Visual C++ 2022 X86 Minimum\u2026",
+            "Version": "14.38.33130",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{E281F6E2-136B-4AF0-895B-253279711697}",
+            "Name": "Microsoft Visual Studio Setup WMI Pro\u2026",
+            "Version": "3.7.2182.35401",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.VisualStudioCode",
+            "Name": "Microsoft Visual Studio Code",
+            "Version": "1.85.2",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.VCRedist.2010.x86",
+            "Name": "Microsoft Visual C++ 2010 x86 Redist\u2026",
+            "Version": "10.0.40219",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{F8474A47-8B5D-4466-ACE3-78EAB3BF21A8}",
+            "Name": "Windows Subsystem for Linux Update",
+            "Version": "5.10.102.1",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "MPC-BE.MPC-BE",
+            "Name": "MPC-BE x64 1.6.10",
+            "Version": "1.6.10",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{FF0EA481-42DB-A8AE-8356-48C09F7D953D}",
+            "Name": "Windows IP Over USB",
+            "Version": "10.1.10586.15",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{a8ef6d85-8556-4ab8-9e84-f935f5582d43}",
+            "Name": "Windows Device Recovery Tool 3.14.075\u2026",
+            "Version": "3.14.7501",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "{ad8a2fa1-06e7-4b0d-927d-6e54b3d31028}",
+            "Name": "Microsoft Visual C++ 2005 Redistribut\u2026",
+            "Version": "8.0.61186",
+            "Source": "Local PC",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Microsoft.DotNet.DesktopRuntime.6",
+            "Name": "Microsoft Windows Desktop Runtime - 6\u2026",
+            "Version": "6.0.26",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        },
+        {
+            "Id": "Python.Python.3.11",
+            "Name": "Python 3.11.6 (64-bit)",
+            "Version": "3.11.6",
+            "Source": "Winget: winget",
+            "ManagerName": "Winget",
+            "InstallationOptions": {
+                "SkipHashCheck": false,
+                "InteractiveInstallation": false,
+                "RunAsAdministrator": false,
+                "Architecture": "",
+                "InstallationScope": "",
+                "CustomParameters": [],
+                "PreRelease": false,
+                "CustomInstallLocation": ""
+            },
+            "Updates": {
+                "UpdatesIgnored": false,
+                "IgnoredVersion": ""
+            }
+        }
+    ],
+    "incompatible_packages_info": "Incompatible packages cannot be installed from WingetUI, but they have been listed here for logging purposes.",
+    "incompatible_packages": []
+}

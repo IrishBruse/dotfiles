@@ -1,0 +1,24 @@
+.explorer-folders-view .monaco-tl-twistie {
+  background-image: none !important;
+  width: 0 !important;
+  padding-right: 0 !important;
+  visibility: hidden;
+}
+
+.explorer-folders-view
+  .monaco-tl-twistie:has(+ .monaco-tl-contents .file-icon)::before {
+  visibility: visible !important;
+  margin-right: 18px;
+  font-size: 12px;
+  transform: rotate(0) !important;
+  width: 400px;
+  position: absolute;
+}
+
+.explorer-folders-view .codicon-tree-item-expanded::before {
+  content: "\EA27";
+}
+
+.explorer-folders-view .monaco-tl-twistie.collapsed::before {
+  content: "\EA2B";
+}

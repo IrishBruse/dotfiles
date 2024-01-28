@@ -613,7 +613,7 @@
         "key": "ctrl+t",
         "command": "ib-utilities.runExternalCommand",
         "args": {
-            "command": "wezterm start --position main:638,324 --cwd ${workspaceFolder}"
+            "command": "wezterm"
         },
         "when": "!terminalFocus"
     },
@@ -626,7 +626,7 @@
         "key": "ctrl+shift+g",
         "command": "ib-utilities.runExternalCommand",
         "args": {
-            "command": "wezterm start --position main:638,324 --cwd ${workspaceFolder} -- lazygit"
+            "command": "wezterm start -- lazygit"
         }
     },
     {
@@ -648,4 +648,33 @@
         "command": "-rerunSearchEditorSearch",
         "when": "inSearchEditor"
     },
+    {
+        "key": "ctrl+j",
+        "command": "-workbench.action.togglePanel"
+    },
+    {
+        "key": "ctrl+oem_5",
+        "command": "-workbench.action.splitEditor"
+    },
+    {
+        "key": "ctrl+oem_5",
+        "command": "workbench.action.terminal.toggleTerminal"
+    },
+    {
+        "key": "ctrl+j ctrl+j",
+        "command": "relative-goto.goto",
+        "args": "12"
+    },
+    {
+        "key": "alt+g",
+        "command": "-relative-goto.goto"
+    },
+    {
+        "key": "ctrl+k ctrl+s",
+        "command": "workbench.action.openGlobalKeybindingsFile"
+    },
+    {
+        "key": "ctrl+k ctrl+s",
+        "command": "-workbench.action.openGlobalKeybindings"
+    }
 ]

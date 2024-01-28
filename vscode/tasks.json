@@ -1,12 +1,4 @@
 {
     "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "lazygit",
-            "type": "process",
-            "command": "lazygit",
-            "hide": true,
-            "problemMatcher": []
-        }
-    ]
+    "tasks": []
 }

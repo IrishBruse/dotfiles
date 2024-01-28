@@ -1,53 +1,99 @@
-local wezterm = require 'wezterm'
-local act = wezterm.action
-
+---@type wezterm
+local wezterm = require "wezterm"
+local mux = wezterm.mux
 local config = wezterm.config_builder()
 
-config.default_prog = { 'nu' }
-config.automatically_reload_config = true
+config.default_prog = { "nu" }
+config.default_gui_startup_args = { "start" }
 
 config.font_size = 10.0
 config.freetype_load_target = "HorizontalLcd"
 
+config.initial_cols = 120
+config.initial_rows = 30
+
 config.hide_tab_bar_if_only_one_tab = true
-config.window_background_opacity = 1
+config.window_background_opacity = .9
 config.enable_scroll_bar = true
 config.anti_alias_custom_block_glyphs = true
 config.window_close_confirmation = "NeverPrompt"
+config.window_decorations = "RESIZE"
+config.enable_scroll_bar = false
+config.default_cursor_style = "BlinkingBar"
+config.animation_fps = 30
+config.cursor_blink_ease_in = "Constant"
+config.cursor_blink_ease_out = "Constant"
+config.automatically_reload_config = true
+config.default_cwd = "A:/"
 
-config.default_cursor_style = 'BlinkingBar'
-config.animation_fps = 1
-config.cursor_blink_ease_in = 'Constant'
-config.cursor_blink_ease_out = 'Constant'
-config.disable_default_key_bindings = true
-config.default_gui_startup_args = { 'start', '--position', 'main:638,324' }
+wezterm.on("gui-startup", function(cmd)
+    local config = cmd or {}
+    local screens = wezterm.gui.screens()
+    local active = screens["active"]
+    local tab, pane, window = mux.spawn_window(config)
+    local gui_window = window:gui_window()
+    local term_size = gui_window:get_dimensions()
+    gui_window:set_position(active.width / 2 - term_size.pixel_width / 2, active.height / 2 - term_size.pixel_height / 2)
+end)
+
+local font =
+    wezterm.font_with_fallback {
+        {
+            family = "Cascadia Mono",
+            weight = "Bold",
+            italic = false,
+        },
+        {
+            family = "Symbols Nerd Font Mono",
+        },
+    }
+
+config.font = font
+
+config.window_frame = {
+    font = font,
+    active_titlebar_bg = "#23272a",
+    inactive_titlebar_bg = "#333333",
+}
 
 config.colors = {
-    -- The default text color
-    foreground = '#D4D4D4',
-    -- The default background color
-    background = '#191D1F',
+    foreground = "#D4D4D4",
+    background = "#191D1F",
 
-    -- Overrides the cell background color when the current cell is occupied by the
-    -- cursor and the cursor style is set to Block
-    cursor_bg = '#ffffff',
-    -- Overrides the text color when the current cell is occupied by the cursor
-    cursor_fg = '#000000',
-    -- Specifies the border color of the cursor when the cursor style is set to Block,
-    -- or the color of the vertical or horizontal bar when the cursor style is set to
-    -- Bar or Underline.
-    cursor_border = '#52ad70',
+    cursor_bg = "#D4D4D4",
+    cursor_fg = "#D4D4D4",
+    cursor_border = "#D4D4D4",
 
-    -- the foreground color of selected text
-    selection_fg = '#D4D4D4',
-    -- the background color of selected text
-    selection_bg = '#354A1D',
+    selection_fg = "#D4D4D4",
+    selection_bg = "#354A1D",
 
-    -- The color of the scrollbar "thumb"; the portion that represents the current viewport
-    scrollbar_thumb = '#4f5051',
+    scrollbar_thumb = "#4f5051",
 
-    -- The color of the split lines between panes
-    split = '#32383d',
+    split = "#32383d",
+
+    tab_bar = {
+        background = "#23272a",
+        active_tab = {
+            bg_color = "#191D1F",
+            fg_color = "#D4D4D4",
+        },
+        inactive_tab = {
+            bg_color = "#1e2224",
+            fg_color = "#D4D4D4",
+        },
+        inactive_tab_hover = {
+            bg_color = "#191D1F",
+            fg_color = "#D4D4D4",
+        },
+        new_tab = {
+            bg_color = "#23272a",
+            fg_color = "#D4D4D4",
+        },
+        new_tab_hover = {
+            bg_color = "#191D1F",
+            fg_color = "#D4D4D4",
+        },
+    },
 
     ansi = {
         "#000000",
@@ -70,96 +116,44 @@ config.colors = {
         "#ffffff",
     },
 
-    -- Arbitrary colors of the palette in the range from 16 to 255
-    indexed = { [136] = '#af8700' },
+    indexed = { [136] = "#af8700" },
+    compose_cursor = "orange",
 
-    -- Since: 20220319-142410-0fcdea07
-    -- When the IME, a dead key or a leader key are being processed and are effectively
-    -- holding input pending the result of input composition, change the cursor
-    -- to this color to give a visual cue about the compose state.
-    compose_cursor = 'orange',
+    copy_mode_active_highlight_bg = { Color = "#000000" },
+    copy_mode_active_highlight_fg = { AnsiColor = "Black" },
+    copy_mode_inactive_highlight_bg = { Color = "#52ad70" },
+    copy_mode_inactive_highlight_fg = { AnsiColor = "White" },
 
-    -- Colors for copy_mode and quick_select
-    -- available since: 20220807-113146-c2fee766
-    -- In copy_mode, the color of the active text is:
-    -- 1. copy_mode_active_highlight_* if additional text was selected using the mouse
-    -- 2. selection_* otherwise
-    copy_mode_active_highlight_bg = { Color = '#000000' },
-    -- use `AnsiColor` to specify one of the ansi color palette values
-    -- (index 0-15) using one of the names "Black", "Maroon", "Green",
-    --  "Olive", "Navy", "Purple", "Teal", "Silver", "Grey", "Red", "Lime",
-    -- "Yellow", "Blue", "Fuchsia", "Aqua" or "White".
-    copy_mode_active_highlight_fg = { AnsiColor = 'Black' },
-    copy_mode_inactive_highlight_bg = { Color = '#52ad70' },
-    copy_mode_inactive_highlight_fg = { AnsiColor = 'White' },
-
-    quick_select_label_bg = { Color = 'peru' },
-    quick_select_label_fg = { Color = '#ffffff' },
-    quick_select_match_bg = { AnsiColor = 'Navy' },
-    quick_select_match_fg = { Color = '#ffffff' },
+    quick_select_label_bg = { Color = "peru" },
+    quick_select_label_fg = { Color = "#ffffff" },
+    quick_select_match_bg = { AnsiColor = "Navy" },
+    quick_select_match_fg = { Color = "#ffffff" },
 }
 
-config.font = wezterm.font {
-    family = 'Cascadia Mono',
-    weight = 'Bold',
-    italic = false,
-    harfbuzz_features = { 'ss01=1', 'ss02=1', 'ss03=1', 'ss04=1', 'ss05=1', 'ss06=1', 'zero=1', 'onum=1' },
-}
-
+config.disable_default_key_bindings = true
 config.keys = {
-    {
-        key = "C",
-        mods = "CTRL",
-        action = wezterm.action.DisableDefaultAssignment,
-    },
-    {
-        key = "q",
-        mods = "CTRL",
-        action = wezterm.action.DisableDefaultAssignment,
-    },
-    {
-        key = 'V',
-        mods = 'CTRL',
-        action = wezterm.action.DisableDefaultAssignment,
-    },
+    { mods = "CTRL|SHIFT", key = "p", action = wezterm.action.ActivateCommandPalette, },
+    { mods = "CTRL",       key = "w", action = wezterm.action.CloseCurrentTab({ confirm = false }), },
+    { mods = "CTRL",       key = "v", action = wezterm.action.PasteFrom("Clipboard"), },
+    { mods = 'CTRL',       key = 'n', action = wezterm.action.SpawnCommandInNewTab {} },
+    { mods = 'CTRL|SHIFT', key = 'r', action = wezterm.action.ReloadConfiguration },
     {
         key = "c",
         mods = "CTRL",
         action = wezterm.action_callback(function(window, pane)
-            print(window:get_selection_text_for_pane(pane))
             if window:get_selection_text_for_pane(pane) == "" then
-                window:perform_action(wezterm.action.SendKey { key = 'c', mods = 'CTRL' }, pane)
+                window:perform_action(wezterm.action.SendKey { key = "c", mods = "CTRL" }, pane)
             else
-                window:perform_action(wezterm.action { CopyTo = 'ClipboardAndPrimarySelection' }, pane)
+                window:perform_action(wezterm.action { CopyTo = "ClipboardAndPrimarySelection" }, pane)
             end
-        end)
-
+        end),
     },
     {
-        key = "v",
         mods = "CTRL",
-        action = wezterm.action.PasteFrom 'Clipboard'
-    },
-    {
-        key = "|",
-        mods = "CTRL",
-        action = wezterm.action.SplitVertical { domain = "CurrentPaneDomain" }
-    },
-    {
-        key = "k",
-        mods = "CTRL",
-        action = wezterm.action.Multiple {
-            act.SendKey { key = 'c' },
-            act.SendKey { key = 'l' },
-            act.SendKey { key = 's' },
-            act.SendKey { key = 'Enter' },
-            wezterm.action.ClearScrollback "ScrollbackOnly",
-        },
-    },
-    {
-        key = 'p',
-        mods = 'CTRL',
-        action = wezterm.action.ActivateCommandPalette,
+        key = "a",
+        action = wezterm.action.Multiple({
+            wezterm.action.ActivateCopyMode
+        }),
     },
 }
 
