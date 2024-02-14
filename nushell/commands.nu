@@ -54,6 +54,10 @@ def --wrapped git [...args:string] {
     }
 }
 
+def serve [port:int = 42069] {
+    dotnet serve -o -p $port
+}
+
 def title [...args: string] {
     run-external cmd /c title ...$args
 }
