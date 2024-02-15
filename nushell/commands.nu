@@ -70,7 +70,7 @@ def displayTitle [] {
     title $command $sep $cwd
 }
 
-def startTitle [before:string,after:string] {
+def startTitle [before:any,after:any] {
     if ($before|describe) == nothing {
         let cwd = pwd | str replace --all (char path_sep) "/"
         title Nushell - $cwd

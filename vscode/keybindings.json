@@ -5,6 +5,43 @@
     // *                                                                          *
     // ****************************************************************************
     {
+        "key": "ctrl+k i",
+        "command": "-inlineChat.quickVoice.start",
+        "when": "editorFocus && hasSpeechProvider && !inlineChat.quickChatInProgress"
+    },
+    {
+        "key": "ctrl+k i",
+        "command": "-inlineChat.quickVoice.stop",
+        "when": "hasSpeechProvider && inlineChat.quickChatInProgress"
+    },
+    {
+        "key": "ctrl+k o",
+        "command": "-workbench.action.copyEditorToNewWindow",
+        "when": "activeEditor"
+    },
+    {
+        "key": "ctrl+k ctrl+i",
+        "command": "-workbench.action.showTreeHover",
+        "when": "customTreeView && listFocus && !inputFocus && !treestickyScrollFocused"
+    },
+    {
+        "key": "ctrl+m",
+        "command": "editor.emmet.action.evaluateMathExpression"
+    },
+    {
+        "key": "ctrl+j",
+        "command": "ib-utilities.relativeGoTo"
+    },
+    {
+        "key": "shift+insert",
+        "command": "-editor.action.clipboardPasteAction"
+    },
+    {
+        "key": "v",
+        "command": "-notebook.cell.paste",
+        "when": "notebookEditorFocused && !inputFocus && !notebookOutputInputFocused"
+    },
+    {
         "key": "ctrl+alt+j",
         "command": "-editor.action.insertSnippet",
         "when": "editorTextFocus && !editorReadonly && editorLangId == 'nushell'"
@@ -938,11 +975,37 @@
         "command": "-editor.action.insertCursorBelow",
         "when": "editorTextFocus"
     },
+    // *
+    // *
+    // *
+    // *
+    // *
+    // *
+    // *
+    // *
+    // *
+    // *
+    // *
+    // *
+    // *
     // ****************************************************************************
     // *                                                                          *
     // *                                Added                                     *
     // *                                                                          *
     // ****************************************************************************
+    // *
+    // *
+    // *
+    // *
+    // *
+    // *
+    // *
+    // *
+    // *
+    // *
+    // *
+    // *
+    // *
     {
         "key": "ctrl+a",
         "command": "editor.action.smartSelect.grow",
@@ -1117,8 +1180,7 @@
     },
     {
         "key": "ctrl+k",
-        "command": "workbench.action.terminal.clear",
-        "when": "editorFocus"
+        "command": "workbench.action.terminal.clear"
     },
     {
         "key": "shift+alt+up",
@@ -1143,42 +1205,5 @@
         "args": {
             "command": "-- lazygit"
         }
-    },
-    {
-        "key": "ctrl+k i",
-        "command": "-inlineChat.quickVoice.start",
-        "when": "editorFocus && hasSpeechProvider && !inlineChat.quickChatInProgress"
-    },
-    {
-        "key": "ctrl+k i",
-        "command": "-inlineChat.quickVoice.stop",
-        "when": "hasSpeechProvider && inlineChat.quickChatInProgress"
-    },
-    {
-        "key": "ctrl+k o",
-        "command": "-workbench.action.copyEditorToNewWindow",
-        "when": "activeEditor"
-    },
-    {
-        "key": "ctrl+k ctrl+i",
-        "command": "-workbench.action.showTreeHover",
-        "when": "customTreeView && listFocus && !inputFocus && !treestickyScrollFocused"
-    },
-    {
-        "key": "ctrl+m",
-        "command": "editor.emmet.action.evaluateMathExpression"
-    },
-    {
-        "key": "ctrl+j",
-        "command": "ib-utilities.relativeGoTo"
-    },
-    {
-        "key": "shift+insert",
-        "command": "-editor.action.clipboardPasteAction"
-    },
-    {
-        "key": "v",
-        "command": "-notebook.cell.paste",
-        "when": "notebookEditorFocused && !inputFocus && !notebookOutputInputFocused"
-    },
+    }
 ]
