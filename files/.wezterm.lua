@@ -95,7 +95,7 @@ config.colors = {
     },
 
     ansi = {
-        "#000000",
+        "#363636",
         "#e53935",
         "#91b859",
         "#ffb62c",
@@ -134,8 +134,9 @@ config.keys = {
     { mods = "CTRL|SHIFT", key = "p", action = wezterm.action.ActivateCommandPalette, },
     { mods = "CTRL",       key = "w", action = wezterm.action.CloseCurrentTab({ confirm = false }), },
     { mods = "CTRL",       key = "v", action = wezterm.action.PasteFrom("Clipboard"), },
-    { mods = 'CTRL',       key = 'n', action = wezterm.action.SpawnCommandInNewTab {} },
-    { mods = 'CTRL|SHIFT', key = 'r', action = wezterm.action.ReloadConfiguration },
+    { mods = "CTRL",       key = "n", action = wezterm.action.SpawnCommandInNewTab {} },
+    { mods = "CTRL",       key = "k", action = wezterm.action.ClearScrollback("ScrollbackAndViewport") },
+    { mods = "CTRL|SHIFT", key = "r", action = wezterm.action.ReloadConfiguration },
     {
         key = "c",
         mods = "CTRL",

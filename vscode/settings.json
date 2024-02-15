@@ -14,7 +14,8 @@
             "list.inactiveSelectionBackground": "#384d20b6",
             "notebook.editorBackground": "#191d1f",
             "editor.findMatchHighlightBorder": "#00000000",
-            "editor.findMatchHighlightBackground": "#163b4f",
+            "editor.findMatchHighlightBackground": "#163b4faa",
+            "notebook.cellBorderColor": "#2d3236",
             "terminal.background": "#191d1f",
             "panel.background": "#191d1f",
         }
@@ -65,7 +66,7 @@
                     }
                 },
                 {
-                    "scope": [],
+                    "scope": [ ],
                     "settings": {
                         "foreground": "#DCDCAA"
                     }
@@ -181,16 +182,16 @@
     "files.associations": {
         "*.ib": "go",
         ".air.toml": "ini",
-        "*.ldtk": "json"
+        "*.ldtk": "json",
+        "*.ldtkl": "json",
+        "*.animation": "json"
     },
     "gopls": {
         "ui.completion.experimentalPostfixCompletions": true,
         "ui.documentation.hoverKind": "SynopsisDocumentation",
         "ui.semanticTokens": false
     },
-    "editor.codeActionsOnSave": {
-        "source.organizeImports": "explicit"
-    },
+    "editor.codeActionsOnSave": { },
     "files.watcherExclude": {
         "**/bin/**": true,
         "**/obj/**": true
@@ -219,7 +220,6 @@
     "debug.toolBarLocation": "docked",
     "zenMode.hideStatusBar": false,
     "diffEditor.codeLens": false,
-    "diffEditor.experimental.showMoves": false,
     "diffEditor.useInlineViewWhenSpaceIsLimited": false,
     "diffEditor.wordWrap": "off",
     "dotnet.inlayHints.enableInlayHintsForLiteralParameters": true,
@@ -306,7 +306,6 @@
     "go.inlayHints.compositeLiteralFields": true,
     "go.inlayHints.compositeLiteralTypes": true,
     "go.inlayHints.parameterNames": true,
-    "java.format.settings.url": "A:\\dotfiles\\files\\JavaFormatter.xml",
     "java.implementationsCodeLens.enabled": true,
     "java.referencesCodeLens.enabled": true,
     "javascript.inlayHints.enumMemberValues.enabled": true,
@@ -338,7 +337,7 @@
     "security.workspace.trust.banner": "never",
     "security.workspace.trust.enabled": false,
     "smartersemicolon.autoLineChange": false,
-    "smartersemicolon.enable": false,
+    "smartersemicolon.enable": true,
     "sqltools.highlightQuery": false,
     "sqltools.queryParams.enableReplace": true,
     "sqltools.results.reuseTabs": "connection",
@@ -392,10 +391,8 @@
     "thunder-client.indentSize": 4,
     "thunder-client.sidebar.defaultTab": "Collections",
     "thunder-client.sidebar.layout": "compact",
-    "breadcrumbs.enabled": false,
     "java.codeGeneration.useBlocks": true,
     "security.promptForLocalFileProtocolHandling": false,
-    "workbench.iconTheme": "material-icon-theme",
     "editor.semanticHighlighting.enabled": true,
     "js/ts.implicitProjectConfig.checkJs": true,
     "vscode_custom_css.imports": [
@@ -405,7 +402,6 @@
     "editor.inlineSuggest.suppressSuggestions": true,
     "cody.commandCodeLenses": false,
     "editor.pasteAs.enabled": false,
-    "terminal.integrated.enableMultiLinePasteWarning": false,
     "java.jdt.ls.java.home": "C:\\Program Files\\Java\\jdk-21",
     "java.configuration.runtimes": [
         {
@@ -443,4 +439,10 @@
     "terminal.explorerKind": "both",
     "terminal.integrated.gpuAcceleration": "on",
     "terminal.integrated.rightClickBehavior": "nothing",
+    "breadcrumbs.enabled": false,
+    "ib-utilities.externalTerminalCommand": "wt nt -d ${workspaceFolder} ",
+    "explorer.fileNesting.expand": false,
+    "githubPullRequests.createOnPublishBranch": "never",
+    "json.format.keepLines": true,
+    "workbench.iconTheme": "material-icon-theme",
 }

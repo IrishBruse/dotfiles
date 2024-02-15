@@ -9,7 +9,7 @@ menu(type="file|dir" mode=multiple expanded=true)
 // Reorder items
 modify(pos=pos.top image=\uE272 find='"Open with Code"')
 modify(pos=pos.top image=\uE0AC find='"Open WezTerm here"')
-modify(pos=pos.top menu=title.more_options find='"Paste Into File"')
+modify(pos=pos.middle find='"Paste Into File"')
 
 modify(pos=pos.bottom image=\uE19B title="File Lockpick" find="What's using this file?")
 modify(pos=pos.bottom find='Refresh')

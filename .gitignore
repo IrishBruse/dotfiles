@@ -17,3 +17,6 @@ nushell/history.txt
 
 node_modules/
 shell/shell.log
+
+bin/
+obj/
