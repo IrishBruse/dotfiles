@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-string APPDATA_ROAMING = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+﻿string APPDATA_ROAMING = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 string ProgramFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
 string USERPROFILE = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 // string APPDATA_LOCAL = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -25,7 +23,7 @@ string[][] completitions = [
     ["https://raw.githubusercontent.com/nushell/nu_scripts/main/custom-completions/winget/winget-completions.nu","winget.nu"],
 ];
 
-foreach (var completion in completitions)
+foreach (string[] completion in completitions)
 {
     await AddCompletion(completion[0], completion[1]);
 }
@@ -38,10 +36,12 @@ static void Link(string source, string target, bool isFile = false)
     {
         if (isFile)
         {
+            _ = Directory.CreateDirectory(Path.GetDirectoryName(target)!);
             _ = File.CreateSymbolicLink(target, source);
         }
         else
         {
+            _ = Directory.CreateDirectory(Directory.GetParent(Path.GetDirectoryName(target)!)!.FullName);
             _ = Directory.CreateSymbolicLink(target, source);
         }
         Console.WriteLine("Linked " + Path.GetFullPath(source) + " -> " + target + " ");
@@ -60,7 +60,7 @@ static void Link(string source, string target, bool isFile = false)
 
 static async Task AddCompletion(string url, string filename)
 {
-    using var client = new HttpClient();
+    using HttpClient client = new();
     string test = await client.GetStringAsync(url);
     _ = File.WriteAllTextAsync("../nushell/completions/" + filename, test);
 }
