@@ -7,7 +7,7 @@ Link("..\\alacritty\\", APPDATA_ROAMING + "\\alacritty\\");
 Link("..\\WindowsPowerShell\\", USERPROFILE + "\\Documents\\WindowsPowerShell\\");
 Link("..\\Ditto\\", APPDATA_ROAMING + "\\Ditto\\");
 Link("..\\nushell\\", APPDATA_ROAMING + "\\nushell\\");
-Link("..\\vscode\\", APPDATA_ROAMING + "\\Code\\User\\");
+// Link("..\\vscode\\", APPDATA_ROAMING + "\\Code\\User\\"); // Only on desktop
 
 Link("..\\files\\.gitconfig", USERPROFILE + "\\.gitconfig", true);
 Link("..\\files\\.wezterm.lua", USERPROFILE + "\\.wezterm.lua", true);
