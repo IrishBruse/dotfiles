@@ -36,11 +36,13 @@ static void Link(string source, string target, bool isFile = false)
     {
         if (isFile)
         {
+            File.Delete(target);
             _ = Directory.CreateDirectory(Path.GetDirectoryName(target)!);
             _ = File.CreateSymbolicLink(target, source);
         }
         else
         {
+            Directory.Delete(target, true);
             _ = Directory.CreateDirectory(Directory.GetParent(Path.GetDirectoryName(target)!)!.FullName);
             _ = Directory.CreateSymbolicLink(target, source);
         }

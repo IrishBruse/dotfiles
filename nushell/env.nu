@@ -1,3 +1,7 @@
+# Nushell Environment Config File
+#
+# version = "0.90.1"
+
 def create_left_prompt [] {
     mut home = ""
     try {
@@ -21,12 +25,7 @@ def create_left_prompt [] {
 }
 
 def create_right_prompt [] {
-    let git_command = do { ^git branch --show-current } | complete
-    let git_branch  = if ($git_command.exit_code == 0) {
-        ([(ansi green), ($git_command.stdout)] | str join)
-    } else {
-        ""
-    }
+
 
     let last_exit_code = if ($env.LAST_EXIT_CODE != 0) {
         ([
@@ -37,7 +36,7 @@ def create_right_prompt [] {
         ""
     }
 
-    ([$last_exit_code, (char space), $git_branch, " "] | str join)
+    ([$last_exit_code, (char space), (ansi green), $env.nu_git_branch?] | str join)
 }
 
 # Use nushell functions to define your right and left prompt
@@ -47,11 +46,22 @@ $env.PROMPT_COMMAND_RIGHT = {|| create_right_prompt }
 
 # The prompt indicators are environmental variables that represent
 # the state of the prompt
-$env.PROMPT_INDICATOR = {|| " → " }
-$env.PROMPT_MULTILINE_INDICATOR = {|| "→ " }
+$env.PROMPT_INDICATOR = {|| "> " }
+$env.PROMPT_INDICATOR_VI_INSERT = {|| ": " }
+$env.PROMPT_INDICATOR_VI_NORMAL = {|| "> " }
+$env.PROMPT_MULTILINE_INDICATOR = {|| "::: " }
 
-$env.PROMPT_INDICATOR_VI_INSERT = {|| "Vi? " }
-$env.PROMPT_INDICATOR_VI_NORMAL = {|| "Vi? " }
+# If you want previously entered commands to have a different prompt from the usual one,
+# you can uncomment one or more of the following lines.
+# This can be useful if you have a 2-line prompt and it's taking up a lot of space
+# because every command entered takes up 2 lines instead of 1. You can then uncomment
+# the line below so that previously entered commands show with a single `🚀`.
+# $env.TRANSIENT_PROMPT_COMMAND = {|| "🚀 " }
+# $env.TRANSIENT_PROMPT_INDICATOR = {|| "" }
+# $env.TRANSIENT_PROMPT_INDICATOR_VI_INSERT = {|| "" }
+# $env.TRANSIENT_PROMPT_INDICATOR_VI_NORMAL = {|| "" }
+# $env.TRANSIENT_PROMPT_MULTILINE_INDICATOR = {|| "" }
+# $env.TRANSIENT_PROMPT_COMMAND_RIGHT = {|| "" }
 
 # Specifies how environment variables are:
 # - converted from a string to a value on Nushell startup (from_string)
@@ -69,14 +79,14 @@ $env.ENV_CONVERSIONS = {
 }
 
 # Directories to search for scripts when calling source or use
+# The default for this is $nu.default-config-dir/scripts
 $env.NU_LIB_DIRS = [
-    # FIXME: This default is not implemented in rust code as of 2023-09-06.
     ($nu.default-config-dir | path join 'scripts') # add <nushell-config-dir>/scripts
 ]
 
 # Directories to search for plugin binaries when calling register
+# The default for this is $nu.default-config-dir/plugins
 $env.NU_PLUGIN_DIRS = [
-    # FIXME: This default is not implemented in rust code as of 2023-09-06.
     ($nu.default-config-dir | path join 'plugins') # add <nushell-config-dir>/plugins
 ]
 

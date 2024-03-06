@@ -76,3 +76,15 @@ def startTitle [before:any,after:any] {
         title Nushell - $cwd
     }
 }
+
+def --env onChangePWD [old:any,new:any] {
+
+    let git_command = do { ^git branch --show-current } | complete
+    let git_branch  = if ($git_command.exit_code == 0) {
+        ($git_command.stdout | str join)
+    } else {
+        ""
+    }
+
+    $env.nu_git_branch = $git_branch
+}

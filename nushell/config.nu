@@ -1,3 +1,12 @@
+# Nushell Config File
+#
+# version = "0.90.1"
+
+# For more information on defining custom themes, see
+# https://www.nushell.sh/book/coloring_and_theming.html
+# And here is the theme collection
+# https://github.com/nushell/nu_scripts/tree/main/themes
+
 source A:/dotfiles/nushell/completions.nu
 source A:/dotfiles/nushell/commands.nu
 
@@ -37,6 +46,7 @@ let dark_theme = {
     shape_directory: cyan
     shape_external: cyan
     shape_externalarg: green_bold
+    shape_external_resolved: light_yellow_bold
     shape_filepath: cyan
     shape_flag: blue_bold
     shape_float: purple_bold
@@ -45,6 +55,7 @@ let dark_theme = {
     shape_globpattern: cyan_bold
     shape_int: purple_bold
     shape_internalcall: cyan_bold
+    shape_keyword: cyan_bold
     shape_list: cyan_bold
     shape_literal: blue
     shape_match_pattern: green
@@ -66,7 +77,7 @@ let dark_theme = {
 
 # External completer example
 # let carapace_completer = {|spans|
-#     carapace $spans.0 nushell $spans | from json
+#     carapace $spans.0 nushell ...$spans | from json
 # }
 
 # The default config record. This is where much of your global configuration is setup.
@@ -120,11 +131,6 @@ $env.config = {
             selected_cell: {bg: light_blue},
             selected_row: {},
             selected_column: {},
-            show_cursor: true,
-            line_head_top: true,
-            line_head_bottom: true,
-            line_shift: true,
-            line_index: true,
         },
     }
 
@@ -148,7 +154,7 @@ $env.config = {
     }
 
     filesize: {
-        metric: true # true => KB, MB, GB (ISO standard), false => KiB, MiB, GiB (Windows standard)
+        metric: false # true => KB, MB, GB (ISO standard), false => KiB, MiB, GiB (Windows standard)
         format: "auto" # b, kb, kib, mb, mib, gb, gib, tb, tib, pb, pib, eb, eib, auto
     }
 
@@ -166,14 +172,18 @@ $env.config = {
     use_ansi_coloring: true
     bracketed_paste: true # enable bracketed paste, currently useless on windows
     edit_mode: emacs # emacs, vi
-    shell_integration: true # enables terminal shell integration. Off by default, as some terminals have issues with this.
-    render_right_prompt_on_last_line: false # true or false to enable or disable right prompt to be rendered on last line of the prompt.
+    shell_integration: ((($env.VSCODE_GIT_EDITOR_MAIN?) | describe) == string) # enables terminal shell integration. Off by default, as some terminals have issues with this.
+    render_right_prompt_on_last_line: true # true or false to enable or disable right prompt to be rendered on last line of the prompt.
+    use_kitty_protocol: false # enables keyboard enhancement protocol implemented by kitty console, only if your terminal support this.
+    highlight_resolved_externals: false # true enables highlighting of external commands in the repl resolved by which.
+
+    plugins: {} # Per-plugin configuration. See https://www.nushell.sh/contributor-book/plugins.html#configuration.
 
     hooks: {
         pre_prompt: [{ null }] # run before the prompt is shown
-        pre_execution: [{ displayTitle }] # run before the repl input is run
+        pre_execution: [{ null }] # run before the repl input is run
         env_change: {
-            PWD: [{|before, after| startTitle $before $after }] # run if the PWD environment is different since the last repl input
+            PWD: [{|before, after| onChangePWD $before $after }] # run if the PWD environment is different since the last repl input
         }
         display_output: "if (term size).columns >= 100 { table -e } else { table }" # run to display the output of a pipeline
         command_not_found: { null } # return an error message when a command is not found
@@ -194,8 +204,43 @@ $env.config = {
             }
             style: {
                 text: green
-                selected_text: green_reverse
+                selected_text: {attr: r}
                 description_text: yellow
+                match_text: {attr: u}
+                selected_match_text: {attr: ur}
+            }
+        }
+        {
+            name: ide_completion_menu
+            only_buffer_difference: false
+            marker: "| "
+            type: {
+                layout: ide
+                min_completion_width: 0,
+                max_completion_width: 50,
+                # max_completion_height: 10, # will be limited by the available lines in the terminal
+                padding: 0,
+                border: true,
+                cursor_offset: 0,
+                description_mode: "prefer_right"
+                min_description_width: 0
+                max_description_width: 50
+                max_description_height: 10
+                description_offset: 1
+                # If true, the cursor pos will be corrected, so the suggestions match up with the typed text
+                #
+                # C:\> str
+                #      str join
+                #      str trim
+                #      str split
+                correct_cursor_pos: false
+            }
+            style: {
+                text: green
+                selected_text: {attr: r}
+                description_text: yellow
+                match_text: {attr: u}
+                selected_match_text: {attr: ur}
             }
         }
         {
@@ -245,6 +290,26 @@ $env.config = {
                     { edit: complete }
                 ]
             }
+        }
+        {
+            name: ide_completion_menu
+            modifier: control
+            keycode: char_n
+            mode: [emacs vi_normal vi_insert]
+            event: {
+                until: [
+                    { send: menu name: ide_completion_menu }
+                    { send: menunext }
+                    { edit: complete }
+                ]
+            }
+        }
+        {
+            name: history_menu
+            modifier: control
+            keycode: char_r
+            mode: [emacs, vi_insert, vi_normal]
+            event: { send: menu name: history_menu }
         }
         {
             name: help_menu
@@ -315,6 +380,13 @@ $env.config = {
             event: { send: searchhistory }
         }
         {
+            name: open_command_editor
+            modifier: control
+            keycode: char_o
+            mode: [emacs, vi_normal, vi_insert]
+            event: { send: openeditor }
+        }
+        {
             name: move_up
             modifier: none
             keycode: up
@@ -369,16 +441,6 @@ $env.config = {
             keycode: left
             mode: [emacs, vi_normal, vi_insert]
             event: {edit: movewordleft}
-        }
-        {
-            name: reload_config
-            modifier: none
-            keycode: f5
-            mode: [ emacs vi_insert vi_normal ]
-            event: [
-              { edit: clear }
-              { send: executehostcommand cmd: $"source A:\\dotfiles\\nushell\\commands.nu; source ($nu.env-path); source ($nu.config-path); print 'Reloading config...'" }
-            ]
         }
         {
             name: move_one_word_right_or_take_history_hint
@@ -684,6 +746,34 @@ $env.config = {
             keycode: char_c
             mode: emacs
             event: {edit: capitalizechar}
+        }
+        {
+            name: copy_selection
+            modifier: control_shift
+            keycode: char_c
+            mode: emacs
+            event: { edit: copyselection }
+        }
+        {
+            name: cut_selection
+            modifier: control_shift
+            keycode: char_x
+            mode: emacs
+            event: { edit: cutselection }
+        }
+        {
+            name: select_all
+            modifier: control_shift
+            keycode: char_a
+            mode: emacs
+            event: { edit: selectall }
+        }
+        {
+            name: paste
+            modifier: control_shift
+            keycode: char_v
+            mode: emacs
+            event: { edit: pastecutbufferbefore }
         }
     ]
 }
