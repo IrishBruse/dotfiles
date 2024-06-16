@@ -1,4 +1,4 @@
-eval "$(oh-my-posh init zsh --config ~/dotfiles/zsh/oh-my-posh.toml)"
+eval "$(oh-my-posh init zsh --config ~/dotfiles/zsh/oh-my-posh.yaml)"
 
 source ~/dotfiles/zsh/nvm.sh
 
@@ -7,6 +7,7 @@ alias cd="z"
 alias lg="lazygit"
 alias ls="eza -a"
 alias zshrc="code ~/dotfiles/zsh/zshrc.sh"
+alias watch="watch exec"
 
 alias dot="code ~/dotfiles/"
 
@@ -19,9 +20,9 @@ c() {
     fi
 }
 
+
 eval "$(zoxide init zsh)"
 source <(fzf --zsh)
-
 
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 [ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
@@ -30,7 +31,7 @@ ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 autoload -Uz compinit
 compinit
 
-source ~/gh.sh
+[ -f ~/gh.sh ] && source ~/gh.sh
 
 source "${ZINIT_HOME}/zinit.zsh"
 

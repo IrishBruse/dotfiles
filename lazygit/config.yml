@@ -11,6 +11,7 @@ git:
   disableForcePushing: true
   branchLogCmd: git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=medium {{branchName} --}
   allBranchesLogCmd: git log --graph --all --color=always --abbrev-commit --decorate --date=relative  --pretty=medium
+
   paging:
     colorArg: always
     useConfig: true
@@ -42,7 +43,7 @@ gui:
   border: single
   animateExplosion: true
   portraitMode: auto
-  nerdFontsVersion: "3"
+  nerdFontsVersion: "2"
 
 os:
   editPreset: "vscode"
