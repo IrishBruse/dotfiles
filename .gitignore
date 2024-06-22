@@ -1,22 +1,6 @@
-PowerToys/**/*log*
-PowerToys/Updates
-PowerToys/*.json
-
-!PowerToys/settings.json
-PowerToys/**/*version*
-
-PowerToys/PowerToys Run/
-
-vscode/History/
-vscode/globalStorage/
-vscode/workspaceStorage/
-vscode/profiles/
-PowerToys/ColorPicker/settings.json
-vscode/sync/**/
-nushell/history.txt
-
 node_modules/
-shell/shell.log
 
 bin/
 obj/
+
+.cinnamon/spices.cache

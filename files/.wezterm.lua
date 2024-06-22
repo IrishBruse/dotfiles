@@ -19,11 +19,10 @@ config.window_close_confirmation = "NeverPrompt"
 config.window_decorations = "RESIZE"
 config.enable_scroll_bar = false
 config.default_cursor_style = "BlinkingBar"
-config.animation_fps = 30
+config.animation_fps = 60
 config.cursor_blink_ease_in = "Constant"
 config.cursor_blink_ease_out = "Constant"
 config.automatically_reload_config = true
-config.default_cwd = "~/git/"
 
 wezterm.on("gui-startup", function(cmd)
     local config = cmd or {}
@@ -35,7 +34,7 @@ wezterm.on("gui-startup", function(cmd)
     gui_window:set_position(active.width / 2 - term_size.pixel_width / 2, active.height / 2 - term_size.pixel_height / 2)
 end)
 
-local font = wezterm.font_with_fallback {
+config.font = wezterm.font_with_fallback {
     {
         family = "CaskaydiaCove NF",
         weight = "Bold",
@@ -43,87 +42,13 @@ local font = wezterm.font_with_fallback {
     },
 }
 
-config.font = font
-
 config.window_frame = {
     font = font,
     active_titlebar_bg = "#23272a",
     inactive_titlebar_bg = "#333333",
 }
 
-config.colors = {
-    foreground = "#D4D4D4",
-    background = "#191D1F",
-
-    cursor_bg = "#D4D4D4",
-    cursor_fg = "#D4D4D4",
-    cursor_border = "#D4D4D4",
-
-    selection_fg = "#D4D4D4",
-    selection_bg = "#354A1D",
-
-    scrollbar_thumb = "#4f5051",
-
-    split = "#32383d",
-
-    tab_bar = {
-        background = "#23272a",
-        active_tab = {
-            bg_color = "#191D1F",
-            fg_color = "#D4D4D4",
-        },
-        inactive_tab = {
-            bg_color = "#1e2224",
-            fg_color = "#D4D4D4",
-        },
-        inactive_tab_hover = {
-            bg_color = "#191D1F",
-            fg_color = "#D4D4D4",
-        },
-        new_tab = {
-            bg_color = "#23272a",
-            fg_color = "#D4D4D4",
-        },
-        new_tab_hover = {
-            bg_color = "#191D1F",
-            fg_color = "#D4D4D4",
-        },
-    },
-
-    ansi = {
-        "#363636",
-        "#e53935",
-        "#91b859",
-        "#ffb62c",
-        "#6182b8",
-        "#ff5370",
-        "#39adb5",
-        "#a0a0a0",
-    },
-    brights = {
-        "#4e4e4e",
-        "#ff5370",
-        "#c3e88d",
-        "#ffcb6b",
-        "#82aaff",
-        "#f07178",
-        "#89ddff",
-        "#ffffff",
-    },
-
-    indexed = { [136] = "#af8700" },
-    compose_cursor = "orange",
-
-    copy_mode_active_highlight_bg = { Color = "#000000" },
-    copy_mode_active_highlight_fg = { AnsiColor = "Black" },
-    copy_mode_inactive_highlight_bg = { Color = "#52ad70" },
-    copy_mode_inactive_highlight_fg = { AnsiColor = "White" },
-
-    quick_select_label_bg = { Color = "peru" },
-    quick_select_label_fg = { Color = "#ffffff" },
-    quick_select_match_bg = { AnsiColor = "Navy" },
-    quick_select_match_fg = { Color = "#ffffff" },
-}
+config.color_scheme = 'OneHalfDark'
 
 config.disable_default_key_bindings = true
 config.keys = {

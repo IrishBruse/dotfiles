@@ -3,8 +3,9 @@ eval "$(oh-my-posh init zsh --config ~/dotfiles/zsh/oh-my-posh.yaml)"
 source ~/dotfiles/zsh/nvm.sh
 
 # alias
+alias ..="cd .."
 alias cd="z"
-alias lg="lazygit"
+alias lz="lazygit"
 alias ls="eza -a"
 alias zshrc="code ~/dotfiles/zsh/zshrc.sh"
 alias watch="watch exec"
@@ -19,7 +20,6 @@ c() {
         code $1
     fi
 }
-
 
 eval "$(zoxide init zsh)"
 source <(fzf --zsh)
