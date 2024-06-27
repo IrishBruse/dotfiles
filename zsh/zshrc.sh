@@ -17,5 +17,10 @@ zinit light zsh-users/zsh-autosuggestions
 zinit snippet 'https://github.com/robbyrussell/oh-my-zsh/raw/master/plugins/git/git.plugin.zsh'
 
 source ~/dotfiles/zsh/commands.zsh
-source ~/gp.sh
-source ~/secrets.sh
+
+[ -f ~/gp.sh ] && source ~/gp.sh
+[ -f ~/secrets.sh ] && source ~/secrets.sh
+
+export HISTFILE="$HOME/.zsh_history"
+export HISTSIZE=1000000000
+export SAVEHIST=1000000000

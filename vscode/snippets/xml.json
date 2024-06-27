@@ -1,0 +1,33 @@
+{
+  "csproj": {
+    "prefix": "csproj",
+    "body": [
+      "<Project Sdk=\"Microsoft.NET.Sdk\">",
+      "",
+      "    <PropertyGroup>",
+      "        <OutputType>Exe</OutputType>",
+      "        <TargetFramework>net8.0</TargetFramework>",
+      "    </PropertyGroup>",
+      "",
+      "</Project>",
+      ""
+    ],
+    "description": "csproj template"
+  },
+  "PackageReference": {
+    "prefix": "PackageReference",
+    "body": [
+      "<PackageReference Include=\"$1\" Version=\"$2\" />$0",
+      ""
+    ],
+    "description": "Add PackageReference to project"
+  },
+  "ProjectReference": {
+    "prefix": "ProjectReference",
+    "description": "Add PackageReference to project",
+    "body": [
+      "<ProjectReference Include=\"$1\" Version=\"$2\" />$0",
+      ""
+    ]
+  }
+}

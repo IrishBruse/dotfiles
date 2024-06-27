@@ -1,0 +1,38 @@
+[Nemo Action]
+
+# %U - insert URI list of selection
+# %F - insert path list of selection
+# %P - insert path of parent (current) directory
+# %f or %N (deprecated) - insert display name of first selected file
+# %p - insert display name of parent directory
+# %D - insert device path of file (i.e. /dev/sdb1)
+# %e - insert display name of first selected file with the extension stripped
+# %% - insert a literal percent sign, don't treat the next character as a token
+# %X - insert the XID for the NemoWindow this action is being activated in.
+
+Active=true
+Name=Open File in Code
+Comment=Open File in Code
+Exec=code %F
+
+Icon-Name=vscode
+
+# What type selection: [s]ingle, [m]ultiple, any, notnone, none (background click), or
+Selection=s
+
+# "dir" for directory selection
+# "none" for no extension.
+# "nodirs" for any selection, but not including directories.
+# "any" for any file type, including directories.
+Extensions=dir
+
+# Escape Spaces - set to true to escape spaces in filenames and uris ($U, $F, $P, $D)
+#
+# Sometimes this may be preferred to getting raw filenames that must be enclosed in
+# quotes.
+#
+# Optional - by default this is false
+
+EscapeSpaces=true
+
+#Terminal=false
