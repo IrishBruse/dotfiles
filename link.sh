@@ -1,8 +1,8 @@
-ln files/.gitconfig ~/.gitconfig
-ln lazygit/config.yml ~/.config/lazygit/config.yml
-ln -s $(realpath .themes/Custom/)/ ~/.themes
-ln files/.wezterm.lua ~/.wezterm.lua
-ln -s $(realpath .cinnamon/)/ ~/.cinnamon
-ln -s $(realpath nemo/) ~/.local/share/nemo
-ln $(realpath ./vscode/settings.json) ~/.config/Code/User/settings.json
-ln $(realpath ./vscode/snippets/) ~/.config/Code/User/snippets
+ln -f $(realpath ./files/.gitconfig) ~/.gitconfig
+ln -f $(realpath ./lazygit/config.yml) ~/.config/lazygit/config.yml
+ln -f -s $(realpath .themes/Custom/)/ ~/.themes
+ln -f files/.wezterm.lua ~/.wezterm.lua
+ln -f -s $(realpath .cinnamon/)/ ~/.cinnamon
+ln -f -s $(realpath nemo/) ~/.local/share/nemo
+ln -f $(realpath ./vscode/settings.json) ~/.config/Code/User/settings.json
+ln -f $(realpath ./vscode/snippets/) ~/.config/Code/User/snippets

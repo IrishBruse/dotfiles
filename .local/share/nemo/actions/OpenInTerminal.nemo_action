@@ -11,14 +11,14 @@
 # %X - insert the XID for the NemoWindow this action is being activated in.
 
 Active=true
-Name=Open File in Code
-Comment=Open File in Code
-Exec=code %F
+Name=Open in WezTerm
+Comment=Open %P in WezTerm
+Exec=wezterm start --cwd %P
 
-Icon-Name=vscode
+Icon-Name=terminal
 
 # What type selection: [s]ingle, [m]ultiple, any, notnone, none (background click), or
-Selection=s
+Selection=none
 
 # "dir" for directory selection
 # "none" for no extension.

@@ -11,10 +11,14 @@
         "button.hoverBackground": "#6087cf",
         "diffEditor.insertedTextBackground": "#00809b33",
         "dropdown.background": "#353b45",
+        "scrollbar.shadow": "#00000000",
+        "editorStickyScroll.shadow": "#00000066",
         "dropdown.border": "#181a1f",
         "editor.background": "#282c34",
         "editor.findMatchHighlightBackground": "#528bff3d",
         "editor.foreground": "#abb2bf",
+        "panel.border": "#3a3f4b",
+        "diffEditor.border": "#3a3f4b",
         "editor.lineHighlightBackground": "#99bbff0a",
         "editor.selectionBackground": "#3e4451",
         "editorCursor.foreground": "#528bff",
@@ -1864,7 +1868,7 @@
     },
     "[markdown]": {
         "cSpell.enabled": true,
-        "editor.defaultFormatter": "yzhang.markdown-all-in-one",
+        "editor.defaultFormatter": null,
         "editor.pasteAs.enabled": true,
         "editor.unicodeHighlight.ambiguousCharacters": false,
         "editor.unicodeHighlight.invisibleCharacters": false,
@@ -1886,7 +1890,9 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.semanticHighlighting.enabled": false
     },
-    "[yaml]": { },
+    "[yaml]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
     "apc.activityBar": {
         "itemMargin": 1,
         "itemSize": 0
@@ -2119,7 +2125,7 @@
     "window.customTitleBarVisibility": "auto",
     "window.menuBarVisibility": "hidden",
     "window.openFilesInNewWindow": "off",
-    "window.title": "${rootName}${separator}${activeRepositoryBranchName}${separator}${activeEditorShort}",
+    "window.title": "${rootName}",
     "window.titleSeparator": " - ",
     "workbench.activityBar.location": "top",
     "workbench.colorTheme": "Empty Dark",
@@ -2129,12 +2135,13 @@
     "workbench.editor.limit.enabled": true,
     "workbench.editor.limit.value": 10,
     "workbench.editorAssociations": {
+        "{git,gitlens,conflictResolution,vscode-local-history}:/**/*.tc.json": "default",
         "*.bin": "hexEditor.hexedit",
         "*.gb": "hexEditor.hexedit",
         "*.gbm": "hexEditor.hexedit",
-        "*.gbr": "hexEditor.hexedit"
+        "*.gbr": "hexEditor.hexedit",
+        "*.md": "markdownEditor.customEditor"
     },
-    "workbench.iconTheme": "material-icon-theme",
     "workbench.layoutControl.enabled": false,
     "workbench.productIconTheme": "material-product-icons",
     "workbench.sideBar.location": "right",
@@ -2144,7 +2151,27 @@
     "zenMode.fullScreen": false,
     "zenMode.hideLineNumbers": false,
     "zenMode.hideStatusBar": false,
+    "thunder-client.certificates": [
+        {
+            "pfxPath": "cert.p12",
+            "passphrase": ""
+        }
+    ],
+    "apc.stylesheet": {
+        ".editor-actions": {
+            "background-color": "rgb(40, 44, 52)"
+        }
+    },
     "zenMode.restore": false,
     "zenMode.showTabs": "none",
-    "zenMode.silentNotifications": true
+    "zenMode.silentNotifications": true,
+    "Notes.notesLocation": "/home/econn/notes",
+    "terminal.integrated.commandsToSkipShell": [
+        "-workbench.action.terminal.kill",
+        "-workbench.action.terminal.killEditor"
+    ],
+    "diffEditor.ignoreTrimWhitespace": true,
+    "errorLens.gutterIconSet": "defaultOutline",
+    "editor.showFoldingControls": "always",
+    "workbench.iconTheme": "material-icon-theme"
 }
