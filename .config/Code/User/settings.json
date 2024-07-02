@@ -1867,7 +1867,6 @@
         "editor.defaultFormatter": "vscode.json-language-features"
     },
     "[markdown]": {
-        "cSpell.enabled": true,
         "editor.defaultFormatter": null,
         "editor.pasteAs.enabled": true,
         "editor.unicodeHighlight.ambiguousCharacters": false,
@@ -1900,8 +1899,6 @@
     "apc.font.family": "CaskaydiaCove NF",
     "breadcrumbs.enabled": false,
     "breadcrumbs.filePath": "off",
-    "cmake.configureOnOpen": true,
-    "cmake.showOptionsMovedNotification": false,
     "cody.codeActions.enabled": false,
     "cody.commandCodeLenses": false,
     "cody.commandHints.enabled": false,
@@ -2158,14 +2155,15 @@
         }
     ],
     "apc.stylesheet": {
-        ".editor-actions": {
-            "background-color": "rgb(40, 44, 52)"
+        ".tabs-and-actions-container .editor-actions": {
+            "background-color": "rgb(40, 44, 52)",
+            "padding": "0 4px 0 8px !important"
         }
     },
     "zenMode.restore": false,
     "zenMode.showTabs": "none",
     "zenMode.silentNotifications": true,
-    "Notes.notesLocation": "/home/econn/notes",
+    "Notes.notesLocation": "/home/econneely/notes",
     "terminal.integrated.commandsToSkipShell": [
         "-workbench.action.terminal.kill",
         "-workbench.action.terminal.killEditor"

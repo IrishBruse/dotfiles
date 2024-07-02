@@ -10,3 +10,6 @@ obj/
 .config/Code/User/workspaceStorage
 .config/Code/User/History
 .config/Code/User/sync
+.local/share/applications/mimeapps.list
+.local/share/applications/mimeinfo.cache
+.local/share/applications/google-chrome.desktop

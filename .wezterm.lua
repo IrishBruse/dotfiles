@@ -6,7 +6,7 @@ local config = wezterm.config_builder()
 config.default_prog = { "zsh", "-i", "-l" }
 config.default_gui_startup_args = { "start" }
 
-config.font_size = 12.0
+config.font_size = 9.0
 config.freetype_load_target = "HorizontalLcd"
 
 config.initial_cols = 120
@@ -23,6 +23,12 @@ config.animation_fps = 60
 config.cursor_blink_ease_in = "Constant"
 config.cursor_blink_ease_out = "Constant"
 config.automatically_reload_config = true
+
+local ctrl = "CTRL"
+
+if wezterm.target_triple == 'aarch64-apple-darwin' then
+    ctrl = "CMD"
+end
 
 wezterm.on("gui-startup", function(cmd)
     local config = cmd or {}
@@ -51,25 +57,25 @@ config.color_scheme = 'OneHalfDark'
 
 config.disable_default_key_bindings = true
 config.keys = {
-    { mods = "CMD|SHIFT", key = "p", action = wezterm.action.ActivateCommandPalette, },
-    { mods = "CMD",       key = "w", action = wezterm.action.CloseCurrentTab({ confirm = false }), },
-    { mods = "CMD",       key = "v", action = wezterm.action.PasteFrom("Clipboard"), },
-    { mods = "CMD",       key = "n", action = wezterm.action.SpawnCommandInNewTab {} },
-    { mods = "CMD",       key = "k", action = wezterm.action.ClearScrollback("ScrollbackAndViewport") },
-    { mods = "CMD|SHIFT", key = "r", action = wezterm.action.ReloadConfiguration },
+    { mods = ctrl .. "|SHIFT", key = "p", action = wezterm.action.ActivateCommandPalette, },
+    { mods = ctrl,             key = "w", action = wezterm.action.CloseCurrentTab({ confirm = false }), },
+    { mods = ctrl,             key = "v", action = wezterm.action.PasteFrom("Clipboard"), },
+    { mods = ctrl,             key = "n", action = wezterm.action.SpawnCommandInNewTab {} },
+    { mods = ctrl,             key = "k", action = wezterm.action.ClearScrollback("ScrollbackAndViewport") },
+    { mods = ctrl .. "|SHIFT", key = "r", action = wezterm.action.ReloadConfiguration },
     {
-        mods = "CMD",
+        mods = ctrl .. "",
         key = "c",
         action = wezterm.action_callback(function(window, pane)
             if window:get_selection_text_for_pane(pane) == "" then
-                window:perform_action(wezterm.action.SendKey { key = "c", mods = "CMD" }, pane)
+                window:perform_action(wezterm.action.SendKey { key = "c", mods = ctrl }, pane)
             else
                 window:perform_action(wezterm.action { CopyTo = "ClipboardAndPrimarySelection" }, pane)
             end
         end),
     },
     {
-        mods = "CMD",
+        mods = ctrl,
         key = "a",
         action = wezterm.action.Multiple({
             wezterm.action.ActivateCopyMode

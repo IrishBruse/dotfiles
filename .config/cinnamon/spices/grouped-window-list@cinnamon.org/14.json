@@ -168,7 +168,7 @@
         "type": "checkbox",
         "default": true,
         "description": "Group windows by application",
-        "value": true
+        "value": false
     },
     "show-all-workspaces": {
         "type": "checkbox",
@@ -191,7 +191,7 @@
             "Fade": 2,
             "Scale": 3
         },
-        "value": 3
+        "value": 2
     },
     "cycleMenusHotkey": {
         "type": "keybinding",
