@@ -6,7 +6,11 @@ local config = wezterm.config_builder()
 config.default_prog = { "zsh", "-i", "-l" }
 config.default_gui_startup_args = { "start" }
 
-config.font_size = 9.0
+if wezterm.target_triple == 'aarch64-apple-darwin' then
+    config.font_size = 12.0
+else
+    config.font_size = 9.0
+end
 config.freetype_load_target = "HorizontalLcd"
 
 config.initial_cols = 120
