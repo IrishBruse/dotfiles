@@ -41,6 +41,11 @@
         "editorWidget.border": "#3a3f4b",
         "errorLens.errorBackground": "#00000000",
         "errorLens.hintBackground": "#00000000",
+        "commandCenter.border": "#3B4048",
+        "commandCenter.background": "#282C34",
+        "commandCenter.activeBorder": "#3B4048",
+        "commandCenter.activeBackground": "#3B4048",
+        "commandCenter.activeForeground": "#d7dae0",
         "errorLens.hintBackgroundLight": "#00000000",
         "errorLens.infoBackground": "#00000000",
         "errorLens.warningBackground": "#00000000",
@@ -1897,6 +1902,7 @@
         "itemSize": 0
     },
     "apc.font.family": "CaskaydiaCove NF",
+    "apc.monospace.font.family": "CaskaydiaCove NF",
     "breadcrumbs.enabled": false,
     "breadcrumbs.filePath": "off",
     "cody.codeActions.enabled": false,
@@ -1994,7 +2000,6 @@
     "errorLens.messageMaxChars": 80,
     "errorLens.replaceLinebreaksSymbol": " ⏎",
     "errorLens.scrollbarHackEnabled": true,
-    "explorer.autoReveal": "focusNoScroll",
     "explorer.compactFolders": true,
     "explorer.confirmDelete": false,
     "explorer.confirmDragAndDrop": false,
@@ -2015,7 +2020,8 @@
         "*.snippet": "plaintext",
         "*.toml": "ini",
         ".air.toml": "ini",
-        ".zshsecrets": "shellscript"
+        ".zshsecrets": "shellscript",
+        "*.nemo_action": "ini"
     },
     "files.exclude": {
         "**/obj": true
@@ -2043,8 +2049,6 @@
     "hexeditor.inspectorType": "aside",
     "hexeditor.showDecodedText": true,
     "http.experimental.systemCertificatesV2": true,
-    "http.proxy": "",
-    "http.proxyStrictSSL": false,
     "http.systemCertificates": true,
     "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
     "javascript.inlayHints.propertyDeclarationTypes.enabled": true,
@@ -2119,7 +2123,6 @@
     "typescript.updateImportsOnFileMove.enabled": "always",
     "update.mode": "start",
     "window.closeWhenEmpty": false,
-    "window.customTitleBarVisibility": "auto",
     "window.menuBarVisibility": "hidden",
     "window.openFilesInNewWindow": "off",
     "window.title": "${rootName}",
@@ -2128,7 +2131,6 @@
     "workbench.colorTheme": "Empty Dark",
     "workbench.editor.decorations.badges": false,
     "workbench.editor.decorations.colors": false,
-    "workbench.editor.enablePreview": false,
     "workbench.editor.limit.enabled": true,
     "workbench.editor.limit.value": 10,
     "workbench.editorAssociations": {
@@ -2148,12 +2150,6 @@
     "zenMode.fullScreen": false,
     "zenMode.hideLineNumbers": false,
     "zenMode.hideStatusBar": false,
-    "thunder-client.certificates": [
-        {
-            "pfxPath": "cert.p12",
-            "passphrase": ""
-        }
-    ],
     "apc.stylesheet": {
         ".tabs-and-actions-container .editor-actions": {
             "background-color": "rgb(40, 44, 52)",
@@ -2163,7 +2159,6 @@
     "zenMode.restore": false,
     "zenMode.showTabs": "none",
     "zenMode.silentNotifications": true,
-    "Notes.notesLocation": "/home/econneely/notes",
     "terminal.integrated.commandsToSkipShell": [
         "-workbench.action.terminal.kill",
         "-workbench.action.terminal.killEditor"
@@ -2171,5 +2166,12 @@
     "diffEditor.ignoreTrimWhitespace": true,
     "errorLens.gutterIconSet": "defaultOutline",
     "editor.showFoldingControls": "always",
-    "workbench.iconTheme": "material-icon-theme"
+    "workbench.iconTheme": "material-icon-theme",
+    "typescript.tsdk": "./node_modules/typescript/lib",
+    "window.customTitleBarVisibility": "auto",
+    "scm.experimental.showHistoryGraph": true,
+    "java.maven.downloadSources": true,
+    "java.maven.updateSnapshots": true,
+    "java.jdt.ls.androidSupport.enabled": "on",
+    "java.jdt.ls.java.home": "/usr/lib/jvm/java-17-openjdk-amd64/",
 }

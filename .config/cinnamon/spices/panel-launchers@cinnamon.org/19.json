@@ -12,8 +12,8 @@
         ],
         "value": [
             "google-chrome.desktop",
-            "org.wezfurlong.wezterm.desktop",
-            "code.desktop"
+            "code.desktop",
+            "org.wezfurlong.wezterm.desktop"
         ]
     },
     "allow-dragging": {

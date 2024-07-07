@@ -23,6 +23,13 @@
         "tooltip": "Set keybinding(s) to show the sound applet menu.",
         "value": "::"
     },
+    "alwaysShowMuteInput": {
+        "type": "switch",
+        "description": "Always show input switch",
+        "tooltip": "Always show the 'Mute input' switch in the context menu.",
+        "default": false,
+        "value": false
+    },
     "_knownPlayers": {
         "type": "generic",
         "default": [
@@ -71,6 +78,18 @@
         "description": "Action on middle click",
         "value": "mute"
     },
+    "middleShiftClickAction": {
+        "type": "combobox",
+        "default": "in_mute",
+        "options": {
+            "Toggle Mute": "mute",
+            "Toggle Mute output": "out_mute",
+            "Toggle Mute input": "in_mute",
+            "Toggle Play / Pause": "player"
+        },
+        "description": "Action on shift+middle click",
+        "value": "in_mute"
+    },
     "horizontalScroll": {
         "type": "switch",
         "default": false,
@@ -84,13 +103,6 @@
         "description": "Show album art as icon",
         "dependency": "playerControl",
         "value": false
-    },
-    "keepAlbumAspectRatio": {
-        "type": "switch",
-        "default": true,
-        "description": "Keep album art aspect ratio",
-        "dependency": "playerControl",
-        "value": true
     },
     "hideSystray": {
         "type": "switch",
@@ -120,5 +132,5 @@
         "description": "Show song artist and title in tooltip",
         "value": false
     },
-    "__md5__": "0f19e15425da25964a78ca68fe659073"
+    "__md5__": "ceea7709f6c96376c9f83b9b8ddce0b5"
 }

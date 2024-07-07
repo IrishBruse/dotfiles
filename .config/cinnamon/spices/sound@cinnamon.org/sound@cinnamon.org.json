@@ -7,7 +7,7 @@
         "type": "switch",
         "default": true,
         "description": "Control Players",
-        "value": true
+        "value": false
     },
     "extendedPlayerControl": {
         "type": "switch",
@@ -21,7 +21,7 @@
         "description": "Show menu",
         "default": "<Shift><Super>s",
         "tooltip": "Set keybinding(s) to show the sound applet menu.",
-        "value": "<Shift><Super>s"
+        "value": "::"
     },
     "alwaysShowMuteInput": {
         "type": "switch",
@@ -40,7 +40,8 @@
         "value": [
             "banshee",
             "vlc",
-            "rhythmbox"
+            "rhythmbox",
+            "io.github.celluloid_player.Celluloid"
         ]
     },
     "section2": {
@@ -75,7 +76,7 @@
             "Toggle Play / Pause": "player"
         },
         "description": "Action on middle click",
-        "value": "mute"
+        "value": "out_mute"
     },
     "middleShiftClickAction": {
         "type": "combobox",

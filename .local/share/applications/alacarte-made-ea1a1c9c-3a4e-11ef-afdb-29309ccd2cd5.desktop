@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Godot
+Exec=/home/econn/Apps/Godot_v4.3-beta2_mono_linux_x86_64/Godot_v4.3-beta2_mono_linux.x86_64
+Comment=
+Terminal=false
+PrefersNonDefaultGPU=false
+Icon=godot-mono
+Type=Application

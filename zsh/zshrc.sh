@@ -12,8 +12,7 @@ compinit
 source "${ZINIT_HOME}/zinit.zsh"
 
 zinit light zpm-zsh/clipboard # pipe to clip
-zinit light zsh-users/zsh-completions # ghost text completion
-zinit light zsh-users/zsh-autosuggestions
+zinit light zsh-users/zsh-autosuggestions  # ghost text completion
 zinit snippet 'https://github.com/robbyrussell/oh-my-zsh/raw/master/plugins/git/git.plugin.zsh'
 
 source ~/dotfiles/zsh/commands.zsh
@@ -21,6 +20,6 @@ source ~/dotfiles/zsh/commands.zsh
 [ -f ~/gp.sh ] && source ~/gp.sh
 [ -f ~/secrets.sh ] && source ~/secrets.sh
 
-export HISTFILE="$HOME/.zsh_history"
-export HISTSIZE=1000000000
-export SAVEHIST=1000000000
+## case insensitive path-completion
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' menu select

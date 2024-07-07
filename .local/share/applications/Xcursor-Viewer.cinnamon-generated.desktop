@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=Xcursor-Viewer
+Comment=Xcursor-Viewer
+Exec=xcursor-viewer
+Terminal=false
+StartupNotify=true
+PrefersNonDefaultGPU=false
+Icon=cursor-arrow
