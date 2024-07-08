@@ -1,4 +1,4 @@
-source /home/econn/dotfiles/zsh/zshrc.sh
+source ~/dotfiles/zsh/zshrc.zsh
 
 autoload -Uz compinit
 zstyle ':completion:*' menu select

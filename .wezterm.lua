@@ -86,6 +86,16 @@ config.window_frame = {
 
 config.color_scheme = 'OneDark (base16)'
 
+local copy = wezterm.action_callback(function(window, pane)
+    if window:get_selection_text_for_pane(pane) == "" then
+        window:perform_action(wezterm.action.SendKey { key = "c", mods = ctrl }, pane)
+    else
+        window:perform_action(wezterm.action { CopyTo = "ClipboardAndPrimarySelection" }, pane)
+    end
+end)
+
+local selectAll = wezterm.action.Multiple({ wezterm.action.ActivateCopyMode })
+
 config.disable_default_key_bindings = true
 config.keys = {
     { mods = ctrl .. "|SHIFT", key = "p", action = wezterm.action.ActivateCommandPalette, },
@@ -93,24 +103,8 @@ config.keys = {
     { mods = ctrl,             key = "v", action = wezterm.action.PasteFrom("Clipboard"), },
     { mods = ctrl,             key = "n", action = wezterm.action.SpawnCommandInNewTab {} },
     { mods = ctrl,             key = "k", action = wezterm.action.ClearScrollback("ScrollbackAndViewport") },
-    {
-        mods = ctrl .. "",
-        key = "c",
-        action = wezterm.action_callback(function(window, pane)
-            if window:get_selection_text_for_pane(pane) == "" then
-                window:perform_action(wezterm.action.SendKey { key = "c", mods = ctrl }, pane)
-            else
-                window:perform_action(wezterm.action { CopyTo = "ClipboardAndPrimarySelection" }, pane)
-            end
-        end),
-    },
-    {
-        mods = ctrl,
-        key = "a",
-        action = wezterm.action.Multiple({
-            wezterm.action.ActivateCopyMode
-        }),
-    },
+    { mods = ctrl,             key = "c", action = copy, },
+    { mods = ctrl,             key = "a", action = selectAll, },
 }
 
 return config

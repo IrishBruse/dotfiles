@@ -16,6 +16,7 @@ zinit light zsh-users/zsh-autosuggestions  # ghost text completion
 zinit snippet 'https://github.com/robbyrussell/oh-my-zsh/raw/master/plugins/git/git.plugin.zsh'
 
 source ~/dotfiles/zsh/commands.zsh
+source ~/dotfiles/zsh/nvm.zsh
 
 [ -f ~/gp.sh ] && source ~/gp.sh
 [ -f ~/secrets.sh ] && source ~/secrets.sh
