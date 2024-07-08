@@ -5,27 +5,40 @@ local config = wezterm.config_builder()
 
 config.default_prog = { "zsh", "-i", "-l" }
 config.default_gui_startup_args = { "start" }
-
-config.font_size = 9.0
 config.freetype_load_target = "HorizontalLcd"
+
+if wezterm.target_triple == 'aarch64-apple-darwin' then
+    config.font_size = 12.0
+else
+    config.font_size = 9.0
+end
+
 
 config.initial_cols = 120
 config.initial_rows = 30
 
-config.hide_tab_bar_if_only_one_tab = true
-config.enable_scroll_bar = true
+
+config.hide_tab_bar_if_only_one_tab   = true
+config.enable_scroll_bar              = true
 config.anti_alias_custom_block_glyphs = true
-config.window_close_confirmation = "NeverPrompt"
-config.window_decorations = "RESIZE"
-config.enable_scroll_bar = false
-config.default_cursor_style = "BlinkingBar"
-config.animation_fps = 60
-config.cursor_blink_ease_in = "Constant"
-config.cursor_blink_ease_out = "Constant"
-config.automatically_reload_config = true
+config.window_close_confirmation      = "NeverPrompt"
+config.window_decorations             = "RESIZE"
+config.default_cursor_style           = "BlinkingBar"
+config.animation_fps                  = 60
+config.cursor_blink_ease_in           = "Constant"
+config.cursor_blink_ease_out          = "Constant"
+config.automatically_reload_config    = true
+config.use_fancy_tab_bar              = true
+
+
+config.window_padding = {
+    left = 4,
+    right = 10,
+    top = 6,
+    bottom = 6,
+}
 
 local ctrl = "CTRL"
-
 if wezterm.target_triple == 'aarch64-apple-darwin' then
     ctrl = "CMD"
 end
@@ -47,10 +60,28 @@ config.font = wezterm.font_with_fallback {
     },
 }
 
+config.colors = {
+    scrollbar_thumb = '#4e5666',
+    tab_bar = {
+        background = '#21252b',
+        inactive_tab_edge = '#21252b',
+        active_tab = {
+            bg_color = '#282c34',
+            fg_color = '#d7dae0',
+        },
+        inactive_tab = {
+            bg_color = '#21252b',
+            fg_color = '#9da5b4',
+        }
+    },
+}
+
 config.window_frame = {
-    font = font,
-    active_titlebar_bg = "#23272a",
-    inactive_titlebar_bg = "#333333",
+    font = config.font,
+    inactive_titlebar_bg = '#21252b',
+    active_titlebar_bg = '#21252b',
+    inactive_titlebar_fg = '#cccccc',
+    active_titlebar_fg = '#ffffff',
 }
 
 config.color_scheme = 'OneDark (base16)'
@@ -62,7 +93,6 @@ config.keys = {
     { mods = ctrl,             key = "v", action = wezterm.action.PasteFrom("Clipboard"), },
     { mods = ctrl,             key = "n", action = wezterm.action.SpawnCommandInNewTab {} },
     { mods = ctrl,             key = "k", action = wezterm.action.ClearScrollback("ScrollbackAndViewport") },
-    { mods = ctrl .. "|SHIFT", key = "r", action = wezterm.action.ReloadConfiguration },
     {
         mods = ctrl .. "",
         key = "c",
