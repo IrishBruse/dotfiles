@@ -15,3 +15,5 @@ obj/
 .local/share/applications/google-chrome.desktop
 
 push.sh
+
+.DS_STORE

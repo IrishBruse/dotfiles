@@ -17,5 +17,6 @@ export HISTSIZE=1000000000
 export SAVEHIST=1000000000
 
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home
-export LEGACY_GH=$PERSONAL_ACCESS_TOKEN
 export PATH=~/go/bin:$PATH
+
+export EDITOR="code"

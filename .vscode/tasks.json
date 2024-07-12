@@ -1,0 +1,13 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Backup brew",
+            "type": "shell",
+            "osx": {
+                "command": "brew list > ${workspaceFolder}/brew.ini"
+            },
+            "runOptions": { "runOn": "folderOpen" }
+        }
+    ]
+}

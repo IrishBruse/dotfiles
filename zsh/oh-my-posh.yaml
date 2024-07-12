@@ -5,7 +5,7 @@ console_title_template: "{{ .Shell }} in {{ .Folder }}"
 blocks:
   - type: prompt
     alignment: left
-    newline: true
+    newline: false
     segments:
       - type: path
         style: plain
@@ -14,20 +14,9 @@ blocks:
         template: "{{ .Path }}"
         properties:
           style: full
-
   - type: prompt
-    alignment: left
-    newline: true
-    segments:
-      - type: text
-        style: plain
-        foreground_templates:
-          - "{{if gt .Code 0}}red{{end}}"
-          - "{{if eq .Code 0}}magenta{{end}}"
-        background: transparent
-        template: ❯
-  - type: rprompt
-    overflow: hidden
+    alignment: right
+    overflow: hide
     segments:
       - type: git
         style: plain
@@ -45,6 +34,19 @@ blocks:
         template: "{{ .FormattedMs }}"
         properties:
           threshold: 5000
+
+  - type: prompt
+    alignment: left
+    newline: false
+    segments:
+      - type: text
+        style: plain
+        foreground_templates:
+          - "{{if gt .Code 0}}red{{end}}"
+          - "{{if eq .Code 0}}magenta{{end}}"
+        background: transparent
+        template: "\n❯"
+
 transient_prompt:
   foreground_templates:
     - "{{if gt .Code 0}}red{{end}}"
@@ -54,4 +56,4 @@ transient_prompt:
 secondary_prompt:
   foreground: magenta
   background: transparent
-  template: "❯❯ "
+  template: "> "

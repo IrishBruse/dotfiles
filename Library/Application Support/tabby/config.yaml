@@ -1,0 +1,208 @@
+version: 7
+profiles: []
+groups: []
+configSync:
+  parts: {}
+hotkeys:
+  toggle-window: []
+  copy-current-path: []
+  ctrl-c:
+    - ⌘-C
+  paste:
+    - ⌘-V
+  select-all:
+    - ⌘-A
+  zoom-in: []
+  zoom-out: []
+  reset-zoom: []
+  home:
+    - Home
+  end:
+    - End
+  previous-word:
+    - ⌘-Left
+  next-word:
+    - ⌘-Right
+  delete-previous-word:
+    - ⌘-Backspace
+  delete-line: []
+  delete-next-word:
+    - ⌘-Delete
+  search:
+    - ⌘-F
+  pane-focus-all:
+    - ⌘-Shift-I
+  focus-all-tabs:
+    - ⌘-⌥-Shift-I
+  scroll-to-top:
+    - Shift-PageUp
+  scroll-up:
+    - ⌥-PageUp
+  scroll-down:
+    - ⌥-PageDown
+  scroll-to-bottom:
+    - Shift-PageDown
+  restart-telnet-session: []
+  restart-ssh-session: []
+  launch-winscp: []
+  settings-tab: {}
+  settings:
+    - ⌘-,
+  serial: []
+  restart-serial-session: []
+  new-tab:
+    - ⌘-N
+  new-window: []
+  profile: {}
+  profile-selectors: {}
+  toggle-fullscreen: []
+  close-tab:
+    - ⌘-W
+  reopen-tab:
+    - ⌘-Shift-T
+  toggle-last-tab: []
+  rename-tab: []
+  next-tab:
+    - ⌥-Right
+  previous-tab:
+    - ⌥-Left
+  move-tab-left: []
+  move-tab-right: []
+  rearrange-panes: []
+  tab-1:
+    - ⌘-1
+  tab-2:
+    - ⌘-2
+  tab-3:
+    - ⌘-3
+  tab-4:
+    - ⌘-4
+  tab-5:
+    - ⌘-5
+  tab-6:
+    - ⌘-6
+  tab-7:
+    - ⌘-7
+  tab-8:
+    - ⌘-8
+  tab-9:
+    - ⌘-9
+  tab-10: []
+  duplicate-tab: []
+  restart-tab: []
+  reconnect-tab: []
+  disconnect-tab: []
+  explode-tab: []
+  combine-tabs: []
+  tab-11: []
+  tab-12: []
+  tab-13: []
+  tab-14: []
+  tab-15: []
+  tab-16: []
+  tab-17: []
+  tab-18: []
+  tab-19: []
+  tab-20: []
+  split-right: []
+  split-bottom: []
+  split-left: []
+  split-top: []
+  pane-nav-right: []
+  pane-nav-down: []
+  pane-nav-up: []
+  pane-nav-left: []
+  pane-nav-previous: []
+  pane-nav-next: []
+  pane-nav-1: []
+  pane-nav-2: []
+  pane-nav-3: []
+  pane-nav-4: []
+  pane-nav-5: []
+  pane-nav-6: []
+  pane-nav-7: []
+  pane-nav-8: []
+  pane-nav-9: []
+  pane-maximize: []
+  close-pane: []
+  pane-increase-vertical: []
+  pane-decrease-vertical: []
+  pane-increase-horizontal: []
+  pane-decrease-horizontal: []
+  profile-selector: []
+  switch-profile: []
+  command-selector:
+    - ⌘-Shift-P
+  clear:
+    - ⌘-K
+  copy:
+    - Ctrl-C
+terminal:
+  searchOptions: {}
+  colorScheme:
+    name: One Dark
+    foreground: "#ABB2BF"
+    background: "#282c34"
+    cursor: "#ABB2BF"
+    colors:
+      - "#383a42"
+      - "#e45649"
+      - "#50a14f"
+      - "#c18401"
+      - "#0184bc"
+      - "#a626a4"
+      - "#0997b3"
+      - "#fafafa"
+      - "#383a42"
+      - "#e45649"
+      - "#50a14f"
+      - "#c18401"
+      - "#0184bc"
+      - "#a626a4"
+      - "#0997b3"
+      - "#fafafa"
+    selection: "#3e4451"
+  font: CaskaydiaCove Nerd Font
+  ligatures: true
+  cursor: beam
+  customColorSchemes:
+    - name: One Dark
+      foreground: "#ABB2BF"
+      background: "#282c34"
+      cursor: "#ABB2BF"
+      colors:
+        - "#383a42"
+        - "#e45649"
+        - "#50a14f"
+        - "#c18401"
+        - "#0184bc"
+        - "#a626a4"
+        - "#0997b3"
+        - "#fafafa"
+        - "#383a42"
+        - "#e45649"
+        - "#50a14f"
+        - "#c18401"
+        - "#0184bc"
+        - "#a626a4"
+        - "#0997b3"
+        - "#fafafa"
+      selection: "#3e4451"
+  copyAsHTML: false
+  hideTabIndex: true
+  fontSize: 12
+ssh: {}
+clickableLinks: {}
+accessibility: {}
+appearance:
+  spaciness: 0.85
+  flexTabs: true
+hacks: {}
+providerBlacklist: []
+commandBlacklist: []
+enableWelcomeTab: false
+pluginBlacklist: []
+profileDefaults:
+  ssh:
+    disableDynamicTitle: true
+profileBlacklist: []
