@@ -170,26 +170,26 @@
         "type": "generic",
         "default": [],
         "value": [
-            "cinnamon-settings-sound.desktop",
+            "cinnamon-settings-default.desktop",
+            "alacarte-made-953fbec6-3f11-11ef-bb39-d3a1aeeab780.desktop",
+            "yad-icon-browser.desktop",
+            "alacarte-made-9213eaaa-4098-11ef-9cc3-b929ff1211a9.desktop",
+            "net.lutris.Lutris.desktop",
+            "tabby.desktop",
+            "org.gnome.seahorse.Application.desktop",
             "alacarte-made-ea1a1c9c-3a4e-11ef-afdb-29309ccd2cd5.desktop",
-            "mintreport.desktop",
-            "mintinstall.desktop",
-            "libreoffice-calc.desktop",
-            "hypnotix.desktop",
-            "lightdm-settings.desktop",
             "grub-customizer.desktop",
-            "freetube.desktop",
-            "nvidia-settings.desktop",
-            "parcellite.desktop",
-            "sunshine.desktop",
-            "gpick.desktop",
-            "cinnamon-settings-startup.desktop",
-            "discord.desktop",
             "cinnamon-settings-themes.desktop",
-            "cinnamon-color-panel.desktop",
-            "cinnamon-settings-extensions.desktop",
+            "mintupdate.desktop",
+            "cinnamon-settings-startup.desktop",
+            "blueman-manager.desktop",
             "cinnamon-settings.desktop",
-            "google-chrome.desktop"
+            "google-chrome.desktop",
+            "org.gnome.Terminal.desktop",
+            "discord.desktop",
+            "mintreport.desktop",
+            "cinnamon-settings-info.desktop",
+            "cinnamon-settings-sound.desktop"
         ]
     },
     "search-start-folder": {
@@ -205,7 +205,7 @@
     "all-apps-old-style": {
         "type": "generic",
         "default": false,
-        "value": false
+        "value": true
     },
     "applications-view-mode": {
         "type": "combobox",

@@ -13,7 +13,7 @@
         "value": [
             "google-chrome.desktop",
             "code.desktop",
-            "org.wezfurlong.wezterm.desktop"
+            "tabby.desktop"
         ]
     },
     "allow-dragging": {

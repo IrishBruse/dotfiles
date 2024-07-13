@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Asesprite
+Exec=/home/econn/Apps/Asesprite/aseprite
+Comment=
+Terminal=false
+PrefersNonDefaultGPU=false
+Icon=aseprite
+Type=Application

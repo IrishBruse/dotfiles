@@ -140,8 +140,8 @@
       0.6
      ]
     ],
-    "up": 17808,
-    "down": 17808,
+    "up": 20793,
+    "down": 20793,
     "tooltipUp": 0,
     "tooltipDown": 0,
     "lastReading": [
@@ -169,7 +169,7 @@
      ]
     ],
     "up": 444,
-    "down": 0,
+    "down": 304,
     "tooltipUp": 0,
     "tooltipDown": 0,
     "lastReading": [
@@ -205,6 +205,25 @@
      0
     ],
     "readingRatesList": []
+   },
+   {
+    "id": "wlx6245b4f04103",
+    "enabled": false,
+    "show": true,
+    "colors": [
+     [
+      1,
+      1,
+      1,
+      0.8
+     ],
+     [
+      0,
+      0,
+      0,
+      0.6
+     ]
+    ]
    }
   ]
  },
@@ -287,13 +306,51 @@
      ]
     ],
     "path": "/mnt/data",
-    "read": 295043072,
-    "write": 0,
+    "read": 16811917312,
+    "write": 193429504,
     "lastReading": [
      0,
      0
     ],
     "readingRatesList": []
+   },
+   {
+    "id": "OS",
+    "enabled": false,
+    "show": true,
+    "colors": [
+     [
+      1,
+      1,
+      1,
+      0.8
+     ],
+     [
+      0,
+      0,
+      0,
+      0.6
+     ]
+    ]
+   },
+   {
+    "id": "Games",
+    "enabled": false,
+    "show": true,
+    "colors": [
+     [
+      1,
+      1,
+      1,
+      0.8
+     ],
+     [
+      0,
+      0,
+      0,
+      0.6
+     ]
+    ]
    }
   ]
  }

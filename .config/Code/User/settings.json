@@ -1,24 +1,35 @@
 {
     "workbench.colorCustomizations": {
+        "editor.background": "#282c34",
+        "editor.foreground": "#abb2bf",
+
         "activityBar.background": "#333842",
         "activityBar.foreground": "#d7dae0",
         "activityBarBadge.background": "#528bff",
         "activityBarBadge.foreground": "#d7dae0",
+
+        "activityBarTop.activeBorder": "#636d83",
+        "activityBarTop.dropBorder": "#636d83",
+        "activityBarTop.foreground": "#d7dae0",
+        "activityBarTop.inactiveForeground": "#abb2bf",
+
         "badge.background": "#528bff",
         "badge.foreground": "#d7dae0",
+
         "button.background": "#4d78cc",
         "button.foreground": "#ffffff",
         "button.hoverBackground": "#6087cf",
+
         "diffEditor.insertedTextBackground": "#00809b33",
         "dropdown.background": "#353b45",
         "scrollbar.shadow": "#00000000",
-        "editorStickyScroll.shadow": "#00000066",
+        "editorStickyScroll.shadow": "#282c34",
         "dropdown.border": "#181a1f",
-        "editor.background": "#282c34",
         "editor.findMatchHighlightBackground": "#528bff3d",
-        "editor.foreground": "#abb2bf",
         "panel.border": "#3a3f4b",
         "diffEditor.border": "#3a3f4b",
+        "editorOverviewRuler.border": "#00000000",
+        "editorOverviewRuler.background": "#282c34",
         "editor.lineHighlightBackground": "#99bbff0a",
         "editor.selectionBackground": "#3e4451",
         "editorCursor.foreground": "#528bff",
@@ -28,6 +39,7 @@
         "editorHoverWidget.border": "#181a1f",
         "editorIndentGuide.activeBackground1": "#626772",
         "editorIndentGuide.background1": "#abb2bf26",
+        "tree.indentGuidesStroke": "#00000000",
         "editorInlayHint.background": "#2c313a",
         "editorInlayHint.foreground": "#636e83",
         "editorLineNumber.activeForeground": "#abb2bf",
@@ -64,6 +76,7 @@
         "list.inactiveSelectionForeground": "#d7dae0",
         "notebook.cellEditorBackground": "#2c313a",
         "peekView.border": "#528bff",
+        "icon.foreground": "#d7dae0",
         "peekViewEditor.background": "#1b1d23",
         "peekViewResult.background": "#21252b",
         "peekViewResult.selectionBackground": "#2c313a",
@@ -89,8 +102,10 @@
         "titleBar.inactiveForeground": "#9da5b4"
     },
     "editor.semanticTokenColorCustomizations": {
+        "enabled": true,
         "rules": {
-            "punctuation": "#ABB2BF"
+            "punctuation": "#ABB2BF",
+            "enum": "#E5C07B"
         }
     },
     "editor.tokenColorCustomizations": {
@@ -1885,7 +1900,6 @@
     "[snippets]": {
         "files.insertFinalNewline": false
     },
-    "[template.yaml]": { },
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.semanticHighlighting.enabled": false
@@ -1900,6 +1914,33 @@
     "apc.activityBar": {
         "itemMargin": 1,
         "itemSize": 0
+    },
+    "apc.stylesheet": {
+        ".tabs-and-actions-container .editor-actions": {
+            "background-color": "rgb(40, 44, 52)",
+            "padding": "0 4px 0 8px !important",
+        },
+        // ".sidebar .monaco-action-bar .action-item .action-label": {
+        //     // "color": "red"
+        // },
+        ".explorer-folders-view .monaco-list-row[aria-expanded] .monaco-tl-row .codicon-tree-item-expanded::before": {
+            "margin-right": "14px"
+        },
+        ".explorer-folders-view .monaco-list-row .monaco-tl-row .monaco-tl-twistie": {
+            "width": "0px",
+            "padding": "0",
+        },
+        ".explorer-folders-view .monaco-list-row[aria-level=\"1\"] .monaco-tl-row .codicon-tree-item-expanded": {
+            "width": "0px",
+            "padding": "0",
+        },
+        ".explorer-folders-view .monaco-list-row[aria-level=\"1\"] .monaco-tl-row .codicon-tree-item-expanded::before": {
+            "position": "absolute",
+            "left": "-8px"
+        },
+        ".explorer-folders-view .monaco-list-row[aria-level=\"1\"] .monaco-tl-row .monaco-tl-twistie[style=\"padding-left: 20px;\"]": {
+            "padding-left": "6px !important",
+        },
     },
     "apc.font.family": "CaskaydiaCove NF",
     "apc.monospace.font.family": "CaskaydiaCove NF",
@@ -1916,7 +1957,7 @@
     "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": true,
     "csharp.suppressDotnetInstallWarning": true,
     "debug.autoExpandLazyVariables": true,
-    "debug.console.fontFamily": "CaskaydiaMono NFM",
+    "debug.console.fontFamily": "CaskaydiaCove NF",
     "debug.disassemblyView.showSourceCode": false,
     "debug.internalConsoleOptions": "neverOpen",
     "debug.onTaskErrors": "abort",
@@ -1925,7 +1966,6 @@
     "debug.showInStatusBar": "never",
     "debug.toolBarLocation": "docked",
     "diffEditor.codeLens": false,
-    "diffEditor.maxComputationTime": 0,
     "diffEditor.useInlineViewWhenSpaceIsLimited": false,
     "diffEditor.wordWrap": "off",
     "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
@@ -2057,17 +2097,14 @@
     "javascript.referencesCodeLens.enabled": true,
     "javascript.referencesCodeLens.showOnAllFunctions": true,
     "javascript.updateImportsOnFileMove.enabled": "always",
-    "jest.shell": "zsh",
     "js/ts.implicitProjectConfig.checkJs": true,
     "json.format.keepLines": true,
-    "liveshare.populateGitCoAuthors": "never",
     "Lua.codeLens.enable": true,
     "Lua.diagnostics.enable": false,
     "Lua.hint.enable": true,
     "Lua.hover.expandAlias": false,
     "Lua.semantic.keyword": true,
     "material-icon-theme.activeIconPack": "react_redux",
-    "material-icon-theme.folders.color": "#dcb67a",
     "material-icon-theme.hidesExplorerArrows": true,
     "material-icon-theme.saturation": 1,
     "notebook.lineNumbers": "on",
@@ -2102,7 +2139,7 @@
     "terminal.integrated.cursorStyle": "line",
     "terminal.integrated.defaultProfile.linux": "zsh",
     "terminal.integrated.defaultProfile.windows": "Windows PowerShell",
-    "terminal.integrated.fontFamily": "CaskaydiaMono NFM",
+    "terminal.integrated.fontFamily": "CaskaydiaCove NF",
     "terminal.integrated.persistentSessionReviveProcess": "never",
     "terminal.integrated.rightClickBehavior": "nothing",
     "terminal.integrated.shellIntegration.decorationsEnabled": "never",
@@ -2150,12 +2187,6 @@
     "zenMode.fullScreen": false,
     "zenMode.hideLineNumbers": false,
     "zenMode.hideStatusBar": false,
-    "apc.stylesheet": {
-        ".tabs-and-actions-container .editor-actions": {
-            "background-color": "rgb(40, 44, 52)",
-            "padding": "0 4px 0 8px !important"
-        }
-    },
     "zenMode.restore": false,
     "zenMode.showTabs": "none",
     "zenMode.silentNotifications": true,
@@ -2163,7 +2194,6 @@
         "-workbench.action.terminal.kill",
         "-workbench.action.terminal.killEditor"
     ],
-    "diffEditor.ignoreTrimWhitespace": true,
     "errorLens.gutterIconSet": "defaultOutline",
     "editor.showFoldingControls": "always",
     "workbench.iconTheme": "material-icon-theme",
@@ -2174,4 +2204,19 @@
     "java.maven.updateSnapshots": true,
     "java.jdt.ls.androidSupport.enabled": "on",
     "java.jdt.ls.java.home": "/usr/lib/jvm/java-17-openjdk-amd64/",
+    "editor.colorDecoratorsLimit": 1500,
+    "dart.flutterSdkPath": "/home/econn/.local/bin/flutter",
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+        "*.ts": "${capture}.spec.ts",
+        ".env": ".env.*",
+        ".gitignore": ".*"
+    },
+    "jest.runMode": "on-demand",
+    "cody.telemetry.level": "off",
+    "evenBetterToml.formatter.allowedBlankLines": 2,
+    "evenBetterToml.formatter.columnWidth": 1000,
+    "evenBetterToml.schema.links": true,
+    "evenBetterToml.semanticTokens": true,
+    "material-icon-theme.folders.color": "#ABB2BF"
 }

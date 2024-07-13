@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Cemu
+Exec=/home/econn/Apps/Cemu_2.0-88/Cemu
+Comment=
+Terminal=false
+PrefersNonDefaultGPU=false
+Icon=cemu
+Type=Application
