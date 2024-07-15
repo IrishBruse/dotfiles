@@ -242,9 +242,9 @@ clickableLinks: {}
 accessibility: {}
 appearance:
   flexTabs: true
-  css: ''
+  css: .tab-bar{display:none !important;}
   frame: native
-  spaciness: 0.9
+  spaciness: 0.6
 hacks: {}
 providerBlacklist: []
 commandBlacklist: []

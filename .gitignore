@@ -17,3 +17,6 @@ obj/
 push.sh
 
 .DS_STORE
+
+.zshenv.local
+.zshrc.local

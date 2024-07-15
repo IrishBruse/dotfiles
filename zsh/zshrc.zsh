@@ -24,3 +24,4 @@ source ~/dotfiles/zsh/nvm.zsh
 ## case insensitive path-completion
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' menu select
+setopt hist_ignore_all_dups
