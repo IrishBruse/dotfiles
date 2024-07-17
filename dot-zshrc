@@ -16,12 +16,12 @@ zinit light zsh-users/zsh-autosuggestions  # ghost text completion
 zinit snippet 'https://github.com/robbyrussell/oh-my-zsh/raw/master/plugins/git/git.plugin.zsh'
 
 source ~/dotfiles/zsh/commands.zsh
-source ~/dotfiles/zsh/nvm.zsh
 
-[ -f ~/gp.sh ] && source ~/gp.sh
-[ -f ~/secrets.sh ] && source ~/secrets.sh
-
-## case insensitive path-completion
+## case insensitive
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' menu select
+
+# Ignore repeated commands in history
 setopt hist_ignore_all_dups
+
+source ~/dotfiles/local.zshrc

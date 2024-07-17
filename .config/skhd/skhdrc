@@ -1,0 +1,3 @@
+ctrl - e : open -na "/Applications/Nimble Commander.app"
+ctrl - t : /Applications/WezTerm.app/Contents/MacOs/wezterm-gui start --cwd ~/git
+cmd + shift - escape : open -a "/System/Applications/Utilities/Activity Monitor.app"

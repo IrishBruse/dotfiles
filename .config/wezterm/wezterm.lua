@@ -38,10 +38,7 @@ config.window_padding = {
     bottom = 6,
 }
 
-local ctrl = "CTRL"
-if wezterm.target_triple == 'aarch64-apple-darwin' then
-    ctrl = "CMD"
-end
+local ctrl = wezterm.target_triple == 'aarch64-apple-darwin' and "CMD" or "CTRL"
 
 wezterm.on("gui-startup", function(cmd)
     local config = cmd or {}
@@ -86,7 +83,7 @@ config.window_frame = {
 
 config.color_scheme = 'OneDark (base16)'
 
-local copy = wezterm.action_callback(function(window, pane)
+local smartcopy = wezterm.action_callback(function(window, pane)
     if window:get_selection_text_for_pane(pane) == "" then
         window:perform_action(wezterm.action.SendKey { key = "c", mods = ctrl }, pane)
     else
@@ -103,7 +100,7 @@ config.keys = {
     { mods = ctrl,             key = "v", action = wezterm.action.PasteFrom("Clipboard"), },
     { mods = ctrl,             key = "n", action = wezterm.action.SpawnCommandInNewTab {} },
     { mods = ctrl,             key = "k", action = wezterm.action.ClearScrollback("ScrollbackAndViewport") },
-    { mods = ctrl,             key = "c", action = copy, },
+    { mods = ctrl,             key = "c", action = smartcopy, },
     { mods = ctrl,             key = "a", action = selectAll, },
 }
 

@@ -6,3 +6,7 @@ zsh
 \.vscode
 .*\.ini
 \.gitconfig
+
+local.zshrc
+local.zshenv
+Refined\ GitHub\ options.json
