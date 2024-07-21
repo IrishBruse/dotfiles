@@ -162,7 +162,7 @@
             "firefox.desktop",
             "org.gnome.Terminal.desktop"
         ],
-        "value": []
+        "value": [ ]
     },
     "group-apps": {
         "type": "checkbox",
@@ -203,7 +203,7 @@
         "type": "keybinding",
         "default": "<Super>grave",
         "description": "Global hotkey to show the order of apps",
-        "value": "<Super>grave"
+        "value": ""
     },
     "show-apps-order-timeout": {
         "type": "spinbutton",

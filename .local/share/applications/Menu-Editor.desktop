@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Cinnamon Menu Editor
+Exec=cinnamon-menu-editor
+Comment=
+Terminal=false
+PrefersNonDefaultGPU=false
+Icon=menu-editor
+Type=Application

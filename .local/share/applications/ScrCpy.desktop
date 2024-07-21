@@ -1,8 +1,8 @@
 [Desktop Entry]
 Name=Scrcpy
-Exec=zsh -c 'adb connect 192.168.15.30;scrcpy -s 192.168.15.30:5555'
+Exec=zsh -ic "adb connect 192.168.15.30 && scrcpy"
 Comment=
-Terminal=true
+Terminal=false
 PrefersNonDefaultGPU=false
 Icon=scrcpy
 Type=Application

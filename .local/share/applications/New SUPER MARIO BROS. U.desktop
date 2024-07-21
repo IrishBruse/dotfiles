@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=New SUPER MARIO BROS. U
+Comment=Play New SUPER MARIO BROS. U on Cemu
+Exec="/home/econn/Apps/Cemu_2.0-88/Cemu" --title-id 0005000010101d00
+Icon=/home/econn/.local/share/Cemu/icons/0005000010101d00.png
+Terminal=false
+Type=Application
+Categories=Game;

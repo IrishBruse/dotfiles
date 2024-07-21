@@ -117,14 +117,14 @@
   ]
  },
  "net": {
-  "enabled": false,
+  "enabled": true,
   "autoscale": true,
   "logscale": true,
   "width": 40,
   "devices": [
    {
     "id": "lo",
-    "enabled": false,
+    "enabled": true,
     "show": 4,
     "colors": [
      [
@@ -140,8 +140,8 @@
       0.6
      ]
     ],
-    "up": 20793,
-    "down": 20793,
+    "up": 5421,
+    "down": 5421,
     "tooltipUp": 0,
     "tooltipDown": 0,
     "lastReading": [
@@ -152,7 +152,7 @@
    },
    {
     "id": "enp7s0",
-    "enabled": false,
+    "enabled": true,
     "show": 4,
     "colors": [
      [
@@ -168,8 +168,8 @@
       0.6
      ]
     ],
-    "up": 444,
-    "down": 304,
+    "up": 88520,
+    "down": 243077,
     "tooltipUp": 0,
     "tooltipDown": 0,
     "lastReading": [
@@ -180,7 +180,7 @@
    },
    {
     "id": "wlp3s0",
-    "enabled": false,
+    "enabled": true,
     "show": 4,
     "colors": [
      [
@@ -205,25 +205,6 @@
      0
     ],
     "readingRatesList": []
-   },
-   {
-    "id": "wlx6245b4f04103",
-    "enabled": false,
-    "show": true,
-    "colors": [
-     [
-      1,
-      1,
-      1,
-      0.8
-     ],
-     [
-      0,
-      0,
-      0,
-      0.6
-     ]
-    ]
    }
   ]
  },
@@ -231,7 +212,7 @@
   "enabled": true,
   "autoscale": true,
   "logscale": true,
-  "width": 40,
+  "width": 43,
   "devices": [
    {
     "id": "/",
@@ -306,32 +287,13 @@
      ]
     ],
     "path": "/mnt/data",
-    "read": 16811917312,
-    "write": 193429504,
+    "read": 295043072,
+    "write": 0,
     "lastReading": [
      0,
      0
     ],
     "readingRatesList": []
-   },
-   {
-    "id": "OS",
-    "enabled": false,
-    "show": true,
-    "colors": [
-     [
-      1,
-      1,
-      1,
-      0.8
-     ],
-     [
-      0,
-      0,
-      0,
-      0.6
-     ]
-    ]
    },
    {
     "id": "Games",

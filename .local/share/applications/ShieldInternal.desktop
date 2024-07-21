@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Shield Internal Mount
+Exec=pkexec mount -t cifs //192.168.15.30/internal -o username=shield,password=12341234 /home/econn/media/shield
+Comment=
+Terminal=false
+PrefersNonDefaultGPU=false
+Icon=drive-harddisk-system-symbolic
+Type=Application

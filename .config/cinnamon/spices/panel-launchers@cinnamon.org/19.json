@@ -11,9 +11,9 @@
             "nemo.desktop"
         ],
         "value": [
-            "google-chrome.desktop",
+            "cinnamon-custom-launcher-1.desktop",
             "code.desktop",
-            "tabby.desktop"
+            "org.wezfurlong.wezterm.desktop"
         ]
     },
     "allow-dragging": {

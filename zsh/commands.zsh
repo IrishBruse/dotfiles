@@ -1,4 +1,5 @@
 alias cd="z"
+alias ..="cd .."
 alias lz="lazygit"
 alias ls="eza -ax --icons=always --group-directories-first"
 alias ll="eza -al --icons=always --group-directories-first"
@@ -36,31 +37,26 @@ gwa() {
     git workload list
 }
 
-lazynvm() {
-  unset -f nvm node npm yarn
-  export NVM_DIR=~/.nvm
-  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-}
-
 nvm() {
+  unset -f nvm
   lazynvm
   nvm $@
 }
 
 node() {
-  lazynvm
+  unset -f node
   nvm use
   node $@
 }
 
 npm() {
-  lazynvm
+  unset -f npm
   nvm use
   npm $@
 }
 
 yarn() {
-  lazynvm
+  unset -f yarn
   nvm use
   yarn $@
 }

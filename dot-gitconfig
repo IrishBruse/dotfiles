@@ -1,6 +1,7 @@
 [user]
 	name = IrishBruse
 	email = econn50@outlook.com
+
 [init]
 	defaultBranch = main
 

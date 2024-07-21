@@ -159,7 +159,7 @@
     "custom-menu-width": {
         "type": "generic",
         "default": 800,
-        "value": 800
+        "value": 745
     },
     "custom-menu-height": {
         "type": "generic",
@@ -170,26 +170,26 @@
         "type": "generic",
         "default": [],
         "value": [
-            "cinnamon-settings-default.desktop",
-            "alacarte-made-953fbec6-3f11-11ef-bb39-d3a1aeeab780.desktop",
-            "yad-icon-browser.desktop",
-            "alacarte-made-9213eaaa-4098-11ef-9cc3-b929ff1211a9.desktop",
+            "io.github.Hexchat.desktop",
+            "nvidia-settings.desktop",
             "net.lutris.Lutris.desktop",
-            "tabby.desktop",
-            "org.gnome.seahorse.Application.desktop",
-            "alacarte-made-ea1a1c9c-3a4e-11ef-afdb-29309ccd2cd5.desktop",
-            "grub-customizer.desktop",
-            "cinnamon-settings-themes.desktop",
-            "mintupdate.desktop",
+            "yad-icon-browser.desktop",
+            "net.lutris.hades-3.desktop",
             "cinnamon-settings-startup.desktop",
-            "blueman-manager.desktop",
-            "cinnamon-settings.desktop",
-            "google-chrome.desktop",
-            "org.gnome.Terminal.desktop",
+            "org.gnome.DiskUtility.desktop",
+            "parcellite.desktop",
+            "steam.desktop",
+            "mintinstall.desktop",
+            "mintdrivers.desktop",
+            "cinnamon-settings-keyboard.desktop",
             "discord.desktop",
-            "mintreport.desktop",
-            "cinnamon-settings-info.desktop",
-            "cinnamon-settings-sound.desktop"
+            "com.github.maoschanz.drawing.desktop",
+            "clipit.desktop",
+            "alacarte-made-cc605096-3ef8-11ef-bb39-d3a1aeeab780.desktop",
+            "ca.desrt.dconf-editor.desktop",
+            "cinnamon-settings-windows.desktop",
+            "cinnamon-display-panel.desktop",
+            "cinnamon-settings-tiling.desktop"
         ]
     },
     "search-start-folder": {
@@ -320,8 +320,8 @@
     "overlay-key": {
         "type": "keybinding",
         "description": "Keyboard shortcut to open and close the menu",
-        "default": "Super_L::Super_R",
-        "value": "<Primary>Super_L::Super_R"
+        "default": "::",
+        "value": "::"
     },
     "activate-on-hover": {
         "type": "checkbox",

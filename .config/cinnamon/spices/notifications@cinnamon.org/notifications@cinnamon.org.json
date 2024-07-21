@@ -43,7 +43,7 @@
         "description": "Clear notifications",
         "default": "<Shift><Super>c",
         "tooltip": "Set keybinding(s) to clear all notifications.",
-        "value": "<Shift><Super>c"
+        "value": ""
     },
     "section4": {
         "type": "section",

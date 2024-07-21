@@ -134,5 +134,8 @@ open https://gitlab.com/volian/nala/-/releases
 
 sudo add-apt-repository ppa:zhangsongcui3371/fastfetch
 sudo apt update
-
 sudo apt install fastfetch
+
+# Remove xed as vscode is now installed
+sudo apt uninstall xed
+npm i -g @antfu/ni

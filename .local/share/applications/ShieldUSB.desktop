@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Shield USB
+Exec=mount -t cifs //192.168.15.30/USB -o username=shield,password=12341234 /home/econn/media/shieldUSB
+Comment=
+Terminal=false
+PrefersNonDefaultGPU=false
+Icon=drive-removable-media-usb-symbolic
+Type=Application

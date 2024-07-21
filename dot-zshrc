@@ -13,7 +13,6 @@ source "${ZINIT_HOME}/zinit.zsh"
 
 zinit light zpm-zsh/clipboard # pipe to clip
 zinit light zsh-users/zsh-autosuggestions  # ghost text completion
-zinit snippet 'https://github.com/robbyrussell/oh-my-zsh/raw/master/plugins/git/git.plugin.zsh'
 
 source ~/dotfiles/zsh/commands.zsh
 

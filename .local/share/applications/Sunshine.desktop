@@ -1,0 +1,18 @@
+[Desktop Entry]
+Type=Application
+Name=Sunshine
+Exec=/usr/bin/env systemctl start --u sunshine
+Version=1.0
+Comment=Self-hosted game stream host for Moonlight
+Icon=sunshine
+Keywords=gamestream;stream;moonlight;remote play;
+Categories=AudioVideo;Network;RemoteAccess;
+Actions=RunInTerminal;
+
+Terminal=false
+PrefersNonDefaultGPU=false
+
+[Desktop Action RunInTerminal]
+Name=Run in Terminal
+Icon=application-x-executable
+Exec=gio launch /usr/share/applications/sunshine_terminal.desktop

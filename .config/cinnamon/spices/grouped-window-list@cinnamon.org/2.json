@@ -108,7 +108,7 @@
         "type": "checkbox",
         "default": true,
         "description": "Show window count numbers",
-        "value": true
+        "value": false
     },
     "title-display": {
         "type": "combobox",
@@ -162,7 +162,7 @@
             "firefox.desktop",
             "org.gnome.Terminal.desktop"
         ],
-        "value": []
+        "value": [ ]
     },
     "group-apps": {
         "type": "checkbox",
@@ -203,7 +203,7 @@
         "type": "keybinding",
         "default": "<Super>grave",
         "description": "Global hotkey to show the order of apps",
-        "value": "<Super>grave"
+        "value": ""
     },
     "show-apps-order-timeout": {
         "type": "spinbutton",
@@ -291,7 +291,7 @@
         "type": "checkbox",
         "default": true,
         "description": "Show recent items",
-        "value": true
+        "value": false
     },
     "autostart-menu-item": {
         "type": "checkbox",
@@ -304,7 +304,7 @@
         "default": true,
         "description": "Apply the monitor move option to all windows",
         "tooltip": "When clicking \"Move to monitor\" in the context menu, this option will move all of an app's windows instead of just the last focused window from the app.",
-        "value": true
+        "value": false
     },
     "enable-hover-peek": {
         "type": "checkbox",
