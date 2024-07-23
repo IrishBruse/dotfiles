@@ -1,4 +1,4 @@
-/home/econn/Android/Sdk/cmdline-tools/bininstallDeb() {
+installDeb() {
     TEMP_DEB="$(mktemp)" &&
     wget -O "$TEMP_DEB" "$1" &&
     sudo dpkg -i "$TEMP_DEB"

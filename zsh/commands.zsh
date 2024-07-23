@@ -6,9 +6,6 @@ alias ll="eza -al --icons=always --group-directories-first"
 alias reload="echo 'Reloading enviroment variables';exec zsh"
 alias path="echo $PATH | tr ':' '\n'"
 
-alias econneely="gh auth switch --user econneely"
-alias irishbruse="gh auth switch --user IrishBruse"
-
 alias dot="code ~/dotfiles/"
 alias find="fzf | clip"
 
@@ -30,17 +27,11 @@ wclone() {
 }
 
 gwa() {
-    git workload add -b $1 $1
+    git worktree add -b $1 $1
 }
 
-gwa() {
-    git workload list
-}
-
-nvm() {
-  unset -f nvm
-  lazynvm
-  nvm $@
+gwl() {
+    git worktree list
 }
 
 node() {
@@ -59,4 +50,22 @@ yarn() {
   unset -f yarn
   nvm use
   yarn $@
+}
+
+ni() {
+  unset -f ni
+  nvm use
+  ni $@
+}
+
+nr() {
+  unset -f nr
+  nvm use
+  nr $@
+}
+
+nx() {
+  unset -f nx
+  nvm use
+  nlx $@
 }
