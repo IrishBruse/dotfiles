@@ -1,0 +1,7 @@
+
+[Desktop Entry]
+Type=Application
+Name=Hades
+Icon=lutris_hades
+Exec=env LUTRIS_SKIP_INIT=1 lutris lutris:rungameid/3
+Categories=Game

@@ -3,6 +3,9 @@
     "editor.background": "#282c34",
     "editor.foreground": "#abb2bf",
 
+    "editor.lineHighlightBackground": "#99bbff0a",
+    "editor.selectionBackground": "#3e4451",
+
     "activityBar.background": "#333842",
     "activityBar.foreground": "#d7dae0",
     "activityBarBadge.background": "#528bff",
@@ -30,8 +33,7 @@
     "diffEditor.border": "#3a3f4b",
     "editorOverviewRuler.border": "#00000000",
     "editorOverviewRuler.background": "#282c34",
-    "editor.lineHighlightBackground": "#99bbff0a",
-    "editor.selectionBackground": "#3e4451",
+
     "editorCursor.foreground": "#528bff",
     "editorGroup.border": "#181a1f",
     "editorGroupHeader.tabsBackground": "#21252b",
@@ -67,11 +69,11 @@
     "focusBorder": "#528bff",
     "input.background": "#1b1d23",
     "input.border": "#181a1f",
-    "list.activeSelectionBackground": "#2c313a",
+    "list.activeSelectionBackground": "#3e4451",
     "list.activeSelectionForeground": "#d7dae0",
     "list.focusBackground": "#2c313a",
     "list.highlightForeground": "#d7dae0",
-    "list.hoverBackground": "#2c313a66",
+    "list.hoverBackground": "#3e4451",
     "list.inactiveSelectionBackground": "#2c313a",
     "list.inactiveSelectionForeground": "#d7dae0",
     "notebook.cellEditorBackground": "#2c313a",
@@ -363,7 +365,11 @@
         }
       },
       {
-        "scope": ["entity.name.section"],
+        "scope": [
+          "entity.name.section",
+          "support.type.property-name.table.toml",
+          "punctuation.separator.dot.toml"
+        ],
         "settings": {
           "foreground": "#61AFEF"
         }
@@ -654,7 +660,10 @@
         }
       },
       {
-        "scope": ["source.ini keyword.other.definition.ini"],
+        "scope": [
+          "source.ini keyword.other.definition.ini",
+          "support.type.property-name.toml"
+        ],
         "settings": {
           "foreground": "#E06C75"
         }
@@ -1638,8 +1647,17 @@
         "settings": {
           "foreground": "#B267E6"
         }
+      },
+      {
+        "scope": ["support.type.property-name.array.toml"],
+        "settings": {
+          "foreground": "#C678DD"
+        }
       }
     ]
+  },
+  "[asl]": {
+    "editor.defaultFormatter": "amazonwebservices.aws-toolkit-vscode"
   },
   "[csharp]": {
     "editor.maxTokenizationLineLength": 2500,
@@ -1692,46 +1710,45 @@
     "editor.semanticHighlighting.enabled": false
   },
   "[yaml]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "redhat.vscode-yaml"
   },
   "apc.activityBar": {
     "itemMargin": 1,
     "itemSize": 0
   },
+  "apc.font.family": "CaskaydiaCove NF",
+  "apc.monospace.font.family": "CaskaydiaCove NF",
   "apc.stylesheet": {
-    ".tabs-and-actions-container .editor-actions": {
-      "background-color": "rgb(40, 44, 52)",
-      "padding": "0 4px 0 8px !important"
+    ".explorer-folders-view .monaco-list-row .monaco-tl-row .monaco-tl-twistie": {
+      "padding": "0",
+      "width": "0px"
     },
-    // ".sidebar .monaco-action-bar .action-item .action-label": {
-    //     // "color": "red"
-    // },
     ".explorer-folders-view .monaco-list-row[aria-expanded] .monaco-tl-row .codicon-tree-item-expanded::before": {
       "margin-right": "14px"
     },
-    ".explorer-folders-view .monaco-list-row .monaco-tl-row .monaco-tl-twistie": {
-      "width": "0px",
-      "padding": "0"
-    },
     ".explorer-folders-view .monaco-list-row[aria-level=\"1\"] .monaco-tl-row .codicon-tree-item-expanded": {
-      "width": "0px",
-      "padding": "0"
+      "padding": "0",
+      "width": "0px"
     },
     ".explorer-folders-view .monaco-list-row[aria-level=\"1\"] .monaco-tl-row .codicon-tree-item-expanded::before": {
-      "position": "absolute",
-      "left": "-8px"
+      "left": "-8px",
+      "position": "absolute"
     },
     ".explorer-folders-view .monaco-list-row[aria-level=\"1\"] .monaco-tl-row .monaco-tl-twistie[style=\"padding-left: 20px;\"]": {
       "padding-left": "6px !important"
+    },
+    ".tabs-and-actions-container .editor-actions": {
+      "background-color": "rgb(40, 44, 52)",
+      "padding": "0 4px 0 8px !important"
     }
   },
-  "apc.font.family": "CaskaydiaCove NF",
-  "apc.monospace.font.family": "CaskaydiaCove NF",
   "breadcrumbs.enabled": false,
   "breadcrumbs.filePath": "off",
+  "cfnLint.validateUsingJsonSchema": true,
   "cody.codeActions.enabled": false,
   "cody.commandCodeLenses": false,
   "cody.commandHints.enabled": false,
+  "cody.telemetry.level": "off",
   "color-highlight.markerType": "underline",
   "color-highlight.markRuler": false,
   "comments.visible": false,
@@ -1749,6 +1766,8 @@
   "debug.showInStatusBar": "never",
   "debug.toolBarLocation": "docked",
   "diffEditor.codeLens": false,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "diffEditor.maxComputationTime": 0,
   "diffEditor.useInlineViewWhenSpaceIsLimited": false,
   "diffEditor.wordWrap": "off",
   "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
@@ -1761,6 +1780,8 @@
   "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": true,
   "dotnet.server.useOmnisharp": true,
   "editor.accessibilitySupport": "off",
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+  "editor.colorDecoratorsLimit": 1500,
   "editor.cursorBlinking": "expand",
   "editor.cursorWidth": 2,
   "editor.defaultColorDecorators": true,
@@ -1779,6 +1800,7 @@
   "editor.gotoLocation.multipleImplementations": "goto",
   "editor.gotoLocation.multipleReferences": "goto",
   "editor.gotoLocation.multipleTypeDefinitions": "goto",
+  "editor.guides.bracketPairs": "active",
   "editor.guides.bracketPairsHorizontal": false,
   "editor.guides.highlightActiveIndentation": true,
   "editor.inlayHints.enabled": "offUnlessPressed",
@@ -1799,6 +1821,7 @@
   "editor.scrollbar.ignoreHorizontalScrollbarInContentHeight": true,
   "editor.scrollbar.verticalScrollbarSize": 15,
   "editor.semanticHighlighting.enabled": true,
+  "editor.showFoldingControls": "always",
   "editor.snippetSuggestions": "none",
   "editor.suggest.localityBonus": true,
   "editor.suggest.selectionMode": "whenTriggerCharacter",
@@ -1810,20 +1833,32 @@
   "editor.unicodeHighlight.invisibleCharacters": false,
   "editor.wordSeparators": "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?_",
   "errorLens.enabledDiagnosticLevels": ["error", "warning"],
+  "errorLens.excludeBySource": ["node_modules/**"],
   "errorLens.fontSize": "12",
   "errorLens.fontWeight": "bold",
   "errorLens.gutterIconsEnabled": false,
+  "errorLens.gutterIconSet": "defaultOutline",
   "errorLens.margin": "1ch",
   "errorLens.messageMaxChars": 80,
   "errorLens.replaceLinebreaksSymbol": " ⏎",
   "errorLens.scrollbarHackEnabled": true,
+  "evenBetterToml.formatter.allowedBlankLines": 2,
+  "evenBetterToml.formatter.columnWidth": 1000,
+  "evenBetterToml.schema.links": true,
+  "evenBetterToml.semanticTokens": true,
   "explorer.compactFolders": true,
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
   "explorer.confirmPasteNative": false,
   "explorer.copyRelativePathSeparator": "/",
   "explorer.decorations.badges": false,
+  "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.spec.ts,${capture}.test.ts",
+    ".env": ".env.*",
+    ".gitignore": ".*"
+  },
   "explorer.incrementalNaming": "smart",
   "explorer.openEditors.visible": 8,
   "explorer.sortOrder": "foldersNestsFiles",
@@ -1834,22 +1869,25 @@
     "*.ib": "go",
     "*.ldtk": "json",
     "*.ldtkl": "json",
-    "*.snippet": "plaintext",
-    "*.toml": "ini",
-    ".air.toml": "ini",
-    ".zshsecrets": "shellscript",
     "*.nemo_action": "ini",
+    "*.snippet": "plaintext",
+    "*.toml": "toml",
+    ".air.toml": "ini",
     ".gitcredentials": "ini",
+    ".zshsecrets": "shellscript",
+    "dot-gitconfig": "ini",
     "dot-profile": "shellscript",
     "dot-zshenv": "shellscript",
-    "dot-zshrc": "shellscript",
-    "dot-gitconfig": "ini"
+    "dot-zshrc": "shellscript"
   },
   "files.exclude": {
     "**/obj": true
   },
   "files.hotExit": "onExitAndWindowClose",
   "files.insertFinalNewline": true,
+  "files.readonlyInclude": {
+    "node_modules/**": true
+  },
   "files.trimFinalNewlines": true,
   "files.trimTrailingWhitespace": true,
   "files.watcherExclude": {
@@ -1866,12 +1904,17 @@
   "git.pruneOnFetch": true,
   "git.terminalGitEditor": true,
   "githubPullRequests.createOnPublishBranch": "never",
+  "gopls": {
+    "ui.semanticTokens": true
+  },
   "hexeditor.columnWidth": 32,
   "hexeditor.defaultEndianness": "little",
   "hexeditor.inspectorType": "aside",
   "hexeditor.showDecodedText": true,
-  "http.experimental.systemCertificatesV2": true,
-  "http.systemCertificates": true,
+  "java.jdt.ls.androidSupport.enabled": "on",
+  "java.jdt.ls.java.home": "/usr/lib/jvm/java-17-openjdk-amd64/",
+  "java.maven.downloadSources": true,
+  "java.maven.updateSnapshots": true,
   "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
   "javascript.inlayHints.propertyDeclarationTypes.enabled": true,
   "javascript.inlayHints.variableTypes.enabled": true,
@@ -1879,6 +1922,11 @@
   "javascript.referencesCodeLens.enabled": true,
   "javascript.referencesCodeLens.showOnAllFunctions": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
+  "jest.runMode": "on-demand",
+  "jest.shell": {
+    "args": "-li",
+    "command": "fish"
+  },
   "js/ts.implicitProjectConfig.checkJs": true,
   "json.format.keepLines": true,
   "Lua.codeLens.enable": true,
@@ -1887,10 +1935,12 @@
   "Lua.hover.expandAlias": false,
   "Lua.semantic.keyword": true,
   "material-icon-theme.activeIconPack": "react_redux",
+  "material-icon-theme.folders.color": "#ABB2BF",
   "material-icon-theme.hidesExplorerArrows": true,
   "material-icon-theme.saturation": 1,
   "notebook.lineNumbers": "on",
   "problems.defaultViewMode": "table",
+  "problems.sortOrder": "position",
   "redhat.telemetry.enabled": true,
   "references.preferredLocation": "view",
   "scm.alwaysShowRepositories": true,
@@ -1902,6 +1952,7 @@
   "scm.diffDecorationsGutterVisibility": "hover",
   "scm.diffDecorationsGutterWidth": 1,
   "scm.diffDecorationsIgnoreTrimWhitespace": "true",
+  "scm.experimental.showHistoryGraph": true,
   "scm.providerCountBadge": "auto",
   "security.promptForLocalFileProtocolHandling": false,
   "security.workspace.trust.banner": "never",
@@ -1917,13 +1968,53 @@
   "telemetry.telemetryLevel": "crash",
   "terminal.explorerKind": "both",
   "terminal.external.windowsExec": "wt.exe",
+  "terminal.integrated.automationProfile.linux": {
+    "args": ["-li"],
+    "path": "fish"
+  },
+  "terminal.integrated.commandsToSkipShell": [
+    "workbench.action.terminal.kill",
+    "workbench.action.createTerminalEditor",
+    "workbench.action.terminal.killEditor"
+  ],
   "terminal.integrated.cursorStyle": "line",
-  "terminal.integrated.defaultProfile.linux": "zsh",
+  "terminal.integrated.defaultProfile.linux": "fish",
   "terminal.integrated.defaultProfile.windows": "Windows PowerShell",
+  "terminal.integrated.enablePersistentSessions": false,
   "terminal.integrated.fontFamily": "CaskaydiaCove NF",
   "terminal.integrated.persistentSessionReviveProcess": "never",
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "icon": "terminal-bash",
+      "path": "bash"
+    },
+    "fish": {
+      "args": ["-i", "-l"],
+      "path": "fish"
+    },
+    "pwsh": {
+      "icon": "terminal-powershell",
+      "path": "pwsh"
+    },
+    "tmux": {
+      "icon": "terminal-tmux",
+      "path": "tmux"
+    },
+    "zsh": {
+      "args": ["-i", "-l"],
+      "path": "/bin/zsh"
+    }
+  },
   "terminal.integrated.rightClickBehavior": "nothing",
   "terminal.integrated.shellIntegration.decorationsEnabled": "never",
+  "thunder-client.certificates": [
+    {
+      "certPath": "/Users/econneely/cert.pem",
+      "host": "g-p.dev",
+      "keyPath": "/Users/econneely/key.pem",
+      "passphrase": ""
+    }
+  ],
   "thunder-client.httpLibrary": "axios",
   "thunder-client.indentSize": 4,
   "thunder-client.responseLimit": 30,
@@ -1937,12 +2028,15 @@
   "typescript.referencesCodeLens.enabled": true,
   "typescript.referencesCodeLens.showOnAllFunctions": true,
   "typescript.surveys.enabled": false,
+  "typescript.tsdk": "./node_modules/typescript/lib",
   "typescript.tsserver.experimental.enableProjectDiagnostics": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
   "update.mode": "start",
   "window.closeWhenEmpty": false,
+  "window.customTitleBarVisibility": "auto",
   "window.menuBarVisibility": "hidden",
   "window.openFilesInNewWindow": "off",
+  "window.title": "${activeRepositoryName}",
   "window.titleSeparator": " - ",
   "workbench.activityBar.location": "top",
   "workbench.colorTheme": "Empty Dark",
@@ -1951,94 +2045,55 @@
   "workbench.editor.limit.enabled": true,
   "workbench.editor.limit.value": 10,
   "workbench.editorAssociations": {
-    "{git,gitlens,conflictResolution,vscode-local-history}:/**/*.tc.json": "default",
     "*.bin": "hexEditor.hexedit",
     "*.gb": "hexEditor.hexedit",
     "*.gbm": "hexEditor.hexedit",
     "*.gbr": "hexEditor.hexedit",
-    "*.md": "markdownEditor.customEditor"
+    "*.md": "default",
+    "{git,gitlens,conflictResolution,vscode-local-history}:/**/*.tc.json": "default"
   },
+  "workbench.iconTheme": "material-icon-theme",
   "workbench.layoutControl.enabled": false,
   "workbench.productIconTheme": "material-product-icons",
   "workbench.sideBar.location": "right",
   "workbench.startupEditor": "none",
   "workbench.tree.indent": 12,
   "xml.format.maxLineWidth": 0,
+  "yaml.customTags": [
+    "!And scalar",
+    "!If sequence",
+    "!If scaler",
+    "!Not",
+    "!Equals scalar",
+    "!Or scalar",
+    "!FindInMap scalar",
+    "!Base64",
+    "!Cidr",
+    "!GetAtt sequence",
+    "!GetAtt scalar",
+    "!Equals sequence",
+    "!FindInMap sequence",
+    "!Ref",
+    "!Ref scaler",
+    "!Transform scalar",
+    "!Transform",
+    "!Not sequence",
+    "!Or sequence",
+    "!Sub",
+    "!Sub sequence",
+    "!GetAZs",
+    "!ImportValue sequence",
+    "!Select sequence",
+    "!Split sequence",
+    "!Join sequence"
+  ],
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/aws-cloudformation/cfn-lint-visual-studio-code/main/server/schema/base.schema.json": "template.yaml"
+  },
   "zenMode.fullScreen": false,
   "zenMode.hideLineNumbers": false,
   "zenMode.hideStatusBar": false,
   "zenMode.restore": false,
   "zenMode.showTabs": "none",
-  "zenMode.silentNotifications": true,
-  "terminal.integrated.commandsToSkipShell": [
-    "-workbench.action.terminal.kill",
-    "-workbench.action.terminal.killEditor"
-  ],
-  "errorLens.gutterIconSet": "defaultOutline",
-  "editor.showFoldingControls": "always",
-  "workbench.iconTheme": "material-icon-theme",
-  "typescript.tsdk": "./node_modules/typescript/lib",
-  "window.customTitleBarVisibility": "auto",
-  "scm.experimental.showHistoryGraph": true,
-  "java.maven.downloadSources": true,
-  "java.maven.updateSnapshots": true,
-  "java.jdt.ls.androidSupport.enabled": "on",
-  "java.jdt.ls.java.home": "/usr/lib/jvm/java-17-openjdk-amd64/",
-  "editor.colorDecoratorsLimit": 1500,
-  "dart.flutterSdkPath": "/home/econn/.local/bin/flutter",
-  "explorer.fileNesting.enabled": true,
-  "explorer.fileNesting.patterns": {
-    "*.ts": "${capture}.spec.ts,${capture}.test.ts",
-    ".env": ".env.*",
-    ".gitignore": ".*"
-  },
-  "jest.runMode": "on-demand",
-  "cody.telemetry.level": "off",
-  "evenBetterToml.formatter.allowedBlankLines": 2,
-  "evenBetterToml.formatter.columnWidth": 1000,
-  "evenBetterToml.schema.links": true,
-  "evenBetterToml.semanticTokens": true,
-  "material-icon-theme.folders.color": "#ABB2BF",
-  "diffEditor.ignoreTrimWhitespace": false,
-  "gopls": {
-    "ui.semanticTokens": true
-  },
-  "jest.shell": "zsh",
-  "terminal.integrated.profiles.linux": {
-    "bash": {
-      "path": "bash",
-      "icon": "terminal-bash"
-    },
-    "zsh": {
-      "path": "/bin/zsh",
-      "args": ["-i", "-l"]
-    },
-    "fish": {
-      "path": "fish"
-    },
-    "tmux": {
-      "path": "tmux",
-      "icon": "terminal-tmux"
-    },
-    "pwsh": {
-      "path": "pwsh",
-      "icon": "terminal-powershell"
-    },
-    "zsh (2)": {
-      "path": "/usr/bin/zsh"
-    }
-  },
-  "terminal.integrated.automationProfile.linux": {
-    "path": "/bin/zsh",
-    "args": ["-i", "-l"]
-  },
-  "files.readonlyInclude": {
-    "node_modules/**": true
-  },
-  "errorLens.excludeBySource": ["node_modules/**"],
-  "problems.sortOrder": "position",
-  "terminal.integrated.enablePersistentSessions": false,
-  "window.title": "${activeRepositoryName}",
-  "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
-  "editor.guides.bracketPairs": "active"
+  "zenMode.silentNotifications": true
 }
