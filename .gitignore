@@ -14,9 +14,11 @@ obj/
 .local/share/applications/mimeinfo.cache
 .local/share/applications/google-chrome.desktop
 
-push.sh
-
 .DS_STORE
 
-local.zshenv
-local.zshrc
+local.fish
+.config/fish/completions/
+.config/fish/conf.d/
+.config/fish/functions/
+.config/fish/themes/
+.config/cinnamon/spices/Cinnamenu@json/33.json

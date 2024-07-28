@@ -103,7 +103,6 @@ sudo apt install dconf-editor
 sudo apt install dotnet-sdk-8.0
 sudo apt install scrcpy
 sudo apt install tldr
-sudo apt install zsh
 sudo apt install jq
 sudo apt install gpick
 sudo apt install entr
@@ -139,3 +138,7 @@ sudo apt install fastfetch
 # Remove xed as vscode is now installed
 sudo apt uninstall xed
 npm i -g @antfu/ni
+
+sudo apt-add-repository ppa:fish-shell/release-3
+sudo apt update
+sudo apt install fish

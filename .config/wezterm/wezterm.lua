@@ -3,7 +3,7 @@ local wezterm = require "wezterm"
 local mux = wezterm.mux
 local config = wezterm.config_builder()
 
-config.default_prog = { "zsh", "-i", "-l" }
+config.default_prog = { "fish", "-i", "-l" }
 config.default_gui_startup_args = { "start" }
 config.freetype_load_target = "HorizontalLcd"
 
@@ -95,13 +95,14 @@ local selectAll = wezterm.action.Multiple({ wezterm.action.ActivateCopyMode })
 
 config.disable_default_key_bindings = true
 config.keys = {
-    { mods = ctrl .. "|SHIFT", key = "p", action = wezterm.action.ActivateCommandPalette, },
-    { mods = ctrl,             key = "w", action = wezterm.action.CloseCurrentTab({ confirm = false }), },
-    { mods = ctrl,             key = "v", action = wezterm.action.PasteFrom("Clipboard"), },
-    { mods = ctrl,             key = "n", action = wezterm.action.SpawnCommandInNewTab {} },
-    { mods = ctrl,             key = "k", action = wezterm.action.ClearScrollback("ScrollbackAndViewport") },
-    { mods = ctrl,             key = "c", action = smartcopy, },
-    { mods = ctrl,             key = "a", action = selectAll, },
+    { mods = ctrl .. "|SHIFT", key = "p",      action = wezterm.action.ActivateCommandPalette, },
+    { mods = ctrl,             key = "w",      action = wezterm.action.CloseCurrentTab({ confirm = false }), },
+    { mods = ctrl,             key = "v",      action = wezterm.action.PasteFrom("Clipboard"), },
+    { mods = ctrl,             key = "n",      action = wezterm.action.SpawnCommandInNewTab {} },
+    { mods = ctrl,             key = "k",      action = wezterm.action.ClearScrollback("ScrollbackAndViewport") },
+    { mods = ctrl,             key = "c",      action = smartcopy },
+    { mods = ctrl,             key = "a",      action = selectAll },
+    { mods = ctrl,             key = "Delete", action = wezterm.action.SendString '\x09' },
 }
 
 return config
