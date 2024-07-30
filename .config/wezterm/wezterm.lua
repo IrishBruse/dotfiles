@@ -3,20 +3,19 @@ local wezterm = require "wezterm"
 local mux = wezterm.mux
 local config = wezterm.config_builder()
 
-config.default_prog = { "fish", "-i", "-l" }
 config.default_gui_startup_args = { "start" }
 config.freetype_load_target = "HorizontalLcd"
 
 if wezterm.target_triple == 'aarch64-apple-darwin' then
     config.font_size = 12.0
+    config.default_prog = { "/opt/homebrew/bin/fish", "-i", "-l" }
 else
     config.font_size = 9.0
+    config.default_prog = { "fish", "-i", "-l" }
 end
 
-
-config.initial_cols = 120
-config.initial_rows = 30
-
+config.initial_cols                   = 120
+config.initial_rows                   = 30
 
 config.hide_tab_bar_if_only_one_tab   = true
 config.enable_scroll_bar              = true
@@ -30,15 +29,14 @@ config.cursor_blink_ease_out          = "Constant"
 config.automatically_reload_config    = true
 config.use_fancy_tab_bar              = true
 
-
-config.window_padding = {
+config.window_padding                 = {
     left = 4,
     right = 10,
     top = 6,
     bottom = 6,
 }
 
-local ctrl = wezterm.target_triple == 'aarch64-apple-darwin' and "CMD" or "CTRL"
+local ctrl                            = wezterm.target_triple == 'aarch64-apple-darwin' and "CMD" or "CTRL"
 
 wezterm.on("gui-startup", function(cmd)
     local config = cmd or {}
@@ -85,7 +83,7 @@ config.color_scheme = 'OneDark (base16)'
 
 local smartcopy = wezterm.action_callback(function(window, pane)
     if window:get_selection_text_for_pane(pane) == "" then
-        window:perform_action(wezterm.action.SendKey { key = "c", mods = ctrl }, pane)
+        window:perform_action(wezterm.action.SendKey { key = "c", mods = "CTRL" }, pane)
     else
         window:perform_action(wezterm.action { CopyTo = "ClipboardAndPrimarySelection" }, pane)
     end
@@ -95,14 +93,18 @@ local selectAll = wezterm.action.Multiple({ wezterm.action.ActivateCopyMode })
 
 config.disable_default_key_bindings = true
 config.keys = {
-    { mods = ctrl .. "|SHIFT", key = "p",      action = wezterm.action.ActivateCommandPalette, },
-    { mods = ctrl,             key = "w",      action = wezterm.action.CloseCurrentTab({ confirm = false }), },
-    { mods = ctrl,             key = "v",      action = wezterm.action.PasteFrom("Clipboard"), },
-    { mods = ctrl,             key = "n",      action = wezterm.action.SpawnCommandInNewTab {} },
-    { mods = ctrl,             key = "k",      action = wezterm.action.ClearScrollback("ScrollbackAndViewport") },
-    { mods = ctrl,             key = "c",      action = smartcopy },
-    { mods = ctrl,             key = "a",      action = selectAll },
-    { mods = ctrl,             key = "Delete", action = wezterm.action.SendString '\x09' },
+    { mods = ctrl .. "|SHIFT", key = "p",          action = wezterm.action.ActivateCommandPalette, },
+    { mods = ctrl,             key = "w",          action = wezterm.action.CloseCurrentTab({ confirm = false }), },
+    { mods = ctrl,             key = "v",          action = wezterm.action.PasteFrom("Clipboard"), },
+    { mods = ctrl,             key = "n",          action = wezterm.action.SpawnCommandInNewTab {} },
+    { mods = ctrl,             key = "k",          action = wezterm.action.ClearScrollback("ScrollbackAndViewport") },
+    { mods = ctrl,             key = "c",          action = smartcopy },
+    { mods = ctrl,             key = "a",          action = selectAll },
+    { mods = ctrl,             key = "Backspace",  action = wezterm.action.SendKey { mods = 'OPT', key = 'Backspace' }, },
+    { mods = ctrl,             key = "Delete",     action = wezterm.action.SendKey { mods = 'CTRL', key = 'Delete' }, },
+    { mods = ctrl,             key = "r",          action = wezterm.action.SendKey { mods = 'CTRL', key = 'r' }, },
+    { mods = ctrl,             key = "LeftArrow",  action = wezterm.action.SendKey { mods = 'CTRL', key = 'LeftArrow' }, },
+    { mods = ctrl,             key = "RightArrow", action = wezterm.action.SendKey { mods = 'CTRL', key = 'RightArrow' }, },
 }
 
 return config

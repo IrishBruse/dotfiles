@@ -1,6 +1,5 @@
-[user]
-	name = IrishBruse
-	email = econn50@outlook.com
+[includeIf "gitdir:~/git/"]
+	path = ~/git/.gitconfig
 
 [init]
 	defaultBranch = main

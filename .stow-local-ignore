@@ -6,7 +6,7 @@ zsh
 \.vscode
 .*\.ini
 
-local.zshrc
-local.zshenv
+local.fish
+
 Refined\ GitHub\ options.json
 \.DS_Store

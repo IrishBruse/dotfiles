@@ -129,10 +129,10 @@
             },
             {
                 "title": "WezTerm.app",
-                "path": "/Applications/WezTerm.app",
-                "parameters": "--cwd %r",
+                "path": "/Applications/WezTerm.app/Contents/MacOS/wezterm-gui",
+                "parameters": "--args start --cwd %r",
                 "shortcut": "",
-                "startup": 1
+                "startup": 0
             }
         ]
     },

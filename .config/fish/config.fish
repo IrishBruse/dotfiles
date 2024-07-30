@@ -1,3 +1,8 @@
+/opt/homebrew/bin/brew shellenv | source
+oh-my-posh init fish --config $(realpath ~/.config/fish/oh-my-posh.yaml) | source
+zoxide init fish --cmd cd | source
+fzf --fish | source
+
 fish_add_path -g ~/.local/bin
 fish_add_path -g ~/go/bin
 fish_add_path -g ~/Android/Sdk/cmdline-tools/latest/bin
@@ -6,7 +11,7 @@ fish_add_path -g ~/Android/Sdk/build-tools
 fish_add_path -g ~/.local/bin/flutter/bin
 fish_add_path -g /usr/local/go/bin
 
-alias ..="cd .."
+alias cat="bat --theme OneHalfDark --style numbers"
 alias lz="lazygit"
 alias ls="eza -ax --icons=always --group-directories-first"
 alias ll="eza -al --icons=always --group-directories-first"
@@ -20,12 +25,11 @@ set -U fish_greeting
 set fish_color_valid_path
 set -x EDITOR "code"
 
-bind \x08 'backward-kill-bigword'
-bind \x09 'kill-bigword'
-
-oh-my-posh init fish --config ~/.config/fish/oh-my-posh.yaml | source
-zoxide init fish --cmd cd | source
-fzf --fish | source
+if ! set -q TERM_PROGRAM code
+    if test -e .nvmrc
+        nvm use
+    end
+end
 
 function c
     if test (count $argv) -eq 0
@@ -64,3 +68,10 @@ function nx
     nvm use
     command nlx $argv
 end
+
+function tsx
+    nvm use
+    command tsx $argv
+end
+
+source ~/dotfiles/local.fish
