@@ -121,16 +121,16 @@
     "externalTools": {
         "tools_v1": [
             {
-                "title": "Visual Studio Code.app",
+                "title": "Visual Studio Code",
                 "path": "/Applications/Visual Studio Code.app",
                 "parameters": "%r",
                 "shortcut": "",
                 "startup": 0
             },
             {
-                "title": "WezTerm.app",
-                "path": "/Applications/WezTerm.app/Contents/MacOS/wezterm-gui",
-                "parameters": "--args start --cwd %r",
+                "title": "WezTerm",
+                "path": "/Applications/WezTerm.app",
+                "parameters": "start --cwd %p",
                 "shortcut": "",
                 "startup": 0
             }

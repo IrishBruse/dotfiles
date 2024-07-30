@@ -11,12 +11,12 @@ fish_add_path -g ~/Android/Sdk/build-tools
 fish_add_path -g ~/.local/bin/flutter/bin
 fish_add_path -g /usr/local/go/bin
 
-alias cat="bat --theme OneHalfDark --style numbers"
+alias cat="bat --theme OneHalfDark --style grid,numbers"
 alias lz="lazygit"
 alias ls="eza -ax --icons=always --group-directories-first"
 alias ll="eza -al --icons=always --group-directories-first"
 alias reload="echo 'Reloading enviroment variables';exec fish"
-alias path="echo $PATH | tr ':' '\n'"
+alias paths="echo $PATH | tr ':' '\n'"
 alias clip="fish_clipboard_copy"
 alias dot="code ~/dotfiles/"
 alias clone="git clone --recursive"
@@ -25,7 +25,7 @@ set -U fish_greeting
 set fish_color_valid_path
 set -x EDITOR "code"
 
-if ! set -q TERM_PROGRAM code
+if not set TERM_PROGRAM vscode
     if test -e .nvmrc
         nvm use
     end
