@@ -1,7 +1,13 @@
-/opt/homebrew/bin/brew shellenv | source
-zoxide init fish --cmd cd | source
-fzf --fish | source
-fnm env --use-on-cd | source
+switch (uname)
+    case Darwin
+        /opt/homebrew/bin/brew shellenv | source
+
+    case '*'
+        fish_add_path -g ~/.local/bin
+        zoxide init fish --cmd cd | source
+        fzf --fish | source
+        fnm env --use-on-cd | source
+end
 
 
 set -U fish_greeting
@@ -15,20 +21,17 @@ function fish_title
 end
 
 
-fish_add_path -g ~/.local/bin
 fish_add_path -g ~/go/bin
-fish_add_path -g ~/Android/Sdk/cmdline-tools/latest/bin
-fish_add_path -g ~/Android/Sdk/platform-tools
-fish_add_path -g ~/Android/Sdk/build-tools
-fish_add_path -g ~/.local/bin/flutter/bin
-fish_add_path -g /usr/local/go/bin
+
+
+source ~/dotfiles/local.fish
 
 
 alias bat="bat --theme OneHalfDark --style grid,numbers"
 alias lz="lazygit"
 alias ls="eza -ax --icons=always --group-directories-first"
 alias ll="eza -al --icons=always --group-directories-first"
-alias reload="echo 'Reloading enviroment variables';exec fish"
+alias reload="exec fish -C clear"
 alias paths="echo $PATH | tr ':' '\n'"
 alias clip="fish_clipboard_copy"
 alias dot="code ~/dotfiles/"
@@ -46,6 +49,3 @@ function v
         code $argv
     end
 end
-
-
-source ~/dotfiles/local.fish

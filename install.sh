@@ -51,13 +51,6 @@ sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.lis
 sudo apt update
 sudo apt install -y eza
 
-header "Node js lts"
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-
-source ~/.bashrc
-
-nvm install --lts --default
-
 header "git delta"
 installDeb "https://github.com/dandavison/delta/releases/download/0.17.0/git-delta_0.17.0_amd64.deb"
 
@@ -142,3 +135,6 @@ npm i -g @antfu/ni
 sudo apt-add-repository ppa:fish-shell/release-3
 sudo apt update
 sudo apt install fish
+
+# fnm
+curl -fsSL https://fnm.vercel.app/install | bash

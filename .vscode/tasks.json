@@ -4,6 +4,7 @@
     {
       "label": "Backup brew",
       "type": "shell",
+      "command": "",
       "osx": {
         "command": "brew list > ${workspaceFolder}/brew.ini"
       },
@@ -14,6 +15,7 @@
     {
       "label": "Stow files",
       "type": "shell",
+      "command": "",
       "osx": {
         "command": "stow . --dotfiles"
       },
@@ -24,6 +26,7 @@
     {
       "label": "Backup cinnemon",
       "type": "shell",
+      "command": "",
       "osx": {
         "command": "stow . --dotfiles"
       },

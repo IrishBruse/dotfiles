@@ -1,5 +1,5 @@
-[includeIf "gitdir:~/git/"]
-	path = ~/git/.gitconfig
+[includeIf "gitdir:~/"]
+	path = ~/user.gitconfig
 
 [init]
 	defaultBranch = main

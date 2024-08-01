@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Cemu
-Exec=/home/econn/Apps/Cemu_2.0-88/Cemu
+Exec=/home/econn/Apps/Cemu/Cemu
 Comment=
 Terminal=false
 PrefersNonDefaultGPU=false

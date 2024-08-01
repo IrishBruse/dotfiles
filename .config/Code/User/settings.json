@@ -873,12 +873,6 @@
         }
       },
       {
-        "scope": "string.quoted.double punctuation",
-        "settings": {
-          "foreground": "#98C379"
-        }
-      },
-      {
         "scope": "support.constant",
         "settings": {
           "foreground": "#D19A66"
@@ -1710,7 +1704,7 @@
     "editor.semanticHighlighting.enabled": false
   },
   "[yaml]": {
-    "editor.defaultFormatter": "redhat.vscode-yaml"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "apc.activityBar": {
     "itemMargin": 1,
@@ -1866,6 +1860,7 @@
   "extensions.ignoreRecommendations": true,
   "files.associations": {
     "*.animation": "json",
+    "*.fish": "shellscript",
     "*.ib": "go",
     "*.ldtk": "json",
     "*.ldtkl": "json",
@@ -1922,11 +1917,9 @@
   "javascript.referencesCodeLens.enabled": true,
   "javascript.referencesCodeLens.showOnAllFunctions": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
+  "jest.jestCommandLine": "npm run test",
   "jest.runMode": "on-demand",
-  "jest.shell": {
-    "args": "-li",
-    "command": "fish"
-  },
+  "jest.shell": "/opt/homebrew/bin/fish",
   "js/ts.implicitProjectConfig.checkJs": true,
   "json.format.keepLines": true,
   "Lua.codeLens.enable": true,
@@ -1963,12 +1956,13 @@
   ],
   "smartersemicolon.autoLineChange": false,
   "smartersemicolon.enable": true,
-  "task.allowAutomaticTasks": "on",
-  "task.autoDetect": "off",
   "telemetry.telemetryLevel": "crash",
   "terminal.explorerKind": "both",
-  "terminal.external.windowsExec": "wt.exe",
   "terminal.integrated.automationProfile.linux": {
+    "args": ["-li"],
+    "path": "fish"
+  },
+  "terminal.integrated.automationProfile.osx": {
     "args": ["-li"],
     "path": "fish"
   },
@@ -1977,11 +1971,18 @@
     "workbench.action.createTerminalEditor",
     "workbench.action.terminal.killEditor"
   ],
+  "terminal.integrated.confirmOnKill": "never",
+  "terminal.integrated.cursorBlinking": true,
   "terminal.integrated.cursorStyle": "line",
   "terminal.integrated.defaultProfile.linux": "fish",
+  "terminal.integrated.defaultProfile.osx": "fish",
   "terminal.integrated.defaultProfile.windows": "Windows PowerShell",
   "terminal.integrated.enablePersistentSessions": false,
+  "terminal.integrated.enableVisualBell": true,
   "terminal.integrated.fontFamily": "CaskaydiaCove NF",
+  "terminal.integrated.gpuAcceleration": "on",
+  "terminal.integrated.hideOnStartup": "always",
+  "terminal.integrated.ignoreBracketedPasteMode": true,
   "terminal.integrated.persistentSessionReviveProcess": "never",
   "terminal.integrated.profiles.linux": {
     "bash": {
@@ -2006,7 +2007,10 @@
     }
   },
   "terminal.integrated.rightClickBehavior": "nothing",
+  "terminal.integrated.scrollback": 10000,
   "terminal.integrated.shellIntegration.decorationsEnabled": "never",
+  "terminal.integrated.shellIntegration.enabled": false,
+  "terminal.integrated.tabs.title": "${sequence}",
   "thunder-client.certificates": [
     {
       "certPath": "/Users/econneely/cert.pem",

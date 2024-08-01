@@ -287,7 +287,7 @@
      ]
     ],
     "path": "/mnt/data",
-    "read": 295043072,
+    "read": 295010304,
     "write": 0,
     "lastReading": [
      0,
@@ -298,7 +298,7 @@
    {
     "id": "Games",
     "enabled": false,
-    "show": true,
+    "show": 4,
     "colors": [
      [
       1,
@@ -312,7 +312,15 @@
       0,
       0.6
      ]
-    ]
+    ],
+    "path": "/mnt/Games",
+    "read": 0,
+    "write": 0,
+    "lastReading": [
+     0,
+     0
+    ],
+    "readingRatesList": []
    }
   ]
  }

@@ -170,26 +170,26 @@
         "type": "generic",
         "default": [],
         "value": [
+            "cinnamon-settings-themes.desktop",
+            "lightdm-settings.desktop",
+            "cinnamon-settings-calendar.desktop",
+            "mintupdate.desktop",
+            "chromium-browser.desktop",
+            "net.lutris.Lutris.desktop",
+            "mintdrivers.desktop",
+            "grub-customizer.desktop",
+            "discord.desktop",
+            "Menu-Editor.desktop",
+            "Sunshine.desktop",
             "cinnamon-settings-startup.desktop",
             "cinnamon-settings-keyboard.desktop",
             "nemo.desktop",
-            "mintupdate.desktop",
             "gucharmap.desktop",
             "parcellite.desktop",
             "cinnamon-settings-fonts.desktop",
             "cinnamon-settings-default.desktop",
             "ScrCpy.desktop",
-            "lightdm-settings.desktop",
-            "cinnamon-settings.desktop",
-            "cinnamon-settings-general.desktop",
-            "mintwelcome.desktop",
-            "net.lutris.hades-3.desktop",
-            "cinnamon-settings-themes.desktop",
-            "yad-icon-browser.desktop",
-            "discord.desktop",
-            "Sunshine.desktop",
-            "net.lutris.Lutris.desktop",
-            "io.github.Hexchat.desktop"
+            "cinnamon-settings.desktop"
         ]
     },
     "search-start-folder": {
@@ -596,7 +596,7 @@
         "default_category": "Linux",
         "default_icon": "cinnamon-symbolic",
         "tooltip": "Panel icon",
-        "value": "linuxmint-logo-simple-symbolic"
+        "value": "/home/econn/git/Images/Avatar/LogoIcon.png"
     },
     "menu-icon-size-custom": {
         "type": "checkbox",
@@ -615,7 +615,7 @@
         "description": "Panel icon size (pixels)",
         "dependency": "menu-icon-size-custom",
         "tooltip": "Choose a custom size for the panel icon",
-        "value": 26
+        "value": 30
     },
     "menu-label": {
         "type": "entry",
