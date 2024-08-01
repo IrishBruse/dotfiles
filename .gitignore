@@ -1,7 +1,7 @@
-node_modules/
-
 bin/
 obj/
+
+.DS_STORE
 
 .cinnamon/spices.cache
 .config/Code/*
@@ -13,12 +13,17 @@ obj/
 .local/share/applications/mimeapps.list
 .local/share/applications/mimeinfo.cache
 .local/share/applications/google-chrome.desktop
+.config/cinnamon/spices/Cinnamenu@json/33.json
 
-.DS_STORE
 
 local.fish
-.config/fish/completions/
-.config/fish/conf.d/
-.config/fish/functions/
+
 .config/fish/themes/
-.config/cinnamon/spices/Cinnamenu@json/33.json
+.config/fish/functions/
+
+.config/fish/completions/*
+!.config/fish/completions/aws.fish
+!.config/fish/completions/sam*.fish
+
+.config/fish/conf.d/*
+!.config/fish/conf.d/prompt.fish

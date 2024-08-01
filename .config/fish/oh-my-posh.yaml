@@ -14,26 +14,6 @@ blocks:
         template: "{{ .Path }}"
         properties:
           style: full
-  - type: prompt
-    alignment: right
-    overflow: hide
-    segments:
-      - type: git
-        style: plain
-        foreground: "green"
-        background: transparent
-        template: " {{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }} <cyan>{{ if gt .Behind 0 }}⇣{{ end }}{{ if gt .Ahead 0 }}⇡{{ end }}</>"
-        properties:
-          branch_icon: ""
-          commit_icon: "@"
-          fetch_status: true
-      - type: executiontime
-        style: plain
-        foreground: yellow
-        background: transparent
-        template: "{{ .FormattedMs }}"
-        properties:
-          threshold: 5000
 
   - type: prompt
     alignment: left

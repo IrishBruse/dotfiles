@@ -1,7 +1,19 @@
 /opt/homebrew/bin/brew shellenv | source
-oh-my-posh init fish --config $(realpath ~/.config/fish/oh-my-posh.yaml) | source
 zoxide init fish --cmd cd | source
 fzf --fish | source
+fnm env --use-on-cd | source
+
+
+set -U fish_greeting
+set fish_color_valid_path
+set -x EDITOR code
+set -x JQ_COLORS "2;33:2;33:0;33:0;36:1;32:0;35:1;35:2;34"
+
+
+function fish_title
+    echo test
+end
+
 
 fish_add_path -g ~/.local/bin
 fish_add_path -g ~/go/bin
@@ -11,7 +23,8 @@ fish_add_path -g ~/Android/Sdk/build-tools
 fish_add_path -g ~/.local/bin/flutter/bin
 fish_add_path -g /usr/local/go/bin
 
-alias cat="bat --theme OneHalfDark --style grid,numbers"
+
+alias bat="bat --theme OneHalfDark --style grid,numbers"
 alias lz="lazygit"
 alias ls="eza -ax --icons=always --group-directories-first"
 alias ll="eza -al --icons=always --group-directories-first"
@@ -21,17 +34,12 @@ alias clip="fish_clipboard_copy"
 alias dot="code ~/dotfiles/"
 alias clone="git clone --recursive"
 
-set -U fish_greeting
-set fish_color_valid_path
-set -x EDITOR "code"
 
-if not set TERM_PROGRAM vscode
-    if test -e .nvmrc
-        nvm use
-    end
+function pretty
+    jq -Rr '. as $line | try (fromjson) catch $line'
 end
 
-function c
+function v
     if test (count $argv) -eq 0
         code .
     else
@@ -39,39 +47,5 @@ function c
     end
 end
 
-function node
-    nvm use
-    command node $argv
-end
-
-function npm
-    nvm use
-    command npm $argv
-end
-
-function yarn
-    nvm use
-    command yarn $argv
-end
-
-function ni
-    nvm use
-    command ni $argv
-end
-
-function nr
-    nvm use
-    command nr $argv
-end
-
-function nx
-    nvm use
-    command nlx $argv
-end
-
-function tsx
-    nvm use
-    command tsx $argv
-end
 
 source ~/dotfiles/local.fish
