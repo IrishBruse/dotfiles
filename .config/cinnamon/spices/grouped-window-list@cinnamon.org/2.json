@@ -162,7 +162,7 @@
             "firefox.desktop",
             "org.gnome.Terminal.desktop"
         ],
-        "value": [ ]
+        "value": []
     },
     "group-apps": {
         "type": "checkbox",
@@ -231,7 +231,7 @@
             "250 ms": 250,
             "500 ms": 500
         },
-        "value": 250
+        "value": 50
     },
     "thumbnail-size": {
         "type": "combobox",
@@ -261,7 +261,7 @@
         "type": "checkbox",
         "default": false,
         "description": "Animate thumbnails",
-        "value": true
+        "value": false
     },
     "vertical-thumbnails": {
         "type": "checkbox",
@@ -310,7 +310,7 @@
         "type": "checkbox",
         "default": true,
         "description": "Show the window when hovering its thumbnail",
-        "value": true
+        "value": false
     },
     "hover-peek-time-in": {
         "dependency": "enable-hover-peek",

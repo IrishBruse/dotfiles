@@ -3,12 +3,12 @@ switch (uname)
         /opt/homebrew/bin/brew shellenv | source
 
     case '*'
-        fish_add_path -g ~/.local/bin
-        zoxide init fish --cmd cd | source
-        fzf --fish | source
-        fnm env --use-on-cd | source
 end
 
+fish_add_path -g ~/.local/bin
+zoxide init fish --cmd cd | source
+fzf --fish | source
+fnm env --use-on-cd | source
 
 set -U fish_greeting
 set fish_color_valid_path

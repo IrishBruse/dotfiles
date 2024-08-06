@@ -1,0 +1,265 @@
+/* Unindent foldable items in panel */
+.explorer-folders-view .monaco-list-row .monaco-tl-row .monaco-tl-twistie {
+  padding: 0;
+  width: 0px;
+}
+
+.explorer-folders-view .monaco-list-row[aria-expanded] .monaco-tl-row .codicon-tree-item-expanded::before {
+  margin-right: 14px;
+}
+
+.explorer-folders-view .monaco-list-row[aria-level="1"] .monaco-tl-row .codicon-tree-item-expanded {
+  padding: 0;
+  width: 0px;
+}
+
+.explorer-folders-view .monaco-list-row[aria-level="1"] .monaco-tl-row .codicon-tree-item-expanded::before {
+  left: -8px;
+  position: absolute;
+}
+
+.explorer-folders-view .monaco-list-row[aria-level="1"] .monaco-tl-row .monaco-tl-twistie[style="padding-left: 20px;"] {
+  padding-left: 10px !important;
+}
+
+
+/* Tab Top right background color matching tab color */
+.tabs-and-actions-container .editor-actions {
+  background-color: rgb(40 44 52);
+  padding: 0 4px 0 8px !important;
+}
+
+
+/* Fix top aligned activity bar and bottom panel padding without custom titlebar */
+.panel>.composite,
+.sidebar>.composite {
+  padding-left: 4px !important;
+}
+
+
+/* Empty project watermark */
+.editor-group-watermark {
+  max-width: none !important;
+}
+
+.letterpress {
+  background-repeat: no-repeat no-repeat !important;
+  background-position: center center !important;
+  background-size: contain !important;
+  width: 60% !important;
+}
+
+.monaco-workbench.linux .letterpress {
+  background-image: url("vscode-file://home/econn/dotfiles/vscode/art.svg") !important;
+}
+
+.monaco-workbench.macos .letterpress {
+  background-image: url("vscode-file://Users/econneely/dotfiles/vscode/art.svg") !important;
+}
+
+
+/* Move settings and profile icons to top right */
+.split-view-view:has(> .titlebar .action-toolbar-container) {
+  display: block !important;
+}
+
+.monaco-workbench.linux .titlebar-container>.titlebar-right {
+  position: absolute;
+  top: 3px;
+  right: 0;
+  height: 30px !important;
+}
+
+
+/* Center Command Pallet */
+.quick-input-widget {
+  top: 25% !important;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, .45) !important;
+  padding: 10px 10px 18px 10px !important;
+  border-radius: 10px !important;
+}
+
+.quick-input-filter .monaco-inputbox {
+  border-radius: 8px !important;
+  padding: 8px !important;
+  border: none !important;
+  font-family: "Open Sans" !important;
+  font-size: 14px !important;
+  margin-bottom: 16px !important;
+}
+
+/* Blur background when command pallet active */
+.monaco-grid-view:has(~.quick-input-widget:not([style*="display: none;"])) {
+  filter: blur(4px);
+}
+
+/* Sidebar panel Title */
+.title-label>h2 {
+  font-weight: bold !important;
+  font-size: 1.1em !important;
+  font-family: "Open Sans";
+}
+
+/* Use Open Sans in comments */
+/* .mtk3 {
+  font-family: 'Open Sans', monospace !important;
+} */
+
+/* Activity bar top icon colors and hover */
+.sidebar>.header .action-item>a {
+  color: var(--vscode-activityBarTop-inactiveForeground);
+}
+
+.sidebar>.header .action-item>a:hover {
+  color: var(--vscode-activityBarTop-foreground);
+  background-color: var(--vscode-activityBarTop-foreground) !important;
+}
+
+.sidebar .action-item>.action-label[aria-label^="Explorer"]:before {
+  content: "\e2c8";
+}
+
+.sidebar .action-item>.action-label[aria-label^="Source Control"]:before {
+  content: "\e627";
+}
+
+.sidebar .action-item>.action-label[aria-label^="Extensions"]:before {
+  font-family: 'pi-material-icons' !important;
+}
+
+.sidebar .action-item>.action-label[aria-label^="Snippet"]:before {
+  content: "\e627";
+}
+
+.sidebar .action-item>.action-label[aria-label^="Run and Debug"]:before {
+  content: "\e868";
+  font-size: 22px !important;
+  transform: translateY(1px);
+}
+
+.sidebar .action-item>.action-label[aria-label^="Search"]:before {
+  content: "\e8b6";
+  font-size: 20px !important;
+}
+
+.sidebar .action-item>.action-label[aria-label^="Snippet"]:hover,
+.sidebar .action-item>.action-label[aria-label^="Snippet"] {
+  background-color: transparent !important;
+  mask-image: none !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar .action-item>.action-label[aria-label^="Snippet"]:before {
+  content: "\e244";
+  font-size: 20px !important;
+}
+
+.sidebar .action-item>.action-label[aria-label^="Thunder Client"]:hover,
+.sidebar .action-item>.action-label[aria-label^="Thunder Client"] {
+  mask-image: none !important;
+  background-color: transparent !important;
+}
+
+.sidebar .action-item>.action-label[aria-label^="Thunder Client"]:before {
+  content: "\ec1c";
+  font-size: 20px !important;
+}
+
+.sidebar ul[arial-label="Active View Switcher"] .action-item>.action-label:before {
+  font-family: 'pi-material-icons';
+}
+
+.sidebar .action-item>.action-label[aria-label^="GitHub Pull Requests"]:before {
+  font-family: 'pi-material-icons' !important;
+}
+
+.sidebar .action-item>.action-label[aria-label^="Additional Views"]:before {
+  content: "\e5d3";
+}
+
+.linux .sidebar .icon>a[aria-label="AWS"] {
+  mask-image: url("vscode-file://home/econn/dotfiles/vscode/aws.png") !important;
+}
+
+.macos .sidebar .icon>a[aria-label="AWS"] {
+  mask-image: url("vscode-file://Users/econneely/dotfiles/vscode/aws.png") !important;
+}
+
+/* Custom icons */
+.sidebar>.header .actions-container .action-item>a:before {
+  font-family: 'Material Symbols Rounded';
+  position: inherit !important;
+  font-size: 18px;
+}
+
+.sidebar>.header .actions-container .action-item>a {
+  align-items: center;
+  justify-content: center;
+}
+
+/*
+.sidebar>.header .action-item> {
+  display: inline-block !important;
+} */
+
+/* Scrollbar animation */
+.scrollbar.vertical .slider {
+  transition: width 0.2s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
+  width: 2px !important;
+  right: 0px !important;
+  left: auto !important;
+}
+
+.scrollbar.vertical:hover .slider {
+  width: 15px !important;
+}
+
+.scrollbar.horizontal .slider {
+  transition: height 0.2s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
+  height: 2px !important;
+  bottom: 0px !important;
+  top: auto !important;
+}
+
+.scrollbar.horizontal:hover .slider {
+  height: 15px !important;
+}
+
+.editor-container .fade.invisible {
+  opacity: 1 !important;
+}
+
+/* Tooltip style */
+.monaco-editor-hover,
+.monaco-hover {
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, .3) !important;
+  padding: 8px !important;
+  border-radius: 10px !important;
+  border: none !important;
+}
+
+.editor-container .monaco-editor-hover,
+.editor-container .monaco-hover {
+  transform: translateY(-1rem);
+}
+
+.editor-widget.suggest-widget {
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, .45) !important;
+  border: none !important;
+  border-radius: 8px;
+}
+
+/* Customize sticky widget */
+.monaco-tree-sticky-container,
+.sticky-widget {
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, .2) !important;
+}
+
+.sticky-widget {
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  width: 100% !important;
+}
+
+/* asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd asdasda dasd asd asd asd  */

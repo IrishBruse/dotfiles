@@ -24,6 +24,7 @@ local.fish
 .config/fish/completions/*
 !.config/fish/completions/aws.fish
 !.config/fish/completions/sam*.fish
+!.config/fish/completions/wezterm.fish
 
 .config/fish/conf.d/*
 !.config/fish/conf.d/prompt.fish

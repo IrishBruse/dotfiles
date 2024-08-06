@@ -8,7 +8,7 @@
 
     "activityBar.background": "#333842",
     "activityBar.foreground": "#d7dae0",
-    "activityBarBadge.background": "#528bff",
+    "activityBarBadge.background": "#35A854",
     "activityBarBadge.foreground": "#d7dae0",
 
     "activityBarTop.activeBorder": "#636d83",
@@ -16,89 +16,107 @@
     "activityBarTop.foreground": "#d7dae0",
     "activityBarTop.inactiveForeground": "#abb2bf",
 
-    "badge.background": "#528bff",
+    "badge.background": "#35A854",
     "badge.foreground": "#d7dae0",
 
     "button.background": "#4d78cc",
     "button.foreground": "#ffffff",
     "button.hoverBackground": "#6087cf",
-
     "diffEditor.insertedTextBackground": "#00809b33",
     "dropdown.background": "#353b45",
     "scrollbar.shadow": "#00000000",
     "editorStickyScroll.shadow": "#282c34",
-    "dropdown.border": "#181a1f",
+    "dropdown.border": "#21252B",
     "editor.findMatchHighlightBackground": "#528bff3d",
     "panel.border": "#3a3f4b",
     "diffEditor.border": "#3a3f4b",
     "editorOverviewRuler.border": "#00000000",
     "editorOverviewRuler.background": "#282c34",
 
-    "editorCursor.foreground": "#528bff",
-    "editorGroup.border": "#181a1f",
+    "editorStickyScrollHover.background": "#3e445177",
+
+    "editorCursor.foreground": "#35A854",
+    "editorGroup.border": "#3A3F4B",
     "editorGroupHeader.tabsBackground": "#21252b",
-    "editorHoverWidget.background": "#21252b",
-    "editorHoverWidget.border": "#181a1f",
+    "editorHoverWidget.background": "#252931",
+    "editorHoverWidget.border": "#21252b",
     "editorIndentGuide.activeBackground1": "#626772",
     "editorIndentGuide.background1": "#abb2bf26",
     "tree.indentGuidesStroke": "#00000000",
     "editorInlayHint.background": "#2c313a",
     "editorInlayHint.foreground": "#636e83",
+
     "editorLineNumber.activeForeground": "#abb2bf",
-    "editorLineNumber.foreground": "#636d83",
-    "editorRuler.foreground": "#abb2bf26",
-    "editorSuggestWidget.background": "#21252b",
-    "editorSuggestWidget.border": "#181a1f",
+    "editorLineNumber.foreground": "#0000",
+
+    "commandCenter.activeBackground": "#3B4048",
+    "commandCenter.activeBorder": "#3B4048",
+    "commandCenter.activeForeground": "#d7dae0",
+    "commandCenter.background": "#282C34",
+    "commandCenter.border": "#3B4048",
+
+    "editorRuler.foreground": "#1e5bce26",
+
+    "editorSuggestWidget.background": "#252931",
+    "editorSuggestWidget.border": "#3a3f4b",
     "editorSuggestWidget.selectedBackground": "#2c313a",
+
     "editorWhitespace.foreground": "#abb2bf26",
     "editorWidget.background": "#21252b",
     "editorWidget.border": "#3a3f4b",
+
     "errorLens.errorBackground": "#00000000",
     "errorLens.hintBackground": "#00000000",
-    "commandCenter.border": "#3B4048",
-    "commandCenter.background": "#282C34",
-    "commandCenter.activeBorder": "#3B4048",
-    "commandCenter.activeBackground": "#3B4048",
-    "commandCenter.activeForeground": "#d7dae0",
     "errorLens.hintBackgroundLight": "#00000000",
     "errorLens.infoBackground": "#00000000",
     "errorLens.warningBackground": "#00000000",
     "errorLens.warningBackgroundLight": "#00000000",
+
     "extensionButton.prominentBackground": "#2ba143",
     "extensionButton.prominentHoverBackground": "#37af4e",
-    "focusBorder": "#528bff",
-    "input.background": "#1b1d23",
-    "input.border": "#181a1f",
+
+    "focusBorder": "#00000000",
+    "icon.foreground": "#d7dae0",
+    "input.background": "#252931",
+    "input.border": "#3a3f4b",
+
     "list.activeSelectionBackground": "#3e4451",
     "list.activeSelectionForeground": "#d7dae0",
     "list.focusBackground": "#2c313a",
+    "list.focusOutline": "#35A854",
     "list.highlightForeground": "#d7dae0",
     "list.hoverBackground": "#3e4451",
     "list.inactiveSelectionBackground": "#2c313a",
     "list.inactiveSelectionForeground": "#d7dae0",
+
     "notebook.cellEditorBackground": "#2c313a",
-    "peekView.border": "#528bff",
-    "icon.foreground": "#d7dae0",
+
+    "peekView.border": "#35A854",
     "peekViewEditor.background": "#1b1d23",
     "peekViewResult.background": "#21252b",
     "peekViewResult.selectionBackground": "#2c313a",
     "peekViewTitle.background": "#1b1d23",
-    "pickerGroup.border": "#528bff",
+
+    "pickerGroup.border": "#35A854",
+
     "scrollbarSlider.activeBackground": "#747d9180",
     "scrollbarSlider.background": "#4e566680",
     "scrollbarSlider.hoverBackground": "#5a637580",
+
     "sideBar.background": "#21252b",
     "sideBarSectionHeader.background": "#333842",
     "statusBar.background": "#21252b",
-    "statusBar.debuggingForeground": "#ffffff",
     "statusBar.debuggingBackground": "#747d9180",
+    "statusBar.debuggingForeground": "#ffffff",
     "statusBar.foreground": "#9da5b4",
     "statusBar.noFolderBackground": "#21252b",
     "statusBarItem.hoverBackground": "#2c313a",
+
     "tab.activeBackground": "#282c34",
     "tab.activeForeground": "#d7dae0",
-    "tab.border": "#181a1f",
+    "tab.border": "#0000",
     "tab.inactiveBackground": "#21252b",
+
     "titleBar.activeBackground": "#21252b",
     "titleBar.activeForeground": "#9da5b4",
     "titleBar.inactiveBackground": "#21252b",
@@ -1658,7 +1676,7 @@
     "editor.semanticHighlighting.enabled": true
   },
   "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "vscode.css-language-features"
   },
   "[go]": {
     "editor.semanticHighlighting.enabled": false
@@ -1707,37 +1725,16 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "apc.activityBar": {
-    "itemMargin": 1,
-    "itemSize": 0
+    "itemSize": 30
   },
-  "apc.font.family": "CaskaydiaCove NF",
-  "apc.monospace.font.family": "CaskaydiaCove NF",
-  "apc.stylesheet": {
-    ".explorer-folders-view .monaco-list-row .monaco-tl-row .monaco-tl-twistie": {
-      "padding": "0",
-      "width": "0px"
-    },
-    ".explorer-folders-view .monaco-list-row[aria-expanded] .monaco-tl-row .codicon-tree-item-expanded::before": {
-      "margin-right": "14px"
-    },
-    ".explorer-folders-view .monaco-list-row[aria-level=\"1\"] .monaco-tl-row .codicon-tree-item-expanded": {
-      "padding": "0",
-      "width": "0px"
-    },
-    ".explorer-folders-view .monaco-list-row[aria-level=\"1\"] .monaco-tl-row .codicon-tree-item-expanded::before": {
-      "left": "-8px",
-      "position": "absolute"
-    },
-    ".explorer-folders-view .monaco-list-row[aria-level=\"1\"] .monaco-tl-row .monaco-tl-twistie[style=\"padding-left: 20px;\"]": {
-      "padding-left": "6px !important"
-    },
-    ".tabs-and-actions-container .editor-actions": {
-      "background-color": "rgb(40, 44, 52)",
-      "padding": "0 4px 0 8px !important"
+  "apc.font.family": "CaskaydiaCove Nerd Font",
+  "apc.imports": [
+    "file://${userHome}/dotfiles/vscode/custom.css",
+    {
+      "rel": "stylesheet",
+      "href": "https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0"
     }
-  },
-  "breadcrumbs.enabled": false,
-  "breadcrumbs.filePath": "off",
+  ],
   "cfnLint.validateUsingJsonSchema": true,
   "cody.codeActions.enabled": false,
   "cody.commandCodeLenses": false,
@@ -1750,7 +1747,6 @@
   "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": true,
   "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": true,
   "csharp.suppressDotnetInstallWarning": true,
-  "debug.autoExpandLazyVariables": true,
   "debug.console.fontFamily": "CaskaydiaCove NF",
   "debug.disassemblyView.showSourceCode": false,
   "debug.internalConsoleOptions": "neverOpen",
@@ -1815,8 +1811,6 @@
   "editor.scrollbar.ignoreHorizontalScrollbarInContentHeight": true,
   "editor.scrollbar.verticalScrollbarSize": 15,
   "editor.semanticHighlighting.enabled": true,
-  "editor.showFoldingControls": "always",
-  "editor.snippetSuggestions": "none",
   "editor.suggest.localityBonus": true,
   "editor.suggest.selectionMode": "whenTriggerCharacter",
   "editor.suggest.shareSuggestSelections": true,
@@ -1860,7 +1854,7 @@
   "extensions.ignoreRecommendations": true,
   "files.associations": {
     "*.animation": "json",
-    "*.fish": "shellscript",
+    "*.fish": "fish",
     "*.ib": "go",
     "*.ldtk": "json",
     "*.ldtkl": "json",
@@ -1952,10 +1946,11 @@
   "security.workspace.trust.enabled": false,
   "settingsSync.ignoredSettings": [
     "window.titleBarStyle",
-    "editor.mouseWheelScrollSensitivity"
+    "editor.mouseWheelScrollSensitivity",
+    "update.mode"
   ],
   "smartersemicolon.autoLineChange": false,
-  "smartersemicolon.enable": true,
+  "smartersemicolon.enable": false,
   "telemetry.telemetryLevel": "crash",
   "terminal.explorerKind": "both",
   "terminal.integrated.automationProfile.linux": {
@@ -1980,7 +1975,6 @@
   "terminal.integrated.enablePersistentSessions": false,
   "terminal.integrated.enableVisualBell": true,
   "terminal.integrated.fontFamily": "CaskaydiaCove NF",
-  "terminal.integrated.gpuAcceleration": "on",
   "terminal.integrated.hideOnStartup": "always",
   "terminal.integrated.ignoreBracketedPasteMode": true,
   "terminal.integrated.persistentSessionReviveProcess": "never",
@@ -2009,7 +2003,6 @@
   "terminal.integrated.rightClickBehavior": "nothing",
   "terminal.integrated.scrollback": 10000,
   "terminal.integrated.shellIntegration.decorationsEnabled": "never",
-  "terminal.integrated.shellIntegration.enabled": false,
   "terminal.integrated.tabs.title": "${sequence}",
   "thunder-client.certificates": [
     {
@@ -2035,14 +2028,12 @@
   "typescript.tsdk": "./node_modules/typescript/lib",
   "typescript.tsserver.experimental.enableProjectDiagnostics": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "update.mode": "start",
+  "update.mode": "none",
   "window.closeWhenEmpty": false,
-  "window.customTitleBarVisibility": "auto",
   "window.menuBarVisibility": "hidden",
   "window.openFilesInNewWindow": "off",
   "window.title": "${activeRepositoryName}",
   "window.titleSeparator": " - ",
-  "workbench.activityBar.location": "top",
   "workbench.colorTheme": "Empty Dark",
   "workbench.editor.decorations.badges": false,
   "workbench.editor.decorations.colors": false,
@@ -2058,7 +2049,6 @@
   },
   "workbench.iconTheme": "material-icon-theme",
   "workbench.layoutControl.enabled": false,
-  "workbench.productIconTheme": "material-product-icons",
   "workbench.sideBar.location": "right",
   "workbench.startupEditor": "none",
   "workbench.tree.indent": 12,
@@ -2099,5 +2089,12 @@
   "zenMode.hideStatusBar": false,
   "zenMode.restore": false,
   "zenMode.showTabs": "none",
-  "zenMode.silentNotifications": true
+  "zenMode.silentNotifications": true,
+  "terminal.integrated.shellIntegration.enabled": false,
+  "window.commandCenter": false,
+  "editor.lineNumbers": "off",
+  "workbench.activityBar.location": "top",
+  "breadcrumbs.enabled": false,
+  "window.zoomLevel": 0.5,
+  "workbench.productIconTheme": "material-product-icons"
 }

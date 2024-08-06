@@ -1,10 +1,8 @@
 [Desktop Entry]
-Name=Cemu
-Exec=/home/econn/Apps/Cemu/Cemu
+Name=PolyMC
+Exec=/home/econn/.local/bin/polymc\n
 Comment=
 Terminal=false
 PrefersNonDefaultGPU=false
-Icon=cemu
+Icon=org.polymc.PolyMC
 Type=Application
-Hidden=false
-NoDisplay=false

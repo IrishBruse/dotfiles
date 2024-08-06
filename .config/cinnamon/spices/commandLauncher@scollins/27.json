@@ -39,7 +39,7 @@
         "type": "entry",
         "description": "Command",
         "default": "",
-        "value": "~/dotfiles/toggleAudioSource.sh"
+        "value": "~/dotfiles/toggleAudioSource.fish"
     },
     "useRoot": {
         "type": "checkbox",

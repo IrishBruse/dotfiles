@@ -138,3 +138,6 @@ sudo apt install fish
 
 # fnm
 curl -fsSL https://fnm.vercel.app/install | bash
+
+# Fish completions
+wezterm shell-completion --shell fish > .config/fish/completions/wezterm.fish
