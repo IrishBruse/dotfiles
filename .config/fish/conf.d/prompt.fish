@@ -23,7 +23,11 @@ function fish_prompt
 end
 
 function fish_right_prompt
-    printf (set_color normal)(fish_git_prompt)" "
+    if test $TERM_PROGRAM = vscode
+        printf ""
+    else
+        printf (set_color normal)(fish_git_prompt)" "
+    end
 end
 
 function fish_right_prompt_loading_indicator
@@ -31,6 +35,7 @@ function fish_right_prompt_loading_indicator
 end
 
 function maybe_execute
+
     set -g fish_first_prompt 1
 
     commandline --is-valid
@@ -45,7 +50,15 @@ function maybe_execute
 end
 
 function fish_title
-    echo test
+    if test (commandline -pc) != ""
+        set -gx fish_command (commandline -pc)
+    end
+
+    if test $TERM_PROGRAM = vscode
+        echo (commandline -pc)
+    else
+        echo (prompt_pwd --full-length-dirs=100) $fish_command
+    end
 end
 
 

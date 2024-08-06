@@ -115,92 +115,8 @@
   background-color: var(--vscode-activityBarTop-foreground) !important;
 }
 
-.sidebar .action-item>.action-label[aria-label^="Explorer"]:before {
-  content: "\e2c8";
-}
-
-.sidebar .action-item>.action-label[aria-label^="Source Control"]:before {
-  content: "\e627";
-}
-
-.sidebar .action-item>.action-label[aria-label^="Extensions"]:before {
-  font-family: 'pi-material-icons' !important;
-}
-
-.sidebar .action-item>.action-label[aria-label^="Snippet"]:before {
-  content: "\e627";
-}
-
-.sidebar .action-item>.action-label[aria-label^="Run and Debug"]:before {
-  content: "\e868";
-  font-size: 22px !important;
-  transform: translateY(1px);
-}
-
-.sidebar .action-item>.action-label[aria-label^="Search"]:before {
-  content: "\e8b6";
-  font-size: 20px !important;
-}
-
-.sidebar .action-item>.action-label[aria-label^="Snippet"]:hover,
-.sidebar .action-item>.action-label[aria-label^="Snippet"] {
-  background-color: transparent !important;
-  mask-image: none !important;
-  align-items: center;
-  justify-content: center;
-}
-
-.sidebar .action-item>.action-label[aria-label^="Snippet"]:before {
-  content: "\e244";
-  font-size: 20px !important;
-}
-
-.sidebar .action-item>.action-label[aria-label^="Thunder Client"]:hover,
-.sidebar .action-item>.action-label[aria-label^="Thunder Client"] {
-  mask-image: none !important;
-  background-color: transparent !important;
-}
-
-.sidebar .action-item>.action-label[aria-label^="Thunder Client"]:before {
-  content: "\ec1c";
-  font-size: 20px !important;
-}
-
-.sidebar ul[arial-label="Active View Switcher"] .action-item>.action-label:before {
-  font-family: 'pi-material-icons';
-}
-
-.sidebar .action-item>.action-label[aria-label^="GitHub Pull Requests"]:before {
-  font-family: 'pi-material-icons' !important;
-}
-
-.sidebar .action-item>.action-label[aria-label^="Additional Views"]:before {
-  content: "\e5d3";
-}
-
-.linux .sidebar .icon>a[aria-label="AWS"] {
-  mask-image: url("vscode-file://home/econn/dotfiles/vscode/aws.png") !important;
-}
-
-.mac .sidebar .icon>a[aria-label="AWS"] {
-  mask-image: url("vscode-file://Users/econneely/dotfiles/vscode/aws.png") !important;
-}
-
-/* Custom icons */
-.sidebar>.header .actions-container .action-item>a:before {
-  font-family: 'Material Symbols Rounded';
-  position: inherit !important;
-  font-size: 18px;
-}
-
-.sidebar>.header .actions-container .action-item>a {
-  align-items: center;
-  justify-content: center;
-}
-
-/*
-.sidebar>.header .action-item> {
-  display: inline-block !important;
+/* .sidebar .action-item>.action-label:before {
+  content: "\eb8b";
 } */
 
 /* Scrollbar animation */
@@ -262,6 +178,7 @@
   width: 100% !important;
 }
 
+/* Last line indicator */
 .view-lines>div:last-child:after {
   width: 6px;
   height: 3px;
@@ -270,4 +187,17 @@
   display: block;
   position: absolute;
   bottom: -6px;
+}
+
+/* Tab border height */
+.tab {
+  border: none !important;
+}
+
+.tab:not(:last-child):after {
+  content: "";
+  background-color: var(--vscode-tab-border);
+  height: 1rem;
+  align-self: center;
+  width: 1px;
 }

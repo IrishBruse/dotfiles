@@ -5,6 +5,10 @@ switch (uname)
     case '*'
 end
 
+if test "$TERM_PROGRAM" = vscode
+    set -g async_prompt_enable 0
+end
+
 fish_add_path -g ~/.local/bin
 zoxide init fish --cmd cd | source
 fzf --fish | source

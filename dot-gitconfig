@@ -12,8 +12,14 @@
 
 [delta]
     navigate = true
-    light = false
+    dark = true
     line-numbers = true
+    side-by-side = true
+    syntax-theme = OneHalfDark
+    commit-decoration-style = bold blue ol ul
+    file-style = bold blue ul
+    file-decoration-style = none
+    hunk-header-decoration-style = bold blue
 
 [merge]
     conflictstyle = diff3

@@ -13,8 +13,7 @@ git:
   allBranchesLogCmd: git log --graph --all --color=always --abbrev-commit --decorate --date=relative  --pretty=medium
 
   paging:
-    colorArg: always
-    useConfig: true
+    pager: delta --dark --paging=never
 
 update:
   method: never
@@ -33,20 +32,17 @@ gui:
   shortTimeFormat: "3:04PM"
   showListFooter: true
   showFileTree: true
-  showRandomTip: true
+  showRandomTip: false
   showCommandLog: true
   showBottomLine: true
   showPanelJumps: true
-  showFileIcons: true
-  commandLogSize: 8
+  commandLogSize: 0
   splitDiff: auto
   border: single
   animateExplosion: true
   portraitMode: auto
   nerdFontsVersion: "2"
-
-os:
-  editPreset: "vscode"
+  showFileIcons: true
 
 keybinding:
   files:
