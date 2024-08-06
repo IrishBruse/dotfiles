@@ -1,19 +1,33 @@
 function fish_prompt
+    set -l exit_code $status
+
     printf \e\[0J # clear from cursor to end of screen
 
-    if set -q fish_first_prompt
-        # echo
-    end
-
     if not set -e transient_prompt
-        echo (set_color blue)(prompt_pwd --full-length-dirs=2 --dir-length=3)(set_color normal)
+        printf (set_color blue)(prompt_pwd --full-length-dirs=20)(set_color normal)
+
+        if test $exit_code -ne 0
+            printf (set_color red)" $exit_code "(set_color normal)
+        end
+
+        echo
     end
 
-    # if $last_status != 0
-    #     echo (set_color red)'❯ '
-    # else
-    # end
-    echo (set_color magenta)'❯ '
+
+    if test $exit_code -eq 0
+        printf (set_color magenta)'❯'
+    else
+        printf (set_color red)'❯'
+    end
+    printf " "(set_color normal)
+end
+
+function fish_right_prompt
+    printf (set_color normal)(fish_git_prompt)" "
+end
+
+function fish_right_prompt_loading_indicator
+    printf (set_color normal)
 end
 
 function maybe_execute
@@ -22,12 +36,17 @@ function maybe_execute
     commandline --is-valid
 
     # If commandline is complete (i.e pressing enter will produce a new prompt)
-    if test $status != 2
+    if test $status -ne 2
         set -g transient_prompt
         commandline -f repaint
     end
 
     commandline -f execute
 end
+
+function fish_title
+    echo test
+end
+
 
 bind \r maybe_execute

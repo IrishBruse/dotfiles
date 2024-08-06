@@ -12,14 +12,10 @@ fnm env --use-on-cd | source
 
 set -U fish_greeting
 set fish_color_valid_path
-set -x EDITOR code
+set -x EDITOR "code --wait"
 set -x JQ_COLORS "2;33:2;33:0;33:0;36:1;32:0;35:1;35:2;34"
-
-
-function fish_title
-    echo test
-end
-
+set -U async_prompt_functions fish_right_prompt
+set -x __fish_git_prompt_showcolorhints 1
 
 fish_add_path -g ~/go/bin
 
@@ -33,9 +29,10 @@ alias ls="eza -ax --icons=always --group-directories-first"
 alias ll="eza -al --icons=always --group-directories-first"
 alias reload="exec fish -C clear"
 alias paths="echo $PATH | tr ':' '\n'"
-alias clip="fish_clipboard_copy"
+alias clip="fish_clipboard_copy;fish_clipboard_paste|cat"
 alias dot="code ~/dotfiles/"
 alias clone="git clone --recursive"
+alias nvm="fnm"
 
 
 function pretty
