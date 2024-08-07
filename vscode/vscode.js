@@ -10,20 +10,15 @@ function debounce(func, timeout = 300) {
 }
 
 const iconObserver = new MutationObserver((mutations) => {
-  const lines = mutations[0].target;
-  lines.childNodes.forEach((m) => {
-    if (m.getAttribute("aria-label") === "GitHub Pull Requests") {
-      m.childNodes[0].classList.remove("codicon-github");
-      m.childNodes[0].classList.remove("codicon");
-    }
-  });
+  const m = document.querySelector(".codicon-github");
+  m.classList.remove("codicon-github");
+  m.classList.remove("codicon");
 });
 
 // call `observe()`, passing it the element to observe, and the options object
-iconObserver.observe(
-  document.querySelector(".sidebar > .header .actions-container"),
-  { childList: true }
-);
+iconObserver.observe(document.querySelector(".sidebar .actions-container"), {
+  childList: true,
+});
 
 const lineObserver = new MutationObserver(
   debounce((mutations) => {
