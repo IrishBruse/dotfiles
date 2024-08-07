@@ -1,5 +1,5 @@
 /* Unindent foldable items in panel */
-/* .explorer-folders-view .monaco-list-row .monaco-tl-row .monaco-tl-twistie {
+.explorer-folders-view .monaco-list-row .monaco-tl-row .monaco-tl-twistie {
   padding: 0;
   width: 0px;
 }
@@ -8,26 +8,9 @@
   margin-right: 14px;
 }
 
-.explorer-folders-view .monaco-list-row[aria-level="1"] .monaco-tl-row .codicon-tree-item-expanded {
-  padding: 0;
-  width: 0px;
+.explorer-folders-view .monaco-list-row .monaco-icon-label {
+  margin-left: 0px;
 }
-
-.explorer-folders-view .monaco-list-row[aria-level="1"] .monaco-tl-row .codicon-tree-item-expanded::before {
-  left: -8px;
-  position: absolute;
-}
-
-.explorer-folders-view .monaco-list-row[aria-level="1"] .monaco-tl-row .monaco-tl-twistie[style="padding-left: 20px;"] {
-  padding-left: 10px !important;
-}
-*/
-
-
-/* .sidebar .content .monaco-list-row .monaco-tl-twistie {
-  padding-left: 0px !important;
-} */
-
 
 /* Tab Top right background color matching tab color */
 .tabs-and-actions-container .editor-actions {
@@ -40,12 +23,6 @@
 /* .tabs-and-actions-container {
   flex-direction: row-reverse;
 } */
-
-/* Fix top aligned activity bar and bottom panel padding without custom titlebar */
-.panel>.composite,
-.sidebar>.composite {
-  padding-left: 4px !important;
-}
 
 /* Empty project watermark */
 .editor-group-watermark {
@@ -146,6 +123,10 @@
   opacity: 1 !important;
 }
 
+#req-left {
+  background-color: red !important;
+}
+
 /* Tooltip style */
 .monaco-editor-hover,
 .monaco-hover {
@@ -174,8 +155,6 @@
 /* Customize editor sticky widget */
 .monaco-editor .sticky-widget {
   box-shadow: 0px 4px 12px rgba(0, 0, 0, .2) !important;
-  border-right: 1px solid var(--vscode-input-border) !important;
-  right: 0px !important;
 }
 
 .sticky-widget {
@@ -195,7 +174,7 @@
   bottom: -6px;
 }
 
-/* Tab border height */
+/* Custom tab seperator like google chrome*/
 .tab {
   border: none !important;
 }
@@ -206,17 +185,4 @@
   height: 1rem;
   align-self: center;
   width: 1px;
-}
-
-.sidebar {
-  box-shadow: -12px 0px 25px rgba(0, 0, 0, .25) !important;
-}
-
-.sidebar>.header {
-  background-color: var(--vscode-tab-inactiveBackground) !important;
-  padding-left: 0 !important;
-}
-
-.sidebar .action-item.icon.checked {
-  background-color: var(--vscode-sideBar-background) !important;
 }
