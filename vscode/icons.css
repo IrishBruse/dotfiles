@@ -12,6 +12,14 @@
     color: var(--vscode-activityBarTop-foreground) !important;
 }
 
+
+/* Activity bar top icon colors and hover */
+.sidebar>.header .action-item>a {
+    color: var(--vscode-activityBarTop-inactiveForeground);
+}
+
+
+
 /* The icons overrides */
 .sidebar .action-item>.action-label[aria-label^="Explorer"]:before {
     font-family: 'Material Symbols Rounded';
@@ -91,16 +99,28 @@
     content: "\e5d3" !important;
 }
 
-.linux .sidebar .icon>a[aria-label="AWS"] {
+.sidebar>.header .action-item:hover[aria-label="AWS"]>a {
+    background-color: var(--vscode-activityBarTop-foreground) !important;
+}
+
+.linux .sidebar .icon>.action-label[aria-label="AWS"] {
     mask-image: url("vscode-file://home/econn/dotfiles/vscode/aws.png") !important;
 }
 
-.mac .sidebar .icon>a[aria-label="AWS"] {
+.mac .sidebar .icon>.action-label[aria-label="AWS"] {
     mask-image: url("vscode-file://Users/econneely/dotfiles/vscode/aws.png") !important;
 }
 
 .sidebar .icon>.action-label[aria-label^="GitHub"]:before {
     display: none !important;
+}
+
+.sidebar .icon>.action-label[aria-label^="GitHub"]:hover .action-label {
+    background-color: #ff00ff;
+}
+
+.sidebar>.header .action-item:hover[aria-label^="GitHub"]>.action-label {
+    background-color: var(--vscode-activityBarTop-foreground) !important;
 }
 
 .sidebar .icon>.action-label[aria-label^="GitHub"] {

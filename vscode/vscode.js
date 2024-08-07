@@ -9,50 +9,46 @@ function debounce(func, timeout = 300) {
   };
 }
 
-/** @type { (...args: MutationRecord[]) => void} */
-const lineUpdate = debounce((mutations) => {
-  let lastLineHeight = 0;
-  let lastLine = 0;
-
-  const lines = document.querySelector(".view-lines");
-
-  console.log("TEST", lines);
-
-  lines.childNodes.forEach((line) => {
-    const styles = getComputedStyle(line);
-    const lineHeight = parseInt(styles.top);
-    if (lineHeight > lastLineHeight) {
-      lastLineHeight = lineHeight;
-      lastLine = line;
+const iconObserver = new MutationObserver((mutations) => {
+  const lines = mutations[0].target;
+  lines.childNodes.forEach((m) => {
+    if (m.getAttribute("aria-label") === "GitHub Pull Requests") {
+      m.childNodes[0].classList.remove("codicon-github");
+      m.childNodes[0].classList.remove("codicon");
     }
   });
+});
 
-  lastLine.classList.add("last-line");
-}, 250);
+// call `observe()`, passing it the element to observe, and the options object
+iconObserver.observe(
+  document.querySelector(".sidebar > .header .actions-container"),
+  { childList: true }
+);
 
-(function () {
-  const iconObserver = new MutationObserver((mutations) => {
-    mutations.childNodes.forEach((m) => {
-      const element = document.querySelector(
-        ".sidebar a[aria-label='GitHub Pull Requests']"
-      );
+const lineObserver = new MutationObserver(
+  debounce((mutations) => {
+    let lastLineHeight = 0;
+    let lastLine = 0;
 
-      element?.classList.remove("codicon-github");
-      element?.classList.remove("codicon");
+    const lines = document.querySelector(".view-lines");
+
+    console.log("TEST2", mutations[0].target);
+
+    lines.childNodes.forEach((line) => {
+      const styles = getComputedStyle(line);
+      const lineHeight = parseInt(styles.top);
+      if (lineHeight > lastLineHeight) {
+        lastLineHeight = lineHeight;
+        lastLine = line;
+      }
     });
-  });
 
-  // call `observe()`, passing it the element to observe, and the options object
-  iconObserver.observe(
-    document.querySelector(".sidebar > .header .actions-container"),
-    { childList: true }
-  );
+    lastLine.classList.add("last-line");
+  })
+);
 
-  const lineObserver = new MutationObserver(lineUpdate);
-
-  // call `observe()`, passing it the element to observe, and the options object
-  lineObserver.observe(
-    document.querySelector(".monaco-editor .view-lines > div"),
-    { subtree: true, childList: true, attributes: true }
-  );
-})();
+// call `observe()`, passing it the element to observe, and the options object
+lineObserver.observe(
+  document.querySelector(".monaco-editor .view-lines > .view-line"),
+  { subtree: true, childList: true, attributes: true }
+);

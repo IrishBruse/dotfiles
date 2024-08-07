@@ -33,15 +33,19 @@
 .tabs-and-actions-container .editor-actions {
   background-color: rgb(40 44 52);
   padding: 0 4px 0 8px !important;
+  z-index: 10;
 }
 
+/* swap order of tabs and actions */
+/* .tabs-and-actions-container {
+  flex-direction: row-reverse;
+} */
 
 /* Fix top aligned activity bar and bottom panel padding without custom titlebar */
 .panel>.composite,
 .sidebar>.composite {
   padding-left: 4px !important;
 }
-
 
 /* Empty project watermark */
 .editor-group-watermark {
@@ -111,16 +115,6 @@
   font-family: 'Open Sans', monospace !important;
 } */
 
-/* Activity bar top icon colors and hover */
-.sidebar>.header .action-item>a {
-  color: var(--vscode-activityBarTop-inactiveForeground);
-}
-
-.sidebar>.header .action-item>a:hover {
-  color: var(--vscode-activityBarTop-foreground);
-  background-color: var(--vscode-activityBarTop-foreground) !important;
-}
-
 /* .sidebar .action-item>.action-label:before {
   content: "\eb8b";
 } */
@@ -172,10 +166,16 @@
   border-radius: 8px;
 }
 
-/* Customize sticky widget */
-.monaco-tree-sticky-container,
-.sticky-widget {
+/* Customize tree sticky widget */
+.monaco-tree-sticky-container {
+  border-bottom: 1px solid var(--vscode-editorWidget-border) !important;
+}
+
+/* Customize editor sticky widget */
+.monaco-editor .sticky-widget {
   box-shadow: 0px 4px 12px rgba(0, 0, 0, .2) !important;
+  border-right: 1px solid var(--vscode-input-border) !important;
+  right: 0px !important;
 }
 
 .sticky-widget {
@@ -206,4 +206,17 @@
   height: 1rem;
   align-self: center;
   width: 1px;
+}
+
+.sidebar {
+  box-shadow: -12px 0px 25px rgba(0, 0, 0, .25) !important;
+}
+
+.sidebar>.header {
+  background-color: var(--vscode-tab-inactiveBackground) !important;
+  padding-left: 0 !important;
+}
+
+.sidebar .action-item.icon.checked {
+  background-color: var(--vscode-sideBar-background) !important;
 }
