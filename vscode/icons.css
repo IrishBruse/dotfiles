@@ -63,6 +63,7 @@
     background-color: transparent !important;
     mask-image: none !important;
     align-items: center;
+    transform: translateX(-7px);
     justify-content: center;
 }
 
@@ -82,8 +83,8 @@
     font-family: 'Material Symbols Rounded';
     content: "\ec1c" !important;
     font-size: 18px !important;
+    transform: translateX(-1px);
 }
-
 
 .sidebar .action-item>.action-label[aria-label^="Additional Views"]:before {
     font-family: 'Material Symbols Rounded';
@@ -104,6 +105,7 @@
 
 .sidebar .icon>.action-label[aria-label^="GitHub"] {
     background-color: rgb(171, 178, 191);
+    transform: translateX(1px);
 
     -webkit-mask-position-x: 50% !important;
     -webkit-mask-position-y: 50% !important;

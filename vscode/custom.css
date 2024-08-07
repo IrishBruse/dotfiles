@@ -1,5 +1,5 @@
 /* Unindent foldable items in panel */
-.explorer-folders-view .monaco-list-row .monaco-tl-row .monaco-tl-twistie {
+/* .explorer-folders-view .monaco-list-row .monaco-tl-row .monaco-tl-twistie {
   padding: 0;
   width: 0px;
 }
@@ -21,6 +21,12 @@
 .explorer-folders-view .monaco-list-row[aria-level="1"] .monaco-tl-row .monaco-tl-twistie[style="padding-left: 20px;"] {
   padding-left: 10px !important;
 }
+*/
+
+
+/* .sidebar .content .monaco-list-row .monaco-tl-twistie {
+  padding-left: 0px !important;
+} */
 
 
 /* Tab Top right background color matching tab color */
@@ -179,7 +185,7 @@
 }
 
 /* Last line indicator */
-.view-lines>div:last-child:after {
+.view-lines>div.last-line:after {
   width: 6px;
   height: 3px;
   background-color: var(--vscode-input-border);

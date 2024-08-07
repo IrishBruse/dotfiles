@@ -37,6 +37,7 @@ alias clip="fish_clipboard_copy;fish_clipboard_paste|cat"
 alias dot="code ~/dotfiles/"
 alias clone="git clone --recursive"
 alias nvm="fnm"
+alias code="code --force-device-scale-factor=0.9"
 
 
 function pretty

@@ -114,7 +114,7 @@
 
     "tab.activeBackground": "#282c34",
     "tab.activeForeground": "#d7dae0",
-    "tab.border": "#0000",
+    "tab.border": "#3a3f4b",
     "tab.inactiveBackground": "#21252b",
 
     "titleBar.activeBackground": "#21252b",
@@ -1676,7 +1676,7 @@
     "editor.semanticHighlighting.enabled": true
   },
   "[css]": {
-    "editor.defaultFormatter": "vscode.css-language-features"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[go]": {
     "editor.semanticHighlighting.enabled": false
@@ -1730,6 +1730,8 @@
   "apc.font.family": "CaskaydiaCove Nerd Font",
   "apc.imports": [
     "file://${userHome}/dotfiles/vscode/custom.css",
+    "file://${userHome}/dotfiles/vscode/icons.css",
+    "file://${userHome}/dotfiles/vscode/vscode.js",
     {
       "rel": "stylesheet",
       "href": "https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0"
@@ -2002,7 +2004,6 @@
   },
   "terminal.integrated.rightClickBehavior": "nothing",
   "terminal.integrated.scrollback": 10000,
-  "terminal.integrated.shellIntegration.decorationsEnabled": "never",
   "terminal.integrated.tabs.title": "${sequence}",
   "thunder-client.certificates": [
     {
@@ -2053,48 +2054,48 @@
   "workbench.startupEditor": "none",
   "workbench.tree.indent": 12,
   "xml.format.maxLineWidth": 0,
-  "yaml.customTags": [
-    "!And scalar",
-    "!If sequence",
-    "!If scaler",
-    "!Not",
-    "!Equals scalar",
-    "!Or scalar",
-    "!FindInMap scalar",
-    "!Base64",
-    "!Cidr",
-    "!GetAtt sequence",
-    "!GetAtt scalar",
-    "!Equals sequence",
-    "!FindInMap sequence",
-    "!Ref",
-    "!Ref scaler",
-    "!Transform scalar",
-    "!Transform",
-    "!Not sequence",
-    "!Or sequence",
-    "!Sub",
-    "!Sub sequence",
-    "!GetAZs",
-    "!ImportValue sequence",
-    "!Select sequence",
-    "!Split sequence",
-    "!Join sequence"
-  ],
-  "yaml.schemas": {
-    "https://raw.githubusercontent.com/aws-cloudformation/cfn-lint-visual-studio-code/main/server/schema/base.schema.json": "template.yaml"
-  },
+  // "yaml.customTags": [
+  //   "!And scalar",
+  //   "!If sequence",
+  //   "!If scaler",
+  //   "!Not",
+  //   "!Equals scalar",
+  //   "!Or scalar",
+  //   "!FindInMap scalar",
+  //   "!Base64",
+  //   "!Cidr",
+  //   "!GetAtt sequence",
+  //   "!GetAtt scalar",
+  //   "!Equals sequence",
+  //   "!FindInMap sequence",
+  //   "!Ref",
+  //   "!Ref scaler",
+  //   "!Transform scalar",
+  //   "!Transform",
+  //   "!Not sequence",
+  //   "!Or sequence",
+  //   "!Sub",
+  //   "!Sub sequence",
+  //   "!GetAZs",
+  //   "!ImportValue sequence",
+  //   "!Select sequence",
+  //   "!Split sequence",
+  //   "!Join sequence"
+  // ],
+  // "yaml.schemas": {
+  //   "https://raw.githubusercontent.com/aws-cloudformation/cfn-lint-visual-studio-code/main/server/schema/base.schema.json": "template.yaml"
+  // },
   "zenMode.fullScreen": false,
   "zenMode.hideLineNumbers": false,
   "zenMode.hideStatusBar": false,
   "zenMode.restore": false,
   "zenMode.showTabs": "none",
   "zenMode.silentNotifications": true,
-  "terminal.integrated.shellIntegration.enabled": false,
-  "window.commandCenter": false,
   "editor.lineNumbers": "off",
   "workbench.activityBar.location": "top",
   "breadcrumbs.enabled": false,
-  "window.zoomLevel": 0.5,
+  "window.customTitleBarVisibility": "never",
+  "terminal.integrated.shellIntegration.decorationsEnabled": "overviewRuler",
+  "editor.hover.enabled": false,
   "workbench.productIconTheme": "material-product-icons"
 }
