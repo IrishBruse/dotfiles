@@ -186,3 +186,21 @@
   align-self: center;
   width: 1px;
 }
+
+/* Status bar */
+#status\.editor\.selection {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: fit-content;
+}
+
+#sidebar-mimic {
+  position: absolute;
+  right: 0;
+  z-index: -10;
+  background-color: var(--vscode-sideBar-background);
+  height: 100%;
+}

@@ -38,12 +38,20 @@ alias ls="eza -ax --icons=always --group-directories-first"
 alias ll="eza -al --icons=always --group-directories-first"
 alias reload="exec fish -C clear"
 alias paths="echo $PATH | tr ':' '\n'"
-alias clip="fish_clipboard_copy;fish_clipboard_paste|cat"
 alias dot="code ~/dotfiles/"
-alias clone="git clone --recursive"
 alias nvm="fnm"
 alias code="code --force-device-scale-factor=0.9"
 
+function clone
+    set repoURL (echo $argv[1] | string trim -l -c "https://" | string split "/")
+    set -l repo (repoURL[3] | string split ".")
+
+    echo repo[1]
+end
+
+function clip
+    fish_clipboard_copy
+end
 
 function pretty
     jq -Rr '. as $line | try (fromjson) catch $line'

@@ -12,6 +12,20 @@
     color: var(--vscode-activityBarTop-foreground) !important;
 }
 
+/* Align icons to the center */
+.sidebar>.header {
+    justify-content: center !important;
+}
+
+.sidebar>.header>div {
+    flex-grow: 0 !important;
+}
+
+/* make trafic light padding bigger */
+.inline-tabs-placeholder {
+    width: 78px !important;
+}
+
 /* Hover */
 .sidebar>.header .action-item:hover>.action-label {
     background-color: var(--vscode-activityBarTop-foreground) !important;
