@@ -51,15 +51,16 @@ end
 
 function fish_title
     if test (commandline -pc) != ""
-        set -gx fish_command (commandline -pc)
+        set -gx fish_command (commandline -pc | string shorten --max 20)
     end
 
     if test $TERM_PROGRAM = vscode
-        echo (commandline -pc)
+        echo $fish_command
     else
         echo (prompt_pwd --full-length-dirs=100) $fish_command
     end
-end
 
+    echo $test
+end
 
 bind \r maybe_execute

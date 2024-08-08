@@ -5,14 +5,19 @@ switch (uname)
     case '*'
 end
 
-if test "$TERM_PROGRAM" = vscode
-    set -g async_prompt_enable 0
-end
-
 fish_add_path -g ~/.local/bin
 zoxide init fish --cmd cd | source
 fzf --fish | source
-fnm env --use-on-cd | source
+fnm env | source
+
+function on_change_dir --on-variable PWD --description 'Change Node version on directory change'
+    status --is-command-substitution; and return
+    if test -f .node-version -o -f .nvmrc
+        fnm use --silent-if-unchanged >/dev/null
+    end
+end
+
+on_change_dir
 
 set -U fish_greeting
 set fish_color_valid_path

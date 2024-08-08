@@ -4,6 +4,9 @@
 [init]
 	defaultBranch = main
 
+[user]
+    name = Ethan Conneely
+
 [core]
     pager = delta
 
@@ -16,7 +19,7 @@
     line-numbers = true
     side-by-side = true
     syntax-theme = OneHalfDark
-    commit-decoration-style = bold blue ol ul
+    commit-decoration-style = bold blue
     file-style = bold blue ul
     file-decoration-style = none
     hunk-header-decoration-style = bold blue
