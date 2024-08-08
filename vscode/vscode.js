@@ -27,8 +27,6 @@ const lineObserver = new MutationObserver(
 
     const lines = document.querySelector(".view-lines");
 
-    console.log("TEST2", mutations[0].target);
-
     lines.childNodes.forEach((line) => {
       const styles = getComputedStyle(line);
       const lineHeight = parseInt(styles.top);
