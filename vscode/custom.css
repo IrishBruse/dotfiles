@@ -96,9 +96,12 @@
 
 .scrollbar.horizontal .slider {
   transition: height 0.2s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
-  height: 2px !important;
-  bottom: 0px !important;
   top: auto !important;
+  opacity: 0;
+}
+
+.scrollbar.horizontal:hover .slider {
+  opacity: 1;
 }
 
 .scrollbar.horizontal:hover .slider {
