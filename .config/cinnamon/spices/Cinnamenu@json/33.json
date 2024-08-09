@@ -171,8 +171,10 @@
         "default": [],
         "value": [
             "alacarte-made-ba6c3700-52b0-11ef-9524-d017c2d5dd9f.desktop",
-            "Sunshine.desktop",
             "discord.desktop",
+            "org.gnome.DiskUtility.desktop",
+            "grub-customizer.desktop",
+            "Sunshine.desktop",
             "lightdm-settings.desktop",
             "cinnamon-settings-themes.desktop",
             "Cemu.desktop",
@@ -187,9 +189,7 @@
             "nemo.desktop",
             "cinnamon-settings-effects.desktop",
             "cinnamon-settings-startup.desktop",
-            "gucharmap.desktop",
-            "cinnamon-settings-fonts.desktop",
-            "mintdrivers.desktop"
+            "gucharmap.desktop"
         ]
     },
     "search-start-folder": {

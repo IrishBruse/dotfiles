@@ -6,7 +6,7 @@
     "editor.lineHighlightBackground": "#99bbff0a",
     "editor.selectionBackground": "#3e4451",
 
-    "activityBar.background": "#333842",
+    "activityBar.background": "#282c34",
     "activityBar.foreground": "#d7dae0",
     "activityBarBadge.background": "#35A854",
     "activityBarBadge.foreground": "#d7dae0",
@@ -19,17 +19,15 @@
     "badge.background": "#35A854",
     "badge.foreground": "#d7dae0",
 
-    "button.background": "#4d78cc",
+    "button.background": "#35A854",
     "button.foreground": "#ffffff",
-    "button.hoverBackground": "#6087cf",
-    "diffEditor.insertedTextBackground": "#00809b33",
+    "button.hoverBackground": "#35974f",
     "dropdown.background": "#353b45",
     "scrollbar.shadow": "#00000000",
     "editorStickyScroll.shadow": "#282c34",
     "dropdown.border": "#21252B",
-    "editor.findMatchHighlightBackground": "#528bff3d",
+    "editor.findMatchHighlightBackground": "#636d8377",
     "panel.border": "#3a3f4b",
-    "diffEditor.border": "#3a3f4b",
     "editorOverviewRuler.border": "#00000000",
     "editorOverviewRuler.background": "#282c34",
 
@@ -38,7 +36,7 @@
     "editorCursor.foreground": "#35A854",
     "editorGroup.border": "#3A3F4B",
     "editorGroupHeader.tabsBackground": "#21252b",
-    "editorHoverWidget.background": "#252931",
+    "editorHoverWidget.background": "#21252b",
     "editorHoverWidget.border": "#21252b",
     "editorIndentGuide.activeBackground1": "#626772",
     "editorIndentGuide.background1": "#abb2bf26",
@@ -47,7 +45,7 @@
     "editorInlayHint.foreground": "#636e83",
 
     "editorLineNumber.activeForeground": "#abb2bf",
-    "editorLineNumber.foreground": "#0000",
+    "editorLineNumber.foreground": "#636e83",
 
     "commandCenter.activeBackground": "#3B4048",
     "commandCenter.activeBorder": "#3B4048",
@@ -85,7 +83,7 @@
     "list.focusBackground": "#2c313a",
     "list.focusOutline": "#35A854",
     "list.highlightForeground": "#d7dae0",
-    "list.hoverBackground": "#3e4451",
+    "list.hoverBackground": "#3e445188",
     "list.inactiveSelectionBackground": "#2c313a",
     "list.inactiveSelectionForeground": "#d7dae0",
 
@@ -105,17 +103,29 @@
 
     "sideBar.background": "#21252b",
     "sideBarSectionHeader.background": "#333842",
-    "statusBar.background": "#21252b",
+    "statusBar.background": "#00000000",
     "statusBar.debuggingBackground": "#747d9180",
     "statusBar.debuggingForeground": "#ffffff",
     "statusBar.foreground": "#9da5b4",
-    "statusBar.noFolderBackground": "#21252b",
+    "statusBar.noFolderBackground": "#00000000",
     "statusBarItem.hoverBackground": "#2c313a",
 
     "tab.activeBackground": "#282c34",
     "tab.activeForeground": "#d7dae0",
     "tab.border": "#3a3f4b",
     "tab.inactiveBackground": "#21252b",
+
+    "textLink.foreground": "#35A854",
+    "textLink.activeForeground": "#d7dae0",
+
+    "settings.modifiedItemIndicator": "#35A854",
+
+    "diffEditor.insertedTextBackground": "#35A85422",
+    "diffEditor.insertedLineBackground": "#00000000",
+    "diffEditor.removedTextBackground": "#a8353522",
+    "diffEditor.removedLineBackground": "#00000000",
+
+    "diffEditor.border": "#3a3f4b",
 
     "titleBar.activeBackground": "#21252b",
     "titleBar.activeForeground": "#9da5b4",
@@ -1714,7 +1724,7 @@
     "files.insertFinalNewline": false
   },
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "vscode.typescript-language-features",
     "editor.semanticHighlighting.enabled": false
   },
   "[typescriptreact]": {
@@ -1733,15 +1743,12 @@
     "file://${userHome}/dotfiles/vscode/icons.css",
     "file://${userHome}/dotfiles/vscode/vscode.js",
     {
-      "rel": "stylesheet",
-      "href": "https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0"
+      "href": "https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0",
+      "rel": "stylesheet"
     }
   ],
+  "breadcrumbs.enabled": false,
   "cfnLint.validateUsingJsonSchema": true,
-  "cody.codeActions.enabled": false,
-  "cody.commandCodeLenses": false,
-  "cody.commandHints.enabled": false,
-  "cody.telemetry.level": "off",
   "color-highlight.markerType": "underline",
   "color-highlight.markRuler": false,
   "comments.visible": false,
@@ -1795,10 +1802,12 @@
   "editor.guides.bracketPairs": "active",
   "editor.guides.bracketPairsHorizontal": false,
   "editor.guides.highlightActiveIndentation": true,
+  "editor.hover.enabled": false,
   "editor.inlayHints.enabled": "offUnlessPressed",
   "editor.inlayHints.padding": true,
   "editor.inlineSuggest.enabled": true,
   "editor.inlineSuggest.suppressSuggestions": true,
+  "editor.lineNumbers": "off",
   "editor.linkedEditing": true,
   "editor.minimap.enabled": false,
   "editor.parameterHints.cycle": true,
@@ -1836,12 +1845,12 @@
   "evenBetterToml.formatter.columnWidth": 1000,
   "evenBetterToml.schema.links": true,
   "evenBetterToml.semanticTokens": true,
+  "explorer.autoReveal": "focusNoScroll",
   "explorer.compactFolders": true,
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
   "explorer.confirmPasteNative": false,
   "explorer.copyRelativePathSeparator": "/",
-  "explorer.decorations.badges": false,
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
@@ -1853,7 +1862,6 @@
   "explorer.openEditors.visible": 8,
   "explorer.sortOrder": "foldersNestsFiles",
   "extensions.autoCheckUpdates": false,
-  "extensions.ignoreRecommendations": true,
   "files.associations": {
     "*.animation": "json",
     "*.fish": "fish",
@@ -1895,6 +1903,7 @@
   "git.pruneOnFetch": true,
   "git.terminalGitEditor": true,
   "githubPullRequests.createOnPublishBranch": "never",
+  "githubPullRequests.showPullRequestNumberInTree": true,
   "gopls": {
     "ui.semanticTokens": true
   },
@@ -1949,7 +1958,9 @@
   "settingsSync.ignoredSettings": [
     "window.titleBarStyle",
     "editor.mouseWheelScrollSensitivity",
-    "update.mode"
+    "update.mode",
+    "apc.electron",
+    "apc.header"
   ],
   "smartersemicolon.autoLineChange": false,
   "smartersemicolon.enable": false,
@@ -2004,6 +2015,7 @@
   },
   "terminal.integrated.rightClickBehavior": "nothing",
   "terminal.integrated.scrollback": 10000,
+  "terminal.integrated.shellIntegration.decorationsEnabled": "overviewRuler",
   "terminal.integrated.tabs.title": "${sequence}",
   "thunder-client.certificates": [
     {
@@ -2031,10 +2043,12 @@
   "typescript.updateImportsOnFileMove.enabled": "always",
   "update.mode": "none",
   "window.closeWhenEmpty": false,
+  "window.customTitleBarVisibility": "never",
   "window.menuBarVisibility": "hidden",
   "window.openFilesInNewWindow": "off",
-  "window.title": "${activeRepositoryName}",
+  // "window.title": "${activeRepositoryName}",
   "window.titleSeparator": " - ",
+  "workbench.activityBar.location": "top",
   "workbench.colorTheme": "Empty Dark",
   "workbench.editor.decorations.badges": false,
   "workbench.editor.decorations.colors": false,
@@ -2050,9 +2064,11 @@
   },
   "workbench.iconTheme": "material-icon-theme",
   "workbench.layoutControl.enabled": false,
+  "workbench.productIconTheme": "material-product-icons",
+  "workbench.settings.editor": "json",
   "workbench.sideBar.location": "right",
   "workbench.startupEditor": "none",
-  "workbench.tree.indent": 12,
+  "workbench.tree.indent": 16,
   "xml.format.maxLineWidth": 0,
   // "yaml.customTags": [
   //   "!And scalar",
@@ -2090,12 +2106,5 @@
   "zenMode.hideStatusBar": false,
   "zenMode.restore": false,
   "zenMode.showTabs": "none",
-  "zenMode.silentNotifications": true,
-  "editor.lineNumbers": "off",
-  "workbench.activityBar.location": "top",
-  "breadcrumbs.enabled": false,
-  "window.customTitleBarVisibility": "never",
-  "terminal.integrated.shellIntegration.decorationsEnabled": "overviewRuler",
-  "editor.hover.enabled": false,
-  "workbench.productIconTheme": "material-product-icons"
+  "zenMode.silentNotifications": true
 }

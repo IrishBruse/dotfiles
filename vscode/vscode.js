@@ -56,8 +56,6 @@ try {
     const sidebar = document.querySelector(".sidebar");
     const sidebarMimic = document.querySelector("#sidebar-mimic");
 
-    console.log("test", mutations);
-
     sidebarMimic.style.width = `${sidebar.clientWidth}px`;
   });
 
