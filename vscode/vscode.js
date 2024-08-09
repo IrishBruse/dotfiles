@@ -23,33 +23,6 @@ try {
     childList: true,
   });
 
-  const lineObserver = new MutationObserver(
-    debounce((mutations) => {
-      let lastLineHeight = 0;
-      let lastLine = 0;
-
-      const lines = document.querySelector(".view-lines");
-
-      lines.childNodes.forEach((line) => {
-        const styles = getComputedStyle(line);
-        const lineHeight = parseInt(styles.top);
-        if (lineHeight > lastLineHeight) {
-          lastLineHeight = lineHeight;
-          lastLine = line;
-        }
-      });
-
-      lastLine.classList.add("last-line");
-    })
-  );
-
-  // call `observe()`, passing it the element to observe, and the options object
-  lineObserver.observe(document.querySelector(".monaco-editor .view-lines"), {
-    subtree: true,
-    childList: true,
-    attributes: true,
-  });
-
   // observe this document.getElementsByClassName("sidebar")[0].clientWidth
   const sidebarObserver = new MutationObserver((mutations) => {
     /** @type {HTMLDivElement} */

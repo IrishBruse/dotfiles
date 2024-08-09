@@ -2,6 +2,9 @@ switch (uname)
     case Darwin
         /opt/homebrew/bin/brew shellenv | source
 
+    case Linux
+        alias code="code --force-device-scale-factor=0.9"
+
     case '*'
 end
 
@@ -40,7 +43,14 @@ alias reload="exec fish -C clear"
 alias paths="echo $PATH | tr ':' '\n'"
 alias dot="code ~/dotfiles/"
 alias nvm="fnm"
-alias code="code --force-device-scale-factor=0.9"
+
+function view
+    gh pr view -w
+
+    if test $status -ne 0
+        gh browse
+    end
+end
 
 function clone
     set repoURL (echo $argv[1] | string trim -l -c "https://" | string split "/")

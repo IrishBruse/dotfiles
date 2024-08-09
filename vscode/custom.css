@@ -71,9 +71,9 @@
 }
 
 /* Blur background when command pallet active */
-.monaco-grid-view:has(~.quick-input-widget:not([style*="display: none;"])) {
+/* .monaco-grid-view:has(~.quick-input-widget:not([style*="display: none;"])) {
   filter: blur(4px);
-}
+} */
 
 /* Sidebar panel Title */
 .title-label>h2 {
