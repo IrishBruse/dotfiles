@@ -43,6 +43,7 @@ alias reload="exec fish -C clear"
 alias paths="echo $PATH | tr ':' '\n'"
 alias dot="code ~/dotfiles/"
 alias nvm="fnm"
+alias nx="nlx"
 
 function view
     gh pr view -w

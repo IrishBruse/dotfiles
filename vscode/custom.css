@@ -28,31 +28,6 @@
   padding-left: 0px !important;
 }
 
-/* swap order of tabs and actions */
-/* .tabs-and-actions-container {
-  flex-direction: row-reverse;
-} */
-
-/* Empty project watermark */
-.editor-group-watermark {
-  max-width: none !important;
-}
-
-.letterpress {
-  background-repeat: no-repeat no-repeat !important;
-  background-position: center center !important;
-  background-size: contain !important;
-  width: 60% !important;
-}
-
-.monaco-workbench.linux .letterpress {
-  background-image: url("vscode-file://home/econn/dotfiles/vscode/art.svg") !important;
-}
-
-.monaco-workbench.mac .letterpress {
-  background-image: url("vscode-file://Users/econneely/dotfiles/vscode/art.svg") !important;
-}
-
 /* Center Command Pallet */
 .quick-input-widget {
   top: 25% !important;
