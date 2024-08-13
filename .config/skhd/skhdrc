@@ -1,3 +1,4 @@
 ctrl - e : open -na "/Applications/Nimble Commander.app"
 ctrl - t : open -na "/Applications/WezTerm.app" --args start --cwd ~/git
+ctrl - d : code ~/dotfiles
 cmd + shift - escape : open -na "/System/Applications/Utilities/Activity Monitor.app"
