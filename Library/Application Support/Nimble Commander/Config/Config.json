@@ -771,7 +771,6 @@
         "menu.file.enter": "",
         "menu.go.right_panel": "",
         "menu.command.external_editor": "\\r",
-        "menu.command.rename_in_place": "",
-        "menu.command.move_to_trash": "⌦"
+        "menu.command.rename_in_place": ""
     }
 }

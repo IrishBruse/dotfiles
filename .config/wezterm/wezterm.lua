@@ -7,10 +7,8 @@ config.default_gui_startup_args = { "start" }
 config.freetype_load_target = "HorizontalLcd"
 
 if wezterm.target_triple == 'aarch64-apple-darwin' then
-    config.font_size = 12.0
     config.default_prog = { "/opt/homebrew/bin/fish", "-i", "-l" }
 else
-    config.font_size = 9.0
     config.default_prog = { "fish", "-i", "-l" }
 end
 
@@ -50,9 +48,10 @@ end)
 
 config.font = wezterm.font_with_fallback {
     {
-        family = "CaskaydiaMono NFM",
+        family = "Cascadia Code",
         italic = false,
     },
+    "Symbols Nerd Font Mono"
 }
 
 config.colors = {

@@ -16,34 +16,50 @@ fnm env | source
 function on_change_dir --on-variable PWD --description 'Change Node version on directory change'
     status --is-command-substitution; and return
     if test -f .node-version -o -f .nvmrc
-        fnm use --silent-if-unchanged >/dev/null
+        fnm use >/dev/null
+
+        set -g fish_node_version ""
+        set -g fish_git_branch ""
+
+        set -l test (fnm current | string split .)
+        set -g fish_git_branch (git branch --show-current 2>/dev/null)
+        set -g fish_node_version $test[1]
+        if test $fish_node_version != ""
+            set -g fish_node_version (echo " ")$fish_node_version
+        end
     end
 end
 
 on_change_dir
+
 
 set -U fish_greeting
 set fish_color_valid_path
 set -x EDITOR "code --wait"
 set -x JQ_COLORS "2;33:2;33:0;33:0;36:1;32:0;35:1;35:2;34"
 set -U async_prompt_functions fish_right_prompt
-set -x __fish_git_prompt_showcolorhints 1
 
+set -g __fish_git_prompt_showcolorhints 1
+set -g __fish_git_prompt_color_branch blue
+set -g __fish_git_prompt_color_prefix ""
+set -g __fish_git_prompt_color_suffix ""
 fish_add_path -g ~/go/bin
 
 
 source ~/dotfiles/local.fish
 
+function on_change_pwd --on-variable PWD
+    status --is-command-substitution; and return
+    set -l repo (echo $PWD | string replace ~/git/ "")
 
-alias bat="bat --theme OneHalfDark --style grid,numbers"
-alias lz="lazygit"
-alias ls="eza -ax --icons=always --group-directories-first"
-alias ll="eza -al --icons=always --group-directories-first"
-alias reload="exec fish -C clear"
-alias paths="echo $PATH | tr ':' '\n'"
-alias dot="code ~/dotfiles/"
-alias nvm="fnm"
-alias nx="nlx"
+    local_onchange_repo $repo
+
+    switch (echo $repo)
+        case "*"
+    end
+end
+
+on_change_pwd
 
 function view
     gh pr view -w
@@ -75,3 +91,13 @@ function v
         code $argv
     end
 end
+
+alias bat="bat --theme OneHalfDark --style grid,numbers"
+alias lz="lazygit"
+alias ls="eza -ax --icons=always --group-directories-first"
+alias ll="eza -al --icons=always --group-directories-first"
+alias reload="exec fish -C clear"
+alias paths="echo $PATH | tr ':' '\n'"
+alias dot="code ~/dotfiles/"
+alias nvm="fnm"
+alias nx="nlx"

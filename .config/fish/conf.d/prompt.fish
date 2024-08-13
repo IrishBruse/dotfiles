@@ -23,11 +23,9 @@ function fish_prompt
 end
 
 function fish_right_prompt
-    if test $TERM_PROGRAM = vscode
-        printf ""
-    else
-        printf (set_color normal)(fish_git_prompt)" "
-    end
+    printf (set_color green)(echo $fish_node_version)
+    printf " "
+    printf (set_color normal)(echo $fish_git_branch)
 end
 
 function fish_right_prompt_loading_indicator
@@ -54,13 +52,7 @@ function fish_title
         set -gx fish_command (commandline -pc | string shorten --max 20)
     end
 
-    if test $TERM_PROGRAM = vscode
-        echo $fish_command
-    else
-        echo (prompt_pwd --full-length-dirs=100) $fish_command
-    end
-
-    echo $test
+    echo $fish_command
 end
 
 bind \r maybe_execute
