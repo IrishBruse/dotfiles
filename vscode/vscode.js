@@ -11,7 +11,9 @@ try {
   }
 
   const iconObserver = new MutationObserver((mutations) => {
-    const m = document.querySelector(".codicon-github");
+    const m = document.querySelector(
+      ".sidebar .actions-container .codicon-github"
+    );
     try {
       m.classList.remove("codicon-github");
       m.classList.remove("codicon");
