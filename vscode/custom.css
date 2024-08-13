@@ -1,6 +1,6 @@
 /* Unindent foldable items in panel */
 .explorer-folders-view .monaco-list-row .monaco-tl-row .monaco-tl-twistie {
-  padding: 0;
+  padding-right: 0;
   width: 0px;
 }
 
@@ -163,4 +163,9 @@
   z-index: -10;
   background-color: var(--vscode-sideBar-background);
   height: 100%;
+}
+
+/* Fix Panel indentation */
+.panel>.title {
+  padding-left: 0px !important;
 }

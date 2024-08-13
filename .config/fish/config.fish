@@ -61,6 +61,9 @@ end
 
 on_change_pwd
 
+set -x NI_DEFAULT_AGENT npm
+set -x NI_GLOBAL_AGENT npm
+
 function view
     gh pr view -w
 
@@ -86,10 +89,15 @@ end
 
 function v
     if test (count $argv) -eq 0
-        code .
+        code (realpath .)
     else
-        code $argv
+        code (realpath $argv)
     end
+end
+
+function ni
+    npm i -g @antfu/ni
+    ni $argv
 end
 
 alias bat="bat --theme OneHalfDark --style grid,numbers"

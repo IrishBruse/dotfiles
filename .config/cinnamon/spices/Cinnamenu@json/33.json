@@ -170,13 +170,18 @@
         "type": "generic",
         "default": [],
         "value": [
-            "alacarte-made-ba6c3700-52b0-11ef-9524-d017c2d5dd9f.desktop",
             "discord.desktop",
+            "ca.desrt.dconf-editor.desktop",
+            "cinnamon-settings-keyboard.desktop",
+            "alacarte-made-ba6c3700-52b0-11ef-9524-d017c2d5dd9f.desktop",
+            "cinnamon-settings-universal-access.desktop",
+            "Aseprite.desktop",
+            "cinnamon-settings-themes.desktop",
+            "cinnamon-settings-extensions.desktop",
             "org.gnome.DiskUtility.desktop",
             "grub-customizer.desktop",
             "Sunshine.desktop",
             "lightdm-settings.desktop",
-            "cinnamon-settings-themes.desktop",
             "Cemu.desktop",
             "Menu-Editor.desktop",
             "nvidia-settings.desktop",
@@ -184,12 +189,7 @@
             "mintinstall.desktop",
             "scrcpy.desktop",
             "New SUPER MARIO BROS. U.desktop",
-            "cinnamon-settings-keyboard.desktop",
-            "org.gnome.Rhythmbox3.desktop",
-            "nemo.desktop",
-            "cinnamon-settings-effects.desktop",
-            "cinnamon-settings-startup.desktop",
-            "gucharmap.desktop"
+            "org.gnome.Rhythmbox3.desktop"
         ]
     },
     "search-start-folder": {
@@ -596,7 +596,7 @@
         "default_category": "Linux",
         "default_icon": "cinnamon-symbolic",
         "tooltip": "Panel icon",
-        "value": "/home/econn/git/Images/Avatar/LogoIcon.png"
+        "value": "cinnamon-symbolic"
     },
     "menu-icon-size-custom": {
         "type": "checkbox",
@@ -615,7 +615,7 @@
         "description": "Panel icon size (pixels)",
         "dependency": "menu-icon-size-custom",
         "tooltip": "Choose a custom size for the panel icon",
-        "value": 30
+        "value": 26
     },
     "menu-label": {
         "type": "entry",
