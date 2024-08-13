@@ -19,10 +19,7 @@ function on_change_dir --on-variable PWD --description 'Change Node version on d
         fnm use >/dev/null
 
         set -g fish_node_version ""
-        set -g fish_git_branch ""
-
         set -l test (fnm current | string split .)
-        set -g fish_git_branch (git branch --show-current 2>/dev/null)
         set -g fish_node_version $test[1]
         if test $fish_node_version != ""
             set -g fish_node_version (echo " ")$fish_node_version
@@ -31,7 +28,6 @@ function on_change_dir --on-variable PWD --description 'Change Node version on d
 end
 
 on_change_dir
-
 
 set -U fish_greeting
 set fish_color_valid_path
@@ -51,6 +47,9 @@ source ~/dotfiles/local.fish
 function on_change_pwd --on-variable PWD
     status --is-command-substitution; and return
     set -l repo (echo $PWD | string replace ~/git/ "")
+
+    set -g fish_git_branch ""
+    set -g fish_git_branch (git branch --show-current 2>/dev/null)
 
     local_onchange_repo $repo
 

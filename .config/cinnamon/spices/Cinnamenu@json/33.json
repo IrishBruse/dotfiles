@@ -170,6 +170,7 @@
         "type": "generic",
         "default": [],
         "value": [
+            "lightdm-settings.desktop",
             "discord.desktop",
             "ca.desrt.dconf-editor.desktop",
             "cinnamon-settings-keyboard.desktop",
@@ -181,7 +182,6 @@
             "org.gnome.DiskUtility.desktop",
             "grub-customizer.desktop",
             "Sunshine.desktop",
-            "lightdm-settings.desktop",
             "Cemu.desktop",
             "Menu-Editor.desktop",
             "nvidia-settings.desktop",

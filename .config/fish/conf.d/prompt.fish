@@ -23,9 +23,9 @@ function fish_prompt
 end
 
 function fish_right_prompt
-    printf (set_color green)(echo $fish_node_version)
+    printf (set_color green)(echo $fish_node_version)(set_color normal)
     printf " "
-    printf (set_color normal)(echo $fish_git_branch)
+    printf "|"(set_color blue)(echo $fish_git_branch)(set_color normal)"|"
 end
 
 function fish_right_prompt_loading_indicator
