@@ -2818,14 +2818,29 @@
   "window.newWindowDimensions": "maximized",
   "git-blame.config.showBlameInline": false,
   "workbench.editor.enablePreview": false,
-  "statusbar_command.commands": [
+  "terminals.terminals": [
     {
-      "text": "View $(github)",
-      "tooltip": "View Repo/PR",
-      "id": "github-view",
-      "name": "GitHub View",
-      "command": "workbench.action.tasks.runTask",
-      "arguments": ["statusbar view github"]
+      "command": "view"
+    }
+  ],
+  "commands.commands": [
+    {
+      "command": "runCommands",
+      "arguments": [
+        {
+          "commands": [
+            {
+              "command": "workbench.action.terminal.new"
+            },
+            {
+              "command": "workbench.action.terminal.sendSequence",
+              "args": { "text": "gh browse && exit\n" }
+            }
+          ]
+        }
+      ],
+      "text": "$(github) View",
+      "tooltip": "View Repo/PR"
     }
   ]
 }
