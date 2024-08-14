@@ -7,15 +7,14 @@ config.default_gui_startup_args = { "start" }
 config.freetype_load_target = "HorizontalLcd"
 
 if wezterm.target_triple == 'aarch64-apple-darwin' then
-    config.font_size = 12.0
     config.default_prog = { "/opt/homebrew/bin/fish", "-i", "-l" }
 else
-    config.font_size = 9.0
+    -- config.font_size = 9.0
     config.default_prog = { "fish", "-i", "-l" }
 end
 
-config.initial_cols                   = 120
-config.initial_rows                   = 30
+config.initial_cols                   = 90
+config.initial_rows                   = 24
 
 config.hide_tab_bar_if_only_one_tab   = true
 config.enable_scroll_bar              = true
@@ -51,7 +50,6 @@ end)
 config.font = wezterm.font_with_fallback {
     {
         family = "Cascadia Code",
-        italic = false,
     },
     "Symbols Nerd Font Mono"
 }
@@ -69,6 +67,28 @@ config.colors = {
             bg_color = '#21252b',
             fg_color = '#9da5b4',
         }
+    },
+    selection_fg = 'none',
+    selection_bg = '#3e4451',
+    ansi = {
+        "#1E2127",
+        "#E06C75",
+        "#98C379",
+        "#D19A66",
+        "#61AFEF",
+        "#C678DD",
+        "#56B6C2",
+        "#ABB2BF",
+    },
+    brights = {
+        "#5C6370",
+        "#E9969D",
+        "#B3D39C",
+        "#DDB58D",
+        "#8FC7F4",
+        "#D6A1E7",
+        "#7BC9D0",
+        "#FFFFFF",
     },
 }
 
@@ -100,7 +120,7 @@ config.keys = {
     { mods = ctrl,             key = "n",          action = wezterm.action.SpawnCommandInNewTab {} },
     { mods = ctrl,             key = "k",          action = wezterm.action.ClearScrollback("ScrollbackAndViewport") },
     { mods = ctrl,             key = "c",          action = smartcopy },
-    { mods = ctrl,             key = "a",          action = selectAll },
+    -- { mods = ctrl,             key = "a",          action = selectAll },
     { mods = ctrl,             key = "Backspace",  action = wezterm.action.SendKey { mods = 'OPT', key = 'Backspace' }, },
     { mods = ctrl,             key = "Delete",     action = wezterm.action.SendKey { mods = 'CTRL', key = 'Delete' }, },
     { mods = ctrl,             key = "r",          action = wezterm.action.SendKey { mods = 'CTRL', key = 'r' }, },

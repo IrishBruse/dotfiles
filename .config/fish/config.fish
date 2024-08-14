@@ -8,6 +8,14 @@ switch (uname)
     case '*'
 end
 
+switch (echo $TERM_PROGRAM)
+    case vscode
+        set -g node_icon " "
+    case "*"
+    case WezTerm
+        set -g node_icon " "
+end
+
 fish_add_path -g ~/.local/bin
 zoxide init fish --cmd cd | source
 fzf --fish | source
@@ -22,7 +30,7 @@ function on_change_dir --on-variable PWD --description 'Change Node version on d
         set -l test (fnm current | string split .)
         set -g fish_node_version $test[1]
         if test $fish_node_version != ""
-            set -g fish_node_version (echo " ")$fish_node_version
+            set -g fish_node_version (echo $node_icon)$fish_node_version
         end
     end
 end
@@ -39,8 +47,12 @@ set -g __fish_git_prompt_showcolorhints 1
 set -g __fish_git_prompt_color_branch blue
 set -g __fish_git_prompt_color_prefix ""
 set -g __fish_git_prompt_color_suffix ""
+set -g fish_color_error red
 fish_add_path -g ~/go/bin
 
+set -x CYPRESS_PASSWORD F98@qnyxibxm7v37g
+
+set -gx fish_back_pwd $PWD
 
 source ~/dotfiles/local.fish
 
@@ -100,11 +112,13 @@ function ni
 end
 
 alias bat="bat --theme OneHalfDark --style grid,numbers"
-alias lz="lazygit"
 alias ls="eza -ax --icons=always --group-directories-first"
 alias ll="eza -al --icons=always --group-directories-first"
-alias reload="exec fish -C clear"
+alias reload="clear;exec fish"
 alias paths="echo $PATH | tr ':' '\n'"
 alias dot="code ~/dotfiles/"
+alias back="cd $fish_back_pwd"
+
+alias lz="lazygit"
 alias nvm="fnm"
 alias nx="nlx"
