@@ -8,13 +8,16 @@ config.freetype_load_target = "HorizontalLcd"
 
 if wezterm.target_triple == 'aarch64-apple-darwin' then
     config.default_prog = { "/opt/homebrew/bin/fish", "-i", "-l" }
+    config.initial_cols = 90
+    config.initial_rows = 24
 else
-    -- config.font_size = 9.0
+    config.font_size    = 9.0
     config.default_prog = { "fish", "-i", "-l" }
+    config.initial_cols = 100
+    config.initial_rows = 25
 end
 
-config.initial_cols                   = 90
-config.initial_rows                   = 24
+
 
 config.hide_tab_bar_if_only_one_tab   = true
 config.enable_scroll_bar              = true

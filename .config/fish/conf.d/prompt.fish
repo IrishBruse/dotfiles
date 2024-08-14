@@ -4,7 +4,7 @@ function fish_prompt
     printf \e\[0J # clear from cursor to end of screen
 
     if not set -e transient_prompt
-        printf (set_color blue)(prompt_pwd --full-length-dirs=20)(set_color normal)
+        printf (set_color cyan)(prompt_pwd --full-length-dirs=20)(set_color normal)
 
         if test $exit_code -ne 0
             printf (set_color red)" $exit_code "(set_color normal)
@@ -29,10 +29,6 @@ function fish_right_prompt
         printf " "
         printf "("(set_color blue)(echo $fish_git_branch)(set_color normal)")"
     end
-end
-
-function fish_right_prompt_loading_indicator
-    printf (set_color normal)
 end
 
 function maybe_execute
