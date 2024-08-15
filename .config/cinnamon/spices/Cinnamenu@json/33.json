@@ -170,12 +170,12 @@
         "type": "generic",
         "default": [],
         "value": [
+            "alacarte-made-ba6c3700-52b0-11ef-9524-d017c2d5dd9f.desktop",
             "cinnamon-settings-keyboard.desktop",
+            "discord.desktop",
             "cinnamon-settings-startup.desktop",
             "lightdm-settings.desktop",
-            "discord.desktop",
             "ca.desrt.dconf-editor.desktop",
-            "alacarte-made-ba6c3700-52b0-11ef-9524-d017c2d5dd9f.desktop",
             "cinnamon-settings-universal-access.desktop",
             "Aseprite.desktop",
             "cinnamon-settings-themes.desktop",
@@ -223,7 +223,7 @@
         "default": true,
         "description": "Show sidebar",
         "tooltip": "Show the sidebar in the menu",
-        "value": true
+        "value": false
     },
     "sidebar-placement": {
         "dependency": "show-sidebar",
@@ -237,7 +237,7 @@
             "Right": 3
         },
         "tooltip": "Choose where to show the sidebar",
-        "value": 1
+        "value": 2
     },
     "sidebar-favorites": {
         "dependency": "show-sidebar",

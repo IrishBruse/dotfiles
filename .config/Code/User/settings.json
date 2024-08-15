@@ -2149,5 +2149,6 @@
     }
   ],
   "aws.telemetry": false,
-  "dotnetAcquisitionExtension.enableTelemetry": false
+  "dotnetAcquisitionExtension.enableTelemetry": false,
+  "window.confirmSaveUntitledWorkspace": false
 }

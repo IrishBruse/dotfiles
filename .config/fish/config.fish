@@ -6,14 +6,16 @@ switch (uname)
         alias code="code --force-device-scale-factor=0.9"
 
     case '*'
+        echo 'Unknown OS: '(uname)
 end
 
 switch (echo $TERM_PROGRAM)
     case vscode
         set -g node_icon " "
-    case "*"
     case WezTerm
         set -g node_icon " "
+    case '*'
+        echo "Unknown terminal program: $TERM_PROGRAM"
 end
 
 fish_add_path -g ~/.local/bin
@@ -45,8 +47,6 @@ set -U async_prompt_functions fish_right_prompt
 
 set -g __fish_git_prompt_showcolorhints 1
 set -g __fish_git_prompt_color_branch blue
-set -g __fish_git_prompt_color_prefix ""
-set -g __fish_git_prompt_color_suffix ""
 set -g fish_color_error red
 fish_add_path -g ~/go/bin
 
