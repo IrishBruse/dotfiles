@@ -12,10 +12,8 @@ end
 switch (echo $TERM_PROGRAM)
     case vscode
         set -g node_icon " "
-    case WezTerm
-        set -g node_icon " "
     case '*'
-        echo "Unknown terminal program: $TERM_PROGRAM"
+        set -g node_icon " "
 end
 
 fish_add_path -g ~/.local/bin
@@ -108,7 +106,7 @@ end
 
 function ni
     npm i -g @antfu/ni
-    ni $argv
+    command ni $argv
 end
 
 alias bat="bat --theme OneHalfDark --style grid,numbers"

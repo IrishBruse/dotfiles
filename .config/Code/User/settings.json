@@ -124,7 +124,6 @@
     "diffEditor.insertedLineBackground": "#00000000",
     "diffEditor.removedTextBackground": "#a8353522",
     "diffEditor.removedLineBackground": "#00000000",
-
     "diffEditor.border": "#3a3f4b",
 
     "titleBar.activeBackground": "#21252b",
@@ -132,6 +131,20 @@
     "titleBar.inactiveBackground": "#21252b",
     "titleBar.inactiveForeground": "#9da5b4",
 
+    // Debug
+    "debugTokenExpression.boolean": "#56B6C2",
+    "debugTokenExpression.error": "#E9969D",
+    "debugTokenExpression.name": "#E06C75",
+    "debugTokenExpression.number": "#D19A66",
+    "debugTokenExpression.string": "#98C379",
+    "debugTokenExpression.type": "#E5C07B",
+    "debugTokenExpression.value": "#ABB2BF",
+
+    "debugIcon.breakpointCurrentStackframeForeground": "#E06C75",
+    "debugIcon.breakpointForeground": "#E06C75",
+    "editor.stackFrameHighlightBackground": "#e06c7623",
+
+    // Terminal
     "terminal.ansiBlack": "#1E2127",
     "terminal.ansiRed": "#E06C75",
     "terminal.ansiGreen": "#98C379",
@@ -1761,10 +1774,20 @@
     "files.insertFinalNewline": false
   },
   "[typescript]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit",
+      "source.removeUnusedImports": "explicit",
+      "source.sortImports": "explicit"
+    },
     "editor.defaultFormatter": "vscode.typescript-language-features",
     "editor.semanticHighlighting.enabled": false
   },
   "[typescriptreact]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.removeUnusedImports": "explicit"
+    },
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.semanticHighlighting.enabled": false
   },
@@ -1784,10 +1807,33 @@
       "rel": "stylesheet"
     }
   ],
+  "aws.telemetry": false,
   "breadcrumbs.enabled": false,
   "cfnLint.validateUsingJsonSchema": true,
   "color-highlight.markerType": "underline",
   "color-highlight.markRuler": false,
+  "commands.commands": [
+    {
+      "arguments": [
+        {
+          "commands": [
+            {
+              "command": "workbench.action.terminal.new"
+            },
+            {
+              "args": {
+                "text": "view && exit\n"
+              },
+              "command": "workbench.action.terminal.sendSequence"
+            }
+          ]
+        }
+      ],
+      "command": "runCommands",
+      "text": "$(github) View",
+      "tooltip": "View Repo/PR"
+    }
+  ],
   "comments.visible": false,
   "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": true,
   "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": true,
@@ -1815,6 +1861,7 @@
   "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": true,
   "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": true,
   "dotnet.server.useOmnisharp": true,
+  "dotnetAcquisitionExtension.enableTelemetry": false,
   "editor.accessibilitySupport": "off",
   "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
   "editor.colorDecoratorsLimit": 1500,
@@ -1887,6 +1934,7 @@
   "explorer.confirmDragAndDrop": false,
   "explorer.confirmPasteNative": false,
   "explorer.copyRelativePathSeparator": "/",
+  "explorer.decorations.badges": false,
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
@@ -1949,17 +1997,17 @@
   "hexeditor.inspectorType": "aside",
   "hexeditor.showDecodedText": true,
   "java.jdt.ls.androidSupport.enabled": "on",
-  "java.jdt.ls.java.home": "/usr/lib/jvm/java-17-openjdk-amd64/",
+  "java.jdt.ls.java.home": "/usr/lib/jvm/java-21-openjdk-amd64/",
   "java.maven.downloadSources": true,
   "java.maven.updateSnapshots": true,
   "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "javascript.inlayHints.parameterTypes.enabled": true,
   "javascript.inlayHints.propertyDeclarationTypes.enabled": true,
   "javascript.inlayHints.variableTypes.enabled": true,
   "javascript.preferences.importModuleSpecifier": "relative",
   "javascript.referencesCodeLens.enabled": true,
   "javascript.referencesCodeLens.showOnAllFunctions": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
-  "jest.jestCommandLine": "npm run test",
   "jest.runMode": "on-demand",
   "jest.shell": "/opt/homebrew/bin/fish",
   "js/ts.implicitProjectConfig.checkJs": true,
@@ -1991,6 +2039,11 @@
   "security.promptForLocalFileProtocolHandling": false,
   "security.workspace.trust.banner": "never",
   "security.workspace.trust.enabled": false,
+  "settingsSync.ignoredExtensions": [
+    "cucumberopen.cucumber-official",
+    "shelex.vscode-cy-helper",
+    "alexkrechik.cucumberautocomplete"
+  ],
   "settingsSync.ignoredSettings": [
     "window.titleBarStyle",
     "editor.mouseWheelScrollSensitivity",
@@ -2067,9 +2120,19 @@
   "thunder-client.sidebar.defaultTab": "Collections",
   "thunder-client.sidebar.layout": "compact",
   "thunder-client.sidebar.showActivityFromCollection": true,
+  "ts-type-expand.validate": [
+    "typescript",
+    "typescriptreact",
+    "javascript",
+    "javascriptreact",
+    "vue"
+  ],
   "typescript.implementationsCodeLens.enabled": true,
   "typescript.inlayHints.enumMemberValues.enabled": true,
   "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "typescript.inlayHints.parameterTypes.enabled": true,
+  "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+  "typescript.inlayHints.variableTypes.enabled": true,
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.referencesCodeLens.enabled": true,
   "typescript.referencesCodeLens.showOnAllFunctions": true,
@@ -2079,17 +2142,22 @@
   "typescript.updateImportsOnFileMove.enabled": "always",
   "update.mode": "none",
   "window.closeWhenEmpty": false,
+  "window.confirmSaveUntitledWorkspace": false,
   "window.customTitleBarVisibility": "never",
   "window.menuBarVisibility": "hidden",
+  "window.newWindowDimensions": "maximized",
   "window.openFilesInNewWindow": "off",
   "window.title": "${activeRepositoryName}",
   "window.titleSeparator": " - ",
+  "window.zoomLevel": 0.5,
   "workbench.activityBar.location": "top",
   "workbench.colorTheme": "Empty Dark",
   "workbench.editor.decorations.badges": false,
   "workbench.editor.decorations.colors": false,
+  "workbench.editor.enablePreview": false,
   "workbench.editor.limit.enabled": true,
   "workbench.editor.limit.value": 10,
+  "workbench.editor.splitInGroupLayout": "vertical",
   "workbench.editorAssociations": {
     "*.bin": "hexEditor.hexedit",
     "*.gb": "hexEditor.hexedit",
@@ -2111,44 +2179,5 @@
   "zenMode.hideStatusBar": false,
   "zenMode.restore": false,
   "zenMode.showTabs": "none",
-  "zenMode.silentNotifications": true,
-  "window.zoomLevel": 0.5,
-  "settingsSync.ignoredExtensions": [
-    "cucumberopen.cucumber-official",
-    "shelex.vscode-cy-helper",
-    "alexkrechik.cucumberautocomplete"
-  ],
-  "ts-type-expand.validate": [
-    "typescript",
-    "typescriptreact",
-    "javascript",
-    "javascriptreact",
-    "vue"
-  ],
-  "explorer.decorations.badges": false,
-  "window.newWindowDimensions": "maximized",
-  "workbench.editor.enablePreview": false,
-  "commands.commands": [
-    {
-      "command": "runCommands",
-      "arguments": [
-        {
-          "commands": [
-            {
-              "command": "workbench.action.terminal.new"
-            },
-            {
-              "command": "workbench.action.terminal.sendSequence",
-              "args": { "text": "view && exit\n" }
-            }
-          ]
-        }
-      ],
-      "text": "$(github) View",
-      "tooltip": "View Repo/PR"
-    }
-  ],
-  "aws.telemetry": false,
-  "dotnetAcquisitionExtension.enableTelemetry": false,
-  "window.confirmSaveUntitledWorkspace": false
+  "zenMode.silentNotifications": true
 }
