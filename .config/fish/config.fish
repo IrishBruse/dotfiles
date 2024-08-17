@@ -1,9 +1,11 @@
 switch (uname)
     case Darwin
         /opt/homebrew/bin/brew shellenv | source
+        alias apc="sudo chown -R $(whoami) '/Applications/Visual Studio Code.app/Contents/Resources/app/out/main.js'"
 
     case Linux
         alias code="code --force-device-scale-factor=0.9"
+        alias apc="sudo chown -R $(whoami) '/usr/share/code/resources/app/out/main.js'"
 
     case '*'
         echo 'Unknown OS: '(uname)

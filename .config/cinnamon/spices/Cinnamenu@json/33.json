@@ -153,7 +153,8 @@
             "Office",
             "Administration",
             "Preferences",
-            "Other"
+            "Other",
+            "chrome-apps"
         ]
     },
     "custom-menu-width": {
@@ -171,25 +172,25 @@
         "default": [],
         "value": [
             "discord.desktop",
+            "org.gnome.DiskUtility.desktop",
+            "chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop",
+            "net.lutris.Lutris.desktop",
+            "yad-icon-browser.desktop",
+            "mintdrivers.desktop",
+            "mintreport.desktop",
+            "cinnamon-settings-info.desktop",
+            "cinnamon-settings.desktop",
+            "lightdm-settings.desktop",
             "code.desktop",
             "alacarte-made-ba6c3700-52b0-11ef-9524-d017c2d5dd9f.desktop",
             "cinnamon-settings-keyboard.desktop",
             "cinnamon-settings-startup.desktop",
-            "lightdm-settings.desktop",
             "ca.desrt.dconf-editor.desktop",
             "cinnamon-settings-universal-access.desktop",
             "Aseprite.desktop",
             "cinnamon-settings-themes.desktop",
             "cinnamon-settings-extensions.desktop",
-            "org.gnome.DiskUtility.desktop",
-            "grub-customizer.desktop",
-            "Sunshine.desktop",
-            "Cemu.desktop",
-            "Menu-Editor.desktop",
-            "nvidia-settings.desktop",
-            "parsecd.desktop",
-            "mintinstall.desktop",
-            "scrcpy.desktop"
+            "grub-customizer.desktop"
         ]
     },
     "search-start-folder": {

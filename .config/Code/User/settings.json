@@ -504,7 +504,7 @@
       {
         "scope": ["meta.tag"],
         "settings": {
-          "foreground": "#ABB2BF"
+          "foreground": "#5C6370"
         }
       },
       {
@@ -2179,5 +2179,8 @@
   "zenMode.hideStatusBar": false,
   "zenMode.restore": false,
   "zenMode.showTabs": "none",
-  "zenMode.silentNotifications": true
+  "zenMode.silentNotifications": true,
+  "git.enableCommitSigning": true,
+  "git-graph.repository.sign.commits": true,
+  "git-graph.repository.sign.tags": true
 }

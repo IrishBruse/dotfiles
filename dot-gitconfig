@@ -7,6 +7,9 @@
 [user]
     name = Ethan Conneely
 
+[commit]
+	gpgsign = true
+
 [core]
     pager = delta
 
