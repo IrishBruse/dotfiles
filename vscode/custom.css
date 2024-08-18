@@ -40,21 +40,16 @@
   border-radius: 8px !important;
   padding: 8px !important;
   border: none !important;
-  font-family: "Open Sans" !important;
+  font-family: "Poppins" !important;
   font-size: 14px !important;
   margin-bottom: 16px !important;
 }
 
-/* Blur background when command pallet active */
-/* .monaco-grid-view:has(~.quick-input-widget:not([style*="display: none;"])) {
-  filter: blur(4px);
-} */
-
 /* Sidebar panel Title */
 .title-label>h2 {
   font-weight: bold !important;
-  font-size: 1.1em !important;
-  font-family: "Open Sans";
+  font-size: 1em !important;
+  font-family: "Poppins";
 }
 
 /* Scrollbar animation */

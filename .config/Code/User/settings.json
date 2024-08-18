@@ -22,6 +22,11 @@
     "button.background": "#35A854",
     "button.foreground": "#ffffff",
     "button.hoverBackground": "#35974f",
+
+    "button.secondaryBackground": "#353B45",
+    "button.secondaryForeground": "#ffffff",
+    "button.secondaryHoverBackground": "#3e4451",
+
     "dropdown.background": "#353b45",
     "scrollbar.shadow": "#00000000",
     "editorStickyScroll.shadow": "#282c34",
@@ -1887,7 +1892,7 @@
   "editor.guides.bracketPairsHorizontal": false,
   "editor.guides.highlightActiveIndentation": true,
   "editor.hover.enabled": false,
-  "editor.inlayHints.enabled": "offUnlessPressed",
+  "editor.inlayHints.enabled": "onUnlessPressed",
   "editor.inlayHints.padding": true,
   "editor.inlineSuggest.enabled": true,
   "editor.inlineSuggest.suppressSuggestions": true,
@@ -1898,7 +1903,6 @@
   "editor.parameterHints.enabled": true,
   "editor.pasteAs.enabled": false,
   "editor.pasteAs.showPasteSelector": "never",
-  "editor.quickSuggestionsDelay": 250,
   "editor.renderFinalNewline": "dimmed",
   "editor.renderLineHighlight": "line",
   "editor.renderLineHighlightOnlyWhenFocus": true,
@@ -2157,7 +2161,6 @@
   "workbench.editor.enablePreview": false,
   "workbench.editor.limit.enabled": true,
   "workbench.editor.limit.value": 10,
-  "workbench.editor.splitInGroupLayout": "vertical",
   "workbench.editorAssociations": {
     "*.bin": "hexEditor.hexedit",
     "*.gb": "hexEditor.hexedit",
@@ -2182,5 +2185,6 @@
   "zenMode.silentNotifications": true,
   "git.enableCommitSigning": true,
   "git-graph.repository.sign.commits": true,
-  "git-graph.repository.sign.tags": true
+  "git-graph.repository.sign.tags": true,
+  "editor.quickSuggestionsDelay": 100000
 }

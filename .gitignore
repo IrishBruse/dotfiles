@@ -13,7 +13,7 @@ obj/
 .local/share/applications/mimeapps.list
 .local/share/applications/mimeinfo.cache
 .local/share/applications/google-chrome.desktop
-.config/cinnamon/spices/Cinnamenu@json/33.json
+.config/cinnamon/spices/Cinnamenu@json/
 
 local.fish
 
