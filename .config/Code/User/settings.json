@@ -2147,13 +2147,12 @@
   "update.mode": "none",
   "window.closeWhenEmpty": false,
   "window.confirmSaveUntitledWorkspace": false,
-  "window.customTitleBarVisibility": "never",
   "window.menuBarVisibility": "hidden",
   "window.newWindowDimensions": "maximized",
   "window.openFilesInNewWindow": "off",
   "window.title": "${activeRepositoryName}",
   "window.titleSeparator": " - ",
-  "window.zoomLevel": 0.5,
+  "window.zoomLevel": 0,
   "workbench.activityBar.location": "top",
   "workbench.colorTheme": "Empty Dark",
   "workbench.editor.decorations.badges": false,
@@ -2186,5 +2185,6 @@
   "git.enableCommitSigning": true,
   "git-graph.repository.sign.commits": true,
   "git-graph.repository.sign.tags": true,
-  "editor.quickSuggestionsDelay": 100000
+  "editor.quickSuggestionsDelay": 100000,
+  "window.commandCenter": false
 }

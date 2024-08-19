@@ -13,7 +13,7 @@
 Active=true
 Name=Open in Code
 Comment=Open %F in Code
-Exec=fish -c "code $(realpath %F) --force-device-scale-factor=0.9"
+Exec=fish -c "code $(realpath %F)"
 
 Icon-Name=vscode
 
