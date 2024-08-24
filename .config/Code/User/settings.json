@@ -333,7 +333,7 @@
       {
         "scope": ["string.other.link"],
         "settings": {
-          "foreground": "#E06C75"
+          "foreground": "#61AFEF"
         }
       },
       {
@@ -431,6 +431,12 @@
         }
       },
       {
+        "scope": ["fenced_code.block.language"],
+        "settings": {
+          "foreground": "#56B6C2"
+        }
+      },
+      {
         "scope": [
           "entity.name.section",
           "support.type.property-name.table.toml",
@@ -513,17 +519,13 @@
         }
       },
       {
-        "scope": ["underline"],
-        "settings": {}
-      },
-      {
         "scope": ["none"],
         "settings": {
           "foreground": "#ABB2BF"
         }
       },
       {
-        "scope": ["invalid.illegal", "invalid.deprecated"],
+        "scope": ["invalid.deprecated"],
         "settings": {
           "fontStyle": "italic",
           "foreground": "#E06C75"
@@ -945,7 +947,10 @@
         }
       },
       {
-        "scope": "support.type.property-name.json",
+        "scope": [
+          "support.type.property-name.json",
+          "support.type.property-name.hurl"
+        ],
         "settings": {
           "foreground": "#E06C75"
         }
@@ -1733,9 +1738,7 @@
       }
     ]
   },
-  "[asl]": {
-    "editor.defaultFormatter": "amazonwebservices.aws-toolkit-vscode"
-  },
+  "supermaven.enableFixWithSupermaven": false,
   "[csharp]": {
     "editor.maxTokenizationLineLength": 2500,
     "editor.semanticHighlighting.enabled": true
@@ -1744,7 +1747,8 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[go]": {
-    "editor.semanticHighlighting.enabled": false
+    "editor.semanticHighlighting.enabled": false,
+    "editor.suggest.showSnippets": true
   },
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -1765,7 +1769,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[markdown]": {
-    "editor.defaultFormatter": null,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.pasteAs.enabled": true,
     "editor.unicodeHighlight.ambiguousCharacters": false,
     "editor.unicodeHighlight.invisibleCharacters": false,
@@ -1798,9 +1802,6 @@
   },
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "apc.activityBar": {
-    "itemSize": 30
   },
   "apc.font.family": "CaskaydiaCove Nerd Font",
   "apc.imports": [
@@ -1877,7 +1878,6 @@
   "editor.foldingHighlight": false,
   "editor.fontFamily": "CaskaydiaCove NF",
   "editor.fontLigatures": true,
-  "editor.fontSize": 12,
   "editor.formatOnPaste": false,
   "editor.formatOnSave": true,
   "editor.formatOnType": false,
@@ -1892,7 +1892,7 @@
   "editor.guides.bracketPairsHorizontal": false,
   "editor.guides.highlightActiveIndentation": true,
   "editor.hover.enabled": false,
-  "editor.inlayHints.enabled": "onUnlessPressed",
+  "editor.inlayHints.enabled": "offUnlessPressed",
   "editor.inlayHints.padding": true,
   "editor.inlineSuggest.enabled": true,
   "editor.inlineSuggest.suppressSuggestions": true,
@@ -1973,8 +1973,7 @@
   "files.hotExit": "onExitAndWindowClose",
   "files.insertFinalNewline": true,
   "files.readonlyInclude": {
-    ".git/**": true,
-    "node_modules/**": true
+    ".git/**": true
   },
   "files.trimFinalNewlines": true,
   "files.trimTrailingWhitespace": true,
@@ -2012,8 +2011,10 @@
   "javascript.referencesCodeLens.enabled": true,
   "javascript.referencesCodeLens.showOnAllFunctions": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
+  "jest.jestCommandLine": "npx react-scripts test",
   "jest.runMode": "on-demand",
   "jest.shell": "/opt/homebrew/bin/fish",
+  "testing.showCoverageInExplorer": true,
   "js/ts.implicitProjectConfig.checkJs": true,
   "json.format.keepLines": true,
   "Lua.codeLens.enable": true,
@@ -2124,13 +2125,6 @@
   "thunder-client.sidebar.defaultTab": "Collections",
   "thunder-client.sidebar.layout": "compact",
   "thunder-client.sidebar.showActivityFromCollection": true,
-  "ts-type-expand.validate": [
-    "typescript",
-    "typescriptreact",
-    "javascript",
-    "javascriptreact",
-    "vue"
-  ],
   "typescript.implementationsCodeLens.enabled": true,
   "typescript.inlayHints.enumMemberValues.enabled": true,
   "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
@@ -2186,5 +2180,25 @@
   "git-graph.repository.sign.commits": true,
   "git-graph.repository.sign.tags": true,
   "editor.quickSuggestionsDelay": 100000,
-  "window.commandCenter": false
+  "window.commandCenter": false,
+  "window.customTitleBarVisibility": "never",
+  "editor.suggest.showSnippets": false,
+  "quokka.compactMessageOutput": true,
+  "quokka.automaticRestart": true,
+  "quokka.showStartViewOnFeatureRelease": false,
+  "quokka.showOutputOnStart": false,
+  "quokka.snapsAutoDiscovery": false,
+  "quokka.colors": {
+    "covered": "#00000000",
+    "errorPath": "#00000000",
+    "errorSource": "#00000000",
+    "notCovered": "#00000000",
+    "partiallyCovered": "#00000000"
+  },
+  "supermaven.enable": {
+    "*": false
+  },
+  "debug.console.fontSize": 12,
+  "terminal.integrated.fontSize": 12,
+  "editor.fontSize": 12
 }
