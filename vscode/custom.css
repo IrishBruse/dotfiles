@@ -154,14 +154,6 @@
   width: fit-content;
 }
 
-#sidebar-mimic {
-  position: absolute;
-  right: 0;
-  z-index: -10;
-  background-color: var(--vscode-sideBar-background);
-  height: 100%;
-}
-
 /* Fix Panel indentation */
 .panel>.title {
   padding-left: 0px !important;

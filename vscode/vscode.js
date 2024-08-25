@@ -24,27 +24,6 @@ try {
   iconObserver.observe(document.querySelector(".sidebar .actions-container"), {
     childList: true,
   });
-
-  // observe this document.getElementsByClassName("sidebar")[0].clientWidth
-  const sidebarObserver = new MutationObserver((mutations) => {
-    /** @type {HTMLDivElement} */
-    const sidebar = document.querySelector(".sidebar");
-    const sidebarMimic = document.querySelector("#sidebar-mimic");
-
-    sidebarMimic.style.width = `${sidebar.clientWidth}px`;
-  });
-
-  sidebarObserver.observe(document.getElementById("workbench.parts.sidebar"), {
-    subtree: true,
-    attributes: true,
-  });
-
-  const sidebarMimic = document.createElement("div");
-  sidebarMimic.id = "sidebar-mimic";
-
-  /** @type {HTMLDivElement} */
-  const statusbarElement = document.querySelector(".statusbar");
-  statusbarElement.appendChild(sidebarMimic);
 } catch (error) {
   console.log("TEST", error);
 }

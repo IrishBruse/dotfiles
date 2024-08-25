@@ -8,7 +8,7 @@
         "description": "Panel Icon",
         "default": "go-next",
         "tooltip": "Supports both icon name and icon path.\nTo use a symbolic icon, include '-symbolic' (or '-symbolic.svg') at the end.",
-        "value": "audio-headphones-symbolic"
+        "value": "computer-symbolic"
     },
     "tooltipText": {
         "type": "entry",
@@ -20,7 +20,7 @@
         "type": "keybinding",
         "description": "Keyboard shortcut",
         "default": "",
-        "value": ""
+        "value": "<Super>u::"
     },
     "showNotifications": {
         "type": "checkbox",
