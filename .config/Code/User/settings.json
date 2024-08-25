@@ -1804,6 +1804,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "apc.font.family": "CaskaydiaCove Nerd Font",
+  "apc.activityBar": { "itemSize": 24 },
   "apc.imports": [
     "file://${userHome}/dotfiles/vscode/custom.css",
     "file://${userHome}/dotfiles/vscode/icons.css",
@@ -2200,5 +2201,9 @@
   },
   "debug.console.fontSize": 12,
   "terminal.integrated.fontSize": 12,
-  "editor.fontSize": 12
+  "editor.fontSize": 12,
+  "gitlens.currentLine.enabled": false,
+  "gitlens.codeLens.enabled": false,
+  "gitlens.launchpad.indicator.enabled": false,
+  "gitlens.launchpad.indicator.polling.enabled": false
 }
