@@ -17,8 +17,6 @@ else
     config.initial_rows = 25
 end
 
-
-
 config.hide_tab_bar_if_only_one_tab   = true
 config.enable_scroll_bar              = true
 config.anti_alias_custom_block_glyphs = true
@@ -65,6 +63,15 @@ config.font_rules = {
         font = wezterm.font_with_fallback {
             family = 'Cascadia Code',
             weight = "Regular"
+        },
+    },
+    {
+        italic = true,
+        intensity = 'Half',
+        font = wezterm.font {
+            italic = true,
+            family = 'Cascadia Code',
+            weight = "Regular",
         },
     },
 }
