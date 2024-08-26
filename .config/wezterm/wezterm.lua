@@ -53,8 +53,20 @@ end)
 config.font = wezterm.font_with_fallback {
     {
         family = "Cascadia Code",
+        weight = "Regular"
     },
     "Symbols Nerd Font Mono"
+}
+
+config.font_rules = {
+    {
+        italic = false,
+        intensity = 'Half',
+        font = wezterm.font_with_fallback {
+            family = 'Cascadia Code',
+            weight = "Regular"
+        },
+    },
 }
 
 config.colors = {

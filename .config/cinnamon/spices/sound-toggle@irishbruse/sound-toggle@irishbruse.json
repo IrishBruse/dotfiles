@@ -8,28 +8,19 @@
         "description": "Panel Icon",
         "default": "go-next",
         "tooltip": "Supports both icon name and icon path.\nTo use a symbolic icon, include '-symbolic' (or '-symbolic.svg') at the end.",
-        "value": "computer-symbolic"
-    },
-    "tooltipText": {
-        "type": "entry",
-        "description": "Tooltip",
-        "default": "",
-        "value": "Toggle Source"
+        "value": "audio-headphones-symbolic"
     },
     "keyLaunch": {
         "type": "keybinding",
         "description": "Keyboard shortcut",
         "default": "",
-        "value": "<Super>u::"
+        "value": ""
     },
     "showNotifications": {
         "type": "checkbox",
         "description": "Show notifications on completion",
         "default": false,
         "value": false
-    },
-    "sep1": {
-        "type": "separator"
     },
     "commandTitle": {
         "type": "header",
@@ -39,7 +30,7 @@
         "type": "entry",
         "description": "Command",
         "default": "",
-        "value": "~/dotfiles/toggleAudioSource.fish"
+        "value": ""
     },
     "useRoot": {
         "type": "checkbox",
@@ -62,5 +53,5 @@
         "dependency": "useAltEnv",
         "value": "/"
     },
-    "__md5__": "79c299413041467ad03f5556895d2f3c"
+    "__md5__": "84c0c2b33c3d22fd7fe862b3b4abafab"
 }
