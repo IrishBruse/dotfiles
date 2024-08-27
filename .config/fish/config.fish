@@ -42,7 +42,7 @@ on_change_dir
 set -U fish_greeting
 set fish_color_valid_path
 set -x EDITOR "code --wait"
-set -x JQ_COLORS "2;33:2;33:0;33:0;36:1;32:0;35:1;35:2;34"
+set -gx JQ_COLORS "0;34:0;34:0;34:0;37:0;32:0;37:0;37:0;31"
 set -U async_prompt_functions fish_right_prompt
 
 set -g __fish_git_prompt_showcolorhints 1
