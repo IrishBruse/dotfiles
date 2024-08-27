@@ -3,13 +3,12 @@
   "modules": [
     "title",
     "separator",
-    "os",
     "host",
+    "os",
     "kernel",
     "uptime",
     "packages",
     "shell",
-    "display",
     "de",
     "wm",
     "wmtheme",
@@ -19,22 +18,16 @@
     "cursor",
     "editor",
     "terminal",
-    "terminalfont",
-    "separator",
     "cpu",
-    "cpuusage",
     "gpu",
     "memory",
     "swap",
     "disk",
-    "separator",
-    "localip",
-    "battery",
-    "poweradapter",
-    "break",
     "colors"
   ],
   "logo": {
-    "type": "chafa"
-  }
+    "type": "chafa",
+    "position": "right"
+  },
+  "general": { "thread": true }
 }

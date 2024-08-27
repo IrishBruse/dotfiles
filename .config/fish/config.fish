@@ -107,7 +107,7 @@ function v
 end
 
 function ni
-    npm i -g @antfu/ni
+    npm i --global @antfu/ni
     command ni $argv
 end
 

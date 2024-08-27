@@ -150,7 +150,6 @@
     mask-origin: padding !important;
 }
 
-
 .linux .sidebar>.header .icon>.action-label[aria-label^="GitHub"] {
     mask-image: url("vscode-file://home/econn/dotfiles/vscode/icons/github.png") !important;
 }
