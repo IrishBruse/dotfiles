@@ -10,7 +10,7 @@ try {
     };
   }
 
-  const iconObserver = new MutationObserver((mutations) => {
+  const iconObserver = new MutationObserver(() => {
     const m = document.querySelector(
       ".sidebar .actions-container .codicon-github"
     );
@@ -25,5 +25,5 @@ try {
     childList: true,
   });
 } catch (error) {
-  console.log("TEST", error);
+  console.log("vscode.js ERROR", error);
 }

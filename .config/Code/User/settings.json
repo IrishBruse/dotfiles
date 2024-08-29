@@ -108,7 +108,8 @@
     "scrollbarSlider.hoverBackground": "#5a637580",
 
     "sideBar.background": "#21252b",
-    "sideBarSectionHeader.background": "#333842",
+    "sideBarSectionHeader.background": "#21252b",
+    "sideBarSectionHeader.border": "#3A3F4B",
     "statusBar.background": "#21252B",
     "statusBar.debuggingBackground": "#747d9180",
     "statusBar.debuggingForeground": "#ffffff",
@@ -403,6 +404,12 @@
       },
       {
         "scope": ["support.type"],
+        "settings": {
+          "foreground": "#56B6C2"
+        }
+      },
+      {
+        "scope": ["support.type.primitive.ts"],
         "settings": {
           "foreground": "#56B6C2"
         }
@@ -1790,7 +1797,7 @@
       "source.removeUnusedImports": "explicit",
       "source.sortImports": "explicit"
     },
-    "editor.defaultFormatter": "vscode.typescript-language-features",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.semanticHighlighting.enabled": false
   },
   "[typescriptreact]": {

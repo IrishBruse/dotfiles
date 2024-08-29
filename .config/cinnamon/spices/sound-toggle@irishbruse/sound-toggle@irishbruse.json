@@ -1,12 +1,12 @@
 {
     "apearance": {
         "type": "header",
-        "description": "Appearance and behavior"
+        "description": "Appearance and behavior ddd"
     },
     "panelIcon": {
         "type": "iconfilechooser",
         "description": "Panel Icon",
-        "default": "go-next",
+        "default": "audio-headphones-symbolic",
         "tooltip": "Supports both icon name and icon path.\nTo use a symbolic icon, include '-symbolic' (or '-symbolic.svg') at the end.",
         "value": "audio-headphones-symbolic"
     },
@@ -21,6 +21,28 @@
         "description": "Show notifications on completion",
         "default": false,
         "value": false
+    },
+    "appearance": {
+        "type": "header",
+        "options": {
+            "Icon": "icon",
+            "IP": "ip",
+            "Icon and IP": "iconIp"
+        },
+        "default": "icon",
+        "description": "Appearance",
+        "value": "icon"
+    },
+    "save_every": {
+        "type": "spinbutton",
+        "default": 60,
+        "min": 1,
+        "max": 86400,
+        "step": 1,
+        "units": "seconds",
+        "description": "Save every",
+        "tooltip": "How often to save last used values",
+        "value": 1.0
     },
     "commandTitle": {
         "type": "header",
@@ -42,7 +64,7 @@
         "type": "checkbox",
         "description": "Run in alternate directory",
         "default": false,
-        "value": false
+        "value": true
     },
     "altEnv": {
         "type": "filechooser",
@@ -53,5 +75,5 @@
         "dependency": "useAltEnv",
         "value": "/"
     },
-    "__md5__": "84c0c2b33c3d22fd7fe862b3b4abafab"
+    "__md5__": "a93d120e393d4bce5902bd88d20bd532"
 }

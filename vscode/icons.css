@@ -14,7 +14,7 @@
 
 /* Align icons to the center */
 .sidebar>.header {
-    justify-content: right !important;
+    justify-content: center !important;
     padding-left: 0px !important;
 }
 

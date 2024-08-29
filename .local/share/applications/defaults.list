@@ -1,23 +1,2 @@
 [Default Applications]
-application/pdf=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/ai=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/bmp=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/cdr=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/eps=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/gif=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/jp2=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/jpeg=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/jpx=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/png=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/psb=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/psd=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/pxd=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/sketch=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/svg+xml=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/tiff=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/vnd-ms.dds=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/webp=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/x-icon=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/x-tga=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/xcf=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
-image/xd=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
+x-scheme-handler/magnet=webtorrent-desktop.desktop

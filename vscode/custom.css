@@ -52,8 +52,6 @@
   font-family: "Poppins";
 }
 
-.title-label>h2 {}
-
 /* Scrollbar animation */
 .scrollbar.vertical .slider {
   transition: width 0.2s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
@@ -129,6 +127,11 @@
   display: block;
   position: absolute;
   bottom: -6px;
+}
+
+/* Remove activity bar top border */
+.monaco-workbench .pane-composite-part>.header {
+  border: none;
 }
 
 /* Custom tab seperator like google chrome*/
