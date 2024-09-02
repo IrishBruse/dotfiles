@@ -100,9 +100,9 @@ end
 
 function v
     if test (count $argv) -eq 0
-        code (realpath .)
+        code .
     else
-        code (realpath $argv)
+        code $argv
     end
 end
 

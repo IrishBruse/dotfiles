@@ -1,0 +1,37 @@
+{
+    "appearance.customDarkThemeVariants": {
+        "10": "#35A854",
+        "20": "#35A854",
+        "30": "#35A854",
+        "40": "#35A854",
+        "50": "#35A854",
+        "60": "#35A854",
+        "70": "#35A854",
+        "80": "#35A854",
+        "90": "#35A854",
+        "100": "#35A854",
+        "110": "#35A854",
+        "120": "#35A854",
+        "130": "#35A854",
+        "140": "#35A854",
+        "150": "#35A854",
+        "160": "#35A854"
+    },
+    "appearance.searchBarAppearance": "outline",
+    "appearance.themeName": "Custom",
+    "extension[VSCode].prefix": "",
+    "extensions.enabledExtensionIds": [
+        "ApplicationSearch",
+        "WebSearch",
+        "Calculator",
+        "ColorConverter",
+        "VSCode",
+        "UeliCommand"
+    ],
+    "general.hotkey": "Super+Space",
+    "imageGenerator.faviconApiProvider": "Favicone",
+    "keyboardAndMouse.singleClickBehavior": "invokeSearchResultItem",
+    "searchEngine.fuzziness": 0.2,
+    "searchEngine.id": "Fuse.js",
+    "window.scrollBehavior": "instant"
+}

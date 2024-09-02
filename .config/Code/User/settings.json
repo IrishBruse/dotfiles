@@ -133,6 +133,9 @@
     "diffEditor.removedLineBackground": "#00000000",
     "diffEditor.border": "#3a3f4b",
 
+    "multiDiffEditor.border": "#3a3f4b",
+    "multiDiffEditor.headerBackground": "#21252B",
+
     "titleBar.activeBackground": "#21252b",
     "titleBar.activeForeground": "#9da5b4",
     "titleBar.inactiveBackground": "#21252b",
@@ -1811,16 +1814,13 @@
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "apc.activityBar": {
+    "itemSize": 30
+  },
   "apc.font.family": "CaskaydiaCove Nerd Font",
-  "apc.activityBar": { "itemSize": 24 },
   "apc.imports": [
     "file://${userHome}/dotfiles/vscode/custom.css",
-    "file://${userHome}/dotfiles/vscode/icons.css",
-    "file://${userHome}/dotfiles/vscode/vscode.js",
-    {
-      "href": "https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0",
-      "rel": "stylesheet"
-    }
+    "file://${userHome}/dotfiles/vscode/vscode.js"
   ],
   "aws.telemetry": false,
   "breadcrumbs.enabled": false,

@@ -416,9 +416,6 @@
         "ShowAllMessageButtons": {
             "enabled": false
         },
-        "ShowAllRoles": {
-            "enabled": false
-        },
         "ShowConnections": {
             "enabled": false
         },
@@ -557,6 +554,12 @@
         },
         "YoutubeAdblock": {
             "enabled": false
+        },
+        "AlwaysExpandRoles": {
+            "enabled": false
+        },
+        "NoMaskedUrlPaste": {
+            "enabled": false
         }
     },
     "notifications": {
@@ -569,6 +572,6 @@
         "authenticated": true,
         "url": "https://api.vencord.dev/",
         "settingsSync": true,
-        "settingsSyncVersion": 1723925160228
+        "settingsSyncVersion": 1725034112786
     }
 }
