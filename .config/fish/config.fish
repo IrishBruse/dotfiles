@@ -18,6 +18,14 @@ switch (echo $TERM_PROGRAM)
         set -g node_icon " "
 end
 
+function prompt_update
+    set -l fnm_version (command fnm current | string split .)
+    set -g fish_node_version $fnm_version[1]
+    if test $fish_node_version != ""
+        set -g fish_node_version (echo $node_icon)$fish_node_version
+    end
+end
+
 fish_add_path -g ~/.local/bin
 zoxide init fish --cmd cd | source
 fzf --fish | source
@@ -29,11 +37,7 @@ function on_change_dir --on-variable PWD --description 'Change Node version on d
         fnm use >/dev/null
 
         set -g fish_node_version ""
-        set -l test (fnm current | string split .)
-        set -g fish_node_version $test[1]
-        if test $fish_node_version != ""
-            set -g fish_node_version (echo $node_icon)$fish_node_version
-        end
+        prompt_update
     end
 end
 
@@ -63,7 +67,9 @@ function on_change_pwd --on-variable PWD
     set -g fish_git_branch ""
     set -g fish_git_branch (git branch --show-current 2>/dev/null)
 
-    local_onchange_repo $repo
+    if test "$TESTING" != true
+        local_onchange_repo $repo
+    end
 
     switch (echo $repo)
         case "*"
@@ -98,6 +104,10 @@ function pretty
     jq -Rr '. as $line | try (fromjson) catch $line'
 end
 
+function sam-dev
+    sam local start-api 2>&1 | pretty
+end
+
 function v
     if test (count $argv) -eq 0
         code .
@@ -106,9 +116,9 @@ function v
     end
 end
 
-function ni
-    npm i --global @antfu/ni
-    command ni $argv
+function fnm
+    command fnm $argv
+    prompt_update
 end
 
 alias bat="bat --theme OneHalfDark --style grid,numbers"

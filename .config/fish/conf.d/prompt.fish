@@ -23,6 +23,10 @@ function fish_prompt
 end
 
 function fish_right_prompt
+    if test "$TESTING" = true
+        return
+    end
+
     printf (set_color green)(echo $fish_node_version)(set_color normal)
 
     if test "$fish_git_branch" != ""
