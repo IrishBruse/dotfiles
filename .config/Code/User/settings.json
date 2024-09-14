@@ -29,13 +29,12 @@
     "button.secondaryHoverBackground": "#3e4451",
 
     "dropdown.background": "#353b45",
-    "scrollbar.shadow": "#00000000",
     "editorStickyScroll.shadow": "#282c34",
     "dropdown.border": "#21252B",
     "editor.findMatchHighlightBackground": "#636d8377",
     "panel.border": "#3a3f4b",
     "editorOverviewRuler.border": "#00000000",
-    "editorOverviewRuler.background": "#282c34",
+    "editorOverviewRuler.background": "#00000000",
 
     "editorStickyScrollHover.background": "#3e445177",
 
@@ -106,6 +105,7 @@
     "scrollbarSlider.activeBackground": "#747d9180",
     "scrollbarSlider.background": "#4e566680",
     "scrollbarSlider.hoverBackground": "#5a637580",
+    "scrollbar.shadow": "#00000000",
 
     "sideBar.background": "#21252b",
     "sideBarSectionHeader.background": "#21252b",
@@ -1819,7 +1819,12 @@
   },
   "apc.font.family": "CaskaydiaCove Nerd Font",
   "apc.imports": [
+    {
+      "href": "https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0",
+      "rel": "stylesheet"
+    },
     "file://${userHome}/dotfiles/vscode/custom.css",
+    "file://${userHome}/dotfiles/vscode/icons.css",
     "file://${userHome}/dotfiles/vscode/vscode.js"
   ],
   "aws.telemetry": false,
@@ -1905,7 +1910,7 @@
   "editor.inlayHints.padding": true,
   "editor.inlineSuggest.enabled": true,
   "editor.inlineSuggest.suppressSuggestions": true,
-  "editor.lineNumbers": "off",
+  "editor.lineNumbers": "on",
   "editor.linkedEditing": true,
   "editor.minimap.enabled": false,
   "editor.parameterHints.cycle": true,
@@ -1952,6 +1957,7 @@
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
     "*.ts": "${capture}.spec.ts,${capture}.test.ts",
+    "*.tsx": "${capture}.spec.tsx,${capture}.test.tsx",
     ".env": ".env.*",
     ".gitignore": ".*"
   },
@@ -2015,14 +2021,17 @@
   "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
   "javascript.inlayHints.parameterTypes.enabled": true,
   "javascript.inlayHints.propertyDeclarationTypes.enabled": true,
+  "versionlens.npm.http.strictSSL": false,
   "javascript.inlayHints.variableTypes.enabled": true,
   "javascript.preferences.importModuleSpecifier": "relative",
   "javascript.referencesCodeLens.enabled": true,
   "javascript.referencesCodeLens.showOnAllFunctions": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
-  "jest.jestCommandLine": "npx react-scripts test",
   "jest.runMode": "on-demand",
   "jest.shell": "/opt/homebrew/bin/fish",
+  "jest.nodeEnv": {
+    "TESTING": "true"
+  },
   "testing.showCoverageInExplorer": true,
   "js/ts.implicitProjectConfig.checkJs": true,
   "json.format.keepLines": true,
@@ -2116,19 +2125,40 @@
       "path": "/bin/zsh"
     }
   },
+  "terminal.integrated.profiles.osx": {
+    "bash": {
+      "path": "bash",
+      "args": ["-l"],
+      "icon": "terminal-bash"
+    },
+    "zsh": {
+      "path": "zsh",
+      "args": ["-l"]
+    },
+    "fish": {
+      "args": ["-i", "-l"],
+      "path": "fish"
+    },
+    "tmux": {
+      "path": "tmux",
+      "icon": "terminal-tmux"
+    },
+    "pwsh": {
+      "path": "pwsh",
+      "icon": "terminal-powershell"
+    }
+  },
   "terminal.integrated.rightClickBehavior": "nothing",
   "terminal.integrated.scrollback": 10000,
   "terminal.integrated.shellIntegration.decorationsEnabled": "overviewRuler",
   "terminal.integrated.tabs.title": "${sequence}",
   "thunder-client.certificates": [
     {
-      "certPath": "/Users/econneely/cert.pem",
-      "host": "g-p.dev",
-      "keyPath": "/Users/econneely/key.pem",
-      "passphrase": ""
+      "certPath": "../.certs/cq-cert.pem",
+      "keyPath": "../.certs/cq-key.pem",
+      "host": "document-management--document-management.us-east-1.private-api.integration-direct.g-p.dev"
     }
   ],
-  "thunder-client.httpLibrary": "axios",
   "thunder-client.indentSize": 4,
   "thunder-client.responseLimit": 30,
   "thunder-client.sidebar.defaultTab": "Collections",
@@ -2149,13 +2179,15 @@
   "typescript.updateImportsOnFileMove.enabled": "always",
   "update.mode": "none",
   "window.closeWhenEmpty": false,
+  "git.allowNoVerifyCommit": true,
+  "git.confirmNoVerifyCommit": false,
   "window.confirmSaveUntitledWorkspace": false,
   "window.menuBarVisibility": "hidden",
   "window.newWindowDimensions": "maximized",
   "window.openFilesInNewWindow": "off",
   "window.title": "${activeRepositoryName}",
   "window.titleSeparator": " - ",
-  "window.zoomLevel": 0,
+  "window.zoomLevel": 0.5,
   "workbench.activityBar.location": "top",
   "workbench.colorTheme": "Empty Dark",
   "workbench.editor.decorations.badges": false,
@@ -2190,20 +2222,9 @@
   "git-graph.repository.sign.tags": true,
   "editor.quickSuggestionsDelay": 100000,
   "window.commandCenter": false,
+  "debug.inlineValues": "on",
   "window.customTitleBarVisibility": "never",
   "editor.suggest.showSnippets": false,
-  "quokka.compactMessageOutput": true,
-  "quokka.automaticRestart": true,
-  "quokka.showStartViewOnFeatureRelease": false,
-  "quokka.showOutputOnStart": false,
-  "quokka.snapsAutoDiscovery": false,
-  "quokka.colors": {
-    "covered": "#00000000",
-    "errorPath": "#00000000",
-    "errorSource": "#00000000",
-    "notCovered": "#00000000",
-    "partiallyCovered": "#00000000"
-  },
   "supermaven.enable": {
     "*": false
   },
@@ -2213,6 +2234,5 @@
   "gitlens.currentLine.enabled": false,
   "gitlens.codeLens.enabled": false,
   "gitlens.launchpad.indicator.enabled": false,
-  "gitlens.launchpad.indicator.polling.enabled": false,
-  "debug.inlineValues": "on"
+  "gitlens.launchpad.indicator.polling.enabled": false
 }

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Game 455712169795780630
-Exec=/usr/local/bin/dolphin-emu %u
+Exec=/app/bin/dolphin-emu %u
 Type=Application
 NoDisplay=true
 Categories=Discord;Games;

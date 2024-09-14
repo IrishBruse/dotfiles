@@ -47,5 +47,11 @@
     "body": [
       "const [${1:state}, set${1:State}] = useState($0);"
     ]
+  },
+  "space": {
+    "prefix": "space",
+    "body": [
+      "&nbsp;"
+    ]
   }
 }

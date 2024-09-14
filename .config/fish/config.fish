@@ -91,9 +91,9 @@ end
 
 function clone
     set repoURL (echo $argv[1] | string trim -l -c "https://" | string split "/")
-    set -l repo (repoURL[3] | string split ".")
+    set -l folder (echo $repoURL[3] | string split ".")
 
-    echo repo[1]
+    git clone --recursive -- $argv[1] $folder[1]
 end
 
 function clip
@@ -132,3 +132,4 @@ alias back="cd $fish_back_pwd"
 alias lz="lazygit"
 alias nvm="fnm"
 alias nx="nlx"
+alias nid="ni -D"

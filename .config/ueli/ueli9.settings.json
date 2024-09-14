@@ -19,19 +19,46 @@
     },
     "appearance.searchBarAppearance": "outline",
     "appearance.themeName": "Custom",
+    "extension[VSCode].command": "code \"%s\"",
     "extension[VSCode].prefix": "",
+    "extension[Workflow].workflows": [
+        {
+            "actions": [],
+            "name": "",
+            "id": "workflow-02874b14-0bf0-431b-9f8a-ac415f01dd21"
+        }
+    ],
     "extensions.enabledExtensionIds": [
-        "ApplicationSearch",
-        "WebSearch",
+        "Workflow",
+        "UeliCommand",
+        "JetBrainsToolbox",
         "Calculator",
+        "Base64Conversion",
+        "WebSearch",
+        "DeeplTranslator",
+        "CurrencyConversion",
         "ColorConverter",
-        "VSCode",
-        "UeliCommand"
+        "ApplicationSearch",
+        "VSCode"
     ],
     "general.hotkey": "Super+Space",
+    "general.searchHistory.enabled": true,
+    "general.searchHistory.history": [
+        "sett"
+    ],
+    "general.searchHistory.limit": 11,
     "imageGenerator.faviconApiProvider": "Favicone",
     "keyboardAndMouse.singleClickBehavior": "invokeSearchResultItem",
     "searchEngine.fuzziness": 0.2,
     "searchEngine.id": "Fuse.js",
+    "window.defaultSettingsWindowSize": {
+        "width": 800,
+        "height": 600
+    },
+    "window.defaultWindowSize": {
+        "width": 600,
+        "height": 400
+    },
+    "window.hideWindowOn": [],
     "window.scrollBehavior": "instant"
 }

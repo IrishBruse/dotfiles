@@ -60,6 +60,10 @@
   left: auto !important;
 }
 
+.decorationsOverviewRuler {
+  z-index: 10;
+}
+
 .scrollbar.vertical:hover .slider {
   width: 15px !important;
 }
@@ -114,7 +118,7 @@
 
 .sticky-widget {
   overflow-x: hidden !important;
-  overflow-y: visible !important;
+  overflow-y: hidden !important;
   width: 100% !important;
 }
 
