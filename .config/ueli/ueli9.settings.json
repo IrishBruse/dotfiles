@@ -29,7 +29,6 @@
         }
     ],
     "extensions.enabledExtensionIds": [
-        "Workflow",
         "UeliCommand",
         "JetBrainsToolbox",
         "Calculator",

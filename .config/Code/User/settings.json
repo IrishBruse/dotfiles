@@ -110,7 +110,7 @@
     "sideBar.background": "#21252b",
     "sideBarSectionHeader.background": "#21252b",
     "sideBarSectionHeader.border": "#3A3F4B",
-    "statusBar.background": "#21252B",
+    "statusBar.background": "#21252b",
     "statusBar.debuggingBackground": "#747d9180",
     "statusBar.debuggingForeground": "#ffffff",
     "statusBar.foreground": "#9da5b4",
@@ -1957,9 +1957,20 @@
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
     "*.ts": "${capture}.spec.ts,${capture}.test.ts",
+    "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
+    "*.jsx": "${capture}.js",
+    "*": "${capture}.import",
     "*.tsx": "${capture}.spec.tsx,${capture}.test.tsx",
+    "tsconfig.json": "tsconfig.*.json",
+    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb",
     ".env": ".env.*",
-    ".gitignore": ".*"
+    ".gitignore": ".*",
+    "*.sqlite": "${capture}.${extname}-*",
+    "*.db": "${capture}.${extname}-*",
+    "*.sqlite3": "${capture}.${extname}-*",
+    "*.db3": "${capture}.${extname}-*",
+    "*.sdb": "${capture}.${extname}-*",
+    "*.s3db": "${capture}.${extname}-*"
   },
   "explorer.incrementalNaming": "smart",
   "explorer.openEditors.visible": 8,
@@ -2027,7 +2038,11 @@
   "javascript.referencesCodeLens.enabled": true,
   "javascript.referencesCodeLens.showOnAllFunctions": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
-  "jest.runMode": "on-demand",
+  "jest.runMode": {
+    "coverage": true,
+    "type": "on-demand",
+    "showInlineError": false
+  },
   "jest.shell": "/opt/homebrew/bin/fish",
   "jest.nodeEnv": {
     "TESTING": "true"
@@ -2152,6 +2167,8 @@
   "terminal.integrated.scrollback": 10000,
   "terminal.integrated.shellIntegration.decorationsEnabled": "overviewRuler",
   "terminal.integrated.tabs.title": "${sequence}",
+  "testing.coverageToolbarEnabled": true,
+  "testing.displayedCoveragePercent": "totalCoverage",
   "thunder-client.certificates": [
     {
       "certPath": "../.certs/cq-cert.pem",

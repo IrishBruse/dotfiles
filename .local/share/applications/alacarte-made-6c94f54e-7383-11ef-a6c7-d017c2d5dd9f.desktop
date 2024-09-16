@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Godot
+Exec=/home/econn/Apps/Godot/Godot
+Comment=
+Terminal=false
+PrefersNonDefaultGPU=false
+Icon=godot
+Type=Application

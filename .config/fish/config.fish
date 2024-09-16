@@ -4,7 +4,6 @@ switch (uname)
         alias apc="sudo chown -R $(whoami) '/Applications/Visual Studio Code.app/Contents/Resources/app/out/main.js'"
 
     case Linux
-        alias code="code --force-device-scale-factor=0.9"
         alias apc="sudo chown -R $(whoami) '/usr/share/code/resources/app/out/main.js'"
 
     case '*'
