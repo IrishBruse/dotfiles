@@ -26,3 +26,4 @@ local.fish
 
 .config/fish/conf.d/*
 !.config/fish/conf.d/prompt.fish
+.config/fish/fish_variables
