@@ -104,6 +104,7 @@ function pretty
 end
 
 function sam-dev
+    sam build
     sam local start-api 2>&1 | pretty
 end
 

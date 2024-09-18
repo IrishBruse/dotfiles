@@ -126,13 +126,6 @@
                 "parameters": "%r",
                 "shortcut": "",
                 "startup": 0
-            },
-            {
-                "title": "WezTerm",
-                "path": "/Applications/WezTerm.app",
-                "parameters": "start --cwd %p",
-                "shortcut": "",
-                "startup": 0
             }
         ]
     },
