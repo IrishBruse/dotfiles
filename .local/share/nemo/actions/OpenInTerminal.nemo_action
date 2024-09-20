@@ -13,7 +13,7 @@
 Active=true
 Name=Open in WezTerm
 Comment=Open %P in WezTerm
-Exec=fish -c "wezterm start --cwd $(realpath %P)"
+Exec=fish -c "wezterm start --cwd %P"
 
 Icon-Name=terminal
 

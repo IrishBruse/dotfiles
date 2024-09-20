@@ -18,9 +18,10 @@
         "160": "#35A854"
     },
     "appearance.searchBarAppearance": "outline",
+    "appearance.searchBarPlaceholderText": "Type to search...",
     "appearance.themeName": "Custom",
-    "extension[VSCode].command": "code \"%s\"",
-    "extension[VSCode].prefix": "",
+    "extension[VSCode].command": "code %s",
+    "extension[VSCode].prefix": "v",
     "extension[Workflow].workflows": [
         {
             "actions": [],
@@ -29,6 +30,8 @@
         }
     ],
     "extensions.enabledExtensionIds": [
+        "Workflow",
+        "SimpleFileSearch",
         "UeliCommand",
         "JetBrainsToolbox",
         "Calculator",
@@ -41,15 +44,25 @@
         "VSCode"
     ],
     "general.hotkey": "Super+Space",
+    "general.language": "en-US",
     "general.searchHistory.enabled": true,
     "general.searchHistory.history": [
+        "",
+        "v work",
+        "v a",
+        "v dot",
+        "v desk",
+        "v spa",
         "sett"
     ],
-    "general.searchHistory.limit": 11,
+    "general.searchHistory.limit": 10,
     "imageGenerator.faviconApiProvider": "Favicone",
     "keyboardAndMouse.singleClickBehavior": "invokeSearchResultItem",
-    "searchEngine.fuzziness": 0.2,
-    "searchEngine.id": "Fuse.js",
+    "searchEngine.fuzziness": 0.5,
+    "searchEngine.id": "fuzzysort",
+    "searchEngine.rescanIntervalInSeconds": 300,
+    "window.alwaysCenter": false,
+    "window.alwaysOnTop": false,
     "window.defaultSettingsWindowSize": {
         "width": 800,
         "height": 600

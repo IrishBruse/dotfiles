@@ -128,6 +128,7 @@ alias reload="clear;exec fish"
 alias paths="echo $PATH | tr ':' '\n'"
 alias dot="code ~/dotfiles/"
 alias back="cd $fish_back_pwd"
+alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LDtk.Codegen.csproj"
 
 alias lz="lazygit"
 alias nvm="fnm"

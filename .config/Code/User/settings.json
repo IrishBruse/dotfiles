@@ -1987,7 +1987,9 @@
     "*.toml": "toml",
     ".air.toml": "ini",
     ".gitcredentials": "ini",
-    "dot-gitconfig": "ini"
+    "dot-gitconfig": "ini",
+    ".env.json": "json",
+    "*.json": "jsonc"
   },
   "files.exclude": {
     "**/.git": false,
@@ -2077,6 +2079,7 @@
   "security.promptForLocalFileProtocolHandling": false,
   "security.workspace.trust.banner": "never",
   "security.workspace.trust.enabled": false,
+  "extensions.ignoreRecommendations": false,
   "settingsSync.ignoredExtensions": [
     "cucumberopen.cucumber-official",
     "shelex.vscode-cy-helper",
@@ -2204,7 +2207,7 @@
   "window.openFilesInNewWindow": "off",
   "window.title": "${activeRepositoryName}",
   "window.titleSeparator": " - ",
-  "window.zoomLevel": 0.5,
+  "window.zoomLevel": 0,
   "workbench.activityBar.location": "top",
   "workbench.colorTheme": "Empty Dark",
   "workbench.editor.decorations.badges": false,
@@ -2251,5 +2254,7 @@
   "gitlens.currentLine.enabled": false,
   "gitlens.codeLens.enabled": false,
   "gitlens.launchpad.indicator.enabled": false,
-  "gitlens.launchpad.indicator.polling.enabled": false
+  "gitlens.launchpad.indicator.polling.enabled": false,
+  "codeviz.analyticsEnabled": true,
+  "editor.cursorSmoothCaretAnimation": "explicit"
 }

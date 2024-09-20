@@ -13,7 +13,7 @@
 Active=true
 Name=Open in Code
 Comment=Open %F in Code
-Exec=fish -c "code $(realpath %F)"
+Exec=fish -c "code %F"
 
 Icon-Name=vscode
 
