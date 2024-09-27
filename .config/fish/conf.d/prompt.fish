@@ -1,4 +1,9 @@
 function fish_prompt
+    if test "$NO_PROMPT" = true
+        printf '❯ '
+        return
+    end
+
     set -l exit_code $status
 
     printf \e\[0J # clear from cursor to end of screen
@@ -13,7 +18,6 @@ function fish_prompt
         echo
     end
 
-
     if test $exit_code -eq 0
         printf (set_color magenta)'❯'
     else
@@ -23,7 +27,7 @@ function fish_prompt
 end
 
 function fish_right_prompt
-    if test "$TESTING" = true
+    if test "$NO_PROMPT" = true
         return
     end
 
@@ -58,4 +62,6 @@ function fish_title
     echo $fish_command
 end
 
-bind \r maybe_execute
+if test "$NO_PROMPT" != true
+    bind \r maybe_execute
+end

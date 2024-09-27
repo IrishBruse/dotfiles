@@ -2,6 +2,7 @@ switch (uname)
     case Darwin
         /opt/homebrew/bin/brew shellenv | source
         alias apc="sudo chown -R $(whoami) '/Applications/Visual Studio Code.app/Contents/Resources/app/out/main.js'"
+        alias code="code --ignore-certificate-errors"
 
     case Linux
         alias apc="sudo chown -R $(whoami) '/usr/share/code/resources/app/out/main.js'"
@@ -43,10 +44,9 @@ end
 on_change_dir
 
 set -U fish_greeting
-set fish_color_valid_path
+set -g fish_color_valid_path
 set -x EDITOR "code --wait"
 set -gx JQ_COLORS "0;34:0;34:0;34:0;37:0;32:0;37:0;37:0;31"
-set -U async_prompt_functions fish_right_prompt
 
 set -g __fish_git_prompt_showcolorhints 1
 set -g __fish_git_prompt_color_branch blue
@@ -55,7 +55,12 @@ fish_add_path -g ~/go/bin
 
 set -x CYPRESS_PASSWORD F98@qnyxibxm7v37g
 
-set -gx fish_back_pwd $PWD
+function setgx
+    set -gx $argv[1] $argv[2]
+    if test $status -eq 0
+        echo "Set $argv[1]"
+    end
+end
 
 source ~/dotfiles/local.fish
 
@@ -105,7 +110,12 @@ end
 
 function sam-dev
     sam build
-    sam local start-api 2>&1 | pretty
+    sam local start-api -n .env.json --config-file samconfig-ephemeral.toml $argv --skip-pull-image 2>&1 | pretty
+end
+
+function sam-deploy
+    sam build
+    sam deploy --config-file samconfig-ephemeral.toml
 end
 
 function v
@@ -120,6 +130,8 @@ function fnm
     command fnm $argv
     prompt_update
 end
+
+alias gsrp="git stash && git pull --rebase && git stash pop"
 
 alias bat="bat --theme OneHalfDark --style grid,numbers"
 alias ls="eza -ax --icons=always --group-directories-first"
