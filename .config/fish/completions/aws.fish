@@ -1,5 +1,12 @@
-function __fish_complete_aws
-    env COMP_LINE=(commandline -pc) aws_completer | tr -d ' '
+function __aws_complete
+    set -lx COMP_SHELL fish
+    set -lx COMP_LINE (commandline -opc)
+
+    if string match -q -- "-*" (commandline -opt)
+        set COMP_LINE $COMP_LINE -
+    end
+
+    aws_completer | command sed 's/ $//'
 end
 
-complete -c aws -f -a "(__fish_complete_aws)"
+complete --command aws --no-files --arguments '(__aws_complete)'

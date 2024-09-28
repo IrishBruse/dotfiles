@@ -26,6 +26,10 @@ function fish_prompt
     printf " "(set_color normal)
 end
 
+function transient_prompt_func
+    echo -e -n (set_color purple)"❯ " # print prompt
+end
+
 function fish_right_prompt
     if test "$NO_PROMPT" = true
         return
@@ -39,29 +43,10 @@ function fish_right_prompt
     end
 end
 
-function maybe_execute
-
-    set -g fish_first_prompt 1
-
-    commandline --is-valid
-
-    # If commandline is complete (i.e pressing enter will produce a new prompt)
-    if test $status -ne 2
-        set -g transient_prompt
-        commandline -f repaint
-    end
-
-    commandline -f execute
-end
-
 function fish_title
-    if test (commandline -pc) != ""
-        set -gx fish_command (commandline -pc | string shorten --max 20)
+    if test (commandline -pc) = ""
+        return
     end
 
-    echo $fish_command
-end
-
-if test "$NO_PROMPT" != true
-    bind \r maybe_execute
+    echo fish_command (commandline -pc | string shorten --max 20)
 end

@@ -147,5 +147,10 @@ alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LD
 
 alias lz="lazygit"
 alias nvm="fnm"
-alias nx="nlx"
+
+alias npx="nlx"
 alias nid="ni -D"
+
+function nr --wraps "npm run"
+    command nr $argv
+end
