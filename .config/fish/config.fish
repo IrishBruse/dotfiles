@@ -14,6 +14,8 @@ switch (uname)
         echo 'Unknown OS: '(uname)
 end
 
+alias let="set -l"
+
 switch (echo $TERM_PROGRAM)
     case vscode
         set -g node_icon " "
