@@ -147,3 +147,5 @@ tar xf lazygit.tar.gz lazygit
 sudo install lazygit /usr/local/bin
 
 gsettings set org.gnome.desktop.screensaver lock-enabled false
+
+cp -f ./override/icons/sunshine-tray.svg /usr/share/icons/hicolor/scalable/status/sunshine-tray.svg

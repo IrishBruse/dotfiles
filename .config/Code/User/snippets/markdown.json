@@ -1,6 +1,6 @@
 {
-	"space": {
-		"prefix": "space",
-		"body": "&nbsp;"
-	}
+  "space": {
+    "prefix": "space",
+    "body": "&nbsp;"
+  }
 }

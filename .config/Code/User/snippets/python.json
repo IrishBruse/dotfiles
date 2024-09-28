@@ -1,8 +1,6 @@
 {
   "log": {
     "prefix": "log",
-    "body": [
-      "print($1)"
-    ]
+    "body": ["print($1)"]
   }
 }

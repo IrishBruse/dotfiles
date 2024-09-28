@@ -36,22 +36,14 @@
   },
   "useEffect": {
     "prefix": "useEffect",
-    "body": [
-      "useEffect(()=>{",
-      "    $0",
-      "},[])"
-    ]
+    "body": ["useEffect(()=>{", "    $0", "},[])"]
   },
   "useState": {
     "prefix": "useState",
-    "body": [
-      "const [${1:state}, set${1:State}] = useState($0);"
-    ]
+    "body": ["const [${1:state}, setState] = useState($0);"]
   },
   "space": {
     "prefix": "space",
-    "body": [
-      "&nbsp;"
-    ]
+    "body": ["&nbsp;"]
   }
 }

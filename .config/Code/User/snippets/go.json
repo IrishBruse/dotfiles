@@ -6,20 +6,12 @@
   // Example:
   "Print to console": {
     "prefix": "log",
-    "body": [
-      "fmt.Println(\"$1\");"
-    ],
+    "body": ["fmt.Println(\"$1\");"],
     "description": "Log output to console"
   },
   "err": {
     "prefix": "?",
     "description": "return err",
-    "body": [
-      "",
-      "if err != nil {",
-      "\treturn err",
-      "}",
-      ""
-    ]
+    "body": ["", "if err != nil {", "\treturn err", "}", ""]
   }
 }

@@ -2,33 +2,11 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Backup brew",
+      "label": "Run on Open",
       "type": "shell",
-      "command": "",
-      "osx": {
-        "command": "brew list > ${workspaceFolder}/brew.ini"
-      },
-      "problemMatcher": [],
-      "runOptions": { "runOn": "folderOpen" },
-      "presentation": { "reveal": "silent" }
-    },
-    {
-      "label": "Stow files",
-      "type": "shell",
-      "command": "",
-      "osx": {
-        "command": "stow . --dotfiles"
-      },
-      "problemMatcher": [],
-      "runOptions": { "runOn": "folderOpen" },
-      "presentation": { "reveal": "silent" }
-    },
-    {
-      "label": "Backup cinnemon",
-      "type": "shell",
-      "command": "",
-      "osx": {
-        "command": "stow . --dotfiles"
+      "command": "echo skipped",
+      "linux": {
+        "command": "fish -c ./open.fish"
       },
       "problemMatcher": [],
       "runOptions": { "runOn": "folderOpen" },

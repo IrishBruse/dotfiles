@@ -21,7 +21,7 @@
     "appearance.searchBarPlaceholderText": "Type to search...",
     "appearance.themeName": "Custom",
     "extension[VSCode].command": "code %s",
-    "extension[VSCode].prefix": "v",
+    "extension[VSCode].prefix": "",
     "extension[Workflow].workflows": [
         {
             "actions": [],
@@ -47,13 +47,16 @@
     "general.language": "en-US",
     "general.searchHistory.enabled": true,
     "general.searchHistory.history": [
+        "ueli",
+        "ldtk",
+        "dot",
+        "v ueli",
         "",
         "v work",
         "v a",
         "v dot",
         "v desk",
-        "v spa",
-        "sett"
+        "v spa"
     ],
     "general.searchHistory.limit": 10,
     "imageGenerator.faviconApiProvider": "Favicone",
@@ -71,6 +74,10 @@
         "width": 600,
         "height": 400
     },
-    "window.hideWindowOn": [],
+    "window.hideWindowOn": [
+        "blur",
+        "afterInvocation",
+        "escapePressed"
+    ],
     "window.scrollBehavior": "instant"
 }

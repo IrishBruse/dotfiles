@@ -1,5 +1,4 @@
 {
-  "editor.tabFocusMode": false,
   "workbench.colorCustomizations": {
     "editor.background": "#282c34",
     "editor.foreground": "#abb2bf",
@@ -523,8 +522,14 @@
           "foreground": "#ABB2BF"
         }
       },
+      // {
+      //   "scope": ["meta.tag"],
+      //   "settings": {
+      //     "foreground": "#5C6370"
+      //   }
+      // },
       {
-        "scope": ["meta.tag"],
+        "scope": ["source.tsx punctuation.definition.tag"],
         "settings": {
           "foreground": "#5C6370"
         }
@@ -1410,7 +1415,7 @@
       {
         "scope": ["variable.other.object.js", "variable.other.object.ts"],
         "settings": {
-          "foreground": "#ABB2BF"
+          "foreground": "#D19A66"
         }
       },
       {
@@ -1749,7 +1754,6 @@
       }
     ]
   },
-  "supermaven.enableFixWithSupermaven": false,
   "[csharp]": {
     "editor.maxTokenizationLineLength": 2500,
     "editor.semanticHighlighting.enabled": true
@@ -1774,7 +1778,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[json]": {
-    "editor.defaultFormatter": "vscode.json-language-features"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -1811,9 +1815,17 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.semanticHighlighting.enabled": false
   },
+  "[ini]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "Lua.codeLens.enable": true,
+  "Lua.diagnostics.enable": false,
+  "Lua.hint.enable": true,
+  "Lua.hover.expandAlias": false,
+  "Lua.semantic.keyword": true,
   "apc.activityBar": {
     "itemSize": 30
   },
@@ -1830,8 +1842,8 @@
   "aws.telemetry": false,
   "breadcrumbs.enabled": false,
   "cfnLint.validateUsingJsonSchema": true,
-  "color-highlight.markerType": "underline",
   "color-highlight.markRuler": false,
+  "color-highlight.markerType": "underline",
   "commands.commands": [
     {
       "arguments": [
@@ -1854,13 +1866,14 @@
       "tooltip": "View Repo/PR"
     }
   ],
-  "comments.visible": false,
   "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": true,
   "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": true,
   "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": true,
   "csharp.suppressDotnetInstallWarning": true,
   "debug.console.fontFamily": "CaskaydiaCove NF",
+  "debug.console.fontSize": 12,
   "debug.disassemblyView.showSourceCode": false,
+  "debug.inlineValues": "on",
   "debug.internalConsoleOptions": "neverOpen",
   "debug.onTaskErrors": "abort",
   "debug.openDebug": "neverOpen",
@@ -1886,12 +1899,14 @@
   "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
   "editor.colorDecoratorsLimit": 1500,
   "editor.cursorBlinking": "expand",
+  "editor.cursorSmoothCaretAnimation": "explicit",
   "editor.cursorWidth": 2,
   "editor.defaultColorDecorators": true,
   "editor.experimental.asyncTokenization": true,
   "editor.foldingHighlight": false,
   "editor.fontFamily": "CaskaydiaCove NF",
   "editor.fontLigatures": true,
+  "editor.fontSize": 12,
   "editor.formatOnPaste": false,
   "editor.formatOnSave": true,
   "editor.formatOnType": false,
@@ -1917,6 +1932,7 @@
   "editor.parameterHints.enabled": true,
   "editor.pasteAs.enabled": false,
   "editor.pasteAs.showPasteSelector": "never",
+  "editor.quickSuggestionsDelay": 100000,
   "editor.renderFinalNewline": "dimmed",
   "editor.renderLineHighlight": "line",
   "editor.renderLineHighlightOnlyWhenFocus": true,
@@ -1928,8 +1944,10 @@
   "editor.suggest.selectionMode": "whenTriggerCharacter",
   "editor.suggest.shareSuggestSelections": true,
   "editor.suggest.showKeywords": false,
+  "editor.suggest.showSnippets": false,
   "editor.suggest.showWords": false,
   "editor.suggestSelection": "recentlyUsed",
+  "editor.tabFocusMode": false,
   "editor.tabSize": 4,
   "editor.unicodeHighlight.invisibleCharacters": false,
   "editor.wordSeparators": "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?_",
@@ -1937,8 +1955,8 @@
   "errorLens.excludeBySource": ["node_modules/**"],
   "errorLens.fontSize": "12",
   "errorLens.fontWeight": "bold",
-  "errorLens.gutterIconsEnabled": false,
   "errorLens.gutterIconSet": "defaultOutline",
+  "errorLens.gutterIconsEnabled": false,
   "errorLens.margin": "1ch",
   "errorLens.messageMaxChars": 80,
   "errorLens.replaceLinebreaksSymbol": " ⏎",
@@ -1956,40 +1974,42 @@
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
-    "*.ts": "${capture}.spec.ts,${capture}.test.ts",
+    "*": "${capture}.import",
+    "*.db": "${capture}.${extname}-*",
+    "*.db3": "${capture}.${extname}-*",
     "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
     "*.jsx": "${capture}.js",
-    "*": "${capture}.import",
+    "*.s3db": "${capture}.${extname}-*",
+    "*.sdb": "${capture}.${extname}-*",
+    "*.sqlite": "${capture}.${extname}-*",
+    "*.sqlite3": "${capture}.${extname}-*",
+    "*.ts": "${capture}.spec.ts,${capture}.test.ts",
     "*.tsx": "${capture}.spec.tsx,${capture}.test.tsx",
-    "tsconfig.json": "tsconfig.*.json",
-    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb",
     ".env": ".env.*",
     ".gitignore": ".*",
-    "*.sqlite": "${capture}.${extname}-*",
-    "*.db": "${capture}.${extname}-*",
-    "*.sqlite3": "${capture}.${extname}-*",
-    "*.db3": "${capture}.${extname}-*",
-    "*.sdb": "${capture}.${extname}-*",
-    "*.s3db": "${capture}.${extname}-*"
+    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb",
+    "tsconfig.json": "tsconfig.*.json"
   },
   "explorer.incrementalNaming": "smart",
   "explorer.openEditors.visible": 8,
   "explorer.sortOrder": "foldersNestsFiles",
   "extensions.autoCheckUpdates": false,
+  "extensions.ignoreRecommendations": false,
   "files.associations": {
     "*.animation": "json",
     "*.fish": "fish",
     "*.ib": "go",
+    "*.json": "jsonc",
     "*.ldtk": "json",
     "*.ldtkl": "json",
     "*.nemo_action": "ini",
     "*.snippet": "plaintext",
     "*.toml": "toml",
     ".air.toml": "ini",
+    ".env.json": "json",
     ".gitcredentials": "ini",
     "dot-gitconfig": "ini",
-    ".env.json": "json",
-    "*.json": "jsonc"
+    "fish_variables": "fish"
   },
   "files.exclude": {
     "**/.git": false,
@@ -2009,9 +2029,14 @@
     "**/bin/**": true,
     "**/obj/**": true
   },
+  "git-graph.repository.sign.commits": true,
+  "git-graph.repository.sign.tags": true,
+  "git.allowNoVerifyCommit": true,
   "git.autofetch": true,
+  "git.confirmNoVerifyCommit": false,
   "git.confirmSync": false,
   "git.decorations.enabled": false,
+  "git.enableCommitSigning": true,
   "git.enableSmartCommit": true,
   "git.fetchOnPull": true,
   "git.inputValidation": true,
@@ -2020,6 +2045,10 @@
   "git.terminalGitEditor": true,
   "githubPullRequests.createOnPublishBranch": "never",
   "githubPullRequests.showPullRequestNumberInTree": true,
+  "gitlens.codeLens.enabled": false,
+  "gitlens.currentLine.enabled": false,
+  "gitlens.launchpad.indicator.enabled": false,
+  "gitlens.launchpad.indicator.polling.enabled": false,
   "gopls": {
     "ui.semanticTokens": true
   },
@@ -2027,6 +2056,8 @@
   "hexeditor.defaultEndianness": "little",
   "hexeditor.inspectorType": "aside",
   "hexeditor.showDecodedText": true,
+  "http.experimental.systemCertificatesV2": true,
+  "http.systemCertificates": true,
   "java.jdt.ls.androidSupport.enabled": "on",
   "java.jdt.ls.java.home": "/usr/lib/jvm/java-21-openjdk-amd64/",
   "java.maven.downloadSources": true,
@@ -2034,29 +2065,23 @@
   "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
   "javascript.inlayHints.parameterTypes.enabled": true,
   "javascript.inlayHints.propertyDeclarationTypes.enabled": true,
-  "versionlens.npm.http.strictSSL": false,
   "javascript.inlayHints.variableTypes.enabled": true,
   "javascript.preferences.importModuleSpecifier": "relative",
   "javascript.referencesCodeLens.enabled": true,
   "javascript.referencesCodeLens.showOnAllFunctions": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
+  "jest.nodeEnv": {
+    "NO_PROMPT": "true"
+  },
   "jest.runMode": {
-    "coverage": true,
-    "type": "on-demand",
-    "showInlineError": false
+    "coverage": false,
+    "showInlineError": false,
+    "deferred": true,
+    "type": "on-save"
   },
   "jest.shell": "/opt/homebrew/bin/fish",
-  "jest.nodeEnv": {
-    "TESTING": "true"
-  },
-  "testing.showCoverageInExplorer": true,
   "js/ts.implicitProjectConfig.checkJs": true,
   "json.format.keepLines": true,
-  "Lua.codeLens.enable": true,
-  "Lua.diagnostics.enable": false,
-  "Lua.hint.enable": true,
-  "Lua.hover.expandAlias": false,
-  "Lua.semantic.keyword": true,
   "material-icon-theme.activeIconPack": "react_redux",
   "material-icon-theme.folders.color": "#ABB2BF",
   "material-icon-theme.hidesExplorerArrows": true,
@@ -2079,7 +2104,6 @@
   "security.promptForLocalFileProtocolHandling": false,
   "security.workspace.trust.banner": "never",
   "security.workspace.trust.enabled": false,
-  "extensions.ignoreRecommendations": false,
   "settingsSync.ignoredExtensions": [
     "cucumberopen.cucumber-official",
     "shelex.vscode-cy-helper",
@@ -2094,6 +2118,10 @@
   ],
   "smartersemicolon.autoLineChange": false,
   "smartersemicolon.enable": true,
+  "supermaven.enable": {
+    "*": false
+  },
+  "supermaven.enableFixWithSupermaven": false,
   "telemetry.telemetryLevel": "crash",
   "terminal.explorerKind": "both",
   "terminal.integrated.automationProfile.linux": {
@@ -2102,7 +2130,7 @@
   },
   "terminal.integrated.automationProfile.osx": {
     "args": ["-li"],
-    "path": "fish"
+    "path": "/opt/homebrew/bin/fish"
   },
   "terminal.integrated.commandsToSkipShell": [
     "workbench.action.terminal.kill",
@@ -2118,6 +2146,7 @@
   "terminal.integrated.enablePersistentSessions": false,
   "terminal.integrated.enableVisualBell": true,
   "terminal.integrated.fontFamily": "CaskaydiaCove NF",
+  "terminal.integrated.fontSize": 12,
   "terminal.integrated.hideOnStartup": "always",
   "terminal.integrated.ignoreBracketedPasteMode": true,
   "terminal.integrated.persistentSessionReviveProcess": "never",
@@ -2145,25 +2174,25 @@
   },
   "terminal.integrated.profiles.osx": {
     "bash": {
-      "path": "bash",
       "args": ["-l"],
-      "icon": "terminal-bash"
-    },
-    "zsh": {
-      "path": "zsh",
-      "args": ["-l"]
+      "icon": "terminal-bash",
+      "path": "bash"
     },
     "fish": {
       "args": ["-i", "-l"],
-      "path": "fish"
-    },
-    "tmux": {
-      "path": "tmux",
-      "icon": "terminal-tmux"
+      "path": "/opt/homebrew/bin/fish"
     },
     "pwsh": {
-      "path": "pwsh",
-      "icon": "terminal-powershell"
+      "icon": "terminal-powershell",
+      "path": "pwsh"
+    },
+    "tmux": {
+      "icon": "terminal-tmux",
+      "path": "tmux"
+    },
+    "zsh": {
+      "args": ["-l"],
+      "path": "zsh"
     }
   },
   "terminal.integrated.rightClickBehavior": "nothing",
@@ -2172,11 +2201,17 @@
   "terminal.integrated.tabs.title": "${sequence}",
   "testing.coverageToolbarEnabled": true,
   "testing.displayedCoveragePercent": "totalCoverage",
+  "testing.showCoverageInExplorer": true,
   "thunder-client.certificates": [
     {
       "certPath": "../.certs/cq-cert.pem",
-      "keyPath": "../.certs/cq-key.pem",
-      "host": "document-management--document-management.us-east-1.private-api.integration-direct.g-p.dev"
+      "host": "document-management--document-management.us-east-1.private-api.integration-direct.g-p.dev",
+      "keyPath": "../.certs/cq-key.pem"
+    },
+    {
+      "certPath": "../.certs/cq-cert.pem",
+      "host": "app.integration.g-p.dev",
+      "keyPath": "../.certs/cq-key.pem"
     }
   ],
   "thunder-client.indentSize": 4,
@@ -2198,10 +2233,12 @@
   "typescript.tsserver.experimental.enableProjectDiagnostics": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
   "update.mode": "none",
+  "versionlens.logging.level": "debug",
+  "versionlens.npm.http.strictSSL": false,
   "window.closeWhenEmpty": false,
-  "git.allowNoVerifyCommit": true,
-  "git.confirmNoVerifyCommit": false,
+  "window.commandCenter": false,
   "window.confirmSaveUntitledWorkspace": false,
+  "window.customTitleBarVisibility": "never",
   "window.menuBarVisibility": "hidden",
   "window.newWindowDimensions": "maximized",
   "window.openFilesInNewWindow": "off",
@@ -2237,24 +2274,5 @@
   "zenMode.restore": false,
   "zenMode.showTabs": "none",
   "zenMode.silentNotifications": true,
-  "git.enableCommitSigning": true,
-  "git-graph.repository.sign.commits": true,
-  "git-graph.repository.sign.tags": true,
-  "editor.quickSuggestionsDelay": 100000,
-  "window.commandCenter": false,
-  "debug.inlineValues": "on",
-  "window.customTitleBarVisibility": "never",
-  "editor.suggest.showSnippets": false,
-  "supermaven.enable": {
-    "*": false
-  },
-  "debug.console.fontSize": 12,
-  "terminal.integrated.fontSize": 12,
-  "editor.fontSize": 12,
-  "gitlens.currentLine.enabled": false,
-  "gitlens.codeLens.enabled": false,
-  "gitlens.launchpad.indicator.enabled": false,
-  "gitlens.launchpad.indicator.polling.enabled": false,
-  "codeviz.analyticsEnabled": true,
-  "editor.cursorSmoothCaretAnimation": "explicit"
+  "hurl-runner.commandLineArguments": "--error-format long"
 }
