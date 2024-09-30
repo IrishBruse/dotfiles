@@ -7,10 +7,20 @@ config.default_gui_startup_args = { "start" }
 config.freetype_load_target = "HorizontalLcd"
 
 if wezterm.target_triple == 'aarch64-apple-darwin' then
+    config.set_environment_variables = {
+        OS = "Darwin"
+    }
+
+
     config.default_prog = { "/opt/homebrew/bin/fish", "-i", "-l" }
     config.initial_cols = 90
     config.initial_rows = 24
 else
+    config.set_environment_variables = {
+        OS = "Linux"
+    }
+
+
     config.font_size    = 9.0
     config.default_prog = { "fish", "-i", "-l" }
     config.initial_cols = 100

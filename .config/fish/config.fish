@@ -1,4 +1,4 @@
-switch (uname)
+switch (set -q OS && echo $OS || uname)
     case Darwin
         /opt/homebrew/bin/brew shellenv | source
         alias apc="sudo chown -R $(whoami) '/Applications/Visual Studio Code.app/Contents/Resources/app/out/main.js'"
@@ -16,6 +16,24 @@ end
 
 alias let="set -l"
 
+alias gsrp="git stash && git pull --rebase && git stash pop"
+
+alias man="MANPAGER=cat command man"
+alias bat="bat --theme OneHalfDark --style grid,numbers"
+alias ls="eza -ax --icons=always --group-directories-first"
+alias ll="eza -al --icons=always --group-directories-first"
+alias reload="clear;exec fish"
+alias paths="echo $PATH | tr ':' '\n'"
+alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LDtk.Codegen.csproj"
+
+alias showkey="fish_key_reader --verbose"
+
+# Node alias
+alias nvm="fnm"
+alias nx="nlx"
+alias nid="ni -D"
+
+
 switch (echo $TERM_PROGRAM)
     case vscode
         set -g node_icon " "
@@ -24,9 +42,9 @@ switch (echo $TERM_PROGRAM)
 end
 
 function prompt_update
-    set -l fnm_version (command fnm current | string split .)
+    let fnm_version (command fnm current | string split .)
     set -g fish_node_version $fnm_version[1]
-    if test $fish_node_version != ""
+    if test "$fish_node_version" != ""
         set -g fish_node_version (echo $node_icon)$fish_node_version
     end
 end
@@ -50,8 +68,9 @@ on_change_dir
 
 set -U fish_greeting
 set -g fish_color_valid_path
-set -x EDITOR "code --wait"
-set -gx JQ_COLORS "0;34:0;34:0;34:0;37:0;32:0;37:0;37:0;31"
+set -gx JQ_COLORS "0;33:0;34:0;34:1;33:0;32:0;37:0;37:0;31"
+
+set -gx EDITOR "code --wait"
 
 set -g __fish_git_prompt_showcolorhints 1
 set -g __fish_git_prompt_color_branch blue
@@ -76,9 +95,7 @@ function on_change_pwd --on-variable PWD
     set -g fish_git_branch ""
     set -g fish_git_branch (git branch --show-current 2>/dev/null)
 
-    if test "$TESTING" != true
-        local_onchange_repo $repo
-    end
+    local_onchange_repo $repo
 
     switch (echo $repo)
         case "*"
@@ -87,8 +104,8 @@ end
 
 on_change_pwd
 
-set -x NI_DEFAULT_AGENT npm
-set -x NI_GLOBAL_AGENT npm
+set -gx NI_DEFAULT_AGENT npm
+set -gx NI_GLOBAL_AGENT npm
 
 function view
     gh pr view -w
@@ -100,7 +117,7 @@ end
 
 function clone
     set repoURL (echo $argv[1] | string trim -l -c "https://" | string split "/")
-    set -l folder (echo $repoURL[3] | string split ".")
+    let folder=(echo $repoURL[3] | string split ".")
 
     git clone --recursive -- $argv[1] $folder[1]
 end
@@ -134,25 +151,4 @@ end
 function fnm
     command fnm $argv
     prompt_update
-end
-
-alias gsrp="git stash && git pull --rebase && git stash pop"
-
-alias bat="bat --theme OneHalfDark --style grid,numbers"
-alias ls="eza -ax --icons=always --group-directories-first"
-alias ll="eza -al --icons=always --group-directories-first"
-alias reload="clear;exec fish"
-alias paths="echo $PATH | tr ':' '\n'"
-alias dot="code ~/dotfiles/"
-alias back="cd $fish_back_pwd"
-alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LDtk.Codegen.csproj"
-
-alias lz="lazygit"
-alias nvm="fnm"
-
-alias npx="nlx"
-alias nid="ni -D"
-
-function nr --wraps "npm run"
-    command nr $argv
 end
