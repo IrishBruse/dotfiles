@@ -33,7 +33,6 @@ alias nvm="fnm"
 alias nx="nlx"
 alias nid="ni -D"
 
-
 switch (echo $TERM_PROGRAM)
     case vscode
         set -g node_icon " "
@@ -132,7 +131,8 @@ end
 
 function sam-dev
     sam build
-    sam local start-api -n .env.json --config-file samconfig-ephemeral.toml $argv --skip-pull-image 2>&1 | pretty
+    clear
+    sam local start-api -n .env.json --config-file samconfig-ephemeral.toml $argv 2>&1 | pretty
 end
 
 function sam-deploy

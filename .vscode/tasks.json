@@ -8,6 +8,9 @@
       "linux": {
         "command": "fish -c ./open.fish"
       },
+      "osx": {
+        "command": "fish -c ./open.fish"
+      },
       "problemMatcher": [],
       "runOptions": { "runOn": "folderOpen" },
       "presentation": { "reveal": "silent" }

@@ -7,5 +7,5 @@ end
 
 if test (uname) = Darwin
     uname
-    brew list >${workspaceFolder}/brew.ini
+    brew list >brew.ini
 end
