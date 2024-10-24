@@ -131,13 +131,19 @@ end
 
 function sam-dev
     sam build
-    clear
-    sam local start-api -n .env.json --config-file samconfig-ephemeral.toml $argv 2>&1 | pretty
+
+    set -l configFile samconfig-ephemeral.toml
+    set -l envVars env-vars-override-local.json
+
+    sam local start-api -n .env.json --config-file $configFile --config-env $envVars $argv 2>&1 | pretty
 end
 
 function sam-deploy
     sam build
-    sam deploy --config-file samconfig-ephemeral.toml
+
+    set -l configFile samconfig-ephemeral.toml
+
+    sam deploy --config-file $configFile
 end
 
 function v

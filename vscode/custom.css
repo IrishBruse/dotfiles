@@ -4,10 +4,7 @@
   width: 0px;
 }
 
-.explorer-folders-view
-  .monaco-list-row[aria-expanded]
-  .monaco-tl-row
-  .codicon-tree-item-expanded::before {
+.explorer-folders-view .monaco-list-row[aria-expanded] .monaco-tl-row .codicon-tree-item-expanded::before {
   margin-right: 14px;
 }
 
@@ -27,9 +24,7 @@
   padding-left: 0px !important;
 }
 
-.monaco-list-row[aria-label="Source Control Input"]
-  + .monaco-list-row
-  .monaco-tl-twistie {
+.monaco-list-row[aria-label="Source Control Input"]+.monaco-list-row .monaco-tl-twistie {
   padding-left: 0px !important;
 }
 
@@ -51,7 +46,7 @@
 }
 
 /* Sidebar panel Title */
-.title-label > h2 {
+.title-label>h2 {
   font-weight: bold !important;
   font-size: 1em !important;
   font-family: "Poppins";
@@ -128,7 +123,7 @@
 }
 
 /* Last line indicator */
-.view-lines > div.last-line:after {
+.view-lines>div.last-line:after {
   width: 6px;
   height: 3px;
   background-color: var(--vscode-input-border);
@@ -139,7 +134,7 @@
 }
 
 /* Remove activity bar top border */
-.monaco-workbench .pane-composite-part > .header {
+.monaco-workbench .pane-composite-part>.header {
   border: none;
 }
 
@@ -167,6 +162,6 @@
 }
 
 /* Fix Panel indentation */
-.panel > .title {
+.panel>.title {
   padding-left: 0px !important;
 }
