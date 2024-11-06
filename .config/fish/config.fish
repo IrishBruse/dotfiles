@@ -16,9 +16,7 @@ end
 
 alias let="set -l"
 
-alias gsrp="git stash && git pull --rebase && git stash pop"
 
-alias man="MANPAGER=cat command man"
 alias bat="bat --theme OneHalfDark --style grid,numbers"
 alias ls="eza -ax --icons=always --group-directories-first"
 alias ll="eza -al --icons=always --group-directories-first"
@@ -29,9 +27,12 @@ alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LD
 alias showkey="fish_key_reader --verbose"
 
 # Node alias
-alias nvm="fnm"
 alias nx="nlx"
-alias nid="ni -D"
+abbr nid "ni -D"
+abbr nvm fnm
+
+abbr clone "git clone --recursive"
+abbr gsrp="git stash && git pull --rebase && git stash pop"
 
 switch (echo $TERM_PROGRAM)
     case vscode
@@ -81,8 +82,15 @@ set -x CYPRESS_PASSWORD F98@qnyxibxm7v37g
 function setgx
     set -gx $argv[1] $argv[2]
     if test $status -eq 0
-        echo "Set $argv[1]"
+        echo "Set $argv[1]"d
     end
+end
+
+function jwt -a jwt
+    clear
+
+    set splits (echo $argv[1] | string split ".")
+    string join "" (echo $splits[2]) "==" | base64 --decode | jq
 end
 
 source ~/dotfiles/local.fish
@@ -112,13 +120,6 @@ function view
     if test $status -ne 0
         gh browse
     end
-end
-
-function clone
-    set repoURL (echo $argv[1] | string trim -l -c "https://" | string split "/")
-    let folder=(echo $repoURL[3] | string split ".")
-
-    git clone --recursive -- $argv[1] $folder[1]
 end
 
 function clip
@@ -157,4 +158,8 @@ end
 function fnm
     command fnm $argv
     prompt_update
+end
+
+function nr --wraps "npm run"
+    command nr $argv
 end
