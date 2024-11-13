@@ -1,4 +1,5 @@
 {
+  "AUTO": { "description": "GENERATED", "body": "" },
   "Lamda Function": {
     "prefix": "lamda",
     "body": ["($1)=>{$0}"],

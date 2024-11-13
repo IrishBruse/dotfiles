@@ -110,8 +110,7 @@
     "sideBarSectionHeader.background": "#21252b",
     "sideBarSectionHeader.border": "#3A3F4B",
     "statusBar.background": "#21252b",
-    "statusBar.debuggingBackground": "#747d9180",
-    "statusBar.debuggingForeground": "#ffffff",
+    "statusBar.debuggingBackground": "#21252b",
     "statusBar.foreground": "#9da5b4",
     "statusBar.noFolderBackground": "#00000000",
     "statusBarItem.hoverBackground": "#2c313a",
@@ -290,12 +289,6 @@
         "scope": ["constant.other.symbol"],
         "settings": {
           "foreground": "#56B6C2"
-        }
-      },
-      {
-        "scope": ["variable"],
-        "settings": {
-          "foreground": "#E06C75"
         }
       },
       {
@@ -1799,16 +1792,16 @@
   },
   "[typescript]": {
     "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
       "source.fixAll.eslint": "explicit",
-      "source.organizeImports": "explicit",
-      "source.removeUnusedImports": "explicit",
-      "source.sortImports": "explicit"
+      "source.removeUnusedImports": "explicit"
     },
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.semanticHighlighting.enabled": false
   },
   "[typescriptreact]": {
     "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
       "source.fixAll.eslint": "explicit",
       "source.removeUnusedImports": "explicit"
     },
@@ -1826,15 +1819,7 @@
   "Lua.hint.enable": true,
   "Lua.hover.expandAlias": false,
   "Lua.semantic.keyword": true,
-  "apc.activityBar": {
-    "itemSize": 30
-  },
-  "apc.font.family": "CaskaydiaCove Nerd Font",
-  "apc.imports": [
-    {
-      "href": "https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0",
-      "rel": "stylesheet"
-    },
+  "vscode_custom_css.imports": [
     "file://${userHome}/dotfiles/vscode/custom.css",
     "file://${userHome}/dotfiles/vscode/icons.css",
     "file://${userHome}/dotfiles/vscode/vscode.js"
@@ -1846,22 +1831,8 @@
   "color-highlight.markerType": "underline",
   "commands.commands": [
     {
-      "arguments": [
-        {
-          "commands": [
-            {
-              "command": "workbench.action.terminal.new"
-            },
-            {
-              "args": {
-                "text": "view && exit\n"
-              },
-              "command": "workbench.action.terminal.sendSequence"
-            }
-          ]
-        }
-      ],
-      "command": "runCommands",
+      "command": "workbench.action.tasks.runTask",
+      "arguments": ["View Repo/PR"],
       "text": "$(github) View",
       "tooltip": "View Repo/PR"
     }
@@ -1881,7 +1852,7 @@
   "debug.showInStatusBar": "never",
   "debug.toolBarLocation": "docked",
   "diffEditor.codeLens": false,
-  "diffEditor.ignoreTrimWhitespace": false,
+  "diffEditor.ignoreTrimWhitespace": true,
   "diffEditor.maxComputationTime": 0,
   "diffEditor.useInlineViewWhenSpaceIsLimited": false,
   "diffEditor.wordWrap": "off",
@@ -1942,7 +1913,6 @@
   "editor.semanticHighlighting.enabled": true,
   "editor.suggest.localityBonus": true,
   "editor.suggest.selectionMode": "whenTriggerCharacter",
-  "editor.suggest.shareSuggestSelections": true,
   "editor.suggest.showKeywords": false,
   "editor.suggest.showSnippets": false,
   "editor.suggest.showWords": false,
@@ -1951,7 +1921,7 @@
   "editor.tabSize": 4,
   "editor.unicodeHighlight.invisibleCharacters": false,
   "editor.wordSeparators": "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?_",
-  "errorLens.enabledDiagnosticLevels": ["error", "warning"],
+  "errorLens.enabledDiagnosticLevels": ["warning", "error"],
   "errorLens.excludeBySource": ["node_modules/**"],
   "errorLens.fontSize": "12",
   "errorLens.fontWeight": "bold",
@@ -2009,10 +1979,11 @@
     ".env.json": "json",
     ".gitcredentials": "ini",
     "dot-gitconfig": "ini",
-    "fish_variables": "fish"
+    "fish_variables": "fish",
+    "grammer": "plaintext"
   },
   "files.exclude": {
-    "**/.git": false,
+    "**/.git": true,
     "**/.hg": false,
     "**/.svn": false,
     "**/CVS": false,
@@ -2020,14 +1991,12 @@
   },
   "files.hotExit": "onExitAndWindowClose",
   "files.insertFinalNewline": true,
-  "files.readonlyInclude": {
-    ".git/**": true
-  },
   "files.trimFinalNewlines": true,
   "files.trimTrailingWhitespace": true,
   "files.watcherExclude": {
     "**/bin/**": true,
-    "**/obj/**": true
+    "**/obj/**": true,
+    "**/node_modules/**": true
   },
   "git-graph.repository.sign.commits": true,
   "git-graph.repository.sign.tags": true,
@@ -2077,7 +2046,7 @@
     "coverage": false,
     "showInlineError": false,
     "deferred": true,
-    "type": "on-save"
+    "type": "on-demand"
   },
   "jest.shell": "/opt/homebrew/bin/fish",
   "js/ts.implicitProjectConfig.checkJs": true,
@@ -2107,14 +2076,13 @@
   "settingsSync.ignoredExtensions": [
     "cucumberopen.cucumber-official",
     "shelex.vscode-cy-helper",
-    "alexkrechik.cucumberautocomplete"
+    "alexkrechik.cucumberautocomplete",
+    "drcika.apc-extension"
   ],
   "settingsSync.ignoredSettings": [
     "window.titleBarStyle",
     "editor.mouseWheelScrollSensitivity",
-    "update.mode",
-    "apc.electron",
-    "apc.header"
+    "update.mode"
   ],
   "smartersemicolon.autoLineChange": false,
   "smartersemicolon.enable": true,
@@ -2129,8 +2097,8 @@
     "path": "fish"
   },
   "terminal.integrated.automationProfile.osx": {
-    "args": ["-li"],
-    "path": "/opt/homebrew/bin/fish"
+    "path": "/opt/homebrew/bin/fish",
+    "args": ["-li"]
   },
   "terminal.integrated.commandsToSkipShell": [
     "workbench.action.terminal.kill",
@@ -2205,14 +2173,14 @@
   "testing.showCoverageInExplorer": true,
   "thunder-client.certificates": [
     {
-      "certPath": "../.certs/cq-cert.pem",
       "host": "document-management--document-management.us-east-1.private-api.integration-direct.g-p.dev",
-      "keyPath": "../.certs/cq-key.pem"
+      "certPath": "/Users/econneely/git/.certs/dmp-cert.pem",
+      "keyPath": "/Users/econneely/git/.certs/dmp-key.pem"
     },
     {
-      "certPath": "../.certs/cq-cert.pem",
-      "host": "app.integration.g-p.dev",
-      "keyPath": "../.certs/cq-key.pem"
+      "host": "journey-intelligence--journey-intelligence--compliance-engine.us-east-1.private-api.integration-direct.g-p.dev",
+      "certPath": "/Users/econneely/git/.certs/ji-cert.pem",
+      "keyPath": "/Users/econneely/git/.certs/ji-key.pem"
     }
   ],
   "thunder-client.indentSize": 4,
@@ -2243,14 +2211,13 @@
   "window.menuBarVisibility": "hidden",
   "window.newWindowDimensions": "maximized",
   "window.openFilesInNewWindow": "off",
-  "window.title": "${activeRepositoryName}",
+  "window.title": "${folderName}",
   "window.titleSeparator": " - ",
   "window.zoomLevel": 0,
   "workbench.activityBar.location": "top",
   "workbench.colorTheme": "Empty Dark",
   "workbench.editor.decorations.badges": false,
   "workbench.editor.decorations.colors": false,
-  "workbench.editor.enablePreview": false,
   "workbench.editor.limit.enabled": true,
   "workbench.editor.limit.value": 10,
   "workbench.editorAssociations": {
@@ -2275,5 +2242,23 @@
   "zenMode.restore": false,
   "zenMode.showTabs": "none",
   "zenMode.silentNotifications": true,
-  "hurl-runner.commandLineArguments": "--error-format long"
+  "hurl-runner.commandLineArguments": "--error-format long",
+  "diffEditor.hideUnchangedRegions.enabled": true,
+  "go.editorContextMenuCommands": {
+    "debugTestAtCursor": false,
+    "playground": false,
+    "toggleTestFile": false,
+    "addTags": false,
+    "testAtCursor": false,
+    "generateTestForFunction": false,
+    "addImport": false,
+    "testCoverage": false
+  },
+  "workbench.editor.enablePreview": false,
+  "gitlens.liveshare.allowGuestAccess": false,
+  "gitlens.liveshare.enabled": false,
+  "diffEditor.renderSideBySide": true,
+  "vscode_custom_css.statusbar": false,
+  "go.toolsManagement.autoUpdate": true,
+  "go.lintTool": "golint"
 }

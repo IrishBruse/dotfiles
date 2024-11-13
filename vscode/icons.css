@@ -3,8 +3,7 @@
   font-family: "Material Symbols Rounded";
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/materialsymbolsrounded/v209/syl0-zNym6YjUruM-QrEh7-nyTnjDwKNJ_190FjpZIvDmUSVOK7BDJ_vb9vUSzq3wzLK-P0J-V_Zs-QtQth3-jOcbTCVpeRL2w5rwZu2rIelXxc.woff2)
-    format("woff2");
+  src: url(https://fonts.gstatic.com/s/materialsymbolsrounded/v209/syl0-zNym6YjUruM-QrEh7-nyTnjDwKNJ_190FjpZIvDmUSVOK7BDJ_vb9vUSzq3wzLK-P0J-V_Zs-QtQth3-jOcbTCVpeRL2w5rwZu2rIelXxc.woff2) format("woff2");
 }
 
 .material-symbols-rounded {
@@ -24,31 +23,33 @@
   -webkit-font-smoothing: antialiased;
 }
 
-body {
+.mac,
+.linux {
   font-family: "CaskaydiaCove Nerd Font" !important;
 }
 
+
 /* General Icon settings */
-.sidebar > .header .actions-container .action-item > a:before {
+.sidebar>.header .actions-container .action-item>a:before {
   font-size: 20px;
 }
 
-.sidebar > .header .actions-container .action-item > a {
+.sidebar>.header .actions-container .action-item>a {
   align-items: center;
 }
 
-.sidebar > .header .actions-container .action-item.checked > a {
+.sidebar>.header .actions-container .action-item.checked>a {
   background-color: var(--vscode-activityBarTop-foreground);
   color: var(--vscode-activityBarTop-foreground) !important;
 }
 
 /* Align icons to the center */
-.sidebar > .header {
+.sidebar>.header {
   justify-content: center !important;
   padding-left: 0px !important;
 }
 
-.sidebar > .header > div {
+.sidebar>.header>div {
   flex-grow: 0 !important;
 }
 
@@ -58,74 +59,62 @@ body {
 }
 
 /* Hover */
-.sidebar > .header .action-item:hover > .action-label {
+.sidebar>.header .action-item:hover>.action-label {
   background-color: var(--vscode-activityBarTop-foreground) !important;
 }
 
 /* Activity bar top icon colors and hover */
-.sidebar > .header .action-item > a {
+.sidebar>.header .action-item>a {
   color: var(--vscode-activityBarTop-inactiveForeground);
 }
 
 /* The icons overrides */
-.sidebar > .header .action-item > .action-label[aria-label^="Explorer"]:before {
+.sidebar>.header .action-item>.action-label[aria-label^="Explorer"]:before {
   font-family: "Material Symbols Rounded";
   content: "\e2c7";
 }
 
-.sidebar
-  > .header
-  .action-item.checked
-  > .action-label[aria-label^="Explorer"]:before {
+.sidebar>.header .action-item.checked>.action-label[aria-label^="Explorer"]:before {
   font-family: "Material Symbols Rounded";
   content: "\e2c8" !important;
 }
 
-.sidebar
-  > .header
-  .action-item
-  > .action-label[aria-label^="Source Control"]:before {
+.sidebar>.header .action-item>.action-label[aria-label^="Source Control"]:before {
   font-family: "Material Symbols Rounded";
   content: "\e627" !important;
   transform: rotate(0deg);
   transition: transform 0ms linear;
 }
 
-.sidebar
-  > .header
-  .action-item.checked
-  > .action-label[aria-label^="Source Control"]:before {
+.sidebar>.header .action-item.checked>.action-label[aria-label^="Source Control"]:before {
   transform: rotate(-180deg);
   transition: transform 250ms ease-out;
 }
 
-.sidebar > .header .action-item > .action-label[aria-label^="Snippet"]:before {
+.sidebar>.header .action-item>.action-label[aria-label^="Snippet"]:before {
   font-family: "Material Symbols Rounded";
   content: "\e627" !important;
   font-size: 26px !important;
   transform: translateY(1px);
 }
 
-.sidebar
-  > .header
-  .action-item
-  > .action-label[aria-label^="Run and Debug"]:before {
+.sidebar>.header .action-item>.action-label[aria-label^="Run and Debug"]:before {
   font-family: "Material Symbols Rounded";
   content: "\e868" !important;
   font-size: 22px !important;
 }
 
-.sidebar > .header .action-item > .action-label[aria-label^="Testing"]:before {
+.sidebar>.header .action-item>.action-label[aria-label^="Testing"]:before {
   font-family: "Material Symbols Rounded";
   content: "\e686" !important;
 }
 
-.sidebar > .header .action-item > .action-label[aria-label^="Search"]:before {
+.sidebar>.header .action-item>.action-label[aria-label^="Search"]:before {
   font-size: 18x !important;
 }
 
-.sidebar > .header .action-item > .action-label[aria-label^="Snippet"]:hover,
-.sidebar > .header .action-item > .action-label[aria-label^="Snippet"] {
+.sidebar>.header .action-item>.action-label[aria-label^="Snippet"]:hover,
+.sidebar>.header .action-item>.action-label[aria-label^="Snippet"] {
   background-color: transparent !important;
   mask-image: none !important;
   align-items: center;
@@ -133,60 +122,51 @@ body {
   justify-content: center;
 }
 
-.sidebar > .header .action-item > .action-label[aria-label^="Snippet"]:before {
+.sidebar>.header .action-item>.action-label[aria-label^="Snippet"]:before {
   font-family: "Material Symbols Rounded";
   content: "\e244" !important;
   font-size: 22px !important;
 }
 
-.sidebar
-  > .header
-  .action-item
-  > .action-label[aria-label^="Thunder Client"]:hover,
-.sidebar > .header .action-item > .action-label[aria-label^="Thunder Client"] {
+.sidebar>.header .action-item>.action-label[aria-label^="Thunder Client"]:hover,
+.sidebar>.header .action-item>.action-label[aria-label^="Thunder Client"] {
   mask-image: none !important;
   background-color: transparent !important;
 }
 
-.sidebar
-  > .header
-  .action-item
-  > .action-label[aria-label^="Thunder Client"]:before {
+.sidebar>.header .action-item>.action-label[aria-label^="Thunder Client"]:before {
   font-family: "Material Symbols Rounded";
   content: "\ec1c" !important;
   font-size: 18px !important;
   transform: translateX(-1px);
 }
 
-.sidebar
-  > .header
-  .action-item
-  > .action-label[aria-label^="Additional Views"]:before {
+.sidebar>.header .action-item>.action-label[aria-label^="Additional Views"]:before {
   font-family: "Material Symbols Rounded";
   content: "\e5d3" !important;
 }
 
-.linux .sidebar > .header .action-item > .action-label[aria-label="AWS"] {
+.linux .sidebar>.header .action-item>.action-label[aria-label="AWS"] {
   mask-image: url("vscode-file://home/econn/dotfiles/vscode/icons/aws.png") !important;
 }
 
-.mac .sidebar > .header .action-item > .action-label[aria-label="AWS"] {
+.mac .sidebar>.header .action-item>.action-label[aria-label="AWS"] {
   mask-image: url("vscode-file://Users/econneely/dotfiles/vscode/icons/aws.png") !important;
 }
 
-.sidebar > .header .action-item > .action-label[aria-label^="GitHub"]:before {
+.sidebar>.header .action-item>.action-label[aria-label^="GitHub"]:before {
   display: none !important;
 }
 
-.sidebar > .header .action-item > .action-label[aria-label^="GitHub"]:hover {
+.sidebar>.header .action-item>.action-label[aria-label^="GitHub"]:hover {
   background-color: var(--vscode-activityBarTop-foreground) !important;
 }
 
-.sidebar > .header .action-item[aria-label^="GitHub"]:hover > .action-label {
+.sidebar>.header .action-item[aria-label^="GitHub"]:hover>.action-label {
   background-color: var(--vscode-activityBarTop-foreground) !important;
 }
 
-.sidebar > .header .action-item > .action-label[aria-label^="GitHub"] {
+.sidebar>.header .action-item>.action-label[aria-label^="GitHub"] {
   background-color: rgb(171, 178, 191);
   transform: translateX(1px);
 
@@ -200,10 +180,10 @@ body {
   mask-origin: padding !important;
 }
 
-.linux .sidebar > .header .icon > .action-label[aria-label^="GitHub"] {
+.linux .sidebar>.header .icon>.action-label[aria-label^="GitHub"] {
   mask-image: url("vscode-file://home/econn/dotfiles/vscode/icons/github.png") !important;
 }
 
-.mac .sidebar > .header .icon > .action-label[aria-label^="GitHub"] {
+.mac .sidebar>.header .icon>.action-label[aria-label^="GitHub"] {
   mask-image: url("vscode-file://Users/econneely/dotfiles/vscode/icons/github.png") !important;
 }

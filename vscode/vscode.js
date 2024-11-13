@@ -1,3 +1,5 @@
+const { exec } = require("child_process");
+
 try {
   function debounce(func, timeout = 300) {
     let timer;
@@ -25,5 +27,19 @@ try {
     childList: true,
   });
 } catch (error) {
-  console.log("vscode.js ERROR", error);
+  console.error("vscode.js ERROR", error);
+}
+
+try {
+  setTimeout(() => {
+    document
+      .getElementById("fabiospampinato.vscode-commands")
+      ?.addEventListener("click", () => {
+        console.log("CLICK");
+
+        exec("view");
+      });
+  }, 10_000);
+} catch (err) {
+  console.error("vscode.js ERROR", error);
 }

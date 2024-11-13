@@ -1,4 +1,17 @@
 {
   "version": "2.0.0",
-  "tasks": []
+  "tasks": [
+    {
+      "label": "View Repo/PR",
+      "type": "shell",
+      "command": "fish -lic /home/econn/dotfiles/test.fish",
+      "problemMatcher": [],
+      "isBackground": false,
+      "presentation": {
+        "reveal": "never",
+        "focus": false,
+        "panel": "shared"
+      }
+    }
+  ]
 }

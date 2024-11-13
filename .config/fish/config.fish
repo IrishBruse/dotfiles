@@ -27,12 +27,12 @@ alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LD
 alias showkey="fish_key_reader --verbose"
 
 # Node alias
-alias nx="nlx"
+alias nx nlx
 abbr nid "ni -D"
 abbr nvm fnm
 
 abbr clone "git clone --recursive"
-abbr gsrp="git stash && git pull --rebase && git stash pop"
+abbr gsrp "git stash && git pull --rebase && git stash pop"
 
 switch (echo $TERM_PROGRAM)
     case vscode

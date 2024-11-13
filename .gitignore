@@ -4,12 +4,13 @@ obj/
 .DS_STORE
 
 .cinnamon/spices.cache
+
 .config/Code/*
-!.config/Code/User/
-.config/Code/User/globalStorage
-.config/Code/User/workspaceStorage
-.config/Code/User/History
-.config/Code/User/sync
+.config/Code/User/*
+!.config/Code/User/snippets
+!.config/Code/User/keybindings.json
+!.config/Code/User/settings.json
+
 .local/share/applications/mimeapps.list
 .local/share/applications/mimeinfo.cache
 .local/share/applications/google-chrome.desktop
