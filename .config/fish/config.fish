@@ -14,9 +14,6 @@ switch (set -q OS && echo $OS || uname)
         echo 'Unknown OS: '(uname)
 end
 
-alias let="set -l"
-
-
 alias bat="bat --theme OneHalfDark --style grid,numbers"
 alias ls="eza -ax --icons=always --group-directories-first"
 alias ll="eza -al --icons=always --group-directories-first"
@@ -42,7 +39,7 @@ switch (echo $TERM_PROGRAM)
 end
 
 function prompt_update
-    let fnm_version (command fnm current | string split .)
+    set fnm_version (command fnm current | string split .)
     set -g fish_node_version $fnm_version[1]
     if test "$fish_node_version" != ""
         set -g fish_node_version (echo $node_icon)$fish_node_version
@@ -70,7 +67,11 @@ set -U fish_greeting
 set -g fish_color_valid_path
 set -gx JQ_COLORS "0;33:0;34:0;34:1;33:0;32:0;37:0;37:0;31"
 
+set -gx NODE_ENV development
+
+
 set -gx EDITOR "code --wait"
+set -gx HOMEBREW_NO_ENV_HINTS 1
 
 set -g __fish_git_prompt_showcolorhints 1
 set -g __fish_git_prompt_color_branch blue

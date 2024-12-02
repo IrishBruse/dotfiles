@@ -142,7 +142,6 @@ local smartcopy = wezterm.action_callback(function(window, pane)
     end
 end)
 
-local selectAll = wezterm.action.Multiple({ wezterm.action.ActivateCopyMode })
 
 config.disable_default_key_bindings = true
 config.keys = {
@@ -152,12 +151,13 @@ config.keys = {
     { mods = ctrl,             key = "n",          action = wezterm.action.SpawnCommandInNewTab {} },
     { mods = ctrl,             key = "k",          action = wezterm.action.ClearScrollback("ScrollbackAndViewport") },
     { mods = ctrl,             key = "c",          action = smartcopy },
-    -- { mods = ctrl,             key = "a",          action = selectAll },
     { mods = ctrl,             key = "Backspace",  action = wezterm.action.SendKey { mods = 'OPT', key = 'Backspace' }, },
     { mods = ctrl,             key = "Delete",     action = wezterm.action.SendKey { mods = 'CTRL', key = 'Delete' }, },
     { mods = ctrl,             key = "r",          action = wezterm.action.SendKey { mods = 'CTRL', key = 'r' }, },
     { mods = ctrl,             key = "LeftArrow",  action = wezterm.action.SendKey { mods = 'CTRL', key = 'LeftArrow' }, },
     { mods = ctrl,             key = "RightArrow", action = wezterm.action.SendKey { mods = 'CTRL', key = 'RightArrow' }, },
+
+    { mods = ctrl,             key = "j",          action = wezterm.action.SendKey { mods = 'CTRL', key = 'j' }, },
 }
 
 return config
