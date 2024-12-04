@@ -5,9 +5,6 @@ switch (set -q OS && echo $OS || uname)
         alias code="code --ignore-certificate-errors"
 
     case Linux
-        if test "$XDG_VTNR" = 1 && not set -q DISPLAY
-            exec startx
-        end
         alias apc="sudo chown -R $(whoami) '/usr/share/code/resources/app/out/main.js'"
 
     case '*'

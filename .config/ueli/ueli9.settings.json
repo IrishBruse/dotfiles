@@ -47,6 +47,7 @@
     "general.language": "en-US",
     "general.searchHistory.enabled": true,
     "general.searchHistory.history": [
+        "mono",
         "acorn",
         "note",
         "tray",
@@ -55,8 +56,7 @@
         "feder",
         "hurl",
         "vite",
-        "hur",
-        "example"
+        "hur"
     ],
     "general.searchHistory.limit": 10,
     "imageGenerator.faviconApiProvider": "Favicone",

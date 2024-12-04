@@ -13,7 +13,7 @@
         "value": [
             "cinnamon-custom-launcher-1.desktop",
             "cinnamon-custom-launcher-2.desktop",
-            "org.wezfurlong.wezterm.desktop"
+            "obsidian.desktop"
         ]
     },
     "allow-dragging": {

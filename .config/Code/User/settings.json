@@ -1480,7 +1480,7 @@
       {
         "scope": "variable.other.object.cs",
         "settings": {
-          "foreground": "#ABB2BF"
+          "foreground": "#E06C75"
         }
       },
       {
@@ -1825,7 +1825,6 @@
     "file://${userHome}/dotfiles/vscode/vscode.js"
   ],
   "aws.telemetry": false,
-  "breadcrumbs.enabled": false,
   "cfnLint.validateUsingJsonSchema": true,
   "color-highlight.markRuler": false,
   "color-highlight.markerType": "underline",
@@ -2025,6 +2024,7 @@
   "hexeditor.defaultEndianness": "little",
   "hexeditor.inspectorType": "aside",
   "hexeditor.showDecodedText": true,
+  "color-highlight.enable": false,
   "http.experimental.systemCertificatesV2": true,
   "http.systemCertificates": true,
   "java.jdt.ls.androidSupport.enabled": "on",
@@ -2221,12 +2221,11 @@
   "workbench.editor.limit.enabled": true,
   "workbench.editor.limit.value": 10,
   "workbench.editorAssociations": {
+    "{hexdiff}:/**/*.*": "hexEditor.hexedit",
     "*.bin": "hexEditor.hexedit",
     "*.gb": "hexEditor.hexedit",
     "*.gbm": "hexEditor.hexedit",
-    "*.gbr": "hexEditor.hexedit",
-    "*.md": "default",
-    "{git,gitlens,conflictResolution,vscode-local-history}:/**/*.tc.json": "default"
+    "*.gbr": "hexEditor.hexedit"
   },
   "workbench.iconTheme": "material-icon-theme",
   "workbench.layoutControl.enabled": false,
@@ -2260,5 +2259,6 @@
   "diffEditor.renderSideBySide": true,
   "vscode_custom_css.statusbar": false,
   "go.toolsManagement.autoUpdate": true,
-  "go.lintTool": "golint"
+  "go.lintTool": "golint",
+  "breadcrumbs.enabled": false
 }

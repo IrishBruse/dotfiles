@@ -5,6 +5,7 @@ obj/
 
 .cinnamon/spices.cache
 
+.config/Code/*
 .config/Code/User/*
 !.config/Code/User/snippets
 !.config/Code/User/keybindings.json
