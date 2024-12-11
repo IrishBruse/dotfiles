@@ -8,9 +8,13 @@ obj/
 .config/Code/*
 .config/Code/User/*
 !.config/Code/User/snippets
-!.config/Code/User/snippets/*
 !.config/Code/User/keybindings.json
 !.config/Code/User/settings.json
+
+.config/Code/User/snippets/javascript.json
+.config/Code/User/snippets/javascriptreact.json
+.config/Code/User/snippets/typescript.json
+.config/Code/User/snippets/typescriptreact.json
 
 .local/share/applications/mimeapps.list
 .local/share/applications/mimeinfo.cache
