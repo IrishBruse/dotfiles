@@ -4638,12 +4638,8 @@
 		"when": "editorTextFocus && !editorReadonly"
 	},
 	{
-		"key": "ctrl+]",                       "command": "editor.action.indentLines",
+		"key": "tab",                          "command": "editor.action.indentLines",
 		"when": "editorTextFocus && !editorReadonly"
-	},
-	{
-		"key": "tab",                          "command": "editor.action.inlineEdit.accept",
-		"when": "cursorAtInlineEdit && inlineEditVisible && !editorReadonly"
 	},
 	{
 		"key": "ctrl+alt+=",                   "command": "editor.action.inlineEdit.jumpBack",
@@ -4756,7 +4752,7 @@
 		"when": "textInputFocus && !editorReadonly && supportedCodeAction =~ /(\\s|^)source\\.organizeImports\\b/"
 	},
 	{
-		"key": "ctrl+[",                       "command": "editor.action.outdentLines",
+		"key": "shift+tab",                    "command": "editor.action.outdentLines",
 		"when": "editorTextFocus && !editorReadonly"
 	},
 	{
@@ -6238,14 +6234,6 @@
 	{
 		"key": "ctrl+n",                       "command": "workbench.action.files.newUntitledFile"	},
 	{
-		"key": "ctrl+o",                       "command": "workbench.action.files.openFile",
-		"when": "true"
-	},
-	{
-		"key": "ctrl+o",                       "command": "workbench.action.files.openFileFolder",
-		"when": "isMacNative && openFolderWorkspaceSupport"
-	},
-	{
 		"key": "ctrl+o",                       "command": "workbench.action.files.openFolderViaWorkspace",
 		"when": "!openFolderWorkspaceSupport && workbenchState == 'workspace'"
 	},
@@ -6257,10 +6245,6 @@
 		"key": "ctrl+s",                       "command": "workbench.action.files.save"	},
 	{
 		"key": "ctrl+shift+s",                 "command": "workbench.action.files.saveAs"	},
-	{
-		"key": "ctrl+shift+s",                 "command": "workbench.action.files.saveLocalFile",
-		"when": "remoteFileDialogVisible"
-	},
 	{
 		"key": "ctrl+shift+f",                 "command": "workbench.action.findInFiles"	},
 	{
@@ -6999,11 +6983,6 @@
 	{
 		"key": "ctrl+g",                       "command": "workbench.action.quickOpen",
 		"args": "@: ",
-		"when": "editorTextFocus"
-	},
-	{
-		"key": "ctrl+;",                       "command": "workbench.action.quickOpen",
-		"args": ": ",
 		"when": "editorTextFocus"
 	},
 	{

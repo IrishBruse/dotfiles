@@ -1,11 +1,17 @@
 {
   "useEffect": {
     "prefix": "useEffect",
-    "body": ["useEffect(()=>{", "    $0", "},[])"]
+    "body": [
+      "useEffect(()=>{",
+      "    $0",
+      "},[])"
+    ]
   },
   "useState": {
     "prefix": "useState",
-    "body": ["const [${1:state}, setState] = useState($0);"]
+    "body": [
+      "const [${1:state}, setState] = useState($0);"
+    ]
   },
   "comp func": {
     "prefix": "comp func",
@@ -16,9 +22,5 @@
       "};",
       ""
     ]
-  },
-  "ctor": {
-    "prefix": "ctor",
-    "body": ["constructor()", "{", "$0", "}"]
   }
 }

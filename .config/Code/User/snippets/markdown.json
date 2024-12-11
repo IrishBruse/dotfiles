@@ -1,6 +1,7 @@
 {
   "space": {
     "prefix": "space",
-    "body": "&nbsp;"
+    "body": ["&nbsp;"],
+    "description": "&nbsp;"
   }
 }

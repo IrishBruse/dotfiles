@@ -1,7 +1,5 @@
 #!/usr/bin/env fish
 
-uname
-
 if test (uname) = Linux
     dconf dump / >dconf-settings.ini
 end
@@ -10,8 +8,12 @@ if test (uname) = Darwin
     brew list >brew.ini
 end
 
-cp .config/Code/User/snippets/typescript.json .config/Code/User/snippets/javascript.json
-cp .config/Code/User/snippets/typescriptreact.json .config/Code/User/snippets/javascriptreact.json
+set SNIPPETS .config/Code/User/snippets
 
-sed -i '2 i \ \ "AUTO": { "description": "GENERATED", "body": "" },' '.config/Code/User/snippets/javascriptreact.json'
-sed -i '2 i \ \ "AUTO": { "description": "GENERATED", "body": "" },' '.config/Code/User/snippets/javascript.json'
+set jsSnippets (jq -s '.[0] * {"AUTO": {"description":"GENERATED"}}' $SNIPPETS/node.json)
+echo $jsSnippets | jq >$SNIPPETS/javascript.json
+echo $jsSnippets | jq >$SNIPPETS/typescript.json
+
+set jsReactSnippets (jq -s ".[0] * $jsSnippets" $SNIPPETS/react.json)
+echo $jsReactSnippets | jq >$SNIPPETS/javascriptreact.json
+echo $jsReactSnippets | jq >$SNIPPETS/typescriptreact.json

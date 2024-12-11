@@ -139,13 +139,6 @@ sudo apt install fish
 # fnm
 curl -fsSL https://fnm.vercel.app/install | bash
 
-# Lazygit
-
-LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
-curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
-tar xf lazygit.tar.gz lazygit
-sudo install lazygit /usr/local/bin
-
 gsettings set org.gnome.desktop.screensaver lock-enabled false
 
-cp -f ./override/icons/sunshine-tray.svg /usr/share/icons/hicolor/scalable/status/sunshine-tray.svg
+sudo cp -f ./override/icons/sunshine-tray.svg /usr/share/icons/hicolor/scalable/status/sunshine-tray.svg

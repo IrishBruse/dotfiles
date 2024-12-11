@@ -1480,7 +1480,7 @@
       {
         "scope": "variable.other.object.cs",
         "settings": {
-          "foreground": "#E06C75"
+          "foreground": "#E5C07B"
         }
       },
       {
@@ -1747,6 +1747,11 @@
       }
     ]
   },
+  "Lua.codeLens.enable": true,
+  "Lua.diagnostics.enable": false,
+  "Lua.hint.enable": true,
+  "Lua.hover.expandAlias": false,
+  "Lua.semantic.keyword": true,
   "[csharp]": {
     "editor.maxTokenizationLineLength": 2500,
     "editor.semanticHighlighting.enabled": true
@@ -1760,6 +1765,9 @@
   },
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[ini]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
   },
   "[java]": {
     "editor.suggest.snippetsPreventQuickSuggestions": false
@@ -1793,8 +1801,7 @@
   "[typescript]": {
     "editor.codeActionsOnSave": {
       "source.fixAll": "explicit",
-      "source.fixAll.eslint": "explicit",
-      "source.removeUnusedImports": "explicit"
+      "source.fixAll.eslint": "explicit"
     },
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.semanticHighlighting.enabled": false
@@ -1802,36 +1809,23 @@
   "[typescriptreact]": {
     "editor.codeActionsOnSave": {
       "source.fixAll": "explicit",
-      "source.fixAll.eslint": "explicit",
-      "source.removeUnusedImports": "explicit"
+      "source.fixAll.eslint": "explicit"
     },
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.semanticHighlighting.enabled": false
   },
-  "[ini]": {
-    "editor.defaultFormatter": "tamasfe.even-better-toml"
-  },
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "Lua.codeLens.enable": true,
-  "Lua.diagnostics.enable": false,
-  "Lua.hint.enable": true,
-  "Lua.hover.expandAlias": false,
-  "Lua.semantic.keyword": true,
-  "vscode_custom_css.imports": [
-    "file://${userHome}/dotfiles/vscode/custom.css",
-    "file://${userHome}/dotfiles/vscode/icons.css",
-    "file://${userHome}/dotfiles/vscode/vscode.js"
-  ],
   "aws.telemetry": false,
+  "breadcrumbs.enabled": false,
   "cfnLint.validateUsingJsonSchema": true,
   "color-highlight.markRuler": false,
   "color-highlight.markerType": "underline",
   "commands.commands": [
     {
-      "command": "workbench.action.tasks.runTask",
       "arguments": ["View Repo/PR"],
+      "command": "pr.openPullsWebsite",
       "text": "$(github) View",
       "tooltip": "View Repo/PR"
     }
@@ -1851,8 +1845,10 @@
   "debug.showInStatusBar": "never",
   "debug.toolBarLocation": "docked",
   "diffEditor.codeLens": false,
+  "diffEditor.hideUnchangedRegions.enabled": true,
   "diffEditor.ignoreTrimWhitespace": true,
   "diffEditor.maxComputationTime": 0,
+  "diffEditor.renderSideBySide": true,
   "diffEditor.useInlineViewWhenSpaceIsLimited": false,
   "diffEditor.wordWrap": "off",
   "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
@@ -1952,8 +1948,8 @@
     "*.sdb": "${capture}.${extname}-*",
     "*.sqlite": "${capture}.${extname}-*",
     "*.sqlite3": "${capture}.${extname}-*",
-    "*.ts": "${capture}.spec.ts,${capture}.test.ts",
-    "*.tsx": "${capture}.spec.tsx,${capture}.test.tsx",
+    "*.ts": "${capture}.spec.ts,${capture}.test.ts,${capture}.*.test.ts",
+    "*.tsx": "${capture}.spec.tsx,${capture}.test.tsx,${capture}.*.test.tsx",
     ".env": ".env.*",
     ".gitignore": ".*",
     "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb",
@@ -1994,8 +1990,8 @@
   "files.trimTrailingWhitespace": true,
   "files.watcherExclude": {
     "**/bin/**": true,
-    "**/obj/**": true,
-    "**/node_modules/**": true
+    "**/node_modules/**": true,
+    "**/obj/**": true
   },
   "git-graph.repository.sign.commits": true,
   "git-graph.repository.sign.tags": true,
@@ -2017,6 +2013,21 @@
   "gitlens.currentLine.enabled": false,
   "gitlens.launchpad.indicator.enabled": false,
   "gitlens.launchpad.indicator.polling.enabled": false,
+  "gitlens.liveshare.allowGuestAccess": false,
+  "gitlens.liveshare.enabled": false,
+  "go.editorContextMenuCommands": {
+    "addImport": false,
+    "addTags": false,
+    "debugTestAtCursor": false,
+    "generateTestForFunction": false,
+    "playground": false,
+    "testAtCursor": false,
+    "testCoverage": false,
+    "toggleTestFile": false
+  },
+  "go.lintTool": "golint",
+  "go.lintFlags": ["--fast"],
+  "go.toolsManagement.autoUpdate": true,
   "gopls": {
     "ui.semanticTokens": true
   },
@@ -2024,9 +2035,9 @@
   "hexeditor.defaultEndianness": "little",
   "hexeditor.inspectorType": "aside",
   "hexeditor.showDecodedText": true,
-  "color-highlight.enable": false,
   "http.experimental.systemCertificatesV2": true,
   "http.systemCertificates": true,
+  "hurl-runner.commandLineArguments": "--error-format long",
   "java.jdt.ls.androidSupport.enabled": "on",
   "java.jdt.ls.java.home": "/usr/lib/jvm/java-21-openjdk-amd64/",
   "java.maven.downloadSources": true,
@@ -2039,13 +2050,10 @@
   "javascript.referencesCodeLens.enabled": true,
   "javascript.referencesCodeLens.showOnAllFunctions": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
-  "jest.nodeEnv": {
-    "NO_PROMPT": "true"
-  },
   "jest.runMode": {
     "coverage": false,
-    "showInlineError": false,
     "deferred": true,
+    "showInlineError": false,
     "type": "on-demand"
   },
   "jest.shell": "/opt/homebrew/bin/fish",
@@ -2097,8 +2105,8 @@
     "path": "fish"
   },
   "terminal.integrated.automationProfile.osx": {
-    "path": "/opt/homebrew/bin/fish",
-    "args": ["-li"]
+    "args": ["-li"],
+    "path": "/opt/homebrew/bin/fish"
   },
   "terminal.integrated.commandsToSkipShell": [
     "workbench.action.terminal.kill",
@@ -2164,23 +2172,28 @@
     }
   },
   "terminal.integrated.rightClickBehavior": "nothing",
-  "terminal.integrated.shellIntegration.enabled": false,
   "terminal.integrated.scrollback": 10000,
   "terminal.integrated.shellIntegration.decorationsEnabled": "overviewRuler",
+  "terminal.integrated.shellIntegration.enabled": false,
   "terminal.integrated.tabs.title": "${sequence}",
   "testing.coverageToolbarEnabled": true,
   "testing.displayedCoveragePercent": "totalCoverage",
   "testing.showCoverageInExplorer": true,
   "thunder-client.certificates": [
     {
-      "host": "document-management--document-management.us-east-1.private-api.integration-direct.g-p.dev",
       "certPath": "/Users/econneely/git/.certs/dmp-cert.pem",
+      "host": "document-management--document-management.us-east-1.private-api.integration-direct.g-p.dev",
       "keyPath": "/Users/econneely/git/.certs/dmp-key.pem"
     },
     {
-      "host": "journey-intelligence--journey-intelligence--compliance-engine.us-east-1.private-api.integration-direct.g-p.dev",
       "certPath": "/Users/econneely/git/.certs/ji-cert.pem",
+      "host": "journey-intelligence--journey-intelligence--compliance-engine.us-east-1.private-api.integration-direct.g-p.dev",
       "keyPath": "/Users/econneely/git/.certs/ji-key.pem"
+    },
+    {
+      "certPath": "/Users/econneely/git/.certs/dmp-cert.pem",
+      "host": "work-uat.dev.gpdev.us",
+      "keyPath": "/Users/econneely/git/.certs/dmp-key.pem"
     }
   ],
   "thunder-client.indentSize": 4,
@@ -2204,6 +2217,12 @@
   "update.mode": "none",
   "versionlens.logging.level": "debug",
   "versionlens.npm.http.strictSSL": false,
+  "vscode_custom_css.imports": [
+    "file://${userHome}/dotfiles/vscode/custom.css",
+    "file://${userHome}/dotfiles/vscode/icons.css",
+    "file://${userHome}/dotfiles/vscode/vscode.js"
+  ],
+  "vscode_custom_css.statusbar": false,
   "window.closeWhenEmpty": false,
   "window.commandCenter": false,
   "window.confirmSaveUntitledWorkspace": false,
@@ -2218,6 +2237,7 @@
   "workbench.colorTheme": "Empty Dark",
   "workbench.editor.decorations.badges": false,
   "workbench.editor.decorations.colors": false,
+  "workbench.editor.enablePreview": false,
   "workbench.editor.limit.enabled": true,
   "workbench.editor.limit.value": 10,
   "workbench.editorAssociations": {
@@ -2225,7 +2245,10 @@
     "*.bin": "hexEditor.hexedit",
     "*.gb": "hexEditor.hexedit",
     "*.gbm": "hexEditor.hexedit",
-    "*.gbr": "hexEditor.hexedit"
+    "*.gbr": "hexEditor.hexedit",
+    "*.md": "default",
+    "{git,gitlens,conflictResolution,vscode-local-history}:/**/*.tc.json": "default",
+    "*.hurl": "hurl.hurlEditor"
   },
   "workbench.iconTheme": "material-icon-theme",
   "workbench.layoutControl.enabled": false,
@@ -2241,24 +2264,20 @@
   "zenMode.restore": false,
   "zenMode.showTabs": "none",
   "zenMode.silentNotifications": true,
-  "hurl-runner.commandLineArguments": "--error-format long",
-  "diffEditor.hideUnchangedRegions.enabled": true,
-  "go.editorContextMenuCommands": {
-    "debugTestAtCursor": false,
-    "playground": false,
-    "toggleTestFile": false,
-    "addTags": false,
-    "testAtCursor": false,
-    "generateTestForFunction": false,
-    "addImport": false,
-    "testCoverage": false
+  "cSpell.language": "en-GB",
+  "cSpell.enabledFileTypes": {
+    "yaml": false,
+    "yml": false,
+    "github-actions-workflow": false,
+    "json": false,
+    "jsonc": false,
+    "fish": false
   },
-  "workbench.editor.enablePreview": false,
-  "gitlens.liveshare.allowGuestAccess": false,
-  "gitlens.liveshare.enabled": false,
-  "diffEditor.renderSideBySide": true,
-  "vscode_custom_css.statusbar": false,
-  "go.toolsManagement.autoUpdate": true,
-  "go.lintTool": "golint",
-  "breadcrumbs.enabled": false
+  "cSpell.userWords": [
+    "Autodocs",
+    "centered",
+    "DYNAMICFORMS",
+    "Nextgen",
+    "vars"
+  ]
 }

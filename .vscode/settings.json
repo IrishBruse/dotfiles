@@ -3,5 +3,6 @@
   "[css]": {
     "editor.defaultFormatter": "vscode.css-language-features"
   },
-  "git.enableCommitSigning": false
+  "git.enableCommitSigning": false,
+  "git.ignoreLimitWarning": true
 }
