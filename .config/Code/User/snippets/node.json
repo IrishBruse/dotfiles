@@ -1,0 +1,20 @@
+{
+  "space": {
+    "prefix": "space",
+    "body": ["&nbsp;", ""]
+  },
+  "comp func": {
+    "prefix": "comp func",
+    "description": "Functional React Component",
+    "body": [
+      "const ${1:Component}: FunctionComponent$2 = (args) => {",
+      "  return <div>{args.toString()}</div>;",
+      "};",
+      ""
+    ]
+  },
+  "jsdoc-type": {
+    "prefix": "@type",
+    "body": ["/** @type {${1:any}} */"]
+  }
+}

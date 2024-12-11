@@ -1,0 +1,24 @@
+{
+  "useEffect": {
+    "prefix": "useEffect",
+    "body": ["useEffect(()=>{", "    $0", "},[])"]
+  },
+  "useState": {
+    "prefix": "useState",
+    "body": ["const [${1:state}, setState] = useState($0);"]
+  },
+  "comp func": {
+    "prefix": "comp func",
+    "description": "Functional React Component",
+    "body": [
+      "const ${1:Component}: FunctionComponent$2 = (args) => {",
+      "  return <div>{args.toString()}</div>;",
+      "};",
+      ""
+    ]
+  },
+  "ctor": {
+    "prefix": "ctor",
+    "body": ["constructor()", "{", "$0", "}"]
+  }
+}
