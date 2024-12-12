@@ -3,6 +3,8 @@ switch (set -q OS && echo $OS || uname)
         /opt/homebrew/bin/brew shellenv | source
         alias apc="sudo chown -R $(whoami) '/Applications/Visual Studio Code.app/Contents/Resources/app/out/main.js'"
         alias code="code --ignore-certificate-errors"
+        alias sed="gsed"
+        alias chrome "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --silent-debugger-extension-api"
 
     case Linux
         alias apc="sudo chown -R $(whoami) '/usr/share/code/resources/app/out/main.js'"
