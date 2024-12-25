@@ -31,6 +31,8 @@ abbr nvm fnm
 abbr clone "git clone --recursive"
 abbr gsrp "git stash && git pull --rebase && git stash pop"
 
+abbr jc "jira issue create -t=Task -a=econneely --custom feature-team=dynaFormRaptors --web"
+
 switch (echo $TERM_PROGRAM)
     case vscode
         set -g node_icon " "
@@ -38,30 +40,11 @@ switch (echo $TERM_PROGRAM)
         set -g node_icon " "
 end
 
-function prompt_update
-    set fnm_version (command fnm current | string split .)
-    set -g fish_node_version $fnm_version[1]
-    if test "$fish_node_version" != ""
-        set -g fish_node_version (echo $node_icon)$fish_node_version
-    end
-end
-
 fish_add_path -g ~/.local/bin
 zoxide init fish --cmd cd | source
 fzf --fish | source
 fnm env | source
 
-function on_change_dir --on-variable PWD --description 'Change Node version on directory change'
-    status --is-command-substitution; and return
-    if test -f .node-version -o -f .nvmrc
-        fnm use >/dev/null
-
-        set -g fish_node_version ""
-        prompt_update
-    end
-end
-
-on_change_dir
 
 set -U fish_greeting
 set -g fish_color_valid_path
@@ -83,7 +66,7 @@ set -x CYPRESS_PASSWORD F98@qnyxibxm7v37g
 function setgx
     set -gx $argv[1] $argv[2]
     if test $status -eq 0
-        echo "Set $argv[1]"d
+        echo "Set $argv[1]"
     end
 end
 
@@ -128,16 +111,19 @@ function clip
 end
 
 function pretty
-    jq -Rr '. as $line | try (fromjson) catch $line'
+    jq -Rr '. as $line | try (fromjson) catch $line' --color-output
 end
 
 function sam-dev
-    sam build
-
-    set -l configFile samconfig-ephemeral.toml
-    set -l envVars env-vars-override-local.json
-
-    sam local start-api -n .env.json --config-file $configFile --config-env $envVars $argv 2>&1 | pretty
+    nr build
+    if test $status -ne 0
+        return
+    end
+    nr cfn-lint
+    if test $status -ne 0
+        return
+    end
+    sam local start-api --config-file samconfig-ephemeral.toml $argv 2>&1 | pretty
 end
 
 function sam-deploy
@@ -145,7 +131,7 @@ function sam-deploy
 
     set -l configFile samconfig-ephemeral.toml
 
-    sam deploy --config-file $configFile
+    sam deploy --config-file $configFile $argv
 end
 
 function v
