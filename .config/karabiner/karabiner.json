@@ -771,7 +771,6 @@
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.rdc$",
                       "^com\\.microsoft\\.rdc\\.",
-                      "^com\\.microsoft\\.VSCode$",
                       "^net\\.sf\\.cord$",
                       "^com\\.thinomenon\\.RemoteDesktopConnection$",
                       "^com\\.itap-mobile\\.qmote$",
@@ -839,7 +838,6 @@
                       "^com\\.itap-mobile\\.qmote$",
                       "^com\\.microsoft\\.rdc\\.",
                       "^com\\.microsoft\\.rdc$",
-                      "^com\\.microsoft\\.VSCode$",
                       "^com\\.nulana\\.remotixmac$",
                       "^com\\.OpenText\\.Exceed-TurboX-Client$",
                       "^com\\.p5sys\\.jump\\.mac\\.viewer\\.",
@@ -899,7 +897,6 @@
                       "^com\\.itap-mobile\\.qmote$",
                       "^com\\.microsoft\\.rdc\\.",
                       "^com\\.microsoft\\.rdc$",
-                      "^com\\.microsoft\\.VSCode$",
                       "^com\\.nulana\\.remotixmac$",
                       "^com\\.OpenText\\.Exceed-TurboX-Client$",
                       "^com\\.p5sys\\.jump\\.mac\\.viewer\\.",
