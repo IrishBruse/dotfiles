@@ -1,0 +1,72 @@
+config-file = ?local
+config-file = keybinds
+
+command = fish -i -l
+
+font-family = Cascadia Code
+font-size = 9
+
+background = #272C33
+foreground = #ABB2BF
+
+selection-foreground =
+selection-background = #3e4451
+selection-invert-fg-bg = true
+
+palette = 0=#1E2127
+palette = 1=#E06C75
+palette = 2=#98C379
+palette = 3=#D19A66
+palette = 4=#61AFEF
+palette = 5=#C678DD
+palette = 6=#56B6C2
+palette = 7=#ABB2BF
+
+palette = 8=#5C6370
+palette = 9=#E9969D
+palette = 10=#B3D39C
+palette = 11=#DDB58D
+palette = 12=#8FC7F4
+palette = 13=#D6A1E7
+palette = 14=#7BC9D0
+palette = 15=#FFFFFF
+
+cursor-color = #ABB2BF
+cursor-style = bar
+cursor-style-blink = true
+
+window-padding-x = 4
+window-padding-y = 6
+window-padding-balance = true
+
+window-height = 10
+window-width = 10
+window-step-resize = true
+
+resize-overlay = always
+resize-overlay-position = bottom-center
+resize-overlay-duration = 500ms
+
+confirm-close-surface = false
+
+shell-integration = fish
+shell-integration-features = cursor,sudo,title
+
+macos-non-native-fullscreen = false
+macos-titlebar-style = transparent
+macos-titlebar-proxy-icon = visible
+macos-option-as-alt =
+macos-window-shadow = true
+macos-auto-secure-input = true
+macos-secure-input-indication = true
+macos-icon = official
+macos-icon-frame = aluminum
+macos-icon-ghost-color =
+macos-icon-screen-color =
+adw-toolbar-style = flat
+
+window-decoration = true
+gtk-titlebar = true
+gtk-adwaita = true
+
+auto-update-channel = tip

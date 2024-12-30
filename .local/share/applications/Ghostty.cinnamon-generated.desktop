@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=Ghostty
+Comment=Ghostty
+Exec=/home/econn/.local/bin/ghostty
+Terminal=false
+StartupNotify=true

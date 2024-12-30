@@ -404,7 +404,7 @@
         }
       },
       {
-        "scope": ["support.type.primitive.ts"],
+        "scope": ["support.type.primitive.ts", "support.type.primitive.tsx"],
         "settings": {
           "foreground": "#56B6C2"
         }
@@ -1211,7 +1211,7 @@
           "keyword.control.as.tsx"
         ],
         "settings": {
-          "foreground": "#ABB2BF"
+          "foreground": "#C678DD"
         }
       },
       {
@@ -1264,12 +1264,6 @@
         ],
         "settings": {
           "foreground": "#ABB2BF"
-        }
-      },
-      {
-        "scope": "entity.name.type.module.js,entity.name.type.module.ts,entity.name.type.module.jsx,entity.name.type.module.tsx",
-        "settings": {
-          "foreground": "#98C379"
         }
       },
       {
@@ -1339,6 +1333,17 @@
           "support.type.object.module.jsx",
           "support.type.object.module.ts",
           "support.type.object.module.tsx"
+        ],
+        "settings": {
+          "foreground": "#E06C75"
+        }
+      },
+      {
+        "scope": [
+          "entity.name.type.module.tsx",
+          "entity.name.type.module.ts",
+          "entity.name.type.module.jsx",
+          "entity.name.type.module.js"
         ],
         "settings": {
           "foreground": "#E06C75"
@@ -1801,24 +1806,23 @@
   "[typescript]": {
     "editor.codeActionsOnSave": {
       "source.fixAll": "explicit",
-      "source.fixAll.eslint": "explicit"
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit"
     },
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.semanticHighlighting.enabled": false
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[typescriptreact]": {
     "editor.codeActionsOnSave": {
       "source.fixAll": "explicit",
-      "source.fixAll.eslint": "explicit"
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit"
     },
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.semanticHighlighting.enabled": false
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "aws.telemetry": false,
-  "breadcrumbs.enabled": false,
   "cfnLint.validateUsingJsonSchema": true,
   "color-highlight.markRuler": false,
   "color-highlight.markerType": "underline",
@@ -1837,7 +1841,7 @@
   "debug.console.fontFamily": "CaskaydiaCove NF",
   "debug.console.fontSize": 12,
   "debug.disassemblyView.showSourceCode": false,
-  "debug.inlineValues": "on",
+  "debug.inlineValues": "auto",
   "debug.internalConsoleOptions": "neverOpen",
   "debug.onTaskErrors": "abort",
   "debug.openDebug": "neverOpen",
@@ -1846,7 +1850,7 @@
   "debug.toolBarLocation": "docked",
   "diffEditor.codeLens": false,
   "diffEditor.hideUnchangedRegions.enabled": true,
-  "diffEditor.ignoreTrimWhitespace": true,
+  "diffEditor.ignoreTrimWhitespace": false,
   "diffEditor.maxComputationTime": 0,
   "diffEditor.renderSideBySide": true,
   "diffEditor.useInlineViewWhenSpaceIsLimited": false,
@@ -1927,9 +1931,9 @@
   "errorLens.replaceLinebreaksSymbol": " ⏎",
   "errorLens.scrollbarHackEnabled": true,
   "evenBetterToml.formatter.allowedBlankLines": 2,
-  "evenBetterToml.formatter.columnWidth": 1000,
   "evenBetterToml.schema.links": true,
   "evenBetterToml.semanticTokens": true,
+  "evenBetterToml.formatter.arrayAutoCollapse": false,
   "explorer.compactFolders": true,
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
@@ -2173,7 +2177,7 @@
   },
   "terminal.integrated.rightClickBehavior": "nothing",
   "terminal.integrated.scrollback": 10000,
-  "terminal.integrated.shellIntegration.decorationsEnabled": "overviewRuler",
+  "terminal.integrated.shellIntegration.decorationsEnabled": "never",
   "terminal.integrated.shellIntegration.enabled": false,
   "terminal.integrated.tabs.title": "${sequence}",
   "testing.coverageToolbarEnabled": true,
@@ -2237,7 +2241,6 @@
   "workbench.colorTheme": "Empty Dark",
   "workbench.editor.decorations.badges": false,
   "workbench.editor.decorations.colors": false,
-  "workbench.editor.enablePreview": false,
   "workbench.editor.limit.enabled": true,
   "workbench.editor.limit.value": 10,
   "workbench.editorAssociations": {
@@ -2279,5 +2282,11 @@
     "DYNAMICFORMS",
     "Nextgen",
     "vars"
-  ]
+  ],
+  "editor.overviewRulerBorder": false,
+  "emmet.showSuggestionsAsSnippets": true,
+  "workbench.editor.enablePreview": false,
+  "breadcrumbs.enabled": false,
+  "zig.zls.enabled": "on",
+  "git.replaceTagsWhenPull": true
 }

@@ -31,5 +31,25 @@
       "$0",
       "}"
     ]
+  },
+  "test": {
+    "prefix": "test",
+    "body": [
+      "test('$1', () => {",
+      "  // $0",
+      "})",
+      ""
+    ],
+    "description": "jest test definition"
+  },
+  "describe": {
+    "prefix": "describe",
+    "description": "jest describe definition",
+    "body": [
+      "describe('$1', () => {",
+      "  // $0",
+      "})",
+      ""
+    ]
   }
 }

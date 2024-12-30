@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=ghostty
+Exec=/home/econn/.local/bin/ghostty
+Comment=
+Terminal=false
+PrefersNonDefaultGPU=false
+Icon=ghostwriter
+Type=Application

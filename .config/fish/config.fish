@@ -5,10 +5,12 @@ switch (set -q OS && echo $OS || uname)
         alias code="code --ignore-certificate-errors"
         alias sed="gsed"
         alias chrome "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --silent-debugger-extension-api"
+        set -gx HOMEBREW_NO_ENV_HINTS 1
 
     case Linux
         alias apc="sudo chown -R $(whoami) '/usr/share/code/resources/app/out/main.js'"
         fish_add_path -g ~/Apps/Cemu/
+        fish_add_path -g ~/Apps/zig/
 
     case '*'
         echo 'Unknown OS: '(uname)
@@ -51,10 +53,7 @@ set -g fish_color_valid_path
 set -gx JQ_COLORS "0;33:0;34:0;34:1;33:0;32:0;37:0;37:0;31"
 
 set -gx NODE_ENV development
-
-
 set -gx EDITOR "code --wait"
-set -gx HOMEBREW_NO_ENV_HINTS 1
 
 set -g __fish_git_prompt_showcolorhints 1
 set -g __fish_git_prompt_color_branch blue

@@ -36,3 +36,5 @@ local.fish
 
 .config/karabiner/assets/complex_modifications
 .config/karabiner/automatic_backups
+
+.config/ghostty/local

@@ -1,9 +1,9 @@
 [Desktop Entry]
-Name=Godot
-Exec=/home/econn/Apps/Godot/Godot
+Name=Ghostty
+Exec=/home/econn/.local/bin/ghostty
 Comment=
 Terminal=false
-Icon=godot-mono
+Icon=aseprite
 Type=Application
 PrefersNonDefaultGPU=false
-Hidden=false
+Hidden=true
