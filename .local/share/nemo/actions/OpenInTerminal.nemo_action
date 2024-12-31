@@ -11,9 +11,9 @@
 # %X - insert the XID for the NemoWindow this action is being activated in.
 
 Active=true
-Name=Open in WezTerm
-Comment=Open %P in WezTerm
-Exec=fish -c "wezterm start --cwd %P"
+Name=Open in Ghostty
+Comment=Open %P in Ghostty
+Exec=fish -c "ghostty --working-directory=%P"
 
 Icon-Name=terminal
 
