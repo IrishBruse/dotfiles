@@ -7,7 +7,11 @@ if test (uname) = Linux
 end
 
 if test (uname) = Darwin
-    brew list >brew.ini
+    echo \n\n"== Casks =="\n\n >brew.ini
+    brew list --casks >>brew.ini
+
+    echo \n\n"== Formula =="\n\n >>brew.ini
+    brew list --formula >>brew.ini
 end
 
 set SNIPPETS .config/Code/User/snippets
