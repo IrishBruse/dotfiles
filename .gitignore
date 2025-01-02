@@ -38,3 +38,5 @@ local.fish
 .config/karabiner/automatic_backups
 
 .config/ghostty/local
+
+.hurl/

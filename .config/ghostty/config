@@ -1,4 +1,3 @@
-config-file = ?local
 config-file = keybinds
 
 command = fish -i -l
@@ -35,12 +34,9 @@ cursor-color = #ABB2BF
 cursor-style = bar
 cursor-style-blink = true
 
-window-padding-x = 4
-window-padding-y = 6
-window-padding-balance = true
+window-height = 30
+window-width = 20
 
-window-height = 10
-window-width = 10
 window-step-resize = true
 
 resize-overlay = always
@@ -54,7 +50,7 @@ shell-integration-features = cursor,sudo,title
 
 macos-non-native-fullscreen = false
 macos-titlebar-style = transparent
-macos-titlebar-proxy-icon = visible
+macos-titlebar-proxy-icon = hidden
 macos-option-as-alt =
 macos-window-shadow = true
 macos-auto-secure-input = true
@@ -63,6 +59,7 @@ macos-icon = official
 macos-icon-frame = aluminum
 macos-icon-ghost-color =
 macos-icon-screen-color =
+
 adw-toolbar-style = flat
 
 window-decoration = true
@@ -70,3 +67,5 @@ gtk-titlebar = true
 gtk-adwaita = true
 
 auto-update-channel = tip
+
+config-file = ?local

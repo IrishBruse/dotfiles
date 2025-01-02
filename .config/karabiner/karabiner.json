@@ -4,6 +4,33 @@
       "complex_modifications": {
         "rules": [
           {
+            "description": "Ctrl + Left Click to Left Click",
+            "manipulators": [
+              {
+                "conditions": [
+                  {
+                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "type": "frontmost_application_if"
+                  }
+                ],
+                "from": {
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["any"]
+                  },
+                  "pointing_button": "button1"
+                },
+                "to": [
+                  {
+                    "modifiers": ["command"],
+                    "pointing_button": "button1"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
             "description": "Ctrl+T Opens Ghostty",
             "manipulators": [
               {
@@ -2154,7 +2181,6 @@
                       "^com\\.apple\\.Terminal$",
                       "^com\\.googlecode\\.iterm2$",
                       "^co\\.zeit\\.hyperterm$",
-                      "^com\\.microsoft\\.VSCode$",
                       "^co\\.zeit\\.hyper$",
                       "^io\\.alacritty$",
                       "^org\\.alacritty$",
@@ -2219,7 +2245,6 @@
                       "^com\\.apple\\.Terminal$",
                       "^com\\.googlecode\\.iterm2$",
                       "^co\\.zeit\\.hyperterm$",
-                      "^com\\.microsoft\\.VSCode$",
                       "^co\\.zeit\\.hyper$",
                       "^io\\.alacritty$",
                       "^org\\.alacritty$",
@@ -2309,26 +2334,19 @@
                 "type": "basic"
               }
             ]
-          },
-          {
-            "description": "test",
-            "conditions": [
-              {
-                "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
-                "type": "frontmost_application_if"
-              }
-            ],
-            "from": { "pointing_button": "button3" },
-            "to": [
-              {
-                "modifiers": ["left_command"],
-                "pointing_button": "button1"
-              }
-            ],
-            "type": "basic"
           }
         ]
       },
+      "devices": [
+        {
+          "identifiers": {
+            "is_pointing_device": true,
+            "product_id": 50495,
+            "vendor_id": 1133
+          },
+          "ignore": false
+        }
+      ],
       "name": "Default profile",
       "selected": true,
       "virtual_hid_keyboard": { "keyboard_type_v2": "iso" }
