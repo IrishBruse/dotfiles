@@ -1,5 +1,0 @@
-ctrl - e: open -a "/Applications/Nimble Commander.app"
-ctrl - t: open -na "/Applications/WezTerm.app" --args start --cwd ~/git
-ctrl - d: code ~/dotfiles
-ctrl - r: killall uBar; open -a "/Applications/uBar.app/"
-cmd + shift - escape: open -na "/System/Applications/Utilities/Activity Monitor.app"

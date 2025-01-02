@@ -1,9 +1,5 @@
 const fs = require("fs");
 
-if (fs.existsSync("node_modules/@gp-nova/react-scripts/PATCHED")) {
-  return;
-}
-
 const StartScript = "node_modules/@gp-nova/react-scripts/scripts/start.js";
 const webpackDevServerScript =
   "node_modules/@gp-nova/react-scripts/config/webpackDevServer.config.js";
@@ -34,8 +30,7 @@ console.log("PATCHED " + StartScript);
 
 text = fs.readFileSync(webpackDevServerScript).toString();
 
-const deprecationPatch = `
-    setupMiddlewares: (middlewares, devServer) => {
+const deprecationPatch = `    setupMiddlewares: (middlewares, devServer) => {
       if (!devServer) {
         throw new Error('webpack-dev-server is not defined');
       }
@@ -69,5 +64,3 @@ fs.writeFileSync(
   "node_modules/@gp-nova/react-scripts/scripts/utils/printBanner.js",
   ""
 );
-
-fs.writeFileSync("node_modules/@gp-nova/react-scripts/PATCHED", "");

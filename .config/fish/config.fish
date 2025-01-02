@@ -4,7 +4,7 @@ switch (set -q OS && echo $OS || uname)
         alias apc="sudo chown -R $(whoami) '/Applications/Visual Studio Code.app/Contents/Resources/app/out/main.js'"
         alias code="code --ignore-certificate-errors"
         alias sed="gsed"
-        alias chrome "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --silent-debugger-extension-api"
+        alias chrome "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --silent-debugger-extension-api 2> /dev/null"
         set -gx HOMEBREW_NO_ENV_HINTS 1
 
     case Linux
@@ -29,6 +29,9 @@ alias showkey="fish_key_reader --verbose"
 alias nx nlx
 abbr nid "ni -D"
 abbr nvm fnm
+function nu
+    npm update --save $argv[1]"@latest"
+end
 
 abbr clone "git clone --recursive"
 abbr gsrp "git stash && git pull --rebase && git stash pop"
@@ -68,11 +71,18 @@ function setgx
     end
 end
 
-function jwt -a jwt
-    clear
-
+function jwt
     set splits (echo $argv[1] | string split ".")
     string join "" (echo $splits[2]) "==" | base64 --decode | jq
+end
+
+function base64pad
+    echo $argv
+    set base64_string YWJjZA
+    while test (math (string length $base64_string) % 4) -ne 0
+        set base64_string "$base64_string="
+    end
+    echo $base64_string
 end
 
 source ~/dotfiles/local.fish
