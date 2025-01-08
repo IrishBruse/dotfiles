@@ -16,33 +16,19 @@ switch (set -q OS && echo $OS || uname)
         echo 'Unknown OS: '(uname)
 end
 
-alias bat="bat --theme OneHalfDark --style grid,numbers"
-alias ls="eza -ax --icons=always --group-directories-first"
-alias ll="eza -al --icons=always --group-directories-first"
-alias reload="clear;exec fish"
-alias paths="echo $PATH | tr ':' '\n'"
-alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LDtk.Codegen.csproj"
-
-alias showkey="fish_key_reader --verbose"
-
-# Node alias
-alias nx nlx
-abbr nid "ni -D"
-abbr nvm fnm
-function nu
-    npm update --save $argv[1]"@latest"
-end
-
-abbr clone "git clone --recursive"
-abbr gsrp "git stash && git pull --rebase && git stash pop"
-
-abbr jc "jira issue create -t=Task -a=econneely --custom feature-team=dynaFormRaptors --web"
-
 switch (echo $TERM_PROGRAM)
     case vscode
         set -g node_icon " "
     case '*'
         set -g node_icon " "
+end
+
+function prompt_update
+    set -l fnm_version (command fnm current | string split .)
+    set -g fish_node_version $fnm_version[1]
+    if test $fish_node_version != ""
+        set -g fish_node_version (echo $node_icon)$fish_node_version
+    end
 end
 
 fish_add_path -g ~/.local/bin
@@ -52,10 +38,8 @@ fnm env | source
 
 set -U fish_greeting
 set -g fish_color_valid_path
-set -gx JQ_COLORS "0;33:0;34:0;34:1;33:0;32:0;37:0;37:0;31"
-
-set -gx NODE_ENV development
-set -gx EDITOR code
+set -x EDITOR "code --wait"
+set -gx JQ_COLORS "0;34:0;34:0;34:0;37:0;32:0;37:0;37:0;31"
 
 set -g __fish_git_prompt_showcolorhints 1
 set -g __fish_git_prompt_color_branch blue
@@ -114,6 +98,13 @@ function view
     end
 end
 
+function clone
+    set repoURL (echo $argv[1] | string trim -l -c "https://" | string split "/")
+    set -l folder (echo $repoURL[3] | string split ".")
+
+    git clone --recursive -- $argv[1] $folder[1]
+end
+
 function clip
     fish_clipboard_copy
 end
@@ -155,6 +146,32 @@ function fnm
     prompt_update
 end
 
+alias gsrp="git stash && git pull --rebase && git stash pop"
+
+
+alias bat="bat --theme OneHalfDark --style grid,numbers"
+alias ls="eza -ax --icons=always --group-directories-first"
+alias ll="eza -al --icons=always --group-directories-first"
+alias reload="clear;exec fish"
+alias paths="echo $PATH | tr ':' '\n'"
+alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LDtk.Codegen.csproj"
+
+alias showkey="fish_key_reader --verbose"
+
+# Node alias
+alias nid "ni -D"
+
+abbr nvm fnm
+
+function nu
+    npm install --save $argv[1]"@latest"
+end
+
 function nr --wraps "npm run"
     command nr $argv
 end
+
+abbr clone "git clone --recursive"
+abbr gsrp "git stash && git pull --rebase && git stash pop"
+
+abbr jc "jira issue create -t=Task -a=econneely --custom feature-team=dynaFormRaptors --web"
