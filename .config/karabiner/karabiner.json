@@ -358,12 +358,15 @@
             ]
           },
           {
-            "description": "PC-Style Copy/Paste/Cut",
+            "description": "ctrl+c ctrl+x ctrl+v",
             "manipulators": [
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.mitchellh\\.ghostty$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -382,7 +385,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.mitchellh\\.ghostty$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -401,7 +407,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.mitchellh\\.ghostty$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -2062,8 +2071,7 @@
                       "^org\\.gnu\\.Emacs$",
                       "^org\\.gnu\\.AquamacsEmacs$",
                       "^org\\.gnu\\.Aquamacs$",
-                      "^org\\.pqrs\\.unknownapp\\.conkeror$",
-                      "^com\\.microsoft\\.VSCode$"
+                      "^org\\.pqrs\\.unknownapp\\.conkeror$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -2123,8 +2131,7 @@
                       "^co\\.zeit\\.hyper$",
                       "^io\\.alacritty$",
                       "^org\\.alacritty$",
-                      "^net\\.kovidgoyal\\.kitty$",
-                      "^com\\.microsoft\\.VSCode$"
+                      "^net\\.kovidgoyal\\.kitty$"
                     ],
                     "type": "frontmost_application_unless"
                   }

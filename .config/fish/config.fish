@@ -46,7 +46,7 @@ set -g __fish_git_prompt_color_branch blue
 set -g fish_color_error red
 fish_add_path -g ~/go/bin
 
-set -x CYPRESS_PASSWORD F98@qnyxibxm7v37g
+set ESLINT_NO_DEV_ERRORS true
 
 function setgx
     set -gx $argv[1] $argv[2]
