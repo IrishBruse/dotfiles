@@ -28,7 +28,3 @@ end
 function fish_right_prompt
     printf (set_color green)(echo $fish_node_version)(set_color normal)
 end
-
-function fish_title
-    echo $fish_command (commandline -pc | string shorten --max 20)
-end

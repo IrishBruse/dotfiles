@@ -1,79 +1,83 @@
 {
-  "appearance.customDarkThemeVariants": {
-    "10": "#35A854",
-    "20": "#35A854",
-    "30": "#35A854",
-    "40": "#35A854",
-    "50": "#35A854",
-    "60": "#35A854",
-    "70": "#35A854",
-    "80": "#35A854",
-    "90": "#35A854",
-    "100": "#35A854",
-    "110": "#35A854",
-    "120": "#35A854",
-    "130": "#35A854",
-    "140": "#35A854",
-    "150": "#35A854",
-    "160": "#35A854"
-  },
-  "appearance.searchBarAppearance": "outline",
-  "appearance.searchBarPlaceholderText": "Type to search...",
-  "appearance.themeName": "Custom",
-  "extension[VSCode].command": "code %s",
-  "extension[VSCode].prefix": "",
-  "extension[Workflow].workflows": [
-    {
-      "actions": [],
-      "name": "",
-      "id": "workflow-02874b14-0bf0-431b-9f8a-ac415f01dd21"
-    }
-  ],
-  "extensions.enabledExtensionIds": [
-    "Workflow",
-    "SimpleFileSearch",
-    "UeliCommand",
-    "JetBrainsToolbox",
-    "Calculator",
-    "Base64Conversion",
-    "WebSearch",
-    "DeeplTranslator",
-    "CurrencyConversion",
-    "ColorConverter",
-    "ApplicationSearch",
-    "VSCode"
-  ],
-  "general.hotkey": "Super+Space",
-  "general.language": "en-US",
-  "general.searchHistory.enabled": true,
-  "general.searchHistory.history": [
-    "0x204*3+0xC28",
-    "0x204*3+0x10",
-    "0xAEC0+0x274",
-    "0x18B0-0x1840",
-    "0x18B0-",
-    "0x10+0xC28+(0x204 *3)",
-    "0x10+0xC28+0x204 *3",
-    "0xC28+0x204 *3",
-    "0x204 *3",
-    "0x204*3"
-  ],
-  "general.searchHistory.limit": 10,
-  "imageGenerator.faviconApiProvider": "Favicone",
-  "keyboardAndMouse.singleClickBehavior": "invokeSearchResultItem",
-  "searchEngine.fuzziness": 0.5,
-  "searchEngine.id": "fuzzysort",
-  "searchEngine.rescanIntervalInSeconds": 300,
-  "window.alwaysCenter": false,
-  "window.alwaysOnTop": false,
-  "window.defaultSettingsWindowSize": {
-    "width": 800,
-    "height": 600
-  },
-  "window.defaultWindowSize": {
-    "width": 600,
-    "height": 400
-  },
-  "window.hideWindowOn": ["blur", "afterInvocation", "escapePressed"],
-  "window.scrollBehavior": "instant"
+    "appearance.customDarkThemeVariants": {
+        "10": "#35A854",
+        "20": "#35A854",
+        "30": "#35A854",
+        "40": "#35A854",
+        "50": "#35A854",
+        "60": "#35A854",
+        "70": "#35A854",
+        "80": "#35A854",
+        "90": "#35A854",
+        "100": "#35A854",
+        "110": "#35A854",
+        "120": "#35A854",
+        "130": "#35A854",
+        "140": "#35A854",
+        "150": "#35A854",
+        "160": "#35A854"
+    },
+    "appearance.searchBarAppearance": "outline",
+    "appearance.searchBarPlaceholderText": "Type to search...",
+    "appearance.themeName": "Fluent UI Web",
+    "extension[VSCode].command": "code %s",
+    "extension[VSCode].prefix": "",
+    "extension[Workflow].workflows": [
+        {
+            "actions": [],
+            "name": "",
+            "id": "workflow-02874b14-0bf0-431b-9f8a-ac415f01dd21"
+        }
+    ],
+    "extensions.enabledExtensionIds": [
+        "Workflow",
+        "SimpleFileSearch",
+        "UeliCommand",
+        "JetBrainsToolbox",
+        "Calculator",
+        "Base64Conversion",
+        "WebSearch",
+        "DeeplTranslator",
+        "CurrencyConversion",
+        "ColorConverter",
+        "ApplicationSearch",
+        "VSCode"
+    ],
+    "general.hotkey": "Super+Space",
+    "general.language": "en-US",
+    "general.searchHistory.enabled": true,
+    "general.searchHistory.history": [
+        "",
+        "file",
+        "goog",
+        "google",
+        "dot",
+        "uel",
+        "mint",
+        "hurl",
+        "chrome",
+        "gim"
+    ],
+    "general.searchHistory.limit": 10,
+    "imageGenerator.faviconApiProvider": "Favicone",
+    "keyboardAndMouse.singleClickBehavior": "invokeSearchResultItem",
+    "searchEngine.fuzziness": 0.5,
+    "searchEngine.id": "fuzzysort",
+    "searchEngine.rescanIntervalInSeconds": 300,
+    "window.alwaysCenter": false,
+    "window.alwaysOnTop": false,
+    "window.defaultSettingsWindowSize": {
+        "width": 800,
+        "height": 600
+    },
+    "window.defaultWindowSize": {
+        "width": 600,
+        "height": 400
+    },
+    "window.hideWindowOn": [
+        "blur",
+        "afterInvocation",
+        "escapePressed"
+    ],
+    "window.scrollBehavior": "instant"
 }

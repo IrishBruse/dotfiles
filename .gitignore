@@ -24,7 +24,8 @@ obj/
 local.fish
 
 .config/fish/themes/
-.config/fish/functions/
+.config/fish/functions/*
+!.config/fish/functions/fish_title.fish
 
 .config/fish/completions/*
 !.config/fish/completions/aws.fish

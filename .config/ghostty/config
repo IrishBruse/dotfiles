@@ -6,8 +6,6 @@ font-size = 9
 background = #272C33
 foreground = #ABB2BF
 
-selection-foreground =
-selection-background = #3e4451
 selection-invert-fg-bg = true
 
 palette = 0=#1E2127
@@ -34,6 +32,9 @@ cursor-style-blink = true
 
 window-height = 30
 window-width = 90
+window-padding-x = 5
+window-padding-y = 5
+window-padding-balance = true
 
 window-step-resize = true
 
@@ -53,8 +54,8 @@ macos-option-as-alt = true
 adw-toolbar-style = flat
 
 window-decoration = true
-gtk-titlebar = true
-gtk-adwaita = true
+gtk-titlebar = false
+gtk-adwaita = false
 
 auto-update-channel = tip
 
@@ -73,5 +74,6 @@ keybind = ctrl+k=clear_screen
 keybind = ctrl+backspace=text:\x17
 keybind = ctrl+delete=text:\x1b\x64
 keybind = ctrl+\=new_split:right
+keybind = ctrl+t=new_tab
 
 keybind = alt+r=reload_config

@@ -1,7 +1,5 @@
 #!/usr/bin/env fish
 
-git stash && git pull --rebase && git stash pop
-
 if test (uname) = Linux
     dconf dump / >dconf-settings.ini
 end

@@ -26,7 +26,7 @@
     "colors"
   ],
   "logo": {
-    "type": "chafa",
+    "type": "kitty",
     "position": "right"
   },
   "general": { "thread": true }
