@@ -57,7 +57,7 @@ window-decoration = true
 gtk-titlebar = false
 gtk-adwaita = false
 
-auto-update-channel = tip
+auto-update-channel = stable
 
 config-file = ?local
 

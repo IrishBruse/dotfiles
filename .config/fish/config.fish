@@ -11,6 +11,7 @@ switch (set -q OS && echo $OS || uname)
         alias apc="sudo chown -R $(whoami) '/usr/share/code/resources/app/out/main.js'"
         fish_add_path -g ~/Apps/Cemu/
         fish_add_path -g ~/Apps/zig/
+        fish_add_path -g ~/.local/bin
 
     case '*'
         echo 'Unknown OS: '(uname)
@@ -31,22 +32,25 @@ function prompt_update
     end
 end
 
-fish_add_path -g ~/.local/bin
 zoxide init fish --cmd cd | source
 fzf --fish | source
 fnm env | source
 
 set -U fish_greeting
 set -g fish_color_valid_path
-set -x EDITOR "code --wait"
+set -x EDITOR code
 set -gx JQ_COLORS "0;34:0;34:0;34:0;37:0;32:0;37:0;37:0;31"
 
 set -g __fish_git_prompt_showcolorhints 1
 set -g __fish_git_prompt_color_branch blue
 set -g fish_color_error red
-fish_add_path -g ~/go/bin
 
-set ESLINT_NO_DEV_ERRORS true
+set -x fish_help_browser chrome
+set -x BROWSER none
+
+set -x ESLINT_NO_DEV_ERRORS true
+
+abbr patch "npm version patch --force --git-tag-version=false"
 
 function setgx
     set -gx $argv[1] $argv[2]
