@@ -515,12 +515,6 @@
           "foreground": "#ABB2BF"
         }
       },
-      // {
-      //   "scope": ["meta.tag"],
-      //   "settings": {
-      //     "foreground": "#5C6370"
-      //   }
-      // },
       {
         "scope": ["source.tsx punctuation.definition.tag"],
         "settings": {
@@ -1806,16 +1800,14 @@
   "[typescript]": {
     "editor.codeActionsOnSave": {
       "source.fixAll": "explicit",
-      "source.fixAll.eslint": "explicit",
-      "source.organizeImports": "explicit"
+      "source.fixAll.eslint": "explicit"
     },
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[typescriptreact]": {
     "editor.codeActionsOnSave": {
       "source.fixAll": "explicit",
-      "source.fixAll.eslint": "explicit",
-      "source.organizeImports": "explicit"
+      "source.fixAll.eslint": "explicit"
     },
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -1828,10 +1820,9 @@
   "color-highlight.markerType": "underline",
   "commands.commands": [
     {
-      "arguments": ["View Repo/PR"],
       "command": "pr.openPullsWebsite",
       "text": "$(github) View",
-      "tooltip": "View Repo/PR"
+      "tooltip": "View PRs"
     }
   ],
   "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": true,
@@ -1870,7 +1861,7 @@
   "editor.cursorBlinking": "expand",
   "editor.cursorSmoothCaretAnimation": "explicit",
   "editor.cursorWidth": 2,
-  "editor.defaultColorDecorators": "auto",
+  "editor.defaultColorDecorators": "never",
   "editor.experimental.asyncTokenization": true,
   "editor.foldingHighlight": false,
   "editor.fontFamily": "Cascadia Code",
@@ -1959,7 +1950,7 @@
   },
   "explorer.incrementalNaming": "smart",
   "explorer.openEditors.visible": 8,
-  "explorer.sortOrder": "foldersNestsFiles",
+  "explorer.sortOrder": "type",
   "extensions.autoCheckUpdates": false,
   "extensions.ignoreRecommendations": false,
   "files.associations": {
@@ -1984,10 +1975,12 @@
   },
   "files.exclude": {
     "**/.git": true,
-    "**/.hg": false,
-    "**/.svn": false,
-    "**/CVS": false,
-    "**/obj": true
+    "**/.hg": true,
+    "**/.svn": true,
+    "**/CVS": true,
+    "**/obj": true,
+    "node_modules/[^@,^.]*": false,
+    "node_modules/@[^g,^t,^m]*": false
   },
   "files.hotExit": "onExitAndWindowClose",
   "files.insertFinalNewline": true,
@@ -2044,14 +2037,13 @@
   "http.systemCertificates": true,
   "hurl-runner.commandLineArguments": "--error-format long",
   "java.jdt.ls.androidSupport.enabled": "on",
-  "java.jdt.ls.java.home": "/usr/lib/jvm/java-21-openjdk-amd64/",
+  "java.jdt.ls.java.home": "/usr/lib/jvm/java-17-openjdk-amd64/",
   "java.maven.downloadSources": true,
   "java.maven.updateSnapshots": true,
   "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
   "javascript.inlayHints.parameterTypes.enabled": true,
   "javascript.inlayHints.propertyDeclarationTypes.enabled": true,
   "javascript.inlayHints.variableTypes.enabled": true,
-  "javascript.preferences.importModuleSpecifier": "relative",
   "javascript.referencesCodeLens.enabled": true,
   "javascript.referencesCodeLens.showOnAllFunctions": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
@@ -2069,6 +2061,7 @@
   "material-icon-theme.hidesExplorerArrows": true,
   "material-icon-theme.saturation": 1,
   "notebook.lineNumbers": "on",
+  "omnisharp.enableDecompilationSupport": true,
   "problems.defaultViewMode": "table",
   "problems.sortOrder": "position",
   "references.preferredLocation": "view",
@@ -2098,7 +2091,7 @@
     "update.mode"
   ],
   "smartersemicolon.autoLineChange": false,
-  "smartersemicolon.enable": true,
+  "smartersemicolon.enable": false,
   "supermaven.enable": {
     "*": false
   },
@@ -2213,8 +2206,8 @@
   "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
   "typescript.inlayHints.parameterTypes.enabled": true,
   "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+  "typescript.preferences.autoImportSpecifierExcludeRegexes": ["@mf-types"],
   "typescript.inlayHints.variableTypes.enabled": true,
-  "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.referencesCodeLens.enabled": true,
   "typescript.referencesCodeLens.showOnAllFunctions": true,
   "typescript.surveys.enabled": false,
@@ -2256,7 +2249,6 @@
     "{git,gitlens,conflictResolution,vscode-local-history}:/**/*.tc.json": "default",
     "*.hurl": "hurl.hurlEditor"
   },
-  "workbench.iconTheme": "material-icon-theme",
   "workbench.layoutControl.enabled": false,
   "workbench.productIconTheme": "material-product-icons",
   "workbench.settings.editor": "json",
@@ -2293,5 +2285,7 @@
   "zig.zls.enabled": "on",
   "git.replaceTagsWhenPull": true,
   "githubPullRequests.pullBranch": "never",
-  "workbench.list.multiSelectModifier": "alt"
+  "workbench.list.multiSelectModifier": "alt",
+  "editor.mouseWheelScrollSensitivity": 0.3,
+  "workbench.iconTheme": "material-icon-theme"
 }

@@ -11,8 +11,8 @@
             "nemo.desktop"
         ],
         "value": [
+            "firefox.desktop",
             "google-chrome.desktop",
-            "org.wezfurlong.wezterm.desktop",
             "code.desktop"
         ]
     },

@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=Uninstall TIS-100
-Exec=env WINEPREFIX="/home/econn/.wine" wine-stable C:\\\\ProgramData\\\\Microsoft\\\\Windows\\\\Start\\ Menu\\\\Programs\\\\TIS-100\\ [GOG.com]\\\\Uninstall\\ TIS-100.lnk
-Type=Application
-StartupNotify=true
-Path=/home/econn/.wine/dosdevices/c:/GOG Games/TIS-100
-Icon=2CB4_unins000.0
-StartupWMClass=unins000.exe
