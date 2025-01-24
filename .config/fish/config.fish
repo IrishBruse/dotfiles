@@ -9,9 +9,7 @@ switch (set -q OS && echo $OS || uname)
 
     case Linux
         alias apc="sudo chown -R $(whoami) '/usr/share/code/resources/app/out/main.js'"
-        fish_add_path -g ~/Apps/Cemu/
-        fish_add_path -g ~/Apps/zig/
-        fish_add_path -g ~/.local/bin
+        fish_add_path -g ~/.local/share/fnm/
 
     case '*'
         echo 'Unknown OS: '(uname)
