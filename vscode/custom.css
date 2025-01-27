@@ -53,7 +53,7 @@
 }
 
 /* Scrollbar animation */
-.scrollbar.vertical .slider {
+/* .scrollbar.vertical .slider {
   transition: width 0.2s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
   width: 2px !important;
   right: 0px !important;
@@ -84,7 +84,7 @@
 
 .editor-container .fade.invisible {
   opacity: 1 !important;
-}
+} */
 
 /* Tooltip style */
 /* .monaco-editor-hover,
