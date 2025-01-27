@@ -15,20 +15,7 @@ switch (set -q OS && echo $OS || uname)
         echo 'Unknown OS: '(uname)
 end
 
-switch (echo $TERM_PROGRAM)
-    case vscode
-        set -g node_icon " "
-    case '*'
-        set -g node_icon " "
-end
-
-function prompt_update
-    set -l fnm_version (command fnm current | string split .)
-    set -g fish_node_version $fnm_version[1]
-    if test $fish_node_version != ""
-        set -g fish_node_version (echo $node_icon)$fish_node_version
-    end
-end
+fish_add_path -g ~/go/bin
 
 zoxide init fish --cmd cd | source
 fzf --fish | source
@@ -76,7 +63,7 @@ source ~/dotfiles/local.fish
 function on_change_pwd --on-variable PWD
     status --is-command-substitution; and return
     set -l repo (echo $PWD | string replace ~/git/ "")
-
+;
     set -g fish_git_branch ""
     set -g fish_git_branch (git branch --show-current 2>/dev/null)
 
@@ -145,7 +132,6 @@ end
 
 function fnm
     command fnm $argv
-    prompt_update
 end
 
 alias gsrp="git stash && git pull --rebase && git stash pop"
