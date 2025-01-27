@@ -1858,7 +1858,7 @@
   "editor.accessibilitySupport": "off",
   "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
   "editor.colorDecoratorsLimit": 1500,
-  "editor.cursorBlinking": "expand",
+  "editor.cursorBlinking": "phase",
   "editor.cursorSmoothCaretAnimation": "explicit",
   "editor.cursorWidth": 2,
   "editor.defaultColorDecorators": "never",
@@ -2222,7 +2222,6 @@
     "file://${userHome}/dotfiles/vscode/icons.css",
     "file://${userHome}/dotfiles/vscode/vscode.js"
   ],
-  "vscode_custom_css.statusbar": false,
   "window.closeWhenEmpty": false,
   "window.commandCenter": false,
   "window.confirmSaveUntitledWorkspace": false,
@@ -2286,6 +2285,6 @@
   "git.replaceTagsWhenPull": true,
   "githubPullRequests.pullBranch": "never",
   "workbench.list.multiSelectModifier": "alt",
-  "editor.mouseWheelScrollSensitivity": 0.3,
-  "workbench.iconTheme": "material-icon-theme"
+  "workbench.iconTheme": "material-icon-theme",
+  "vscode_custom_css.statusbar": false
 }

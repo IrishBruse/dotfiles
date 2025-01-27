@@ -53,57 +53,24 @@
 }
 
 /* Scrollbar animation */
-/* .scrollbar.vertical .slider {
-  transition: width 0.2s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
-  width: 2px !important;
-  right: 0px !important;
-  left: auto !important;
-}
-
-.decorationsOverviewRuler {
-  z-index: 10;
-}
-
-.scrollbar.vertical:hover .slider {
-  width: 15px !important;
-}
-
-.scrollbar.horizontal .slider {
-  transition: height 0.2s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
-  top: auto !important;
+.scrollbar.vertical .slider {
+  width: 8px !important;
+  border-radius: 4px;
   opacity: 0;
+
+  background-color: rgba(78, 86, 102, 0.25);
+
+  left: auto !important;
+  right: 3px !important;
 }
 
-.scrollbar.horizontal:hover .slider {
+.scrollbar.vertical .slider:hover {
+  background-color: rgba(78, 86, 102, 0.75);
+}
+
+div:hover>.scrollbar.vertical .slider {
   opacity: 1;
 }
-
-.scrollbar.horizontal:hover .slider {
-  height: 15px !important;
-}
-
-.editor-container .fade.invisible {
-  opacity: 1 !important;
-} */
-
-/* Tooltip style */
-/* .monaco-editor-hover,
-.monaco-hover {
-  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.3) !important;
-  border-radius: 10px !important;
-  border: none !important;
-}
-
-.editor-container .monaco-editor-hover,
-.editor-container .monaco-hover {
-  transform: translateY(-1rem);
-}
-
-.editor-widget.suggest-widget {
-  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.45) !important;
-  border: none !important;
-  border-radius: 8px;
-} */
 
 /* Customize tree sticky widget */
 .monaco-tree-sticky-container {
