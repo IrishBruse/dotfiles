@@ -10,6 +10,11 @@ switch (set -q OS && echo $OS || uname)
     case Linux
         alias apc="sudo chown -R $(whoami) '/usr/share/code/resources/app/out/main.js'"
         fish_add_path -g ~/.local/share/fnm/
+        alias neofetch neowofetch
+
+        for opt in (command ls /opt/)
+            fish_add_path -g "/opt/$opt"
+        end
 
     case '*'
         echo 'Unknown OS: '(uname)
@@ -30,7 +35,7 @@ set -g __fish_git_prompt_showcolorhints 1
 set -g __fish_git_prompt_color_branch blue
 set -g fish_color_error red
 
-set -x fish_help_browser chrome
+set -x fish_help_browser google-chrome
 set -x BROWSER none
 
 set -x ESLINT_NO_DEV_ERRORS true
@@ -63,7 +68,7 @@ source ~/dotfiles/local.fish
 function on_change_pwd --on-variable PWD
     status --is-command-substitution; and return
     set -l repo (echo $PWD | string replace ~/git/ "")
-;
+
     set -g fish_git_branch ""
     set -g fish_git_branch (git branch --show-current 2>/dev/null)
 

@@ -5,7 +5,7 @@
 }
 
 .explorer-folders-view .monaco-list-row[aria-expanded] .monaco-tl-row .codicon-tree-item-expanded::before {
-  margin-right: 14px;
+  margin-right: 20px;
 }
 
 .explorer-folders-view .monaco-list-row .monaco-icon-label {
@@ -69,6 +69,22 @@
 }
 
 div:hover>.scrollbar.vertical .slider {
+  opacity: 1;
+}
+
+.scrollbar.horizontal .slider {
+  height: 8px !important;
+  border-radius: 4px;
+  opacity: 0;
+
+  background-color: rgba(78, 86, 102, 0.25);
+}
+
+.scrollbar.horizontal .slider:hover {
+  background-color: rgba(78, 86, 102, 0.75);
+}
+
+div:hover>.scrollbar.horizontal .slider {
   opacity: 1;
 }
 

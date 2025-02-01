@@ -68,7 +68,6 @@ config-file = ?local
 keybind = ctrl+w=close_surface
 keybind = ctrl+v=paste_from_clipboard
 keybind = performable:ctrl+c=copy_to_clipboard
-# keybind = ctrl+c=text:\x03 # sent ctrl+c
 keybind = ctrl+k=clear_screen
 
 keybind = ctrl+backspace=text:\x17
