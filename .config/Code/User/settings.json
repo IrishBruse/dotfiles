@@ -1840,7 +1840,7 @@
   "debug.showInStatusBar": "never",
   "debug.toolBarLocation": "docked",
   "diffEditor.codeLens": false,
-  "diffEditor.ignoreTrimWhitespace": false,
+  "diffEditor.ignoreTrimWhitespace": true,
   "diffEditor.maxComputationTime": 0,
   "diffEditor.renderSideBySide": true,
   "diffEditor.useInlineViewWhenSpaceIsLimited": false,
@@ -2285,6 +2285,13 @@
   "git.replaceTagsWhenPull": true,
   "githubPullRequests.pullBranch": "never",
   "workbench.list.multiSelectModifier": "alt",
+  "vscode_custom_css.statusbar": false,
   "workbench.iconTheme": "material-icon-theme",
-  "vscode_custom_css.statusbar": false
+  "typescriptExplorer.typeTree.view.show.typeParameters": false,
+  "typescriptExplorer.typeTree.view.show.baseClass": false,
+  "terminal.integrated.suggest.enabled": true,
+  "terminal.integrated.gpuAcceleration": "on",
+  "c3.lsp.path": "/home/econn/.config/Code/User/globalStorage/c3.vscode-c3/c3lsp_install/server/bin/release/c3lsp",
+  "zig.path": "/opt/zig/zig",
+  "ols.server.path": null
 }
