@@ -38,18 +38,9 @@ window-padding-balance = true
 
 window-step-resize = true
 
-resize-overlay = always
 resize-overlay-position = bottom-center
-resize-overlay-duration = 500ms
 
 confirm-close-surface = false
-
-shell-integration = fish
-shell-integration-features = cursor,sudo,title
-
-macos-non-native-fullscreen = false
-macos-titlebar-proxy-icon = hidden
-macos-option-as-alt = true
 
 adw-toolbar-style = flat
 
@@ -67,8 +58,7 @@ config-file = ?local
 
 keybind = ctrl+w=close_surface
 keybind = ctrl+v=paste_from_clipboard
-keybind = performable:ctrl+c=copy_to_clipboard
-# keybind = ctrl+c=text:\x03 # sent ctrl+c
+keybind = performable:ctrl+c=copy_to_clipboard # Copy if there is a selection
 keybind = ctrl+k=clear_screen
 
 keybind = ctrl+backspace=text:\x17
