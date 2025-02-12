@@ -14,7 +14,7 @@
     ]
   },
   "comp func": {
-    "prefix": "comp func",
+    "prefix": "comp",
     "description": "Functional React Component",
     "body": [
       "const ${1:Component}: FunctionComponent$2 = (args) => {",

@@ -11,6 +11,7 @@ switch (set -q OS && echo $OS || uname)
         alias apc="sudo chown -R $(whoami) '/usr/share/code/resources/app/out/main.js'"
         fish_add_path -g ~/.local/share/fnm/
         alias neofetch neowofetch
+        alias rm trash
 
         for opt in (command ls /opt/)
             fish_add_path -g "/opt/$opt"

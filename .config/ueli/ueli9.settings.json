@@ -1,3 +1,20 @@
 {
-    "general.hotkey.enabled": false
+    "appearance.searchResultListLayout": "detailed",
+    "extension[SimpleFileSearch].folders": [
+        {
+            "id": "812997fa-ae86-49bb-8c6b-92a1e4dd65bc",
+            "path": "/home/econn/git",
+            "recursive": false,
+            "searchFor": "filesAndFolders"
+        }
+    ],
+    "extension[VSCode].prefix": "",
+    "extension[VSCode].showPath": false,
+    "extensions.enabledExtensionIds": [
+        "VSCode",
+        "ApplicationSearch",
+        "UeliCommand"
+    ],
+    "general.hotkey.enabled": false,
+    "window.visibleOnAllWorkspaces": false
 }

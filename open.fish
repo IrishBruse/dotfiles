@@ -2,10 +2,7 @@
 
 if test (uname) = Linux
     dconf dump / >misc/dconf-settings.ini
-    zcat /var/log/installer/initial-status.gz | sed -n 's/^Package: //p' >misc/temp.pkgs
-    dpkg-query -W -f='${Package}\n' | cut -d':' -f1 >>misc/temp.pkgs
-    cat misc/temp.pkgs | sort | uniq -u >misc/apt.pkgs
-    rm misc/temp.pkgs
+    dconf read /com/linuxmint/install/installed-apps | string replace -a \' \" | jq >misc/apt.json
 end
 
 if test (uname) = Darwin

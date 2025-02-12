@@ -286,6 +286,12 @@
         }
       },
       {
+        "scope": ["constant.language.boolean"],
+        "settings": {
+          "foreground": "#56B6C2"
+        }
+      },
+      {
         "scope": ["constant.other.symbol"],
         "settings": {
           "foreground": "#56B6C2"
@@ -1759,7 +1765,6 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[go]": {
-    "editor.semanticHighlighting.enabled": false,
     "editor.suggest.showSnippets": true
   },
   "[html]": {
@@ -1829,18 +1834,15 @@
   "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": true,
   "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": true,
   "csharp.suppressDotnetInstallWarning": true,
-  "debug.console.fontFamily": "CaskaydiaCove NF",
+  "debug.console.fontFamily": "Cascadia Mono",
   "debug.console.fontSize": 12,
-  "debug.disassemblyView.showSourceCode": false,
   "debug.inlineValues": "auto",
-  "debug.internalConsoleOptions": "neverOpen",
-  "debug.onTaskErrors": "abort",
   "debug.openDebug": "neverOpen",
   "debug.saveBeforeStart": "nonUntitledEditorsInActiveGroup",
   "debug.showInStatusBar": "never",
   "debug.toolBarLocation": "docked",
   "diffEditor.codeLens": false,
-  "diffEditor.ignoreTrimWhitespace": true,
+  "diffEditor.ignoreTrimWhitespace": false,
   "diffEditor.maxComputationTime": 0,
   "diffEditor.renderSideBySide": true,
   "diffEditor.useInlineViewWhenSpaceIsLimited": false,
@@ -1862,7 +1864,6 @@
   "editor.cursorSmoothCaretAnimation": "explicit",
   "editor.cursorWidth": 2,
   "editor.defaultColorDecorators": "never",
-  "editor.experimental.asyncTokenization": true,
   "editor.foldingHighlight": false,
   "editor.fontFamily": "Cascadia Code",
   "editor.fontLigatures": true,
@@ -1910,7 +1911,6 @@
   "editor.unicodeHighlight.invisibleCharacters": false,
   "editor.wordSeparators": "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?_",
   "errorLens.enabledDiagnosticLevels": ["warning", "error"],
-  "errorLens.excludeBySource": ["node_modules/**"],
   "errorLens.fontSize": "12",
   "errorLens.fontWeight": "bold",
   "errorLens.gutterIconSet": "defaultOutline",
@@ -1978,19 +1978,12 @@
     "**/.hg": true,
     "**/.svn": true,
     "**/CVS": true,
-    "**/obj": true,
-    "node_modules/[^@,^.]*": false,
-    "node_modules/@[^g,^t,^m]*": false
+    "**/obj": true
   },
   "files.hotExit": "onExitAndWindowClose",
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
   "files.trimTrailingWhitespace": true,
-  "files.watcherExclude": {
-    "**/bin/**": true,
-    "**/node_modules/**": true,
-    "**/obj/**": true
-  },
   "git-graph.repository.sign.commits": true,
   "git-graph.repository.sign.tags": true,
   "git.allowNoVerifyCommit": true,
@@ -2013,33 +2006,10 @@
   "gitlens.launchpad.indicator.polling.enabled": false,
   "gitlens.liveshare.allowGuestAccess": false,
   "gitlens.liveshare.enabled": false,
-  "go.editorContextMenuCommands": {
-    "addImport": false,
-    "addTags": false,
-    "debugTestAtCursor": false,
-    "generateTestForFunction": false,
-    "playground": false,
-    "testAtCursor": false,
-    "testCoverage": false,
-    "toggleTestFile": false
-  },
-  "go.lintTool": "golint",
-  "go.lintFlags": ["--fast"],
-  "go.toolsManagement.autoUpdate": true,
-  "gopls": {
-    "ui.semanticTokens": true
-  },
   "hexeditor.columnWidth": 32,
   "hexeditor.defaultEndianness": "little",
   "hexeditor.inspectorType": "aside",
   "hexeditor.showDecodedText": true,
-  "http.experimental.systemCertificatesV2": true,
-  "http.systemCertificates": true,
-  "hurl-runner.commandLineArguments": "--error-format long",
-  "java.jdt.ls.androidSupport.enabled": "on",
-  "java.jdt.ls.java.home": "/usr/lib/jvm/java-17-openjdk-amd64/",
-  "java.maven.downloadSources": true,
-  "java.maven.updateSnapshots": true,
   "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
   "javascript.inlayHints.parameterTypes.enabled": true,
   "javascript.inlayHints.propertyDeclarationTypes.enabled": true,
@@ -2086,9 +2056,9 @@
     "drcika.apc-extension"
   ],
   "settingsSync.ignoredSettings": [
-    "window.titleBarStyle",
     "editor.mouseWheelScrollSensitivity",
-    "update.mode"
+    "window.titleBarStyle",
+    "editor.defaultFoldingRangeProvider"
   ],
   "smartersemicolon.autoLineChange": false,
   "smartersemicolon.enable": false,
@@ -2121,7 +2091,7 @@
   "terminal.integrated.defaultProfile.windows": "Windows PowerShell",
   "terminal.integrated.enablePersistentSessions": false,
   "terminal.integrated.enableVisualBell": true,
-  "terminal.integrated.fontFamily": "CaskaydiaMono NF",
+  "terminal.integrated.fontFamily": "Cascadia Mono",
   "terminal.integrated.fontSize": 12,
   "terminal.integrated.hideOnStartup": "always",
   "terminal.integrated.ignoreBracketedPasteMode": true,
@@ -2179,28 +2149,6 @@
   "testing.coverageToolbarEnabled": true,
   "testing.displayedCoveragePercent": "totalCoverage",
   "testing.showCoverageInExplorer": true,
-  "thunder-client.certificates": [
-    {
-      "certPath": "/Users/econneely/git/.certs/dmp-cert.pem",
-      "host": "document-management--document-management.us-east-1.private-api.integration-direct.g-p.dev",
-      "keyPath": "/Users/econneely/git/.certs/dmp-key.pem"
-    },
-    {
-      "certPath": "/Users/econneely/git/.certs/ji-cert.pem",
-      "host": "journey-intelligence--journey-intelligence--compliance-engine.us-east-1.private-api.integration-direct.g-p.dev",
-      "keyPath": "/Users/econneely/git/.certs/ji-key.pem"
-    },
-    {
-      "certPath": "/Users/econneely/git/.certs/dmp-cert.pem",
-      "host": "work-uat.dev.gpdev.us",
-      "keyPath": "/Users/econneely/git/.certs/dmp-key.pem"
-    }
-  ],
-  "thunder-client.indentSize": 4,
-  "thunder-client.responseLimit": 30,
-  "thunder-client.sidebar.defaultTab": "Collections",
-  "thunder-client.sidebar.layout": "compact",
-  "thunder-client.sidebar.showActivityFromCollection": true,
   "typescript.implementationsCodeLens.enabled": true,
   "typescript.inlayHints.enumMemberValues.enabled": true,
   "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
@@ -2208,11 +2156,10 @@
   "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
   "typescript.preferences.autoImportSpecifierExcludeRegexes": ["@mf-types"],
   "typescript.inlayHints.variableTypes.enabled": true,
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true,
   "typescript.referencesCodeLens.enabled": true,
   "typescript.referencesCodeLens.showOnAllFunctions": true,
   "typescript.surveys.enabled": false,
-  "typescript.tsdk": "./node_modules/typescript/lib",
-  "typescript.tsserver.experimental.enableProjectDiagnostics": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
   "update.mode": "none",
   "versionlens.logging.level": "debug",
@@ -2225,7 +2172,7 @@
   "window.closeWhenEmpty": false,
   "window.commandCenter": false,
   "window.confirmSaveUntitledWorkspace": false,
-  "window.customTitleBarVisibility": "never",
+  "window.customTitleBarVisibility": "auto",
   "window.menuBarVisibility": "hidden",
   "window.newWindowDimensions": "maximized",
   "window.openFilesInNewWindow": "off",
@@ -2238,6 +2185,7 @@
   "workbench.editor.decorations.colors": false,
   "workbench.editor.limit.enabled": true,
   "workbench.editor.limit.value": 10,
+  "cypressHelper.commandForRun": "nr cy:open",
   "workbench.editorAssociations": {
     "{hexdiff}:/**/*.*": "hexEditor.hexedit",
     "*.bin": "hexEditor.hexedit",
@@ -2253,14 +2201,8 @@
   "workbench.settings.editor": "json",
   "workbench.sideBar.location": "right",
   "workbench.startupEditor": "none",
-  "workbench.tree.indent": 16,
+  "workbench.tree.indent": 20,
   "xml.format.maxLineWidth": 0,
-  "zenMode.fullScreen": false,
-  "zenMode.hideLineNumbers": false,
-  "zenMode.hideStatusBar": false,
-  "zenMode.restore": false,
-  "zenMode.showTabs": "none",
-  "zenMode.silentNotifications": true,
   "cSpell.language": "en-GB",
   "cSpell.enabledFileTypes": {
     "yaml": false,
@@ -2289,9 +2231,14 @@
   "workbench.iconTheme": "material-icon-theme",
   "typescriptExplorer.typeTree.view.show.typeParameters": false,
   "typescriptExplorer.typeTree.view.show.baseClass": false,
-  "terminal.integrated.suggest.enabled": true,
   "terminal.integrated.gpuAcceleration": "on",
-  "c3.lsp.path": "/home/econn/.config/Code/User/globalStorage/c3.vscode-c3/c3lsp_install/server/bin/release/c3lsp",
   "zig.path": "/opt/zig/zig",
-  "ols.server.path": null
+  "ols.server.path": null,
+  "editor.smoothScrolling": true,
+  "window.titleBarStyle": "custom",
+  "cypressHelper.commandForOpen": "nr cy:open",
+  "git.mergeEditor": true,
+  "gitlens.gitCommands.skipConfirmations": ["fetch:command"],
+  "typescript.tsserver.log": "verbose",
+  "editor.mouseWheelScrollSensitivity": 3
 }
