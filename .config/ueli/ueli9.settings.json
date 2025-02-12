@@ -15,6 +15,7 @@
         "ApplicationSearch",
         "UeliCommand"
     ],
-    "general.hotkey.enabled": false,
+    "general.hotkey": "Super+Space",
+    "general.hotkey.enabled": true,
     "window.visibleOnAllWorkspaces": false
 }
