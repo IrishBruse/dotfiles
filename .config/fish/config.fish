@@ -39,8 +39,6 @@ set -g fish_color_error red
 set -x fish_help_browser google-chrome
 set -x BROWSER none
 
-set -x ESLINT_NO_DEV_ERRORS true
-
 abbr patch "npm version patch --force --git-tag-version=false"
 
 function setgx
@@ -84,14 +82,6 @@ on_change_pwd
 
 set -gx NI_DEFAULT_AGENT npm
 set -gx NI_GLOBAL_AGENT npm
-
-function view
-    gh pr view -w
-
-    if test $status -ne 0
-        gh browse
-    end
-end
 
 function clone
     set repoURL (echo $argv[1] | string trim -l -c "https://" | string split "/")

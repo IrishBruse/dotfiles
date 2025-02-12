@@ -34,6 +34,7 @@ local.fish
 .config/karabiner/automatic_backups
 
 .config/ghostty/local
+.config/jgh/config.json
 
 .hurl/
 patchStart.js
