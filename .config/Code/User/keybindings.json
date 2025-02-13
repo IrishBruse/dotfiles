@@ -5910,6 +5910,11 @@
         }
     },
     {
+        "when": "!terminalFocus",
+        "key": "ctrl+r",
+        "command": "workbench.files.action.showActiveFileInExplorer"
+    },
+    {
         "key": "ctrl+q",
         "command": "git.openChange",
         "when": "editorFocus && !isInDiffEditor"
