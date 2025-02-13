@@ -1971,8 +1971,7 @@
     "fish_variables": "fish",
     "grammer": "plaintext",
     "keybinds": "ini",
-    "local": "ini",
-    ".snyk": "yaml"
+    "local": "ini"
   },
   "files.exclude": {
     "**/.git": true,
@@ -2012,6 +2011,7 @@
   "hexeditor.defaultEndianness": "little",
   "hexeditor.inspectorType": "aside",
   "hexeditor.showDecodedText": true,
+  "go.toolsManagement.go": "/opt/homebrew/bin/go",
   "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
   "javascript.inlayHints.parameterTypes.enabled": true,
   "javascript.inlayHints.propertyDeclarationTypes.enabled": true,
@@ -2156,6 +2156,8 @@
   "typescript.tsserver.log": "verbose",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "typescriptExplorer.typeTree.view.show.baseClass": false,
+  "fish.path.fish": "/opt/homebrew/bin/fish",
+  "fish.path.fish_indent": "/opt/homebrew/bin/fish_indent",
   "typescriptExplorer.typeTree.view.show.typeParameters": false,
   "update.mode": "none",
   "versionlens.logging.level": "debug",
@@ -2169,18 +2171,18 @@
   "window.closeWhenEmpty": false,
   "window.commandCenter": false,
   "window.confirmSaveUntitledWorkspace": false,
-  "window.customTitleBarVisibility": "windowed",
+  "window.customTitleBarVisibility": "never",
+  "window.titleBarStyle": "custom",
   "window.menuBarVisibility": "hidden",
   "window.newWindowDimensions": "maximized",
   "window.openFilesInNewWindow": "off",
   "window.title": "${folderName}",
-  "window.titleBarStyle": "custom",
-  "window.zoomLevel": 0,
+  "window.titleSeparator": " - ",
   "workbench.activityBar.location": "top",
   "workbench.colorTheme": "Empty Dark",
   "workbench.editor.decorations.badges": false,
   "workbench.editor.decorations.colors": false,
-  "workbench.editor.enablePreview": false, // file peek
+  "workbench.editor.enablePreview": false,
   "workbench.editor.limit.enabled": true,
   "workbench.editor.limit.value": 10,
   "workbench.editorAssociations": {
@@ -2203,6 +2205,5 @@
   "workbench.tree.indent": 20,
   "xml.format.maxLineWidth": 0,
   "settingsSync.ignoredExtensions": ["rangav.vscode-thunder-client"],
-  "breadcrumbs.enabled": false,
-  "editor.mouseWheelScrollSensitivity": 3
+  "breadcrumbs.enabled": false
 }
