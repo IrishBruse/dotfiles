@@ -141,7 +141,7 @@
             "Launch new app instance": 2,
             "Close last focused window in group": 3
         },
-        "value": 3
+        "value": 1
     },
     "show-all-workspaces": {
         "type": "checkbox",
@@ -169,7 +169,7 @@
         "type": "keybinding",
         "default": "<Super>grave",
         "description": "Global hotkey to show the order of apps",
-        "value": "<Super>grave"
+        "value": ""
     },
     "show-apps-order-timeout": {
         "type": "spinbutton",
@@ -232,7 +232,7 @@
         "type": "checkbox",
         "default": true,
         "description": "Show thumbnails",
-        "value": true
+        "value": false
     },
     "animate-thumbnails": {
         "type": "checkbox",
@@ -274,7 +274,7 @@
             "250 ms": 250,
             "500 ms": 500
         },
-        "value": 250
+        "value": 50
     },
     "thumbnail-size": {
         "type": "combobox",
@@ -286,13 +286,13 @@
             "Large": 9,
             "Largest": 12
         },
-        "value": 6
+        "value": 3
     },
     "enable-hover-peek": {
         "type": "checkbox",
         "default": true,
         "description": "Show the window when hovering its thumbnail",
-        "value": true
+        "value": false
     },
     "hover-peek-time-in": {
         "dependency": "enable-hover-peek",
@@ -347,7 +347,7 @@
         "default": true,
         "description": "Apply the monitor move option to all windows",
         "tooltip": "When clicking \"Move to monitor\" in the context menu, this option will move all of an app's windows instead of just the last focused window from the app.",
-        "value": true
+        "value": false
     },
     "pinned-apps": {
         "type": "generic",
@@ -356,9 +356,7 @@
             "firefox.desktop",
             "org.gnome.Terminal.desktop"
         ],
-        "value": [
-            "firefox.desktop"
-        ]
+        "value": []
     },
     "__md5__": "b7d0a7558cf87c22c50195c9d408485f"
 }
