@@ -1896,7 +1896,7 @@
   "editor.renderLineHighlightOnlyWhenFocus": true,
   "editor.renderWhitespace": "trailing",
   "editor.scrollbar.ignoreHorizontalScrollbarInContentHeight": true,
-  "editor.scrollbar.verticalScrollbarSize": 14,
+  "editor.scrollbar.verticalScrollbarSize": 12,
   "editor.semanticHighlighting.enabled": true,
   "editor.smoothScrolling": true,
   "editor.suggest.localityBonus": true,
@@ -1998,9 +1998,6 @@
   "git.pruneOnFetch": true,
   "git.replaceTagsWhenPull": true,
   "git.terminalGitEditor": true,
-  "githubPullRequests.createOnPublishBranch": "never",
-  "githubPullRequests.pullBranch": "never",
-  "githubPullRequests.showPullRequestNumberInTree": true,
   "gitlens.codeLens.enabled": false,
   "gitlens.currentLine.enabled": false,
   "gitlens.launchpad.indicator.enabled": false,
@@ -2025,7 +2022,7 @@
     "showInlineError": false,
     "type": "on-demand"
   },
-  "jest.shell": "/opt/homebrew/bin/fish",
+  "jest.shell": "fish",
   "js/ts.implicitProjectConfig.checkJs": true,
   "json.format.keepLines": true,
   "Lua.codeLens.enable": true,
@@ -2069,7 +2066,7 @@
   },
   "terminal.integrated.automationProfile.osx": {
     "args": ["-li"],
-    "path": "/opt/homebrew/bin/fish"
+    "path": "fish"
   },
   "terminal.integrated.commandsToSkipShell": [
     "workbench.action.terminal.kill",
@@ -2119,7 +2116,7 @@
     },
     "fish": {
       "args": ["-i", "-l"],
-      "path": "/opt/homebrew/bin/fish"
+      "path": "fish"
     },
     "pwsh": {
       "icon": "terminal-powershell",
@@ -2205,5 +2202,6 @@
   "workbench.tree.indent": 20,
   "xml.format.maxLineWidth": 0,
   "settingsSync.ignoredExtensions": ["rangav.vscode-thunder-client"],
-  "breadcrumbs.enabled": false
+  "breadcrumbs.enabled": false,
+  "githubPullRequests.pullBranch": "always"
 }
