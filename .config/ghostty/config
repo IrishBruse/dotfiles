@@ -44,6 +44,8 @@ confirm-close-surface = false
 
 adw-toolbar-style = flat
 
+macos-titlebar-proxy-icon = hidden
+
 window-decoration = true
 gtk-titlebar = false
 gtk-adwaita = false
