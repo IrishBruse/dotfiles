@@ -21,7 +21,7 @@
   "material-icon-theme.activeIconPack": "react_redux",
   "material-icon-theme.folders.color": "#ABB2BF",
   "material-icon-theme.hidesExplorerArrows": true,
-  "material-icon-theme.saturation": 0.8,
+  "material-icon-theme.saturation": 1,
 
   "editor.foldingHighlight": false,
   "breadcrumbs.enabled": false,
@@ -32,12 +32,14 @@
   "window.title": "${folderName}",
   "window.titleSeparator": " - ",
 
-  "workbench.layoutControl.enabled": false,
-  "workbench.editor.limit.enabled": true,
-  "workbench.editor.limit.value": 10,
   "workbench.activityBar.location": "top",
   "workbench.editor.enablePreview": false,
+  "workbench.editor.limit.enabled": true,
+  "workbench.editor.limit.value": 10,
+  "workbench.layoutControl.enabled": false,
+  "workbench.settings.editor": "json",
   "workbench.sideBar.location": "right",
+  "workbench.startupEditor": "none",
 
   "editor.minimap.enabled": false,
   "editor.overviewRulerBorder": false,
@@ -48,11 +50,6 @@
   "debug.toolBarLocation": "docked",
   "problems.defaultViewMode": "table",
   "problems.sortOrder": "position",
-
-  // Setting that will never change
-
-  "workbench.startupEditor": "none",
-  "workbench.settings.editor": "json",
 
   "editor.accessibilitySupport": "off",
   "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
@@ -80,6 +77,7 @@
   "notebook.lineNumbers": "on",
   "telemetry.telemetryLevel": "error",
   "update.mode": "none",
+  "references.preferredLocation": "view",
 
   "commands.commands": [
     {
@@ -195,7 +193,6 @@
   "terminal.integrated.shellIntegration.decorationsEnabled": "never",
   "terminal.integrated.shellIntegration.enabled": false,
   "terminal.integrated.tabs.title": "${sequence}",
-  "githubPullRequests.fileListLayout": "flat",
 
   // -------------------------------------------- Git ---------------------------------------------
 
@@ -221,6 +218,9 @@
   "git.openRepositoryInParentFolders": "always",
   "git.pruneOnFetch": true,
   "git.replaceTagsWhenPull": true,
+
+  "githubPullRequests.fileListLayout": "flat",
+  "githubPullRequests.pullBranch": "always",
 
   // ----------------------------------------- Languages ------------------------------------------
 
@@ -377,8 +377,6 @@
   "workbench.list.multiSelectModifier": "alt",
   "xml.format.maxLineWidth": 0,
 
-  "githubPullRequests.pullBranch": "always",
-
   "cfnLint.validateUsingJsonSchema": true,
 
   "color-highlight.markerType": "underline",
@@ -425,7 +423,7 @@
   "editor.renderWhitespace": "trailing",
 
   "editor.scrollbar.ignoreHorizontalScrollbarInContentHeight": true,
-  "editor.scrollbar.verticalScrollbarSize": 12,
+  "editor.scrollbar.verticalScrollbarSize": 14,
 
   "editor.suggest.localityBonus": true,
   "editor.suggest.selectionMode": "whenTriggerCharacter",
@@ -552,7 +550,7 @@
     "extensionButton.prominentBackground": "#2ba143",
     "extensionButton.prominentHoverBackground": "#37af4e",
 
-    "focusBorder": "#00000000",
+    "focusBorder": "#35A854",
     "icon.foreground": "#d7dae0",
     "input.background": "#252931",
     "input.border": "#3a3f4b",
@@ -2193,12 +2191,12 @@
           "foreground": "#CD9731"
         }
       },
-      // {
-      //   "scope": "token.error-token",
-      //   "settings": {
-      //     "foreground": "#f0f"
-      //   }
-      // },
+      {
+        "scope": "token.error-token",
+        "settings": {
+          "foreground": "#ff0000"
+        }
+      },
       {
         "scope": "token.debug-token",
         "settings": {
@@ -2229,7 +2227,7 @@
         }
       }
     ]
-  }
-
-  // -------------------------------------------- New ---------------------------------------------
+  },
+  // --------------------------------------- New/Keybind Toggle -----------------------------------
+  "git.blame.editorDecoration.enabled": false
 }
