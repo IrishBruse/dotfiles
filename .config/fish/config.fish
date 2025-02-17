@@ -6,12 +6,15 @@ switch (set -q OS && echo $OS || uname)
         alias sed="gsed"
         alias chrome "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --silent-debugger-extension-api 2> /dev/null"
         set -gx HOMEBREW_NO_ENV_HINTS 1
+        set -x fish_help_browser chrome
+        alias neofetch fastfetch
 
     case Linux
         alias apc="sudo chown -R $(whoami) '/usr/share/code/'"
         fish_add_path -g ~/.local/share/fnm/
         alias neofetch neowofetch
         alias rm trash
+        set -x fish_help_browser google-chrome
 
         for opt in (command ls /opt/)
             fish_add_path -g "/opt/$opt"
@@ -36,7 +39,6 @@ set -g __fish_git_prompt_showcolorhints 1
 set -g __fish_git_prompt_color_branch blue
 set -g fish_color_error red
 
-set -x fish_help_browser google-chrome
 set -x BROWSER none
 
 abbr patch "npm version patch --force --git-tag-version=false"
