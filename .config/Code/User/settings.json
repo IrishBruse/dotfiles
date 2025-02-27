@@ -59,7 +59,6 @@
   "editor.formatOnSave": true,
   "editor.linkedEditing": true,
   "editor.semanticHighlighting.enabled": true,
-  "editor.tabSize": 4,
   "editor.wordSeparators": "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?_",
   "editor.smoothScrolling": true,
 
@@ -140,7 +139,7 @@
     "*.sqlite": "${capture}.${extname}-*",
     "*.sqlite3": "${capture}.${extname}-*",
     "*.ts": "${capture}.spec.ts,${capture}.test.ts,${capture}.*.test.ts,${capture}.stories.ts",
-    "*.tsx": "${capture}.spec.tsx,${capture}.test.tsx,${capture}.*.test.tsx,${capture}.stories.tsx",
+    "*.tsx": "${capture}.spec.tsx,${capture}.test.tsx,${capture}.*.test.tsx,${capture}.stories.tsx,${capture}.module.css",
     "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb",
     "tsconfig.json": "tsconfig.*.json"
   },
@@ -430,7 +429,6 @@
   "editor.suggest.showKeywords": false,
   "editor.suggest.showSnippets": false,
   "editor.suggest.showWords": false,
-  "editor.suggestSelection": "recentlyUsed",
 
   "evenBetterToml.formatter.allowedBlankLines": 2,
   "evenBetterToml.formatter.arrayAutoCollapse": false,
@@ -2229,5 +2227,6 @@
     ]
   },
   // --------------------------------------- New/Keybind Toggle -----------------------------------
+  // "editor.mouseWheelScrollSensitivity": 3,
   "git.blame.editorDecoration.enabled": false
 }
