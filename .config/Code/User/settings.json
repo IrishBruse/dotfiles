@@ -1,28 +1,4 @@
 {
-  // -------------------------------------------- Fonts -------------------------------------------
-
-  "editor.fontLigatures": true,
-  "editor.fontFamily": "Cascadia Code",
-  "editor.fontSize": 12,
-
-  "debug.console.fontFamily": "Cascadia Mono",
-  "debug.console.fontSize": 12,
-
-  "terminal.integrated.fontFamily": "Cascadia Mono",
-  "terminal.integrated.fontSize": 12,
-
-  // ----------------------------------------- Visual Look ----------------------------------------
-
-  "workbench.colorTheme": "Empty Dark",
-  "workbench.iconTheme": "material-icon-theme",
-  "workbench.tree.indent": 20,
-
-  "workbench.productIconTheme": "material-product-icons",
-  "material-icon-theme.activeIconPack": "react_redux",
-  "material-icon-theme.folders.color": "#ABB2BF",
-  "material-icon-theme.hidesExplorerArrows": true,
-  "material-icon-theme.saturation": 1,
-
   "editor.foldingHighlight": false,
   "breadcrumbs.enabled": false,
 
@@ -30,7 +6,6 @@
   "window.menuBarVisibility": "hidden",
   "window.commandCenter": false,
   "window.title": "${folderName}",
-  "window.titleSeparator": " - ",
 
   "workbench.activityBar.location": "top",
   "workbench.editor.enablePreview": false,
@@ -223,8 +198,6 @@
 
   // ----------------------------------------- Languages ------------------------------------------
 
-  // -------------------------------------------- Misc --------------------------------------------
-
   "[csharp]": {
     "editor.maxTokenizationLineLength": 2500
   },
@@ -265,6 +238,7 @@
   },
 
   // -------------------------------------------- CSharp ------------------------------------------
+
   "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": true,
   "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": true,
   "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": true,
@@ -284,6 +258,7 @@
   "dotnetAcquisitionExtension.enableTelemetry": false,
 
   // -------------------------------------------- Lua ---------------------------------------------
+
   "Lua.codeLens.enable": true,
   "Lua.diagnostics.enable": false,
   "Lua.hint.enable": true,
@@ -291,6 +266,7 @@
   "Lua.semantic.keyword": true,
 
   // --------------------------------- TypeScript/JavaScript --------------------------------------
+
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -316,6 +292,7 @@
 
   "typescript.surveys.enabled": false,
   "typescript.implementationsCodeLens.enabled": true,
+  "typescript.tsserver.maxTsServerMemory": 4096,
 
   "typescript.inlayHints.enumMemberValues.enabled": true,
   "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
@@ -337,15 +314,23 @@
   "javascript.referencesCodeLens.showOnAllFunctions": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
 
-  // ----------------------------------------- Go ------------------------------------------
+  // ----------------------------------------- Go -------------------------------------------------
 
   "[go]": {
     "editor.suggest.showSnippets": true
   },
 
-  // ----------------------------------------- Extensions -----------------------------------------
+  // ----------------------------------------- Toml -----------------------------------------------
+
+  "evenBetterToml.formatter.allowedBlankLines": 2,
+  "evenBetterToml.formatter.arrayAutoCollapse": false,
+  "evenBetterToml.schema.links": true,
+  "evenBetterToml.semanticTokens": true,
+
+  // ---------------------------------------- Extensions ------------------------------------------
 
   // ----------------------------------------- errorLens ------------------------------------------
+
   "errorLens.enabledDiagnosticLevels": ["warning", "error"],
   "errorLens.fontWeight": "500",
   "errorLens.gutterIconsEnabled": false,
@@ -356,16 +341,28 @@
   "errorLens.replaceLinebreaksSymbol": "⏎",
 
   // ----------------------------------------- hexeditor ------------------------------------------
+
   "hexeditor.columnWidth": 32,
   "hexeditor.defaultEndianness": "little",
   "hexeditor.inspectorType": "aside",
   "hexeditor.showDecodedText": true,
 
-  // -------------------------------------------- Unsorted ----------------------------------------
+  // -------------------------------------------- Testing -----------------------------------------
+
+  "jest.runMode": {
+    "coverage": false,
+    "deferred": true,
+    "showInlineError": false,
+    "type": "on-demand"
+  },
+  "jest.shell": "fish",
 
   "testing.coverageToolbarEnabled": true,
   "testing.displayedCoveragePercent": "totalCoverage",
   "testing.showCoverageInExplorer": true,
+
+  // -------------------------------------------- Unsorted ----------------------------------------
+
   "window.closeWhenEmpty": false,
   "window.confirmSaveUntitledWorkspace": false,
   "window.newWindowDimensions": "maximized",
@@ -374,7 +371,6 @@
   "workbench.editor.decorations.colors": false,
 
   "workbench.list.multiSelectModifier": "alt",
-  "xml.format.maxLineWidth": 0,
 
   "cfnLint.validateUsingJsonSchema": true,
 
@@ -430,11 +426,6 @@
   "editor.suggest.showSnippets": false,
   "editor.suggest.showWords": false,
 
-  "evenBetterToml.formatter.allowedBlankLines": 2,
-  "evenBetterToml.formatter.arrayAutoCollapse": false,
-  "evenBetterToml.schema.links": true,
-  "evenBetterToml.semanticTokens": true,
-
   "explorer.compactFolders": true,
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
@@ -453,15 +444,29 @@
   "gitlens.liveshare.allowGuestAccess": false,
   "gitlens.liveshare.enabled": false,
 
-  "jest.runMode": {
-    "coverage": false,
-    "deferred": true,
-    "showInlineError": false,
-    "type": "on-demand"
-  },
-  "jest.shell": "fish",
-
   // -------------------------------------------- Theme -------------------------------------------
+
+  "editor.fontLigatures": true,
+
+  "editor.inlineSuggest.fontFamily": "Cascadia Mono",
+  "editor.fontFamily": "Cascadia Code",
+  "editor.fontSize": 12,
+
+  "debug.console.fontFamily": "Cascadia Mono",
+  "debug.console.fontSize": 12,
+
+  "terminal.integrated.fontFamily": "Cascadia Mono",
+  "terminal.integrated.fontSize": 12,
+
+  "workbench.colorTheme": "Empty Dark",
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.tree.indent": 20,
+
+  "workbench.productIconTheme": "material-product-icons",
+  "material-icon-theme.activeIconPack": "react",
+  "material-icon-theme.folders.color": "#ABB2BF",
+  "material-icon-theme.hidesExplorerArrows": true,
+  "material-icon-theme.saturation": 1,
 
   "vscode_custom_css.statusbar": false,
   "vscode_custom_css.imports": [
@@ -2227,6 +2232,9 @@
     ]
   },
   // --------------------------------------- New/Keybind Toggle -----------------------------------
-  // "editor.mouseWheelScrollSensitivity": 3,
-  "git.blame.editorDecoration.enabled": false
+  "editor.mouseWheelScrollSensitivity": 1,
+  "git.blame.editorDecoration.enabled": false,
+  "githubPullRequests.createOnPublishBranch": "never",
+  "debug.onTaskErrors": "debugAnyway",
+  "editor.codeActions.triggerOnFocusChange": true
 }
