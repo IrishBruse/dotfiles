@@ -6,7 +6,6 @@ switch (set -q OS && echo $OS || uname)
         alias sed="gsed"
         alias chrome "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --silent-debugger-extension-api 2> /dev/null"
         set -gx HOMEBREW_NO_ENV_HINTS 1
-        set -x fish_help_browser chrome
         alias neofetch fastfetch
 
     case Linux
@@ -14,7 +13,6 @@ switch (set -q OS && echo $OS || uname)
         fish_add_path -g ~/.local/share/fnm/
         alias neofetch neowofetch
         alias rm trash
-        set -x fish_help_browser google-chrome
 
         for opt in (command ls /opt/)
             fish_add_path -g "/opt/$opt"
@@ -38,8 +36,6 @@ set -gx JQ_COLORS "0;34:0;34:0;34:0;37:0;32:0;37:0;37:0;31"
 set -g __fish_git_prompt_showcolorhints 1
 set -g __fish_git_prompt_color_branch blue
 set -g fish_color_error red
-
-set -x BROWSER none
 
 abbr patch "npm version patch --force --git-tag-version=false"
 
@@ -134,6 +130,7 @@ end
 
 alias gsrp="git stash && git pull --rebase && git stash pop"
 
+alias pr='git ls-remote origin "pull/*/head" | grep $(git rev-parse HEAD) | awk -F"/" "{print $3}"'
 
 alias bat="bat --theme OneHalfDark --style grid,numbers"
 alias ls="eza -ax --icons=always --group-directories-first"
@@ -154,6 +151,7 @@ function nu
 end
 
 function nr --wraps "npm run"
+    set -lx BROWSER none
     command nr $argv
 end
 
