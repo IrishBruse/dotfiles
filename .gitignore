@@ -5,12 +5,6 @@ obj/
 
 .cinnamon/spices.cache
 
-
-.config/Code/User/snippets/javascript.json
-.config/Code/User/snippets/javascriptreact.json
-.config/Code/User/snippets/typescript.json
-.config/Code/User/snippets/typescriptreact.json
-
 .local/share/applications/mimeapps.list
 .local/share/applications/mimeinfo.cache
 .local/share/applications/google-chrome.desktop
