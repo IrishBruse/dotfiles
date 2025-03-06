@@ -193,7 +193,7 @@
   "git.pruneOnFetch": true,
   "git.replaceTagsWhenPull": true,
 
-  "githubPullRequests.fileListLayout": "flat",
+  "githubPullRequests.fileListLayout": "tree",
   "githubPullRequests.pullBranch": "always",
 
   // ----------------------------------------- Languages ------------------------------------------
@@ -448,17 +448,18 @@
 
   "editor.fontLigatures": true,
 
-  "editor.inlineSuggest.fontFamily": "Cascadia Mono",
   "editor.fontFamily": "Cascadia Code",
-  "editor.fontSize": 12,
 
-  "debug.console.fontFamily": "Cascadia Mono",
-  "debug.console.fontSize": 12,
-
+  "editor.inlineSuggest.fontFamily": "Cascadia Mono",
   "terminal.integrated.fontFamily": "Cascadia Mono",
+  "debug.console.fontFamily": "Cascadia Mono",
+
+  "editor.fontSize": 12,
+  "debug.console.fontSize": 12,
   "terminal.integrated.fontSize": 12,
 
-  "workbench.colorTheme": "Empty Dark",
+  "workbench.colorTheme": "Empty Dark Theme",
+
   "workbench.iconTheme": "material-icon-theme",
   "workbench.tree.indent": 20,
 
