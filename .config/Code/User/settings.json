@@ -1472,7 +1472,12 @@
         "scope": [
           "variable.other.readwrite.js",
           "variable.other.readwrite.ts",
-          "variable.other.readwrite.tsx"
+          "variable.other.readwrite.jsx",
+          "variable.other.readwrite.tsx",
+          "variable.other.property.js",
+          "variable.other.property.ts",
+          "variable.other.property.jsx",
+          "variable.other.property.tsx"
         ],
         "settings": {
           "foreground": "#ABB2BF"
@@ -1590,9 +1595,10 @@
       },
       {
         "scope": [
-          "source.js punctuation.accessor",
-          "source.ts punctuation.accessor",
-          "source.tsx punctuation.accessor"
+          "punctuation.accessor.js",
+          "punctuation.accessor.ts",
+          "punctuation.accessor.jsx",
+          "punctuation.accessor.tsx"
         ],
         "settings": {
           "foreground": "#ABB2BF"
@@ -1602,7 +1608,8 @@
         "scope": [
           "punctuation.terminator.statement.js",
           "punctuation.terminator.statement.ts",
-          "punctuation.terminator.statement.tsx"
+          "punctuation.terminator.statement.tsx",
+          "punctuation.terminator.statement.jsx"
         ],
         "settings": {
           "foreground": "#ABB2BF"
