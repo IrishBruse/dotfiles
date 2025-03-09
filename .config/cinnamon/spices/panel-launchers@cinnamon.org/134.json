@@ -13,7 +13,8 @@
         "value": [
             "firefox.desktop",
             "google-chrome.desktop",
-            "code.desktop"
+            "code.desktop",
+            "net.lutris.Lutris.desktop"
         ]
     },
     "allow-dragging": {

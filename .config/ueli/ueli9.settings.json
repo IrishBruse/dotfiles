@@ -1,5 +1,7 @@
 {
+    "appearance.searchBarSize": "large",
     "appearance.searchResultListLayout": "compact",
+    "appearance.themeName": "Fluent UI Web",
     "extension[SimpleFileSearch].folders": [
         {
             "id": "812997fa-ae86-49bb-8c6b-92a1e4dd65bc",
@@ -9,10 +11,12 @@
         }
     ],
     "extension[VSCode].command": "code %s",
+    "extension[VSCode].debugLog": true,
     "extension[VSCode].prefix": "",
     "extension[VSCode].showPath": false,
     "extensions.enabledExtensionIds": [
         "VSCode",
+        "SystemCommands",
         "ApplicationSearch",
         "UeliCommand"
     ],

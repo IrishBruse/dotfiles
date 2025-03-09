@@ -43,9 +43,6 @@
   "files.trimFinalNewlines": true,
   "files.trimTrailingWhitespace": true,
 
-  "git.decorations.enabled": false,
-  "git.mergeEditor": true,
-
   "extensions.ignoreRecommendations": true,
   "emmet.showSuggestionsAsSnippets": true,
   "notebook.lineNumbers": "on",
@@ -134,7 +131,7 @@
     }
   },
   "terminal.integrated.defaultProfile.osx": "fish",
-  "terminal.external.linuxExec": "/home/econn/.local/bin/ghostty",
+  "terminal.external.linuxExec": "/usr/bin/ghostty",
   "terminal.external.osxExec": "Ghostty.app",
   "terminal.integrated.automationProfile.linux": {
     "args": ["-li"],
@@ -181,6 +178,10 @@
   "scm.diffDecorationsIgnoreTrimWhitespace": "true",
   "scm.providerCountBadge": "auto",
 
+  "githubPullRequests.fileListLayout": "tree",
+  "githubPullRequests.pullBranch": "always",
+  "githubPullRequests.createOnPublishBranch": "never",
+
   "git.allowNoVerifyCommit": true,
   "git.autofetch": true,
   "git.confirmNoVerifyCommit": false,
@@ -193,8 +194,16 @@
   "git.pruneOnFetch": true,
   "git.replaceTagsWhenPull": true,
 
-  "githubPullRequests.fileListLayout": "tree",
-  "githubPullRequests.pullBranch": "always",
+  "git.decorations.enabled": false,
+  "git.mergeEditor": true,
+
+  "git.blame.editorDecoration.enabled": false,
+
+  "git.showActionButton": {
+    "commit": false,
+    "publish": true,
+    "sync": false
+  },
 
   // ----------------------------------------- Languages ------------------------------------------
 
@@ -447,7 +456,6 @@
   // -------------------------------------------- Theme -------------------------------------------
 
   "editor.fontLigatures": true,
-
   "editor.fontFamily": "Cascadia Code",
 
   "editor.inlineSuggest.fontFamily": "Cascadia Mono",
@@ -469,11 +477,10 @@
   "material-icon-theme.hidesExplorerArrows": true,
   "material-icon-theme.saturation": 1,
 
-  "vscode_custom_css.statusbar": false,
-  "vscode_custom_css.imports": [
+  "custom_css_hot_reload.hotReloadMode": "onSave",
+  "custom_css_hot_reload.imports": [
     "file://${userHome}/dotfiles/vscode/custom.css",
-    "file://${userHome}/dotfiles/vscode/icons.css",
-    "file://${userHome}/dotfiles/vscode/vscode.js"
+    "file://${userHome}/dotfiles/vscode/icons.css"
   ],
 
   "workbench.colorCustomizations": {
@@ -887,7 +894,12 @@
         }
       },
       {
-        "scope": ["support.type.primitive.ts", "support.type.primitive.tsx"],
+        "scope": [
+          "support.type.primitive.ts",
+          "support.type.primitive.tsx",
+          "support.type.builtin.ts",
+          "support.type.builtin.tsx"
+        ],
         "settings": {
           "foreground": "#56B6C2"
         }
@@ -2241,8 +2253,6 @@
   },
   // --------------------------------------- New/Keybind Toggle -----------------------------------
   "editor.mouseWheelScrollSensitivity": 1,
-  "git.blame.editorDecoration.enabled": false,
-  "githubPullRequests.createOnPublishBranch": "never",
   "debug.onTaskErrors": "debugAnyway",
   "editor.codeActions.triggerOnFocusChange": true
 }

@@ -13,6 +13,7 @@ switch (set -q OS && echo $OS || uname)
         fish_add_path -g ~/.local/share/fnm/
         alias neofetch neowofetch
         alias rm trash
+        set -x BROWSER google-chrome
 
         for opt in (command ls /opt/)
             fish_add_path -g "/opt/$opt"

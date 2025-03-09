@@ -1,0 +1,15 @@
+[Nemo Action]
+
+Active=true
+Name=Paste Image
+Comment=Paste Image from clipboard
+Exec=bash -c 'xclip -selection clipboard -t image/png -o > %P/clipboard.png'
+
+Icon-Name=edit-paste
+
+Selection=none
+Extensions=dir
+
+EscapeSpaces=false
+
+terminal=false

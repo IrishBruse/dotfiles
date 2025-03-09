@@ -42,6 +42,15 @@
     ],
     "description": "jest test definition"
   },
+  "func": {
+    "prefix": "func",
+    "body": [
+      "const name = () => {",
+      "  ${1:// }",
+      "}",
+      ""
+    ]
+  },
   "describe": {
     "prefix": "describe",
     "description": "jest describe definition",
@@ -49,15 +58,6 @@
       "describe('$1', () => {",
       "  // $0",
       "})",
-      ""
-    ]
-  },
-  "func": {
-    "prefix": "func",
-    "body": [
-      "const name = () => {",
-      "  ${1:// }",
-      "}",
       ""
     ]
   },
