@@ -193,6 +193,8 @@
   "git.openRepositoryInParentFolders": "always",
   "git.pruneOnFetch": true,
   "git.replaceTagsWhenPull": true,
+  "git.useEditorAsCommitInput": false,
+  "git.showCommitInput": false,
 
   "git.decorations.enabled": false,
   "git.mergeEditor": true,

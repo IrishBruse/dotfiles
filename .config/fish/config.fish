@@ -129,7 +129,9 @@ function fnm
     command fnm $argv
 end
 
+# Git
 alias gsrp="git stash && git pull --rebase && git stash pop"
+abbr gc "git commit"
 
 alias pr='git ls-remote origin "pull/*/head" | grep $(git rev-parse HEAD) | awk -F"/" "{print $3}"'
 
