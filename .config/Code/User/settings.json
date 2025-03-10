@@ -38,6 +38,7 @@
   "editor.wordSeparators": "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?_",
   "editor.smoothScrolling": true,
   "editor.mouseWheelScrollSensitivity": 1,
+  "editor.mouseWheelScrollSensitivity": 1,
 
   "explorer.decorations.badges": false,
 
@@ -447,8 +448,6 @@
   "explorer.incrementalNaming": "smart",
   "explorer.openEditors.visible": 8,
   "explorer.sortOrder": "type",
-  "fish.path.fish": "/opt/homebrew/bin/fish",
-  "fish.path.fish_indent": "/opt/homebrew/bin/fish_indent",
 
   "gitlens.codeLens.enabled": false,
   "gitlens.currentLine.enabled": false,
@@ -456,6 +455,8 @@
   "gitlens.launchpad.indicator.polling.enabled": false,
   "gitlens.liveshare.allowGuestAccess": false,
   "gitlens.liveshare.enabled": false,
+  "fish.path.fish": "/usr/bin/fish",
+  "fish.path.fish_indent": "/usr/bin/fish_indent",
 
   // -------------------------------------------- Theme -------------------------------------------
 

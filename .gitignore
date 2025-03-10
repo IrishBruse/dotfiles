@@ -1,6 +1,3 @@
-bin/
-obj/
-
 .DS_STORE
 
 .cinnamon/spices.cache
@@ -31,4 +28,5 @@ local.fish
 .config/jgh/config.json
 
 .hurl/
-patchStart.js
+
+.gitconfig
