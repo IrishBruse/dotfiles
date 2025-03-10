@@ -5,6 +5,7 @@
   "window.titleBarStyle": "custom",
   "window.menuBarVisibility": "hidden",
   "window.commandCenter": false,
+  "chat.commandCenter.enabled": false,
   "window.title": "${folderName}",
 
   "workbench.activityBar.location": "top",
@@ -36,6 +37,7 @@
   "editor.semanticHighlighting.enabled": true,
   "editor.wordSeparators": "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?_",
   "editor.smoothScrolling": true,
+  "editor.mouseWheelScrollSensitivity": 1,
 
   "explorer.decorations.badges": false,
 
@@ -2254,7 +2256,27 @@
     ]
   },
   // --------------------------------------- New/Keybind Toggle -----------------------------------
-  "editor.mouseWheelScrollSensitivity": 1,
   "debug.onTaskErrors": "debugAnyway",
-  "editor.codeActions.triggerOnFocusChange": true
+  "editor.codeActions.triggerOnFocusChange": true,
+  "platformSettings.autoLoad": true,
+  "platformSettings.platforms": {
+    "linux": {
+      "nodes": {
+        "editor.mouseWheelScrollSensitivity": 2,
+
+        "fish.path.fish": "/usr/bin/fish",
+        "fish.path.fish_indent": "/usr/bin/fish_indent"
+      }
+    },
+    "darwin": {
+      "nodes": {
+        "editor.mouseWheelScrollSensitivity": 1,
+
+        "fish.path.fish": "/opt/homebrew/bin/fish",
+        "fish.path.fish_indent": "/opt/homebrew/bin/fish_indent"
+      }
+    }
+  },
+  "platformSettings.condition": "os.release()",
+  "smartersemicolon.enable": false
 }

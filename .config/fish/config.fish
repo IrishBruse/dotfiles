@@ -130,8 +130,18 @@ function fnm
 end
 
 # Git
-alias gsrp="git stash && git pull --rebase && git stash pop"
+abbr gsrp="git stash && git pull --rebase && git stash pop"
 abbr gc "git commit"
+abbr clone "git clone --recursive"
+
+function gcp
+    if test (count $argv) -gt 0
+        git commit -m "$argv"
+    else
+        git commit
+    end
+    git push
+end
 
 alias pr='git ls-remote origin "pull/*/head" | grep $(git rev-parse HEAD) | awk -F"/" "{print $3}"'
 
@@ -158,7 +168,5 @@ function nr --wraps "npm run"
     command nr $argv
 end
 
-abbr clone "git clone --recursive"
-abbr gsrp "git stash && git pull --rebase && git stash pop"
 
 abbr jc "jira issue create -t=Task -a=econneely --custom feature-team=dynaFormRaptors --web"
