@@ -131,17 +131,16 @@ end
 
 # Git
 abbr gsrp="git stash && git pull --rebase && git stash pop"
-abbr gc "git commit"
 abbr clone "git clone --recursive"
 
-function gcp
+function gc
     if test (count $argv) -gt 0
         git commit -m "$argv"
     else
         git commit
     end
-    git push
 end
+abbr gcp "gc && git push"
 
 alias pr='git ls-remote origin "pull/*/head" | grep $(git rev-parse HEAD) | awk -F"/" "{print $3}"'
 
