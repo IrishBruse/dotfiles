@@ -1,0 +1,22 @@
+[init]
+	defaultBranch = main
+
+[user]
+    name = Ethan Conneely
+    email = mail@example.com
+	signingKey = 123foo
+
+[core]
+    editor = code --wait
+
+[branch]
+	sort = -committerdate
+
+[safe]
+	directory = ~/git/*
+
+[gpg]
+	program = /usr/local/bin/gpg
+
+[commit]
+	gpgsign = true

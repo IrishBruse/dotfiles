@@ -38,7 +38,6 @@
   "editor.wordSeparators": "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?_",
   "editor.smoothScrolling": true,
   "editor.mouseWheelScrollSensitivity": 1,
-  "editor.mouseWheelScrollSensitivity": 1,
 
   "explorer.decorations.badges": false,
 
@@ -142,7 +141,7 @@
   },
   "terminal.integrated.automationProfile.osx": {
     "args": ["-li"],
-    "path": "fish"
+    "path": "/opt/homebrew/bin/fish"
   },
 
   "terminal.explorerKind": "both",
@@ -455,8 +454,8 @@
   "gitlens.launchpad.indicator.polling.enabled": false,
   "gitlens.liveshare.allowGuestAccess": false,
   "gitlens.liveshare.enabled": false,
-  "fish.path.fish": "/usr/bin/fish",
-  "fish.path.fish_indent": "/usr/bin/fish_indent",
+  "fish.path.fish": "/opt/homebrew/bin/fish",
+  "fish.path.fish_indent": "/opt/homebrew/bin/fish_indent",
 
   // -------------------------------------------- Theme -------------------------------------------
 

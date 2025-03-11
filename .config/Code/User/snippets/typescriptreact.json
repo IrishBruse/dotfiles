@@ -85,6 +85,20 @@
       ""
     ]
   },
+  "reduce": {
+    "prefix": "reduce",
+    "body": [
+      "Object.keys($1).reduce(",
+      "  (acc, ${2:curr}) => ({",
+      "    ...acc,",
+      "    [${2:curr}]: \"placeholder\",",
+      "  }),",
+      "  {}",
+      ");$0",
+      ""
+    ],
+    "description": "reduce using keys"
+  },
   "AUTO": {
     "description": "GENERATED"
   }
