@@ -52,14 +52,6 @@
   "update.mode": "none",
   "references.preferredLocation": "view",
 
-  "commands.commands": [
-    {
-      "command": "pr.openPullsWebsite",
-      "text": "$(github) View",
-      "tooltip": "View PRs"
-    }
-  ],
-
   //-----------------------------------------------------------------------------------------------
 
   "workbench.editorAssociations": {
@@ -1886,6 +1878,17 @@
           "meta.template.expression.jsx string.quoted punctuation.definition",
           "meta.template.expression.ts string.quoted punctuation.definition",
           "meta.template.expression.tsx string.quoted punctuation.definition"
+        ],
+        "settings": {
+          "foreground": "#98C379"
+        }
+      },
+      {
+        "scope": [
+          "meta.template.expression.js punctuation.definition.string",
+          "meta.template.expression.jsx punctuation.definition.string",
+          "meta.template.expression.ts punctuation.definition.string",
+          "meta.template.expression.tsx punctuation.definition.string"
         ],
         "settings": {
           "foreground": "#98C379"

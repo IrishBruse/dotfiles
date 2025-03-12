@@ -5886,14 +5886,6 @@
         }
     },
     {
-        "when": "!terminalTextSelectedInFocused && terminalFocus",
-        "key": "cmd+c",
-        "command": "workbench.action.terminal.sendSequence",
-        "args": {
-            "text": "\u0003"
-        }
-    },
-    {
         "when": "terminalFocus",
         "key": "ctrl+alt+left",
         "command": "workbench.action.terminal.sendSequence",
