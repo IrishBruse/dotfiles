@@ -132,6 +132,7 @@ end
 # Git
 abbr gsrp "git stash && git pull --rebase && git stash pop"
 abbr clone "git clone --recursive"
+abbr gs "git status"
 
 function gc
     if test (count $argv) -gt 0
@@ -146,8 +147,6 @@ function gcp
     git push
 end
 
-alias pr='git ls-remote origin "pull/*/head" | grep $(git rev-parse HEAD) | awk -F"/" "{print $3}"'
-
 alias bat="bat --theme OneHalfDark --style grid,numbers"
 alias ls="eza -ax --icons=always --group-directories-first"
 alias ll="eza -al --icons=always --group-directories-first"
@@ -158,9 +157,15 @@ alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LD
 alias showkey="fish_key_reader --verbose"
 
 # Node alias
-alias nid "ni -D"
-
 abbr nvm fnm
+
+function ni --wraps "npm install"
+    npm install --save $argv
+end
+
+function nid --wraps "npm install"
+    npm install --save-dev $argv
+end
 
 function nu
     npm install --save $argv[1]"@latest"
@@ -168,7 +173,7 @@ end
 
 function nr --wraps "npm run"
     set -lx BROWSER none
-    command nr $argv
+    npm run $argv
 end
 
 abbr jc "jira issue create -t=Task -a=econneely --custom feature-team=dynaFormRaptors --web"

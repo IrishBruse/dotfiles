@@ -1,7 +1,7 @@
 {
   "window.title": "DOTFILES",
   "[css]": {
-    "editor.defaultFormatter": "vscode.css-language-features"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "git.enableCommitSigning": false,
   "git.ignoreLimitWarning": true

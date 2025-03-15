@@ -37,7 +37,7 @@
   "editor.semanticHighlighting.enabled": true,
   "editor.wordSeparators": "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?_",
   "editor.smoothScrolling": true,
-  "editor.mouseWheelScrollSensitivity": 1,
+  "editor.mouseWheelScrollSensitivity": 2,
 
   "explorer.decorations.badges": false,
 
@@ -164,7 +164,7 @@
   "scm.alwaysShowRepositories": true,
   "scm.countBadge": "focused",
   "scm.defaultViewMode": "tree",
-  "scm.defaultViewSortKey": "name",
+  "scm.defaultViewSortKey": "status",
   "scm.diffDecorations": "none",
   "scm.diffDecorationsGutterAction": "none",
   "scm.diffDecorationsGutterVisibility": "hover",
@@ -180,26 +180,19 @@
   "git.autofetch": true,
   "git.confirmNoVerifyCommit": false,
   "git.confirmSync": false,
+  "git.decorations.enabled": false,
   "git.enableCommitSigning": true,
   "git.enableSmartCommit": true,
   "git.fetchOnPull": true,
   "git.inputValidation": true,
+  "git.mergeEditor": true,
   "git.openRepositoryInParentFolders": "always",
   "git.pruneOnFetch": true,
   "git.replaceTagsWhenPull": true,
-  "git.useEditorAsCommitInput": false,
   "git.showCommitInput": false,
-
-  "git.decorations.enabled": false,
-  "git.mergeEditor": true,
+  "git.useEditorAsCommitInput": false,
 
   "git.blame.editorDecoration.enabled": false,
-
-  "git.showActionButton": {
-    "commit": false,
-    "publish": true,
-    "sync": false
-  },
 
   // ----------------------------------------- Languages ------------------------------------------
 
@@ -209,14 +202,14 @@
   "[css]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[ini]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml"
-  },
-  "[java]": {
-    "editor.suggest.snippetsPreventQuickSuggestions": false
   },
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -231,9 +224,6 @@
     "editor.unicodeHighlight.invisibleCharacters": false,
     "files.trimFinalNewlines": false,
     "files.trimTrailingWhitespace": false
-  },
-  "[scss]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[snippets]": {
     "files.insertFinalNewline": false
@@ -272,20 +262,7 @@
 
   // --------------------------------- TypeScript/JavaScript --------------------------------------
 
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[javascriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.codeActionsOnSave": {
-      "source.fixAll": "explicit",
-      "source.fixAll.eslint": "explicit"
-    }
-  },
-  "[typescriptreact]": {
+  "[javascript][typescript][javascriptreact][typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.codeActionsOnSave": {
       "source.fixAll": "explicit",
@@ -293,7 +270,13 @@
     }
   },
 
-  "typescriptExplorer.typeTree.view.show.typeParameters": false,
+  "eslint.codeActionsOnSave.rules": [
+    "!@typescript-eslint/no-unused-expressions",
+    "*"
+  ],
+
+  "typescript.preferences.autoImportSpecifierExcludeRegexes": ["@mf-types"],
+  "javascript.preferences.autoImportSpecifierExcludeRegexes": ["@mf-types"],
 
   "typescript.surveys.enabled": false,
   "typescript.implementationsCodeLens.enabled": true,
@@ -304,17 +287,14 @@
   "typescript.inlayHints.parameterTypes.enabled": true,
   "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
   "typescript.inlayHints.variableTypes.enabled": true,
-  "typescript.preferences.autoImportSpecifierExcludeRegexes": ["@mf-types"],
   "typescript.referencesCodeLens.enabled": true,
   "typescript.referencesCodeLens.showOnAllFunctions": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
 
-  "javascript.inlayHints.enumMemberValues.enabled": true,
   "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
   "javascript.inlayHints.parameterTypes.enabled": true,
   "javascript.inlayHints.propertyDeclarationTypes.enabled": true,
   "javascript.inlayHints.variableTypes.enabled": true,
-  "javascript.preferences.autoImportSpecifierExcludeRegexes": ["@mf-types"],
   "javascript.referencesCodeLens.enabled": true,
   "javascript.referencesCodeLens.showOnAllFunctions": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
@@ -438,7 +418,6 @@
   "explorer.copyRelativePathSeparator": "/",
   "explorer.incrementalNaming": "smart",
   "explorer.openEditors.visible": 8,
-  "explorer.sortOrder": "type",
 
   "gitlens.codeLens.enabled": false,
   "gitlens.currentLine.enabled": false,
@@ -446,8 +425,8 @@
   "gitlens.launchpad.indicator.polling.enabled": false,
   "gitlens.liveshare.allowGuestAccess": false,
   "gitlens.liveshare.enabled": false,
-  "fish.path.fish": "/opt/homebrew/bin/fish",
-  "fish.path.fish_indent": "/opt/homebrew/bin/fish_indent",
+  "fish.path.fish": "/usr/bin/fish",
+  "fish.path.fish_indent": "/usr/bin/fish_indent",
 
   // -------------------------------------------- Theme -------------------------------------------
 
@@ -2281,5 +2260,7 @@
     }
   },
   "platformSettings.condition": "os.release()",
-  "smartersemicolon.enable": false
+  "smartersemicolon.enable": false,
+  "settingsSync.ignoredSettings": ["editor.mouseWheelScrollSensitivity"],
+  "explorer.sortOrder": "foldersNestsFiles"
 }
