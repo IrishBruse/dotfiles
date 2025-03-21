@@ -133,6 +133,7 @@ end
 abbr gsrp "git stash && git pull --rebase && git stash pop"
 abbr clone "git clone --recursive"
 abbr gs "git status"
+abbr ga "git add ."
 
 function gc
     if test (count $argv) -gt 0

@@ -196,29 +196,16 @@
 
   // ----------------------------------------- Languages ------------------------------------------
 
+  "[css][scss][html][json][jsonc][yaml][markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "[csharp]": {
     "editor.maxTokenizationLineLength": 2500
-  },
-  "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[scss]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[ini]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml"
   },
-  "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
   "[markdown]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.pasteAs.enabled": true,
     "editor.unicodeHighlight.ambiguousCharacters": false,
     "editor.unicodeHighlight.invisibleCharacters": false,
@@ -227,9 +214,6 @@
   },
   "[snippets]": {
     "files.insertFinalNewline": false
-  },
-  "[yaml]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
 
   // -------------------------------------------- CSharp ------------------------------------------
@@ -265,7 +249,6 @@
   "[javascript][typescript][javascriptreact][typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.codeActionsOnSave": {
-      "source.fixAll": "explicit",
       "source.fixAll.eslint": "explicit"
     }
   },
@@ -571,7 +554,7 @@
     "statusBar.background": "#21252b",
     "statusBar.debuggingBackground": "#21252b",
     "statusBar.foreground": "#9da5b4",
-    "statusBar.noFolderBackground": "#00000000",
+    "statusBar.noFolderBackground": "#21252b",
     "statusBarItem.hoverBackground": "#2c313a",
 
     "tab.activeBackground": "#282c34",
@@ -1258,6 +1241,17 @@
           "source.js keyword.operator.new",
           "source.js keyword.operator.typeof",
           "source.js keyword.operator.void"
+        ],
+        "settings": {
+          "foreground": "#C678DD"
+        }
+      },
+      {
+        "scope": [
+          "variable.language.this.js",
+          "variable.language.this.ts",
+          "variable.language.this.jsx",
+          "variable.language.this.tsx"
         ],
         "settings": {
           "foreground": "#C678DD"
