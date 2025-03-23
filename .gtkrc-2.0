@@ -8,3 +8,9 @@ style "cs-scrollbar-style" {
 
 class "GtkScrollbar" style "cs-scrollbar-style"
 ###############################################
+
+gtk-menu-popup-delay = 0
+gtk-menu-popdown-delay = 0
+gtk-menu-bar-popup-delay = 0
+gtk-enable-animations = 0
+gtk-timeout-expand = 10
