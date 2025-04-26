@@ -81,7 +81,8 @@
     "fish_variables": "fish",
     "grammer": "plaintext",
     "keybinds": "ini",
-    "local": "ini"
+    "local": "ini",
+    "*.glsl": "bat"
   },
   "files.exclude": {
     "**/.git": true,
@@ -107,7 +108,8 @@
     "*.ts": "${capture}.spec.ts,${capture}.test.ts,${capture}.*.test.ts,${capture}.stories.ts",
     "*.tsx": "${capture}.spec.tsx,${capture}.test.tsx,${capture}.*.test.tsx,${capture}.stories.tsx,${capture}.module.css",
     "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb",
-    "tsconfig.json": "tsconfig.*.json"
+    "tsconfig.json": "tsconfig.*.json",
+    "*.glsl": "${capture}.vert,${capture}.frag"
   },
 
   // -------------------------------------------- Terminal ----------------------------------------
@@ -176,15 +178,20 @@
   "githubPullRequests.pullBranch": "always",
   "githubPullRequests.createOnPublishBranch": "never",
 
+  "editor.autoClosingComments": "always",
+  "comments.openView": "never",
+
+  "githubPullRequests.commentExpandState": "collapseAll",
+
   "git.allowNoVerifyCommit": true,
   "git.autofetch": true,
+  "git.autoStash": true,
   "git.confirmNoVerifyCommit": false,
   "git.confirmSync": false,
   "git.decorations.enabled": false,
   "git.enableCommitSigning": true,
   "git.enableSmartCommit": true,
   "git.fetchOnPull": true,
-  "git.inputValidation": true,
   "git.mergeEditor": true,
   "git.openRepositoryInParentFolders": "always",
   "git.pruneOnFetch": true,
@@ -350,7 +357,7 @@
   "debug.saveBeforeStart": "nonUntitledEditorsInActiveGroup",
   "debug.showInStatusBar": "never",
   "diffEditor.codeLens": false,
-  "diffEditor.ignoreTrimWhitespace": false,
+  "diffEditor.ignoreTrimWhitespace": true,
   "diffEditor.maxComputationTime": 0,
   "diffEditor.renderSideBySide": true,
   "diffEditor.useInlineViewWhenSpaceIsLimited": false,
@@ -490,6 +497,8 @@
     "editorInlayHint.background": "#2c313a",
     "editorInlayHint.foreground": "#636e83",
 
+    "editor.wordHighlightBackground": "#0000",
+
     "editorLineNumber.activeForeground": "#abb2bf",
     "editorLineNumber.foreground": "#636e83",
 
@@ -625,6 +634,30 @@
   },
   "editor.tokenColorCustomizations": {
     "textMateRules": [
+      {
+        "scope": "log.error",
+        "settings": {
+          "foreground": "#E06C75"
+        }
+      },
+      {
+        "scope": "log.warning",
+        "settings": {
+          "foreground": "#D19A66"
+        }
+      },
+      {
+        "scope": "log.info",
+        "settings": {
+          "foreground": "#61AFEF"
+        }
+      },
+      {
+        "scope": "log.debug",
+        "settings": {
+          "foreground": "#C678DD"
+        }
+      },
       {
         "scope": ["comment"],
         "settings": {
@@ -2257,5 +2290,6 @@
   "platformSettings.condition": "os.release()",
   "smartersemicolon.enable": false,
   "settingsSync.ignoredSettings": ["editor.mouseWheelScrollSensitivity"],
-  "explorer.sortOrder": "foldersNestsFiles"
+  "explorer.sortOrder": "foldersNestsFiles",
+  "keyboard.touchbar.enabled": false
 }

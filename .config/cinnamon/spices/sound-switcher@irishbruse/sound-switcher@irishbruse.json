@@ -1,0 +1,40 @@
+{
+    "section1": {
+        "type": "section",
+        "description": "Menu"
+    },
+    "toggleKey": {
+        "type": "keybinding",
+        "description": "Audio Toggle",
+        "default": "<Super>l",
+        "tooltip": "Set keybinding(s) to toggle active audio device.",
+        "value": "<Super>l"
+    },
+    "outputDeviceA": {
+        "type": "entry",
+        "default": "",
+        "description": "Output Device A",
+        "tooltip": "Output Device A",
+        "value": "HDA Intel PCH - HDMI / DisplayPort 2"
+    },
+    "outputDeviceB": {
+        "type": "entry",
+        "default": "",
+        "description": "Output Device B",
+        "tooltip": "Output Device B",
+        "value": "[G533 Wireless Headset Dongle] - Digital Output (S/PDIF)"
+    },
+    "outputDeviceAIcon": {
+        "type": "iconfilechooser",
+        "default": "tv-symbolic",
+        "description": "Device A Icon",
+        "value": "tv"
+    },
+    "outputDeviceBIcon": {
+        "type": "iconfilechooser",
+        "default": "audio-headphones-symbolic",
+        "description": "Device B Icon",
+        "value": "audio-headphones-symbolic"
+    },
+    "__md5__": "82ba16811355e54c6ac956e17656adb4"
+}

@@ -11,9 +11,10 @@ switch (set -q OS && echo $OS || uname)
     case Linux
         alias apc="sudo chown -R $(whoami) '/usr/share/code/'"
         fish_add_path -g ~/.local/share/fnm/
-        alias neofetch neowofetch
+        alias neofetch fastfetch
         alias rm trash
         set -x BROWSER google-chrome
+        set -gx ANDROID_HOME /usr/lib/android-sdk
 
         for opt in (command ls /opt/)
             fish_add_path -g "/opt/$opt"
