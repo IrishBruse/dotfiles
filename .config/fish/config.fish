@@ -39,6 +39,8 @@ set -g __fish_git_prompt_showcolorhints 1
 set -g __fish_git_prompt_color_branch blue
 set -g fish_color_error red
 
+set -gx FORCE_COLOR true
+
 abbr patch "npm version patch --force --git-tag-version=false"
 
 function setgx

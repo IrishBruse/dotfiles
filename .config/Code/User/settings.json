@@ -37,7 +37,7 @@
   "editor.semanticHighlighting.enabled": true,
   "editor.wordSeparators": "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?_",
   "editor.smoothScrolling": true,
-  "editor.mouseWheelScrollSensitivity": 2,
+  "editor.mouseWheelScrollSensitivity": 1,
 
   "explorer.decorations.badges": false,
 
@@ -96,7 +96,7 @@
   "explorer.fileNesting.patterns": {
     ".env": ".env.*",
     ".gitignore": ".*",
-    "*": "${capture}.import",
+    "*": "${capture}.uid,${capture}.import",
     "*.db": "${capture}.${extname}-*",
     "*.db3": "${capture}.${extname}-*",
     "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
@@ -415,8 +415,8 @@
   "gitlens.launchpad.indicator.polling.enabled": false,
   "gitlens.liveshare.allowGuestAccess": false,
   "gitlens.liveshare.enabled": false,
-  "fish.path.fish": "/usr/bin/fish",
-  "fish.path.fish_indent": "/usr/bin/fish_indent",
+  "fish.path.fish": "/opt/homebrew/bin/fish",
+  "fish.path.fish_indent": "/opt/homebrew/bin/fish_indent",
 
   // -------------------------------------------- Theme -------------------------------------------
 
