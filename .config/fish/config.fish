@@ -40,6 +40,7 @@ set -g __fish_git_prompt_color_branch blue
 set -g fish_color_error red
 
 set -gx DOTNET_WATCH_RESTART_ON_RUDE_EDIT 1
+set -gx FORCE_COLOR true
 
 abbr patch "npm version patch --force --git-tag-version=false"
 
