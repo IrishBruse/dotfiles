@@ -5662,18 +5662,6 @@
         "when": "editorTextFocus"
     },
     {
-        "key": "ctrl+r",
-        "command": "workbench.action.quickOpen",
-        "args": "task ",
-        "when": "editorTextFocus&&!isDevelopment"
-    },
-    {
-        "key": "ctrl+g",
-        "command": "workbench.action.quickOpen",
-        "args": "@: ",
-        "when": "editorTextFocus"
-    },
-    {
         "key": "ctrl+i",
         "command": "editor.action.insertSnippet"
     },
@@ -5782,11 +5770,6 @@
         "command": "editor.action.autoFix",
         "key": "ctrl+shift+oem_period",
         "when": "textInputFocus && !editorReadonly && supportedCodeAction =~ /(\\s|^)quickfix\\b/"
-    },
-    {
-        "command": "editor.action.clipboardPasteAction",
-        "key": "ctrl+v",
-        "when": "!terminalFocus"
     },
     {
         "command": "references-view.findReferences",

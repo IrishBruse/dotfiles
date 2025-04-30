@@ -60,7 +60,6 @@
     "*.gb": "hexEditor.hexedit",
     "*.gbm": "hexEditor.hexedit",
     "*.gbr": "hexEditor.hexedit",
-    "*.hurl": "hurl.hurlEditor",
     "*.md": "default"
   },
   "files.associations": {
@@ -444,8 +443,8 @@
 
   "custom_css_hot_reload.hotReloadMode": "onSave",
   "custom_css_hot_reload.imports": [
-    "file://${userHome}/dotfiles/vscode/custom.css",
-    "file://${userHome}/dotfiles/vscode/icons.css"
+    "file://${userHome}/dotfiles/vscode/theme/custom.css",
+    "file://${userHome}/dotfiles/vscode/theme/icons.css"
   ],
 
   "workbench.colorCustomizations": {
@@ -2288,8 +2287,9 @@
     }
   },
   "platformSettings.condition": "os.release()",
-  "smartersemicolon.enable": false,
+  "smartersemicolon.enable": true,
   "settingsSync.ignoredSettings": ["editor.mouseWheelScrollSensitivity"],
   "explorer.sortOrder": "foldersNestsFiles",
-  "keyboard.touchbar.enabled": false
+  "keyboard.touchbar.enabled": false,
+  "editor.snippetSuggestions": "none"
 }

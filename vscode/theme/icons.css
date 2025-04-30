@@ -168,9 +168,9 @@
 }
 
 .linux .sidebar > .header .action-item > .action-label[aria-label="AWS"] {
-  mask-image: url("vscode-file://home/econn/dotfiles/vscode/icons/aws.png") !important;
+  mask-image: url("vscode-file://home/econn/dotfiles/vscode/theme/icons/aws.png") !important;
 }
 
 .mac .sidebar > .header .action-item > .action-label[aria-label="AWS"] {
-  mask-image: url("vscode-file://Users/econneely/dotfiles/vscode/icons/aws.png") !important;
+  mask-image: url("vscode-file://Users/econneely/dotfiles/vscode/theme/icons/aws.png") !important;
 }
