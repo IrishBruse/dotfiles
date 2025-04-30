@@ -14,6 +14,16 @@
       "problemMatcher": [],
       "runOptions": { "runOn": "folderOpen" },
       "presentation": { "reveal": "silent" }
+    },
+    {
+      "label": "Vscode Keybind",
+      "type": "shell",
+      "command": "fnm use 23 && node --experimental-specifier-resolution=node --watch index.ts",
+      "problemMatcher": [],
+      "options": {
+        "cwd": "vscode/keybindings/"
+      },
+      "runOptions": { "runOn": "folderOpen" }
     }
   ]
 }

@@ -1,0 +1,12 @@
+{
+  "name": "keybindgenerator",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "type": "module",
+  "author": "",
+  "license": "",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^22.15.3"
+  }
+}

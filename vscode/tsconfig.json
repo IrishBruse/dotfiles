@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "target": "ES2020",
+    "jsx": "react",
+    "checkJs": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "allowImportingTsExtensions": true
+  },
+  "exclude": ["node_modules"]
+}
