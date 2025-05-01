@@ -2267,18 +2267,6 @@
   // --------------------------------------- New/Keybind Toggle -----------------------------------
   "debug.onTaskErrors": "debugAnyway",
   "editor.codeActions.triggerOnFocusChange": true,
-  "platformSettings.autoLoad": true,
-  "platformSettings.platforms": {
-    "linux": {
-      "nodes": {
-        "editor.mouseWheelScrollSensitivity": 2,
-
-        "fish.path.fish": "/usr/bin/fish",
-        "fish.path.fish_indent": "/usr/bin/fish_indent"
-      }
-    }
-  },
-  "platformSettings.condition": "os.release()",
   "smartersemicolon.enable": true,
   "settingsSync.ignoredSettings": ["editor.mouseWheelScrollSensitivity"],
   "explorer.sortOrder": "foldersNestsFiles",
