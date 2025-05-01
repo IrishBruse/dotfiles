@@ -32,12 +32,6 @@ export default [
     command: "editor.action.selectAll",
     when: "editorTextFocus",
   },
-  // {
-  //   key: "ctrl+g",
-  //   command: "workbench.action.quickOpen",
-  //   args: "@: ",
-  //   when: "editorTextFocus",
-  // },
   {
     key: "ctrl+i",
     command: "editor.action.insertSnippet",

@@ -18,21 +18,79 @@ const macosNegativeKeybindings: Keybind[] = await loadJson(
 );
 
 async function Generate(outputFile: string, os: OS) {
-  let keybinds: Keybind[] = [];
+  // if (os === "macos") {
+  //   keybinds.push(...macosNegativeKeybindings);
+  // }
 
-  keybinds.push({
-    key: os,
-  } as any);
+  // if (os === "linux") {
+  //   keybinds.push(...linuxNegativeKeybindings);
+  // }
 
-  if (os === "macos") {
-    keybinds.push(...macosNegativeKeybindings);
+  let macosUnique: Keybind[] = [];
+
+  // Remove macos if being readded by linux
+  for (const bind of macosNegativeKeybindings) {
+    const found =
+      linuxNegativeKeybindings.find((other) => {
+        return (
+          other.command === bind.command &&
+          other.when === bind.when &&
+          other.key === bind.key
+        );
+      }) !== undefined;
+
+    if (!found) {
+      macosUnique.push(bind);
+    }
   }
 
-  if (os === "macos") {
-    keybinds.push(...linuxNegativeKeybindings);
+  let linuxUnique: Keybind[] = [];
+
+  // Remove linux if being readded by linux
+  for (const bind of linuxNegativeKeybindings) {
+    const found =
+      macosNegativeKeybindings.find((other) => {
+        return (
+          other.command === bind.command &&
+          other.when === bind.when &&
+          other.key === bind.key
+        );
+      }) !== undefined;
+
+    if (!found) {
+      const newBinding = {
+        key: bind.key,
+        command: bind.command,
+        when: bind.when,
+        args: bind.args,
+      };
+
+      if (newBinding.command[0] !== "-") {
+        throw new Error("missing -");
+      }
+      newBinding.command = newBinding.command.slice(1);
+      linuxUnique.push(newBinding);
+    }
   }
 
-  keybinds.push(...custom);
+  macosUnique.sort((a, b) => a.command.localeCompare(b.command));
+  linuxUnique.sort((a, b) => a.command.localeCompare(b.command));
+
+  const seperator = {
+    key: "-".repeat(150),
+  } as Keybind;
+
+  let keybinds: Keybind[] = [
+    {
+      key: os,
+    } as Keybind,
+    seperator,
+    ...macosUnique,
+    seperator,
+    ...linuxUnique,
+    seperator,
+    ...custom,
+  ];
 
   await fs.writeFile(outputFile, JSON.stringify(keybinds, null, 4));
 }
