@@ -87,8 +87,7 @@
     "**/.git": true,
     "**/.hg": true,
     "**/.svn": true,
-    "**/CVS": true,
-    "**/obj": true
+    "**/CVS": true
   },
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
@@ -195,7 +194,6 @@
   "git.openRepositoryInParentFolders": "always",
   "git.pruneOnFetch": true,
   "git.replaceTagsWhenPull": true,
-  "git.showCommitInput": false,
   "git.useEditorAsCommitInput": false,
 
   "git.blame.editorDecoration.enabled": false,
@@ -623,7 +621,7 @@
     "terminal.ansiBrightWhite": "#FFFFFF"
   },
   "editor.semanticTokenColorCustomizations": {
-    "enabled": true,
+    "enabled": false,
     "rules": {
       "punctuation": "#ABB2BF",
       "enum": "#E5C07B",
@@ -1004,7 +1002,9 @@
       {
         "scope": [
           "source.tsx punctuation.definition.tag",
-          "text.html punctuation.definition.tag"
+          "source.jsx punctuation.definition.tag",
+          "text.html punctuation.definition.tag",
+          "text.xml punctuation.definition.tag"
         ],
         "settings": {
           "foreground": "#5C6370"
@@ -2272,5 +2272,8 @@
   "explorer.sortOrder": "foldersNestsFiles",
   "keyboard.touchbar.enabled": false,
   "editor.snippetSuggestions": "none",
-  "window.zoomLevel": 0.5
+  "window.zoomLevel": 0.5,
+  "editor.snippetSuggestions": "none",
+  "files.enableTrash": false,
+  "git.discardUntrackedChangesToTrash": false
 }

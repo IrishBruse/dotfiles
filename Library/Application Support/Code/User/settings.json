@@ -81,14 +81,14 @@
     "grammer": "plaintext",
     "keybinds": "ini",
     "local": "ini",
-    "*.glsl": "bat"
+    "*.glsl": "bat",
+    "*.ejs.t": "ejs"
   },
   "files.exclude": {
     "**/.git": true,
     "**/.hg": true,
     "**/.svn": true,
-    "**/CVS": true,
-    "**/obj": true
+    "**/CVS": true
   },
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
@@ -174,7 +174,7 @@
   "scm.providerCountBadge": "auto",
 
   "githubPullRequests.fileListLayout": "tree",
-  "githubPullRequests.pullBranch": "always",
+  "githubPullRequests.pullBranch": "never",
   "githubPullRequests.createOnPublishBranch": "never",
 
   "editor.autoClosingComments": "always",
@@ -195,7 +195,6 @@
   "git.openRepositoryInParentFolders": "always",
   "git.pruneOnFetch": true,
   "git.replaceTagsWhenPull": true,
-  "git.showCommitInput": false,
   "git.useEditorAsCommitInput": false,
 
   "git.blame.editorDecoration.enabled": false,
@@ -216,7 +215,8 @@
     "editor.unicodeHighlight.ambiguousCharacters": false,
     "editor.unicodeHighlight.invisibleCharacters": false,
     "files.trimFinalNewlines": false,
-    "files.trimTrailingWhitespace": false
+    "files.trimTrailingWhitespace": false,
+    "editor.indentSize": 4
   },
   "[snippets]": {
     "files.insertFinalNewline": false
@@ -623,7 +623,7 @@
     "terminal.ansiBrightWhite": "#FFFFFF"
   },
   "editor.semanticTokenColorCustomizations": {
-    "enabled": true,
+    "enabled": false,
     "rules": {
       "punctuation": "#ABB2BF",
       "enum": "#E5C07B",
@@ -1004,7 +1004,9 @@
       {
         "scope": [
           "source.tsx punctuation.definition.tag",
-          "text.html punctuation.definition.tag"
+          "source.jsx punctuation.definition.tag",
+          "text.html punctuation.definition.tag",
+          "text.xml punctuation.definition.tag"
         ],
         "settings": {
           "foreground": "#5C6370"
@@ -2271,5 +2273,7 @@
   "settingsSync.ignoredSettings": ["editor.mouseWheelScrollSensitivity"],
   "explorer.sortOrder": "foldersNestsFiles",
   "keyboard.touchbar.enabled": false,
-  "editor.snippetSuggestions": "none"
+  "editor.snippetSuggestions": "none",
+  "files.enableTrash": false,
+  "git.discardUntrackedChangesToTrash": false
 }

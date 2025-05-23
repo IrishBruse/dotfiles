@@ -77,7 +77,7 @@ async function Generate(outputFile: string, os: OS) {
   linuxUnique.sort((a, b) => a.command.localeCompare(b.command));
 
   const seperator = {
-    key: "-".repeat(150),
+    key: "-".repeat(200),
   } as Keybind;
 
   let keybinds: Keybind[] = [
