@@ -20,3 +20,10 @@
 
 [commit]
 	gpgsign = true
+
+[pull]
+	default = current
+	rebase = true
+
+[rebase]
+	autoStash = true

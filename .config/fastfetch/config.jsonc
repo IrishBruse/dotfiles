@@ -7,6 +7,11 @@
     "host",
     "kernel",
     "uptime",
+    {
+      "type": "command",
+      "text": "echo $(( ($(date +%s) - $(date -d \"$(stat / | grep \"Birth\" | awk '{print $2}')\" +%s)) / 86400 )) 'days'",
+      "key": "Age"
+    },
     "packages",
     "shell",
     "display",
@@ -22,13 +27,7 @@
     "cpu",
     "gpu",
     "memory",
-    "swap",
-    "disk",
-    "localip",
-    "battery",
-    "poweradapter",
-    "locale",
-    "break",
-    "colors"
-  ]
+    "swap"
+  ],
+  "general": {}
 }

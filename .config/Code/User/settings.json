@@ -81,7 +81,8 @@
     "grammer": "plaintext",
     "keybinds": "ini",
     "local": "ini",
-    "*.glsl": "bat"
+    "*.glsl": "bat",
+    "*.ejs.t": "ejs"
   },
   "files.exclude": {
     "**/.git": true,
@@ -173,7 +174,7 @@
   "scm.providerCountBadge": "auto",
 
   "githubPullRequests.fileListLayout": "tree",
-  "githubPullRequests.pullBranch": "always",
+  "githubPullRequests.pullBranch": "never",
   "githubPullRequests.createOnPublishBranch": "never",
 
   "editor.autoClosingComments": "always",
@@ -214,7 +215,8 @@
     "editor.unicodeHighlight.ambiguousCharacters": false,
     "editor.unicodeHighlight.invisibleCharacters": false,
     "files.trimFinalNewlines": false,
-    "files.trimTrailingWhitespace": false
+    "files.trimTrailingWhitespace": false,
+    "editor.indentSize": 4
   },
   "[snippets]": {
     "files.insertFinalNewline": false
@@ -2272,7 +2274,9 @@
   "explorer.sortOrder": "foldersNestsFiles",
   "keyboard.touchbar.enabled": false,
   "editor.snippetSuggestions": "none",
-  "window.zoomLevel": 0.5,
+  "window.zoomLevel": 0.75,
+  "files.enableTrash": false,
+  "git.discardUntrackedChangesToTrash": false,
   "editor.snippetSuggestions": "none",
   "files.enableTrash": false,
   "git.discardUntrackedChangesToTrash": false

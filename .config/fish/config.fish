@@ -15,6 +15,7 @@ switch (set -q OS && echo $OS || uname)
         alias rm trash
         set -x BROWSER google-chrome
         set -gx ANDROID_HOME /usr/lib/android-sdk
+        export DOTNET_ROOT=/usr/share/dotnet
 
         for opt in (command ls /opt/)
             fish_add_path -g "/opt/$opt"

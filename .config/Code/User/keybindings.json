@@ -3,7 +3,7 @@
         "key": "linux"
     },
     {
-        "key": "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
+        "key": "------------------------------------------------------------------------------------------------------------------------------------------------------"
     },
     {
         "key": "cmd+enter",
@@ -3149,7 +3149,7 @@
         "when": "workbench.view.search.active && neverMatch =~ /doesNotMatch/"
     },
     {
-        "key": "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
+        "key": "------------------------------------------------------------------------------------------------------------------------------------------------------"
     },
     {
         "key": "ctrl+enter",
@@ -5820,17 +5820,20 @@
         "when": "workbench.view.search.active && neverMatch =~ /doesNotMatch/"
     },
     {
-        "key": "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
+        "key": "------------------------------------------------------------------------------------------------------------------------------------------------------"
     },
     {
-        "key": "alt+backspace",
-        "command": "deleteWordLeft",
-        "when": "textInputFocus && !editorReadonly && isMac"
+        "key": "f2",
+        "command": "editor.action.rename",
+        "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
     },
     {
-        "key": "alt+delete",
-        "command": "deleteWordRight",
-        "when": "textInputFocus && !editorReadonly && isMac"
+        "key": "f4",
+        "command": "references-view.findReferences"
+    },
+    {
+        "key": "f3",
+        "command": "references-view.findImplementations"
     },
     {
         "key": "ctrl+shift+s",
@@ -5955,14 +5958,6 @@
         "command": "editor.action.autoFix",
         "key": "ctrl+shift+oem_period",
         "when": "textInputFocus && !editorReadonly && supportedCodeAction =~ /(\\s|^)quickfix\\b/"
-    },
-    {
-        "command": "references-view.findReferences",
-        "key": "f4"
-    },
-    {
-        "command": "references-view.findImplementations",
-        "key": "f3"
     },
     {
         "command": "workbench.action.terminal.killEditor",
