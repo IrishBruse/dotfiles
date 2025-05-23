@@ -1,6 +1,21 @@
 import type { Keybind } from "./gen";
 
 export default [
+  // LSP
+  {
+    key: "f2",
+    command: "editor.action.rename",
+    when: "editorHasRenameProvider && editorTextFocus && !editorReadonly",
+  },
+  {
+    key: "f4",
+    command: "references-view.findReferences",
+  },
+  {
+    key: "f3",
+    command: "references-view.findImplementations",
+  },
+  // Misc
   {
     key: "ctrl+shift+s",
     command: "saveAll",
@@ -94,8 +109,7 @@ export default [
     key: "ctrl+shift+oem_period",
     when: "textInputFocus && !editorReadonly && supportedCodeAction =~ /(\\s|^)quickfix\\b/",
   },
-  { command: "references-view.findReferences", key: "f4" },
-  { command: "references-view.findImplementations", key: "f3" },
+
   {
     command: "workbench.action.terminal.killEditor",
     key: "ctrl+w",

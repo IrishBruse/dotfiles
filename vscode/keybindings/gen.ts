@@ -9,7 +9,7 @@ export type Keybind = {
   args?: { [key: string]: any } | string;
 };
 
-type OS = "linux" | "macos" | "windows";
+type OS = "linux" | "macos";
 
 async function loadJson(path: string) {
   const data = await fs.readFile(path);
@@ -46,12 +46,10 @@ async function Generate(outputFile: string, os: OS) {
   keybinds.push({
     key: os,
   } as Keybind);
-
   keybinds.push(seperator);
   keybinds.push(
     ...(os === "macos" ? macosNegativeKeybindings : linuxNegativeKeybindings)
   );
-
   keybinds.push(seperator);
   keybinds.push(...builtin);
   keybinds.push(seperator);
