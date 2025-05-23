@@ -1,37 +1,4 @@
 {
-  "useEffect": {
-    "prefix": "useEffect",
-    "body": [
-      "useEffect(()=>{",
-      "    $0",
-      "},[])"
-    ]
-  },
-  "useState": {
-    "prefix": "useState",
-    "body": [
-      "const [${1:state}, setState] = useState($0);"
-    ]
-  },
-  "comp func": {
-    "prefix": "comp",
-    "description": "Functional React Component",
-    "body": [
-      "const ${1:Component}: FunctionComponent$2 = (args) => {",
-      "  return <div>{args.toString()}</div>;",
-      "};",
-      ""
-    ]
-  },
-  "func": {
-    "prefix": "func",
-    "body": [
-      "const name = () => {",
-      "  ${1:// }",
-      "}",
-      ""
-    ]
-  },
   "space": {
     "prefix": "space",
     "body": [
@@ -75,6 +42,15 @@
     ],
     "description": "jest test definition"
   },
+  "func": {
+    "prefix": "func",
+    "body": [
+      "const name = () => {",
+      "  ${1:// }",
+      "}",
+      ""
+    ]
+  },
   "describe": {
     "prefix": "describe",
     "description": "jest describe definition",
@@ -99,7 +75,29 @@
     ],
     "description": "reduce using keys"
   },
-  "AUTO": {
-    "description": "GENERATED"
+  "useEffect": {
+    "prefix": "useEffect",
+    "body": [
+      "useEffect(()=>{",
+      "    $0",
+      "},[])"
+    ]
+  },
+  "useState": {
+    "prefix": "useState",
+    "body": [
+      "const [${1:state}, setState] = useState($0);"
+    ]
+  },
+  "comp func": {
+    "prefix": "comp",
+    "description": "Functional React Component",
+    "body": [
+      "const ${1:Component} = () => {",
+      "  return (",
+      "    $2",
+      "  )",
+      "};"
+    ]
   }
 }

@@ -9,7 +9,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_if"
                   }
                 ],
@@ -118,7 +121,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -140,7 +146,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -162,7 +171,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -184,7 +196,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -213,6 +228,7 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$",
                       "^com\\.mitchellh\\.ghostty$"
                     ],
                     "type": "frontmost_application_unless"
@@ -235,6 +251,7 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$",
                       "^com\\.mitchellh\\.ghostty$"
                     ],
                     "type": "frontmost_application_unless"
@@ -257,6 +274,7 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$",
                       "^com\\.mitchellh\\.ghostty$"
                     ],
                     "type": "frontmost_application_unless"
@@ -294,9 +312,9 @@
                       "^com\\.microsoft\\.rdc\\.",
                       "^com\\.microsoft\\.rdc$",
                       "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$",
                       "^com\\.nulana\\.remotixmac$",
                       "^com\\.OpenText\\.Exceed-TurboX-Client$",
-
                       "^com\\.parallels\\.desktop\\.console$",
                       "^com\\.parallels\\.desktop$",
                       "^com\\.parallels\\.vm$",
@@ -358,9 +376,9 @@
                       "^com\\.microsoft\\.rdc\\.",
                       "^com\\.microsoft\\.rdc$",
                       "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$",
                       "^com\\.nulana\\.remotixmac$",
                       "^com\\.OpenText\\.Exceed-TurboX-Client$",
-
                       "^com\\.parallels\\.desktop\\.console$",
                       "^com\\.parallels\\.desktop$",
                       "^com\\.parallels\\.vm$",
@@ -410,7 +428,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -437,7 +458,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -464,7 +488,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -513,7 +540,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -537,7 +567,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -564,7 +597,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -586,7 +622,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -613,7 +652,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -640,7 +682,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -662,7 +707,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -684,7 +732,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -711,7 +762,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -1420,7 +1474,10 @@
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"],
+                    "bundle_identifiers": [
+                      "^com\\.microsoft\\.VSCode$",
+                      "^com\\.microsoft\\.VSCodeInsiders$"
+                    ],
                     "type": "frontmost_application_unless"
                   }
                 ],
@@ -1455,6 +1512,20 @@
       ],
       "name": "Default profile",
       "selected": true,
+      "virtual_hid_keyboard": { "keyboard_type_v2": "iso" }
+    },
+    {
+      "devices": [
+        {
+          "identifiers": {
+            "is_pointing_device": true,
+            "product_id": 50495,
+            "vendor_id": 1133
+          },
+          "ignore": false
+        }
+      ],
+      "name": "Default profile (copy)",
       "virtual_hid_keyboard": { "keyboard_type_v2": "iso" }
     }
   ]

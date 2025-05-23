@@ -1,23 +1,6 @@
-export type Keybind = {
-  key: string;
-  command: string;
-  when?: string;
-  args?: { [key: string]: any } | string;
-};
+import type { Keybind } from "./gen";
 
 export default [
-  // macos
-  {
-    key: "alt+backspace",
-    command: "deleteWordLeft",
-    when: "textInputFocus && !editorReadonly && isMac",
-  },
-  {
-    key: "alt+delete",
-    command: "deleteWordRight",
-    when: "textInputFocus && !editorReadonly && isMac",
-  },
-  // macos
   {
     key: "ctrl+shift+s",
     command: "saveAll",

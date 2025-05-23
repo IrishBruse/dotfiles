@@ -17,10 +17,11 @@
     "prefix": "comp",
     "description": "Functional React Component",
     "body": [
-      "const ${1:Component}: FunctionComponent$2 = (args) => {",
-      "  return <div>{args.toString()}</div>;",
-      "};",
-      ""
+      "const ${1:Component} = () => {",
+      "  return (",
+      "    $2",
+      "  )",
+      "};"
     ]
   },
   "func": {
