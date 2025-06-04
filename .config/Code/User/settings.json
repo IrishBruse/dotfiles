@@ -264,8 +264,14 @@
     "*"
   ],
 
-  "typescript.preferences.autoImportSpecifierExcludeRegexes": ["@mf-types"],
-  "javascript.preferences.autoImportSpecifierExcludeRegexes": ["@mf-types"],
+  "typescript.preferences.autoImportSpecifierExcludeRegexes": [
+    "@mf-types",
+    "node_modules"
+  ],
+  "javascript.preferences.autoImportSpecifierExcludeRegexes": [
+    "@mf-types",
+    "node_modules"
+  ],
 
   "typescript.surveys.enabled": false,
   "typescript.implementationsCodeLens.enabled": true,
@@ -2277,7 +2283,9 @@
   "window.zoomLevel": 0.75,
   "files.enableTrash": false,
   "git.discardUntrackedChangesToTrash": false,
-  "editor.snippetSuggestions": "none",
-  "files.enableTrash": false,
-  "git.discardUntrackedChangesToTrash": false
+  "yaml.schemas": {
+    "file:///Users/econneely/.vscode/extensions/atlassian.atlascode-3.8.2/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
+  },
+  "atlascode.jira.enabled": true,
+  "atlascode.bitbucket.enabled": false
 }
