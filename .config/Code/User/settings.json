@@ -2003,6 +2003,12 @@
         }
       },
       {
+        "scope": "variable.other.value.cs",
+        "settings": {
+          "foreground": "#ABB2BF"
+        }
+      },
+      {
         "scope": "variable.other.object.cs",
         "settings": {
           "foreground": "#E5C07B"
