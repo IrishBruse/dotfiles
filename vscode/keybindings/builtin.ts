@@ -18,6 +18,19 @@ export default [
   { key: "down", command: "cursorDown", when: "textInputFocus" },
   { key: "left", command: "cursorLeft", when: "textInputFocus" },
   { key: "right", command: "cursorRight", when: "textInputFocus" },
+  // Selection
+  {
+    key: "shift+up",
+    command: "cursorColumnSelectUp",
+    when: "editorColumnSelection && textInputFocus",
+  },
+  {
+    key: "shift+down",
+    command: "cursorColumnSelectDown",
+    when: "editorColumnSelection && textInputFocus",
+  },
+  { key: "shift+up", command: "cursorUpSelect", when: "textInputFocus" },
+  { key: "shift+down", command: "cursorDownSelect", when: "textInputFocus" },
   // Find
   {
     key: "ctrl+f",

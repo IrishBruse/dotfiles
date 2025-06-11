@@ -8,12 +8,22 @@ export default [
     when: "editorHasRenameProvider && editorTextFocus && !editorReadonly",
   },
   {
+    key: "f3",
+    command: "references-view.findImplementations",
+  },
+  {
     key: "f4",
     command: "references-view.findReferences",
   },
   {
-    key: "f3",
-    command: "references-view.findImplementations",
+    command: "workbench.action.debug.restart",
+    key: "f5",
+    when: "inDebugMode && debugState == 'running'",
+  },
+  {
+    key: "ctrl+space",
+    command: "editor.action.triggerSuggest",
+    when: "editorHasCompletionItemProvider && textInputFocus && !editorReadonly && !suggestWidgetVisible",
   },
   // Misc
   {
@@ -34,22 +44,6 @@ export default [
     key: "ctrl+i",
     command: "editor.action.insertSnippet",
   },
-  {
-    command: "editor.action.selectHighlights",
-    key: "ctrl+shift+d",
-    when: "editorFocus",
-  },
-  {
-    command: "workbench.view.explorer",
-    key: "ctrl+1",
-    when: "viewContainer.workbench.view.explorer.enabled",
-  },
-  {
-    command: "workbench.action.debug.restart",
-    key: "f5",
-    when: "inDebugMode && debugState == 'running'",
-  },
-  { command: "workbench.view.debug", key: "ctrl+3" },
   { command: "workbench.action.previousEditorInGroup", key: "alt+left" },
   { command: "workbench.action.nextEditorInGroup", key: "alt+right" },
   { command: "workbench.action.toggleSidebarVisibility", key: "ctrl+oem_8" },
@@ -186,12 +180,6 @@ export default [
     command: "workbench.action.terminal.sendSequence",
     args: { text: "\u001b[1;5C" },
   },
-  // {
-  //   when: "!terminalTextSelectedInFocused && terminalFocus",
-  //   key: "cmd+c",
-  //   command: "workbench.action.terminal.sendSequence",
-  //   args: { text: "\u0003" },
-  // },
   {
     when: "terminalFocus",
     key: "ctrl+alt+left",
@@ -218,5 +206,22 @@ export default [
     key: "ctrl+q",
     command: "git.openFile",
     when: "editorFocus && isInDiffEditor",
+  },
+  // Duplicate selection
+  {
+    key: "ctrl+d",
+    command: "editor.action.addSelectionToNextFindMatch",
+    when: "editorFocus",
+  },
+  {
+    key: "ctrl+shift+d",
+    command: "editor.action.selectHighlights",
+    when: "editorFocus",
+  },
+  // Close
+  {
+    key: "escape",
+    command: "closeFindWidget",
+    when: "editorFocus && findWidgetVisible && !isComposing",
   },
 ] as Keybind[];
