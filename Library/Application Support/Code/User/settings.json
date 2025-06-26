@@ -100,6 +100,7 @@
     "*.db3": "${capture}.${extname}-*",
     "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
     "*.jsx": "${capture}.js",
+    "*.ssa": "${capture}.s",
     "*.s3db": "${capture}.${extname}-*",
     "*.sdb": "${capture}.${extname}-*",
     "*.sqlite": "${capture}.${extname}-*",
@@ -2295,5 +2296,6 @@
   "atlascode.bitbucket.enabled": false,
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "prettify-ts.enabled": true
 }
