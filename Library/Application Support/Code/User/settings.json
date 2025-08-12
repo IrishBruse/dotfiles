@@ -5,7 +5,6 @@
   "window.titleBarStyle": "custom",
   "window.menuBarVisibility": "hidden",
   "window.commandCenter": false,
-  "chat.commandCenter.enabled": false,
   "window.title": "${folderName}",
 
   "workbench.activityBar.location": "top",
@@ -156,7 +155,7 @@
   "terminal.integrated.ignoreBracketedPasteMode": true,
   "terminal.integrated.persistentSessionReviveProcess": "never",
   "terminal.integrated.rightClickBehavior": "nothing",
-  "terminal.integrated.scrollback": 10000,
+  "terminal.integrated.scrollback": 1000,
   "terminal.integrated.shellIntegration.decorationsEnabled": "never",
   "terminal.integrated.shellIntegration.enabled": false,
   "terminal.integrated.tabs.title": "${sequence}",
@@ -229,6 +228,10 @@
   "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": true,
   "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": true,
   "csharp.suppressDotnetInstallWarning": true,
+  "csharp.debug.requireExactSource": false,
+  "csharp.debug.justMyCode": false,
+  "csharp.debug.suppressJITOptimizations": true,
+  "csharp.debug.sourceFileMap": {},
   "omnisharp.enableDecompilationSupport": true,
 
   "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
@@ -2285,6 +2288,7 @@
   "smartersemicolon.enable": true,
   "settingsSync.ignoredSettings": ["editor.mouseWheelScrollSensitivity"],
   "explorer.sortOrder": "foldersNestsFiles",
+  "explorer.sortOrderLexicographicOptions": "unicode",
   "keyboard.touchbar.enabled": false,
   "editor.snippetSuggestions": "none",
   "files.enableTrash": false,
@@ -2297,5 +2301,20 @@
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "prettify-ts.enabled": true
+  "prettify-ts.enabled": true,
+  "files.watcherInclude": ["obj/**"],
+  "errorLens.messageEnabled": true,
+  "github.copilot.enable": {
+    "*": false,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false,
+    "typescript": false
+  },
+  "editor.lineNumbers": "on",
+  "github.copilot.nextEditSuggestions.fixes": false,
+  "github.copilot.chat.agent.autoFix": false,
+  "github.copilot.editor.enableCodeActions": false,
+  "go.toolsManagement.autoUpdate": true,
+  "chat.editing.confirmEditRequestRetry": false
 }

@@ -33,7 +33,7 @@ fnm env | source
 
 set -U fish_greeting
 set -g fish_color_valid_path
-set -x EDITOR code
+set -x EDITOR "code --wait"
 set -gx JQ_COLORS "0;34:0;34:0;34:0;37:0;32:0;37:0;37:0;31"
 
 set -g __fish_git_prompt_showcolorhints 1
