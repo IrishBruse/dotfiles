@@ -23,7 +23,7 @@ export default [
   },
   {
     key: "ctrl+shift+f",
-    command: "workbench.view.search",
+    command: "workbench.action.findInFiles",
   },
   {
     key: "ctrl+shift+p",
@@ -45,6 +45,21 @@ export default [
   { key: "ctrl+c", command: "editor.action.clipboardCopyAction" },
   { key: "ctrl+v", command: "editor.action.clipboardPasteAction" },
   { key: "ctrl+x", command: "editor.action.clipboardCutAction" },
+  {
+    key: "ctrl+c",
+    command: "filesExplorer.copy",
+    when: "filesExplorerFocus && foldersViewVisible && !explorerResourceIsRoot && !inputFocus",
+  },
+  {
+    key: "ctrl+x",
+    command: "filesExplorer.cut",
+    when: "filesExplorerFocus && foldersViewVisible && !explorerResourceIsRoot && !explorerResourceReadonly && !inputFocus",
+  },
+  {
+    key: "ctrl+v",
+    command: "filesExplorer.paste",
+    when: "filesExplorerFocus && foldersViewVisible && !explorerResourceReadonly && !inputFocus",
+  },
   // Cursor
   { key: "ctrl+left", command: "cursorWordLeft", when: "textInputFocus" },
   { key: "ctrl+right", command: "cursorWordRight", when: "textInputFocus" },
@@ -61,6 +76,11 @@ export default [
     key: "end",
     command: "cursorEnd",
     when: "textInputFocus",
+  },
+  {
+    key: "ctrl+shift+enter",
+    command: "editor.action.insertLineBefore",
+    when: "editorTextFocus && !editorReadonly",
   },
   // Close
   {
@@ -199,5 +219,15 @@ export default [
   {
     key: "ctrl+/",
     command: "editor.action.commentLine",
+  },
+  {
+    key: "f2",
+    command: "renameFile",
+    when: "filesExplorerFocus && foldersViewVisible && !explorerResourceIsRoot && !explorerResourceReadonly && !inputFocus",
+  },
+  {
+    key: "delete",
+    command: "deleteFile",
+    when: "filesExplorerFocus && foldersViewVisible && !explorerResourceMoveableToTrash && !inputFocus",
   },
 ] as Keybind[];
