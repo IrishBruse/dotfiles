@@ -218,10 +218,26 @@ export default [
     command: "editor.action.selectHighlights",
     when: "editorFocus",
   },
-  // Close
+  // Open side bars
   {
-    key: "escape",
-    command: "closeFindWidget",
-    when: "editorFocus && findWidgetVisible && !isComposing",
+    key: "ctrl+shift+e",
+    command: "workbench.view.explorer",
+    when: "!filesExplorerFocus",
   },
+  {
+    key: "ctrl+shift+e",
+    command: "workbench.action.closeSidebar",
+    when: "filesExplorerFocus",
+  },
+  {
+    key: "ctrl+g",
+    command: "workbench.view.scm",
+    when: "!workbench.scm.active",
+  },
+  {
+    key: "ctrl+g",
+    command: "workbench.action.closeSidebar",
+    when: "workbench.scm.active",
+  },
+  //
 ] as Keybind[];

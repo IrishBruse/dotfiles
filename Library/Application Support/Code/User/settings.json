@@ -2283,6 +2283,9 @@
     ]
   },
   // --------------------------------------- New/Keybind Toggle -----------------------------------
+  "disable-default-keybinding.commandsToPreserve": [
+    "^editor\\.action\\.clipboardCopyAction$"
+  ],
   "debug.onTaskErrors": "debugAnyway",
   "editor.codeActions.triggerOnFocusChange": true,
   "smartersemicolon.enable": true,
@@ -2316,5 +2319,16 @@
   "github.copilot.chat.agent.autoFix": false,
   "github.copilot.editor.enableCodeActions": false,
   "go.toolsManagement.autoUpdate": true,
-  "chat.editing.confirmEditRequestRetry": false
+  "chat.editing.confirmEditRequestRetry": false,
+  "git.ignoreRebaseWarning": true,
+  "go.editorContextMenuCommands": {
+    "testAtCursor": false,
+    "generateTestForFunction": false,
+    "addImport": false,
+    "testCoverage": false,
+    "playground": false,
+    "debugTestAtCursor": false,
+    "toggleTestFile": false,
+    "addTags": false
+  }
 }

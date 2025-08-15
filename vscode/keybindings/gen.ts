@@ -59,7 +59,7 @@ async function Generate(outputFile: string, os: OS) {
 }
 
 Generate(
-  "../../../Library/Application Support/Code - Insiders/User/keybindings.json",
+  "../../../Library/Application Support/Code/User/keybindings.json",
   "macos"
 );
 
