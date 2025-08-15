@@ -5,7 +5,6 @@
   "window.titleBarStyle": "custom",
   "window.menuBarVisibility": "hidden",
   "window.commandCenter": false,
-  "chat.commandCenter.enabled": false,
   "window.title": "${folderName}",
 
   "workbench.activityBar.location": "top",
@@ -100,6 +99,7 @@
     "*.db3": "${capture}.${extname}-*",
     "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
     "*.jsx": "${capture}.js",
+    "*.ssa": "${capture}.s",
     "*.s3db": "${capture}.${extname}-*",
     "*.sdb": "${capture}.${extname}-*",
     "*.sqlite": "${capture}.${extname}-*",
@@ -155,7 +155,7 @@
   "terminal.integrated.ignoreBracketedPasteMode": true,
   "terminal.integrated.persistentSessionReviveProcess": "never",
   "terminal.integrated.rightClickBehavior": "nothing",
-  "terminal.integrated.scrollback": 10000,
+  "terminal.integrated.scrollback": 1000,
   "terminal.integrated.shellIntegration.decorationsEnabled": "never",
   "terminal.integrated.shellIntegration.enabled": false,
   "terminal.integrated.tabs.title": "${sequence}",
@@ -228,6 +228,10 @@
   "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": true,
   "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": true,
   "csharp.suppressDotnetInstallWarning": true,
+  "csharp.debug.requireExactSource": false,
+  "csharp.debug.justMyCode": false,
+  "csharp.debug.suppressJITOptimizations": true,
+  "csharp.debug.sourceFileMap": {},
   "omnisharp.enableDecompilationSupport": true,
 
   "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
@@ -2279,11 +2283,15 @@
     ]
   },
   // --------------------------------------- New/Keybind Toggle -----------------------------------
+  "disable-default-keybinding.commandsToPreserve": [
+    "^editor\\.action\\.clipboardCopyAction$"
+  ],
   "debug.onTaskErrors": "debugAnyway",
   "editor.codeActions.triggerOnFocusChange": true,
   "smartersemicolon.enable": true,
   "settingsSync.ignoredSettings": ["editor.mouseWheelScrollSensitivity"],
   "explorer.sortOrder": "foldersNestsFiles",
+  "explorer.sortOrderLexicographicOptions": "unicode",
   "keyboard.touchbar.enabled": false,
   "editor.snippetSuggestions": "none",
   "window.zoomLevel": 0.75,
@@ -2293,5 +2301,35 @@
     "file:///Users/econneely/.vscode/extensions/atlassian.atlascode-3.8.2/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
   },
   "atlascode.jira.enabled": true,
-  "atlascode.bitbucket.enabled": false
+  "atlascode.bitbucket.enabled": false,
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "prettify-ts.enabled": true,
+  "files.watcherInclude": ["obj/**"],
+  "errorLens.messageEnabled": true,
+  "github.copilot.enable": {
+    "*": false,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false,
+    "typescript": false
+  },
+  "editor.lineNumbers": "on",
+  "github.copilot.nextEditSuggestions.fixes": false,
+  "github.copilot.chat.agent.autoFix": false,
+  "github.copilot.editor.enableCodeActions": false,
+  "go.toolsManagement.autoUpdate": true,
+  "chat.editing.confirmEditRequestRetry": false,
+  "git.ignoreRebaseWarning": true,
+  "go.editorContextMenuCommands": {
+    "testAtCursor": false,
+    "generateTestForFunction": false,
+    "addImport": false,
+    "testCoverage": false,
+    "playground": false,
+    "debugTestAtCursor": false,
+    "toggleTestFile": false,
+    "addTags": false
+  }
 }

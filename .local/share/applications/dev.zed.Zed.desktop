@@ -4,15 +4,15 @@ Type=Application
 Name=Zed
 GenericName=Text Editor
 Comment=A high-performance, multiplayer code editor.
-TryExec=/home/econn/.local/zed.app/bin/zed
+TryExec=zed
 StartupNotify=true
-Exec=/home/econn/.local/zed.app/bin/zed %U
-Icon=/home/econn/.local/zed.app/share/icons/hicolor/512x512/apps/zed.png
+Exec=zed %U
+Icon=zed
 Categories=Utility;TextEditor;Development;IDE;
 Keywords=zed;
 MimeType=text/plain;application/x-zerosize;x-scheme-handler/zed;
 Actions=NewWorkspace;
 
 [Desktop Action NewWorkspace]
-Exec=/home/econn/.local/zed.app/bin/zed --new %U
+Exec=zed --new %U
 Name=Open a new workspace
