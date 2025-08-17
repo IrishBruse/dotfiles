@@ -239,5 +239,16 @@ export default [
     command: "workbench.action.closeSidebar",
     when: "workbench.scm.active",
   },
-  //
+  // Terminal
+  {
+    key: "ctrl+c",
+    command: "workbench.action.terminal.sendSequence",
+    args: { text: "\u0003" },
+    when: "terminalFocus",
+  },
+  {
+    key: "ctrl+c",
+    command: "workbench.action.terminal.copySelection",
+    when: "terminalTextSelectedInFocused",
+  },
 ] as Keybind[];

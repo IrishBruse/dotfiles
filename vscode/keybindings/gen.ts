@@ -63,4 +63,4 @@ Generate(
   "macos"
 );
 
-// Generate("../../.config/Code/User/keybindings.json", "linux");
+Generate("../../.config/Code/User/keybindings.json", "linux");

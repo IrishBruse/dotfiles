@@ -42,9 +42,21 @@ export default [
   { key: "backspace", command: "deleteLeft", when: "textInputFocus" },
   { key: "delete", command: "deleteRight", when: "textInputFocus" },
   // Copy cut & paste
-  { key: "ctrl+c", command: "editor.action.clipboardCopyAction" },
-  { key: "ctrl+v", command: "editor.action.clipboardPasteAction" },
-  { key: "ctrl+x", command: "editor.action.clipboardCutAction" },
+  {
+    key: "ctrl+c",
+    command: "editor.action.clipboardCopyAction",
+    when: "textInputFocus",
+  },
+  {
+    key: "ctrl+v",
+    command: "editor.action.clipboardPasteAction",
+    when: "textInputFocus",
+  },
+  {
+    key: "ctrl+x",
+    command: "editor.action.clipboardCutAction",
+    when: "textInputFocus",
+  },
   {
     key: "ctrl+c",
     command: "filesExplorer.copy",
@@ -187,6 +199,11 @@ export default [
     when: "editorFocus && renameInputVisible && !isComposing",
   },
   {
+    key: "enter",
+    command: "keybindings.editor.acceptWhenExpression",
+    when: "inKeybindings && whenFocus && !suggestWidgetVisible",
+  },
+  {
     key: "up",
     command: "list.focusUp",
     when: "listFocus && !inputFocus && !treestickyScrollFocused",
@@ -229,5 +246,44 @@ export default [
     key: "delete",
     command: "deleteFile",
     when: "filesExplorerFocus && foldersViewVisible && !explorerResourceMoveableToTrash && !inputFocus",
+  },
+  {
+    key: "tab",
+    command: "tab",
+    when: "editorTextFocus && !editorReadonly && !editorTabMovesFocus",
+  },
+  {
+    key: "shift+tab",
+    command: "outdent",
+    when: "editorTextFocus && !editorReadonly && !editorTabMovesFocus",
+  },
+  // Snippet
+  {
+    key: "tab",
+    command: "jumpToNextSnippetPlaceholder",
+    when: "hasNextTabstop && inSnippetMode && textInputFocus",
+  },
+  {
+    key: "shift+tab",
+    command: "jumpToPrevSnippetPlaceholder",
+    when: "hasPrevTabstop && inSnippetMode && textInputFocus",
+  },
+  {
+    key: "ctrl+l",
+    command: "editor.action.insertSnippet",
+    when: "editorTextFocus",
+    args: {
+      name: "log",
+    },
+  },
+  {
+    key: "ctrl+.",
+    command: "problems.action.showQuickFixes",
+    when: "problemFocus",
+  },
+  {
+    key: "ctrl+shift+.",
+    command: "editor.action.autoFix",
+    when: "textInputFocus && !editorReadonly && supportedCodeAction =~ /(\\s|^)quickfix\\b/",
   },
 ] as Keybind[];
