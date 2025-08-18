@@ -1,6 +1,7 @@
 import * as fs from "fs/promises";
 import custom from "./custom.ts";
 import builtin from "./builtin.ts";
+import { escape } from "./escape.ts";
 
 export type Keybind = {
   key: string;
@@ -50,6 +51,8 @@ async function Generate(outputFile: string, os: OS) {
   keybinds.push(
     ...(os === "macos" ? macosNegativeKeybindings : linuxNegativeKeybindings)
   );
+  keybinds.push(seperator);
+  keybinds.push(...escape);
   keybinds.push(seperator);
   keybinds.push(...builtin);
   keybinds.push(seperator);

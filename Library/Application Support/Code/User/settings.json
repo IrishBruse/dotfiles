@@ -139,9 +139,8 @@
 
   "terminal.explorerKind": "both",
   "terminal.integrated.commandsToSkipShell": [
-    "workbench.action.terminal.kill",
-    "workbench.action.createTerminalEditor",
-    "workbench.action.terminal.killEditor"
+    "workbench.action.terminal.copySelection",
+    "workbench.action.terminal.paste"
   ],
 
   "terminal.integrated.confirmOnKill": "never",
@@ -2330,5 +2329,6 @@
     "debugTestAtCursor": false,
     "toggleTestFile": false,
     "addTags": false
-  }
+  },
+  "terminal.integrated.enableMultiLinePasteWarning": "never"
 }

@@ -251,4 +251,9 @@ export default [
     command: "workbench.action.terminal.copySelection",
     when: "terminalTextSelectedInFocused",
   },
+  {
+    key: "ctrl+o",
+    command: "editor.action.organizeImports",
+    when: "editorTextFocus",
+  },
 ] as Keybind[];

@@ -94,27 +94,6 @@ export default [
     command: "editor.action.insertLineBefore",
     when: "editorTextFocus && !editorReadonly",
   },
-  // Close
-  {
-    key: "escape",
-    command: "closeFindWidget",
-    when: "editorFocus && findWidgetVisible && !isComposing",
-  },
-  {
-    key: "escape",
-    command: "removeSecondaryCursors",
-    when: "editorHasMultipleSelections && textInputFocus",
-  },
-  {
-    key: "escape",
-    command: "editor.action.cancelSelectionAnchor",
-    when: "editorTextFocus && selectionAnchorSet",
-  },
-  {
-    key: "escape",
-    command: "cancelSelection",
-    when: "editorHasSelection && textInputFocus",
-  },
   // Selection
   {
     key: "shift+up",
@@ -275,6 +254,11 @@ export default [
     args: {
       name: "log",
     },
+  },
+  {
+    key: "ctrl+.",
+    command: "editor.action.quickFix",
+    when: "editorHasCodeActionsProvider && textInputFocus && !editorReadonly",
   },
   {
     key: "ctrl+.",
