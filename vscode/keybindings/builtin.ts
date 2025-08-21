@@ -7,9 +7,19 @@ export default [
     when: "textInputFocus && !editorReadonly && isMac",
   },
   {
+    key: "ctrl+backspace",
+    command: "deleteWordLeft",
+    when: "textInputFocus && !editorReadonly",
+  },
+  {
     key: "alt+delete",
     command: "deleteWordRight",
     when: "textInputFocus && !editorReadonly && isMac",
+  },
+  {
+    key: "ctrl+delete",
+    command: "deleteWordRight",
+    when: "textInputFocus && !editorReadonly",
   },
   {
     key: "alt+up",
@@ -26,9 +36,25 @@ export default [
     command: "workbench.action.findInFiles",
   },
   {
+    key: "ctrl+backspace",
+    command: "deleteWordLeft",
+    when: "textInputFocus && !editorReadonly",
+  },
+  {
+    key: "ctrl+delete",
+    command: "deleteWordRight",
+    when: "textInputFocus && !editorReadonly",
+  },
+  {
     key: "ctrl+shift+p",
     command: "workbench.action.showCommands",
   },
+  { key: "shift+backspace", command: "deleteLeft", when: "textInputFocus" },
+  { key: "backspace", command: "deleteLeft", when: "textInputFocus" },
+  { key: "delete", command: "deleteRight", when: "textInputFocus" },
+  { key: "shift+backspace", command: "deleteLeft", when: "textInputFocus" },
+  { key: "backspace", command: "deleteLeft", when: "textInputFocus" },
+  { key: "delete", command: "deleteRight", when: "textInputFocus" },
   {
     key: "ctrl+p",
     command: "workbench.action.quickOpen",
