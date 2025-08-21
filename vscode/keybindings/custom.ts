@@ -220,24 +220,31 @@ export default [
   },
   // Open side bars
   {
-    key: "ctrl+shift+e",
+    key: "ctrl+1",
     command: "workbench.view.explorer",
-    when: "!filesExplorerFocus",
   },
   {
-    key: "ctrl+shift+e",
+    key: "ctrl+1",
     command: "workbench.action.closeSidebar",
-    when: "filesExplorerFocus",
+    when: "view.workbench.explorer.fileView.visible",
   },
   {
-    key: "ctrl+g",
+    key: "ctrl+2",
     command: "workbench.view.scm",
-    when: "!workbench.scm.active",
   },
   {
-    key: "ctrl+g",
+    key: "ctrl+2",
     command: "workbench.action.closeSidebar",
-    when: "workbench.scm.active",
+    when: "view.workbench.scm.visible",
+  },
+  {
+    key: "ctrl+3",
+    command: "workbench.view.debug",
+  },
+  {
+    key: "ctrl+3",
+    command: "workbench.action.closeSidebar",
+    when: "view.workbench.debug.visible",
   },
   // Terminal
   {

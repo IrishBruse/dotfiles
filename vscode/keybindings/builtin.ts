@@ -270,4 +270,20 @@ export default [
     command: "editor.action.autoFix",
     when: "textInputFocus && !editorReadonly && supportedCodeAction =~ /(\\s|^)quickfix\\b/",
   },
+  // debug
+  {
+    key: "f5",
+    command: "workbench.action.debug.start",
+    when: "debuggersAvailable && debugState == 'inactive'",
+  },
+  {
+    key: "f5",
+    command: "debug.openView",
+    when: "!debuggersAvailable",
+  },
+  {
+    key: "f5",
+    command: "workbench.action.debug.continue",
+    when: "debugState == 'stopped'",
+  },
 ] as Keybind[];

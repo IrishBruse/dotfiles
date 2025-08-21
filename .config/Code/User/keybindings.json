@@ -5735,6 +5735,21 @@
         "when": "textInputFocus && !editorReadonly && supportedCodeAction =~ /(\\s|^)quickfix\\b/"
     },
     {
+        "key": "f5",
+        "command": "workbench.action.debug.start",
+        "when": "debuggersAvailable && debugState == 'inactive'"
+    },
+    {
+        "key": "f5",
+        "command": "debug.openView",
+        "when": "!debuggersAvailable"
+    },
+    {
+        "key": "f5",
+        "command": "workbench.action.debug.continue",
+        "when": "debugState == 'stopped'"
+    },
+    {
         "key": "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
     },
     {
@@ -5996,24 +6011,31 @@
         "when": "editorFocus"
     },
     {
-        "key": "ctrl+shift+e",
-        "command": "workbench.view.explorer",
-        "when": "!filesExplorerFocus"
+        "key": "ctrl+1",
+        "command": "workbench.view.explorer"
     },
     {
-        "key": "ctrl+shift+e",
+        "key": "ctrl+1",
         "command": "workbench.action.closeSidebar",
-        "when": "filesExplorerFocus"
+        "when": "view.workbench.explorer.fileView.visible"
     },
     {
-        "key": "ctrl+g",
-        "command": "workbench.view.scm",
-        "when": "!workbench.scm.active"
+        "key": "ctrl+2",
+        "command": "workbench.view.scm"
     },
     {
-        "key": "ctrl+g",
+        "key": "ctrl+2",
         "command": "workbench.action.closeSidebar",
-        "when": "workbench.scm.active"
+        "when": "view.workbench.scm.visible"
+    },
+    {
+        "key": "ctrl+3",
+        "command": "workbench.view.debug"
+    },
+    {
+        "key": "ctrl+3",
+        "command": "workbench.action.closeSidebar",
+        "when": "view.workbench.debug.visible"
     },
     {
         "key": "ctrl+c",

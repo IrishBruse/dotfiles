@@ -2331,5 +2331,6 @@
     "toggleTestFile": false,
     "addTags": false
   },
-  "terminal.integrated.enableMultiLinePasteWarning": "never"
+  "terminal.integrated.enableMultiLinePasteWarning": "never",
+  "editor.bracketPairColorization.enabled": false
 }
