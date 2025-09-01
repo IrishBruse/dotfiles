@@ -85,6 +85,20 @@ export default [
     when: "textInputFocus",
   },
   {
+    key: "ctrl+c",
+    command: "execCopy",
+  },
+  {
+    key: "ctrl+c",
+    command: "search.action.copyMatch",
+    when: "fileMatchOrMatchFocus",
+  },
+  {
+    key: "ctrl+c",
+    command: "chat.inlineResourceAnchor.copyResource",
+    when: "chatAttachmentResource",
+  },
+  {
     key: "ctrl+v",
     command: "editor.action.clipboardPasteAction",
     when: "textInputFocus",

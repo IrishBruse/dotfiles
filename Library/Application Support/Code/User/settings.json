@@ -204,7 +204,10 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[csharp]": {
-    "editor.maxTokenizationLineLength": 2500
+    "editor.maxTokenizationLineLength": 2500,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.csharp": "explicit"
+    }
   },
   "[ini]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml"
@@ -2330,5 +2333,7 @@
     "toggleTestFile": false,
     "addTags": false
   },
-  "terminal.integrated.enableMultiLinePasteWarning": "never"
+  "terminal.integrated.enableMultiLinePasteWarning": "never",
+  "editor.bracketPairColorization.enabled": false,
+  "workbench.editor.empty.hint": "hidden"
 }
