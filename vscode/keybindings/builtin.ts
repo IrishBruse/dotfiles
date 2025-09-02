@@ -124,10 +124,239 @@ export default [
     when: "filesExplorerFocus && foldersViewVisible && !explorerResourceReadonly && !inputFocus",
   },
   // Cursor
+  // down
+
+  { key: "down", command: "cursorDown", when: "textInputFocus" },
+  {
+    key: "down",
+    command: "notebook.cell.chat.nextFromHistory",
+    when: "inlineChatFocused && notebookCellChatFocused",
+  },
+  {
+    key: "down",
+    command: "editor.action.scrollDownHover",
+    when: "editorHoverFocused",
+  },
+  {
+    key: "down",
+    command: "editor.action.selectNextStickyScrollLine",
+    when: "stickyScrollFocused",
+  },
+  {
+    key: "down",
+    command: "notebook.focusNextEditor",
+    when: "config.notebook.navigation.allowNavigateToSurroundingCells && editorTextFocus && inputFocus && notebookEditorFocused && !accessibilityModeEnabled && !isEmbeddedDiffEditor && notebookEditorCursorAtBoundary != 'none' && notebookEditorCursorAtBoundary != 'top'",
+  },
+  {
+    key: "down",
+    command: "settings.action.focusSettingsFile",
+    when: "inSettingsSearch && !suggestWidgetVisible",
+  },
+  {
+    key: "down",
+    command: "showNextParameterHint",
+    when: "editorFocus && parameterHintsMultipleSignatures && parameterHintsVisible",
+  },
+  {
+    key: "down",
+    command: "selectNextSuggestion",
+    when: "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus || suggestWidgetVisible && textInputFocus && !suggestWidgetHasFocusedSuggestion",
+  },
+  {
+    key: "down",
+    command: "focusNextRenameSuggestion",
+    when: "renameInputVisible",
+  },
+  {
+    key: "down",
+    command: "breadcrumbs.selectFocused",
+    when: "breadcrumbsActive && breadcrumbsVisible",
+  },
+  {
+    key: "down",
+    command: "history.showNext",
+    when: "historyNavigationForwardsEnabled && historyNavigationWidgetFocus && !isComposing && !suggestWidgetVisible",
+  },
+  {
+    key: "down",
+    command: "iconSelectBox.focusDown",
+    when: "iconSelectBoxFocus",
+  },
+  {
+    key: "down",
+    command: "interactive.history.next",
+    when: "isCompositeNotebook && !notebookEditorFocused && !suggestWidgetVisible && interactiveInputCursorAtBoundary != 'none' && interactiveInputCursorAtBoundary != 'top'",
+  },
+  {
+    key: "down",
+    command: "list.focusDown",
+    when: "listFocus && !inputFocus && !treestickyScrollFocused",
+  },
+  {
+    key: "down",
+    command: "notebook.focusNextEditor",
+    when: "config.notebook.navigation.allowNavigateToSurroundingCells && notebookCursorNavigationMode && notebookEditorFocused && !accessibilityModeEnabled && !isEmbeddedDiffEditor && !notebookCellMarkdownEditMode && notebookCellType == 'markup'",
+  },
+  {
+    key: "down",
+    command: "notifications.focusNextToast",
+    when: "notificationFocus && notificationToastsVisible",
+  },
+  {
+    key: "down",
+    command: "quickInput.next",
+    when: "inQuickInput && quickInputType == 'quickPick'",
+  },
+  {
+    key: "down",
+    command: "scm.viewNextCommit",
+    when: "scmInputIsInLastPosition && scmRepository && !suggestWidgetVisible",
+  },
+  {
+    key: "down",
+    command: "settings.action.focusSettingsFromSearch",
+    when: "inSettingsSearch && !suggestWidgetVisible",
+  },
+  {
+    key: "down",
+    command: "workbench.action.interactivePlayground.arrowDown",
+    when: "interactivePlaygroundFocus && !editorTextFocus",
+  },
+  {
+    key: "down",
+    command: "workbench.banner.focusNextAction",
+    when: "bannerFocused",
+  },
+  {
+    key: "down",
+    command: "workbench.statusBar.focusNext",
+    when: "statusBarFocused",
+  },
+  {
+    key: "down",
+    command: "notebook.cell.nullAction",
+    when: "notebookOutputInputFocused",
+  },
+  {
+    key: "down",
+    command: "workbench.action.terminal.selectNextSuggestion",
+    when: "terminalFocus && terminalHasBeenCreated && terminalIsOpen && terminalSuggestWidgetVisible || terminalFocus && terminalIsOpen && terminalProcessSupported && terminalSuggestWidgetVisible",
+  },
+  {
+    key: "down",
+    command: "selectNextCodeAction",
+    when: "codeActionMenuVisible",
+  },
+  // up
+  { key: "up", command: "cursorUp", when: "textInputFocus" },
+  {
+    key: "up",
+    command: "notebook.cell.chat.previousFromHistory",
+    when: "inlineChatFocused && notebookCellChatFocused",
+  },
+  {
+    key: "up",
+    command: "editor.action.scrollUpHover",
+    when: "editorHoverFocused",
+  },
+  {
+    key: "up",
+    command: "editor.action.selectPreviousStickyScrollLine",
+    when: "stickyScrollFocused",
+  },
+  {
+    key: "up",
+    command: "notebook.focusPreviousEditor",
+    when: "config.notebook.navigation.allowNavigateToSurroundingCells && editorTextFocus && inputFocus && notebookEditorFocused && !accessibilityModeEnabled && !isEmbeddedDiffEditor && notebookEditorCursorAtBoundary != 'bottom' && notebookEditorCursorAtBoundary != 'none'",
+  },
+  {
+    key: "up",
+    command: "showPrevParameterHint",
+    when: "editorFocus && parameterHintsMultipleSignatures && parameterHintsVisible",
+  },
+  {
+    key: "up",
+    command: "selectPrevSuggestion",
+    when: "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus || suggestWidgetVisible && textInputFocus && !suggestWidgetHasFocusedSuggestion",
+  },
+  {
+    key: "up",
+    command: "focusPreviousRenameSuggestion",
+    when: "renameInputVisible",
+  },
+  {
+    key: "up",
+    command: "history.showPrevious",
+    when: "historyNavigationBackwardsEnabled && historyNavigationWidgetFocus && !isComposing && !suggestWidgetVisible",
+  },
+  {
+    key: "up",
+    command: "iconSelectBox.focusUp",
+    when: "iconSelectBoxFocus",
+  },
+  {
+    key: "up",
+    command: "interactive.history.previous",
+    when: "isCompositeNotebook && !notebookEditorFocused && !suggestWidgetVisible && interactiveInputCursorAtBoundary != 'bottom' && interactiveInputCursorAtBoundary != 'none'",
+  },
+  {
+    key: "up",
+    command: "list.focusUp",
+    when: "listFocus && !inputFocus && !treestickyScrollFocused",
+  },
+  {
+    key: "up",
+    command: "notebook.focusPreviousEditor",
+    when: "config.notebook.navigation.allowNavigateToSurroundingCells && notebookCursorNavigationMode && notebookEditorFocused && !accessibilityModeEnabled && !isEmbeddedDiffEditor && !notebookCellMarkdownEditMode && notebookCellType == 'markup'",
+  },
+  {
+    key: "up",
+    command: "notifications.focusPreviousToast",
+    when: "notificationFocus && notificationToastsVisible",
+  },
+  {
+    key: "up",
+    command: "quickInput.previous",
+    when: "inQuickInput && quickInputType == 'quickPick'",
+  },
+  {
+    key: "up",
+    command: "scm.viewPreviousCommit",
+    when: "scmInputIsInFirstPosition && scmRepository && !suggestWidgetVisible",
+  },
+  {
+    key: "up",
+    command: "workbench.action.interactivePlayground.arrowUp",
+    when: "interactivePlaygroundFocus && !editorTextFocus",
+  },
+  {
+    key: "up",
+    command: "workbench.banner.focusPreviousAction",
+    when: "bannerFocused",
+  },
+  {
+    key: "up",
+    command: "workbench.statusBar.focusPrevious",
+    when: "statusBarFocused",
+  },
+  {
+    key: "up",
+    command: "notebook.cell.nullAction",
+    when: "notebookOutputInputFocused",
+  },
+  {
+    key: "up",
+    command: "workbench.action.terminal.selectPrevSuggestion",
+    when: "terminalFocus && terminalHasBeenCreated && terminalIsOpen && terminalSuggestWidgetVisible || terminalFocus && terminalIsOpen && terminalProcessSupported && terminalSuggestWidgetVisible",
+  },
+  {
+    key: "up",
+    command: "selectPrevCodeAction",
+    when: "codeActionMenuVisible",
+  },
+  //
   { key: "ctrl+left", command: "cursorWordLeft", when: "textInputFocus" },
   { key: "ctrl+right", command: "cursorWordRight", when: "textInputFocus" },
-  { key: "up", command: "cursorUp", when: "textInputFocus" },
-  { key: "down", command: "cursorDown", when: "textInputFocus" },
   { key: "left", command: "cursorLeft", when: "textInputFocus" },
   { key: "right", command: "cursorRight", when: "textInputFocus" },
   {

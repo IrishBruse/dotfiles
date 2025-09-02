@@ -206,6 +206,7 @@
   "[csharp]": {
     "editor.maxTokenizationLineLength": 2500,
     "editor.codeActionsOnSave": {
+      "source.removeUnused": "never",
       "source.fixAll.csharp": "explicit"
     }
   },
