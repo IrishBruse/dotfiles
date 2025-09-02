@@ -196,7 +196,7 @@
   "git.replaceTagsWhenPull": true,
   "git.useEditorAsCommitInput": false,
 
-  "git.blame.editorDecoration.enabled": false,
+  "git.blame.editorDecoration.enabled": true,
 
   // ----------------------------------------- Languages ------------------------------------------
 
@@ -204,7 +204,11 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[csharp]": {
-    "editor.maxTokenizationLineLength": 2500
+    "editor.maxTokenizationLineLength": 2500,
+    "editor.codeActionsOnSave": {
+      "source.removeUnused": "never",
+      "source.fixAll.csharp": "explicit"
+    }
   },
   "[ini]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml"
@@ -2316,7 +2320,6 @@
   },
   "editor.lineNumbers": "on",
   "github.copilot.nextEditSuggestions.fixes": false,
-  "github.copilot.chat.agent.autoFix": false,
   "github.copilot.editor.enableCodeActions": false,
   "go.toolsManagement.autoUpdate": true,
   "chat.editing.confirmEditRequestRetry": false,
@@ -2332,5 +2335,8 @@
     "addTags": false
   },
   "terminal.integrated.enableMultiLinePasteWarning": "never",
-  "editor.bracketPairColorization.enabled": false
+  "editor.bracketPairColorization.enabled": false,
+  "workbench.editor.empty.hint": "hidden",
+  "github.copilot.chat.codesearch.enabled": true,
+  "editor.aiStats.enabled": true
 }
