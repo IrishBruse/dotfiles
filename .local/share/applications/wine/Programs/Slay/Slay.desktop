@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Slay
+Exec=env WINEPREFIX="/home/econn/.wine" wine-stable C:\\\\ProgramData\\\\Microsoft\\\\Windows\\\\Start\\ Menu\\\\Programs\\\\Slay\\\\Slay.lnk
+Type=Application
+StartupNotify=true
+Path=/home/econn/.wine/dosdevices/c:/Program Files (x86)/Slay
+Icon=98AD_Slay.0
+StartupWMClass=slay.exe

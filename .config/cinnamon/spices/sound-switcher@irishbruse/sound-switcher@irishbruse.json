@@ -15,26 +15,26 @@
         "default": "",
         "description": "Output Device A",
         "tooltip": "Output Device A",
-        "value": "[G533 Wireless Headset Dongle] - Digital Output (S/PDIF)"
+        "value": "HDA Intel PCH - HDMI / DisplayPort 2"
     },
     "outputDeviceB": {
         "type": "entry",
         "default": "",
         "description": "Output Device B",
         "tooltip": "Output Device B",
-        "value": "HDA Intel PCH - HDMI / DisplayPort 2"
+        "value": "[G533 Wireless Headset Dongle] - Digital Output (S/PDIF)"
     },
     "outputDeviceAIcon": {
         "type": "iconfilechooser",
         "default": "tv-symbolic",
         "description": "Device A Icon",
-        "value": "audio-headphones-symbolic"
+        "value": "tv"
     },
     "outputDeviceBIcon": {
         "type": "iconfilechooser",
         "default": "audio-headphones-symbolic",
         "description": "Device B Icon",
-        "value": "tv"
+        "value": "audio-headphones-symbolic"
     },
     "__md5__": "82ba16811355e54c6ac956e17656adb4"
 }

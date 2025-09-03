@@ -87,6 +87,7 @@ export default [
   {
     key: "ctrl+c",
     command: "execCopy",
+    when: "isMac",
   },
   {
     key: "ctrl+c",

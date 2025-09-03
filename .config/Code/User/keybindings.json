@@ -5518,7 +5518,8 @@
     },
     {
         "key": "ctrl+c",
-        "command": "execCopy"
+        "command": "execCopy",
+        "when": "isMac"
     },
     {
         "key": "ctrl+c",

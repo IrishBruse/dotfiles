@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Uninstall Slay
+Exec=env WINEPREFIX="/home/econn/.wine" wine-stable C:\\\\ProgramData\\\\Microsoft\\\\Windows\\\\Start\\ Menu\\\\Programs\\\\Slay\\\\Uninstall\\ Slay.lnk
+Type=Application
+StartupNotify=true
+Path=/home/econn/.wine/dosdevices/c:/Program Files (x86)/Slay
+Icon=0090_unins000.0
+StartupWMClass=unins000.exe

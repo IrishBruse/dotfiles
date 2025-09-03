@@ -196,7 +196,7 @@
   "git.replaceTagsWhenPull": true,
   "git.useEditorAsCommitInput": false,
 
-  "git.blame.editorDecoration.enabled": true,
+  "git.blame.editorDecoration.enabled": false,
 
   // ----------------------------------------- Languages ------------------------------------------
 
