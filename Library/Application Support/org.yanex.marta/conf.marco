@@ -1,0 +1,21 @@
+keyBindings {
+    "Delete" "core.trash"
+    "F2" "core.rename"
+}
+
+fonts {
+    actionBar [ "Cascadia Mono" 12 ]
+    breadcrumbs [ "Cascadia Mono" 12 ]
+    virtualTabs [ "Cascadia Mono Bold" 12 ]
+    files [ "Cascadia Mono" 12 ]
+    statusBar [ "Default" 11 ]
+    tableHeader [ "Cascadia Mono" 11 ]
+    tabs [ "Cascadia Mono" 12 ]
+    preferences [ "Cascadia Mono" 12 ]
+}
+
+table {
+    defaults {
+        showHiddenFiles true
+    }
+}

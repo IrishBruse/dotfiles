@@ -81,7 +81,7 @@
             ]
           },
           {
-            "description": "Ctrl+E Opens Nimble Commander",
+            "description": "Ctrl+E Opens File Manager",
             "manipulators": [
               {
                 "from": {
@@ -1429,38 +1429,6 @@
                 "to": [
                   {
                     "key_code": "delete_or_backspace",
-                    "modifiers": ["option"]
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "PC-Style Control+Delete",
-            "manipulators": [
-              {
-                "conditions": [
-                  {
-                    "bundle_identifiers": [
-                      "^co\\.zeit\\.hyper$",
-                      "^io\\.alacritty$",
-                      "^org\\.alacritty$",
-                      "^net\\.kovidgoyal\\.kitty$"
-                    ],
-                    "type": "frontmost_application_unless"
-                  }
-                ],
-                "from": {
-                  "key_code": "delete_forward",
-                  "modifiers": {
-                    "mandatory": ["control"],
-                    "optional": ["any"]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "delete_forward",
                     "modifiers": ["option"]
                   }
                 ],

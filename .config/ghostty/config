@@ -63,8 +63,6 @@ keybind = ctrl+v=paste_from_clipboard
 keybind = performable:ctrl+c=copy_to_clipboard
 keybind = ctrl+k=clear_screen
 
-keybind = ctrl+backspace=text:\x17
-keybind = ctrl+delete=text:\x1b\x64
 keybind = ctrl+\=new_split:right
 keybind = ctrl+t=new_tab
 
