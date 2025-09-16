@@ -48,7 +48,6 @@ macos-titlebar-proxy-icon = hidden
 
 window-decoration = true
 gtk-titlebar = false
-gtk-adwaita = false
 
 auto-update-channel = stable
 

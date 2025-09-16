@@ -4,6 +4,11 @@
     "body": ["&nbsp;", ""],
     "description": "&nbsp;"
   },
+  "dbg": {
+    "prefix": "dbg",
+    "body": ["console.log('ASD',$0)", ""],
+    "description": "log debug"
+  },
   "jsdoc-type": {
     "prefix": "@type",
     "body": ["/** @type {${1:any}} */", ""],

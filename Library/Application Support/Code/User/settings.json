@@ -81,7 +81,8 @@
     "keybinds": "ini",
     "local": "ini",
     "*.glsl": "bat",
-    "*.ejs.t": "ejs"
+    "*.ejs.t": "ejs",
+    "*.ast": "json"
   },
   "files.exclude": {
     "**/.git": true,
@@ -206,8 +207,8 @@
   "[csharp]": {
     "editor.maxTokenizationLineLength": 2500,
     "editor.codeActionsOnSave": {
-      "source.removeUnused": "never",
-      "source.fixAll.csharp": "explicit"
+      "source.removeUnused": "never"
+      // "source.fixAll.csharp": "explicit"
     }
   },
   "[ini]": {
@@ -318,7 +319,7 @@
 
   // ----------------------------------------- errorLens ------------------------------------------
 
-  "errorLens.enabledDiagnosticLevels": ["warning", "error"],
+  "errorLens.enabledDiagnosticLevels": ["error"],
   "errorLens.fontWeight": "500",
   "errorLens.gutterIconsEnabled": false,
   "errorLens.gutterIconSet": "defaultOutline",
@@ -867,12 +868,6 @@
         "settings": {
           "fontStyle": "italic",
           "foreground": "#C678DD"
-        }
-      },
-      {
-        "scope": ["punctuation.section.embedded"],
-        "settings": {
-          "foreground": "#BE5046"
         }
       },
       {
@@ -2319,7 +2314,6 @@
   },
   "editor.lineNumbers": "on",
   "github.copilot.nextEditSuggestions.fixes": false,
-  "github.copilot.chat.agent.autoFix": false,
   "github.copilot.editor.enableCodeActions": false,
   "go.toolsManagement.autoUpdate": true,
   "chat.editing.confirmEditRequestRetry": false,
@@ -2336,5 +2330,11 @@
   },
   "terminal.integrated.enableMultiLinePasteWarning": "never",
   "editor.bracketPairColorization.enabled": false,
-  "workbench.editor.empty.hint": "hidden"
+  "workbench.editor.empty.hint": "hidden",
+  "github.copilot.chat.codesearch.enabled": true,
+  "editor.aiStats.enabled": true,
+  "errorLens.ignoreUntitled": true,
+  "errorLens.ignoreDirty": true,
+  "bruno.defaultCollectionLocation": "/Users/econneely/dotfiles/.hurl/bruno",
+  "chat.editing.confirmEditRequestRemoval": false
 }
