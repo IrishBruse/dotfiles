@@ -81,7 +81,8 @@
     "keybinds": "ini",
     "local": "ini",
     "*.glsl": "bat",
-    "*.ejs.t": "ejs"
+    "*.ejs.t": "ejs",
+    "*.ast": "json"
   },
   "files.exclude": {
     "**/.git": true,
@@ -200,14 +201,14 @@
 
   // ----------------------------------------- Languages ------------------------------------------
 
-  "[css][scss][html][json][jsonc][yaml][markdown]": {
+  "[css][scss][html][json][jsonc][yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[csharp]": {
     "editor.maxTokenizationLineLength": 2500,
     "editor.codeActionsOnSave": {
-      "source.removeUnused": "never",
-      "source.fixAll.csharp": "explicit"
+      "source.removeUnused": "never"
+      // "source.fixAll.csharp": "explicit"
     }
   },
   "[ini]": {
@@ -219,10 +220,15 @@
     "editor.unicodeHighlight.invisibleCharacters": false,
     "files.trimFinalNewlines": false,
     "files.trimTrailingWhitespace": false,
-    "editor.indentSize": 4
+    "editor.indentSize": 4,
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one"
   },
   "[snippets]": {
     "files.insertFinalNewline": false
+  },
+  "[shellscript]": {
+    "files.eol": "\n",
+    "editor.formatOnSave": false
   },
 
   // -------------------------------------------- CSharp ------------------------------------------
@@ -318,7 +324,7 @@
 
   // ----------------------------------------- errorLens ------------------------------------------
 
-  "errorLens.enabledDiagnosticLevels": ["warning", "error"],
+  "errorLens.enabledDiagnosticLevels": ["error"],
   "errorLens.fontWeight": "500",
   "errorLens.gutterIconsEnabled": false,
   "errorLens.gutterIconSet": "defaultOutline",
@@ -641,7 +647,11 @@
       "punctuation": "#ABB2BF",
       "enum": "#E5C07B",
       "boolean": "#56B6C2",
-      "number": "#D19A66"
+      "number": "#D19A66",
+      "operatorOverloaded": {
+        "bold": true,
+        "foreground": "#C678DD"
+      }
     }
   },
   "editor.tokenColorCustomizations": {
@@ -867,12 +877,6 @@
         "settings": {
           "fontStyle": "italic",
           "foreground": "#C678DD"
-        }
-      },
-      {
-        "scope": ["punctuation.section.embedded"],
-        "settings": {
-          "foreground": "#BE5046"
         }
       },
       {
@@ -2282,6 +2286,13 @@
         "settings": {
           "foreground": "#E06C75"
         }
+      },
+      // custom
+      {
+        "scope": ["keyword.register"],
+        "settings": {
+          "foreground": "#E5C07B"
+        }
       }
     ]
   },
@@ -2291,7 +2302,7 @@
   ],
   "debug.onTaskErrors": "debugAnyway",
   "editor.codeActions.triggerOnFocusChange": true,
-  "smartersemicolon.enable": true,
+  "smartersemicolon.enable": false,
   "settingsSync.ignoredSettings": ["editor.mouseWheelScrollSensitivity"],
   "explorer.sortOrder": "foldersNestsFiles",
   "explorer.sortOrderLexicographicOptions": "unicode",
@@ -2338,5 +2349,9 @@
   "editor.bracketPairColorization.enabled": false,
   "workbench.editor.empty.hint": "hidden",
   "github.copilot.chat.codesearch.enabled": true,
-  "editor.aiStats.enabled": true
+  "editor.aiStats.enabled": true,
+  "errorLens.ignoreUntitled": true,
+  "errorLens.ignoreDirty": true,
+  "chat.editing.confirmEditRequestRemoval": false,
+  "files.eol": "\n"
 }
