@@ -78,6 +78,19 @@ export default [
   { key: "ctrl+a", command: "editor.action.selectAll" },
   { key: "backspace", command: "deleteLeft", when: "textInputFocus" },
   { key: "delete", command: "deleteRight", when: "textInputFocus" },
+  // Terminal
+  {
+    key: "ctrl+backspace",
+    command: "workbench.action.terminal.sendSequence",
+    when: "terminalFocus",
+    args: { text: "\u0017" },
+  },
+  // {
+  //   key: "ctrl+delete",
+  //   command: "workbench.action.terminal.sendSequence",
+  //   when: "terminalFocus",
+  //   args: { text: "\u001bd" },
+  // },
   // Copy cut & paste
   {
     key: "ctrl+c",
@@ -123,6 +136,18 @@ export default [
     key: "ctrl+v",
     command: "filesExplorer.paste",
     when: "filesExplorerFocus && foldersViewVisible && !explorerResourceReadonly && !inputFocus",
+  },
+  {
+    key: "ctrl+=",
+    command: "workbench.action.zoomIn",
+  },
+  {
+    key: "ctrl+-",
+    command: "workbench.action.zoomOut",
+  },
+  {
+    key: "ctrl+0",
+    command: "workbench.action.zoomReset",
   },
   // Cursor
   // down

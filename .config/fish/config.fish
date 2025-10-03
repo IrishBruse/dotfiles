@@ -185,3 +185,6 @@ function nr --wraps "npm run"
 end
 
 abbr jc "jira issue create -t=Task -a=econneely --custom feature-team=dynaFormRaptors --web"
+
+# Keybinds
+bind ctrl-w backward-kill-word

@@ -2308,7 +2308,6 @@
   "explorer.sortOrderLexicographicOptions": "unicode",
   "keyboard.touchbar.enabled": false,
   "editor.snippetSuggestions": "none",
-  "window.zoomLevel": 0.75,
   "files.enableTrash": false,
   "git.discardUntrackedChangesToTrash": false,
   "yaml.schemas": {
@@ -2353,5 +2352,14 @@
   "errorLens.ignoreUntitled": true,
   "errorLens.ignoreDirty": true,
   "chat.editing.confirmEditRequestRemoval": false,
-  "files.eol": "\n"
+  "files.eol": "\n",
+  "[dockercompose]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.autoIndent": "advanced",
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  }
 }
