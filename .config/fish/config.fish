@@ -132,10 +132,6 @@ function v
     end
 end
 
-function fnm
-    command fnm $argv
-end
-
 # Git
 abbr gsrp "git stash && git pull --rebase && git stash pop"
 abbr clone "git clone --recursive"
@@ -183,8 +179,6 @@ function nr --wraps "npm run"
     set -lx BROWSER none
     npm run $argv
 end
-
-abbr jc "jira issue create -t=Task -a=econneely --custom feature-team=dynaFormRaptors --web"
 
 # Keybinds
 bind ctrl-w backward-kill-word
