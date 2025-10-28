@@ -125,13 +125,8 @@
   font-size: 18x !important;
 }
 
-.sidebar > .header .action-item > .action-label[aria-label^="Snippet"]:hover,
 .sidebar > .header .action-item > .action-label[aria-label^="Snippet"] {
-  background-color: transparent !important;
-  mask-image: none !important;
-  align-items: center;
-  transform: translateX(-7px);
-  justify-content: center;
+  transform: scale(1.25);
 }
 
 .sidebar > .header .action-item > .action-label[aria-label^="Snippet"]:before {

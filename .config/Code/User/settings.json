@@ -82,7 +82,8 @@
     "local": "ini",
     "*.glsl": "bat",
     "*.ejs.t": "ejs",
-    "*.ast": "json"
+    "*.ast": "json",
+    "*.sh": "shellscript"
   },
   "files.exclude": {
     "**/.git": true,
@@ -155,7 +156,7 @@
   "terminal.integrated.ignoreBracketedPasteMode": true,
   "terminal.integrated.persistentSessionReviveProcess": "never",
   "terminal.integrated.rightClickBehavior": "nothing",
-  "terminal.integrated.scrollback": 1000,
+  "terminal.integrated.scrollback": 10000,
   "terminal.integrated.shellIntegration.decorationsEnabled": "never",
   "terminal.integrated.shellIntegration.enabled": false,
   "terminal.integrated.tabs.title": "${sequence}",
@@ -207,9 +208,11 @@
   "[csharp]": {
     "editor.maxTokenizationLineLength": 2500,
     "editor.codeActionsOnSave": {
-      "source.removeUnused": "never"
+      "source.removeUnused": "never",
+      "source.organizeImports": "explicit"
       // "source.fixAll.csharp": "explicit"
-    }
+    },
+    "editor.semanticHighlighting.enabled": false
   },
   "[ini]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml"
@@ -228,7 +231,9 @@
   },
   "[shellscript]": {
     "files.eol": "\n",
-    "editor.formatOnSave": false
+    "editor.formatOnSave": true,
+    "files.insertFinalNewline": false,
+    "files.trimTrailingWhitespace": false
   },
 
   // -------------------------------------------- CSharp ------------------------------------------
@@ -642,15 +647,21 @@
     "terminal.ansiBrightWhite": "#FFFFFF"
   },
   "editor.semanticTokenColorCustomizations": {
-    "enabled": false,
-    "rules": {
-      "punctuation": "#ABB2BF",
-      "enum": "#E5C07B",
-      "boolean": "#56B6C2",
-      "number": "#D19A66",
-      "operatorOverloaded": {
-        "bold": true,
-        "foreground": "#C678DD"
+    "[Empty Dark Theme]": {
+      "enabled": true,
+      "rules": {
+        "punctuation": "#ABB2BF",
+        "enum": "#E5C07B",
+        "boolean": "#56B6C2",
+        "number": "#D19A66",
+        "operatorOverloaded": {
+          "bold": true,
+          "foreground": "#C678DD"
+        },
+        "constant.character.escape": {
+          "foreground": "#FF0000",
+          "fontStyle": "bold"
+        }
       }
     }
   },
@@ -724,6 +735,12 @@
         }
       },
       {
+        "scope": "keyword.operator.expression.pattern",
+        "settings": {
+          "foreground": "#C678DD"
+        }
+      },
+      {
         "scope": ["keyword.other.special-method"],
         "settings": {
           "foreground": "#61AFEF"
@@ -766,7 +783,7 @@
         }
       },
       {
-        "scope": ["constant.character.escape"],
+        "scope": ["constant.character.escape", "constant.character.escape.cs"],
         "settings": {
           "foreground": "#56B6C2"
         }
@@ -850,7 +867,8 @@
           "punctuation.definition.parameters",
           "punctuation.definition.separator",
           "punctuation.definition.seperator",
-          "punctuation.definition.array"
+          "punctuation.definition.array",
+          "punctuation.definition.interpolation"
         ],
         "settings": {
           "foreground": "#ABB2BF"
@@ -962,6 +980,12 @@
         "scope": ["entity.other.attribute-name"],
         "settings": {
           "foreground": "#D19A66"
+        }
+      },
+      {
+        "scope": "keyword.operator.expression.new",
+        "settings": {
+          "foreground": "#E06C75"
         }
       },
       {
@@ -1117,7 +1141,7 @@
         }
       },
       {
-        "scope": ["source.cs keyword.operator"],
+        "scope": ["source.cs keyword.operator", "variable.language.this.cs"],
         "settings": {
           "foreground": "#C678DD"
         }
@@ -2004,7 +2028,7 @@
       {
         "scope": "source.cs keyword.operator",
         "settings": {
-          "foreground": "#ABB2BF"
+          "foreground": "#56B6C2"
         }
       },
       {
@@ -2302,7 +2326,7 @@
   ],
   "debug.onTaskErrors": "debugAnyway",
   "editor.codeActions.triggerOnFocusChange": true,
-  "smartersemicolon.enable": false,
+  "smartersemicolon.enable": true,
   "settingsSync.ignoredSettings": ["editor.mouseWheelScrollSensitivity"],
   "explorer.sortOrder": "foldersNestsFiles",
   "explorer.sortOrderLexicographicOptions": "unicode",
@@ -2352,7 +2376,6 @@
   "errorLens.ignoreUntitled": true,
   "errorLens.ignoreDirty": true,
   "chat.editing.confirmEditRequestRemoval": false,
-  "files.eol": "\n",
   "[dockercompose]": {
     "editor.insertSpaces": true,
     "editor.tabSize": 2,
@@ -2361,5 +2384,9 @@
   },
   "[github-actions-workflow]": {
     "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "git.blame.statusBarItem.enabled": false,
+  "aws.suppressPrompts": {
+    "yamlExtPrompt": true
   }
 }
