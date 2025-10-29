@@ -1141,7 +1141,7 @@
         }
       },
       {
-        "scope": ["source.cs keyword.operator"],
+        "scope": ["source.cs keyword.operator", "variable.language.this.cs"],
         "settings": {
           "foreground": "#C678DD"
         }
@@ -2385,5 +2385,8 @@
   "[github-actions-workflow]": {
     "editor.defaultFormatter": "redhat.vscode-yaml"
   },
-  "git.blame.statusBarItem.enabled": true
+  "git.blame.statusBarItem.enabled": false,
+  "aws.suppressPrompts": {
+    "yamlExtPrompt": true
+  }
 }

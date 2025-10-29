@@ -26,6 +26,7 @@ switch (set -q OS && echo $OS || uname)
 end
 
 fish_add_path -g ~/go/bin
+fish_add_path -g ~/.local/bin
 
 zoxide init fish --cmd cd | source
 fzf --fish | source
