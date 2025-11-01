@@ -83,7 +83,8 @@
     "*.glsl": "bat",
     "*.ejs.t": "ejs",
     "*.ast": "json",
-    "*.sh": "shellscript"
+    "*.sh": "shellscript",
+    "*.yaml": "yaml"
   },
   "files.exclude": {
     "**/.git": true,
@@ -271,6 +272,7 @@
   // --------------------------------- TypeScript/JavaScript --------------------------------------
 
   "[javascript][typescript][javascriptreact][typescriptreact]": {
+    "editor.semanticHighlighting.enabled": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"

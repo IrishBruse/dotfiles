@@ -127,9 +127,9 @@ end
 
 function v
     if test (count $argv) -eq 0
-        code .
+        code --enable-features=Vulkan .
     else
-        code $argv
+        code --enable-features=Vulkan $argv
     end
 end
 

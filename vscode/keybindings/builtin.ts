@@ -592,4 +592,8 @@ export default [
     command: "workbench.action.debug.continue",
     when: "debugState == 'stopped'",
   },
+  {
+    key: "ctrl+n",
+    command: "workbench.action.files.newUntitledFile",
+  },
 ] as Keybind[];
