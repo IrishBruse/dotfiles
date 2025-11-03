@@ -1,41 +1,63 @@
 {
   "space": {
     "prefix": "space",
-    "body": ["&nbsp;", ""],
+    "body": [
+      "&nbsp;",
+      ""
+    ],
     "description": "&nbsp;"
   },
   "dbg": {
     "prefix": "dbg",
-    "body": ["console.log('ASD',$0)", ""],
-    "description": "log debug"
+    "description": "log debug",
+    "body": [
+      "console.log('ASD',$0)"
+    ]
   },
   "jsdoc-type": {
     "prefix": "@type",
-    "body": ["/** @type {${1:any}} */", ""],
+    "body": [
+      "/** @type {${1:any}} */",
+      ""
+    ],
     "description": "jsdoc Type Hint"
   },
   "sleep": {
     "prefix": "sleep",
-    "body": ["await new Promise((res)=>setTimeout(res,${1:1000}))", ""],
+    "body": [
+      "await new Promise((res)=>setTimeout(res,${1:1000}))",
+      ""
+    ],
     "description": "await Promise with timeout"
   },
   "ctor": {
     "prefix": "ctor",
-    "body": ["constructor()", "{", "  $0;", "}"]
+    "body": [
+      "constructor()",
+      "{",
+      "  $0;",
+      "}"
+    ]
   },
   "test": {
     "prefix": "test",
-    "body": ["test('$1', () => {", "  // $0", "})", ""],
-    "description": "jest test definition"
-  },
-  "func": {
-    "prefix": "func",
-    "body": ["const name = () => {", "  ${1:// }", "}", ""]
+    "description": "jest test definition",
+    "body": [
+      "test('$1', () => {",
+      "  expect(1).toBe(3)",
+      "})"
+    ]
   },
   "describe": {
     "prefix": "describe",
     "description": "jest describe definition",
-    "body": ["describe('$1', () => {", "  // $0", "})", ""]
+    "body": [
+      "describe('$1', () => {",
+      "  test('$2', () => {",
+      "    expect(1).toBe(3)",
+      "  })",
+      "})"
+    ]
   },
   "reduce": {
     "prefix": "reduce",
@@ -50,8 +72,5 @@
       ""
     ],
     "description": "reduce using keys"
-  },
-  "AUTO": {
-    "description": "GENERATED"
   }
 }

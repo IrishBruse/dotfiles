@@ -149,7 +149,14 @@ end
 
 function gcp
     gc $argv
-    git push
+end
+
+function envs
+    command env | sort | fzf
+end
+
+function paths
+    echo $PATH | string split ' ' | sort | fzf
 end
 
 alias bat="bat --theme OneHalfDark --style grid,numbers"

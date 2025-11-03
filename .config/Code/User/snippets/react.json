@@ -16,6 +16,7 @@
   "comp func": {
     "prefix": "comp",
     "description": "Functional React Component",
+    "isFileTemplate": true,
     "body": [
       "const ${1:Component} = () => {",
       "  return (",

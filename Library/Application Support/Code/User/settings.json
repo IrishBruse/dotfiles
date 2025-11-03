@@ -83,7 +83,8 @@
     "*.glsl": "bat",
     "*.ejs.t": "ejs",
     "*.ast": "json",
-    "*.sh": "shellscript"
+    "*.sh": "shellscript",
+    "*.yaml": "yaml"
   },
   "files.exclude": {
     "**/.git": true,
@@ -271,6 +272,7 @@
   // --------------------------------- TypeScript/JavaScript --------------------------------------
 
   "[javascript][typescript][javascriptreact][typescriptreact]": {
+    "editor.semanticHighlighting.enabled": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
@@ -2326,7 +2328,7 @@
   ],
   "debug.onTaskErrors": "debugAnyway",
   "editor.codeActions.triggerOnFocusChange": true,
-  "smartersemicolon.enable": true,
+  "smartersemicolon.enable": false,
   "settingsSync.ignoredSettings": ["editor.mouseWheelScrollSensitivity"],
   "explorer.sortOrder": "foldersNestsFiles",
   "explorer.sortOrderLexicographicOptions": "unicode",
@@ -2388,5 +2390,14 @@
   "git.blame.statusBarItem.enabled": false,
   "aws.suppressPrompts": {
     "yamlExtPrompt": true
-  }
+  },
+  "todohighlight.keywords": [
+    {
+      "text": "TODO:",
+      "backgroundColor": "transparent",
+      "color": "white",
+      "fontWeight": "bold",
+      "overviewRulerColor": "#ddd"
+    }
+  ]
 }
