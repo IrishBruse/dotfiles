@@ -98,7 +98,7 @@ for (const obj of textMateRules) {
   }
 }
 
-const newRules = [];
+const newRules: any[] = [];
 
 for (const [lang, value] of Object.entries(colors)) {
   // console.log(color);

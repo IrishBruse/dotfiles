@@ -260,6 +260,11 @@
 
   "dotnetAcquisitionExtension.enableTelemetry": false,
 
+  "dotnet.server.useOmnisharp": true,
+  "dotnet.formatting.organizeImportsOnFormat": true,
+  "omnisharp.sdkPath": "/home/econn/.dotnet/sdk/",
+  "omnisharp.sdkVersion": "10.0.100",
+
   // -------------------------------------------- Lua ---------------------------------------------
 
   "Lua.codeLens.enable": true,
@@ -383,7 +388,7 @@
   "debug.saveBeforeStart": "nonUntitledEditorsInActiveGroup",
   "debug.showInStatusBar": "never",
   "diffEditor.codeLens": false,
-  "diffEditor.ignoreTrimWhitespace": true,
+  "diffEditor.ignoreTrimWhitespace": false,
   "diffEditor.maxComputationTime": 0,
   "diffEditor.renderSideBySide": true,
   "diffEditor.useInlineViewWhenSpaceIsLimited": false,
@@ -661,6 +666,7 @@
           "bold": true,
           "foreground": "#C678DD"
         },
+        "variable.defaultLibrary": "#E5C07B",
         "parameter": "#E06C75",
         "parameter.declaration": "#ABB2BF"
       }
@@ -1135,7 +1141,9 @@
           "punctuation.terminator.statement.js",
           "punctuation.separator.parameter.js",
           "source.js meta.import-equals.external.js keyword.operator",
-          "source.js meta.tag.js keyword.operator"
+          "source.js meta.tag.js keyword.operator",
+          "punctuation.definition.template-expression.begin.ts",
+          "punctuation.definition.template-expression.end.ts"
         ],
         "settings": {
           "foreground": "#ABB2BF"
@@ -1170,9 +1178,7 @@
           "meta.export.default.ts variable.other.readwrite.ts",
           "support.type.object.module.ts",
           "entity.name.type.module.ts",
-          "meta.object-literal.key.ts",
-          "punctuation.definition.template-expression.begin.ts",
-          "punctuation.definition.template-expression.end.ts"
+          "meta.object-literal.key.ts"
         ],
         "settings": {
           "foreground": "#E06C75"
@@ -1641,6 +1647,25 @@
         "settings": {
           "foreground": "#C678DD"
         }
+      },
+      // qbe
+      {
+        "scope": ["source.qbe constant.other"],
+        "settings": {
+          "foreground": "#56B6C2"
+        }
+      },
+      {
+        "scope": ["source.qbe keyword.operator", "entity.name.label.qbe"],
+        "settings": {
+          "foreground": "#61AFEF"
+        }
+      },
+      {
+        "scope": "entity.name.type.numeric.qbe",
+        "settings": {
+          "foreground": "#E5C07B"
+        }
       }
     ]
   },
@@ -1697,9 +1722,5 @@
       "fontWeight": "bold",
       "overviewRulerColor": "#ddd"
     }
-  ],
-  "dotnet.server.useOmnisharp": true,
-  "dotnet.formatting.organizeImportsOnFormat": true,
-  "omnisharp.dotnetPath": "~/.dotnet/",
-  "omnisharp.sdkPath": "~/.dotnet/sdk/"
+  ]
 }
