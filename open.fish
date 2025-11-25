@@ -1,14 +1,15 @@
 #!/usr/bin/env fish
 
+fnm env --use-on-cd >.config/fish/conf.d/fnm.fish
+zoxide init fish --cmd cd >.config/fish/conf.d/zoxide.fish
+fzf --fish >.config/fish/conf.d/fzf.fish
+
 if test (uname) = Linux
     dconf dump / >misc/dconf-settings.ini
     dconf read /com/linuxmint/install/installed-apps | string replace -a \' \" | jq >misc/apt.json
 end
 
 if test (uname) = Darwin
-    echo \n\n"== Casks =="\n\n >misc/brew.ini
-    brew list --casks >>misc/brew.ini
-
-    echo \n\n"== Formula =="\n\n >>misc/brew.ini
-    brew list --formula >>misc/brew.ini
+    brew bundle dump --no-vscode -f --file=misc/Brewfile
+    /opt/homebrew/bin/brew shellenv >.config/fish/conf.d/brew.fish
 end

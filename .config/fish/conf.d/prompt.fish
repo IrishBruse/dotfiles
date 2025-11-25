@@ -1,8 +1,6 @@
 function fish_prompt
     set -l exit_code $status
 
-    # printf \e\[0J # clear from cursor to end of screen
-
     if not set -e transient_prompt
         printf (set_color cyan)(prompt_pwd --full-length-dirs=20)(set_color normal)
 
@@ -10,11 +8,11 @@ function fish_prompt
             printf (set_color red)" $exit_code "(set_color normal)
         end
 
-        echo
+        printf '\n'
     end
 
     if test $exit_code -eq 0
-        printf (set_color magenta)'❯'
+        printf (set_color blue)'❯'
     else
         printf (set_color red)'❯'
     end

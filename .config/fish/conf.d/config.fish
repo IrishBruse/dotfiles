@@ -1,36 +1,15 @@
-switch (set -q OS && echo $OS || uname)
-    case Darwin
-        /opt/homebrew/bin/brew shellenv | source
-        alias apc="sudo chown -R $(whoami) '/Applications/Visual Studio Code.app/Contents/'"
-        alias code="code --ignore-certificate-errors"
-        alias sed="gsed"
-        alias chrome "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --silent-debugger-extension-api 2> /dev/null"
-        set -gx HOMEBREW_NO_ENV_HINTS 1
-        alias neofetch fastfetch
+# fish_add_path -g ~/.local/share/fnm/
+# alias neofetch fastfetch
+# alias rm trash
+# set -x BROWSER google-chrome
+# set -gx ANDROID_HOME /usr/lib/android-sdk
+# export DOTNET_ROOT=/usr/share/dotnet
 
-    case Linux
-        alias apc="sudo chown -R $(whoami) '/usr/share/code/'"
-        fish_add_path -g ~/.local/share/fnm/
-        alias neofetch fastfetch
-        alias rm trash
-        set -x BROWSER google-chrome
-        set -gx ANDROID_HOME /usr/lib/android-sdk
-        export DOTNET_ROOT=/usr/share/dotnet
+# for opt in (command ls /opt/)
+#     fish_add_path -g "/opt/$opt"
+# end
 
-        for opt in (command ls /opt/)
-            fish_add_path -g "/opt/$opt"
-        end
-
-    case '*'
-        echo 'Unknown OS: '(uname)
-end
-
-fish_add_path -g ~/go/bin
-fish_add_path -g ~/.local/bin
-
-zoxide init fish --cmd cd | source
-fzf --fish | source
-fnm env | source
+# Global
 
 set -U fish_greeting
 set -g fish_color_valid_path
@@ -48,10 +27,16 @@ set -gx FORCE_COLOR true
 
 abbr patch "npm version patch --force --git-tag-version=false"
 
-function setgx
-    set -gx $argv[1] $argv[2]
-    if test $status -eq 0
-        echo "Set $argv[1]"
+function apc
+    switch (uname)
+        case Darwin
+            alias apc="sudo chown -R $(whoami) '/usr/share/code/'"
+
+        case Linux
+            alias apc="sudo chown -R $(whoami) '/Applications/Visual Studio Code.app/Contents/'"
+
+        case '*'
+            echo 'Unknown OS: '(uname)
     end
 end
 
@@ -75,9 +60,6 @@ function on_change_pwd --on-variable PWD
     status --is-command-substitution; and return
     set -l repo (echo $PWD | string replace ~/git/ "")
 
-    set -g fish_git_branch ""
-    set -g fish_git_branch (git branch --show-current 2>/dev/null)
-
     local_onchange_repo $repo
 
     switch (echo $repo)
@@ -86,16 +68,6 @@ function on_change_pwd --on-variable PWD
 end
 
 on_change_pwd
-
-set -gx NI_DEFAULT_AGENT npm
-set -gx NI_GLOBAL_AGENT npm
-
-function clone
-    set repoURL (echo $argv[1] | string trim -l -c "https://" | string split "/")
-    set -l folder (echo $repoURL[3] | string split ".")
-
-    git clone --recursive -- $argv[1] $folder[1]
-end
 
 function clip
     fish_clipboard_copy
@@ -127,17 +99,16 @@ end
 
 function v
     if test (count $argv) -eq 0
-        code --enable-features=Vulkan .
+        code .
     else
-        code --enable-features=Vulkan $argv
+        code $argv
     end
 end
 
 # Git
-abbr gsrp "git stash && git pull --rebase && git stash pop"
-abbr clone "git clone --recursive"
 abbr gs "git status"
 abbr ga "git add ."
+abbr clone "git clone --recursive"
 
 function gc
     if test (count $argv) -gt 0
@@ -145,10 +116,6 @@ function gc
     else
         git commit
     end
-end
-
-function gcp
-    gc $argv
 end
 
 function envs
@@ -159,9 +126,9 @@ function paths
     echo $PATH | string split ' ' | sort | fzf
 end
 
-alias bat="bat --theme OneHalfDark --style grid,numbers"
-alias ls="eza -ax --icons=always --group-directories-first"
-alias ll="eza -al --icons=always --group-directories-first"
+alias bat="bat --theme OneHalfDark ---style grid,numbers"
+alias ls="eza -ax --no-user --time-style relative --group-directories-first"
+alias ll="eza -al --no-user --time-style relative --group-directories-first"
 alias reload="clear;exec fish"
 alias paths="echo $PATH | tr ':' '\n'"
 alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LDtk.Codegen.csproj"
@@ -170,23 +137,6 @@ alias showkey="fish_key_reader --verbose"
 
 # Node alias
 abbr nvm fnm
-
-function ni --wraps "npm install"
-    npm install --save $argv
-end
-
-function nid --wraps "npm install"
-    npm install --save-dev $argv
-end
-
-function nu
-    npm install --save $argv[1]"@latest"
-end
-
-function nr --wraps "npm run"
-    set -lx BROWSER none
-    npm run $argv
-end
 
 # Keybinds
 bind ctrl-w backward-kill-word

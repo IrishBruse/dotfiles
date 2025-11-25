@@ -23,7 +23,8 @@
       "options": {
         "cwd": "vscode/keybindings/"
       },
-      "runOptions": { "runOn": "folderOpen" }
+      "runOptions": { "runOn": "folderOpen" },
+      "presentation": { "reveal": "silent" }
     }
   ]
 }

@@ -72,5 +72,13 @@
       ""
     ],
     "description": "reduce using keys"
+  },
+  "stringify": {
+    "prefix": "stringify",
+    "description": "JSON.stringify",
+    "isFileTemplate": false,
+    "body": [
+      "JSON.stringify($0, null, 2)"
+    ]
   }
 }

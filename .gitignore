@@ -9,17 +9,8 @@
 
 local.fish
 
-.config/fish/themes/
-.config/fish/functions/*
-!.config/fish/functions/fish_title.fish
-
-.config/fish/completions/*
-!.config/fish/completions/aws.fish
-!.config/fish/completions/sam*.fish
-
-.config/fish/conf.d/*
-!.config/fish/conf.d/prompt.fish
 .config/fish/fish_variables
+.config/fish/conf.d/brew.fish
 
 .config/karabiner/assets/complex_modifications
 .config/karabiner/automatic_backups
@@ -32,4 +23,3 @@ local.fish
 .gitconfig
 
 node_modules
-login.fish
