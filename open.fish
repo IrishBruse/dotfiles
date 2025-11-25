@@ -1,6 +1,5 @@
 #!/usr/bin/env fish
 
-fnm env --use-on-cd >.config/fish/conf.d/fnm.fish
 zoxide init fish --cmd cd >.config/fish/conf.d/zoxide.fish
 fzf --fish >.config/fish/conf.d/fzf.fish
 

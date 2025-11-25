@@ -11,32 +11,19 @@
 
 # Global
 
-set -U fish_greeting
-set -g fish_color_valid_path
+fnm env --use-on-cd --shell fish | source
+
 set -x EDITOR "code --wait"
 set -gx JQ_COLORS "0;34:0;34:0;34:0;37:0;32:0;37:0;37:0;31"
-
-set -g __fish_git_prompt_showcolorhints 1
-set -g __fish_git_prompt_color_branch blue
-set -g fish_color_error red
 
 set -gx DOTNET_WATCH_RESTART_ON_RUDE_EDIT 1
 set -gx DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION true
 
-set -gx FORCE_COLOR true
-
-abbr patch "npm version patch --force --git-tag-version=false"
-
 function apc
-    switch (uname)
-        case Darwin
-            alias apc="sudo chown -R $(whoami) '/usr/share/code/'"
-
-        case Linux
-            alias apc="sudo chown -R $(whoami) '/Applications/Visual Studio Code.app/Contents/'"
-
-        case '*'
-            echo 'Unknown OS: '(uname)
+    if test (uname) = Linux
+        sudo chown -R $(whoami) /usr/share/code/
+    else
+        sudo chown -R $(whoami) '/Applications/Visual Studio Code.app/Contents/'
     end
 end
 
@@ -61,10 +48,6 @@ function on_change_pwd --on-variable PWD
     set -l repo (echo $PWD | string replace ~/git/ "")
 
     local_onchange_repo $repo
-
-    switch (echo $repo)
-        case "*"
-    end
 end
 
 on_change_pwd
@@ -105,6 +88,13 @@ function v
     end
 end
 
+function watch -a command
+    while true
+        fish -c $command
+        sleep 1
+    end
+end
+
 # Git
 abbr gs "git status"
 abbr ga "git add ."
@@ -130,7 +120,6 @@ alias bat="bat --theme OneHalfDark ---style grid,numbers"
 alias ls="eza -ax --no-user --time-style relative --group-directories-first"
 alias ll="eza -al --no-user --time-style relative --group-directories-first"
 alias reload="clear;exec fish"
-alias paths="echo $PATH | tr ':' '\n'"
 alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LDtk.Codegen.csproj"
 
 alias showkey="fish_key_reader --verbose"
@@ -140,3 +129,5 @@ abbr nvm fnm
 
 # Keybinds
 bind ctrl-w backward-kill-word
+
+# set -gx FORCE_COLOR true
