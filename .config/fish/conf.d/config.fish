@@ -1,15 +1,5 @@
-# fish_add_path -g ~/.local/share/fnm/
-# alias neofetch fastfetch
-# alias rm trash
-# set -x BROWSER google-chrome
-# set -gx ANDROID_HOME /usr/lib/android-sdk
-# export DOTNET_ROOT=/usr/share/dotnet
-
-# for opt in (command ls /opt/)
-#     fish_add_path -g "/opt/$opt"
-# end
-
-# Global
+set -x BROWSER google-chrome
+set -gx ANDROID_HOME /usr/lib/android-sdk
 
 fnm env --use-on-cd --shell fish | source
 
@@ -116,6 +106,7 @@ function paths
     echo $PATH | string split ' ' | sort | fzf
 end
 
+alias rm trash
 alias bat="bat --theme OneHalfDark ---style grid,numbers"
 alias ls="eza -ax --no-user --time-style relative --group-directories-first"
 alias ll="eza -al --no-user --time-style relative --group-directories-first"

@@ -1,9 +1,15 @@
 #!/usr/bin/env fish
 
+for opt in (command ls /opt/)
+    fish_add_path -g "/opt/$opt"
+end
+
 function setU -a name value
     set --erase $name
     set -U $name $value
 end
+
+fish_add_path -U $HOME/.local/share/fnm/
 
 setU fish_greeting
 

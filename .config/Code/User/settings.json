@@ -27,6 +27,7 @@
   "problems.sortOrder": "position",
 
   "editor.accessibilitySupport": "off",
+  "editor.bracketPairColorization.enabled": false,
   "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
   "editor.cursorBlinking": "phase",
   "editor.cursorSmoothCaretAnimation": "explicit",
@@ -206,15 +207,6 @@
   "[css][scss][html][json][jsonc][yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "[csharp]": {
-    "editor.maxTokenizationLineLength": 2500,
-    "editor.codeActionsOnSave": {
-      "source.removeUnused": "never",
-      "source.organizeImports": "explicit"
-      // "source.fixAll.csharp": "explicit"
-    },
-    "editor.semanticHighlighting.enabled": false
-  },
   "[ini]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml"
   },
@@ -239,6 +231,16 @@
 
   // -------------------------------------------- CSharp ------------------------------------------
 
+  "[csharp]": {
+    "editor.maxTokenizationLineLength": 2500,
+    "editor.codeActionsOnSave": {
+      "source.removeUnused": "never",
+      "source.organizeImports": "explicit"
+      // "source.fixAll.csharp": "explicit"
+    },
+    "editor.semanticHighlighting.enabled": false
+  },
+
   "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": true,
   "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": true,
   "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": true,
@@ -247,6 +249,9 @@
   "csharp.debug.justMyCode": false,
   "csharp.debug.suppressJITOptimizations": true,
   "csharp.debug.sourceFileMap": {},
+
+  "omnisharp.sdkPath": "/home/econn/.dotnet/sdk/10.0.100",
+  "omnisharp.dotnetPath": "/home/econn/.dotnet/",
   "omnisharp.enableDecompilationSupport": true,
 
   "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
@@ -262,7 +267,6 @@
 
   "dotnet.server.useOmnisharp": true,
   "dotnet.formatting.organizeImportsOnFormat": true,
-  "omnisharp.sdkPath": "/home/econn/.dotnet/sdk/",
   "omnisharp.sdkVersion": "10.0.100",
 
   // -------------------------------------------- Lua ---------------------------------------------
@@ -1680,20 +1684,25 @@
   "editor.snippetSuggestions": "none",
   "files.enableTrash": false,
   "git.discardUntrackedChangesToTrash": false,
-  "yaml.schemas": {
-    "file:///Users/econneely/.vscode/extensions/atlassian.atlascode-3.8.2/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
-  },
+  "yaml.customTags": [
+    "!Equals sequence",
+    "!FindInMap sequence",
+    "!GetAtt",
+    "!GetAZs",
+    "!ImportValue",
+    "!Join sequence",
+    "!Ref",
+    "!Select sequence",
+    "!Split sequence",
+    "!Sub"
+  ],
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "files.watcherInclude": ["obj/**"],
   "errorLens.messageEnabled": true,
   "github.copilot.enable": {
-    "*": false,
-    "plaintext": false,
-    "markdown": false,
-    "scminput": false,
-    "typescript": false
+    "*": false
   },
   "editor.lineNumbers": "on",
   "github.copilot.nextEditSuggestions.fixes": false,
@@ -1712,8 +1721,6 @@
     "addTags": false
   },
   "terminal.integrated.enableMultiLinePasteWarning": "never",
-  "editor.bracketPairColorization.enabled": false,
-  "chat.editing.confirmEditRequestRemoval": false,
   "todohighlight.keywords": [
     {
       "text": "TODO:",
@@ -1722,5 +1729,10 @@
       "fontWeight": "bold",
       "overviewRulerColor": "#ddd"
     }
-  ]
+  ],
+  "workbench.editor.empty.hint": "hidden",
+  "terminal.integrated.suggest.enabled": false,
+  "github.copilot.chat.alternateGptPrompt.enabled": true,
+  "github.copilot.chat.copilotDebugCommand.enabled": false,
+  "github.copilot.chat.generateTests.codeLens": true
 }

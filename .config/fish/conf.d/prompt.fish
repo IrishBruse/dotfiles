@@ -2,7 +2,7 @@ function fish_prompt
     set -l exit_code $status
 
     if not set -e transient_prompt
-        printf (prompt_pwd --full-length-dirs=20)
+        printf (set_color cyan)(prompt_pwd --full-length-dirs=20)(set_color normal)
 
         if test $exit_code -ne 0
             printf (set_color red)" $exit_code "(set_color normal)

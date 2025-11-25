@@ -14,8 +14,7 @@
             "firefox.desktop",
             "cinnamon-custom-launcher-2.desktop",
             "cinnamon-custom-launcher-3.desktop",
-            "net.lutris.Lutris.desktop",
-            "ES-DE.desktop"
+            "net.lutris.Lutris.desktop"
         ]
     },
     "allow-dragging": {
