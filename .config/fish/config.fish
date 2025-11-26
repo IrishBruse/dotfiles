@@ -63,3 +63,5 @@ abbr nvm fnm
 bind ctrl-w backward-kill-word
 
 # set -gx FORCE_COLOR true
+
+alias stow="echo 'use ./stow.fish'"

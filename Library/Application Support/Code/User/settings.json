@@ -1711,7 +1711,6 @@
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "files.watcherInclude": ["obj/**"],
   "errorLens.messageEnabled": true,
   "github.copilot.enable": {
     "*": false
@@ -1744,9 +1743,6 @@
   ],
   "workbench.editor.empty.hint": "hidden",
   "terminal.integrated.suggest.enabled": false,
-  "github.copilot.chat.alternateGptPrompt.enabled": true,
-  "github.copilot.chat.copilotDebugCommand.enabled": false,
-  "github.copilot.chat.generateTests.codeLens": true,
   "chat.tools.terminal.autoApprove": {
     "dotnet run": true,
     "dotnet build": true
