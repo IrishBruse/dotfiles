@@ -1746,5 +1746,8 @@
   "chat.tools.terminal.autoApprove": {
     "dotnet run": true,
     "dotnet build": true
-  }
+  },
+  "inlineChat.accessibleDiffView": "off",
+  "terminal.integrated.initialHint": false,
+  "githubPullRequests.experimental.chat": false
 }

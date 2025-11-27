@@ -49,8 +49,9 @@ end
 alias clip fish_clipboard_copy
 alias rm trash
 alias bat="bat --theme OneHalfDark ---style grid,numbers"
-alias ls="eza -ax --no-user --time-style relative --group-directories-first"
-alias ll="eza -al --no-user --time-style relative --group-directories-first"
+alias ls="eza -l --no-permissions --no-user --time-style relative --group-directories-first"
+alias ll="eza -la --group-directories-first"
+alias la=ll
 alias reload="clear;exec fish"
 alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LDtk.Codegen.csproj"
 
@@ -61,7 +62,5 @@ abbr nvm fnm
 
 # Keybinds
 bind ctrl-w backward-kill-word
-
-# set -gx FORCE_COLOR true
 
 alias stow="echo 'use ./stow.fish'"

@@ -11,6 +11,7 @@ end
 
 fish_add_path -U $HOME/.local/share/fnm/
 
+setU ARTIFACT_AUTH_TOKEN_TIMESTAMP 0
 setU fish_greeting
 
 setU fish_color_autosuggestion brblack

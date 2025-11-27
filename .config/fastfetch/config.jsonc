@@ -13,13 +13,14 @@
     "shell",
     "de",
     "wm",
-    "terminal",
     "cpu",
     "gpu",
     "memory",
     "swap",
     "disk",
-    {}
+    "separator",
+    "terminal",
+    "colors"
   ],
   "general": {}
 }
