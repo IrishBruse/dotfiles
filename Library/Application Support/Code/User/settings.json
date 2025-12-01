@@ -250,7 +250,6 @@
   "csharp.debug.suppressJITOptimizations": true,
   "csharp.debug.sourceFileMap": {},
 
-  "omnisharp.sdkPath": "/home/econn/.dotnet/sdk/10.0.100",
   "omnisharp.enableDecompilationSupport": true,
 
   "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
@@ -266,7 +265,6 @@
 
   "dotnet.server.useOmnisharp": true,
   "dotnet.formatting.organizeImportsOnFormat": true,
-  "omnisharp.sdkVersion": "10.0.100",
 
   // -------------------------------------------- Lua ---------------------------------------------
 
@@ -858,7 +856,6 @@
       },
       {
         "scope": [
-          // "variable.interpolation",
           "meta.template.expression.js punctuation.definition",
           "meta.template.expression.ts punctuation.definition"
         ],
@@ -1745,9 +1742,11 @@
   "terminal.integrated.suggest.enabled": false,
   "chat.tools.terminal.autoApprove": {
     "dotnet run": true,
-    "dotnet build": true
+    "dotnet build": true,
+    "dotnet test": true
   },
   "inlineChat.accessibleDiffView": "off",
   "terminal.integrated.initialHint": false,
-  "githubPullRequests.experimental.chat": false
+  "githubPullRequests.experimental.chat": false,
+  "chat.editing.confirmEditRequestRemoval": false
 }

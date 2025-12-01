@@ -1,6 +1,5 @@
 fnm env --use-on-cd --shell fish | source
 
-set -x BROWSER google-chrome
 set -gx ANDROID_HOME /usr/lib/android-sdk
 
 set -x EDITOR nano
