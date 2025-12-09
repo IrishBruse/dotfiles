@@ -15,6 +15,7 @@ local.fish
 .config/fish/conf.d/brew.fish
 .config/fish/conf.d/fzf.fish
 .config/fish/conf.d/zoxide.fish
+.config/fish/conf.d/fly.fish
 
 .config/karabiner/assets/complex_modifications
 .config/karabiner/automatic_backups

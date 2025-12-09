@@ -22,3 +22,5 @@ image/x-icon=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
 image/x-tga=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
 image/xcf=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
 image/xd=chrome-jdklklfpinionkgpmghaghehojplfjio-Default.desktop
+x-scheme-handler/steamvr=valve-steamvr.desktop
+x-scheme-handler/vrmonitor=valve-vrmonitor.desktop

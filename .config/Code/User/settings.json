@@ -250,8 +250,6 @@
   "csharp.debug.suppressJITOptimizations": true,
   "csharp.debug.sourceFileMap": {},
 
-  "omnisharp.sdkPath": "/home/econn/.dotnet/sdk/10.0.100",
-  "omnisharp.dotnetPath": "/home/econn/.dotnet/",
   "omnisharp.enableDecompilationSupport": true,
 
   "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
@@ -267,7 +265,6 @@
 
   "dotnet.server.useOmnisharp": true,
   "dotnet.formatting.organizeImportsOnFormat": true,
-  "omnisharp.sdkVersion": "10.0.100",
 
   // -------------------------------------------- Lua ---------------------------------------------
 
@@ -392,7 +389,7 @@
   "debug.saveBeforeStart": "nonUntitledEditorsInActiveGroup",
   "debug.showInStatusBar": "never",
   "diffEditor.codeLens": false,
-  "diffEditor.ignoreTrimWhitespace": false,
+  "diffEditor.ignoreTrimWhitespace": true,
   "diffEditor.maxComputationTime": 0,
   "diffEditor.renderSideBySide": true,
   "diffEditor.useInlineViewWhenSpaceIsLimited": false,
@@ -859,7 +856,6 @@
       },
       {
         "scope": [
-          "variable.interpolation",
           "meta.template.expression.js punctuation.definition",
           "meta.template.expression.ts punctuation.definition"
         ],
@@ -1670,6 +1666,19 @@
         "settings": {
           "foreground": "#E5C07B"
         }
+      },
+      // fish
+      {
+        "scope": ["source.fish source.option"],
+        "settings": {
+          "foreground": "#61AFEF"
+        }
+      },
+      {
+        "scope": "source.fish keyword.operator.pipe",
+        "settings": {
+          "foreground": "#D19A66"
+        }
       }
     ]
   },
@@ -1699,7 +1708,6 @@
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "files.watcherInclude": ["obj/**"],
   "errorLens.messageEnabled": true,
   "github.copilot.enable": {
     "*": false
@@ -1732,7 +1740,19 @@
   ],
   "workbench.editor.empty.hint": "hidden",
   "terminal.integrated.suggest.enabled": false,
-  "github.copilot.chat.alternateGptPrompt.enabled": true,
-  "github.copilot.chat.copilotDebugCommand.enabled": false,
-  "github.copilot.chat.generateTests.codeLens": true
+  "chat.tools.terminal.autoApprove": {
+    "dotnet run": true,
+    "dotnet build": true,
+    "dotnet test": true
+  },
+  "inlineChat.accessibleDiffView": "off",
+  "terminal.integrated.initialHint": false,
+  "githubPullRequests.experimental.chat": false,
+  "chat.editing.confirmEditRequestRemoval": false,
+  "godotTools.editorPath.godot4": "/opt/Godot/godot",
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "http.experimental.systemCertificatesV2": true,
+  "git.blame.statusBarItem.enabled": true
 }
