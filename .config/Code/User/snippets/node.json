@@ -80,5 +80,13 @@
     "body": [
       "JSON.stringify($0, null, 2)"
     ]
+  },
+  "record": {
+    "prefix": "record",
+    "description": "Typescript record snippet",
+    "isFileTemplate": false,
+    "body": [
+      "Record<${1:string},${2:string}>"
+    ]
   }
 }
