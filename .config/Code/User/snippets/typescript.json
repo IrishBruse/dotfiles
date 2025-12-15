@@ -1,52 +1,32 @@
 {
   "space": {
     "prefix": "space",
-    "body": [
-      "&nbsp;",
-      ""
-    ],
+    "body": ["&nbsp;", ""],
     "description": "&nbsp;"
   },
   "dbg": {
     "prefix": "dbg",
     "description": "log debug",
-    "body": [
-      "console.log('ASD',$0)"
-    ]
+    "body": ["console.log('ASD',$0)"]
   },
   "jsdoc-type": {
     "prefix": "@type",
-    "body": [
-      "/** @type {${1:any}} */",
-      ""
-    ],
+    "body": ["/** @type {${1:any}} */", ""],
     "description": "jsdoc Type Hint"
   },
   "sleep": {
     "prefix": "sleep",
-    "body": [
-      "await new Promise((res)=>setTimeout(res,${1:1000}))",
-      ""
-    ],
+    "body": ["await new Promise((res)=>setTimeout(res,${1:1000}))", ""],
     "description": "await Promise with timeout"
   },
   "ctor": {
     "prefix": "ctor",
-    "body": [
-      "constructor()",
-      "{",
-      "  $0;",
-      "}"
-    ]
+    "body": ["constructor()", "{", "  $0;", "}"]
   },
   "test": {
     "prefix": "test",
     "description": "jest test definition",
-    "body": [
-      "test('$1', () => {",
-      "  expect(1).toBe(3)",
-      "})"
-    ]
+    "body": ["test('$1', () => {", "  expect(1).toBe(3)", "})"]
   },
   "describe": {
     "prefix": "describe",
@@ -77,8 +57,12 @@
     "prefix": "stringify",
     "description": "JSON.stringify",
     "isFileTemplate": false,
-    "body": [
-      "JSON.stringify($0, null, 2)"
-    ]
+    "body": ["JSON.stringify($0, null, 2)"]
+  },
+  "record": {
+    "prefix": "record",
+    "description": "Typescript record snippet",
+    "isFileTemplate": false,
+    "body": ["Record<${1:string},${2:string}>"]
   }
 }

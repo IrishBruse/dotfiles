@@ -245,10 +245,6 @@
   "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": true,
   "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": true,
   "csharp.suppressDotnetInstallWarning": true,
-  "csharp.debug.requireExactSource": false,
-  "csharp.debug.justMyCode": false,
-  "csharp.debug.suppressJITOptimizations": true,
-  "csharp.debug.sourceFileMap": {},
 
   "omnisharp.enableDecompilationSupport": true,
 
@@ -389,7 +385,7 @@
   "debug.saveBeforeStart": "nonUntitledEditorsInActiveGroup",
   "debug.showInStatusBar": "never",
   "diffEditor.codeLens": false,
-  "diffEditor.ignoreTrimWhitespace": false,
+  "diffEditor.ignoreTrimWhitespace": true,
   "diffEditor.maxComputationTime": 0,
   "diffEditor.renderSideBySide": true,
   "diffEditor.useInlineViewWhenSpaceIsLimited": false,
@@ -1683,7 +1679,6 @@
     ]
   },
   // --------------------------------------- New/Keybind Toggle -----------------------------------
-  "debug.onTaskErrors": "debugAnyway",
   "editor.codeActions.triggerOnFocusChange": true,
   "smartersemicolon.enable": true,
   "settingsSync.ignoredSettings": ["editor.mouseWheelScrollSensitivity"],
@@ -1693,18 +1688,18 @@
   "editor.snippetSuggestions": "none",
   "files.enableTrash": false,
   "git.discardUntrackedChangesToTrash": false,
-  "yaml.customTags": [
-    "!Equals sequence",
-    "!FindInMap sequence",
-    "!GetAtt",
-    "!GetAZs",
-    "!ImportValue",
-    "!Join sequence",
-    "!Ref",
-    "!Select sequence",
-    "!Split sequence",
-    "!Sub"
-  ],
+  // "yaml.customTags": [
+  //   "!Equals sequence",
+  //   "!FindInMap sequence",
+  //   "!GetAtt",
+  //   "!GetAZs",
+  //   "!ImportValue",
+  //   "!Join sequence",
+  //   "!Ref",
+  //   "!Select sequence",
+  //   "!Split sequence",
+  //   "!Sub"
+  // ],
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -1748,5 +1743,13 @@
   "inlineChat.accessibleDiffView": "off",
   "terminal.integrated.initialHint": false,
   "githubPullRequests.experimental.chat": false,
-  "chat.editing.confirmEditRequestRemoval": false
+  "chat.editing.confirmEditRequestRemoval": false,
+  "godotTools.editorPath.godot4": "/opt/Godot/godot",
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "http.experimental.systemCertificatesV2": true,
+  "git.blame.statusBarItem.enabled": true,
+  "godotTools.editor.verbose": true,
+  "omnisharp.sdkVersion": "10.0.101"
 }

@@ -49,7 +49,7 @@ alias clip fish_clipboard_copy
 alias rm trash
 alias bat="bat --theme OneHalfDark ---style grid,numbers"
 alias ls="eza -l --no-permissions --no-user --time-style relative --group-directories-first"
-alias ll="eza -la --group-directories-first"
+alias ll="eza -la --no-permissions --group-directories-first"
 alias la=ll
 alias reload="clear;exec fish"
 alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LDtk.Codegen.csproj"
