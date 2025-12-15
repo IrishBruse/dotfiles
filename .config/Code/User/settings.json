@@ -245,10 +245,6 @@
   "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": true,
   "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": true,
   "csharp.suppressDotnetInstallWarning": true,
-  "csharp.debug.requireExactSource": false,
-  "csharp.debug.justMyCode": false,
-  "csharp.debug.suppressJITOptimizations": true,
-  "csharp.debug.sourceFileMap": {},
 
   "omnisharp.enableDecompilationSupport": true,
 
@@ -1683,7 +1679,6 @@
     ]
   },
   // --------------------------------------- New/Keybind Toggle -----------------------------------
-  "debug.onTaskErrors": "debugAnyway",
   "editor.codeActions.triggerOnFocusChange": true,
   "smartersemicolon.enable": true,
   "settingsSync.ignoredSettings": ["editor.mouseWheelScrollSensitivity"],
@@ -1693,18 +1688,18 @@
   "editor.snippetSuggestions": "none",
   "files.enableTrash": false,
   "git.discardUntrackedChangesToTrash": false,
-  "yaml.customTags": [
-    "!Equals sequence",
-    "!FindInMap sequence",
-    "!GetAtt",
-    "!GetAZs",
-    "!ImportValue",
-    "!Join sequence",
-    "!Ref",
-    "!Select sequence",
-    "!Split sequence",
-    "!Sub"
-  ],
+  // "yaml.customTags": [
+  //   "!Equals sequence",
+  //   "!FindInMap sequence",
+  //   "!GetAtt",
+  //   "!GetAZs",
+  //   "!ImportValue",
+  //   "!Join sequence",
+  //   "!Ref",
+  //   "!Select sequence",
+  //   "!Split sequence",
+  //   "!Sub"
+  // ],
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -1754,5 +1749,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "http.experimental.systemCertificatesV2": true,
-  "git.blame.statusBarItem.enabled": true
+  "git.blame.statusBarItem.enabled": true,
+  "godotTools.editor.verbose": true,
+  "omnisharp.sdkVersion": "10.0.101"
 }
