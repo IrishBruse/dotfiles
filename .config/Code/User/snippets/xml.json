@@ -16,10 +16,7 @@
   },
   "PackageReference": {
     "prefix": "PackageReference",
-    "body": [
-      "<PackageReference Include=\"$1\" Version=\"$2\" />$0",
-      ""
-    ],
+    "body": ["<PackageReference Include=\"$1\" Version=\"$2\" />$0", ""],
     "description": "Add PackageReference to project"
   },
   "ProjectReference": {
@@ -32,15 +29,16 @@
   "UnsafeBlocks": {
     "prefix": "ProjectReference",
     "description": "Add PackageReference to project",
-    "body": [
-      "<AllowUnsafeBlocks>enable</AllowUnsafeBlocks>"
-    ]
+    "body": ["<AllowUnsafeBlocks>enable</AllowUnsafeBlocks>"]
   },
-  "example": {
-    "prefix": "example",
+  "AllowUnsafeBlocks": {
+    "prefix": "AllowUnsafeBlocks",
     "isFileTemplate": false,
-    "body": [
-      "// replace me"
-    ]
+    "body": ["<AllowUnsafeBlocks>true</AllowUnsafeBlocks>"]
+  },
+  "PublishAot": {
+    "prefix": "PublishAot",
+    "isFileTemplate": false,
+    "body": ["<PublishAot>true</PublishAot>"]
   }
 }
