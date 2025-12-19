@@ -294,7 +294,7 @@
           "markup.changed",
           "markup.italic",
           "source.c keyword.operator",
-          "keyword.operator.new.j"
+          "keyword.operator.new.js"
         ],
         "settings": { "foreground": "#C678DD" }
       },
