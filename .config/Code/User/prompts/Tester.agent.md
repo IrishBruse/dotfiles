@@ -46,7 +46,7 @@ Follow this loop strictly to resolve issues:
 
 ## Coding Standards & Style
 
-- **Syntax:** ES6+ Modules only (`import`/`export`) never use await import in the test. **Never** use `require`, keep all import to the top of the file.
+- **Syntax:** ES6+ Modules only (`import`/`export`) never use dynamic imports in the test. **Never** use `require`.
 - **Formatting:** Always use semicolons (`;`). Indentation is strictly **2 spaces**.
 - **Structure:** Prefer function declarations (`function foo() {}`) over arrow functions for top-level exports.
 - **Brevity:** Code should be concise. Avoid comments unless explaining complex, non-obvious logic.

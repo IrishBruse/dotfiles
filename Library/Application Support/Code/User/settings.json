@@ -1,5 +1,7 @@
 {
+  //
   // Theme
+  //
 
   "workbench.colorCustomizations": {
     "editor.background": "#282c34",
@@ -1204,7 +1206,9 @@
     ]
   },
 
-  //-----------------------------------------------------------------------------------------------
+  //
+  // File Associations
+  //
 
   "workbench.editorAssociations": {
     "{hexdiff}:/**/*.*": "hexEditor.hexedit",
@@ -1266,9 +1270,11 @@
     "tsconfig.json": "tsconfig.*.json",
     "*.glsl": "${capture}.vert,${capture}.frag"
   },
+  "files.enableTrash": true,
 
-  //-----------------------------------------------------------------------------------------------
-
+  //
+  // Settings
+  //
   "editor.foldingHighlight": false,
   "editor.fontFamily": "Cascadia Code",
   "editor.fontLigatures": true,
@@ -1305,8 +1311,6 @@
   "terminal.integrated.fontFamily": "Cascadia Mono",
   "terminal.integrated.fontSize": 12,
 
-  "update.mode": "none",
-
   "window.commandCenter": false,
   "window.menuBarVisibility": "hidden",
   "window.title": "${folderName}",
@@ -1325,7 +1329,17 @@
   "workbench.startupEditor": "none",
   "workbench.tree.indent": 20,
 
-  "breadcrumbs.enabled": false,
+  //
+  // Debug
+  //
+
+  "debug.console.fontFamily": "Cascadia Mono",
+  "debug.console.fontSize": 12,
+  "debug.toolBarLocation": "docked",
+
+  //
+  // Misc
+  //
 
   "custom_css_hot_reload.hotReloadMode": "onSave",
   "custom_css_hot_reload.imports": [
@@ -1333,11 +1347,24 @@
     "file://${userHome}/dotfiles/vscode/theme/icons.css"
   ],
 
-  "debug.console.fontFamily": "Cascadia Mono",
-  "debug.console.fontSize": 12,
-  "debug.toolBarLocation": "docked",
+  "todohighlight.keywords": [
+    {
+      "backgroundColor": "transparent",
+      "color": "white",
+      "fontWeight": "bold",
+      "overviewRulerColor": "#ddd",
+      "text": "TODO:"
+    }
+  ],
 
-  //-----------------------------------------------------------------------------------------------
+  "update.mode": "none",
+  "http.experimental.systemCertificatesV2": true,
+  "breadcrumbs.enabled": false,
+  "settingsSync.ignoredSettings": ["editor.mouseWheelScrollSensitivity"],
+
+  //
+  //
+  //
 
   "editor.accessibilitySupport": "off",
   "editor.bracketPairColorization.enabled": false,
@@ -1392,7 +1419,9 @@
   "editor.suggest.showSnippets": false,
   "editor.suggest.showWords": false,
 
-  // -------------------------------------------- Terminal ----------------------------------------
+  //
+  // Terminal
+  //
 
   "terminal.integrated.profiles.linux": {
     "fish": {
@@ -1439,8 +1468,13 @@
   "terminal.integrated.shellIntegration.decorationsEnabled": "never",
   "terminal.integrated.shellIntegration.enabled": false,
   "terminal.integrated.tabs.title": "${sequence}",
+  "terminal.integrated.enableMultiLinePasteWarning": "never",
+  "terminal.integrated.initialHint": false,
+  "terminal.integrated.suggest.enabled": false,
 
-  // -------------------------------------------- Git ---------------------------------------------
+  //
+  // Git
+  //
 
   "scm.alwaysShowRepositories": true,
   "scm.countBadge": "focused",
@@ -1453,14 +1487,8 @@
   "scm.diffDecorationsIgnoreTrimWhitespace": "true",
   "scm.providerCountBadge": "auto",
 
-  "githubPullRequests.fileListLayout": "tree",
-  "githubPullRequests.pullBranch": "never",
-  "githubPullRequests.createOnPublishBranch": "never",
-
   "editor.autoClosingComments": "always",
   "comments.openView": "never",
-
-  "githubPullRequests.commentExpandState": "collapseAll",
 
   "git.allowNoVerifyCommit": true,
   "git.autofetch": true,
@@ -1478,8 +1506,41 @@
   "git.useEditorAsCommitInput": false,
 
   "git.blame.editorDecoration.enabled": false,
+  "git.blame.statusBarItem.enabled": true,
+  "git.discardUntrackedChangesToTrash": false,
+  "git.ignoreRebaseWarning": true,
 
-  // ----------------------------------------- Languages ------------------------------------------
+  //
+  // GitHub
+  //
+  "github.copilot.editor.enableCodeActions": false,
+  "github.copilot.enable": {
+    "*": false
+  },
+  "github.copilot.nextEditSuggestions.fixes": false,
+  "githubPullRequests.experimental.chat": false,
+  "githubPullRequests.commentExpandState": "collapseAll",
+  "githubPullRequests.fileListLayout": "tree",
+  "githubPullRequests.pullBranch": "never",
+  "githubPullRequests.createOnPublishBranch": "never",
+
+  //
+  // AI/Chat
+  //
+
+  "chat.editing.confirmEditRequestRemoval": false,
+  "chat.editing.confirmEditRequestRetry": false,
+  "chat.tools.terminal.autoApprove": {
+    "dotnet build": true,
+    "dotnet run": true,
+    "dotnet test": true
+  },
+  "chat.viewSessions.orientation": "stacked",
+  "inlineChat.accessibleDiffView": "off",
+
+  //
+  // Languages
+  //
 
   "[html][css][scss][html][json][jsonc][yaml][github-actions-workflow]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -1506,7 +1567,9 @@
     "files.trimTrailingWhitespace": false
   },
 
-  // -------------------------------------------- yaml  -------------------------------------------
+  //
+  // yaml
+  //
 
   "[yaml]": {
     "diffEditor.ignoreTrimWhitespace": true
@@ -1534,7 +1597,9 @@
     "!Sub sequence"
   ],
 
-  // -------------------------------------------- CSharp ------------------------------------------
+  //
+  // CSharp
+  //
 
   "[csharp]": {
     "editor.maxTokenizationLineLength": 2500,
@@ -1552,6 +1617,7 @@
   "csharp.suppressDotnetInstallWarning": true,
 
   "omnisharp.enableDecompilationSupport": true,
+  "omnisharp.sdkVersion": "10.0.101",
 
   "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
   "dotnet.backgroundAnalysis.compilerDiagnosticsScope": "fullSolution",
@@ -1567,7 +1633,16 @@
   "dotnet.server.useOmnisharp": true,
   "dotnet.formatting.organizeImportsOnFormat": true,
 
-  // -------------------------------------------- Lua ---------------------------------------------
+  //
+  // Godot
+  //
+
+  "godotTools.editor.verbose": true,
+  "godotTools.editorPath.godot4": "/opt/Godot/godot",
+
+  //
+  // Lua
+  //
 
   "Lua.codeLens.enable": true,
   "Lua.diagnostics.enable": false,
@@ -1575,7 +1650,9 @@
   "Lua.hover.expandAlias": false,
   "Lua.semantic.keyword": true,
 
-  // --------------------------------- TypeScript/JavaScript --------------------------------------
+  //
+  // TypeScript/JavaScript
+  //
 
   "[javascript][typescript][javascriptreact][typescriptreact]": {
     "editor.semanticHighlighting.enabled": true,
@@ -1620,22 +1697,41 @@
   "javascript.referencesCodeLens.showOnAllFunctions": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
 
-  // ----------------------------------------- Go -------------------------------------------------
+  //
+  // Go
+  //
 
   "[go]": {
     "editor.suggest.showSnippets": true
   },
+  "go.editorContextMenuCommands": {
+    "addImport": false,
+    "addTags": false,
+    "debugTestAtCursor": false,
+    "generateTestForFunction": false,
+    "playground": false,
+    "testAtCursor": false,
+    "testCoverage": false,
+    "toggleTestFile": false
+  },
+  "go.toolsManagement.autoUpdate": true,
 
-  // ----------------------------------------- Toml -----------------------------------------------
+  //
+  // Toml
+  //
 
   "evenBetterToml.formatter.allowedBlankLines": 2,
   "evenBetterToml.formatter.arrayAutoCollapse": false,
   "evenBetterToml.schema.links": true,
   "evenBetterToml.semanticTokens": true,
 
-  // ---------------------------------------- Extensions ------------------------------------------
+  //
+  // Extensions
+  //
 
-  // ----------------------------------------- errorLens ------------------------------------------
+  //
+  // errorLens
+  //
 
   "errorLens.enabledDiagnosticLevels": ["error"],
   "errorLens.fontWeight": "500",
@@ -1648,14 +1744,18 @@
   "errorLens.ignoreUntitled": true,
   "errorLens.ignoreDirty": true,
 
-  // ----------------------------------------- hexeditor ------------------------------------------
+  //
+  // hexeditor
+  //
 
   "hexeditor.columnWidth": 32,
   "hexeditor.defaultEndianness": "little",
   "hexeditor.inspectorType": "aside",
   "hexeditor.showDecodedText": true,
 
-  // -------------------------------------------- Testing -----------------------------------------
+  //
+  // Testing
+  //
 
   "jest.runMode": {
     "coverage": false,
@@ -1669,7 +1769,9 @@
   "testing.displayedCoveragePercent": "totalCoverage",
   "testing.showCoverageInExplorer": true,
 
-  // -------------------------------------------- Unsorted ----------------------------------------
+  //
+  // Unsorted
+  //
 
   "window.closeWhenEmpty": false,
   "window.confirmSaveUntitledWorkspace": false,
@@ -1712,57 +1814,16 @@
   "gitlens.liveshare.enabled": false,
   "fish.path.fish": "/opt/homebrew/bin/fish",
   "fish.path.fish_indent": "/opt/homebrew/bin/fish_indent",
-  // --------------------------------------- New/Keybind Toggle -----------------------------------
 
-  "chat.editing.confirmEditRequestRemoval": false,
-  "chat.editing.confirmEditRequestRetry": false,
-  "chat.tools.terminal.autoApprove": {
-    "dotnet build": true,
-    "dotnet run": true,
-    "dotnet test": true
-  },
-
-  "errorLens.messageEnabled": true,
-  "files.enableTrash": false,
-  "git.blame.statusBarItem.enabled": true,
-  "git.discardUntrackedChangesToTrash": false,
-  "git.ignoreRebaseWarning": true,
-  "github.copilot.editor.enableCodeActions": false,
-  "github.copilot.enable": {
-    "*": false
-  },
-  "github.copilot.nextEditSuggestions.fixes": false,
-  "githubPullRequests.experimental.chat": false,
-  "go.editorContextMenuCommands": {
-    "addImport": false,
-    "addTags": false,
-    "debugTestAtCursor": false,
-    "generateTestForFunction": false,
-    "playground": false,
-    "testAtCursor": false,
-    "testCoverage": false,
-    "toggleTestFile": false
-  },
-  "go.toolsManagement.autoUpdate": true,
-  "godotTools.editor.verbose": true,
-  "godotTools.editorPath.godot4": "/opt/Godot/godot",
-  "http.experimental.systemCertificatesV2": true,
-  "inlineChat.accessibleDiffView": "off",
-  "keyboard.touchbar.enabled": false,
-  "omnisharp.sdkVersion": "10.0.101",
-  "settingsSync.ignoredSettings": ["editor.mouseWheelScrollSensitivity"],
+  //
+  //
+  //
   "smartersemicolon.enable": true,
-  "terminal.integrated.enableMultiLinePasteWarning": "never",
-  "terminal.integrated.initialHint": false,
-  "terminal.integrated.suggest.enabled": false,
-  "todohighlight.keywords": [
-    {
-      "backgroundColor": "transparent",
-      "color": "white",
-      "fontWeight": "bold",
-      "overviewRulerColor": "#ddd",
-      "text": "TODO:"
-    }
-  ],
-  "aws.cloudformation.telemetry.enabled": false
+
+  //
+  // errorLens
+  //
+  "errorLens.messageEnabled": true,
+  "aws.cloudformation.telemetry.enabled": false,
+  "github.copilot.nextEditSuggestions.enabled": true
 }
