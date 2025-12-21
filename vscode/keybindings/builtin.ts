@@ -62,14 +62,7 @@ export default [
   },
   { key: "shift+backspace", command: "deleteLeft", when: "textInputFocus" },
   { key: "backspace", command: "deleteLeft", when: "textInputFocus" },
-  { key: "delete", command: "deleteRight", when: "textInputFocus" },
-  { key: "shift+backspace", command: "deleteLeft", when: "textInputFocus" },
-  { key: "backspace", command: "deleteLeft", when: "textInputFocus" },
-  { key: "delete", command: "deleteRight", when: "textInputFocus" },
-  {
-    key: "ctrl+p",
-    command: "workbench.action.quickOpen",
-  },
+  { key: "ctrl+p", command: "workbench.action.quickOpen" },
   {
     key: "enter",
     command: "editor.action.nextMatchFindAction",
@@ -528,11 +521,6 @@ export default [
     when: "filesExplorerFocus && foldersViewVisible && !explorerResourceIsRoot && !explorerResourceReadonly && !inputFocus",
   },
   {
-    key: "delete",
-    command: "deleteFile",
-    when: "filesExplorerFocus && foldersViewVisible && !explorerResourceMoveableToTrash && !inputFocus",
-  },
-  {
     key: "tab",
     command: "tab",
     when: "editorTextFocus && !editorReadonly && !editorTabMovesFocus",
@@ -595,5 +583,10 @@ export default [
   {
     key: "ctrl+n",
     command: "workbench.action.files.newUntitledFile",
+  },
+  {
+    key: "delete",
+    command: "deleteFile",
+    when: "filesExplorerFocus && !inputFocus",
   },
 ] as Keybind[];

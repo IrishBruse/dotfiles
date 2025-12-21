@@ -3,6 +3,8 @@ import custom from "./custom.ts";
 import builtin from "./builtin.ts";
 import { escape } from "./escape.ts";
 
+console.clear();
+
 export type Keybind = {
   key: string;
   command: string;
