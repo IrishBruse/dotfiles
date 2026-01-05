@@ -1,9 +1,7 @@
 {
   "Print to console": {
     "prefix": "log",
-    "body": [
-      "Console.WriteLine($1);$0"
-    ],
+    "body": ["Console.WriteLine($1);$0"],
     "description": "Log output to console"
   },
   "New File Template": {
@@ -22,22 +20,12 @@
   },
   "Static Main": {
     "prefix": "main",
-    "body": [
-      "public static void Main(string[] args)",
-      "{",
-      "\t$0",
-      "}"
-    ],
+    "body": ["public static void Main(string[] args)", "{", "\t$0", "}"],
     "description": "Create main method"
   },
   "Unsafe Fixed Pointer": {
     "prefix": "fixedPtr",
-    "body": [
-      "fixed(${1:type}* ${2:variable} = ${3:array})",
-      "{",
-      "\t$0",
-      "}"
-    ],
+    "body": ["fixed(${1:type}* ${2:variable} = ${3:array})", "{", "\t$0", "}"],
     "description": "Create a fixed pointer"
   },
   "for X Y": {
@@ -55,9 +43,7 @@
   },
   "Doc Comment": {
     "prefix": "///",
-    "body": [
-      "/// <summary> $1 </summary>$0"
-    ],
+    "body": ["/// <summary> $1 </summary>$0"],
     "description": "Doc Comment summary"
   },
   "Switch statement": {
@@ -71,7 +57,7 @@
     ]
   },
   "implicit operator": {
-    "prefix": "explicit operator",
+    "prefix": "implicit operator",
     "body": [
       "public static implicit operator ${1:To}(${2:From} from) => from$0;",
       ""
@@ -96,8 +82,6 @@
   "inheritdoc": {
     "prefix": "inheritdoc",
     "isFileTemplate": false,
-    "body": [
-      "<inheritdoc/>"
-    ]
+    "body": ["<inheritdoc/>"]
   }
 }
