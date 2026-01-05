@@ -4,12 +4,17 @@ import * as path from "path";
 process.chdir(import.meta.dirname);
 
 async function main() {
-  await downloadKeybinding(
-    "https://raw.githubusercontent.com/codebling/vs-code-default-keybindings/refs/heads/master/macos.negative.keybindings.json"
-  );
-  await downloadKeybinding(
-    "https://raw.githubusercontent.com/codebling/vs-code-default-keybindings/refs/heads/master/linux.negative.keybindings.json"
-  );
+  Promise.all([
+    downloadKeybinding(
+      "https://raw.githubusercontent.com/codebling/vs-code-default-keybindings/refs/heads/master/macos.negative.keybindings.json"
+    ),
+    downloadKeybinding(
+      "https://raw.githubusercontent.com/codebling/vs-code-default-keybindings/refs/heads/master/linux.negative.keybindings.json"
+    ),
+    downloadKeybinding(
+      "https://raw.githubusercontent.com/codebling/vs-code-default-keybindings/refs/heads/master/linux.keybindings.json"
+    ),
+  ]);
 }
 
 async function downloadKeybinding(url: string) {

@@ -1513,10 +1513,8 @@
   "jest.runMode": {
     "coverage": false,
     "deferred": true,
-    "showInlineError": false,
-    "type": "on-demand"
+    "type": "watch"
   },
-  "jest.shell": "fish",
 
   "testing.coverageToolbarEnabled": true,
   "testing.displayedCoveragePercent": "totalCoverage",
