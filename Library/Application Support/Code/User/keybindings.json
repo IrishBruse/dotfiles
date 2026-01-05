@@ -11143,5 +11143,15 @@
         "key": "ctrl+o",
         "command": "editor.action.organizeImports",
         "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+u",
+        "command": "editor.action.transformToUppercase",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+u",
+        "command": "editor.action.transformToLowercase",
+        "when": "editorTextFocus"
     }
 ]

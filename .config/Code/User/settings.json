@@ -20,6 +20,8 @@
     "activityBarTop.foreground": "#d7dae0",
     "activityBarTop.inactiveForeground": "#abb2bf",
 
+    "sideBarActivityBarTop.border": "#0000",
+
     "badge.background": "#35A854",
     "badge.foreground": "#d7dae0",
 
@@ -124,7 +126,7 @@
     "tab.activeBackground": "#282c34",
     "tab.activeForeground": "#d7dae0",
     "tab.inactiveForeground": "#696969",
-    "tab.border": "#3a3f4b",
+    "tab.border": "#0000",
     "tab.inactiveBackground": "#21252b",
 
     "textLink.foreground": "#35A854",
@@ -910,6 +912,55 @@
       {
         "scope": ["source.qbe constant.other"],
         "settings": { "foreground": "#56B6C2" }
+      },
+
+      //
+      // Markdown
+      //
+
+      {
+        "scope": "markup.italic",
+        "settings": {
+          "foreground": "#ABB2BF",
+          "fontStyle": "italic"
+        }
+      },
+      {
+        "scope": "punctuation.definition.italic.markdown",
+        "settings": {
+          "foreground": "#3b414e",
+          "fontStyle": ""
+        }
+      },
+
+      {
+        "scope": "markup.strikethrough",
+        "settings": {
+          "foreground": "#ABB2BF",
+          "fontStyle": "strikethrough"
+        }
+      },
+
+      {
+        "scope": "punctuation.definition.strikethrough.markdown",
+        "settings": {
+          "foreground": "#3b414e",
+          "fontStyle": ""
+        }
+      },
+
+      {
+        "scope": "markup.bold",
+        "settings": {
+          "foreground": "#ABB2BF",
+          "fontStyle": "bold"
+        }
+      },
+      {
+        "scope": "punctuation.definition.bold.markdown",
+        "settings": {
+          "foreground": "#3b414e"
+        }
       }
     ]
   },
@@ -947,9 +998,10 @@
     "local": "ini",
     "*.glsl": "bat",
     "*.ejs.t": "ejs",
-    "*.ast": "json",
+    "*.ast": "graphql",
     "*.sh": "shellscript",
-    "*.yaml": "yaml"
+    "*.yaml": "yaml",
+    "*.gbl": "b"
   },
   "files.exclude": {
     "**/.git": true,
@@ -957,8 +1009,6 @@
     "**/.svn": true,
     "**/CVS": true
   },
-  "explorer.fileNesting.enabled": true,
-  "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
     ".env": ".env.*",
     ".gitignore": ".*",
@@ -978,6 +1028,8 @@
     "tsconfig.json": "tsconfig.*.json",
     "*.glsl": "${capture}.vert,${capture}.frag"
   },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
   "files.enableTrash": true,
 
   //
@@ -987,7 +1039,7 @@
   "editor.fontFamily": "Cascadia Code",
   "editor.fontLigatures": true,
   "editor.fontSize": 12,
-  "editor.inlineSuggest.fontFamily": "Cascadia Mono",
+  "editor.inlineSuggest.fontFamily": "Cascadia Code",
   "editor.minimap.enabled": false,
   "editor.overviewRulerBorder": false,
 
@@ -995,7 +1047,6 @@
 
   "explorer.decorations.badges": false,
   "explorer.sortOrder": "foldersNestsFiles",
-  "explorer.sortOrderLexicographicOptions": "unicode",
 
   "extensions.ignoreRecommendations": true,
 
@@ -1016,7 +1067,7 @@
   "security.workspace.trust.enabled": false,
   "telemetry.telemetryLevel": "error",
 
-  "terminal.integrated.fontFamily": "Cascadia Mono",
+  "terminal.integrated.fontFamily": "Cascadia Code",
   "terminal.integrated.fontSize": 12,
 
   "window.commandCenter": false,
@@ -1044,15 +1095,10 @@
   "debug.console.fontFamily": "Cascadia Mono",
   "debug.console.fontSize": 12,
   "debug.toolBarLocation": "docked",
-
-  //
-  // Misc
-  //
-
-  "custom_css_hot_reload.hotReloadMode": "onSave",
   "custom_css_hot_reload.imports": [
-    "file://${userHome}/dotfiles/vscode/theme/custom.css",
-    "file://${userHome}/dotfiles/vscode/theme/icons.css"
+    // "file:///Users/econneely/dotfiles/vscode/theme/custom.css",
+    "file://${userHome}/dotfiles/vscode/theme/custom.css"
+    // "file://${userHome}/dotfiles/vscode/theme/icons.css"
   ],
 
   "todohighlight.keywords": [
@@ -1241,9 +1287,9 @@
   "chat.tools.terminal.autoApprove": {
     "dotnet build": true,
     "dotnet run": true,
-    "dotnet test": true
+    "dotnet test": true,
+    "bc": true
   },
-  "chat.viewSessions.orientation": "stacked",
   "inlineChat.accessibleDiffView": "off",
 
   //
@@ -1266,7 +1312,8 @@
     "editor.defaultFormatter": "yzhang.markdown-all-in-one"
   },
   "[snippets]": {
-    "files.insertFinalNewline": false
+    "files.insertFinalNewline": false,
+    "editor.defaultFormatter": "vscode.json-language-features"
   },
   "[shellscript]": {
     "files.eol": "\n",
@@ -1337,8 +1384,6 @@
   "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": true,
 
   "dotnetAcquisitionExtension.enableTelemetry": false,
-
-  "dotnet.server.useOmnisharp": true,
   "dotnet.formatting.organizeImportsOnFormat": true,
 
   //
@@ -1468,10 +1513,8 @@
   "jest.runMode": {
     "coverage": false,
     "deferred": true,
-    "showInlineError": false,
-    "type": "on-demand"
+    "type": "watch"
   },
-  "jest.shell": "fish",
 
   "testing.coverageToolbarEnabled": true,
   "testing.displayedCoveragePercent": "totalCoverage",
@@ -1505,8 +1548,6 @@
   "diffEditor.renderSideBySide": true,
   "diffEditor.useInlineViewWhenSpaceIsLimited": false,
   "diffEditor.wordWrap": "off",
-
-  "explorer.compactFolders": true,
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
   "explorer.confirmPasteNative": false,
@@ -1514,22 +1555,12 @@
   "explorer.incrementalNaming": "smart",
   "explorer.openEditors.visible": 8,
 
-  "gitlens.codeLens.enabled": false,
-  "gitlens.currentLine.enabled": false,
-  "gitlens.launchpad.indicator.enabled": false,
-  "gitlens.launchpad.indicator.polling.enabled": false,
-  "gitlens.liveshare.allowGuestAccess": false,
-  "gitlens.liveshare.enabled": false,
+  "smartersemicolon.enable": false,
 
-  //
-  //
-  //
-  "smartersemicolon.enable": true,
-
-  //
-  // errorLens
-  //
   "errorLens.messageEnabled": true,
   "aws.cloudformation.telemetry.enabled": false,
-  "github.copilot.nextEditSuggestions.enabled": true
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "scm.compactFolders": false,
+  "workbench.secondarySideBar.defaultVisibility": "visible",
+  "chat.viewSessions.enabled": false
 }
