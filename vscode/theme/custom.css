@@ -1,8 +1,7 @@
 /* Custom font */
 
-.mac,
-.linux {
-  font-family: "Cascadia Code";
+.monaco-workbench {
+  font-family: "Cascadia Code" !important;
 }
 
 /* Command Pallet */

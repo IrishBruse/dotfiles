@@ -2,6 +2,7 @@
     "appearance.searchBarSize": "large",
     "appearance.searchResultListLayout": "compact",
     "appearance.themeName": "Fluent UI Web",
+    "appearance.themeSource": "dark",
     "extension[SimpleFileSearch].folders": [
         {
             "id": "812997fa-ae86-49bb-8c6b-92a1e4dd65bc",
@@ -21,7 +22,7 @@
         "UeliCommand"
     ],
     "general.hotkey": "Super+Space",
-    "general.hotkey.enabled": true,
+    "general.hotkey.enabled": false,
     "window.scrollBehavior": "instant",
     "window.visibleOnAllWorkspaces": true
 }

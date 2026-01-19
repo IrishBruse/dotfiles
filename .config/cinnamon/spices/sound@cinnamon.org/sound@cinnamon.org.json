@@ -43,7 +43,8 @@
             "rhythmbox",
             "io.github.celluloid_player.Celluloid",
             "org.gnome.Rhythmbox3",
-            "google-chrome"
+            "google-chrome",
+            "mpv"
         ]
     },
     "section2": {

@@ -1,0 +1,36 @@
+window {
+  font-family: "Cascadia Code", "Symbols Nerd Font";
+  background-color: #262a2f;
+  border: solid 1px #262a2f;
+}
+
+#clock:hover,
+#cpu:hover,
+#memory:hover,
+#network:hover,
+#pulseaudio:hover {
+  background-color: #3e4451;
+  color: #ffffff;
+  border-radius: 3px;
+}
+
+#clock,
+#cpu,
+#memory,
+#network,
+#pulseaudio,
+#tray,
+#window {
+  padding: 0 10px;
+  margin: 3px 2px;
+  transition: all 0.2s ease;
+}
+
+#clock {
+  margin-left: 12px;
+  min-width: 100px;
+}
+/*
+window#waybar.modules-center {
+  max-width: 200px;
+} */

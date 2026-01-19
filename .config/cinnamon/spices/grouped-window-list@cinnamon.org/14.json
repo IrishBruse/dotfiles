@@ -65,7 +65,8 @@
             "keys": [
                 "title-display",
                 "launcher-animation-effect",
-                "number-display",
+                "enable-window-count-badges",
+                "enable-notification-badges",
                 "enable-app-button-dragging"
             ]
         },
@@ -210,11 +211,19 @@
         },
         "value": 3
     },
-    "number-display": {
+    "enable-window-count-badges": {
         "type": "checkbox",
         "default": true,
-        "description": "Show window count numbers",
-        "value": false
+        "description": "Show window count badges",
+        "tooltip": "Indicate on the panel the number of open windows an application has",
+        "value": true
+    },
+    "enable-notification-badges": {
+        "type": "checkbox",
+        "default": true,
+        "description": "Show notification badges",
+        "tooltip": "Indicate on the panel when an application has notifications",
+        "value": true
     },
     "enable-app-button-dragging": {
         "type": "checkbox",
@@ -358,5 +367,5 @@
         ],
         "value": []
     },
-    "__md5__": "b7d0a7558cf87c22c50195c9d408485f"
+    "__md5__": "3df0dfb46c743f29a6405292b645807a"
 }

@@ -1,3 +1,0 @@
-"^com\\.microsoft\\.VSCode$",
-"^com\\.mitchellh\\.ghostty$",
-"^com\\.google\\.Chrome$"

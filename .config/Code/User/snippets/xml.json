@@ -40,5 +40,10 @@
     "prefix": "PublishAot",
     "isFileTemplate": false,
     "body": ["<PublishAot>true</PublishAot>"]
+  },
+  "DisableDynamicCode": {
+    "prefix": "DisableDynamicCode",
+    "isFileTemplate": false,
+    "body": ["<DisableDynamicCode>true</DisableDynamicCode>"]
   }
 }

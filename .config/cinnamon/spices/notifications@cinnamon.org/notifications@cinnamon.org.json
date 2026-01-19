@@ -27,6 +27,12 @@
         "description": "Show the number of notifications",
         "value": true
     },
+    "showNewestFirst": {
+        "type": "switch",
+        "default": false,
+        "description": "Show newest notifications first",
+        "value": false
+    },
     "section3": {
         "type": "section",
         "description": "Keyboard shortcuts"
@@ -54,5 +60,5 @@
         "description": "Open notification settings",
         "callback": "on_btn_open_system_settings_clicked"
     },
-    "__md5__": "cb9ad336b2e360509f8ba388e1d19b8f"
+    "__md5__": "5000989ac12e8ec4353931a7deab82f2"
 }
