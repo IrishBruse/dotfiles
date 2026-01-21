@@ -1,7 +1,0 @@
-
-[Desktop Entry]
-Type=Application
-Name=Another Crab's Treasure
-Icon=lutris_another-crabs-treasure
-Exec=env LUTRIS_SKIP_INIT=1 lutris lutris:rungameid/4
-Categories=Game

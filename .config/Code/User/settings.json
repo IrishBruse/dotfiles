@@ -1554,8 +1554,6 @@
   "explorer.incrementalNaming": "smart",
   "explorer.openEditors.visible": 8,
 
-  "smartersemicolon.enable": false,
-
   "errorLens.messageEnabled": true,
   "aws.cloudformation.telemetry.enabled": false,
   "github.copilot.nextEditSuggestions.enabled": true,

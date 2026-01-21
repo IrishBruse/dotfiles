@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=PolyMC
-Exec=/home/econn/.local/bin/polymc\n
-Comment=
-Terminal=false
-PrefersNonDefaultGPU=false
-Icon=org.polymc.PolyMC
-Type=Application

@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=Hollow Knight Silksong
-Exec=env WINEPREFIX="/home/econn/.wine" wine-stable C:\\\\ProgramData\\\\Microsoft\\\\Windows\\\\Start\\ Menu\\\\Programs\\\\Hollow\\ Knight\\ Silksong.lnk
-Type=Application
-StartupNotify=true
-Path=/home/econn/games/Hollow Knight Silksong
-Icon=6695_Hollow Knight Silksong.0
-StartupWMClass=hollow knight silksong.exe
