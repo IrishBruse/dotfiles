@@ -1096,8 +1096,8 @@
   "debug.toolBarLocation": "commandCenter",
   "custom_css_hot_reload.imports": [
     // "file:///Users/econneely/dotfiles/vscode/theme/custom.css",
-    // "file:///home/econn/dotfiles/vscode/theme/custom.css"
-    "file://${userHome}/dotfiles/vscode/theme/custom.css",
+    "file:///home/econn/dotfiles/vscode/theme/custom.css",
+    // "file://${userHome}/dotfiles/vscode/theme/custom.css",
     // "file://${userHome}/dotfiles/vscode/theme/icons.css"
   ],
 

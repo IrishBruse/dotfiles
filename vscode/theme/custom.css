@@ -88,7 +88,7 @@ div:hover > .scrollbar.horizontal .slider {
 }
 
 /* Align foldable files */
-
+/*
 .explorer-folders-view .monaco-list-row .monaco-tl-row .monaco-tl-twistie {
   padding-right: 0;
   width: 0px;
@@ -99,4 +99,4 @@ div:hover > .scrollbar.horizontal .slider {
   .monaco-tl-row
   .codicon-tree-item-expanded::before {
   margin-right: 14px;
-}
+} */
