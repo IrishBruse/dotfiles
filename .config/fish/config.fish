@@ -2,7 +2,7 @@ fnm env --use-on-cd --shell fish | source
 
 set -gx ANDROID_HOME /usr/lib/android-sdk
 
-set -x EDITOR nano
+set -x EDITOR code --wait
 set -gx JQ_COLORS "0;34:0;34:0;34:0;37:0;32:0;37:0;37:0;31"
 
 set -gx DOTNET_WATCH_RESTART_ON_RUDE_EDIT 1
@@ -55,6 +55,9 @@ alias reload="clear;exec fish"
 alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LDtk.Codegen.csproj"
 
 alias showkey="fish_key_reader --verbose"
+
+alias nano="micro"
+alias snano="sudo micro"
 
 # Node alias
 abbr nvm fnm

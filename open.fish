@@ -4,7 +4,6 @@ zoxide init fish --cmd cd >.config/fish/conf.d/zoxide.fish
 fzf --fish >.config/fish/conf.d/fzf.fish
 
 if test (uname) = Linux
-    dconf dump / >misc/dconf-settings.ini
     dconf read /com/linuxmint/install/installed-apps | string replace -a \' \" | jq >misc/apt.json
 end
 

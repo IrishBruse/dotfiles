@@ -2,40 +2,125 @@
 
 window {
   font-family: "Cascadia Code", "Symbols Nerd Font";
-  background-color: #2c3037;
+  background-color: #262a2f;
+  color: #fff;
+
+  margin: 0 12px;
+  border-top: solid 1px #3d414c;
 }
 
-* {
-  border: 0px none;
+tooltip {
+  font-family: "Cascadia Code", "Symbols Nerd Font";
+  background: #21252b;
+  border: 1px solid #3d414c;
 }
 
-#clock:hover,
-#cpu:hover,
-#memory:hover,
-#network:hover,
-#pulseaudio:hover {
-  background-color: #3e4451;
-  color: #ffffff;
-  border-radius: 3px;
+tooltip label {
+  color: white;
 }
 
 #clock,
 #cpu,
 #memory,
+#disk,
+#temperature,
+#backlight,
 #network,
 #pulseaudio,
+#wireplumber,
+#custom-media,
 #tray,
-#window {
+#mode,
+#idle_inhibitor,
+#scratchpad,
+#mpd {
+  margin: 4px 0;
   padding: 0 10px;
-  margin: 3px 2px;
-  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+#cpu:hover,
+#memory:hover,
+#disk:hover,
+#temperature:hover,
+#backlight:hover,
+#network:hover,
+#pulseaudio:hover,
+#wireplumber:hover,
+#custom-media:hover,
+#mode:hover,
+#idle_inhibitor:hover,
+#scratchpad:hover,
+#mpd:hover,
+#tray > .active:hover,
+#clock:hover {
+  background-color: #404652;
 }
 
 #clock {
-  margin-left: 12px;
-  min-width: 100px;
+  font-weight: bold;
 }
 
-/* window#waybar.modules-center {
-  width: 200px;
+#network.disconnected {
+  color: #e06c75;
+}
+
+#tray {
+  background-color: #262a2f;
+}
+
+#tray > .passive,
+#tray > .active {
+  padding: 12px;
+  margin: 4px;
+  border-radius: 4px;
+}
+
+#tray > .passive {
+  -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+  -gtk-icon-effect: highlight;
+  background-color: #eb4d4b;
+}
+
+/* https://github.com/Alexays/Waybar/wiki/Module:-Hyprland */
+/*
+#workspaces button {
+  padding: 0 5px;
+  background-color: transparent;
+  color: #abb2bf;
+  border-bottom: 3px solid transparent;
+}
+
+#workspaces button.focused {
+  color: #61afef;
+  border-bottom: 3px solid #61afef;
+}
+
+#workspaces button.urgent {
+  background-color: #e06c75;
+  color: #282c34;
+}
+
+#workspaces button:hover {
+  background: rgba(171, 178, 191, 0.1);
+  box-shadow: inherit;
+  text-shadow: inherit;
+}
+
+#window {
+  background-color: #404652;
+  margin: 4px 0;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+window#waybar.empty #window {
+  background-color: transparent;
+}
+
+window#waybar.fullscreen {
+  opacity: 0;
 } */

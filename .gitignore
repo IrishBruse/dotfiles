@@ -28,3 +28,4 @@ local.fish
 .gitconfig
 
 node_modules
+.config/dconf/user.txt-lock
