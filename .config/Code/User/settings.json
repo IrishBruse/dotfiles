@@ -1646,4 +1646,7 @@
     "/Users/econneely/git/DF-UI",
     "/Users/econneely/git/DF-Plugins",
   ],
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
+  },
 }

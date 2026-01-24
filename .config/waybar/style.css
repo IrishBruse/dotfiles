@@ -1,7 +1,12 @@
+/* https://github.com/Alexays/Waybar/wiki/Styling */
+
 window {
   font-family: "Cascadia Code", "Symbols Nerd Font";
-  background-color: #262a2f;
-  border: solid 1px #262a2f;
+  background-color: #2c3037;
+}
+
+* {
+  border: 0px none;
 }
 
 #clock:hover,
@@ -30,7 +35,7 @@ window {
   margin-left: 12px;
   min-width: 100px;
 }
-/*
-window#waybar.modules-center {
-  max-width: 200px;
+
+/* window#waybar.modules-center {
+  width: 200px;
 } */

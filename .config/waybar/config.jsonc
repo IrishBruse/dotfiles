@@ -1,4 +1,5 @@
 {
+  // https://github.com/Alexays/Waybar/wiki/Configuration
   "$schema": "https://raw.githubusercontent.com/Magniquick/waybar-config-schema/main/schema.json",
   "layer": "top",
   "position": "bottom",
@@ -9,10 +10,16 @@
     "memory",
     "temperature",
     "pulseaudio",
-    "hyprland/workspaces",
+    "hyprland/workspaces"
   ],
-  "modules-center": ["hyprland/window"],
-  "modules-right": ["network", "tray", "clock", ""],
+  "modules-center": [
+    "hyprland/window"
+  ],
+  "modules-right": [
+    "network",
+    "tray",
+    "clock"
+  ],
   "hyprland/workspaces": {
     "format": "{windows}",
     "format-window-separator": "",
@@ -21,23 +28,24 @@
       "update-active-window": true,
       "format": "{icon}",
       "icon-size": 18,
-      "ignore-list": ["ueli"],
+      "ignore-list": [
+        "ueli"
+      ]
     },
-    "cursor": 60,
+    "cursor": 60
   },
   "clock": {
-    "format": "{:%I:%M %p\n%b/%d/%Y}",
-    "format-alt": "{:%b/%d/%Y}",
-    "tooltip-format": "<tt><small>{calendar}</small></tt>",
+    "format": "{:%a %b %d %I:%M %p}",
+    "tooltip-format": "<tt><small>{calendar}</small></tt>"
   },
   "cpu": {
     "cursor": 60,
     "format": "{usage}%  ",
-    "tooltip": false,
+    "tooltip": false
   },
   "memory": {
     "cursor": 60,
-    "format": "{}%  ",
+    "format": "{}%  "
   },
   "network": {
     "format-wifi": "",
@@ -45,7 +53,7 @@
     "format-disconnected": "⚠",
     "on-click": "nm-connection-editor",
     "tooltip-format": "Network",
-    "tooltip-format-ethernet": "Ethernet Connection",
+    "tooltip-format-ethernet": "Ethernet Connection"
   },
   "pulseaudio": {
     "format": "{volume}% {icon}",
@@ -58,9 +66,13 @@
       "phone": "",
       "portable": "",
       "car": "",
-      "default": ["", "", ""],
+      "default": [
+        "",
+        "",
+        ""
+      ],
     },
-    "on-click": "pavucontrol",
+    "on-click": "pavucontrol"
   },
   "tray": {
     "cursor": 60,
@@ -68,7 +80,7 @@
     "spacing": 10,
     "icons": {
       "Easy Effects": "bluetooth",
-      "TelegramDesktop": "$HOME/.local/share/icons/hicolor/16x16/apps/telegram.png",
+      "TelegramDesktop": "$HOME/.local/share/icons/hicolor/16x16/apps/telegram.png"
     },
   },
 }

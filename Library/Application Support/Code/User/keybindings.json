@@ -11051,57 +11051,41 @@
         }
     },
     {
-        "when": "terminalFocus",
-        "key": "ctrl+right",
-        "command": "workbench.action.terminal.sendSequence",
-        "args": {
-            "text": "\u001b[1;5C"
-        }
-    },
-    {
-        "when": "terminalFocus",
-        "key": "ctrl+alt+left",
         "command": "workbench.action.terminal.sendSequence",
         "args": {
             "text": "\u001b[1;5D"
-        }
+        },
+        "key": "ctrl+alt+left",
+        "when": "terminalFocus"
     },
     {
-        "when": "terminalFocus",
+        "command": "workbench.files.action.showActiveFileInExplorer",
         "key": "ctrl+r",
-        "command": "workbench.action.terminal.sendSequence",
-        "args": {
-            "text": "\u0012"
-        }
+        "when": "!terminalFocus"
     },
     {
-        "when": "!terminalFocus",
-        "key": "ctrl+r",
-        "command": "workbench.files.action.showActiveFileInExplorer"
-    },
-    {
-        "key": "ctrl+q",
         "command": "git.openChange",
+        "key": "ctrl+q",
         "when": "editorFocus && !isInDiffEditor"
     },
     {
-        "key": "ctrl+q",
         "command": "git.openFile",
+        "key": "ctrl+q",
         "when": "editorFocus && isInDiffEditor"
     },
     {
-        "key": "ctrl+d",
         "command": "editor.action.addSelectionToNextFindMatch",
+        "key": "ctrl+d",
         "when": "editorFocus"
     },
     {
-        "key": "ctrl+shift+d",
         "command": "editor.action.selectHighlights",
+        "key": "ctrl+shift+d",
         "when": "editorFocus"
     },
     {
-        "key": "ctrl+1",
-        "command": "workbench.view.explorer"
+        "command": "workbench.view.explorer",
+        "key": "ctrl+1"
     },
     {
         "key": "ctrl+1",
@@ -11151,6 +11135,11 @@
     },
     {
         "key": "ctrl+shift+u",
+        "command": "editor.action.transformToPascalcase",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "alt+u",
         "command": "editor.action.transformToLowercase",
         "when": "editorTextFocus"
     }

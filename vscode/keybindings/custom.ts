@@ -44,13 +44,35 @@ export default [
     key: "ctrl+i",
     command: "editor.action.insertSnippet",
   },
-  { command: "workbench.action.previousEditorInGroup", key: "alt+left" },
-  { command: "workbench.action.nextEditorInGroup", key: "alt+right" },
-  { command: "workbench.action.toggleSidebarVisibility", key: "ctrl+oem_8" },
-  { command: "workbench.action.files.saveWithoutFormatting", key: "alt+s" },
-  { command: "workbench.action.toggleZenMode", key: "f11" },
-  { command: "workbench.action.openSettingsJson", key: "ctrl+shift+e" },
-  { command: "notebook.execute", key: "f5", when: "notebookEditorFocused" },
+  {
+    command: "workbench.action.previousEditorInGroup",
+    key: "alt+left",
+  },
+  {
+    command: "workbench.action.nextEditorInGroup",
+    key: "alt+right",
+  },
+  {
+    command: "workbench.action.toggleSidebarVisibility",
+    key: "ctrl+oem_8",
+  },
+  {
+    command: "workbench.action.files.saveWithoutFormatting",
+    key: "alt+s",
+  },
+  {
+    command: "workbench.action.toggleZenMode",
+    key: "f11",
+  },
+  {
+    command: "workbench.action.openSettingsJson",
+    key: "ctrl+shift+e",
+  },
+  {
+    command: "notebook.execute",
+    key: "f5",
+    when: "notebookEditorFocused",
+  },
   {
     command: "testing.runCurrentFile",
     key: "f5",
@@ -61,7 +83,10 @@ export default [
     key: "ctrl+f5",
     when: "testing.activeEditorHasTests",
   },
-  { command: "workbench.action.closeOtherEditors", key: "ctrl+shift+w" },
+  {
+    command: "workbench.action.closeOtherEditors",
+    key: "ctrl+shift+w",
+  },
   {
     command: "editor.action.jumpToBracket",
     key: "ctrl+b",
@@ -77,7 +102,10 @@ export default [
     key: "ctrl+tab",
     when: "!inQuickOpen",
   },
-  { command: "workbench.action.focusActiveEditorGroup", key: "ctrl+e" },
+  {
+    command: "workbench.action.focusActiveEditorGroup",
+    key: "ctrl+e",
+  },
   {
     command: "workbench.action.quickOpenNavigatePreviousInViewPicker",
     key: "ctrl+shift+tab",
@@ -114,8 +142,14 @@ export default [
     key: "shift+space",
     when: "editorTextFocus",
   },
-  { command: "workbench.action.terminal.toggleTerminal", key: "ctrl+oem_5" },
-  { command: "workbench.action.terminal.clear", key: "ctrl+k" },
+  {
+    command: "workbench.action.terminal.toggleTerminal",
+    key: "ctrl+oem_5",
+  },
+  {
+    command: "workbench.action.terminal.clear",
+    key: "ctrl+k",
+  },
   {
     command: "editor.action.insertCursorAbove",
     key: "shift+alt+up",
@@ -135,7 +169,10 @@ export default [
     key: "ctrl+v",
     when: "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported",
   },
-  { command: "editor.action.goToTypeDefinition", key: "f1" },
+  {
+    command: "editor.action.goToTypeDefinition",
+    key: "f1",
+  },
   {
     command: "toggle",
     key: "ctrl+shift+i",
@@ -175,53 +212,41 @@ export default [
     args: { text: "\u001b[1;5D" },
   },
   {
-    when: "terminalFocus",
-    key: "ctrl+right",
-    command: "workbench.action.terminal.sendSequence",
-    args: { text: "\u001b[1;5C" },
-  },
-  {
-    when: "terminalFocus",
-    key: "ctrl+alt+left",
     command: "workbench.action.terminal.sendSequence",
     args: { text: "\u001b[1;5D" },
-  },
-  {
+    key: "ctrl+alt+left",
     when: "terminalFocus",
-    key: "ctrl+r",
-    command: "workbench.action.terminal.sendSequence",
-    args: { text: "\u0012" },
   },
   {
-    when: "!terminalFocus",
-    key: "ctrl+r",
     command: "workbench.files.action.showActiveFileInExplorer",
+    key: "ctrl+r",
+    when: "!terminalFocus",
   },
   {
-    key: "ctrl+q",
     command: "git.openChange",
+    key: "ctrl+q",
     when: "editorFocus && !isInDiffEditor",
   },
   {
-    key: "ctrl+q",
     command: "git.openFile",
+    key: "ctrl+q",
     when: "editorFocus && isInDiffEditor",
   },
   // Duplicate selection
   {
-    key: "ctrl+d",
     command: "editor.action.addSelectionToNextFindMatch",
+    key: "ctrl+d",
     when: "editorFocus",
   },
   {
-    key: "ctrl+shift+d",
     command: "editor.action.selectHighlights",
+    key: "ctrl+shift+d",
     when: "editorFocus",
   },
   // Open side bars
   {
-    key: "ctrl+1",
     command: "workbench.view.explorer",
+    key: "ctrl+1",
   },
   {
     key: "ctrl+1",
@@ -270,6 +295,11 @@ export default [
   },
   {
     key: "ctrl+shift+u",
+    command: "editor.action.transformToPascalcase",
+    when: "editorTextFocus",
+  },
+  {
+    key: "alt+u",
     command: "editor.action.transformToLowercase",
     when: "editorTextFocus",
   },
