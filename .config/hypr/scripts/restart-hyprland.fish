@@ -27,4 +27,4 @@ if not kill -0 $waybar_pid 2>/dev/null
     exit 1
 end
 
-hyprctl notify 2 5000 0 "Hyprland Restarted"
+hyprctl notify 2 2000 0 "Hyprland Restarted"

@@ -86,7 +86,7 @@ tooltip label {
 }
 
 /* https://github.com/Alexays/Waybar/wiki/Module:-Hyprland */
-/*
+
 #workspaces button {
   padding: 0 5px;
   background-color: transparent;
@@ -123,4 +123,4 @@ window#waybar.empty #window {
 
 window#waybar.fullscreen {
   opacity: 0;
-} */
+}
