@@ -2,11 +2,14 @@
 
 window {
   font-family: "Cascadia Code", "Symbols Nerd Font";
-  background-color: #262a2f;
   color: #fff;
 
   margin: 0 12px;
-  border-top: solid 1px #3d414c;
+}
+
+window > box {
+  border-top: solid 2px #3d414c;
+  background-color: #262a2f;
 }
 
 tooltip {

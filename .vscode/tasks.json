@@ -2,6 +2,21 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Vscode Keybind",
+      "type": "shell",
+      "command": "fnm use 24 && node --experimental-specifier-resolution=node --watch gen.ts",
+      "problemMatcher": [],
+      "options": {
+        "cwd": "vscode/keybindings/"
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "presentation": {
+        "reveal": "silent"
+      }
+    },
+    {
       "label": "Run on Open",
       "type": "shell",
       "command": "echo skipped",
@@ -12,19 +27,12 @@
         "command": "fish -c ./open.fish"
       },
       "problemMatcher": [],
-      "runOptions": { "runOn": "folderOpen" },
-      "presentation": { "reveal": "silent" }
-    },
-    {
-      "label": "Vscode Keybind",
-      "type": "shell",
-      "command": "fnm use 24 && node --experimental-specifier-resolution=node --watch gen.ts",
-      "problemMatcher": [],
-      "options": {
-        "cwd": "vscode/keybindings/"
+      "runOptions": {
+        "runOn": "folderOpen"
       },
-      "runOptions": { "runOn": "folderOpen" },
-      "presentation": { "reveal": "silent" }
+      "presentation": {
+        "reveal": "silent"
+      }
     }
   ]
 }

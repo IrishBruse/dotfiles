@@ -1682,4 +1682,5 @@
   "[jsonc]": {
     "editor.defaultFormatter": "vscode.json-language-features",
   },
+  "chat.useNestedAgentsMdFiles": true,
 }

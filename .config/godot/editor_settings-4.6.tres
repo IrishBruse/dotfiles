@@ -15,7 +15,6 @@ interface/editor/bottom_dock_tab_style = 2
 interface/editor/display_scale = 3
 interface/editor/code_font_contextual_ligatures = 0
 interface/editor/font_antialiasing = 2
-interface/editor/main_font = "/home/econn/git/godot-launcher/Assets/Fonts/CascadiaCode.ttf"
 interface/theme/color_preset = "Custom"
 interface/theme/base_color = Color(0.17254902, 0.1882353, 0.21568628, 1)
 interface/theme/accent_color = Color(0.20784314, 0.65882355, 0.32941177, 1)

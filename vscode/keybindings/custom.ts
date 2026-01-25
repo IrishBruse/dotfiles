@@ -223,6 +223,11 @@ export default [
     when: "!terminalFocus",
   },
   {
+    command: "workbench.action.restartExtensionHost",
+    key: "ctrl+shift+r",
+    when: "!terminalFocus",
+  },
+  {
     command: "git.openChange",
     key: "ctrl+q",
     when: "editorFocus && !isInDiffEditor",
