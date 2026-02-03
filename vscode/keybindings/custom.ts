@@ -308,4 +308,5 @@ export default [
     command: "editor.action.transformToLowercase",
     when: "editorTextFocus",
   },
+  { key: "ctrl+g", command: "workbench.action.gotoSymbol" },
 ] as Keybind[];

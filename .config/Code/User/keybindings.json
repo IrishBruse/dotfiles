@@ -10617,5 +10617,9 @@
         "key": "alt+u",
         "command": "editor.action.transformToLowercase",
         "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+g",
+        "command": "workbench.action.gotoSymbol"
     }
 ]
