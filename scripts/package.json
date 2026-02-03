@@ -10,8 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "a": "",
-    "b": ""
+    "@aws-sdk/client-dynamodb": "3.965.0"
   },
   "devDependencies": {
     "@types/node": "^24.10.1"

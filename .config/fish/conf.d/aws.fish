@@ -1,17 +1,11 @@
 function sam-dev
-    nr build
-    if test $status -ne 0
-        return
-    end
     nr cfn-lint
-    if test $status -ne 0
-        return
-    end
-    sam local start-api --config-file samconfig-ephemeral.toml $argv 2>&1 | pretty
+    and nr build
+    and sam sync --watch --config-file samconfig-ephemeral.toml $argv
 end
 
 function sam-deploy
     sam build
-    set -l configFile samconfig-ephemeral.toml
-    sam deploy --config-file $configFile $argv
+    and set -l configFile samconfig-ephemeral.toml
+    and sam deploy --config-file $configFile $argv
 end

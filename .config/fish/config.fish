@@ -66,3 +66,5 @@ abbr nvm fnm
 bind ctrl-w backward-kill-word
 
 alias stow="echo 'use ./stow.fish'"
+
+fish_add_path $HOME/.local/bin
