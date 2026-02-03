@@ -12,6 +12,7 @@
       "</Project>",
       ""
     ],
+    "isFileTemplate": true,
     "description": "csproj template"
   },
   "PackageReference": {
@@ -50,6 +51,20 @@
       "<PublishAot>true</PublishAot>"
     ]
   },
+  "Nullable": {
+    "prefix": "Nullable",
+    "isFileTemplate": false,
+    "body": [
+      "<Nullable>enable</Nullable>"
+    ]
+  },
+  "ImplicitUsings": {
+    "prefix": "ImplicitUsings",
+    "isFileTemplate": false,
+    "body": [
+      "<ImplicitUsings>enable</ImplicitUsings>"
+    ]
+  },
   "DisableDynamicCode": {
     "prefix": "DisableDynamicCode",
     "isFileTemplate": false,
@@ -57,11 +72,46 @@
       "<DisableDynamicCode>true</DisableDynamicCode>"
     ]
   },
-  "AppendTargetFrameworkToOutputPath": {
-    "prefix": "AppendTargetFrameworkToOutputPath",
+  "PublishTrimmed": {
+    "prefix": "PublishTrimmed",
     "isFileTemplate": false,
     "body": [
-      "<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>"
+      "<PublishTrimmed>true</AppendTargetFrameworkToOutputPath>"
+    ]
+  },
+  "TrimMode": {
+    "prefix": "TrimMode",
+    "isFileTemplate": false,
+    "body": [
+      "<TrimMode>false</TrimMode>"
+    ]
+  },
+  "EnableTrimAnalyzer": {
+    "prefix": "EnableTrimAnalyzer",
+    "isFileTemplate": false,
+    "body": [
+      "<EnableTrimAnalyzer>true</EnableTrimAnalyzer>"
+    ]
+  },
+  "InvariantGlobalization": {
+    "prefix": "InvariantGlobalization",
+    "isFileTemplate": false,
+    "body": [
+      "<InvariantGlobalization>false</InvariantGlobalization>"
+    ]
+  },
+  "EnableTrimCompatibilityWarnings": {
+    "prefix": "EnableTrimCompatibilityWarnings",
+    "isFileTemplate": false,
+    "body": [
+      "<EnableTrimCompatibilityWarnings>false</EnableTrimCompatibilityWarnings>"
+    ]
+  },
+  "XmlSerializerGenerator": {
+    "prefix": "XmlSerializerGenerator",
+    "isFileTemplate": false,
+    "body": [
+      "<XmlSerializerGenerator>false</XmlSerializerGenerator>"
     ]
   }
 }
