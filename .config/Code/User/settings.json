@@ -304,6 +304,7 @@
           "fenced_code.block.language",
           "markup.link",
           "source.flow keyword.operator",
+          "source.cs string.unquoted.preprocessor.message",
         ],
         "settings": {
           "foreground": "#56B6C2"
@@ -1606,4 +1607,9 @@
   "explorer.fileNesting.enabled": true,
   "csharp.suppressBuildAssetsNotification": true,
   "debug.onTaskErrors": "debugAnyway",
+  "files.watcherExclude": {
+    "**/bin/*": true,
+    "**/obj/*": true
+  },
+  "mermaid.vscode.dark": "redux-dark-color",
 }
