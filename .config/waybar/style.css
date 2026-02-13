@@ -1,14 +1,27 @@
 /* https://github.com/Alexays/Waybar/wiki/Styling */
 
 window {
-  font-family: "Cascadia Code", "Symbols Nerd Font";
+  font-family: "Cascadia Code", "Symbols Nerd Font Mono";
   color: #fff;
+}
 
-  margin: 0 12px;
+window#waybar > box {
+  padding: 0 12px;
+}
+
+window#waybar.hidden {
+  background-color: transparent;
+}
+
+window#waybar.bottom > box {
+  border-top: solid 2px #3d414c;
+}
+
+window#waybar.top > box {
+  border-bottom: solid 2px #3d414c;
 }
 
 window > box {
-  border-top: solid 2px #3d414c;
   background-color: #262a2f;
 }
 
@@ -22,41 +35,7 @@ tooltip label {
   color: white;
 }
 
-#clock,
-#cpu,
-#memory,
-#disk,
-#temperature,
-#backlight,
-#network,
-#pulseaudio,
-#wireplumber,
-#custom-media,
-#tray,
-#mode,
-#idle_inhibitor,
-#scratchpad,
-#mpd {
-  margin: 4px 0;
-  padding: 0 10px;
-  border-radius: 4px;
-}
-
-#cpu:hover,
-#memory:hover,
-#disk:hover,
-#temperature:hover,
-#backlight:hover,
-#network:hover,
-#pulseaudio:hover,
-#wireplumber:hover,
-#custom-media:hover,
-#mode:hover,
-#idle_inhibitor:hover,
-#scratchpad:hover,
-#mpd:hover,
-#tray > .active:hover,
-#clock:hover {
+widget > label:hover {
   background-color: #404652;
 }
 
@@ -99,6 +78,7 @@ tooltip label {
 
 #workspaces button.focused {
   color: #61afef;
+  background-color: green;
   border-bottom: 3px solid #61afef;
 }
 
@@ -113,17 +93,34 @@ tooltip label {
   text-shadow: inherit;
 }
 
-#window {
-  background-color: #404652;
-  margin: 4px 0;
-  padding: 4px;
-  border-radius: 4px;
-}
-
 window#waybar.empty #window {
   background-color: transparent;
 }
 
 window#waybar.fullscreen {
   opacity: 0;
+}
+
+#custom-logo {
+  font-size: 18px;
+}
+
+#custom-notification:hover {
+  background-color: #404652;
+}
+
+#custom-power {
+  font-size: 18px;
+}
+
+#custom-notification {
+  font-size: 16px;
+  margin: 4px 0;
+}
+
+.modules-left > widget > *,
+.modules-right > widget > * {
+  margin: 4px 10px;
+  border-radius: 3px;
+  padding: 2px;
 }

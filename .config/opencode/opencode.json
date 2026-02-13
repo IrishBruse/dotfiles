@@ -5,6 +5,11 @@
   "autoupdate": true,
   "keybinds": {
     "command_list": "alt+p",
-    "variant_cycle": "alt+t"
+    "variant_cycle": "alt+t",
+    "input_newline": "shift+return,ctrl+return,alt+return,ctrl+j",
+    "input_submit": "return"
+  },
+  "compaction": {
+    "auto": true
   }
 }

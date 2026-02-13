@@ -1,0 +1,57 @@
+// https://github.com/Alexays/Waybar/wiki/Configuration
+{
+  "$schema": "https://raw.githubusercontent.com/Magniquick/waybar-config-schema/main/schema.json",
+  "layer": "top",
+  "position": "top",
+  "spacing": 0,
+  "height": 30,
+  "modules-left": [
+    "custom/logo",
+    "hyprland/workspaces",
+  ],
+  "modules-center": [
+    "hyprland/window"
+  ],
+  "modules-right": [
+    "custom/power"
+  ],
+  "hyprland/window": {
+    "max-length": 60,
+    "separate-outputs": true
+  },
+  "hyprland/windowcount": {
+    "format": " {} "
+  },
+  "hyprland/workspaces": {
+    "on-click": "activate",
+    "format": "{icon}",
+    "format-icons": {
+      "default": "",
+      "1": "󰲠",
+      "2": "󰲢",
+      "3": "󰲤",
+      "4": "󰲨",
+      "5": "󰲪",
+      "6": "󰲪",
+      "7": "󰲬",
+      "8": "󰲮",
+      "9": "󰲰",
+      "active": "",
+      "urgent": ""
+    },
+    "persistent-workspaces": {
+      "*": 3,
+      "HDMI-A-3": 1
+    }
+  },
+  "custom/logo": {
+    "format": "",
+    "tooltip": false,
+    "on-click": "~/.config/rofi/launchers/misc/launcher.sh &"
+  },
+  "custom/power": {
+    "format": "󰤆",
+    "tooltip": false,
+    "on-click": "~/.config/hypr/scripts/power-menu.sh &"
+  }
+}

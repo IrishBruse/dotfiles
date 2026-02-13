@@ -185,8 +185,7 @@
           "comment",
           "comment markup.link",
           "punctuation.definition.comment",
-          "text.html punctuation.definition.tag",
-          "text.xml punctuation.definition.tag",
+          "punctuation.definition.tag",
         ],
         "settings": {
           "foreground": "#5C6370"
@@ -310,7 +309,7 @@
           "foreground": "#56B6C2"
         },
       },
-      // [LIGHT GREY/TEXT] Parameters, Separators, Imports, Blocks
+      // [LIGHT GRAY/TEXT] Parameters, Separators, Imports, Blocks
       {
         "scope": [
           "storage.modifier.package",
@@ -1121,16 +1120,15 @@
     "tsconfig.json": "tsconfig.*.json",
     "*.glsl": "${capture}.vert,${capture}.frag",
   },
-  "explorer.fileNesting.expand": false,
   "files.enableTrash": true,
   //
   // Settings
   //
   "editor.foldingHighlight": false,
-  "editor.fontFamily": "Cascadia Code",
+  "editor.fontFamily": "Cascadia Code, Symbols Nerd Font",
   "editor.fontLigatures": true,
   "editor.fontSize": 12,
-  "editor.inlineSuggest.fontFamily": "Cascadia Code",
+  "editor.inlineSuggest.fontFamily": "Cascadia Code, Symbols Nerd Font",
   "editor.minimap.enabled": false,
   "editor.overviewRulerBorder": false,
   "emmet.showSuggestionsAsSnippets": true,
@@ -1141,7 +1139,6 @@
   "files.trimTrailingWhitespace": true,
   "material-icon-theme.activeIconPack": "react",
   "material-icon-theme.folders.color": "#ABB2BF",
-  "material-icon-theme.hidesExplorerArrows": true,
   "material-icon-theme.saturation": 1,
   "notebook.lineNumbers": "on",
   "problems.defaultViewMode": "table",
@@ -1150,7 +1147,7 @@
   "security.workspace.trust.banner": "never",
   "security.workspace.trust.enabled": false,
   "telemetry.telemetryLevel": "error",
-  "terminal.integrated.fontFamily": "Cascadia Mono",
+  "terminal.integrated.fontFamily": "Cascadia Mono, Symbols Nerd Font Mono",
   "terminal.integrated.fontSize": 12,
   "window.commandCenter": false,
   "window.menuBarVisibility": "hidden",
@@ -1171,7 +1168,7 @@
   //
   // Debug
   //
-  "debug.console.fontFamily": "Cascadia Mono",
+  "debug.console.fontFamily": "Cascadia Mono, Symbols Nerd Font Mono",
   "debug.console.fontSize": 12,
   "debug.toolBarLocation": "docked",
   "custom_css_hot_reload.imports": [
@@ -1336,12 +1333,10 @@
   //
   "github.copilot.editor.enableCodeActions": false,
   "github.copilot.enable": {
-    "*": false,
+    "*": true,
     "plaintext": false,
     "markdown": false,
     "scminput": false,
-    "cpp": true,
-    "csharp": true
   },
   "github.copilot.nextEditSuggestions.fixes": false,
   "githubPullRequests.experimental.chat": false,
@@ -1600,11 +1595,9 @@
   "[jsonc]": {
     "editor.defaultFormatter": "vscode.json-language-features",
   },
-  "chat.useNestedAgentsMdFiles": true,
   "editor.experimental.preferTreeSitter.ini": true,
   "editor.experimental.preferTreeSitter.css": true,
   "http.proxyStrictSSL": false,
-  "explorer.fileNesting.enabled": true,
   "csharp.suppressBuildAssetsNotification": true,
   "debug.onTaskErrors": "debugAnyway",
   "files.watcherExclude": {
@@ -1612,4 +1605,24 @@
     "**/obj/*": true
   },
   "mermaid.vscode.dark": "redux-dark-color",
+  "editor.experimental.preferTreeSitter.typescript": true,
+  "go.diagnostic.vulncheck": "Off",
+  "lldb-dap.environment": {
+    "WAYLAND_DEBUG": "1"
+  },
+  "debug.breakpointsView.presentation": "tree",
+  "json.schemaDownload.trustedDomains": {
+    "https://schemastore.azurewebsites.net/": true,
+    "https://raw.githubusercontent.com/": true,
+    "https://www.schemastore.org/": true,
+    "https://json.schemastore.org/": true,
+    "https://json-schema.org/": true,
+    "https://opencode.ai": true,
+    "https://models.dev": true
+  },
+  "lldb-dap.executable-path": "/usr/bin/lldb-dap-18",
+  "workbench.settings.alwaysShowAdvancedSettings": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.enabled": true,
+  "material-icon-theme.hidesExplorerArrows": true,
 }
