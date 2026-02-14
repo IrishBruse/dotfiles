@@ -5,6 +5,13 @@ window {
   color: #fff;
 }
 
+.modules-left > widget > *,
+.modules-right > widget > * {
+  margin: 4px 10px;
+  border-radius: 3px;
+  padding: 0px 6px;
+}
+
 window#waybar > box {
   padding: 0 12px;
 }
@@ -110,17 +117,17 @@ window#waybar.fullscreen {
 }
 
 #custom-power {
-  font-size: 18px;
+  font-size: 14px;
 }
 
 #custom-notification {
   font-size: 16px;
-  margin: 4px 0;
 }
 
-.modules-left > widget > *,
-.modules-right > widget > * {
-  margin: 4px 10px;
-  border-radius: 3px;
-  padding: 2px;
+.modules-left > widget:first-child > * {
+  margin-left: 0;
+}
+
+.modules-right > widget:last-child > * {
+  margin-right: 0;
 }

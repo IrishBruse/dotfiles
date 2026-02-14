@@ -10,7 +10,9 @@
     "temperature"
   ],
   "modules-center": [
-    "hyprland/workspaces"
+    // "hyprland/workspaces"
+    // "custom/windowlist"
+    "wlr/taskbar"
   ],
   "modules-right": [
     "network",
@@ -19,10 +21,16 @@
     "clock",
     "custom/notification"
   ],
+  "wlr/taskbar": {
+    "format": "{icon} {title:.20}",
+    "on-click": "activate",
+    "on-click-middle": "close",
+  },
   "hyprland/workspaces": {
     "format": "{windows}",
     "workspace-taskbar": {
       "enable": true,
+      "on-click-window": "~/.config/hypr/scripts/focus-window.sh {address} {button}",
       "update-active-window": true,
       "format": "{icon} {title:.20}",
       "icon-size": 18

@@ -3,11 +3,9 @@
   "$schema": "https://raw.githubusercontent.com/Magniquick/waybar-config-schema/main/schema.json",
   "layer": "top",
   "position": "top",
-  "spacing": 0,
-  "height": 30,
+  "height": 24,
   "modules-left": [
-    "custom/logo",
-    "hyprland/workspaces",
+    "hyprland/workspaces"
   ],
   "modules-center": [
     "hyprland/window"
@@ -18,9 +16,6 @@
   "hyprland/window": {
     "max-length": 60,
     "separate-outputs": true
-  },
-  "hyprland/windowcount": {
-    "format": " {} "
   },
   "hyprland/workspaces": {
     "on-click": "activate",
@@ -41,13 +36,8 @@
     },
     "persistent-workspaces": {
       "*": 3,
-      "HDMI-A-3": 1
+      "HDMI-A-3": 0
     }
-  },
-  "custom/logo": {
-    "format": "",
-    "tooltip": false,
-    "on-click": "~/.config/rofi/launchers/misc/launcher.sh &"
   },
   "custom/power": {
     "format": "󰤆",
