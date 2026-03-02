@@ -88,15 +88,15 @@ div:hover > .scrollbar.horizontal .slider {
 }
 
 /* Align foldable files */
-/*
 .explorer-folders-view .monaco-list-row .monaco-tl-row .monaco-tl-twistie {
   padding-right: 0;
   width: 0px;
 }
 
 .explorer-folders-view
-  .monaco-list-row[aria-expanded]
-  .monaco-tl-row
+  /* .monaco-list-row[aria-expanded]
+  .monaco-tl-row */
   .codicon-tree-item-expanded::before {
   margin-right: 14px;
-} */
+  content: "";
+}

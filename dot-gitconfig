@@ -3,11 +3,11 @@
 
 [user]
     name = Ethan Conneely
-    email = mail@example.com
-	signingKey = 123foo
 
 [core]
+	hooksPath = /dev/null
     editor = code --wait
+	excludesFile = ~/.gitignore
 
 [branch]
 	sort = -committerdate
@@ -15,15 +15,12 @@
 [safe]
 	directory = ~/git/*
 
-[gpg]
-	program = /usr/local/bin/gpg
-
 [commit]
 	gpgsign = true
 
-[pull]
-	default = current
-	rebase = true
+[diff]
+   renames = copies
+   renamelimit = 0
 
-[rebase]
-	autoStash = true
+[push]
+	autoSetupRemote = true

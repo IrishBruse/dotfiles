@@ -73,6 +73,20 @@
     ],
     "description": "reduce using keys"
   },
+  "useEffect": {
+    "prefix": "useEffect",
+    "body": [
+      "useEffect(()=>{",
+      "    $0",
+      "},[])"
+    ]
+  },
+  "useState": {
+    "prefix": "useState",
+    "body": [
+      "const [${1:state}, setState] = useState($0);"
+    ]
+  },
   "stringify": {
     "prefix": "stringify",
     "description": "JSON.stringify",

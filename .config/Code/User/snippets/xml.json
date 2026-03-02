@@ -113,5 +113,12 @@
     "body": [
       "<XmlSerializerGenerator>false</XmlSerializerGenerator>"
     ]
+  },
+  "ToolCommandName": {
+    "prefix": "ToolCommandName",
+    "isFileTemplate": false,
+    "body": [
+      "<ToolCommandName>$0</ToolCommandName>"
+    ]
   }
 }

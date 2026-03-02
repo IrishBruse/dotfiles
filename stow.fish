@@ -1,9 +1,9 @@
 #!/usr/bin/env fish
 
 if test (uname) = Linux
-    command stow .
+    command stow . --dotfiles
 end
 
 if test (uname) = Darwin
-    command stow .
+    command stow . --dotfiles
 end
