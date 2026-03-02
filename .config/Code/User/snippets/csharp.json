@@ -99,5 +99,15 @@
     "body": [
       "<inheritdoc/>"
     ]
+  },
+  "operator overloading": {
+    "prefix": "operator overloading",
+    "isFileTemplate": false,
+    "body": [
+      "public static ${1:Type} operator ${3|+, -, *, /, ==, !=, <, >, <=, >=|}(${4:Type} a, ${5:Type} b)",
+      "{",
+      "\t$0",
+      "}"
+    ]
   }
 }

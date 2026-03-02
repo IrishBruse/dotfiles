@@ -159,6 +159,8 @@
         "variable.defaultLibrary": "#E5C07B",
         "parameter": "#E06C75",
         "parameter.declaration": "#ABB2BF",
+        "jsonObject": "#ABB2BF",
+        "jsonPunctuation": "#ABB2BF",
       },
     },
   },
@@ -185,8 +187,7 @@
           "comment",
           "comment markup.link",
           "punctuation.definition.comment",
-          "text.html punctuation.definition.tag",
-          "text.xml punctuation.definition.tag",
+          "punctuation.definition.tag",
         ],
         "settings": {
           "foreground": "#5C6370"
@@ -251,6 +252,7 @@
           "keyword.operator",
           "keyword.operator.expression.pattern",
           "storage",
+          "storage.type",
           "storage.type.annotation",
           "storage.type.primitive",
           "punctuation.definition.italic",
@@ -304,12 +306,13 @@
           "fenced_code.block.language",
           "markup.link",
           "source.flow keyword.operator",
+          "source.cs string.unquoted.preprocessor.message",
         ],
         "settings": {
           "foreground": "#56B6C2"
         },
       },
-      // [LIGHT GREY/TEXT] Parameters, Separators, Imports, Blocks
+      // [LIGHT GRAY/TEXT] Parameters, Separators, Imports, Blocks
       {
         "scope": [
           "storage.modifier.package",
@@ -1060,12 +1063,15 @@
   // File Associations
   //
   "workbench.editorAssociations": {
+    "{git,gitlens,conflictResolution,vscode-local-history}:/**/*.tc.json": "default",
+    "{git,gitlens,conflictResolution,vscode-local-history}:/**/*.{asl.json,asl.yaml,asl.yml}": "default",
+    "*.copilotmd": "vscode.markdown.preview.editor",
     "{hexdiff}:/**/*.*": "hexEditor.hexedit",
     "*.bin": "hexEditor.hexedit",
     "*.gb": "hexEditor.hexedit",
     "*.gbm": "hexEditor.hexedit",
     "*.gbr": "hexEditor.hexedit",
-    "*.md": "default",
+    "*.md": "default"
   },
   "files.associations": {
     ".air.toml": "ini",
@@ -1120,16 +1126,15 @@
     "tsconfig.json": "tsconfig.*.json",
     "*.glsl": "${capture}.vert,${capture}.frag",
   },
-  "explorer.fileNesting.expand": false,
   "files.enableTrash": true,
   //
   // Settings
   //
   "editor.foldingHighlight": false,
-  "editor.fontFamily": "Cascadia Code",
+  "editor.fontFamily": "Cascadia Code, Symbols Nerd Font",
   "editor.fontLigatures": true,
   "editor.fontSize": 12,
-  "editor.inlineSuggest.fontFamily": "Cascadia Code",
+  "editor.inlineSuggest.fontFamily": "Cascadia Code, Symbols Nerd Font",
   "editor.minimap.enabled": false,
   "editor.overviewRulerBorder": false,
   "emmet.showSuggestionsAsSnippets": true,
@@ -1140,7 +1145,6 @@
   "files.trimTrailingWhitespace": true,
   "material-icon-theme.activeIconPack": "react",
   "material-icon-theme.folders.color": "#ABB2BF",
-  "material-icon-theme.hidesExplorerArrows": true,
   "material-icon-theme.saturation": 1,
   "notebook.lineNumbers": "on",
   "problems.defaultViewMode": "table",
@@ -1149,12 +1153,9 @@
   "security.workspace.trust.banner": "never",
   "security.workspace.trust.enabled": false,
   "telemetry.telemetryLevel": "error",
-  "terminal.integrated.fontFamily": "Cascadia Mono",
+  "terminal.integrated.fontFamily": "Cascadia Mono, Symbols Nerd Font Mono",
   "terminal.integrated.fontSize": 12,
-  "window.commandCenter": false,
-  "window.menuBarVisibility": "hidden",
   "window.title": "${folderName}",
-  "window.titleBarStyle": "custom",
   "workbench.activityBar.location": "top",
   "workbench.colorTheme": "Empty Dark Theme",
   "workbench.editor.empty.hint": "hidden",
@@ -1162,7 +1163,6 @@
   "workbench.editor.limit.enabled": true,
   "workbench.editor.limit.value": 10,
   "workbench.iconTheme": "material-icon-theme",
-  "workbench.layoutControl.enabled": false,
   "workbench.productIconTheme": "material-product-icons",
   "workbench.sideBar.location": "right",
   "workbench.startupEditor": "none",
@@ -1170,7 +1170,7 @@
   //
   // Debug
   //
-  "debug.console.fontFamily": "Cascadia Mono",
+  "debug.console.fontFamily": "Cascadia Mono, Symbols Nerd Font Mono",
   "debug.console.fontSize": 12,
   "debug.toolBarLocation": "docked",
   "custom_css_hot_reload.imports": [
@@ -1219,7 +1219,7 @@
   "editor.guides.highlightActiveIndentation": true,
   "editor.inlayHints.enabled": "offUnlessPressed",
   "editor.inlayHints.padding": true,
-  "editor.inlineSuggest.enabled": true,
+  "editor.inlineSuggest.enabled": false,
   "editor.inlineSuggest.suppressSuggestions": true,
   "editor.lineNumbers": "on",
   "editor.parameterHints.cycle": true,
@@ -1289,10 +1289,7 @@
   "terminal.integrated.hideOnStartup": "always",
   "terminal.integrated.ignoreBracketedPasteMode": true,
   "terminal.integrated.persistentSessionReviveProcess": "never",
-  "terminal.integrated.rightClickBehavior": "nothing",
-  "terminal.integrated.scrollback": 10000,
-  "terminal.integrated.shellIntegration.decorationsEnabled": "never",
-  "terminal.integrated.shellIntegration.enabled": false,
+  "terminal.integrated.shellIntegration.decorationsEnabled": "overviewRuler",
   "terminal.integrated.tabs.title": "${sequence}",
   "terminal.integrated.enableMultiLinePasteWarning": "never",
   "terminal.integrated.initialHint": false,
@@ -1334,14 +1331,6 @@
   // GitHub
   //
   "github.copilot.editor.enableCodeActions": false,
-  "github.copilot.enable": {
-    "*": false,
-    "plaintext": false,
-    "markdown": false,
-    "scminput": false,
-    "cpp": true,
-    "csharp": true
-  },
   "github.copilot.nextEditSuggestions.fixes": false,
   "githubPullRequests.experimental.chat": false,
   "githubPullRequests.commentExpandState": "collapseAll",
@@ -1574,7 +1563,7 @@
   "debug.saveBeforeStart": "nonUntitledEditorsInActiveGroup",
   "debug.showInStatusBar": "never",
   "diffEditor.codeLens": false,
-  "diffEditor.ignoreTrimWhitespace": true,
+  "diffEditor.ignoreTrimWhitespace": false,
   "diffEditor.maxComputationTime": 0,
   "diffEditor.renderSideBySide": true,
   "diffEditor.useInlineViewWhenSpaceIsLimited": false,
@@ -1589,7 +1578,6 @@
   "fish.path.fish_indent": "/opt/homebrew/bin/fish_indent",
   "errorLens.messageEnabled": true,
   "aws.cloudformation.telemetry.enabled": false,
-  "github.copilot.nextEditSuggestions.enabled": true,
   "scm.compactFolders": false,
   "workbench.secondarySideBar.defaultVisibility": "visible",
   "chat.viewSessions.enabled": false,
@@ -1597,14 +1585,45 @@
   "settingsSync.ignoredExtensions": [
     "fireblast.hyprlang-vscode"
   ],
-  "terminal.integrated.customGlyphs": false,
   "[jsonc]": {
     "editor.defaultFormatter": "vscode.json-language-features",
   },
-  "chat.useNestedAgentsMdFiles": true,
   "editor.experimental.preferTreeSitter.ini": true,
-  "editor.experimental.preferTreeSitter.css": true,
   "http.proxyStrictSSL": false,
-  "explorer.fileNesting.enabled": true,
   "csharp.suppressBuildAssetsNotification": true,
+  "debug.onTaskErrors": "debugAnyway",
+  "files.watcherExclude": {
+    "**/bin/*": true,
+    "**/obj/*": true
+  },
+  "mermaid.vscode.dark": "redux-dark-color",
+  "go.diagnostic.vulncheck": "Off",
+  "lldb-dap.environment": {
+    "WAYLAND_DEBUG": "1"
+  },
+  "debug.breakpointsView.presentation": "tree",
+  "json.schemaDownload.trustedDomains": {
+    "https://schemastore.azurewebsites.net/": true,
+    "https://raw.githubusercontent.com/": true,
+    "https://www.schemastore.org/": true,
+    "https://json.schemastore.org/": true,
+    "https://json-schema.org/": true,
+    "https://opencode.ai": true,
+    "https://models.dev": true
+  },
+  "workbench.settings.alwaysShowAdvancedSettings": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.enabled": true,
+  "material-icon-theme.hidesExplorerArrows": true,
+  "workbench.layoutControl.enabled": false,
+  "chat.agentsControl.enabled": false,
+  "workbench.navigationControl.enabled": false,
+  "window.menuBarVisibility": "toggle",
+  "window.commandCenter": false,
+  "editor.experimental.preferTreeSitter.css": true,
+  "accessibility.signalOptions.volume": 0,
+  "terminal.integrated.gpuAcceleration": "on",
+  "explorer.sortOrderLexicographicOptions": "unicode",
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "emmet.useInlineCompletions": true,
 }

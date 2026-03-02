@@ -12,9 +12,6 @@
       "runOptions": {
         "runOn": "folderOpen"
       },
-      "presentation": {
-        "reveal": "silent"
-      }
     },
     {
       "label": "Run on Open",
@@ -30,9 +27,6 @@
       "runOptions": {
         "runOn": "folderOpen"
       },
-      "presentation": {
-        "reveal": "silent"
-      }
     }
   ]
 }
