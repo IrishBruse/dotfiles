@@ -15,6 +15,7 @@
     "wlr/taskbar"
   ],
   "modules-right": [
+    "custom/updates",
     "network",
     "tray",
     "pulseaudio",
@@ -25,6 +26,9 @@
     "format": "{icon} {title:.20}",
     "on-click": "activate",
     "on-click-middle": "close",
+    "ignore-list": [
+      "DOTFILES"
+    ]
   },
   "hyprland/workspaces": {
     "format": "{windows}",
@@ -86,14 +90,15 @@
   "tray": {
     "cursor": 60,
     "icon-size": 16,
+    "show-passive-items": true,
     "spacing": 10,
     "icons": {
-      "easyeffects": "microphone",
+      "easyeffects": "audio-input-microphone-symbolic",
       "TelegramDesktop": "$HOME/.local/share/icons/hicolor/16x16/apps/telegram.png"
     }
   },
   "temperature": {
-    "cursor": 60,
+    "cursor": 60
   },
   "custom/notification": {
     "tooltip": true,
@@ -115,4 +120,11 @@
     "on-click-right": "swaync-client -d -sw",
     "escape": true
   },
+  "custom/updates": {
+    "format": "{icon}",
+    "format-icons": "󰚰",
+    "tooltip": true,
+    "tooltip-format": "Open Mint Update",
+    "on-click": "mintupdate"
+  }
 }

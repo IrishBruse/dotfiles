@@ -54,15 +54,21 @@ widget > label:hover {
   color: #e06c75;
 }
 
-#tray {
-  background-color: #262a2f;
-}
-
 #tray > .passive,
-#tray > .active {
-  padding: 12px;
+#tray > .active,
+#tray > .needs-attention {
   margin: 4px;
   border-radius: 4px;
+}
+
+#tray > * > * {
+  min-width: 24px;
+  min-height: 24px;
+}
+
+#tray > .passive:hover,
+#tray > .active:hover {
+  background-color: #404652;
 }
 
 #tray > .passive {
@@ -73,7 +79,6 @@ widget > label:hover {
   -gtk-icon-effect: highlight;
   background-color: #eb4d4b;
 }
-
 /* https://github.com/Alexays/Waybar/wiki/Module:-Hyprland */
 
 #workspaces button {
@@ -130,4 +135,49 @@ window#waybar.fullscreen {
 
 .modules-right > widget:last-child > * {
   margin-right: 0;
+}
+
+/* Taskbar Styling */
+#taskbar {
+  background-color: transparent;
+}
+
+#taskbar button {
+  padding: 0 8px;
+  color: #abb2bf;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+
+  border-color: #282c34;
+}
+
+#taskbar button.active {
+  background-color: #404652;
+  color: white;
+  font-weight: bold;
+  border-bottom: 3px solid #38a755;
+}
+
+#taskbar button.minimized {
+  color: #5c6370; /* Dimmed color for minimized windows */
+}
+
+#taskbar button.maximized {
+  /* Optional: differentiate maximized windows, perhaps a brighter text */
+  color: #ffffff;
+}
+
+#taskbar button.fullscreen {
+  /* Optional: visual cue for fullscreen windows */
+  background-color: rgba(97, 175, 239, 0.1);
+}
+
+#taskbar.empty {
+  background-color: transparent;
+}
+
+#taskbar button:hover {
+  background: rgba(171, 178, 191, 0.1);
+  box-shadow: inherit;
+  text-shadow: inherit;
 }

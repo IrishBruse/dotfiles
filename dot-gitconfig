@@ -15,6 +15,9 @@
 [safe]
 	directory = ~/git/*
 
+[gpg]
+	program = /usr/bin/gpg
+
 [commit]
 	gpgsign = true
 
