@@ -1063,6 +1063,7 @@
   // File Associations
   //
   "workbench.editorAssociations": {
+    "*.copilotmd": "vscode.markdown.preview.editor",
     "{hexdiff}:/**/*.*": "hexEditor.hexedit",
     "*.bin": "hexEditor.hexedit",
     "*.gb": "hexEditor.hexedit",
@@ -1601,8 +1602,10 @@
   "window.commandCenter": false,
   "accessibility.signalOptions.volume": 0,
   "terminal.integrated.gpuAcceleration": "on",
-  "explorer.sortOrderLexicographicOptions": "unicode",
   "github.copilot.nextEditSuggestions.enabled": true,
   "emmet.useInlineCompletions": true,
   "material-icon-theme.hidesExplorerArrows": true,
+  "zenMode.fullScreen": false,
+  "explorer.fileNesting.expand": false,
+  "editor.experimental.preferTreeSitter.css": true,
 }

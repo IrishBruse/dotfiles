@@ -16,14 +16,16 @@
     {
       "label": "Run on Open",
       "type": "shell",
-      "command": "echo skipped",
-      "linux": {
-        "command": "fish -c ./open.fish"
-      },
-      "osx": {
-        "command": "fish -c ./open.fish"
-      },
+      "command": "fish -c ./open.fish",
       "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
       "runOptions": {
         "runOn": "folderOpen"
       },

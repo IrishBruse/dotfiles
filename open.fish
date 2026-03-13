@@ -5,6 +5,7 @@ fzf --fish >.config/fish/conf.d/fzf.fish
 
 if test (uname) = Linux
     dconf read /com/linuxmint/install/installed-apps | string replace -a \' \" | jq >misc/apt.json
+    dconf dump / >.config/dconf/user.ini
 end
 
 if test (uname) = Darwin
