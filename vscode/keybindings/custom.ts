@@ -299,6 +299,14 @@ export default [
     when: "editorTextFocus",
   },
   {
+    key: "enter",
+    command: "workbench.action.terminal.sendSequence",
+    args: {
+      text: "\u000D",
+    },
+    when: "terminalFocus",
+  },
+  {
     key: "ctrl+shift+u",
     command: "editor.action.transformToPascalcase",
     when: "editorTextFocus",

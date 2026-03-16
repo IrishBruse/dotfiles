@@ -5,12 +5,18 @@ description: Write and structure Jest tests using React Testing Library, MSW, an
 
 # Jest Testing
 
-Align Jest tests with project conventions: colocated `.test` files, React Testing Library, and shared setup and utilities.
+Align Jest tests with project conventions: colocated `.test` files, React Testing Library, Mock Service Worker (MSW) for network mocking, and shared setup and utilities.
+
+## Agent Workflow
+
+- **Baseline Check:** Before writing or modifying any code, run the existing test suite (`npm run test`) for the target module to understand the current state and establish a baseline.
+- **Iterative Execution:** After adding or modifying tests or source code, immediately run the relevant tests.
+- **Continuous Resolution:** If tests fail, you must analyze the console output, implement a fix, and re-run the tests. Do not stop, ask for human intervention (unless completely blocked by a missing dependency), or mark the task as complete until the tests pass successfully.
 
 ## File naming and location
 
 - Use **`.test.ts`** or **`.test.tsx`** (not `.spec.*`).
-- Colocate test files next to the module under test (e.g. `pathUtils.ts` → `pathUtils.test.ts`, `FieldRenderer.tsx` → `FieldRenderer.test.tsx`).
+- Colocate test files next to the module under test (e.g., `pathUtils.ts` → `pathUtils.test.ts`, `FieldRenderer.tsx` → `FieldRenderer.test.tsx`).
 
 ## Test structure
 
@@ -30,6 +36,12 @@ describe("convertToFieldPath", () => {
 });
 ```
 
+## Formatting and styling
+
+- Prefer ES modules (`import`/`export`) over CommonJS (`require`).
+- Prefer **functional style** and **small, focused tests**; one behaviour per `it()`.
+- Do not put any comments unless absolutely needed to explain the test.
+
 ## Unit tests (pure logic / utils)
 
 - Import the function under test; no React rendering.
@@ -37,51 +49,32 @@ describe("convertToFieldPath", () => {
 - Cast mocks to `jest.Mock` when you need to configure them: `const mockFn = someMock as jest.Mock`.
 - Use **`beforeEach`** to reset or reconfigure mocks (`mockReset()`, `mockResolvedValue()`, etc.).
 - Prefer **`expect(x).toEqual()`** or **`expect(x).toStrictEqual()`** for objects; **`expect(x).toBe()`** for primitives and identity.
-- Prefer `import` over `require`
 
 ## Component tests (React)
 
 - Use **`render()`** from `@testing-library/react`.
-- Query by **`data-testid`** first: `getByTestId`, `findByTestId`, `screen.findByTestId`. Add `data-testid` on elements that tests need to find.
-- Use **`@testing-library/jest-dom`** matchers: **`toBeInTheDocument()`**, **`toHaveTextContent()`**, **`toHaveDisplayValue()`**.
-- Mock context providers and heavy dependencies at the top of the file with **`jest.mock('.../Context', () => ({ useXContext: () => ({ ... }) }))`**. Use a **variable** (e.g. `let mockContext`) that you reassign in individual tests to vary context per case.
-- When the component needs the full app stack (plugins, API), use project helpers such as **`actRender`**, **`mockPlugins`**, **`mockLoadRemotes`**, and **`EventListener` / `DispatchEvent`** from the project’s test utilities and mock components (see reference).
+- **Querying priority:** Query by accessible roles first (e.g., `screen.getByRole('button', { name: /submit/i })`, `screen.getByLabelText()`, `screen.getByText()`). Use `getByTestId` only as a last resort.
+- Use **`@testing-library/jest-dom`** matchers: **`toBeInTheDocument()`**, **`toHaveTextContent()`**, **`toBeVisible()`**.
 
 ## Hook tests
 
 - Use **`renderHook()`** from `@testing-library/react`.
-- **`jest.mock()`** the hook’s dependencies (e.g. `useAppContext`, `useRegistryContext`); get the mock with `const mockUseX = useX as jest.Mock`.
+- **`jest.mock()`** the hook’s dependencies (e.g. `useAppContext`); get the mock with `const mockUseX = useX as jest.Mock`.
 - In **`beforeEach`**, call **`jest.clearAllMocks()`** and set **`mockUseX.mockReturnValue({ ... })`** for the scenario.
 - Assert on **`result.current`** after `renderHook(() => useMyHook())`.
 
-## Integration tests (UI + context + events)
+## Integration tests & UI Events
 
-- Use **`actRender(ui)`** from the project’s test utilities instead of raw `render()` when the tree triggers async state updates.
-- Use the project’s **mock plugins / load remotes** helpers and mock components to avoid real plugin or API loading.
-- Attach listeners with **`EventListener(eventTarget, eventType, handler)`** and drive the UI with **`DispatchEvent(eventTarget, eventType, payload)`** when the project provides these helpers.
-- Use **`await waitFor(() => expect(...))`** for assertions that depend on async updates; use **`screen.findByTestId()`** for elements that appear asynchronously.
-- Wrap user-driven updates in **`act(() => { fireEvent.change(el, { target: { value: 'x' } }) })`** when needed for React state.
+- Use **`@testing-library/user-event`** (`userEvent.setup()`) instead of `fireEvent` to simulate realistic user interactions (typing, clicking).
+- **Avoid manual `act()` wrapping** for user events or renders, as React Testing Library handles this automatically. Only use `act()` for testing custom hooks or out-of-band state updates.
+- Use **`async`/`await**` with **`waitFor`** or **`findBy\*`\*\* queries to assert on asynchronous UI updates and side effects.
 
-## Mocks and test utilities
+## Network Mocking (MSW)
 
-- **Main app**: Use the project’s `setupTests` (e.g. MSW server, i18n mocks, `jest-fail-on-console`). Use **`server`**, **`mockGET`**, **`mockPUT`**, **`mockPOST`** from the project’s test utilities for API; use the project’s mock components (e.g. mock field/layout components) where they exist.
-- **Plugin/add-on packages**: Use the project’s `setupTests` (e.g. i18n mocks, MSW passthrough). Use shared **mocked event handlers** from `src/tests/utils` (or equivalent) for component props (`handleChange`, `handleBlur`, `handleFocus`, etc.).
-- **Node/service packages**: Use `jest.config` and a setup file; test environment is Node; no DOM.
-
-## Assertions
-
-- **DOM**: `toBeInTheDocument()`, `toHaveTextContent()`, `toHaveDisplayValue()` (jest-dom).
-- **Calls**: `toHaveBeenCalledWith(expect.objectContaining({ ... }))`, `toHaveBeenCalledTimes(n)`.
-- **Async**: `await waitFor(() => expect(fn).toHaveBeenCalledWith(...))`.
-- **Errors**: If a test intentionally triggers console output, avoid failing the run with **`jest.spyOn(console, 'warn').mockImplementationOnce(() => {})`** (or similar) in that test only.
+- Intercept network requests using MSW instead of mocking `fetch` or `axios` directly.
+- Use `server.use(http.get('/api/path', () => HttpResponse.json({...})))` inside tests to override default handlers for specific scenarios.
+- Always ensure `server.resetHandlers()` is called in an `afterEach` block to prevent test contamination.
 
 ## Conventions
 
-- Prefer **functional style** and **small, focused tests**; one behaviour per `it()`.
-- Use **`async`/`await`** for async tests; use **`waitFor`** for assertions on side effects.
-- Do **not** add new global mocks in setup unless the whole suite needs them; prefer **`jest.mock()`** in the test file or **`mockImplementationOnce`** in a single test.
-- For components that accept `handleChange`/`handleBlur`/`handleFocus`, use the project’s **mocked event handlers** (or equivalent) so events are covered.
-
-## Reference
-
-For file paths and pattern lookup, see [reference.md](reference.md).
+- Do **not** add new global mocks in the global setup unless the whole suite needs them; prefer **`jest.mock()`** in the test file or **`mockImplementationOnce`** in a single test.

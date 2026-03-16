@@ -1607,4 +1607,6 @@
   "emmet.useInlineCompletions": true,
   "material-icon-theme.hidesExplorerArrows": true,
   "zenMode.fullScreen": false,
+  "explorer.fileNesting.expand": false,
+  "editor.experimental.preferTreeSitter.css": true,
 }
