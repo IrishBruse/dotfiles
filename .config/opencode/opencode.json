@@ -3,5 +3,5 @@
   "autoupdate": true,
   "compaction": {
     "auto": true
-  }
+  },
 }
