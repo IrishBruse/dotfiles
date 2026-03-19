@@ -1069,7 +1069,7 @@
     "*.gb": "hexEditor.hexedit",
     "*.gbm": "hexEditor.hexedit",
     "*.gbr": "hexEditor.hexedit",
-    "*.md": "default"
+    "*.md": "new-markdown.markdownEditor"
   },
   "files.associations": {
     ".air.toml": "ini",
