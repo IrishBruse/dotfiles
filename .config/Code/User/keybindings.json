@@ -10629,5 +10629,10 @@
     {
         "key": "ctrl+g",
         "command": "workbench.action.gotoSymbol"
+    },
+    {
+        "key": "ctrl+u",
+        "command": "workbench.action.terminal.startVoice",
+        "when": "!terminalDictation.inProgress"
     }
 ]

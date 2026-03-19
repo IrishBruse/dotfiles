@@ -1069,7 +1069,7 @@
     "*.gb": "hexEditor.hexedit",
     "*.gbm": "hexEditor.hexedit",
     "*.gbr": "hexEditor.hexedit",
-    "*.md": "default"
+    "*.md": "new-markdown.markdownEditor"
   },
   "files.associations": {
     ".air.toml": "ini",
@@ -1156,7 +1156,6 @@
   "workbench.activityBar.location": "top",
   "workbench.colorTheme": "Empty Dark Theme",
   "workbench.editor.empty.hint": "hidden",
-  "workbench.editor.enablePreview": false,
   "workbench.editor.limit.enabled": true,
   "workbench.editor.limit.value": 10,
   "workbench.iconTheme": "material-icon-theme",
@@ -1276,6 +1275,8 @@
   "terminal.integrated.commandsToSkipShell": [
     "workbench.action.terminal.copySelection",
     "workbench.action.terminal.paste",
+    "workbench.action.terminal.startVoice",
+    "workbench.action.terminal.stopVoice"
   ],
   "terminal.integrated.confirmOnKill": "never",
   "terminal.integrated.cursorBlinking": true,
@@ -1608,4 +1609,5 @@
   "zenMode.fullScreen": false,
   "explorer.fileNesting.expand": false,
   "editor.experimental.preferTreeSitter.css": true,
+  "accessibility.voice.speechLanguage": "en-IE",
 }

@@ -7,3 +7,5 @@ end
 if test (uname) = Darwin
     command stow . --dotfiles
 end
+
+ln -s ~/dotfiles/.agents/skills/ ~/.cursor/skills

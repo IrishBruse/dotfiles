@@ -1,51 +1,53 @@
----
-name: plan
-description: Use when you have a spec or requirements for a multi-step task, before touching code
----
+## name: plandescription: Use when you have a spec or requirements for a multi-step task, before touching code
 
 # Writing Plans
 
 ## Overview
 
-Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch for each task, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD.
+Write comprehensive asdimplementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch for each task, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD.
 
-Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.
+Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don’t know good test design very well.
 
-**Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
+Announce at start: “I’m using the writing-plans skill to create the implementation plan.”
 
-**Context:** This should be run in a dedicated worktree (created by brainstorming skill).
+Context: This should be run in a dedicated worktree (created by brainstorming skill).
 
-**Save plans to:** `.ai/plans/<feature-name>.md`
+Save plans to: .ai/plans/&lt;feature-name&gt;.md
 
 ## Scope Check
 
-If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
+If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn’t, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
 
 ## File Structure
 
 Before defining tasks, map out which files will be created or modified and what each one is responsible for. This is where decomposition decisions get locked in.
 
-- Design units with clear boundaries and well-defined interfaces. Each file should have one clear responsibility.
-- You reason best about code you can hold in context at once, and your edits are more reliable when files are focused. Prefer smaller, focused files over large ones that do too much.
-- Files that change together should live together. Split by responsibility, not by technical layer.
-- In existing codebases, follow established patterns. If the codebase uses large files, don't unilaterally restructure - but if a file you're modifying has grown unwieldy, including a split in the plan is reasonable.
+Design units with clear boundaries and well-defined interfaces. Each file should have one clear responsibility.
+
+You reason best about code you can hold in context at once, and your edits are more reliable when files are focused. Prefer smaller, focused files over large ones that do too much.
+
+Files that change together should live together. Split by responsibility, not by technical layer.
+
+In existing codebases, follow established patterns. If the codebase uses large files, don’t unilaterally restructure - but if a file you’re modifying has grown unwieldy, including a split in the plan is reasonable.
 
 This structure informs the task decomposition. Each task should produce self-contained changes that make sense independently.
 
 ## Bite-Sized Task Granularity
 
-**Each step is one action (2-5 minutes):**
+Each step is one action (2-5 minutes):
 
-- "Write the failing test" - step
-- "Run it to make sure it fails" - step
-- "Implement the minimal code to make the test pass" - step
-- "Run the tests and make sure they pass" - step
+“Write the failing test” - step
+
+“Run it to make sure it fails” - step
+
+“Implement the minimal code to make the test pass” - step
+
+“Run the tests and make sure they pass” - step
 
 ## Plan Document Header
 
-**Every plan MUST start with this header:**
+Every plan MUST start with this header:
 
-```markdown
 # [Feature Name] Implementation Plan
 
 **Goal:** [One sentence describing what this builds]
@@ -55,11 +57,9 @@ This structure informs the task decomposition. Each task should produce self-con
 **Tech Stack:** [Key technologies/libraries]
 
 ---
-```
 
 ## Task Structure
 
-````markdown
 ### Task N: [Component Name]
 
 **Files:**
@@ -113,11 +113,10 @@ After completing each chunk of the plan:
    - Repeat until ✅ Approved
 3. If ✅ Approved: proceed to next chunk (or execution handoff if last chunk)
 
-**Chunk boundaries:** Use `## Chunk N: <name>` headings to delimit chunks. Each chunk should be ≤1000 lines and logically self-contained.
+**Chunk boundaries:** Use `## Chunk N: &lt;name&gt;` headings to delimit chunks. Each chunk should be ≤1000 lines and logically self-contained.
 
 **Review loop guidance:**
 
 - Same agent that wrote the plan fixes it (preserves context)
 - If loop exceeds 5 iterations, surface to human for guidance
 - Reviewers are advisory - explain disagreements if you believe feedback is incorrect
-````
