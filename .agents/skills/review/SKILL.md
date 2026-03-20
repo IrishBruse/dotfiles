@@ -1,38 +1,26 @@
 ---
 name: review
 description:
-  Use this skill to review code. It supports both local changes (staged or working tree)
-  and remote Pull Requests (by ID or URL). It focuses on correctness, maintainability,
-  and adherence to project standards.
+  Use this skill to review code. It supports local changes (staged or working tree).
+  It focuses on correctness, maintainability, and adherence to project standards.
 ---
 
 # Code Reviewer
 
-This skill guides the agent in conducting professional and thorough code reviews for both local development and remote Pull Requests.
+This skill guides the agent in conducting professional and thorough code reviews for local development.
 
 ## Workflow
 
 ### 1. Determine Review Target
 
-- **Remote PR**: If the user provides a PR number or URL (e.g., "Review PR #123"), target that remote PR.
-- **Local Changes**: If no specific PR is mentioned, or if the user asks to "review my changes", target the current local file system states (staged and unstaged changes).
+- Target the current local file system states (staged and unstaged changes)
 
 ### 2. Preparation
-
-#### For Remote PRs:
-
-1.  **Checkout**: Use the GitHub CLI to checkout the PR.
-    ```bash
-    gh pr checkout <PR_NUMBER>
-    ```
-2.  **Context**: Read the PR description and any existing comments to understand the goal and history.
-
-#### For Local Changes:
 
 1.  **Identify Changes**:
     - Check status: `git status`
     - Read diffs: `git diff` (working tree) and/or `git diff --staged` (staged).
-    - Diff the current branch against main eg `git diff main..my-branch`
+    - Diff the current branch against main eg `git diff main..my-branch -w`
 2.  **Preflight (Optional)**: If the changes are substantial, ask the user if they want to run `npm run preflight` before reviewing.
 
 ### 3. In-Depth Analysis
@@ -63,7 +51,3 @@ Analyze the code changes based on the following pillars:
 - Be constructive, professional, and friendly.
 - Explain _why_ a change is requested.
 - For approvals, acknowledge the specific value of the contribution.
-
-### 5. Cleanup (Remote PRs only)
-
-- After the review, ask the user if they want to switch back to the default branch (e.g., `main` or `master`).
