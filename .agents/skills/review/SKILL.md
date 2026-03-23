@@ -17,11 +17,8 @@ This skill guides the agent in conducting professional and thorough code reviews
 
 ### 2. Preparation
 
-1.  **Identify Changes**:
-    - Check status: `git status`
-    - Read diffs: `git diff` (working tree) and/or `git diff --staged` (staged).
-    - Diff the current branch against main eg `git diff main..my-branch -w`
-2.  **Preflight (Optional)**: If the changes are substantial, ask the user if they want to run `npm run preflight` before reviewing.
+- Check status: `git status`
+- Diff the current branch against main e.g. `git diff main..my-branch -w`
 
 ### 3. In-Depth Analysis
 

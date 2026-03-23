@@ -104,6 +104,7 @@
     "textLink.foreground": "#35A854",
     "textLink.activeForeground": "#d7dae0",
     "textCodeBlock.background": "#23282f",
+    "markdown.extension.editor.codeSpan.border": "#636d8344",
     "settings.modifiedItemIndicator": "#35A854",
     "diffEditor.insertedTextBackground": "#35A85422",
     "diffEditor.insertedLineBackground": "#00000000",
@@ -770,6 +771,7 @@
           "punctuation.definition.metadata.markdown",
           "markup.underline.link.markdown",
           "markup.underline.link.image.markdown",
+          "markup.inline.raw.string.markdown",
         ],
         "settings": {
           "foreground": "#C678DD",
@@ -1044,7 +1046,7 @@
     "*.gbl": "b",
     "*.toml.example": "toml",
     "*.gbasm": "retroasm_gameboy",
-    "*.md": "markdown",
+    "SKILL.md": "skill",
   },
   "files.exclude": {
     "**/.git": false,
@@ -1227,13 +1229,8 @@
   "terminal.integrated.enableMultiLinePasteWarning": "never",
   "terminal.integrated.initialHint": false,
   "terminal.integrated.suggest.enabled": false,
-  //
-  // Git
-  //
-  "scm.alwaysShowRepositories": true,
   "scm.countBadge": "focused",
   "scm.defaultViewMode": "tree",
-  "scm.defaultViewSortKey": "status",
   "scm.diffDecorations": "none",
   "scm.diffDecorationsGutterAction": "none",
   "scm.diffDecorationsGutterVisibility": "hover",
@@ -1290,9 +1287,11 @@
   "[ini]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml",
   },
-  "[markdown]": {
+  "[markdown,skill]": {
     "files.trimFinalNewlines": false,
     "files.trimTrailingWhitespace": false,
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 10000,
     "editor.indentSize": 4,
     "editor.defaultFormatter": "yzhang.markdown-all-in-one",
   },
@@ -1490,7 +1489,6 @@
   "explorer.openEditors.visible": 8,
   "errorLens.messageEnabled": true,
   "aws.cloudformation.telemetry.enabled": false,
-  "scm.compactFolders": false,
   "workbench.secondarySideBar.defaultVisibility": "visible",
   "chat.viewSessions.enabled": false,
   "http.systemCertificatesNode": true,
@@ -1543,4 +1541,13 @@
   "markdownInlineEditor.colors.heading4": "#E06C75",
   "markdownInlineEditor.colors.heading2": "#E06C75",
   "markdownInlineEditor.colors.heading6": "#E06C75",
+  "markdownInlineEditor.colors.inlineCode": "#C678DD",
+  "markdownInlineEditor.colors.inlineCodeBackground": "#23282f00",
+  "workbench.editor.enablePreview": false,
+  "task.allowAutomaticTasks": "on",
+  "ib-utilities.pasteImagePath": ".ai/images/",
+  "scm.alwaysShowRepositories": true,
+  "[markdown]": {
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one",
+  },
 }
