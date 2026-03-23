@@ -22,6 +22,7 @@ local.fish
 
 .config/ghostty/local
 .config/jgh/config.json
+.config/dconf/user
 
 .hurl/
 
@@ -33,3 +34,4 @@ node_modules
 scratch/
 .config/dconf/user
 .skill-lock.json
+
