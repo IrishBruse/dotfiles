@@ -8,6 +8,7 @@
 .config/cinnamon/spices/Cinnamenu@json/
 
 local.fish
+.cursor/
 
 .config/fish/fish_variables
 

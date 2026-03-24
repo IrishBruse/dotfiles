@@ -1548,4 +1548,7 @@
   "task.allowAutomaticTasks": "on",
   "ib-utilities.pasteImagePath": ".ai/images/",
   "scm.alwaysShowRepositories": true,
+  "[markdown]": {
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one",
+  },
 }
