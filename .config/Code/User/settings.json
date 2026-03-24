@@ -1290,8 +1290,7 @@
   "[markdown,skill]": {
     "files.trimFinalNewlines": false,
     "files.trimTrailingWhitespace": false,
-    "editor.wordWrap": "wordWrapColumn",
-    "editor.wordWrapColumn": 10000,
+    "editor.wordWrap": "off",
     "editor.indentSize": 4,
     "editor.defaultFormatter": "yzhang.markdown-all-in-one",
   },
