@@ -1253,7 +1253,7 @@
   "git.pruneOnFetch": true,
   "git.replaceTagsWhenPull": true,
   "git.useEditorAsCommitInput": false,
-  "git.blame.editorDecoration.enabled": false,
+  "git.blame.editorDecoration.enabled": true,
   "git.blame.statusBarItem.enabled": false,
   "git.discardUntrackedChangesToTrash": false,
   "git.ignoreRebaseWarning": true,
@@ -1287,11 +1287,13 @@
   "[ini]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml",
   },
+  "[markdown]": {
+    "editor.wordWrap": "off",
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one",
+  },
   "[markdown,skill]": {
     "files.trimFinalNewlines": false,
     "files.trimTrailingWhitespace": false,
-    "editor.wordWrap": "wordWrapColumn",
-    "editor.wordWrapColumn": 10000,
     "editor.indentSize": 4,
     "editor.defaultFormatter": "yzhang.markdown-all-in-one",
   },
@@ -1548,7 +1550,4 @@
   "task.allowAutomaticTasks": "on",
   "ib-utilities.pasteImagePath": ".ai/images/",
   "scm.alwaysShowRepositories": true,
-  "[markdown]": {
-    "editor.defaultFormatter": "yzhang.markdown-all-in-one",
-  },
 }
