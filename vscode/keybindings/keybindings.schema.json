@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dotfiles.local/vscode-keybindings-custom.schema.json",
+  "title": "VS Code custom keybindings (dotfiles)",
+  "description": "VS Code keyboard shortcut rules. Find command IDs via Command Palette → \"Preferences: Open Default Keyboard Shortcuts (JSON)\" or the Keyboard Shortcuts UI.",
+  "type": "object",
+  "required": ["bindings"],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "bindings": {
+      "type": "array",
+      "description": "Merged into generated keybindings.json by gen.ts.",
+      "items": {
+        "$ref": "#/definitions/keybindingRule"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "keybindingRule": {
+      "type": "object",
+      "description": "One keybinding rule (same fields as VS Code user keybindings.json).",
+      "properties": {
+        "key": {
+          "allOf": [
+            {
+              "description": "Key chord. Use Ctrl+Space for suggestions from bundled default keybindings."
+            },
+            { "$ref": "keybindings.enums.json#/definitions/keyChord" }
+          ]
+        },
+        "command": {
+          "allOf": [
+            {
+              "description": "Command ID, or prefix with - to unbind a default."
+            },
+            { "$ref": "keybindings.enums.json#/definitions/commandId" }
+          ]
+        },
+        "when": {
+          "allOf": [
+            {
+              "description": "When-clause context expression."
+            },
+            { "$ref": "keybindings.enums.json#/definitions/whenClause" }
+          ]
+        },
+        "args": {
+          "description": "Arguments for the command.",
+          "oneOf": [
+            { "type": "object" },
+            { "type": "string" },
+            { "type": "array" },
+            { "type": "number" },
+            { "type": "boolean" }
+          ]
+        },
+        "mac": {
+          "allOf": [
+            { "description": "Key chord override on macOS." },
+            { "$ref": "keybindings.enums.json#/definitions/keyChord" }
+          ]
+        },
+        "linux": {
+          "allOf": [
+            { "description": "Key chord override on Linux." },
+            { "$ref": "keybindings.enums.json#/definitions/keyChord" }
+          ]
+        },
+        "win": {
+          "allOf": [
+            { "description": "Key chord override on Windows." },
+            { "$ref": "keybindings.enums.json#/definitions/keyChord" }
+          ]
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

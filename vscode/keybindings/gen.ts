@@ -1,5 +1,5 @@
 import * as fs from "fs/promises";
-import custom from "./custom.ts";
+import { generateKeybindingEnums } from "./generate-enums.ts";
 
 export type Keybind = {
   key: string;
@@ -20,6 +20,17 @@ const SEPARATOR = {
 async function loadJson(path: string): Promise<Keybind[]> {
   const data = await fs.readFile(path);
   return JSON.parse(data.toString());
+}
+
+async function loadCustomBindings(): Promise<Keybind[]> {
+  const raw = await fs.readFile(new URL("./custom.json", import.meta.url));
+  const parsed = JSON.parse(raw.toString()) as {
+    bindings?: Keybind[];
+  };
+  if (!Array.isArray(parsed.bindings)) {
+    throw new Error("custom.json must contain a bindings array");
+  }
+  return parsed.bindings;
 }
 
 function whenMatches(a?: string, b?: string): boolean {
@@ -82,7 +93,7 @@ async function writeKeybindingsFile(outputFile: string, entries: Keybind[]) {
   await fs.writeFile(outputFile, JSON.stringify(entries, null, 4));
 }
 
-async function buildMacosKeybinds(): Promise<Keybind[]> {
+async function buildMacosKeybinds(custom: Keybind[]): Promise<Keybind[]> {
   const rawNegatives = await loadJson(
     "defaultKeybinds/macos.negative.keybindings.json"
   );
@@ -102,9 +113,12 @@ async function buildMacosKeybinds(): Promise<Keybind[]> {
   ];
 }
 
+await generateKeybindingEnums();
+const custom = await loadCustomBindings();
+
 await writeKeybindingsFile(
   "../../../Library/Application Support/Code/User/keybindings.json",
-  await buildMacosKeybinds()
+  await buildMacosKeybinds(custom)
 );
 
 await writeKeybindingsFile("../../.config/Code/User/keybindings.json", [

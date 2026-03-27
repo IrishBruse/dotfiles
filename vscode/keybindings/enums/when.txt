@@ -1,0 +1,117 @@
+accessibilityHelpIsShown
+activeCursorHasCommentingRange
+activeEditor
+activeEditor == 'multiDiffEditor'
+activeEditor == 'workbench.editor.browser'
+activeEditor == 'workbench.editor.interactive'
+activeEditor == 'workbench.editor.notebookTextDiffEditor'
+activeEditorCanSplitInGroup
+activeEditorGroupEmpty
+activeEditorHasCommentingRange
+activeEditorIsPinned
+auxiliaryBarMaximized
+bannerFocused
+breakpointsFocused
+callHierarchyVisible
+cancellableOperation
+canNavigateBack
+canNavigateForward
+chatAttachmentResource
+chatIsEnabled
+codeActionMenuVisible
+commentEditorFocused
+commentsFilterFocus
+comparingMovedCode
+config.breadcrumbs.enabled
+debuggersAvailable
+debugState != 'inactive'
+debugState == 'running'
+debugState == 'stopped'
+dirtyDiffVisible
+dropWidgetVisible
+editorDictation.inProgress
+editorFocus
+editorHasCallHierarchyProvider
+editorHasReferenceProvider
+editorHoverFocused
+editorTextFocus
+exceptionWidgetVisible
+fileMatchOrFolderMatchWithResourceFocus
+fileMatchOrMatchFocus
+focusedView != ''
+focusedView == 'workbench.panel.comments'
+focusedView == 'workbench.panel.markers.view'
+focusedView == 'workbench.panel.repl.view'
+focusedView == 'workbench.view.testing'
+hasSymbols
+iconSelectBoxFocus
+inChat
+inDebugMode
+inDebugRepl
+inDiffEditor
+inInlineEditsPreviewEditor
+inKeybindings
+inQuickInput
+inQuickOpen
+inSearchEditor
+inSettingsEditor
+inZenMode
+isAuxiliaryWindowFocusedContext
+isDevelopment
+isInDiffEditor
+isIOS
+isMergeEditor
+isReadingLineWithInlayHints
+messageVisible
+mostRecentReplEditor
+notebookEditorFocused
+notebookOutputInputFocused
+notificationCenterVisible
+notificationFocus
+notificationToastsVisible
+openFolderWorkspaceSupport
+pasteWidgetVisible
+problemFocus
+problemsFilterFocus
+remoteFileDialogVisible
+renameInputVisible
+scmRepository
+scopedChatSynthesisInProgress
+searchViewletFocus
+sideBySideEditorActive
+standaloneColorPickerFocused
+standaloneColorPickerVisible
+statusBarFocused
+stickyScrollFocused
+suggestWidgetDetailsFocused
+suggestWidgetVisible
+taskCommandsRegistered
+terminal.active
+terminalDictation.inProgress
+terminalDictationInProgress
+terminalFocus
+terminalTextSelectedInFocused
+testing.activeEditorHasTests
+testing.canRefresh
+testing.hasAnyResults
+testing.isPeekVisible
+textCompareEditorVisible
+textInputFocus
+treestickyScrollFocused
+true
+typeHierarchyVisible
+variablesFocused
+view == 'workbench.panel.repl.view'
+view.workbench.debug.visible
+view.workbench.explorer.fileView.visible
+view.workbench.scm.visible
+viewContainer.workbench.view.debug.enabled
+viewContainer.workbench.view.explorer.enabled
+viewContainer.workbench.view.extensions.enabled
+watchExpressionsFocused
+workbench.explorer.openEditorsView.active
+workbench.panel.chat.view.copilot.active
+workbench.panel.markers.view.active
+workbench.panel.output.active
+workbench.panel.repl.view.active
+workbench.scm.active

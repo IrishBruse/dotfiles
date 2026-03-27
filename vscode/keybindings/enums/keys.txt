@@ -1,0 +1,687 @@
+alt+-
+alt+[
+alt+]
+alt+=
+alt+0
+alt+1
+alt+2
+alt+3
+alt+4
+alt+5
+alt+6
+alt+7
+alt+8
+alt+9
+alt+a
+alt+backspace
+alt+c
+alt+cmd+.
+alt+cmd+[
+alt+cmd+]
+alt+cmd+0
+alt+cmd+b
+alt+cmd+backspace
+alt+cmd+c
+alt+cmd+down
+alt+cmd+enter
+alt+cmd+escape
+alt+cmd+f
+alt+cmd+i
+alt+cmd+k
+alt+cmd+l
+alt+cmd+left
+alt+cmd+o
+alt+cmd+p
+alt+cmd+pagedown
+alt+cmd+pageup
+alt+cmd+r
+alt+cmd+right
+alt+cmd+s
+alt+cmd+t
+alt+cmd+tab
+alt+cmd+up
+alt+cmd+v
+alt+cmd+w
+alt+cmd+y
+alt+delete
+alt+down
+alt+end
+alt+end alt+end
+alt+enter
+alt+escape
+alt+f1
+alt+f10
+alt+f12
+alt+f2
+alt+f3
+alt+f4
+alt+f5
+alt+f6
+alt+f8
+alt+f9
+alt+h
+alt+home
+alt+home alt+home
+alt+k
+alt+l
+alt+left
+alt+meta+/
+alt+meta+j
+alt+n
+alt+p
+alt+pagedown
+alt+pageup
+alt+r
+alt+right
+alt+s
+alt+space
+alt+t
+alt+u
+alt+up
+alt+w
+alt+z
+backspace
+browserback
+browserforward
+cmd+-
+cmd+,
+cmd+; a
+cmd+; c
+cmd+; cmd+a
+cmd+; cmd+c
+cmd+; cmd+e
+cmd+; cmd+f
+cmd+; cmd+i
+cmd+; cmd+l
+cmd+; cmd+m
+cmd+; cmd+o
+cmd+; cmd+r
+cmd+; cmd+x
+cmd+; e
+cmd+; f
+cmd+; l
+cmd+; shift+cmd+a
+cmd+; shift+cmd+c
+cmd+; shift+cmd+f
+cmd+; shift+cmd+i
+cmd+; shift+cmd+l
+cmd+.
+cmd+[
+cmd+]
+cmd+/
+cmd+\
+cmd+=
+cmd+0
+cmd+1
+cmd+2
+cmd+3
+cmd+4
+cmd+5
+cmd+6
+cmd+7
+cmd+8
+cmd+9
+cmd+a
+cmd+b
+cmd+backspace
+cmd+c
+cmd+d
+cmd+delete
+cmd+down
+cmd+e
+cmd+end
+cmd+enter
+cmd+escape
+cmd+f
+cmd+f11
+cmd+f12
+cmd+f2
+cmd+f3
+cmd+f5
+cmd+f9
+cmd+g
+cmd+home
+cmd+i
+cmd+j
+cmd+k
+cmd+k alt+cmd+c
+cmd+k alt+cmd+down
+cmd+k alt+cmd+left
+cmd+k alt+cmd+right
+cmd+k alt+cmd+s
+cmd+k alt+cmd+up
+cmd+k c
+cmd+k cmd+-
+cmd+k cmd+,
+cmd+k cmd+.
+cmd+k cmd+[
+cmd+k cmd+]
+cmd+k cmd+/
+cmd+k cmd+\
+cmd+k cmd+=
+cmd+k cmd+0
+cmd+k cmd+1
+cmd+k cmd+2
+cmd+k cmd+3
+cmd+k cmd+4
+cmd+k cmd+5
+cmd+k cmd+6
+cmd+k cmd+7
+cmd+k cmd+8
+cmd+k cmd+9
+cmd+k cmd+a
+cmd+k cmd+b
+cmd+k cmd+c
+cmd+k cmd+d
+cmd+k cmd+down
+cmd+k cmd+e
+cmd+k cmd+f
+cmd+k cmd+f12
+cmd+k cmd+i
+cmd+k cmd+j
+cmd+k cmd+k
+cmd+k cmd+l
+cmd+k cmd+left
+cmd+k cmd+m
+cmd+k cmd+n
+cmd+k cmd+q
+cmd+k cmd+r
+cmd+k cmd+right
+cmd+k cmd+s
+cmd+k cmd+t
+cmd+k cmd+u
+cmd+k cmd+up
+cmd+k cmd+w
+cmd+k cmd+x
+cmd+k d
+cmd+k down
+cmd+k e
+cmd+k enter
+cmd+k f
+cmd+k f12
+cmd+k f2
+cmd+k i
+cmd+k left
+cmd+k m
+cmd+k o
+cmd+k p
+cmd+k r
+cmd+k right
+cmd+k s
+cmd+k shift+alt+cmd+c
+cmd+k shift+cmd+\
+cmd+k shift+cmd+l
+cmd+k shift+cmd+left
+cmd+k shift+cmd+n
+cmd+k shift+cmd+right
+cmd+k shift+cmd+w
+cmd+k shift+enter
+cmd+k shift+o
+cmd+k t
+cmd+k u
+cmd+k up
+cmd+k v
+cmd+k w
+cmd+k y
+cmd+k z
+cmd+l
+cmd+left
+cmd+n
+cmd+numpad_add
+cmd+numpad_subtract
+cmd+numpad0
+cmd+o
+cmd+p
+cmd+pagedown
+cmd+pageup
+cmd+q
+cmd+r
+cmd+right
+cmd+s
+cmd+t
+cmd+u
+cmd+up
+cmd+v
+cmd+w
+cmd+x
+cmd+y
+cmd+z
+ctrl+-
+ctrl+,
+ctrl+; a
+ctrl+; c
+ctrl+; ctrl+a
+ctrl+; ctrl+c
+ctrl+; ctrl+e
+ctrl+; ctrl+f
+ctrl+; ctrl+i
+ctrl+; ctrl+l
+ctrl+; ctrl+m
+ctrl+; ctrl+o
+ctrl+; ctrl+r
+ctrl+; ctrl+shift+a
+ctrl+; ctrl+shift+c
+ctrl+; ctrl+shift+f
+ctrl+; ctrl+shift+i
+ctrl+; ctrl+shift+l
+ctrl+; ctrl+x
+ctrl+; e
+ctrl+; f
+ctrl+; l
+ctrl+.
+ctrl+[
+ctrl+[IntlBackslash]
+ctrl+]
+ctrl+/
+ctrl+\
+ctrl+`
+ctrl+=
+ctrl+0
+ctrl+1
+ctrl+2
+ctrl+3
+ctrl+4
+ctrl+5
+ctrl+6
+ctrl+7
+ctrl+8
+ctrl+9
+ctrl+a
+ctrl+alt+-
+ctrl+alt+.
+ctrl+alt+/
+ctrl+alt+b
+ctrl+alt+backspace
+ctrl+alt+c
+ctrl+alt+cmd+/
+ctrl+alt+cmd+down
+ctrl+alt+cmd+end
+ctrl+alt+cmd+enter
+ctrl+alt+cmd+escape
+ctrl+alt+cmd+home
+ctrl+alt+cmd+n
+ctrl+alt+cmd+pagedown
+ctrl+alt+cmd+pageup
+ctrl+alt+cmd+right
+ctrl+alt+cmd+up
+ctrl+alt+delete
+ctrl+alt+down
+ctrl+alt+end
+ctrl+alt+enter
+ctrl+alt+escape
+ctrl+alt+f
+ctrl+alt+g
+ctrl+alt+home
+ctrl+alt+i
+ctrl+alt+j
+ctrl+alt+left
+ctrl+alt+meta+/
+ctrl+alt+meta+n
+ctrl+alt+n
+ctrl+alt+o
+ctrl+alt+p
+ctrl+alt+pagedown
+ctrl+alt+pageup
+ctrl+alt+r
+ctrl+alt+right
+ctrl+alt+space
+ctrl+alt+up
+ctrl+alt+v
+ctrl+alt+y
+ctrl+b
+ctrl+backspace
+ctrl+c
+ctrl+cmd+1
+ctrl+cmd+9
+ctrl+cmd+down
+ctrl+cmd+end
+ctrl+cmd+enter
+ctrl+cmd+escape
+ctrl+cmd+f
+ctrl+cmd+home
+ctrl+cmd+i
+ctrl+cmd+left
+ctrl+cmd+pagedown
+ctrl+cmd+pageup
+ctrl+cmd+right
+ctrl+cmd+up
+ctrl+d
+ctrl+delete
+ctrl+down
+ctrl+e
+ctrl+end
+ctrl+enter
+ctrl+escape
+ctrl+f
+ctrl+f11
+ctrl+f12
+ctrl+f2
+ctrl+f3
+ctrl+f5
+ctrl+f9
+ctrl+g
+ctrl+h
+ctrl+home
+ctrl+i
+ctrl+j
+ctrl+k
+ctrl+k c
+ctrl+k ctrl+-
+ctrl+k ctrl+,
+ctrl+k ctrl+.
+ctrl+k ctrl+[
+ctrl+k ctrl+]
+ctrl+k ctrl+/
+ctrl+k ctrl+\
+ctrl+k ctrl+=
+ctrl+k ctrl+0
+ctrl+k ctrl+1
+ctrl+k ctrl+2
+ctrl+k ctrl+3
+ctrl+k ctrl+4
+ctrl+k ctrl+5
+ctrl+k ctrl+6
+ctrl+k ctrl+7
+ctrl+k ctrl+8
+ctrl+k ctrl+9
+ctrl+k ctrl+a
+ctrl+k ctrl+alt+c
+ctrl+k ctrl+alt+down
+ctrl+k ctrl+alt+s
+ctrl+k ctrl+alt+up
+ctrl+k ctrl+b
+ctrl+k ctrl+c
+ctrl+k ctrl+d
+ctrl+k ctrl+down
+ctrl+k ctrl+e
+ctrl+k ctrl+f
+ctrl+k ctrl+f12
+ctrl+k ctrl+h
+ctrl+k ctrl+i
+ctrl+k ctrl+j
+ctrl+k ctrl+k
+ctrl+k ctrl+l
+ctrl+k ctrl+left
+ctrl+k ctrl+m
+ctrl+k ctrl+n
+ctrl+k ctrl+o
+ctrl+k ctrl+p
+ctrl+k ctrl+pagedown
+ctrl+k ctrl+pageup
+ctrl+k ctrl+q
+ctrl+k ctrl+r
+ctrl+k ctrl+right
+ctrl+k ctrl+s
+ctrl+k ctrl+shift+\
+ctrl+k ctrl+shift+alt+c
+ctrl+k ctrl+shift+l
+ctrl+k ctrl+shift+n
+ctrl+k ctrl+shift+w
+ctrl+k ctrl+t
+ctrl+k ctrl+u
+ctrl+k ctrl+up
+ctrl+k ctrl+w
+ctrl+k ctrl+x
+ctrl+k d
+ctrl+k down
+ctrl+k e
+ctrl+k enter
+ctrl+k f
+ctrl+k f12
+ctrl+k f2
+ctrl+k i
+ctrl+k left
+ctrl+k m
+ctrl+k o
+ctrl+k p
+ctrl+k r
+ctrl+k right
+ctrl+k s
+ctrl+k shift+enter
+ctrl+k shift+o
+ctrl+k t
+ctrl+k u
+ctrl+k up
+ctrl+k v
+ctrl+k w
+ctrl+k y
+ctrl+k z
+ctrl+l
+ctrl+left
+ctrl+m
+ctrl+n
+ctrl+numpad_add
+ctrl+numpad_subtract
+ctrl+numpad0
+ctrl+o
+ctrl+oem_5
+ctrl+oem_8
+ctrl+p
+ctrl+pagedown
+ctrl+pageup
+ctrl+q
+ctrl+r
+ctrl+right
+ctrl+s
+ctrl+shift+-
+ctrl+shift+,
+ctrl+shift+;
+ctrl+shift+.
+ctrl+shift+[
+ctrl+shift+[IntlBackslash]
+ctrl+shift+]
+ctrl+shift+/
+ctrl+shift+\
+ctrl+shift+`
+ctrl+shift+=
+ctrl+shift+1
+ctrl+shift+2
+ctrl+shift+5
+ctrl+shift+6
+ctrl+shift+a
+ctrl+shift+alt+`
+ctrl+shift+alt+c
+ctrl+shift+alt+down
+ctrl+shift+alt+g
+ctrl+shift+alt+i
+ctrl+shift+alt+j
+ctrl+shift+alt+l
+ctrl+shift+alt+left
+ctrl+shift+alt+o
+ctrl+shift+alt+right
+ctrl+shift+alt+up
+ctrl+shift+b
+ctrl+shift+backspace
+ctrl+shift+c
+ctrl+shift+cmd+left
+ctrl+shift+cmd+right
+ctrl+shift+d
+ctrl+shift+down
+ctrl+shift+e
+ctrl+shift+end
+ctrl+shift+enter
+ctrl+shift+f
+ctrl+shift+f10
+ctrl+shift+f12
+ctrl+shift+f2
+ctrl+shift+f3
+ctrl+shift+f5
+ctrl+shift+f9
+ctrl+shift+g
+ctrl+shift+h
+ctrl+shift+home
+ctrl+shift+i
+ctrl+shift+j
+ctrl+shift+k
+ctrl+shift+l
+ctrl+shift+left
+ctrl+shift+m
+ctrl+shift+n
+ctrl+shift+o
+ctrl+shift+oem_period
+ctrl+shift+p
+ctrl+shift+pagedown
+ctrl+shift+pageup
+ctrl+shift+q
+ctrl+shift+r
+ctrl+shift+right
+ctrl+shift+s
+ctrl+shift+space
+ctrl+shift+t
+ctrl+shift+tab
+ctrl+shift+u
+ctrl+shift+up
+ctrl+shift+v
+ctrl+shift+w
+ctrl+shift+x
+ctrl+shift+y
+ctrl+shift+z
+ctrl+space
+ctrl+t
+ctrl+tab
+ctrl+u
+ctrl+up
+ctrl+v
+ctrl+w
+ctrl+x
+ctrl+y
+ctrl+z
+delete
+down
+end
+enter
+escape
+escape escape
+f1
+f10
+f11
+f12
+f2
+f3
+f4
+f5
+f6
+f7
+f8
+f9
+home
+insert
+left
+m
+meta+enter
+pagedown
+pageup
+right
+shift+alt+.
+shift+alt+[IntlBackslash]
+shift+alt+0
+shift+alt+1
+shift+alt+9
+shift+alt+a
+shift+alt+cmd+c
+shift+alt+cmd+down
+shift+alt+cmd+g
+shift+alt+cmd+l
+shift+alt+cmd+left
+shift+alt+cmd+o
+shift+alt+cmd+pagedown
+shift+alt+cmd+pageup
+shift+alt+cmd+right
+shift+alt+cmd+up
+shift+alt+d
+shift+alt+down
+shift+alt+enter
+shift+alt+f
+shift+alt+f1
+shift+alt+f10
+shift+alt+f12
+shift+alt+f2
+shift+alt+f3
+shift+alt+f4
+shift+alt+f5
+shift+alt+f7
+shift+alt+f8
+shift+alt+f9
+shift+alt+h
+shift+alt+i
+shift+alt+left
+shift+alt+meta+j
+shift+alt+o
+shift+alt+right
+shift+alt+up
+shift+backspace
+shift+cmd+-
+shift+cmd+,
+shift+cmd+;
+shift+cmd+.
+shift+cmd+[
+shift+cmd+]
+shift+cmd+/
+shift+cmd+\
+shift+cmd+=
+shift+cmd+1
+shift+cmd+a
+shift+cmd+b
+shift+cmd+backspace
+shift+cmd+c
+shift+cmd+d
+shift+cmd+down
+shift+cmd+e
+shift+cmd+enter
+shift+cmd+f
+shift+cmd+f12
+shift+cmd+f2
+shift+cmd+f3
+shift+cmd+f5
+shift+cmd+f9
+shift+cmd+g
+shift+cmd+h
+shift+cmd+i
+shift+cmd+j
+shift+cmd+k
+shift+cmd+l
+shift+cmd+left
+shift+cmd+m
+shift+cmd+n
+shift+cmd+o
+shift+cmd+p
+shift+cmd+r
+shift+cmd+right
+shift+cmd+s
+shift+cmd+space
+shift+cmd+t
+shift+cmd+u
+shift+cmd+up
+shift+cmd+v
+shift+cmd+w
+shift+cmd+x
+shift+cmd+y
+shift+cmd+z
+shift+delete
+shift+down
+shift+end
+shift+enter
+shift+escape
+shift+f10
+shift+f11
+shift+f12
+shift+f3
+shift+f4
+shift+f5
+shift+f6
+shift+f7
+shift+f8
+shift+f9
+shift+home
+shift+insert
+shift+left
+shift+pagedown
+shift+pageup
+shift+right
+shift+space
+shift+tab
+shift+up
+space
+tab
+up
+y
