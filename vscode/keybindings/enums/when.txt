@@ -1,14 +1,19 @@
+# Lines with && or || are skipped when generating keybindings.enums.json (simple clauses only).
 accessibilityHelpIsShown
 activeCursorHasCommentingRange
 activeEditor
 activeEditor == 'multiDiffEditor'
 activeEditor == 'workbench.editor.browser'
 activeEditor == 'workbench.editor.interactive'
+activeEditor == 'workbench.editor.notebook'
 activeEditor == 'workbench.editor.notebookTextDiffEditor'
 activeEditorCanSplitInGroup
 activeEditorGroupEmpty
 activeEditorHasCommentingRange
+activeEditorIsDirty
 activeEditorIsPinned
+activePanel == 'workbench.panel.output'
+activeViewlet == 'workbench.view.explorer'
 auxiliaryBarMaximized
 bannerFocused
 breakpointsFocused
@@ -25,20 +30,43 @@ comparingMovedCode
 config.breadcrumbs.enabled
 debuggersAvailable
 debugState != 'inactive'
+debugState == 'inactive'
 debugState == 'running'
 debugState == 'stopped'
+debugType == 'node'
 dirtyDiffVisible
 dropWidgetVisible
 editorDictation.inProgress
 editorFocus
 editorHasCallHierarchyProvider
+editorHasMultipleSelections
 editorHasReferenceProvider
+editorHasSelection
 editorHoverFocused
+editorIsOpen
+editorLangId == 'css'
+editorLangId == 'html'
+editorLangId == 'json'
+editorLangId == 'jsonc'
+editorLangId == 'markdown'
+editorLangId == 'python'
+editorLangId == 'typescript'
+editorLangId == 'typescriptreact'
+editorReadonly
+editorTabMovesFocus
 editorTextFocus
 exceptionWidgetVisible
+explorerResourceIsFolder
+explorerViewletFocus
+explorerViewletVisible
+extension == 'eamodio.gitlens'
+extensionStatus == 'installed'
 fileMatchOrFolderMatchWithResourceFocus
 fileMatchOrMatchFocus
+filesExplorerFocus
+findWidgetVisible
 focusedView != ''
+focusedView == 'workbench.explorer.fileView'
 focusedView == 'workbench.panel.comments'
 focusedView == 'workbench.panel.markers.view'
 focusedView == 'workbench.panel.repl.view'
@@ -51,52 +79,88 @@ inDebugRepl
 inDiffEditor
 inInlineEditsPreviewEditor
 inKeybindings
+inputFocus
 inQuickInput
 inQuickOpen
+inReferenceSearchEditor
 inSearchEditor
 inSettingsEditor
+inSnippetMode
 inZenMode
 isAuxiliaryWindowFocusedContext
+isCenteredLayout
 isDevelopment
+isFileSystemResource
+isFullscreen
 isInDiffEditor
+isInEmbeddedEditor
 isIOS
+isLinux
+isMac
 isMergeEditor
 isReadingLineWithInlayHints
+isWeb
+isWindows
+listDoubleSelection
+listFocus
+listHasSelectionOrFocus
+listMultiSelection
+listSupportsMultiselect
 messageVisible
 mostRecentReplEditor
+multipleEditorGroups
 notebookEditorFocused
 notebookOutputInputFocused
 notificationCenterVisible
 notificationFocus
 notificationToastsVisible
+openEditorsFocus
 openFolderWorkspaceSupport
+panelFocus
+parameterHintsVisible
 pasteWidgetVisible
 problemFocus
 problemsFilterFocus
+referenceSearchVisible
 remoteFileDialogVisible
 renameInputVisible
+replaceActive
+resourceExtname == '.js'
+resourceExtname == '.ts'
+resourceFilename == 'package.json'
+resourceScheme == 'file'
+resourceScheme == 'untitled'
+resourceScheme =~ /^file$|^untitled$/
+resourceSet
 scmRepository
 scopedChatSynthesisInProgress
 searchViewletFocus
+searchViewletVisible
+sideBarFocus
+sideBarVisible
 sideBySideEditorActive
 standaloneColorPickerFocused
 standaloneColorPickerVisible
 statusBarFocused
 stickyScrollFocused
 suggestWidgetDetailsFocused
+suggestWidgetMultipleSuggestions
 suggestWidgetVisible
 taskCommandsRegistered
 terminal.active
 terminalDictation.inProgress
 terminalDictationInProgress
 terminalFocus
+terminalIsOpen
 terminalTextSelectedInFocused
 testing.activeEditorHasTests
 testing.canRefresh
 testing.hasAnyResults
 testing.isPeekVisible
+textCompareEditorActive
 textCompareEditorVisible
 textInputFocus
+timelineFollowActiveEditor
 treestickyScrollFocused
 true
 typeHierarchyVisible
@@ -115,3 +179,8 @@ workbench.panel.markers.view.active
 workbench.panel.output.active
 workbench.panel.repl.view.active
 workbench.scm.active
+workbenchState == 'empty'
+workbenchState == 'folder'
+workbenchState == 'workspace'
+workspaceFolderCount < 2
+workspaceFolderCount >= 1

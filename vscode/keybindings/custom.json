@@ -333,7 +333,7 @@
     {
       "key": "ctrl+u",
       "command": "workbench.action.terminal.startVoice",
-      "when": "!terminalDictation.inProgress"
+      "when": "terminalDictation.inProgress"
     }
   ]
 }

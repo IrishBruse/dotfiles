@@ -6,7 +6,14 @@ const DIR = path.dirname(fileURLToPath(import.meta.url));
 const ENUM_TXT_DIR = path.join(DIR, "enums");
 
 function sortedUnique(values: Iterable<string>): string[] {
-  return [...new Set(values)].filter(Boolean).sort((a, b) => a.localeCompare(b));
+  return [...new Set(values)]
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b));
+}
+
+/** When-clauses with && or || are skipped for enum autocomplete (compound logic). */
+function isSimpleWhenClause(w: string): boolean {
+  return !w.includes("&&") && !w.includes("||");
 }
 
 /** One entry per line; empty lines and #-prefixed lines are ignored. */
@@ -32,17 +39,41 @@ async function readLineDelimitedFile(name: string): Promise<string[]> {
 /** Build key/command/when suggestions from VS Code defaults, custom.json, and optional *.txt lists. */
 export async function generateKeybindingEnums(): Promise<void> {
   const linux = JSON.parse(
-    (await fs.readFile(path.join(DIR, "defaultKeybinds/linux.keybindings.json"))).toString()
-  ) as { key?: string; command?: string; when?: string; mac?: string; linux?: string; win?: string }[];
+    (
+      await fs.readFile(
+        path.join(DIR, "defaultKeybinds/linux.keybindings.json"),
+      )
+    ).toString(),
+  ) as {
+    key?: string;
+    command?: string;
+    when?: string;
+    mac?: string;
+    linux?: string;
+    win?: string;
+  }[];
 
   const macNeg = JSON.parse(
-    (await fs.readFile(path.join(DIR, "defaultKeybinds/macos.negative.keybindings.json"))).toString()
-  ) as { key?: string; command?: string; when?: string; mac?: string; linux?: string; win?: string }[];
+    (
+      await fs.readFile(
+        path.join(DIR, "defaultKeybinds/macos.negative.keybindings.json"),
+      )
+    ).toString(),
+  ) as {
+    key?: string;
+    command?: string;
+    when?: string;
+    mac?: string;
+    linux?: string;
+    win?: string;
+  }[];
 
   let customBindings: typeof linux = [];
   try {
     const customRaw = await fs.readFile(path.join(DIR, "custom.json"));
-    const parsed = JSON.parse(customRaw.toString()) as { bindings?: typeof linux };
+    const parsed = JSON.parse(customRaw.toString()) as {
+      bindings?: typeof linux;
+    };
     customBindings = parsed.bindings ?? [];
   } catch {
     // custom.json missing during first setup
@@ -53,7 +84,14 @@ export async function generateKeybindingEnums(): Promise<void> {
   const whens = new Set<string>();
 
   const scan = (
-    rows: { key?: string; command?: string; when?: string; mac?: string; linux?: string; win?: string }[]
+    rows: {
+      key?: string;
+      command?: string;
+      when?: string;
+      mac?: string;
+      linux?: string;
+      win?: string;
+    }[],
   ) => {
     for (const r of rows) {
       if (r.key) keys.add(r.key);
@@ -61,7 +99,7 @@ export async function generateKeybindingEnums(): Promise<void> {
       if (r.linux) keys.add(r.linux);
       if (r.win) keys.add(r.win);
       if (r.command) commands.add(r.command);
-      if (r.when) whens.add(r.when);
+      if (r.when && isSimpleWhenClause(r.when)) whens.add(r.when);
     }
   };
 
@@ -71,7 +109,12 @@ export async function generateKeybindingEnums(): Promise<void> {
 
   for (const k of await readLineDelimitedFile("keys.txt")) keys.add(k);
   for (const c of await readLineDelimitedFile("commands.txt")) commands.add(c);
-  for (const w of await readLineDelimitedFile("when.txt")) whens.add(w);
+  for (const w of await readLineDelimitedFile("when.txt")) {
+    if (isSimpleWhenClause(w)) whens.add(w);
+  }
+  for (const w of await readLineDelimitedFile("when-basic.txt")) {
+    if (isSimpleWhenClause(w)) whens.add(w);
+  }
 
   const out = {
     $schema: "http://json-schema.org/draft-07/schema#",
@@ -82,7 +125,10 @@ export async function generateKeybindingEnums(): Promise<void> {
           "Key chord. Suggestions: bundled defaults, enums/keys.txt, custom.json. Any chord string is allowed.",
         anyOf: [
           { enum: sortedUnique(keys) },
-          { type: "string", description: "Any key chord (including values not in defaults)." },
+          {
+            type: "string",
+            description: "Any key chord (including values not in defaults).",
+          },
         ],
       },
       commandId: {
@@ -95,7 +141,7 @@ export async function generateKeybindingEnums(): Promise<void> {
       },
       whenClause: {
         description:
-          "When-clause. Suggestions: bundled defaults, enums/when.txt, custom.json.",
+          "When-clause (simple expressions only in enum — no && or ||). Sources: defaults, enums/when.txt, enums/when-basic.txt, custom.json.",
         anyOf: [
           { enum: sortedUnique(whens) },
           { type: "string", description: "Any when expression." },
@@ -106,6 +152,6 @@ export async function generateKeybindingEnums(): Promise<void> {
 
   await fs.writeFile(
     path.join(DIR, "keybindings.enums.json"),
-    JSON.stringify(out, null, 4) + "\n"
+    JSON.stringify(out, null, 4) + "\n",
   );
 }
