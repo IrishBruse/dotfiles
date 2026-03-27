@@ -133,7 +133,7 @@ export default [
   },
 
   {
-    command: "workbench.action.terminal.killEditor",
+    command: "workbench.action.terminal.kill",
     key: "ctrl+w",
     when: "terminalFocus",
   },
@@ -277,6 +277,16 @@ export default [
     when: "view.workbench.debug.visible",
   },
   // Terminal
+  {
+    command: "workbench.action.terminal.new",
+    key: "ctrl+n",
+    when: "terminalFocus",
+  },
+  {
+    command: "workbench.action.terminal.split",
+    key: "ctrl+\\",
+    when: "terminalFocus",
+  },
   {
     key: "ctrl+c",
     command: "workbench.action.terminal.sendSequence",

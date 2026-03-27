@@ -10970,7 +10970,7 @@
         "when": "textInputFocus && !editorReadonly && supportedCodeAction =~ /(\\s|^)quickfix\\b/"
     },
     {
-        "command": "workbench.action.terminal.killEditor",
+        "command": "workbench.action.terminal.kill",
         "key": "ctrl+w",
         "when": "terminalFocus"
     },
@@ -11114,6 +11114,16 @@
         "key": "ctrl+3",
         "command": "workbench.action.closeSidebar",
         "when": "view.workbench.debug.visible"
+    },
+    {
+        "command": "workbench.action.terminal.new",
+        "key": "ctrl+n",
+        "when": "terminalFocus"
+    },
+    {
+        "command": "workbench.action.terminal.split",
+        "key": "ctrl+\\",
+        "when": "terminalFocus"
     },
     {
         "key": "ctrl+c",
