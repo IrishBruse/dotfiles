@@ -161,7 +161,7 @@ export default [
     when: "editorTextFocus",
   },
   {
-    command: "workbench.action.terminal.openNativeConsole",
+    command: "workbench.action.createTerminalEditor",
     key: "ctrl+t",
   },
   {

@@ -1,29 +1,26 @@
 import * as fs from "fs/promises";
 import custom from "./custom.ts";
-import builtin from "./builtin.ts";
 
 export type Keybind = {
   key: string;
-  command: string;
+  command?: string;
   when?: string;
   args?: { [key: string]: any } | string;
+  mac?: string;
+  linux?: string;
+  win?: string;
 };
 
 type OS = "linux" | "macos";
 
-async function loadJson(path: string) {
+const SEPARATOR = {
+  key: "-".repeat(200),
+} as Keybind;
+
+async function loadJson(path: string): Promise<Keybind[]> {
   const data = await fs.readFile(path);
-  const text = data.toString();
-  return JSON.parse(text);
+  return JSON.parse(data.toString());
 }
-
-const linuxNegativeKeybindings: Keybind[] = await loadJson(
-  "defaultKeybinds/linux.negative.keybindings.json"
-);
-
-const macosNegativeKeybindings: Keybind[] = await loadJson(
-  "defaultKeybinds/macos.negative.keybindings.json"
-);
 
 function whenMatches(a?: string, b?: string): boolean {
   return (a ?? "") === (b ?? "");
@@ -36,77 +33,82 @@ function argsMatch(a?: Keybind["args"], b?: Keybind["args"]): boolean {
 }
 
 /**
- * Drop pairs where a negative `-command` and a builtin `command` describe the same
- * chord (same key, when, args): they cancel and need not appear in the output.
- * Custom bindings are merged later and are never stripped here.
+ * Drop pairs where a negative `-command` and a positive default describe the same
+ * chord (same key, when, args). Those entries cancel; omitting both restores VS Code
+ * defaults for that chord.
  *
- * On Linux, `linux.negative.keybindings.json` and `builtin.ts` are the same length
- * and align 1:1, so this removes both sections entirely (equivalent net effect:
- * fall through to VS Code defaults, plus `custom`).
+ * Used on macOS only: Linux negatives + linux defaults dedupe to nothing, so the Linux
+ * build skips this path entirely and emits `custom` only.
  */
-function dedupeCancellingNegativeBuiltinPairs(
+function dedupeCancellingNegativePositivePairs(
   negatives: Keybind[],
-  builtins: Keybind[]
-): { negatives: Keybind[]; builtins: Keybind[] } {
-  const builtinRemove = new Set<number>();
+  positives: Keybind[]
+): { negatives: Keybind[]; positives: Keybind[] } {
+  const positiveRemove = new Set<number>();
   const negativeRemove = new Set<number>();
 
   for (let i = 0; i < negatives.length; i++) {
     const n = negatives[i];
-    if (!n.command.startsWith("-")) continue;
+    if (!n.command?.startsWith("-")) continue;
 
     const positiveCmd = n.command.slice(1);
 
-    for (let j = 0; j < builtins.length; j++) {
-      if (builtinRemove.has(j)) continue;
+    for (let j = 0; j < positives.length; j++) {
+      if (positiveRemove.has(j)) continue;
 
-      const b = builtins[j];
-      if (b.command !== positiveCmd) continue;
-      if (b.key !== n.key) continue;
-      if (!whenMatches(n.when, b.when)) continue;
-      if (!argsMatch(n.args, b.args)) continue;
+      const p = positives[j];
+      if (p.command !== positiveCmd) continue;
+      if (p.key !== n.key) continue;
+      if (!whenMatches(n.when, p.when)) continue;
+      if (!argsMatch(n.args, p.args)) continue;
 
       negativeRemove.add(i);
-      builtinRemove.add(j);
+      positiveRemove.add(j);
       break;
     }
   }
 
   return {
     negatives: negatives.filter((_, i) => !negativeRemove.has(i)),
-    builtins: builtins.filter((_, j) => !builtinRemove.has(j)),
+    positives: positives.filter((_, j) => !positiveRemove.has(j)),
   };
 }
 
-async function Generate(outputFile: string, os: OS) {
-  const rawNegatives =
-    os === "macos" ? macosNegativeKeybindings : linuxNegativeKeybindings;
-
-  const { negatives: negativesDeduped, builtins: builtinsDeduped } =
-    dedupeCancellingNegativeBuiltinPairs(rawNegatives, [...builtin]);
-
-  const seperator = {
-    key: "-".repeat(200),
-  } as Keybind;
-
-  let keybinds: Keybind[] = [];
-
-  keybinds.push({
-    key: os,
-  } as Keybind);
-  keybinds.push(seperator);
-  keybinds.push(...negativesDeduped);
-  keybinds.push(seperator);
-  keybinds.push(...builtinsDeduped);
-  keybinds.push(seperator);
-  keybinds.push(...custom);
-
-  await fs.writeFile(outputFile, JSON.stringify(keybinds, null, 4));
+function osMarker(os: OS): Keybind {
+  return { key: os } as Keybind;
 }
 
-await Generate(
+async function writeKeybindingsFile(outputFile: string, entries: Keybind[]) {
+  await fs.writeFile(outputFile, JSON.stringify(entries, null, 4));
+}
+
+async function buildMacosKeybinds(): Promise<Keybind[]> {
+  const rawNegatives = await loadJson(
+    "defaultKeybinds/macos.negative.keybindings.json"
+  );
+  const linuxDefaults = await loadJson("defaultKeybinds/linux.keybindings.json");
+  const { negatives, positives } = dedupeCancellingNegativePositivePairs(
+    rawNegatives,
+    linuxDefaults
+  );
+  return [
+    osMarker("macos"),
+    SEPARATOR,
+    ...negatives,
+    SEPARATOR,
+    ...positives,
+    SEPARATOR,
+    ...custom,
+  ];
+}
+
+await writeKeybindingsFile(
   "../../../Library/Application Support/Code/User/keybindings.json",
-  "macos"
+  await buildMacosKeybinds()
 );
 
-await Generate("../../.config/Code/User/keybindings.json", "linux");
+await writeKeybindingsFile("../../.config/Code/User/keybindings.json", [
+  osMarker("linux"),
+  SEPARATOR,
+  ...custom,
+]);
