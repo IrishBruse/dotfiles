@@ -54,7 +54,7 @@ alias la=ll
 alias reload="clear;exec fish"
 alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LDtk.Codegen.csproj"
 
-alias j="just --choose"
+alias j="just"
 
 alias showkey="fish_key_reader --verbose"
 
