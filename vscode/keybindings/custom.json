@@ -101,18 +101,13 @@
       "when": "!inQuickOpen"
     },
     {
-      "command": "workbench.action.focusActiveEditorGroup",
+      "command": "workbench.view.explorer",
       "key": "ctrl+e"
     },
     {
       "command": "workbench.action.quickOpenNavigatePreviousInViewPicker",
       "key": "ctrl+shift+tab",
       "when": "inQuickOpen && inViewsPicker"
-    },
-    {
-      "command": "editor.action.marker.nextInFiles",
-      "key": "ctrl+e",
-      "when": "editorFocus"
     },
     {
       "command": "editor.action.marker.prevInFiles",
