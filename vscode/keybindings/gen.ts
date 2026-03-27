@@ -53,7 +53,7 @@ function argsMatch(a?: Keybind["args"], b?: Keybind["args"]): boolean {
  */
 function dedupeCancellingNegativePositivePairs(
   negatives: Keybind[],
-  positives: Keybind[]
+  positives: Keybind[],
 ): { negatives: Keybind[]; positives: Keybind[] } {
   const positiveRemove = new Set<number>();
   const negativeRemove = new Set<number>();
@@ -95,12 +95,14 @@ async function writeKeybindingsFile(outputFile: string, entries: Keybind[]) {
 
 async function buildMacosKeybinds(custom: Keybind[]): Promise<Keybind[]> {
   const rawNegatives = await loadJson(
-    "defaultKeybinds/macos.negative.keybindings.json"
+    "defaultKeybinds/macos.negative.keybindings.json",
   );
-  const linuxDefaults = await loadJson("defaultKeybinds/linux.keybindings.json");
+  const linuxDefaults = await loadJson(
+    "defaultKeybinds/linux.keybindings.json",
+  );
   const { negatives, positives } = dedupeCancellingNegativePositivePairs(
     rawNegatives,
-    linuxDefaults
+    linuxDefaults,
   );
   return [
     osMarker("macos"),
@@ -118,7 +120,7 @@ const custom = await loadCustomBindings();
 
 await writeKeybindingsFile(
   "../../../Library/Application Support/Code/User/keybindings.json",
-  await buildMacosKeybinds(custom)
+  await buildMacosKeybinds(custom),
 );
 
 await writeKeybindingsFile("../../.config/Code/User/keybindings.json", [

@@ -16,6 +16,11 @@ function isSimpleWhenClause(w: string): boolean {
   return !w.includes("&&") && !w.includes("||");
 }
 
+/** Unbind rules use `-commandId`; enum suggestions use the positive id only (dedupes with bind). */
+function normalizeCommandIdForEnum(command: string): string {
+  return command.startsWith("-") ? command.slice(1) : command;
+}
+
 /** One entry per line; empty lines and #-prefixed lines are ignored. */
 async function readLineDelimitedFile(name: string): Promise<string[]> {
   const filePath = path.join(ENUM_TXT_DIR, name);
@@ -98,7 +103,10 @@ export async function generateKeybindingEnums(): Promise<void> {
       if (r.mac) keys.add(r.mac);
       if (r.linux) keys.add(r.linux);
       if (r.win) keys.add(r.win);
-      if (r.command) commands.add(r.command);
+      if (r.command) {
+        const id = normalizeCommandIdForEnum(r.command);
+        if (id) commands.add(id);
+      }
       if (r.when && isSimpleWhenClause(r.when)) whens.add(r.when);
     }
   };
@@ -108,7 +116,10 @@ export async function generateKeybindingEnums(): Promise<void> {
   scan(customBindings);
 
   for (const k of await readLineDelimitedFile("keys.txt")) keys.add(k);
-  for (const c of await readLineDelimitedFile("commands.txt")) commands.add(c);
+  for (const c of await readLineDelimitedFile("commands.txt")) {
+    const id = normalizeCommandIdForEnum(c);
+    if (id) commands.add(id);
+  }
   for (const w of await readLineDelimitedFile("when.txt")) {
     if (isSimpleWhenClause(w)) whens.add(w);
   }
@@ -133,7 +144,7 @@ export async function generateKeybindingEnums(): Promise<void> {
       },
       commandId: {
         description:
-          "Command ID. Suggestions: bundled defaults, custom.json, enums/commands.txt. Extension IDs: paste into commands.txt and run gen.",
+          "Command ID (unbind `-id` entries are normalized to `id` in suggestions). Sources: defaults, custom.json, enums/commands.txt.",
         anyOf: [
           { enum: sortedUnique(commands) },
           { type: "string", description: "Any command ID." },
