@@ -113,6 +113,45 @@ function createSession(config: ServerConfig): McpSession {
 
 let _reqId = 1;
 
+// --- Cache ---
+
+interface CacheEntry {
+  session: McpSession;
+  tools: Array<{ name: string; description?: string }>;
+  expires: number;
+}
+
+const _cache = new Map<string, CacheEntry>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+function getCachedSession(config: ServerConfig, serverName: string): McpSession {
+  const cached = _cache.get(serverName);
+  if (cached && cached.expires > Date.now()) {
+    cached.session.config = config;
+    cached.expires = Date.now() + CACHE_TTL;
+    return cached.session;
+  }
+  const session = createSession(config);
+  _cache.set(serverName, { session, tools: [], expires: Date.now() + CACHE_TTL });
+  return session;
+}
+
+function getCachedTools(serverName: string): Array<{ name: string; description?: string }> | null {
+  const cached = _cache.get(serverName);
+  if (cached && cached.tools.length && cached.expires > Date.now()) {
+    return cached.tools;
+  }
+  return null;
+}
+
+function setCachedTools(serverName: string, tools: Array<{ name: string; description?: string }>): void {
+  const cached = _cache.get(serverName);
+  if (cached) {
+    cached.tools = tools;
+    cached.expires = Date.now() + CACHE_TTL;
+  }
+}
+
 async function mcpPost(
   session: McpSession,
   method: string,
@@ -184,26 +223,33 @@ async function initialize(session: McpSession): Promise<unknown> {
 
 async function listTools(
   serverConfig: ServerConfig,
+  serverName: string,
 ): Promise<Array<{ name: string; description?: string }>> {
-  const session = createSession(serverConfig);
+  const cached = getCachedTools(serverName);
+  if (cached) return cached;
+
+  const session = getCachedSession(serverConfig, serverName);
   await initialize(session);
   const res = await mcpPost(session, "tools/list", {});
   if (res?.error) throw new Error(`tools/list: ${JSON.stringify(res.error)}`);
   const r = res as Record<string, unknown>;
-  return (
+  const tools = (
     (((r.result as Record<string, unknown>)?.tools ?? r.tools) as Array<{
       name: string;
       description?: string;
     }>) ?? []
   );
+  setCachedTools(serverName, tools);
+  return tools;
 }
 
 async function callTool(
   serverConfig: ServerConfig,
+  serverName: string,
   toolName: string,
   toolArgs: Record<string, unknown>,
 ): Promise<McpResult> {
-  const session = createSession(serverConfig);
+  const session = getCachedSession(serverConfig, serverName);
   await initialize(session);
   const res = await mcpPost(session, "tools/call", {
     name: toolName,
@@ -249,7 +295,7 @@ async function cmdTools(
   serverConfig: ServerConfig,
   serverName: string,
 ): Promise<void> {
-  const tools = await listTools(serverConfig);
+  const tools = await listTools(serverConfig, serverName);
 
   if (!tools.length) {
     console.log("No tools available.");
@@ -272,7 +318,7 @@ async function cmdToolHelp(
   serverName: string,
   toolName: string,
 ): Promise<void> {
-  const tools = await listTools(serverConfig);
+  const tools = await listTools(serverConfig, serverName);
   const tool = tools.find((t) => t.name === toolName) as
     | {
         name: string;
@@ -387,7 +433,7 @@ async function cmdCall(
   toolArgs: Record<string, unknown>,
 ): Promise<void> {
   try {
-    const result = await callTool(serverConfig, toolName, toolArgs);
+    const result = await callTool(serverConfig, serverName, toolName, toolArgs);
 
     const content = result?.content;
     if (Array.isArray(content)) {
@@ -395,7 +441,7 @@ async function cmdCall(
         if (block.type === "text") {
           const formatted = formatTextContentError(block.text);
           if (formatted) {
-            await listTools(serverConfig).then((tools) => {
+            await listTools(serverConfig, serverName).then((tools) => {
               const tool = tools.find(t => t.name === toolName) as { name: string; description?: string; inputSchema?: Record<string, unknown> } | undefined;
               if (!tool || !tool.inputSchema) return;
 
