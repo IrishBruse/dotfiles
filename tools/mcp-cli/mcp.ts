@@ -1,14 +1,4 @@
 #!/usr/bin/env node
-/**
- * mcp-cli.ts - CLI wrapper for MCP servers defined in ~/.cursor/mcp.json
- *
- * Usage:
- *   mcp-cli list
- *   mcp-cli <server> --help
- *   mcp-cli <server> call <tool> [--args '{"key":"value"}']
- *   mcp-cli <server> auth     Re-run OAuth flow
- *   mcp-cli <server> logout   Clear stored token
- */
 
 import fs from "node:fs";
 import os from "node:os";
@@ -53,7 +43,8 @@ function useColor(): boolean {
 
 const label = (s: string) => (useColor() ? `${C_CYAN}${BOLD}${s}${RESET}` : s);
 const value = (s: string) => (useColor() ? `${C_GREEN}${s}${RESET}` : s);
-const highlight = (s: string) => (useColor() ? `${C_YELLOW}${BOLD}${s}${RESET}` : s);
+const highlight = (s: string) =>
+  useColor() ? `${C_YELLOW}${BOLD}${s}${RESET}` : s;
 const dim = (s: string) => (useColor() ? `${DIM}${s}${RESET}` : s);
 const errStyle = (s: string) => (useColor() ? `${C_RED}${s}${RESET}` : s);
 
@@ -63,7 +54,9 @@ function loadConfig(): McpConfig {
   try {
     return JSON.parse(fs.readFileSync(CONFIG_PATH, "utf-8")) as McpConfig;
   } catch (e) {
-    console.error(errStyle(`Failed to read ${CONFIG_PATH}: ${(e as Error).message}`));
+    console.error(
+      errStyle(`Failed to read ${CONFIG_PATH}: ${(e as Error).message}`),
+    );
     process.exit(1);
   }
 }
@@ -80,7 +73,13 @@ async function resolveAuth(
   const staticToken = explicitToken ?? process.env[envKey] ?? null;
 
   if (staticToken) {
-    return { ...serverConfig, headers: { ...serverConfig.headers, Authorization: `Bearer ${staticToken}` } };
+    return {
+      ...serverConfig,
+      headers: {
+        ...serverConfig.headers,
+        Authorization: `Bearer ${staticToken}`,
+      },
+    };
   }
 
   if (!opts.forceRefresh && serverConfig.headers?.Authorization) {
@@ -93,7 +92,10 @@ async function resolveAuth(
     (msg) => process.stderr.write(dim(msg)),
     opts,
   );
-  return { ...serverConfig, headers: { ...serverConfig.headers, Authorization: `Bearer ${token}` } };
+  return {
+    ...serverConfig,
+    headers: { ...serverConfig.headers, Authorization: `Bearer ${token}` },
+  };
 }
 
 // --- MCP JSON-RPC ---
@@ -111,7 +113,11 @@ function createSession(config: ServerConfig): McpSession {
 
 let _reqId = 1;
 
-async function mcpPost(session: McpSession, method: string, params: Record<string, unknown> = {}): Promise<McpResult> {
+async function mcpPost(
+  session: McpSession,
+  method: string,
+  params: Record<string, unknown> = {},
+): Promise<McpResult> {
   const { url, headers: extraHeaders = {} } = session.config;
   const id = _reqId++;
   const body = JSON.stringify({ jsonrpc: "2.0", id, method, params });
@@ -135,7 +141,9 @@ async function mcpPost(session: McpSession, method: string, params: Record<strin
 
   if (!res.ok) {
     const text = await res.text().catch(() => "");
-    throw new Error(`HTTP ${res.status} ${res.statusText}${text ? `: ${text.slice(0, 200)}` : ""}`);
+    throw new Error(
+      `HTTP ${res.status} ${res.statusText}${text ? `: ${text.slice(0, 200)}` : ""}`,
+    );
   }
 
   return res.json() as Promise<McpResult>;
@@ -152,7 +160,11 @@ function extractFromSSE(text: string, targetId: number): McpResult {
       messages.push(JSON.parse(data) as McpResult);
     } catch {}
   }
-  return messages.find((m) => (m as Record<string, unknown>).id === targetId) ?? messages.at(-1) ?? {};
+  return (
+    messages.find((m) => (m as Record<string, unknown>).id === targetId) ??
+    messages.at(-1) ??
+    {}
+  );
 }
 
 async function initialize(session: McpSession): Promise<unknown> {
@@ -165,19 +177,33 @@ async function initialize(session: McpSession): Promise<unknown> {
   return (res as Record<string, unknown>).result ?? res;
 }
 
-async function listTools(serverConfig: ServerConfig): Promise<Array<{ name: string; description?: string }>> {
+async function listTools(
+  serverConfig: ServerConfig,
+): Promise<Array<{ name: string; description?: string }>> {
   const session = createSession(serverConfig);
   await initialize(session);
   const res = await mcpPost(session, "tools/list", {});
   if (res?.error) throw new Error(`tools/list: ${JSON.stringify(res.error)}`);
   const r = res as Record<string, unknown>;
-  return (((r.result as Record<string, unknown>)?.tools ?? r.tools) as Array<{ name: string; description?: string }>) ?? [];
+  return (
+    (((r.result as Record<string, unknown>)?.tools ?? r.tools) as Array<{
+      name: string;
+      description?: string;
+    }>) ?? []
+  );
 }
 
-async function callTool(serverConfig: ServerConfig, toolName: string, toolArgs: Record<string, unknown>): Promise<McpResult> {
+async function callTool(
+  serverConfig: ServerConfig,
+  toolName: string,
+  toolArgs: Record<string, unknown>,
+): Promise<McpResult> {
   const session = createSession(serverConfig);
   await initialize(session);
-  const res = await mcpPost(session, "tools/call", { name: toolName, arguments: toolArgs });
+  const res = await mcpPost(session, "tools/call", {
+    name: toolName,
+    arguments: toolArgs,
+  });
   if (res?.error) throw new Error(`tools/call: ${JSON.stringify(res.error)}`);
   return ((res as Record<string, unknown>).result as McpResult) ?? res;
 }
@@ -192,19 +218,32 @@ function cmdList(config: McpConfig): void {
     return;
   }
   const tokens = loadTokens();
-  console.log(`${label(`MCP Servers (${entries.length})`)}  ${dim(CONFIG_PATH)}`);
+  console.log(
+    `${label(`MCP Servers (${entries.length})`)}  ${dim(CONFIG_PATH)}`,
+  );
   console.log();
   for (const [n, cfg] of entries) {
     const transport = cfg.url ? "http" : cfg.command ? "stdio" : "unknown";
-    const loc = cfg.url ?? (cfg.command ? [cfg.command, ...(cfg.args ?? [])].join(" ") : "?");
+    const loc =
+      cfg.url ??
+      (cfg.command ? [cfg.command, ...(cfg.args ?? [])].join(" ") : "?");
     const hasStaticAuth = Boolean(cfg.headers?.Authorization);
     const hasStoredToken = Boolean(tokens[n]?.access_token);
-    const authNote = hasStaticAuth ? dim(" [token]") : hasStoredToken ? dim(" [oauth]") : "";
-    console.log(`  ${highlight(n)}  ${dim(transport)}  ${value(loc)}${authNote}`);
+    const authNote = hasStaticAuth
+      ? dim(" [token]")
+      : hasStoredToken
+        ? dim(" [oauth]")
+        : "";
+    console.log(
+      `  ${highlight(n)}  ${dim(transport)}  ${value(loc)}${authNote}`,
+    );
   }
 }
 
-async function cmdTools(serverConfig: ServerConfig, serverName: string): Promise<void> {
+async function cmdTools(
+  serverConfig: ServerConfig,
+  serverName: string,
+): Promise<void> {
   process.stderr.write(dim(`Connecting to ${serverName}...\n`));
   const tools = await listTools(serverConfig);
 
@@ -224,11 +263,19 @@ async function cmdTools(serverConfig: ServerConfig, serverName: string): Promise
   }
 }
 
-async function cmdToolHelp(serverConfig: ServerConfig, serverName: string, toolName: string): Promise<void> {
+async function cmdToolHelp(
+  serverConfig: ServerConfig,
+  serverName: string,
+  toolName: string,
+): Promise<void> {
   process.stderr.write(dim(`Connecting to ${serverName}...\n`));
   const tools = await listTools(serverConfig);
   const tool = tools.find((t) => t.name === toolName) as
-    | ({ name: string; description?: string; inputSchema?: Record<string, unknown> })
+    | {
+        name: string;
+        description?: string;
+        inputSchema?: Record<string, unknown>;
+      }
     | undefined;
 
   if (!tool) {
@@ -237,7 +284,9 @@ async function cmdToolHelp(serverConfig: ServerConfig, serverName: string, toolN
   }
 
   const schema = tool.inputSchema;
-  const props = schema?.properties as Record<string, Record<string, unknown>> | undefined;
+  const props = schema?.properties as
+    | Record<string, Record<string, unknown>>
+    | undefined;
   const required = new Set((schema?.required as string[] | undefined) ?? []);
 
   // Usage line
@@ -258,7 +307,10 @@ async function cmdToolHelp(serverConfig: ServerConfig, serverName: string, toolN
       const type = prop.type ? dim(String(prop.type)) : dim("string");
       console.log(`  ${highlight(`--${key}`)}  ${type}  ${req}`);
       if (prop.description) console.log(`    ${dim(String(prop.description))}`);
-      if (prop.enum) console.log(`    ${dim(`one of: ${(prop.enum as unknown[]).join(", ")}`)}`);
+      if (prop.enum)
+        console.log(
+          `    ${dim(`one of: ${(prop.enum as unknown[]).join(", ")}`)}`,
+        );
     }
   } else {
     console.log(dim("  (no arguments)"));
@@ -283,7 +335,9 @@ function formatMcpError(error: Record<string, unknown>): string {
         const path = (item.path as string[] | undefined)?.join(".");
         const itemMsg = item.message as string | undefined;
         if (path) {
-          missing.push(`${highlight(`--${path}`)}  ${dim(itemMsg ?? code ?? "invalid")}`);
+          missing.push(
+            `${highlight(`--${path}`)}  ${dim(itemMsg ?? code ?? "invalid")}`,
+          );
         }
       }
     }
@@ -324,9 +378,8 @@ async function cmdCall(
     if (jsonMatch) {
       try {
         const parsed = JSON.parse(jsonMatch[1]);
-        if (parsed.jsonrpc === "2.0" && parsed.error) {
-          msg = formatMcpError(parsed.error);
-        }
+        const errorObj = (parsed as Record<string, unknown>).error ?? parsed;
+        msg = formatMcpError(errorObj as Record<string, unknown>);
       } catch {}
     }
     console.error(errStyle(msg));
@@ -356,20 +409,6 @@ function printUsage(): void {
   ${prog} <server> <tool> [--key value ...]  Call a tool
   ${prog} <server> auth                           Re-run OAuth flow
   ${prog} <server> logout                         Clear stored token
-
-Options:
-  --token <token>  Bearer token (overrides env/oauth). Also: MCP_<SERVER>_TOKEN env var.
-  --args '{}'      Pass arguments as a JSON blob (alternative to individual flags).
-
-Examples:
-  ${prog} list
-  ${prog} jira --help
-  ${prog} jira getConfluencePage --help
-  ${prog} jira getConfluencePage --cloudId a1b2-... --pageId FC1bw
-  ${prog} coralogix get_datetime
-
-Config: ${CONFIG_PATH}
-Tokens: ${TOKENS_PATH}
 `);
 }
 
@@ -410,10 +449,15 @@ function parseToolArgs(argv: string[]): Record<string, unknown> {
   for (let i = 0; i < argv.length; i++) {
     let json: string | null = null;
     if (argv[i] === "--args" && argv[i + 1]) json = argv[++i];
-    else if (argv[i].startsWith("--args=")) json = argv[i].slice("--args=".length);
+    else if (argv[i].startsWith("--args="))
+      json = argv[i].slice("--args=".length);
     if (json !== null) {
-      try { base = JSON.parse(json) as Record<string, unknown>; }
-      catch { console.error(errStyle(`Invalid JSON for --args: ${json}`)); process.exit(1); }
+      try {
+        base = JSON.parse(json) as Record<string, unknown>;
+      } catch {
+        console.error(errStyle(`Invalid JSON for --args: ${json}`));
+        process.exit(1);
+      }
     }
   }
 
@@ -423,7 +467,10 @@ function parseToolArgs(argv: string[]): Record<string, unknown> {
     const arg = argv[i];
     if (!arg.startsWith("--")) continue;
     const key = arg.slice(2);
-    if (key === "args") { i++; continue; } // already handled above
+    if (key === "args") {
+      i++;
+      continue;
+    } // already handled above
     const next = argv[i + 1];
     if (next !== undefined && !next.startsWith("--")) {
       overlay[key] = coerceValue(next);
@@ -460,18 +507,30 @@ async function main(): Promise<number> {
 
   const rawServerConfig = config.mcpServers?.[serverName];
   if (!rawServerConfig) {
-    console.error(errStyle(`Server "${serverName}" not found. Run 'mcp-cli list' to see available servers.`));
+    console.error(
+      errStyle(
+        `Server "${serverName}" not found. Run 'mcp-cli list' to see available servers.`,
+      ),
+    );
     return 1;
   }
   if (!rawServerConfig.url) {
-    console.error(errStyle("Only HTTP MCP servers are supported (this server uses stdio transport)."));
+    console.error(
+      errStyle(
+        "Only HTTP MCP servers are supported (this server uses stdio transport).",
+      ),
+    );
     return 1;
   }
 
   const sub = argv[0];
 
   if (!sub) {
-    console.error(errStyle(`Missing subcommand for "${serverName}". Try: --help, call, auth, logout`));
+    console.error(
+      errStyle(
+        `Missing subcommand for "${serverName}". Try: --help, call, auth, logout`,
+      ),
+    );
     return 2;
   }
 
@@ -509,5 +568,21 @@ async function main(): Promise<number> {
   return 0;
 }
 
-const code = await main();
-process.exit(code ?? 0);
+try {
+  const code = await main();
+  process.exit(code ?? 0);
+} catch (e) {
+  const err = e as Error;
+  let msg = err.message;
+  const jsonMatch = msg.match(/(\[[\s\S]*\]|\{[\s\S]*\})$/);
+  if (jsonMatch) {
+    try {
+      const parsed = JSON.parse(jsonMatch[1]);
+      if (parsed.jsonrpc === "2.0" && parsed.error) {
+        msg = formatMcpError(parsed.error);
+      }
+    } catch {}
+  }
+  console.error(errStyle(msg));
+  process.exit(1);
+}
