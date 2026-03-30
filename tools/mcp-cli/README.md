@@ -1,6 +1,6 @@
 # mcp-cli
 
-CLI wrapper for [Model Context Protocol](https://modelcontextprotocol.io) servers configured in `~/.cursor/mcp.json`. Lets you interact with MCP servers directly from the terminal — list servers, discover tools, call tools with flags, and manage OAuth tokens.
+CLI wrapper for [Model Context Protocol](https://modelcontextprotocol.io) servers configured in `~/.config/mcp-cli/mcp.json`. Lets you interact with MCP servers directly from the terminal — list servers, discover tools, call tools with flags, and manage OAuth tokens.
 
 ## Quick Start
 
@@ -18,7 +18,7 @@ mcp <server> logout                         # Clear stored token
 TypeScript executed directly via Node with `tsx` — no build step. The tool is npm-linked globally:
 
 ```bash
-npm link    # makes `mcp` and `confluence-sync` available globally
+npm link    # makes `mcp` and `confluence-pull` available globally
 ```
 
 Typecheck:
@@ -29,7 +29,7 @@ npx tsc --noEmit
 
 ## How It Works
 
-1. Reads server configs from `~/.cursor/mcp.json` (the `mcpServers` map).
+1. Reads server configs from `~/.config/mcp-cli/mcp.json` (the `mcpServers` map).
 2. For HTTP servers, resolves authentication through one of (in priority order):
    - `--token <value>` CLI flag
    - `MCP_<SERVER_NAME>_TOKEN` environment variable (server name uppercased, non-alphanumeric chars replaced with `_`)
@@ -42,10 +42,10 @@ npx tsc --noEmit
 
 ### `mcp list`
 
-List all configured MCP servers from `~/.cursor/mcp.json`. Shows server name, transport type (`http` or `stdio`), location (URL or command), and auth status (`[token]` for static auth, `[oauth]` for stored OAuth tokens).
+List all configured MCP servers from `~/.config/mcp-cli/mcp.json`. Shows server name, transport type (`http` or `stdio`), location (URL or command), and auth status (`[token]` for static auth, `[oauth]` for stored OAuth tokens).
 
 ```bash
-MCP Servers (3)  ~/.cursor/mcp.json
+MCP Servers (3)  ~/.config/mcp-cli/mcp.json
 
   atlassian     http  https://mcp.atlassian.com/v1/sse  [oauth]
   github        http  https://api.github.com/mcp        [token]
@@ -112,7 +112,7 @@ Delete the stored OAuth token for the server.
 
 ## Configuration
 
-### Server config: `~/.cursor/mcp.json`
+### Server config: `~/.config/mcp-cli/mcp.json`
 
 ```json
 {
@@ -160,7 +160,7 @@ OAuth tokens stored per server name:
 
 1. `--token <value>` — explicit token on the command line
 2. `MCP_<SERVER>_TOKEN` env var — e.g. `MCP_ATLASSIAN_TOKEN`
-3. Static `Authorization` header in `~/.cursor/mcp.json`
+3. Static `Authorization` header in `~/.config/mcp-cli/mcp.json`
 4. OAuth 2.0 + PKCE — automatic browser-based flow with token caching
 
 ### OAuth 2.0 + PKCE flow
@@ -215,14 +215,14 @@ mcp atlassian getConfluencePage --cloudId <cloudId> --pageId <pageId>
 | `mcp.ts`                        | Main CLI — arg parsing, auth resolution, server init, tool calls, output formatting, error display             |
 | `oauth.ts`                      | OAuth 2.0 + PKCE — discovery, dynamic client registration, code exchange, token refresh, local callback server |
 | `bin/mcp.js`                    | Shebang entry that imports `mcp.ts` via `tsx`                                                                  |
-| `bin/confluence-sync.js`        | Bulk Confluence space downloader (also registered as `confluence-sync` command)                                |
+| `bin/confluence-pull.js`        | Bulk Confluence space downloader (also registered as `confluence-pull` command)                                |
 | `package.json`                  | Package manifest with `mcp` and `confluence-sync` bin entries                                                  |
 | `tsconfig.json`                 | TypeScript config — `noEmit`, `esnext`, `nodenext` modules                                                     |
 | `AGENTS.md`                     | Agent rules for working with this codebase                                                                     |
-| `~/.cursor/mcp.json`            | Server configuration (shared with Cursor IDE)                                                                  |
+| `~/.config/mcp-cli/mcp.json`    | Server configuration                                                                                           |
 | `~/.config/mcp-cli/tokens.json` | Cached OAuth tokens                                                                                            |
 
-## confluence-sync
+## confluence-pull
 
 Bulk-downloads all pages from a Confluence space into a local directory tree of Markdown files. Uses `mcp atlassian` under the hood.
 
@@ -234,10 +234,10 @@ mcp atlassian getAccessibleAtlassianResources
 mcp atlassian getConfluenceSpaces --cloudId <cloudId>
 
 # Sync a space by key
-confluence-sync <cloudId> <spaceKey> [outputDir]
+confluence-pull <cloudId> <spaceKey> [outputDir]
 
 # Sync using space ID instead of key
-confluence-sync <cloudId> <spaceId> [outputDir] --spaceId
+confluence-pull <cloudId> <spaceId> [outputDir] --spaceId
 ```
 
 Output directory defaults to `./confluence-<spaceKey>`.

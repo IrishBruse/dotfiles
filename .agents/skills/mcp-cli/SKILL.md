@@ -2,14 +2,16 @@
 name: mcp-cli
 description: Use this skill when working with the mcp CLI tool.
   Covers calling MCP server tools, listing servers/tools, OAuth auth,
-  debugging errors, extending the CLI, and the confluence-sync utility.
+  debugging errors, and the confluence-sync utility.
 ---
 
 # MCP CLI
 
-CLI wrapper for MCP servers configured in `~/.cursor/mcp.json`. The tool is npm-linked globally, so `mcp` is available without a build step.
+CLI wrapper for MCP servers configured in `~/.cursor/mcp.json`. Lets you call tools on remote MCP servers (Atlassian, GitHub, etc.) directly from the terminal without going through an IDE.
 
-## Quick Reference
+## Commands
+
+The tool works by server name — first discover what's available, then call tools on specific servers.
 
 ```bash
 mcp list                              # List configured MCP servers
@@ -18,42 +20,21 @@ mcp <server> <tool> --help            # Show a tool's schema/args
 mcp <server> <tool> --key value ...   # Call a tool with flags
 mcp <server> auth                     # Re-run OAuth flow
 mcp <server> logout                   # Clear stored token
-confluence-sync <cloudId> <spaceKey>  # Sync Confluence space to Markdown
 ```
 
-## How It Works
+## Discovering Servers and Tools
 
-1. Reads server configs from `~/.cursor/mcp.json` (`mcpServers` map).
-2. For HTTP servers, resolves auth via (in priority order):
-   - `--token <value>` CLI flag
-   - `MCP_<SERVER>_TOKEN` env var
-   - Static `Authorization` header from config
-   - OAuth 2.0 + PKCE flow (tokens cached at `~/.config/mcp-cli/tokens.json`)
-3. Initializes a JSON-RPC session with the server (Streamable HTTP transport, `Mcp-Session-Id` header).
-4. Calls tools via `tools/call` and renders results with `jq` formatting.
-
-## Key Files
-
-| File | Purpose |
-|------|---------|
-| `mcp.ts` | Main CLI entry: arg parsing, auth resolution, server init, tool calls, output formatting |
-| `oauth.ts` | OAuth 2.0 + PKCE: discovery, registration, code exchange, token refresh, local callback server |
-| `bin/mcp.js` | Shebang entry that imports `mcp.ts` via `tsx` |
-| `bin/confluence-sync.js` | Bulk Confluence downloader registered as `confluence-sync` |
-| `~/.cursor/mcp.json` | Server configuration (shared with Cursor IDE) |
-| `~/.config/mcp-cli/tokens.json` | Cached OAuth tokens per server |
-
-## Common Workflows
-
-### Discovering available servers and tools
+Before calling any tool, check what servers are configured and what tools they expose. Use `--help` to see required and optional arguments for a specific tool.
 
 ```bash
-mcp list                    # see all servers, transport type, auth status
-mcp atlassian tools         # list tools on a specific server
-mcp atlassian getConfluencePage --help   # inspect a tool's arguments
+mcp list                                         # all servers, transport, auth status
+mcp atlassian tools                              # tools on a server
+mcp atlassian getConfluencePage --help           # inspect a tool's arguments
 ```
 
-### Calling a tool
+## Calling Tools
+
+Pass tool arguments as `--key value` flags. Required args are enforced; optional args have defaults. The CLI coerces `"true"`/`"false"` strings to booleans and `null` to null.
 
 ```bash
 # Required args only
@@ -66,26 +47,25 @@ mcp atlassian getPagesInConfluenceSpace --cloudId abc123 --spaceId 789 --limit 5
 mcp github search_repositories --query "mcp" --private false
 ```
 
-### Handling auth issues
+## Auth
+
+Most servers require authentication. Tokens are persisted locally so you only auth once. When a call fails with a permission error, check `mcp list` for the server's auth status.
+
+- Tokens stored at `~/.config/mcp-cli/tokens.json` (keyed by server name).
+- `mcp <server> auth` forces a fresh OAuth flow.
+- `mcp <server> logout` deletes the stored token.
 
 ```bash
-# Check if a server has stored tokens
+# Check auth status
 mcp list    # look for [oauth] or [token] annotations
 
-# Force re-authentication
+# Re-authenticate
 mcp atlassian auth
-
-# Clear a bad token
-mcp atlassian logout
-
-# Use a one-off token without storing
-mcp atlassian tools --token ghp_xxxxx
-
-# Use env var for CI/scripts
-MCP_ATLASSIAN_TOKEN=ghp_xxxxx mcp atlassian tools
 ```
 
-### Syncing Confluence spaces
+## Syncing Confluence Spaces
+
+The `confluence-sync` helper downloads entire Confluence spaces as local Markdown files. It requires a cloud ID, which you get from the Atlassian server first.
 
 ```bash
 # Get cloud ID
@@ -98,54 +78,20 @@ mcp atlassian getConfluenceSpaces --cloudId abc123
 confluence-sync abc123 PROD ./docs/prod
 ```
 
-## Auth & Tokens
+## Debugging Failed Calls
 
-- Tokens stored at `~/.config/mcp-cli/tokens.json` (keyed by server name).
-- Access tokens auto-refresh when within 60s of expiry.
-- `mcp <server> auth` forces a fresh OAuth flow.
-- `mcp <server> logout` deletes the stored token.
-- `--token <value>` or `MCP_<SERVER>_TOKEN` bypasses stored tokens entirely.
-
-### OAuth flow detail
-
-1. Discovery via `/.well-known/oauth-authorization-server`
-2. Dynamic client registration (fresh client per auth flow)
-3. PKCE: SHA-256 verifier/challenge, base64url-encoded
-4. Local callback server on random port for redirect
-5. Browser opened with `open` command
-6. Code exchanged for tokens, stored with expiry timestamp
-
-## Error Handling
-
-- MCP JSON-RPC errors are parsed and displayed with missing-field hints.
-- `--help` on a tool shows usage and required/optional flags.
-- HTTP errors include status codes and response body snippets.
-- When a tool call fails with validation errors, the usage line is printed above the error for quick reference.
-- Content-level `MCP error` text is parsed for structured error data.
-
-### Debugging a failed tool call
+When a tool call fails, work through these steps in order — most issues are either auth or missing required arguments.
 
 ```bash
-# Step 1: Verify server is reachable and auth works
+# 1. Verify server is reachable and auth works
 mcp <server> tools
 
-# Step 2: Check the tool's schema
+# 2. Check the tool's schema
 mcp <server> <tool> --help
 
-# Step 3: Call with required args, inspect error for missing fields
+# 3. Call with required args, inspect error for missing fields
 mcp <server> <tool> --requiredArg value
 
-# Step 4: Check for auth issues
+# 4. Check auth
 mcp list    # verify [oauth] or [token] shows up
 ```
-
-## When Modifying This Code
-
-- It's TypeScript (`mcp.ts`, `oauth.ts`) executed via Node with `--import tsx` (see `bin/mcp.js`).
-- No build step needed — the tool is npm-linked.
-- Config lives at `~/.cursor/mcp.json`, tokens at `~/.config/mcp-cli/tokens.json`.
-- Run `npx tsc --noEmit` from `tools/mcp-cli/` to typecheck.
-- Follow existing code patterns: use `node:` prefixed imports, `errStyle()` for errors, `dim()` for secondary info.
-- The `_cache` Map in `mcp.ts` handles session/tool caching with 5-minute TTL — invalidate or extend as needed.
-- New commands go in `main()` as additional `if (sub === "...")` branches.
-- OAuth changes should stay in `oauth.ts` — `mcp.ts` only calls the high-level `getOAuthToken()`.

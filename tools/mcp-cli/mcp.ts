@@ -7,7 +7,7 @@ import path from "node:path";
 import process from "node:process";
 import { TOKENS_PATH, loadTokens, saveTokens, getOAuthToken } from "./oauth.ts";
 
-const CONFIG_PATH = path.join(os.homedir(), ".cursor", "mcp.json");
+const CONFIG_PATH = path.join(os.homedir(), ".config", "mcp-cli", "mcp.json");
 
 // --- Types ---
 

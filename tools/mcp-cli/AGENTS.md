@@ -1,8 +1,8 @@
 # Rules
 
 - The `mcp` tool is npm-linked globally — no build step needed, `mcp` is available immediately after `npm link`.
-- `confluence-sync` is also globally available via the same link.
-- Config lives at `~/.cursor/mcp.json` (shared with Cursor IDE). Tokens at `~/.config/mcp-cli/tokens.json`.
+- `confluence-pull` is also globally available via the same link.
+- Config lives at `~/.config/mcp-cli/mcp.json`. Tokens at `~/.config/mcp-cli/tokens.json`.
 - TypeScript is executed at runtime via `tsx` (see `bin/mcp.js`). There is no compiled output.
 - Typecheck with `npx tsc --noEmit` before considering changes complete.
 
@@ -26,7 +26,7 @@
 - `bin/mcp.js` → imports `mcp.ts` (2 lines, shebang + import)
 - `mcp.ts` → CLI entry, all command logic, session/caching, JSON-RPC, output formatting
 - `oauth.ts` → pure OAuth utilities exported for use by `mcp.ts` (`getOAuthToken`, `loadTokens`, `saveTokens`)
-- `bin/confluence-sync.js` → standalone script using `mcp atlassian` via `execSync`
+- `bin/confluence-pull.js` → standalone script using `mcp atlassian` via `execSync`
 - Session cache (`_cache` Map) stores sessions and tool lists with 5-minute TTL
 - Tokens are stored as a JSON object keyed by server name at `~/.config/mcp-cli/tokens.json`
 

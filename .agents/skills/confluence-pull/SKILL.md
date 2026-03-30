@@ -1,5 +1,5 @@
 ---
-name: confluence-sync
+name: confluence-pull
 description:
   Use this skill when working with confluence-sync.js to download and sync
   Confluence spaces/pages as local Markdown files. Covers usage, content
