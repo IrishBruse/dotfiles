@@ -146,7 +146,12 @@ async function mcpPost(
     );
   }
 
-  return res.json() as Promise<McpResult>;
+  const text = await res.text();
+  try {
+    return JSON.parse(text) as McpResult;
+  } catch (e) {
+    throw new Error(`Failed to parse JSON response: ${text.slice(0, 200)}`);
+  }
 }
 
 function extractFromSSE(text: string, targetId: number): McpResult {
@@ -309,7 +314,7 @@ async function cmdToolHelp(
       if (prop.description) console.log(`    ${dim(String(prop.description))}`);
       if (prop.enum)
         console.log(
-          `    ${dim(`one of: ${(prop.enum as unknown[]).join(", ")}`)}`,
+          `    ${dim(`values: ${(prop.enum as unknown[]).join(" | ")}`)}`,
         );
     }
   } else {
@@ -350,6 +355,33 @@ function formatMcpError(error: Record<string, unknown>): string {
   return lines.length ? lines.join("\n") : JSON.stringify(error);
 }
 
+function formatTextContentError(text: string): string | null {
+  const mcpErrorMatch = text.match(/^MCP error (-?\d+):\s*(.*)$/s);
+  if (!mcpErrorMatch) return null;
+
+  const message = mcpErrorMatch[2];
+  const lines: string[] = [];
+
+  const dataMatch = message.match(/:\s*(\[[\s\S]*\])$/);
+  if (dataMatch) {
+    try {
+      const data = JSON.parse(dataMatch[1]) as Array<Record<string, unknown>>;
+      for (const item of data) {
+        const path = ((item.path as string[] | undefined)?.join("."));
+        const itemMsg = item.message as string | undefined;
+        if (path) {
+          lines.push(
+            `  ${highlight(`--${path}`)}  ${dim(itemMsg ?? "invalid")}`,
+          );
+        }
+      }
+    } catch {}
+  }
+
+  if (lines.length) return lines.join("\n");
+  return message.split('\n')[0];
+}
+
 async function cmdCall(
   serverConfig: ServerConfig,
   serverName: string,
@@ -363,6 +395,27 @@ async function cmdCall(
     if (Array.isArray(content)) {
       for (const block of content) {
         if (block.type === "text") {
+          const formatted = formatTextContentError(block.text);
+          if (formatted) {
+            await listTools(serverConfig).then((tools) => {
+              const tool = tools.find(t => t.name === toolName) as { name: string; description?: string; inputSchema?: Record<string, unknown> } | undefined;
+              if (!tool || !tool.inputSchema) return;
+
+              const schema = tool.inputSchema;
+              const props = schema?.properties as Record<string, Record<string, unknown>> | undefined;
+              const required = new Set((schema?.required as string[] | undefined) ?? []);
+
+              const prog = `mcp ${serverName} ${tool.name}`;
+              const usageParts = Object.entries(props ?? {}).map(([key]) => {
+                const r = required.has(key);
+                return r ? `--${key} <${key}>` : `[--${key} <${key}>]`;
+              });
+              console.log(`${prog} ${usageParts.join(" ")}\n`);
+            }).catch(() => {});
+
+            console.error(formatted);
+            process.exit(1);
+          }
           console.log(block.text);
         } else {
           console.log(JSON.stringify(block, null, 2));
@@ -374,14 +427,37 @@ async function cmdCall(
   } catch (e) {
     const err = e as Error;
     let msg = err.message;
-    const jsonMatch = msg.match(/(\[[\s\S]*\]|\{[\s\S]*\})$/);
-    if (jsonMatch) {
+
+    // Try to extract JSON-RPC error from various message formats
+    let errorObj: Record<string, unknown> | null = null;
+
+    // Format: "tools/call: {jsonrpc error}"
+    const colonMatch = msg.match(/:\s*(\{[\s\S]*\}|\[[\s\S]*\])$/);
+    if (colonMatch) {
       try {
-        const parsed = JSON.parse(jsonMatch[1]);
-        const errorObj = (parsed as Record<string, unknown>).error ?? parsed;
-        msg = formatMcpError(errorObj as Record<string, unknown>);
+        const parsed = JSON.parse(colonMatch[1]);
+        if ((parsed as Record<string, unknown>).jsonrpc === "2.0") {
+          errorObj = (parsed as Record<string, unknown>).error as Record<string, unknown>;
+        } else if ((parsed as Record<string, unknown>).error) {
+          errorObj = (parsed as Record<string, unknown>).error as Record<string, unknown>;
+        } else {
+          errorObj = parsed as Record<string, unknown>;
+        }
       } catch {}
     }
+
+    // Fallback: try parsing entire message
+    if (!errorObj) {
+      try {
+        const parsed = JSON.parse(msg);
+        errorObj = (parsed as Record<string, unknown>).error ?? parsed;
+      } catch {}
+    }
+
+    if (errorObj) {
+      msg = formatMcpError(errorObj);
+    }
+
     console.error(errStyle(msg));
     process.exit(1);
   }
@@ -484,6 +560,7 @@ function parseToolArgs(argv: string[]): Record<string, unknown> {
 }
 
 async function main(): Promise<number> {
+  const prog = path.basename(process.argv[1] ?? "mcp-cli.ts");
   let argv = process.argv.slice(2);
   const first = argv[0];
 
@@ -525,15 +602,6 @@ async function main(): Promise<number> {
 
   const sub = argv[0];
 
-  if (!sub) {
-    console.error(
-      errStyle(
-        `Missing subcommand for "${serverName}". Try: --help, call, auth, logout`,
-      ),
-    );
-    return 2;
-  }
-
   if (sub === "logout") {
     cmdLogout(serverName);
     return 0;
@@ -574,15 +642,17 @@ try {
 } catch (e) {
   const err = e as Error;
   let msg = err.message;
-  const jsonMatch = msg.match(/(\[[\s\S]*\]|\{[\s\S]*\})$/);
-  if (jsonMatch) {
+
+  const colonMatch = msg.match(/:\s*(\{[\s\S]*\}|\[[\s\S]*\])$/);
+  if (colonMatch) {
     try {
-      const parsed = JSON.parse(jsonMatch[1]);
-      if (parsed.jsonrpc === "2.0" && parsed.error) {
-        msg = formatMcpError(parsed.error);
+      const parsed = JSON.parse(colonMatch[1]);
+      if ((parsed as Record<string, unknown>).jsonrpc === "2.0" && (parsed as Record<string, unknown>).error) {
+        msg = formatMcpError((parsed as Record<string, unknown>).error as Record<string, unknown>);
       }
     } catch {}
   }
+
   console.error(errStyle(msg));
   process.exit(1);
 }
