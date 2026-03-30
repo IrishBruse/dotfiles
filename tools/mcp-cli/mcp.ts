@@ -249,7 +249,6 @@ async function cmdTools(
   serverConfig: ServerConfig,
   serverName: string,
 ): Promise<void> {
-  process.stderr.write(dim(`Connecting to ${serverName}...\n`));
   const tools = await listTools(serverConfig);
 
   if (!tools.length) {
@@ -273,7 +272,6 @@ async function cmdToolHelp(
   serverName: string,
   toolName: string,
 ): Promise<void> {
-  process.stderr.write(dim(`Connecting to ${serverName}...\n`));
   const tools = await listTools(serverConfig);
   const tool = tools.find((t) => t.name === toolName) as
     | {
