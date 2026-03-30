@@ -59,6 +59,7 @@ alias showkey="fish_key_reader --verbose"
 
 alias nano="micro"
 alias snano="sudo micro"
+alias agent="agent --approve-mcps"
 
 # Scripts
 
