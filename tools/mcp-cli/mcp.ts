@@ -265,26 +265,72 @@ async function cmdToolHelp(serverConfig: ServerConfig, serverName: string, toolN
   }
 }
 
+function formatMcpError(error: Record<string, unknown>): string {
+  const msg = error.message as string | undefined;
+  const data = error.data as Record<string, unknown> | undefined;
+  const code = error.code as string | undefined;
+
+  const lines: string[] = [];
+
+  if (msg && msg !== "Error") {
+    lines.push(msg);
+  }
+
+  if (data && Array.isArray(data)) {
+    const missing: string[] = [];
+    for (const item of data) {
+      if (typeof item === "object" && item !== null) {
+        const path = (item.path as string[] | undefined)?.join(".");
+        const itemMsg = item.message as string | undefined;
+        if (path) {
+          missing.push(`${highlight(`--${path}`)}  ${dim(itemMsg ?? code ?? "invalid")}`);
+        }
+      }
+    }
+    if (missing.length) {
+      if (lines.length) lines.push("");
+      lines.push(...missing);
+    }
+  }
+
+  return lines.length ? lines.join("\n") : JSON.stringify(error);
+}
+
 async function cmdCall(
   serverConfig: ServerConfig,
   serverName: string,
   toolName: string,
   toolArgs: Record<string, unknown>,
 ): Promise<void> {
-  process.stderr.write(dim(`Calling ${serverName}/${toolName}...\n`));
-  const result = await callTool(serverConfig, toolName, toolArgs);
+  try {
+    const result = await callTool(serverConfig, toolName, toolArgs);
 
-  const content = result?.content;
-  if (Array.isArray(content)) {
-    for (const block of content) {
-      if (block.type === "text") {
-        console.log(block.text);
-      } else {
-        console.log(JSON.stringify(block, null, 2));
+    const content = result?.content;
+    if (Array.isArray(content)) {
+      for (const block of content) {
+        if (block.type === "text") {
+          console.log(block.text);
+        } else {
+          console.log(JSON.stringify(block, null, 2));
+        }
       }
+    } else {
+      console.log(JSON.stringify(result, null, 2));
     }
-  } else {
-    console.log(JSON.stringify(result, null, 2));
+  } catch (e) {
+    const err = e as Error;
+    let msg = err.message;
+    const jsonMatch = msg.match(/(\[[\s\S]*\]|\{[\s\S]*\})$/);
+    if (jsonMatch) {
+      try {
+        const parsed = JSON.parse(jsonMatch[1]);
+        if (parsed.jsonrpc === "2.0" && parsed.error) {
+          msg = formatMcpError(parsed.error);
+        }
+      } catch {}
+    }
+    console.error(errStyle(msg));
+    process.exit(1);
   }
 }
 
@@ -463,10 +509,5 @@ async function main(): Promise<number> {
   return 0;
 }
 
-main().then(
-  (code) => process.exit(code ?? 0),
-  (e) => {
-    console.error(errStyle(String((e as Error)?.message ?? e)));
-    process.exit(1);
-  },
-);
+const code = await main();
+process.exit(code ?? 0);

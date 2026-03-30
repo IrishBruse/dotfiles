@@ -1017,7 +1017,6 @@
     "*.gb": "hexEditor.hexedit",
     "*.gbm": "hexEditor.hexedit",
     "*.gbr": "hexEditor.hexedit",
-    "*.md": "new-markdown.markdownEditor",
   },
   "files.associations": {
     ".air.toml": "ini",
@@ -1289,7 +1288,7 @@
     "editor.defaultFormatter": "tamasfe.even-better-toml",
   },
   "[markdown]": {
-    "editor.wordWrap": "off",
+    // "editor.wordWrap": "off",
     "editor.defaultFormatter": "yzhang.markdown-all-in-one",
   },
   "[markdown,skill]": {
@@ -1551,4 +1550,5 @@
   "scm.alwaysShowRepositories": true,
   "markdownInlineEditor.math.enabled": false,
   "diffEditor.ignoreTrimWhitespace": false,
+  "terminal.integrated.gpuAcceleration": "on",
 }
