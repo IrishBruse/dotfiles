@@ -33,6 +33,29 @@ async function loadCustomBindings(): Promise<Keybind[]> {
   return parsed.bindings;
 }
 
+/** Stable key order for custom.json: key, command, args, when (then platform overrides if present). */
+function orderKeybind(b: Keybind): Keybind {
+  const o: Keybind = { key: b.key };
+  if (b.command !== undefined) o.command = b.command;
+  if (b.args !== undefined) o.args = b.args;
+  if (b.when !== undefined) o.when = b.when;
+  if (b.mac !== undefined) o.mac = b.mac;
+  if (b.linux !== undefined) o.linux = b.linux;
+  if (b.win !== undefined) o.win = b.win;
+  return o;
+}
+
+async function writeFormattedCustomJson(bindings: Keybind[]): Promise<void> {
+  const doc = {
+    $schema: "./keybindings.schema.json",
+    bindings: bindings.map(orderKeybind),
+  };
+  await fs.writeFile(
+    new URL("./custom.json", import.meta.url),
+    `${JSON.stringify(doc, null, 2)}\n`,
+  );
+}
+
 function whenMatches(a?: string, b?: string): boolean {
   return (a ?? "") === (b ?? "");
 }
@@ -115,8 +138,9 @@ async function buildMacosKeybinds(custom: Keybind[]): Promise<Keybind[]> {
   ];
 }
 
-await generateKeybindingEnums();
 const custom = await loadCustomBindings();
+// await writeFormattedCustomJson(custom);
+await generateKeybindingEnums();
 
 await writeKeybindingsFile(
   "../../../Library/Application Support/Code/User/keybindings.json",

@@ -1,6 +1,6 @@
 # Rules
 
-1. Write all plans to docs/ before implementating anything
+1. Write all plans to `docs/` before implementating anything
 3. When you encounter something you didnt expect in this code base update `Quirks` in the `AGENTS.md`
 4. Always make sure to verify changes with commands before finishing
 

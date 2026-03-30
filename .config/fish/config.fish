@@ -8,8 +8,6 @@ set -gx JQ_COLORS "0;34:0;34:0;34:0;37:0;32:0;37:0;37:0;31"
 set -gx DOTNET_WATCH_RESTART_ON_RUDE_EDIT 1
 set -gx DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION true
 
-alias agent-cli="node ~/dotfiles/scripts/cursor-cli.js"
-
 source ~/dotfiles/local.fish
 
 function on_change_pwd --on-variable PWD
@@ -54,7 +52,6 @@ alias la="eza -l --no-permissions --no-user --time-style relative --group-direct
 alias ll="eza -la --no-permissions --group-directories-first"
 alias la=ll
 alias reload="clear;exec fish"
-alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LDtk.Codegen.csproj"
 
 alias j="just"
 
@@ -62,6 +59,12 @@ alias showkey="fish_key_reader --verbose"
 
 alias nano="micro"
 alias snano="sudo micro"
+
+# Scripts
+
+alias mcp="node ~/dotfiles/scripts/mcp-cli.js"
+alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LDtk.Codegen.csproj"
+alias agent-cli="node ~/dotfiles/scripts/cursor-cli.js"
 
 # Node alias
 abbr nvm fnm

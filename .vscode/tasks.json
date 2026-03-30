@@ -4,7 +4,7 @@
     {
       "label": "Vscode Keybind",
       "type": "shell",
-      "command": "fnm use 24 && node --experimental-specifier-resolution=node --watch gen.ts",
+      "command": "fnm use 24 && node --experimental-specifier-resolution=node --watch --watch-path=custom.json gen.ts",
       "problemMatcher": [],
       "options": {
         "cwd": "vscode/keybindings/"

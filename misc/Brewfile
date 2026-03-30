@@ -1,6 +1,8 @@
 tap "ankitpokhrel/jira-cli"
 tap "anomalyco/tap"
+tap "atlassian/acli"
 tap "brew-gem/gems"
+tap "cloudflare/cloudflare"
 tap "gp-nova/devx-cli", "https://github.com/gp-nova/devx-cli.git"
 tap "koekeishiya/formulae"
 tap "kreuzberg-dev/tap"
