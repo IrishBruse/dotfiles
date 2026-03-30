@@ -6,7 +6,7 @@
   "type": "module",
   "bin": {
     "mcp": "./bin/mcp.js",
-    "confluence-sync": "./bin/confluence-sync.js"
+    "confluence-pull": "./bin/confluence-pull.js"
   },
   "devDependencies": {
     "@types/node": "25.5.0"
