@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { execSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -47,6 +48,20 @@ const highlight = (s: string) =>
   useColor() ? `${C_YELLOW}${BOLD}${s}${RESET}` : s;
 const dim = (s: string) => (useColor() ? `${DIM}${s}${RESET}` : s);
 const errStyle = (s: string) => (useColor() ? `${C_RED}${s}${RESET}` : s);
+
+function printJson(data: unknown): void {
+  const input = typeof data === "string" ? data : JSON.stringify(data);
+  try {
+    const result = execSync("jq -C .", {
+      input,
+      encoding: "utf-8",
+      stdio: ["pipe", "pipe", "pipe"],
+    });
+    console.log(result.trimEnd());
+  } catch {
+    console.log(JSON.stringify(data, null, 2));
+  }
+}
 
 // --- Config ---
 
@@ -460,13 +475,18 @@ async function cmdCall(
             console.error(formatted);
             process.exit(1);
           }
-          console.log(block.text);
+          try {
+            const parsed = JSON.parse(block.text);
+            printJson(parsed);
+          } catch {
+            console.log(block.text);
+          }
         } else {
-          console.log(JSON.stringify(block, null, 2));
+          printJson(block);
         }
       }
     } else {
-      console.log(JSON.stringify(result, null, 2));
+      printJson(result);
     }
   } catch (e) {
     const err = e as Error;
