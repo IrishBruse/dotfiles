@@ -5,7 +5,8 @@
   "license": "ISC",
   "type": "module",
   "bin": {
-    "mcp": "./bin/mcp.js"
+    "mcp": "./bin/mcp.js",
+    "confluence-sync": "./bin/confluence-sync.js"
   },
   "devDependencies": {
     "@types/node": "25.5.0"

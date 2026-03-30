@@ -51,8 +51,9 @@ const errStyle = (s: string) => (useColor() ? `${C_RED}${s}${RESET}` : s);
 
 function printJson(data: unknown): void {
   const input = typeof data === "string" ? data : JSON.stringify(data);
+  const jqCmd = useColor() ? "jq -C ." : "jq .";
   try {
-    const result = execSync("jq -C .", {
+    const result = execSync(jqCmd, {
       input,
       encoding: "utf-8",
       stdio: ["pipe", "pipe", "pipe"],
@@ -576,51 +577,21 @@ function coerceValue(v: string): unknown {
   return v;
 }
 
-/**
- * Parses tool arguments from argv.  Two forms are supported and can be mixed:
- *   --args '{"key":"val"}'       legacy JSON blob
- *   --cloudId abc --pageId 123   individual flags (preferred)
- * Individual flags take precedence over --args values.
- */
 function parseToolArgs(argv: string[]): Record<string, unknown> {
-  let base: Record<string, unknown> = {};
-
-  // Pull out --args JSON blob first
-  for (let i = 0; i < argv.length; i++) {
-    let json: string | null = null;
-    if (argv[i] === "--args" && argv[i + 1]) json = argv[++i];
-    else if (argv[i].startsWith("--args="))
-      json = argv[i].slice("--args=".length);
-    if (json !== null) {
-      try {
-        base = JSON.parse(json) as Record<string, unknown>;
-      } catch {
-        console.error(errStyle(`Invalid JSON for --args: ${json}`));
-        process.exit(1);
-      }
-    }
-  }
-
-  // Overlay individual --key [value] flags (skip --args itself)
-  const overlay: Record<string, unknown> = {};
+  const args: Record<string, unknown> = {};
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (!arg.startsWith("--")) continue;
     const key = arg.slice(2);
-    if (key === "args") {
-      i++;
-      continue;
-    } // already handled above
     const next = argv[i + 1];
     if (next !== undefined && !next.startsWith("--")) {
-      overlay[key] = coerceValue(next);
+      args[key] = coerceValue(next);
       i++;
     } else {
-      overlay[key] = true;
+      args[key] = true;
     }
   }
-
-  return { ...base, ...overlay };
+  return args;
 }
 
 async function main(): Promise<number> {
