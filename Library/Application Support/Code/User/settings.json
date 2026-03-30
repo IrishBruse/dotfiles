@@ -1047,6 +1047,7 @@
     "*.toml.example": "toml",
     "*.gbasm": "retroasm_gameboy",
     "SKILL.md": "skill",
+    "CODEOWNERS": "plaintext",
   },
   "files.exclude": {
     "**/.git": false,

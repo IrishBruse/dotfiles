@@ -1,0 +1,13 @@
+{
+  "name": "mcp-cli",
+  "version": "1.0.0",
+  "description": "CLI wrapper for MCP servers defined in ~/.cursor/mcp.json",
+  "license": "ISC",
+  "type": "module",
+  "bin": {
+    "mcp": "./bin/mcp.js"
+  },
+  "devDependencies": {
+    "@types/node": "25.5.0"
+  }
+}

@@ -62,7 +62,6 @@ alias snano="sudo micro"
 
 # Scripts
 
-alias mcp="node ~/dotfiles/scripts/mcp-cli.js"
 alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LDtk.Codegen.csproj"
 alias agent-cli="node ~/dotfiles/scripts/cursor-cli.js"
 
