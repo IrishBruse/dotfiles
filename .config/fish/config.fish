@@ -27,7 +27,7 @@ function v
     end
 end
 
-function watch -a command time
+function repeat -a command time
     if not set -q time[1]
         set time 1
     end
