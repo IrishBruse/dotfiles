@@ -16,16 +16,18 @@
 - Use `label()` for section headers.
 - Prefer `process.exit(1)` for fatal errors, `process.exit(0)` for clean exits.
 - Return numeric exit codes from `main()`.
-- Keep the JSON-RPC logic in `mcp.ts`, OAuth logic in `oauth.ts` — don't mix concerns.
-- New CLI commands go in `main()` as `if (sub === "...")` branches.
+- Keep JSON-RPC logic in `client.ts`, command implementations in `commands.ts`, OAuth logic in `oauth.ts` — don't mix concerns.
+- New CLI commands go in `main()` in `mcp.ts` as `if (sub === "...")` branches; add command handler to `commands.ts`.
 - Flag parsing uses `extractFlag()` for named flags and `parseToolArgs()` for `--key value` pairs.
 - Error messages should be actionable: include what went wrong and how to fix it when possible.
 
 # Architecture
 
 - `bin/mcp.js` → imports `mcp.ts` (2 lines, shebang + import)
-- `mcp.ts` → CLI entry, all command logic, session/caching, JSON-RPC, output formatting
-- `oauth.ts` → pure OAuth utilities exported for use by `mcp.ts` (`getOAuthToken`, `loadTokens`, `saveTokens`)
+- `mcp.ts` → CLI entry: types, config loading, auth resolution, arg parsing, command routing
+- `client.ts` → MCP JSON-RPC client: session management, caching, HTTP transport, SSE parsing
+- `commands.ts` → command handlers (`cmdList`, `cmdTools`, `cmdToolHelp`, `cmdCall`, `cmdLogout`), error formatting, terminal styling
+- `oauth.ts` → pure OAuth utilities (`getOAuthToken`, `loadTokens`, `saveTokens`)
 - `bin/confluence-pull.js` → standalone script using `mcp atlassian` via `execSync`
 - Session cache (`_cache` Map) stores sessions and tool lists with 5-minute TTL
 - Tokens are stored as a JSON object keyed by server name at `~/.config/mcp-cli/tokens.json`
