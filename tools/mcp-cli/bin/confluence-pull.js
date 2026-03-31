@@ -3,22 +3,60 @@ import { execSync } from "child_process";
 import { mkdirSync, writeFileSync } from "fs";
 import { join } from "path";
 
-const flags = new Set(["--spaceId"]);
-const positional = process.argv.slice(2).filter(a => !flags.has(a));
+function parseArgs(argv) {
+  const USE_SPACE_ID = argv.includes("--spaceId");
+  let rootPageId = null;
+  const out = [];
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === "--spaceId") continue;
+    if (a === "--root") {
+      rootPageId = argv[++i];
+      if (!rootPageId) {
+        console.error("Missing value for --root <pageId>");
+        process.exit(1);
+      }
+      continue;
+    }
+    if (a === "--url") {
+      const url = argv[++i];
+      if (!url) {
+        console.error("Missing value for --url <confluencePageUrl>");
+        process.exit(1);
+      }
+      const m = String(url).match(/\/pages\/(\d+)/);
+      if (!m) {
+        console.error("Could not find page id in URL (expected .../pages/<id>/...)");
+        process.exit(1);
+      }
+      rootPageId = m[1];
+      continue;
+    }
+    out.push(a);
+  }
+  return { USE_SPACE_ID, rootPageId, positional: out };
+}
+
+const { USE_SPACE_ID, rootPageId, positional } = parseArgs(process.argv.slice(2));
+
 const CLOUD_ID = positional[0];
-const SPACE_KEY = positional[1];
-const OUTPUT_DIR = positional[2] || `./confluence-${SPACE_KEY}`;
+/** Full-space mode: [cloudId, spaceKey, outputDir?]. Root mode: [cloudId, outputDir?] */
+const SPACE_KEY = rootPageId ? undefined : positional[1];
+const OUTPUT_DIR = rootPageId
+  ? positional[1] || `./confluence-${rootPageId}`
+  : positional[2] || `./confluence-${SPACE_KEY}`;
 
-const USE_SPACE_ID = process.argv.includes("--spaceId");
-
-if (!CLOUD_ID || !SPACE_KEY) {
-  console.error("Usage: node confluence-sync.js <cloudId> <spaceKey|spaceId> [outputDir] [--spaceId]");
+if (!CLOUD_ID || (!rootPageId && !SPACE_KEY)) {
+  console.error("Usage:");
+  console.error("  Full space:  node confluence-pull.js <cloudId> <spaceKey|spaceId> [outputDir] [--spaceId]");
+  console.error("  Subtree:     node confluence-pull.js <cloudId> [outputDir] --root <pageId>");
+  console.error("  Subtree:     node confluence-pull.js <cloudId> [outputDir] --url <confluencePageUrl>");
   console.error("");
   console.error("To get your cloudId:");
   console.error("  mcp atlassian getAccessibleAtlassianResources");
   console.error("");
   console.error("To list spaces:");
-  console.error(`  mcp atlassian getConfluenceSpaces --cloudId <cloudId>`);
+  console.error("  mcp atlassian getConfluenceSpaces --cloudId <cloudId>");
   process.exit(1);
 }
 
@@ -147,33 +185,46 @@ function syncPage(dir, title, pageId, level) {
 }
 
 // Main
-console.log(`Syncing space ${SPACE_KEY} to ${OUTPUT_DIR}\n`);
+if (rootPageId) {
+  console.log(`Syncing subtree from page ${rootPageId} to ${OUTPUT_DIR}\n`);
+  const rootPage = getPage(rootPageId);
+  mkdirSync(OUTPUT_DIR, { recursive: true });
+  const result = syncPage(
+    join(OUTPUT_DIR, sanitize(rootPage.title)),
+    rootPage.title,
+    rootPageId,
+    0
+  );
+  const total = 1 + result.children;
+  console.log(`\nDone. Synced ${total} pages to ${OUTPUT_DIR}`);
+} else {
+  console.log(`Syncing space ${SPACE_KEY} to ${OUTPUT_DIR}\n`);
 
-const spaceId = USE_SPACE_ID ? SPACE_KEY : getSpaceId(SPACE_KEY);
-if (!spaceId) {
-  console.error(`Space "${SPACE_KEY}" not found`);
-  process.exit(1);
+  const spaceId = USE_SPACE_ID ? SPACE_KEY : getSpaceId(SPACE_KEY);
+  if (!spaceId) {
+    console.error(`Space "${SPACE_KEY}" not found`);
+    process.exit(1);
+  }
+
+  const topPages = [];
+  let cursor;
+  do {
+    const data = getPages(spaceId, cursor);
+    if (data.error) throw new Error(data.message);
+    const pages = data.results ?? data ?? [];
+    topPages.push(...pages);
+    cursor = data._links?.next ? "next" : undefined;
+  } while (cursor);
+
+  console.log(`Found ${topPages.length} top-level pages\n`);
+
+  mkdirSync(OUTPUT_DIR, { recursive: true });
+
+  let total = 0;
+  for (const page of topPages) {
+    const result = syncPage(join(OUTPUT_DIR, sanitize(page.title)), page.title, page.id, 0);
+    total += 1 + result.children;
+  }
+
+  console.log(`\nDone. Synced ${total} pages to ${OUTPUT_DIR}`);
 }
-
-// Get all top-level pages
-const topPages = [];
-let cursor;
-do {
-  const data = getPages(spaceId, cursor);
-  if (data.error) throw new Error(data.message);
-  const pages = data.results ?? data ?? [];
-  topPages.push(...pages);
-  cursor = data._links?.next ? "next" : undefined;
-} while (cursor);
-
-console.log(`Found ${topPages.length} top-level pages\n`);
-
-mkdirSync(OUTPUT_DIR, { recursive: true });
-
-let total = 0;
-for (const page of topPages) {
-  const result = syncPage(join(OUTPUT_DIR, sanitize(page.title)), page.title, page.id, 0);
-  total += 1 + result.children;
-}
-
-console.log(`\nDone. Synced ${total} pages to ${OUTPUT_DIR}`);
