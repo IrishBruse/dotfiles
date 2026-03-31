@@ -96,10 +96,21 @@ function extractFlag(argv: string[], flag: string): [string | null, string[]] {
   return [val, rest];
 }
 
-function coerceValue(v: string): unknown {
+function coerceValue(v: string, key: string): unknown {
   if (v === "true") return true;
   if (v === "false") return false;
   if (v === "null") return null;
+  // MCP tool schemas often expect numbers for these flags; argv is always strings.
+  if (/^(limit|depth|maxResults|top|skip|first|offset|pageSize|perPage)$/i.test(key)) {
+    if (/^-?\d+$/.test(v)) {
+      const n = Number(v);
+      if (Number.isSafeInteger(n)) return n;
+    }
+    if (/^-?\d+\.\d+$/.test(v)) {
+      const n = Number(v);
+      if (Number.isFinite(n)) return n;
+    }
+  }
   return v;
 }
 
@@ -111,7 +122,7 @@ function parseToolArgs(argv: string[]): Record<string, unknown> {
     const key = arg.slice(2);
     const next = argv[i + 1];
     if (next !== undefined && !next.startsWith("--")) {
-      args[key] = coerceValue(next);
+      args[key] = coerceValue(next, key);
       i++;
     } else {
       args[key] = true;
