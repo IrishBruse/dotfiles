@@ -31,6 +31,7 @@ local.fish
 
 node_modules
 .config/dconf/user.txt-lock
+.config/mcp-cli/
 
 scratch/
 .config/dconf/user
