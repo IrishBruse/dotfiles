@@ -1,18 +1,33 @@
 ---
 name: pr
-description: Args [draft,preview,update,new] Use when the user is ready to make a Pull Request
+description: Automates the creation, updating, and previewing of Pull Requests while enforcing repository templates, Jira ticket integration, and conventional commit standards.
+compatibility: gh cli, Jira access,
 ---
 
-# Args
+# PR Tool
 
-- `new`/`no arg` create a none draft PR
-- `draft` only create a draft PR
-- `update` update the body and title of the already created PR
-- `preview` dont create a pr only create a markdown file with a preview of what the PR will looklike put it in `./PR.md`
+Automates the generation and management of Pull Requests to ensure they meet repository standards, include necessary tracking information (like Jira tickets), and follow expected commit conventions.
 
-# Rules
+## Prerequisites
 
-- Figure out the Jira ticket which should be the first part of the ticket example `NOVACORE-1234 - description...`
-- If the repo has a PR template under `.github/` (e.g. `pull_request_template.md`), use it and follow it
-- Check **CONTRIBUTING.md** or **docs/** for contribution rules, not only `.github/` templates.
-- **Conventional commits** or **merge strategy** (squash vs merge) if the agent should align commit messages.
+- Local git repository with an active branch and pushed commits.
+- Access to read repository configuration files (e.g., `.github/pull_request_template.md`, `CONTRIBUTING.md`, `docs/`).
+- GitHub CLI (`gh`) fail if not auth or not installed goto `#Failure`.
+- Jira MCP connected if missing goto `#Failure`.
+- On a fully pushed branch if not or on main goto `#Failure`.
+
+# Steps
+
+1. Pull down the users currently assigned jira tickets.
+2. Read the diff from this branch and main fail if on main.
+3. Review PR for issues dont examine code.
+4. Read the local PR template and use it.
+5. Create the pr with the title `NOVACORE-123 - title`
+
+# Output
+
+Return the link to the pr template only unless there are issues.
+
+# Failure
+
+Print the failure reason to the user and stop executing.

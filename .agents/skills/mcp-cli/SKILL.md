@@ -3,6 +3,7 @@ name: mcp-cli
 description: Use this skill when working with the mcp CLI tool.
   Covers calling MCP server tools, listing servers/tools, OAuth auth,
   debugging errors, and the confluence-sync utility.
+disable-model-invocation: true
 ---
 
 # MCP CLI
