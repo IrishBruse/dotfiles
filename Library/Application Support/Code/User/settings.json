@@ -1288,7 +1288,6 @@
     "editor.defaultFormatter": "tamasfe.even-better-toml",
   },
   "[markdown]": {
-    "editor.wordWrap": "off",
     "editor.defaultFormatter": "yzhang.markdown-all-in-one",
   },
   "[markdown,skill]": {
