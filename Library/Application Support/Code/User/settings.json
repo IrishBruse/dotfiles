@@ -1011,7 +1011,6 @@
   // File Associations
   //
   "workbench.editorAssociations": {
-    "*.copilotmd": "vscode.markdown.preview.editor",
     "{hexdiff}:/**/*.*": "hexEditor.hexedit",
     "*.bin": "hexEditor.hexedit",
     "*.gb": "hexEditor.hexedit",

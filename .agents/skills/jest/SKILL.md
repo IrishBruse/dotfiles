@@ -8,21 +8,6 @@ disable-model-invocation: true
 
 A comprehensive skill for testing React applications using Jest and React Testing Library. This skill covers everything from basic component testing to advanced patterns including mocking, async testing, custom hooks testing, and integration testing strategies.
 
-## When to Use This Skill
-
-Use this skill when:
-
-- Testing React components with Jest and React Testing Library
-- Setting up Jest configuration for React projects
-- Writing unit tests for components, hooks, and utilities
-- Testing user interactions and component behavior
-- Mocking modules, functions, API calls, and external dependencies
-- Testing asynchronous operations (API calls, timers, promises)
-- Testing custom React hooks
-- Writing integration tests for complex component trees
-- Debugging failing tests or improving test coverage
-- Following testing best practices and patterns
-
 ## Core Concepts
 
 ### Testing Philosophy
@@ -1316,10 +1301,3 @@ it("renders modal in portal", () => {
 - Jest DOM Matchers: https://github.com/testing-library/jest-dom
 - MSW Documentation: https://mswjs.io/
 - Common Mistakes: https://kentcdodds.com/blog/common-mistakes-with-react-testing-library
-
----
-
-**Skill Version**: 1.0.0
-**Last Updated**: October 2025
-**Skill Category**: Testing, React, Quality Assurance
-**Compatible With**: Jest 29+, React Testing Library 13+, React 16.8+
