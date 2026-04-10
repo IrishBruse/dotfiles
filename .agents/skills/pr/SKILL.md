@@ -6,7 +6,8 @@ compatibility: gh cli, Jira mcp
 
 # Steps
 
-- Pull down the users currently assigned jira tickets with the mcp tool.
+- Pull down the users currently assigned jira tickets with the mcp tool
+  - Or use the user provided jira id in which case you can skip this and use the provided id.
 - Run `git diff origin/main` to use with the description.
 - Read the local PR template and use it.
 - Create the PR with the title `NOVACORE-123 - <title>` and the body following the template.
