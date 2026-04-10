@@ -1011,7 +1011,6 @@
   // File Associations
   //
   "workbench.editorAssociations": {
-    "*.copilotmd": "vscode.markdown.preview.editor",
     "{hexdiff}:/**/*.*": "hexEditor.hexedit",
     "*.bin": "hexEditor.hexedit",
     "*.gb": "hexEditor.hexedit",
@@ -1042,7 +1041,7 @@
     "*.ast": "graphql",
     "*.sh": "shellscript",
     "*.yaml": "yaml",
-    "*.gbl": "b",
+    "*.gbl": "go",
     "*.toml.example": "toml",
     "*.gbasm": "retroasm_gameboy",
     "SKILL.md": "skill",
@@ -1289,10 +1288,10 @@
     "editor.defaultFormatter": "tamasfe.even-better-toml",
   },
   "[markdown]": {
-    // "editor.wordWrap": "off",
     "editor.defaultFormatter": "yzhang.markdown-all-in-one",
   },
   "[markdown,skill]": {
+    "editor.wordWrap": "on",
     "files.trimFinalNewlines": false,
     "files.trimTrailingWhitespace": false,
     "editor.indentSize": 4,
@@ -1547,9 +1546,9 @@
   "markdownInlineEditor.colors.inlineCodeBackground": "#23282f00",
   "workbench.editor.enablePreview": false,
   "task.allowAutomaticTasks": "on",
-  "ib-utilities.pasteImagePath": ".ai/images/",
   "scm.alwaysShowRepositories": true,
   "markdownInlineEditor.math.enabled": false,
   "diffEditor.ignoreTrimWhitespace": false,
   "terminal.integrated.gpuAcceleration": "on",
+  "git.repositoryScanMaxDepth": 2,
 }
