@@ -314,5 +314,10 @@
         "key": "ctrl+u",
         "command": "workbench.action.terminal.startVoice",
         "when": "terminalDictation.inProgress"
+    },
+    {
+        "key": "ctrl+t",
+        "command": "workbench.action.createTerminalEditor",
+        "when": "terminalEditorFocus"
     }
 ]

@@ -1210,6 +1210,7 @@
   },
   "terminal.explorerKind": "both",
   "terminal.integrated.commandsToSkipShell": [
+    "workbench.action.createTerminalEditor",
     "workbench.action.terminal.copySelection",
     "workbench.action.terminal.paste",
     "workbench.action.terminal.startVoice",

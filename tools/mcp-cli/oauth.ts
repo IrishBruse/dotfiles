@@ -3,20 +3,11 @@
  * Supports dynamic client registration, auth code flow, and token refresh.
  */
 
+import { exec } from "node:child_process";
 import crypto from "node:crypto";
-import fs from "node:fs";
 import http from "node:http";
 import type { AddressInfo } from "node:net";
-import os from "node:os";
-import path from "node:path";
-import { exec } from "node:child_process";
-
-export const TOKENS_PATH = path.join(
-  os.homedir(),
-  ".config",
-  "mcp-cli",
-  "tokens.json",
-); // TODO: Improve where this is stored
+import { createRequire } from "node:module";
 
 // --- Types ---
 
@@ -28,6 +19,21 @@ export interface StoredToken {
   client_secret?: string;
   token_endpoint?: string;
 }
+
+const require = createRequire(import.meta.url);
+const {
+  TOKENS_PATH,
+  loadTokens: loadTokensFromStore,
+  saveTokens: saveTokensToStore,
+  getTokenStoreDescription,
+} = require("./token-store.cjs") as {
+  TOKENS_PATH: string;
+  loadTokens: () => Record<string, StoredToken>;
+  saveTokens: (tokens: Record<string, StoredToken>) => void;
+  getTokenStoreDescription: () => string;
+};
+
+export { TOKENS_PATH };
 
 interface OAuthMeta {
   authorization_endpoint: string;
@@ -62,19 +68,14 @@ interface RefreshTokenOpts {
   clientSecret?: string;
 }
 
-// --- Token storage ---
+// --- Token storage (Keychain on macOS; see token-store.cjs) ---
 
 export function loadTokens(): Record<string, StoredToken> {
-  try {
-    return JSON.parse(fs.readFileSync(TOKENS_PATH, "utf-8"));
-  } catch {
-    return {};
-  }
+  return loadTokensFromStore();
 }
 
 export function saveTokens(tokens: Record<string, StoredToken>): void {
-  fs.mkdirSync(path.dirname(TOKENS_PATH), { recursive: true });
-  fs.writeFileSync(TOKENS_PATH, JSON.stringify(tokens, null, 2), "utf-8");
+  saveTokensToStore(tokens);
 }
 
 // --- PKCE ---
@@ -324,6 +325,6 @@ export async function getOAuthToken(
   tokens[serverName] = newEntry;
   saveTokens(tokens);
 
-  log(`Authorized! Token stored at ${TOKENS_PATH}\n\n`);
+  log(`Authorized! Token stored: ${getTokenStoreDescription()}\n\n`);
   return newEntry.access_token!;
 }
