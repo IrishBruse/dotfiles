@@ -29,69 +29,19 @@ end run`,
   return out.replace(/\n$/, "");
 }
 
-/** On Hyprland, force the entry dialog to float (tiled zenity/yad is common otherwise). */
-function hyprlandFloatPoller(pid) {
-  if (!process.env.HYPRLAND_INSTANCE_SIGNATURE) return () => {};
-
-  let stopped = false;
-  const start = Date.now();
-  const maxMs = 15_000;
-  const interval = setInterval(() => {
-    if (stopped) return;
-    if (Date.now() - start > maxMs) {
-      clearInterval(interval);
-      return;
-    }
-    try {
-      const raw = execFileSync("hyprctl", ["clients", "-j"], {
-        encoding: "utf8",
-        maxBuffer: 10 * 1024 * 1024,
-      });
-      const clients = JSON.parse(raw);
-      const win = clients.find((c) => c.pid === pid);
-      if (!win || !win.mapped) return;
-      if (win.floating) {
-        stopped = true;
-        clearInterval(interval);
-        return;
-      }
-      execFileSync("hyprctl", [
-        "dispatch",
-        "setfloating",
-        `address:${win.address}`,
-      ]);
-      stopped = true;
-      clearInterval(interval);
-    } catch {
-      // hyprctl missing or transient parse error — keep polling briefly
-    }
-  }, 45);
-
-  return () => {
-    stopped = true;
-    clearInterval(interval);
-  };
-}
-
 function spawnEntry(cmd, args) {
   return new Promise((resolve, reject) => {
     const child = spawn(cmd, args);
     let stdout = "";
-
-    const stopFloat = hyprlandFloatPoller(child.pid);
 
     child.stdout?.setEncoding("utf8");
     child.stdout?.on("data", (chunk) => {
       stdout += chunk;
     });
 
-    child.on("error", (err) => {
-      stopFloat();
-      reject(err);
-    });
+    child.on("error", reject);
 
     child.on("close", (code) => {
-      stopFloat();
       if (code === 0) {
         resolve(stdout.replace(/\n$/, ""));
       } else {
