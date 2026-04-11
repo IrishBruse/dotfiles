@@ -1560,4 +1560,5 @@
   "workbench.editor.useModal": "off",
   "markdown.extension.tableFormatter.enabled": false,
   "markdown.extension.tableFormatter.normalizeIndentation": true,
+  "workbench.browser.showInTitleBar": true,
 }
