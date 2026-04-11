@@ -1551,4 +1551,13 @@
   "diffEditor.ignoreTrimWhitespace": false,
   "terminal.integrated.gpuAcceleration": "on",
   "git.repositoryScanMaxDepth": 2,
+  "acp.agents": {
+    "Cursor": {
+      "command": "agent",
+      "args": ["acp"],
+    },
+  },
+  "workbench.editor.useModal": "off",
+  "markdown.extension.tableFormatter.enabled": false,
+  "markdown.extension.tableFormatter.normalizeIndentation": true,
 }
