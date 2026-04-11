@@ -14,6 +14,5 @@ swaync-client -R -rs
 
 # Start waybar and capture error output
 waybar &
-waybar -c /home/econn/dotfiles/.config/waybar/titlebar.jsonc &
 
 hyprctl notify 2 2000 0 "Hyprland Restarted"
