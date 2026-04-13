@@ -8,6 +8,7 @@ import crypto from "node:crypto";
 import http from "node:http";
 import type { AddressInfo } from "node:net";
 import { createRequire } from "node:module";
+import process from "node:process";
 
 // --- Types ---
 
@@ -169,7 +170,10 @@ export function startCallbackServer(): Promise<{
 }
 
 export function openBrowser(url: string): void {
-  exec(`open ${JSON.stringify(url)}`);
+  const q = JSON.stringify(url);
+  if (process.platform === "darwin") exec(`open ${q}`);
+  else if (process.platform === "win32") exec(`start ${q}`);
+  else exec(`xdg-open ${q}`);
 }
 
 // --- Token exchange & refresh ---

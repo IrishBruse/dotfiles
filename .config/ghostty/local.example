@@ -1,0 +1,3 @@
+command = /opt/homebrew/bin/fish -i -l
+working-directory = /Users/econneely/git/
+font-size = 12

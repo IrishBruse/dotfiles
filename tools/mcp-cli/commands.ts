@@ -187,7 +187,8 @@ export function formatMcpError(error: Record<string, unknown>): string {
   return lines.length ? lines.join("\n") : JSON.stringify(error);
 }
 
-function formatTextContentError(text: string): string | null {
+/** Plain-text MCP validation errors from tools/call text blocks (no ANSI). */
+export function formatTextContentErrorPlain(text: string): string | null {
   const mcpErrorMatch = text.match(/^MCP error (-?\d+):\s*(.*)$/s);
   if (!mcpErrorMatch) return null;
 
@@ -199,19 +200,32 @@ function formatTextContentError(text: string): string | null {
     try {
       const data = JSON.parse(dataMatch[1]) as Array<Record<string, unknown>>;
       for (const item of data) {
-        const path = ((item.path as string[] | undefined)?.join("."));
-        const itemMsg = item.message as string | undefined;
-        if (path) {
-          lines.push(
-            `  ${highlight(`--${path}`)}  ${dim(itemMsg ?? "invalid")}`,
-          );
+        if (typeof item === "object" && item !== null) {
+          const path = ((item.path as string[] | undefined)?.join("."));
+          const itemMsg = item.message as string | undefined;
+          if (path) {
+            lines.push(`  --${path}  ${itemMsg ?? "invalid"}`);
+          }
         }
       }
     } catch {}
   }
 
   if (lines.length) return lines.join("\n");
-  return message.split('\n')[0];
+  return message.split("\n")[0];
+}
+
+function formatTextContentError(text: string): string | null {
+  const plain = formatTextContentErrorPlain(text);
+  if (!plain) return null;
+  return plain
+    .split("\n")
+    .map((line) => {
+      const m = line.match(/^  (--\S+)\s{2}(.+)$/);
+      if (m) return `  ${highlight(m[1])}  ${dim(m[2])}`;
+      return line;
+    })
+    .join("\n");
 }
 
 export async function cmdCall(
