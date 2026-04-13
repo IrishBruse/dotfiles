@@ -9,6 +9,10 @@ import process from "node:process";
 import { getOAuthToken } from "./oauth.ts";
 import { callTool, type McpConfig, type ServerConfig } from "./client.ts";
 import { CONFIG_PATH, dim, formatTextContentErrorPlain } from "./commands.ts";
+import {
+  formatConfluenceDateForOutput,
+  replaceConfluenceDateNodes,
+} from "./confluence-dates.ts";
 
 function pLimit(concurrency: number) {
   const queue: Array<{
@@ -344,7 +348,12 @@ function buildFrontmatter(page: ConfluencePage) {
     ["status", page.status],
     ["spaceId", page.spaceId],
     ["parentId", page.parentId],
-    ["createdAt", page.createdAt],
+    [
+      "createdAt",
+      page.createdAt != null
+        ? formatConfluenceDateForOutput(page.createdAt)
+        : undefined,
+    ],
     ["version", page.version?.number],
   ];
   for (const [key, val] of fields) {
@@ -365,7 +374,7 @@ function cleanContent(body: string) {
     /<custom data-type="mention"[^>]*>(@?\w+)<\/custom>/g,
     "$1",
   );
-  text = text.replace(/<custom data-type="date"[^>]*>([^<]*)<\/custom>/g, "$1");
+  text = replaceConfluenceDateNodes(text);
   text = text.replace(
     /<custom data-type="placeholder"[^>]*>.*?<\/custom>/g,
     "",

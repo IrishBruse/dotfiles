@@ -54,6 +54,8 @@ alias la=ll
 alias reload="clear;exec fish"
 
 alias j="just"
+alias ac="agent --continue"
+alias aa="agent agent"
 
 alias showkey="fish_key_reader --verbose"
 

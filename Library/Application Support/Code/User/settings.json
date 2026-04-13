@@ -1561,7 +1561,6 @@
   "workbench.editor.useModal": "off",
   "markdown.extension.tableFormatter.enabled": false,
   "workbench.browser.showInTitleBar": true,
-  "markdown.extension.tableFormatter.delimiterRowNoPadding": true,
   "ib-utilities.acpAgents": [
     { "name": "Cursor", "command": "agent", "args": ["acp"] },
   ],

@@ -6,6 +6,7 @@ import process from "node:process";
 import { loadTokens, saveTokens } from "./oauth.ts";
 import type { McpConfig, McpResult, ServerConfig } from "./client.ts";
 import { callTool, listTools } from "./client.ts";
+import { normalizeConfluenceToolJson } from "./confluence-dates.ts";
 
 // --- Colors ---
 
@@ -264,7 +265,7 @@ export async function cmdCall(
           }
           try {
             const parsed = JSON.parse(block.text);
-            printJson(parsed);
+            printJson(normalizeConfluenceToolJson(toolName, parsed));
           } catch {
             console.log(block.text);
           }
