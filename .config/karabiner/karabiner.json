@@ -11,7 +11,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_if"
                   }
@@ -134,7 +135,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -165,7 +167,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -196,7 +199,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -227,7 +231,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -264,6 +269,7 @@
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
                       "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$",
                       "^com\\.mitchellh\\.ghostty$"
                     ],
                     "type": "frontmost_application_unless"
@@ -293,6 +299,7 @@
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
                       "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$",
                       "^com\\.mitchellh\\.ghostty$"
                     ],
                     "type": "frontmost_application_unless"
@@ -322,6 +329,7 @@
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
                       "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$",
                       "^com\\.mitchellh\\.ghostty$"
                     ],
                     "type": "frontmost_application_unless"
@@ -366,6 +374,7 @@
                       "^com\\.microsoft\\.rdc$",
                       "^com\\.microsoft\\.VSCode$",
                       "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$",
                       "^com\\.nulana\\.remotixmac$",
                       "^com\\.OpenText\\.Exceed-TurboX-Client$",
                       "^com\\.parallels\\.desktop\\.console$",
@@ -436,6 +445,7 @@
                       "^com\\.microsoft\\.rdc$",
                       "^com\\.microsoft\\.VSCode$",
                       "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$",
                       "^com\\.nulana\\.remotixmac$",
                       "^com\\.OpenText\\.Exceed-TurboX-Client$",
                       "^com\\.parallels\\.desktop\\.console$",
@@ -496,7 +506,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -532,7 +543,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -568,7 +580,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -634,7 +647,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -667,7 +681,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -703,7 +718,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -734,7 +750,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -770,7 +787,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -806,7 +824,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -837,7 +856,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -868,7 +888,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -904,7 +925,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -1708,7 +1730,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.microsoft\\.VSCode$",
-                      "^com\\.microsoft\\.VSCodeInsiders$"
+                      "^com\\.microsoft\\.VSCodeInsiders$",
+                      "^com\\.todesktop\\.230313mzl4w4u92$"
                     ],
                     "type": "frontmost_application_unless"
                   }
