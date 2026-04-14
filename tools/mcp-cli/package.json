@@ -6,7 +6,8 @@
   "type": "module",
   "bin": {
     "mcp": "./bin/mcp.js",
-    "confluence-pull": "./bin/confluence-pull.js"
+    "confluence-pull": "./bin/confluence-pull.js",
+    "jira-ls": "./bin/jira-ls.js"
   },
   "devDependencies": {
     "@types/node": "25.5.0"
