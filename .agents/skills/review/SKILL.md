@@ -9,6 +9,11 @@ description:
 
 This skill guides the agent in conducting professional and thorough code reviews for local development.
 
+## Inputs
+
+- If the user doesnt specify assume its this local repo.
+- If the user provides a GitHub PR use `worktree` skill and review that branch
+
 ## Workflow
 
 ### 1. Determine Review Target
