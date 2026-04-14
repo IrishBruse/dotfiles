@@ -1055,7 +1055,7 @@
   },
   "explorer.fileNesting.patterns": {
     ".env": ".env.*",
-    ".gitignore": ".*",
+    // ".gitignore": ".*",
     "*": "${capture}.uid,${capture}.import",
     "*.db": "${capture}.${extname}-*",
     "*.db3": "${capture}.${extname}-*",
@@ -1560,6 +1560,7 @@
   },
   "workbench.editor.useModal": "off",
   "markdown.extension.tableFormatter.enabled": false,
+  "markdown.extension.tableFormatter.delimiterRowNoPadding": true,
   "workbench.browser.showInTitleBar": true,
   "ib-utilities.acpAgents": [
     { "name": "Cursor", "command": "agent", "args": ["acp"] },

@@ -12,7 +12,7 @@ compatibility: gh cli, Jira mcp
 
 - Pull down the users currently assigned jira tickets with the mcp tool or use the provided NOVACORE-... provided by the user
 - Run `git diff origin/main` to use with the description.
-- Read the local PR template and use it.
+- Read and use the local PR template if it exists.
 - Do any validation required
   - Run only the relevent tests
   - Run any security checks (e.g. Snyk)
