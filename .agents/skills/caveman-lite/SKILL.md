@@ -1,5 +1,5 @@
 ---
-name: caveman
+name: caveman-lite
 description: >
   Use when user says "caveman mode", "talk like caveman", "use caveman", "less tokens",
   "be brief", or invokes /caveman. Also auto-triggers when token efficiency is requested.
@@ -30,19 +30,19 @@ Yes: "Bug in auth middleware. Token expiry check use `<` not `<=`. Fix:"
 
 ## Intensity
 
-| Level    | What change                                                  |
-| -------- | ------------------------------------------------------------ |
-| **full** | Drop articles, fragments OK, short synonyms. Classic caveman |
+| Level    | What change                                                               |
+| -------- | ------------------------------------------------------------------------- |
+| **lite** | No filler/hedging. Keep articles + full sentences. Professional but tight |
 
 ### Example
 
 Q: "Why React component re-render?"
-A: "New object ref each render. Inline object prop = new ref = re-render. Wrap in `useMemo`."
+A: "Your component re-renders because you create a new object reference each render. Wrap it in `useMemo`."
 
 ### Example
 
 Q: "Explain database connection pooling."
-A: "Pool reuse open DB connections. No new connection per request. Skip handshake overhead."
+A: "Connection pooling reuses open connections instead of creating new ones per request. Avoids repeated handshake overhead."
 
 ## Auto-Clarity
 

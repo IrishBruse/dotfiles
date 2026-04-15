@@ -1551,19 +1551,10 @@
   "diffEditor.ignoreTrimWhitespace": false,
   "terminal.integrated.gpuAcceleration": "on",
   "git.repositoryScanMaxDepth": 2,
-  "acp.agents": {
-    "Cursor": {
-      "command": "agent",
-      "args": ["acp"],
-    },
-  },
   "workbench.editor.useModal": "off",
   "markdown.extension.tableFormatter.enabled": false,
   "markdown.extension.tableFormatter.delimiterRowNoPadding": true,
   "workbench.browser.showInTitleBar": true,
-  "ib-utilities.acpAgents": [
-    { "name": "Cursor", "command": "agent", "args": ["acp"] },
-  ],
   "network.meteredConnection": "off",
   "material-icon-theme.hidesExplorerArrows": true,
   "editor.scrollbar.horizontalScrollbarSize": 8,
