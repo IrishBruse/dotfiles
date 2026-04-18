@@ -5,7 +5,7 @@ description: >
   number, PR URL, or asked to review someone's PR. Fetches the diff and context
   via the GitHub CLI, analyzes for correctness, security, and maintainability,
   and produces a structured review with an optional posted comment.
-args: default (post as comment), draft (readonly), post (approve the PR based on review)
+disable-model-invocation: true
 ---
 
 # PR Reviewer
@@ -16,7 +16,6 @@ Conducts thorough, constructive code reviews of remote GitHub Pull Requests.
 
 - **PR number** (e.g. `42`) — assumes current repo
 - **PR URL** (e.g. `https://github.com/org/repo/pull/42`)
-- User provided argument
 
 If no PR is specified, list open PRs for the user to pick from:
 
@@ -26,8 +25,7 @@ gh pr list --limit 20
 
 ## Requirements
 
-- `gh` CLI must be installed and authenticated (`gh auth status`)
-- Fallback if `gh` unavailable: `git fetch origin` then `git diff origin/main...origin/<branch>`
+- `gh` CLI must be installed
 
 ## Workflow
 
@@ -94,17 +92,8 @@ Analyze changes across these pillars:
 - Always explain _why_ a change is requested, not just _what_ to change.
 - For approvals, call out something specific and valuable in the contribution.
 
-### 6. Post to GitHub
-
-Skip if user specified `draft`
+### 6. Post comment to GitHub
 
 ```bash
-# Approve (post only)
-gh pr review <number> --approve --body "<your review text>"
-
-# Request changes (post only)
-gh pr review <number> --request-changes --body "<your review text>"
-
-# Comment only (default)
 gh pr review <number> --comment --body "<your review text>"
 ```

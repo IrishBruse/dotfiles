@@ -20,15 +20,7 @@ local.fish
 .config/jgh/config.json
 .config/dconf/user
 
-.hurl/
-
-.gitconfig
-
 node_modules
-.config/dconf/user.txt-lock
-.config/mcp-cli/
 
-scratch/
 .config/dconf/user
-.skill-lock.json
 

@@ -3,6 +3,7 @@ name: review
 description:
   Use this skill to review code. It supports local changes (staged or working tree).
   It focuses on correctness, maintainability, and adherence to project standards.
+disable-model-invocation: true
 ---
 
 # Code Reviewer
