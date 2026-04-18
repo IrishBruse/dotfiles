@@ -336,6 +336,7 @@
           "customrule",
           "support.type.property-name",
           "markup.heading.setext",
+          "source.markdown support.function",
         ],
         "settings": {
           "foreground": "#ABB2BF",
@@ -956,7 +957,7 @@
         },
       },
       {
-        "scope": ["source.qbe constant.other"],
+        "scope": ["source.qbe constant.other", "source.markdown constant"],
         "settings": {
           "foreground": "#56B6C2",
         },
@@ -1038,6 +1039,7 @@
     "local": "ini",
     "*.glsl": "bat",
     "*.ejs.t": "ejs",
+    "*.feature": "feature",
     "*.ast": "graphql",
     "*.sh": "shellscript",
     "*.yaml": "yaml",
@@ -1199,18 +1201,17 @@
   "terminal.integrated.defaultProfile.osx": "fish",
   "terminal.external.linuxExec": "ghostty",
   "terminal.external.osxExec": "Ghostty.app",
-  "terminal.integrated.automationProfile.linux": {
-    "args": ["-li"],
-    "path": "fish",
-  },
-  "terminal.integrated.automationProfile.osx": {
-    "args": ["-li"],
-    "path": "/opt/homebrew/bin/fish",
-  },
+  // "terminal.integrated.automationProfile.linux": {
+  //   "args": ["-li"],
+  //   "path": "fish",
+  // },
+  // "terminal.integrated.automationProfile.osx": {
+  //   "args": ["-li"],
+  //   "path": "/opt/homebrew/bin/fish",
+  // },
   "terminal.explorerKind": "both",
   "terminal.integrated.commandsToSkipShell": [
     "workbench.action.createTerminalEditor",
-    "workbench.action.terminal.copySelection",
     "workbench.action.terminal.paste",
     "workbench.action.terminal.startVoice",
     "workbench.action.terminal.stopVoice",
@@ -1550,7 +1551,6 @@
   "markdownInlineEditor.math.enabled": false,
   "diffEditor.ignoreTrimWhitespace": false,
   "terminal.integrated.gpuAcceleration": "on",
-  "git.repositoryScanMaxDepth": 2,
   "workbench.editor.useModal": "off",
   "markdown.extension.tableFormatter.enabled": false,
   "markdown.extension.tableFormatter.delimiterRowNoPadding": true,

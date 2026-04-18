@@ -1,8 +1,20 @@
 #!/usr/bin/env bash
-# Open ~/dotfiles in VS Code (Electron) and move that window to special:special.
-# Window rules cannot do this alone: Code forks, and the folder name appears in the title only after load.
+# Toggle ~/dotfiles VS Code window in special workspace
 
 set -eu
 
-hyprctl dispatch workspace special
-code "$HOME/dotfiles" 
+# 1. Check if the special workspace is currently visible on the focused monitor
+# We look for the "specialWorkspace" field in the monitor list
+IS_SPECIAL_VISIBLE=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true).specialWorkspace.name')
+
+# 2. Logic: If it's visible (not empty or "null"), hide it.
+# Otherwise, open/move to it.
+if [ "$IS_SPECIAL_VISIBLE" != "" ] && [ "$IS_SPECIAL_VISIBLE" != "null" ]; then
+    # Hides the special workspace
+    hyprctl dispatch togglespecialworkspace special
+else
+    # Only run code if it's not already visible to avoid duplicate instances/forks
+    code "$HOME/dotfiles"
+    # Show the special workspace
+    hyprctl dispatch togglespecialworkspace special
+fi

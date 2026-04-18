@@ -53,20 +53,18 @@ alias ll="eza -la --no-permissions --group-directories-first"
 alias la=ll
 alias reload="clear;exec fish"
 
-alias j="just"
 alias ac="agent --continue"
-alias aa="agent agent"
+alias a="agent agent"
+alias ap="agent --mode=plan agent"
+alias aa="agent --mode=ask agent"
 
 alias showkey="fish_key_reader --verbose"
 
 alias nano="micro"
 alias snano="sudo micro"
-alias agent="agent --approve-mcps"
 
 # Scripts
-
 alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LDtk.Codegen.csproj"
-alias agent-cli="node ~/dotfiles/scripts/cursor-cli.js"
 
 # Node alias
 abbr nvm fnm
@@ -75,5 +73,3 @@ abbr nvm fnm
 bind ctrl-w backward-kill-word
 
 alias stow="echo 'use ./stow.fish'"
-
-fish_add_path $HOME/.local/bin
