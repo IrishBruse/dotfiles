@@ -14,5 +14,7 @@ if test (uname) = Darwin
 end
 
 # Ignore new changes to files
+# undo with
+# git update-index --no-assume-unchanged
 
 git update-index --assume-unchanged .agents/skills/jira-tickets/SKILL.md
