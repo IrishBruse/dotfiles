@@ -12,3 +12,7 @@ if test (uname) = Darwin
     brew bundle dump --no-vscode -f --file=misc/Brewfile
     /opt/homebrew/bin/brew shellenv >.config/fish/conf.d/brew.fish
 end
+
+# Ignore new changes to files
+
+git update-index --assume-unchanged .agents/skills/jira-tickets/SKILL.md

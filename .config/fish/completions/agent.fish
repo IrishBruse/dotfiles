@@ -1,5 +1,7 @@
 # Cursor `agent` CLI completions (fish)
 # Skills: ~/.cursor/skills, ~/.agents/skills, $PWD/.cursor/skills, git root .cursor/skills, …
+# Global /-skill list (plain text, one name per line; optional leading /; # comments): ~/.cursor/agent-global-skills.txt
+#   Override path: set -Ux AGENT_GLOBAL_SKILLS_FILE /path/to/list.txt
 # Skill picks: /name only — @ prefixes file refs; no bare filenames in completions (use -f)
 # Optional fzf: Ctrl-G runs agent_fzf_path (~/.config/fish/functions/agent-fzf.fish) — respects @path prefix
 
@@ -52,6 +54,15 @@ function __fish_agent_skills
     end
 end
 
+function __fish_agent_global_skills_list_file
+    if set -q AGENT_GLOBAL_SKILLS_FILE
+        test -f "$AGENT_GLOBAL_SKILLS_FILE"; and path resolve $AGENT_GLOBAL_SKILLS_FILE
+        return 0
+    end
+    set -l def $HOME/.cursor/agent-global-skills.txt
+    test -f $def; and path resolve $def
+end
+
 function __fish_agent_skill_pick_files
     set -l bases $PWD
     set -l gitroot (command git -C $PWD rev-parse --show-toplevel 2>/dev/null)
@@ -76,9 +87,17 @@ function __fish_agent_skill_pick_files
     end
 end
 
+function __fish_agent_all_skill_list_files
+    set -l g (__fish_agent_global_skills_list_file)
+    test -n "$g"; and printf '%s\n' $g
+    for f in (__fish_agent_skill_pick_files)
+        printf '%s\n' $f
+    end
+end
+
 function __fish_agent_skills_from_files
     set -l out
-    for f in (__fish_agent_skill_pick_files)
+    for f in (__fish_agent_all_skill_list_files)
         test -f $f; or continue
         for line in (string split \n -- (command cat $f 2>/dev/null))
             set -l s (string trim -- $line)
