@@ -46,6 +46,7 @@ File exists at repo root. Every module name matches across TOC, headings, and di
 - Each module entry: responsibilities, file paths, inbound deps, outbound deps, boundary constraints.
 - Show only architecturally significant externals in diagrams.
 - State unknowns in the Assumptions section.
+- **Mermaid fence height (hard requirement)**: Inside every ` ```mermaid ` … ` ``` ` block, there must be **at least 10 lines of content** (diagram lines + blank padding lines). Small diagrams overlay adjacent markdown in some editors; pad with blank lines after the last mermaid line until the inner line count reaches 20.
 
 ## Template
 
@@ -77,6 +78,13 @@ File exists at repo root. Every module name matches across TOC, headings, and di
 flowchart TD
   A[Module A] --> B[Module B]
   B --> D[(External)]
+
+
+
+
+
+
+
 ```
 
 ## 2. Subsystem Boundaries
@@ -92,6 +100,14 @@ flowchart TD
 ```mermaid
 flowchart LR
   A1[Area A1] --> A2[Area A2]
+
+
+
+
+
+
+
+
 ```
 
 ## 3. Component Boundaries
@@ -105,6 +121,14 @@ flowchart LR
 ```mermaid
 flowchart TB
   C1[Component A1] --> C2[Component A2]
+
+
+
+
+
+
+
+
 ```
 
 ### 3.2 <Subsystem B>
@@ -129,4 +153,4 @@ _Fewer than 3 components — no decomposition._
 - [ ] All cited paths exist
 - [ ] Level 3 only where 3+ components exist
 - [ ] Names consistent across TOC, headings, diagrams
-- [ ] Mermaid diagram at every documented level
+- [ ] Mermaid diagram at every documented level; each ` ```mermaid ` block has ≥20 inner lines (pad with blanks)
