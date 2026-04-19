@@ -13,11 +13,11 @@ Produce `ARCHITECTURE.md` at the repo root mapping module boundaries across two 
 
 ## Steps
 
-### 1. Check existing
+### Check existing
 
 Read `<repo-root>/ARCHITECTURE.md` if present. Preserve accurate sections; update only stale parts.
 
-### 2. Analyze deeply (do not rush)
+### Analyze deeply (do not rush)
 
 - Map the tree two levels deep.
 - Read every manifest in full (`package.json`, `go.mod`, `Cargo.toml`, `pyproject.toml`, `Dockerfile`, monorepo configs).
@@ -27,17 +27,17 @@ Read `<repo-root>/ARCHITECTURE.md` if present. Preserve accurate sections; updat
 - Locate the data layer (schemas, migrations, API contracts) and runtime boundaries (services, workers, CLIs).
 - Identify **public entry surfaces**: HTTP/RPC routes, CLI mains, published library exports, webhooks, message consumers, scheduled jobs, and how auth or credentials apply at each boundary.
 
-### 3. Build hierarchy
+### Build hierarchy
 
-- **Level 1**: whole-system map — include one `### <Module …>` per top-level module (short **role** line + pointer to Layer 2 expansion).
-- **Public interface** (in the written doc): how the external world enters and interacts — not a third abstraction layer, but a dedicated section tied to Level 1 modules and entry surfaces.
-- **Level 2**: **expands** each Level 1 module: for every `### <Module X>` in Layer 1, a matching `### <Module X> — subsystems` with `####` per subsystem; open each Layer 2 module block with a link back to the same module’s Layer 1 heading.
+- **System context**: whole-system map — include one `### <Module …>` per top-level module (short **role** line + pointer to that module’s subsystems section).
+- **Public interface** (in the written doc): how the external world enters and interacts — not another decomposition layer, but a dedicated section tied to modules and entry surfaces.
+- **Subsystems**: **expands** each top-level module: for every `### <Module X>` under System context, a matching `### <Module X> — subsystems` with `####` per subsystem; open each subsystems block with a link back to the same module under System context.
 
-### 4. Write to disk
+### Write to disk
 
 Use the `Write` tool to create `<repo-root>/ARCHITECTURE.md`. Output in chat is not enough — file must exist on disk.
 
-### 5. Verify
+### Verify
 
 File exists at repo root. Every module name matches across TOC, headings, and diagrams. Every cited path exists.
 
@@ -45,10 +45,11 @@ File exists at repo root. Every module name matches across TOC, headings, and di
 
 - **Naming**: One canonical module name in TOC, headings, body, and diagrams.
 - **Entries**: Modules and subsystems include responsibilities, paths, inbound/outbound deps, and boundary constraints. Diagrams only show architecturally significant externals.
-- **Public interface**: List entry surfaces with protocol/contract and owning Level 1 module; split inbound vs outbound when it clarifies boundaries.
-- **Unknowns**: Put gaps in Scope, Cross-Cutting, or per-module text. A standalone `## Assumptions` is allowed only if it appears in the TOC with a working anchor.
+- **Public interface**: List entry surfaces with protocol/contract and owning module; split inbound vs outbound when it clarifies boundaries.
+- **Unknowns**: Put gaps in Scope, Cross-cutting concerns, or per-module text. A standalone `## Assumptions` is allowed only if it appears in the TOC with a working anchor.
+- **Headings**: Do not number section titles (`1.`, `2.1`) or use layer ordinals like “Layer 1” in `ARCHITECTURE.md`; use stable names (e.g. **System context**, **Subsystems**).
 - **TOC**: Nested list matches heading depth; every TOC link must match a real heading.
-- **Layer 1 ↔ Layer 2**: Each `### <Module X>` in Layer 1 pairs with `### <Module X> — subsystems` in Layer 2 (same name under both TOC groups); cross-link in the body both ways.
+- **System context ↔ Subsystems**: Each `### <Module X>` under System context pairs with `### <Module X> — subsystems` under Subsystems (same module name in both TOC branches); cross-link in the body both ways.
 
 ## Template
 
@@ -57,35 +58,33 @@ File exists at repo root. Every module name matches across TOC, headings, and di
 
 ## Table of Contents
 
-- **System boundary**
-  - [Layer 1 — System Context](#layer-1--system-context)
-    - [Scope and coverage](#scope-and-coverage)
-    - [Cross-Cutting Concerns](#cross-cutting-concerns)
-    - [Module inventory](#module-inventory)
-    - [<Module A>](#module-a)
-    - [<Module B>](#module-b)
-  - [Public interface](#public-interface)
-    - [Surface summary](#surface-summary)
-    - [External actors](#external-actors)
-    - [Public boundary constraints](#public-boundary-constraints)
-- **Internal decomposition**
-  - [Layer 2 — Subsystem Boundaries](#layer-2--subsystem-boundaries)
-    - [<Module A>](#module-a--subsystems)
-      - [<Subsystem A>](#subsystem-a)
-    - [<Module B>](#module-b--subsystems)
-      - [<Subsystem B>](#subsystem-b)
+- [System context](#system-context)
+  - [Scope](#scope)
+  - [Cross-cutting concerns](#cross-cutting-concerns)
+  - [Modules](#modules)
+  - [<Module A>](#module-a)
+  - [<Module B>](#module-b)
+- [Public interface](#public-interface)
+  - [Surfaces](#surfaces)
+  - [Actors](#actors)
+  - [Constraints](#constraints)
+- [Subsystems](#subsystems)
+  - [<Module A>](#module-a--subsystems)
+    - [<Subsystem A>](#subsystem-a)
+  - [<Module B>](#module-b--subsystems)
+    - [<Subsystem B>](#subsystem-b)
 
-## Layer 1 — System Context
+## System context
 
-> The 10,000-foot view. What exists, what it owns, and how the top-level modules relate to each other and the outside world.
+> Whole-system view: what exists, what it owns, and how top-level modules relate to each other and the outside world.
 
-### Scope and coverage
+### Scope
 
 <what this document covers>
 
-### Cross-Cutting Concerns
+### Cross-cutting concerns
 
-> Concerns that apply across both layers and must not be silently re-implemented inside any single subsystem.
+> Concerns that span modules and must not be silently re-implemented inside a single subsystem.
 
 - **Auth**: <...>
 - **Logging**: <...>
@@ -94,7 +93,7 @@ File exists at repo root. Every module name matches across TOC, headings, and di
 - **Error handling**: <...>
 - **Feature flags**: <...>
 
-### Module inventory
+### Modules
 
 | Module     | Path            | Owns  | Depends On | Must Not Depend On |
 | ---------- | --------------- | ----- | ---------- | ------------------ |
@@ -121,20 +120,20 @@ flowchart TD
 
 ## Public interface
 
-> The **contract with the outside world**: how external actors invoke, authenticate to, subscribe to, or observe this system. This section names **entry surfaces** (the doors in), not internal subsystems. Tie each surface to the owning Level 1 module.
+> How the outside world invokes, authenticates to, subscribes to, or observes this system: **entry surfaces** (doors in), not internal subsystems. Tie each surface to its owning module.
 
-### Surface summary
+### Surfaces
 
 | Direction | Surface (examples)                                            | Owned by module | Contract / notes                    |
 | --------- | ------------------------------------------------------------- | --------------- | ----------------------------------- |
 | Inbound   | <HTTP API, CLI, npm exports, webhook URL, queue subscription> | <Module A>      | <protocol, auth model, idempotency> |
 | Outbound  | <callbacks, webhooks you call, client SDKs to third parties>  | <Module B>      | <when they fire, failure semantics> |
 
-### External actors
+### Actors
 
 **Actors**: <humans via CLI, browser clients, partner backends, other repos importing this package, …>
 
-### Public boundary constraints
+### Constraints
 
 **Constraints**: <what callers must not do, rate limits, versioning, breaking-change policy for public API>
 
@@ -146,9 +145,9 @@ flowchart LR
   MA --> OUT[(Outbound to external systems)]
 ```
 
-## Layer 2 — Subsystem Boundaries
+## Subsystems
 
-> Expands each **Module** from [Module inventory](#module-inventory) and the per-module blurbs in [Layer 1 — System Context](#layer-1--system-context). Same module names as Level 1; here: subsystems only.
+> Expands each row in [Modules](#modules) and each module blurb under [System context](#system-context). Same module names as there; here: subsystems only.
 
 ### <Module A> — subsystems
 
@@ -194,8 +193,8 @@ flowchart LR
 - [ ] Source files sampled per module
 - [ ] Import graph confirmed via `Grep`
 - [ ] All cited paths exist
-- [ ] TOC nested like document tree (groups + heading depth); TOC links match real `##` / `###` / `####` anchors
-- [ ] Each Level 1 `### <Module …>` has a Level 2 `### <Module …> — subsystems`; same module name in TOC under both **System boundary** and **Internal decomposition**
+- [ ] TOC nesting matches heading depth; every link resolves to a real `##` / `###` / `####` heading
+- [ ] Each `### <Module …>` under System context has a matching `### <Module …> — subsystems`; the same module name appears under both **System context** and **Subsystems** in the TOC
 - [ ] Names consistent across TOC, headings, diagrams
 - [ ] Public interface section lists entry surfaces, owners, and inbound vs outbound where useful
 - [ ] Mermaid diagrams where the template calls for them (system view, public interface, each subsystem)
