@@ -6,6 +6,18 @@
         "matcher": "Read",
         "command": "node $HOME/dotfiles/.agents/hooks/skill-read-scripts.ts"
       }
+    ],
+    "postToolUse": [
+      {
+        "matcher": "Read",
+        "command": "node $HOME/dotfiles/.agents/hooks/skill-restore-after-read.ts"
+      }
+    ],
+    "postToolUseFailure": [
+      {
+        "matcher": "Read",
+        "command": "node $HOME/dotfiles/.agents/hooks/skill-restore-after-read.ts"
+      }
     ]
   }
 }
