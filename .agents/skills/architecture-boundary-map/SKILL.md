@@ -124,10 +124,12 @@ flowchart TD
 
 ### Surfaces
 
-| Direction | Surface (examples)                                            | Owned by module | Contract / notes                    |
-| --------- | ------------------------------------------------------------- | --------------- | ----------------------------------- |
-| Inbound   | <HTTP API, CLI, npm exports, webhook URL, queue subscription> | <Module A>      | <protocol, auth model, idempotency> |
-| Outbound  | <callbacks, webhooks you call, client SDKs to third parties>  | <Module B>      | <when they fire, failure semantics> |
+Keep notes short 1 sentance.
+
+| Direction | Owned by module | Contract / notes                    |
+| --------- | --------------- | ----------------------------------- |
+| Inbound   | <Module A>      | <protocol, auth model, idempotency> |
+| Outbound  | <Module B>      | <when they fire, failure semantics> |
 
 ### Actors
 
