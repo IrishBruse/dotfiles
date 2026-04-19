@@ -1,51 +1,70 @@
 ---
 name: jira-board-sync
-description: >-
-  Fetches Jira issues via the Atlassian MCP (JQL search), writes markdown under
-  ~/jira-board/me/, ~/jira-board/team/, and ~/jira-board/unassigned/, and deletes stale keys
-  per folder. Use when syncing the board mirror, refreshing jira-board, or when the user
-  mentions outdated tickets or team board sync.
+description: Sync down the current state of the Jira board
+disable-model-invocation: true
 ---
 
-# Jira board sync (`me/` + `team/` + `unassigned/`)
+# Jira board sync
 
 ## Goal
 
-Mirror **exactly** what each JQL returns into its folder (upsert `KEY.md`, delete missing keys):
+Use Atlassian MCP to pull the current board tickets from JQL and mirror them to markdown files.
 
-| Folder | Typical JQL |
-|--------|-------------|
-| **`~/jira-board/me/`** | assignee = current user |
-| **`~/jira-board/team/`** | board/sprint scope, assignee set, not you |
-| **`~/jira-board/unassigned/`** | same scope, `assignee is EMPTY` |
+Each ticket must be written as:
+
+- one markdown file per issue
+- with YAML frontmatter
+- filename = uppercase Jira key (for example: `NOVACORE-123.md`)
+
+| Folder                         | JQL (source of truth)                                                             |
+| ------------------------------ | --------------------------------------------------------------------------------- |
+| **`~/jira-board/me/`**         | `sprint in openSprints() AND assignee = currentUser()`                            |
+| **`~/jira-board/team/`**       | `sprint in openSprints() AND assignee is not EMPTY AND assignee != currentUser()` |
+| **`~/jira-board/unassigned/`** | `sprint in openSprints() AND assignee is EMPTY`                                   |
 
 Same issue must appear in **only one** folder (pick the JQL that matches it).
-
-The hook `jira-tickets` maps `me/` → **My tickets**, `team/` → **Teammates**, `unassigned/` → **Unassigned** (by path, not by parsing `assigned:`).
 
 ## Prerequisites
 
 - Atlassian MCP with JQL search (`searchJiraIssuesUsingJql` or equivalent).
 - **`cloudId`**: `JIRA_CLOUD_ID` or MCP site resolution.
-- **JQL files** under `~/jira-board/`:
-  - **`.board-jql`** → `me/`
-  - **`.team-jql`** → `team/`
-  - **`.unassigned-jql`** → `unassigned/`
-
-Ask the user if a file is missing.
-
-## Issue file format
-
-Match `.agents/hooks/scripts/jira-tickets.ts`: **`title:`**, **`assigned:`** (or **`asigneed:`**).
 
 ## Steps (three passes for a full sync)
 
-1. **me/** — read `.board-jql`, fetch, write/delete under `me/` only.
-2. **team/** — read `.team-jql`, fetch, write/delete under `team/` only.
-3. **unassigned/** — read `.unassigned-jql`, fetch, write/delete under `unassigned/` only.
+1. **me/** — run the table JQL for `me`, fetch, write/delete under `me/` only.
+2. **team/** — run the table JQL for `team`, fetch, write/delete under `team/` only.
+3. **unassigned/** — run the table JQL for `unassigned`, fetch, write/delete under `unassigned/` only.
 
-Shared: `mkdir -p` each folder before writes; keep config files; on MCP failure, do not delete until fetch succeeds.
+For each pass:
 
-## Optional: CLI mirror
+- Query Jira through MCP (paginate until all matching issues are fetched).
+- Ensure results are scoped to the **current sprint** (`sprint in openSprints()`).
+- For each issue, write/update `KEY.md` where `KEY` is uppercase.
+- Delete stale `*.md` files in that folder that are no longer returned by that folder's JQL.
 
-`tools/mcp-cli/jira-ls.ts` with `--jql` and `--json` can feed the same layout.
+Shared rules:
+
+- `mkdir -p` each folder before writes.
+- Keep non-ticket files (dotfiles, config files) untouched.
+- If MCP fetch fails for a folder, do **not** delete existing files in that folder.
+
+## Markdown file format
+
+Use this shape for each ticket file:
+
+```md
+---
+title: Ticket summary
+assigned: Jane Doe
+type: Story
+url: https://<site>.atlassian.net/browse/<JIRA-KEY>
+---
+
+[Ticket description here in markdown]
+```
+
+Guidance:
+
+- Keep frontmatter concise and machine-readable.
+- Keep body readable for humans; avoid dumping huge raw JSON.
+- Prefer stable fields over every possible Jira field.
