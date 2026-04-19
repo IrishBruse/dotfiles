@@ -29,9 +29,9 @@ Read `<repo-root>/ARCHITECTURE.md` if present. Preserve accurate sections; updat
 
 ### 3. Build hierarchy
 
-- **Level 1**: whole-system map.
+- **Level 1**: whole-system map — include one `### <Module …>` per top-level module (short **role** line + pointer to Layer 2 expansion).
 - **Public interface** (in the written doc): how the external world enters and interacts — not a third abstraction layer, but a dedicated section tied to Level 1 modules and entry surfaces.
-- **Level 2**: internal decomposition of each Level 1 module.
+- **Level 2**: **expands** each Level 1 module: for every `### <Module X>` in Layer 1, a matching `### <Module X> — subsystems` with `####` per subsystem; open each Layer 2 module block with a link back to the same module’s Layer 1 heading.
 
 ### 4. Write to disk
 
@@ -48,6 +48,8 @@ File exists at repo root. Every module name matches across TOC, headings, and di
 - Show only architecturally significant externals in diagrams.
 - Document **public interfaces** explicitly: name each entry surface, who invokes it, protocol or contract, and which Level 1 module owns it; separate inbound (world → system) from outbound (system → world) where it clarifies the boundary.
 - State unknowns in the Assumptions section.
+- **Table of Contents shape**: Mirror document tree — use nested list (2 spaces per level). Optional bold **group labels** (`System boundary`, `Internal decomposition`, `Cross-cutting`) group related `##` sections; under each `##` / `###` / `####`, indent TOC children to match heading depth. Every linked TOC line must match a real heading so anchors resolve (add `###` / `####` subheadings where the TOC nests deeper).
+- **Layer 1 ↔ Layer 2 continuity**: Same canonical **module name** appears in TOC twice — once under **Layer 1** (context: `### <Module X>`) and once under **Layer 2** (`### <Module X> — subsystems` → subsystems). Body text cross-links (Layer 1 → “subsystems below”; Layer 2 → “expands [Module X](#…) from system context”).
 - **Mermaid fence height (hard requirement)**: Small diagrams overlay adjacent markdown in some editors; pad with blank lines after the last diagram line until the inner line count is high enough.
   - **Mostly horizontal** (`flowchart LR`, `flowchart RL`, `graph LR`, `graph RL`): target **about 5 inner lines total** (diagram + padding). Add only the blanks needed so the fence is roughly that tall, not a tall stack of padding.
   - **Vertical or mixed** (`flowchart TD`/`TB`, `graph TD`/`TB`, sequence/state, and other layouts): target **at least 15 inner lines** (diagram + padding).
@@ -59,26 +61,62 @@ File exists at repo root. Every module name matches across TOC, headings, and di
 
 ## Table of Contents
 
-- [Layer 1 — System Context](#layer-1--system-context)
-- [Public interface](#public-interface)
-- [Layer 2 — Subsystem Boundaries](#layer-2--subsystem-boundaries)
-  - [<Module A> / <Subsystem A>](#module-a--subsystem-a)
-  - [<Module B> / <Subsystem B>](#module-b--subsystem-b)
-- [Cross-Cutting Concerns](#cross-cutting-concerns)
-- [Assumptions](#assumptions)
+- **System boundary**
+  - [Layer 1 — System Context](#layer-1--system-context)
+    - [Scope and coverage](#scope-and-coverage)
+    - [Cross-Cutting Concerns](#cross-cutting-concerns)
+    - [Module inventory](#module-inventory)
+    - [<Module A>](#module-a)
+    - [<Module B>](#module-b)
+  - [Public interface](#public-interface)
+    - [Surface summary](#surface-summary)
+    - [External actors](#external-actors)
+    - [Public boundary constraints](#public-boundary-constraints)
+- **Internal decomposition**
+  - [Layer 2 — Subsystem Boundaries](#layer-2--subsystem-boundaries)
+    - [<Module A>](#module-a--subsystems)
+      - [<Subsystem A>](#subsystem-a)
+    - [<Module B>](#module-b--subsystems)
+      - [<Subsystem B>](#subsystem-b)
+- **Cross-cutting**
 
 ## Layer 1 — System Context
 
 > The 10,000-foot view. What exists, what it owns, and how the top-level modules relate to each other and the outside world.
 
-**Scope**: <what this document covers>
+### Scope and coverage
 
-**Modules**
+<what this document covers>
+
+### Cross-Cutting Concerns
+
+> Concerns that apply across both layers and must not be silently re-implemented inside any single subsystem.
+
+- **Auth**: <...>
+- **Logging**: <...>
+- **Config**: <...>
+- **Observability**: <...>
+- **Error handling**: <...>
+- **Feature flags**: <...>
+
+### Module inventory
 
 | Module     | Path            | Owns  | Depends On | Must Not Depend On |
 | ---------- | --------------- | ----- | ---------- | ------------------ |
 | <Module A> | `src/module-a/` | <...> | <...>      | <...>              |
 | <Module B> | `src/module-b/` | <...> | <...>      | <...>              |
+
+### <Module A>
+
+**Role**: <one sentence — what this module is for in the whole system.>
+
+Internal detail: [<Module A> — subsystems](#module-a--subsystems).
+
+### <Module B>
+
+**Role**: <one sentence — what this module is for in the whole system.>
+
+Internal detail: [<Module B> — subsystems](#module-b--subsystems).
 
 ```mermaid
 flowchart TD
@@ -90,16 +128,20 @@ flowchart TD
 
 > The **contract with the outside world**: how external actors invoke, authenticate to, subscribe to, or observe this system. This section names **entry surfaces** (the doors in), not internal subsystems. Tie each surface to the owning Level 1 module.
 
-**Summary**
+### Surface summary
 
-| Direction | Surface (examples) | Owned by module | Contract / notes |
-| --------- | ------------------- | --------------- | ---------------- |
-| Inbound   | <HTTP API, CLI, npm exports, webhook URL, queue subscription> | <Module A> | <protocol, auth model, idempotency> |
-| Outbound  | <callbacks, webhooks you call, client SDKs to third parties> | <Module B> | <when they fire, failure semantics> |
+| Direction | Surface (examples)                                            | Owned by module | Contract / notes                    |
+| --------- | ------------------------------------------------------------- | --------------- | ----------------------------------- |
+| Inbound   | <HTTP API, CLI, npm exports, webhook URL, queue subscription> | <Module A>      | <protocol, auth model, idempotency> |
+| Outbound  | <callbacks, webhooks you call, client SDKs to third parties>  | <Module B>      | <when they fire, failure semantics> |
+
+### External actors
 
 **Actors**: <humans via CLI, browser clients, partner backends, other repos importing this package, …>
 
-**Constraints at the boundary**: <what callers must not do, rate limits, versioning, breaking-change policy for public API>
+### Public boundary constraints
+
+**Constraints**: <what callers must not do, rate limits, versioning, breaking-change policy for public API>
 
 ```mermaid
 flowchart LR
@@ -111,9 +153,13 @@ flowchart LR
 
 ## Layer 2 — Subsystem Boundaries
 
-> The mid-level view. Each module is broken into subsystems with clear responsibilities, interfaces, and constraints.
+> Expands each **Module** from [Module inventory](#module-inventory) and the per-module blurbs in [Layer 1 — System Context](#layer-1--system-context). Same module names as Level 1; here: subsystems only.
 
-### <Module A> / <Subsystem A>
+### <Module A> — subsystems
+
+Expands [<Module A>](#module-a) from system context.
+
+#### <Subsystem A>
 
 **Path**: `src/module-a/subsystem-a/`
 **Responsibilities**: <what this subsystem is solely responsible for>
@@ -127,30 +173,17 @@ flowchart LR
   SA2 --> EXT[(External)]
 ```
 
-### <Module B> / <Subsystem B>
+### <Module B> — subsystems
+
+Expands [<Module B>](#module-b) from system context.
+
+#### <Subsystem B>
 
 **Path**: `src/module-b/subsystem-b/`
 **Responsibilities**: <...>
 **Inbound**: <...>
 **Outbound**: <...>
 **Constraints**: <...>
-
-## Cross-Cutting Concerns
-
-> Concerns that apply across both layers and must not be silently re-implemented inside any single subsystem.
-
-- **Auth**: <...>
-- **Logging**: <...>
-- **Config**: <...>
-- **Observability**: <...>
-- **Error handling**: <...>
-- **Feature flags**: <...>
-
----
-
-## Assumptions
-
-- <...>
 ````
 
 ## Checklist
@@ -160,6 +193,8 @@ flowchart LR
 - [ ] Source files sampled per module
 - [ ] Import graph confirmed via `Grep`
 - [ ] All cited paths exist
+- [ ] TOC nested like document tree (groups + heading depth); TOC links match real `##` / `###` / `####` anchors
+- [ ] Each Level 1 `### <Module …>` has a Level 2 `### <Module …> — subsystems`; same module name in TOC under both **System boundary** and **Internal decomposition**
 - [ ] Names consistent across TOC, headings, diagrams
 - [ ] Public interface section lists entry surfaces, owners, and inbound vs outbound where useful
 - [ ] Mermaid diagram at every documented level; horizontal `LR`/`RL` fences ≈5 inner lines; other layouts ≥10 inner lines (pad with blanks)
