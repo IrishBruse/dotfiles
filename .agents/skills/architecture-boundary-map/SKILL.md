@@ -2,14 +2,14 @@
 name: architecture-boundary-map
 description: >-
   Analyze the current codebase to identify module boundaries and create or update a top-level ARCHITECTURE.md with a table of contents,
-  boundary documentation, and mermaid diagrams across three abstraction levels. Use when the user asks for architecture documentation,
+  boundary documentation, and mermaid diagrams across two abstraction levels. Use when the user asks for architecture documentation,
   module boundary mapping, system decomposition, or layered architecture diagrams.
 disable-model-invocation: true
 ---
 
 # Architecture Boundary Map
 
-Produce `ARCHITECTURE.md` at the repo root mapping module boundaries across up to 3 abstraction levels.
+Produce `ARCHITECTURE.md` at the repo root mapping module boundaries across two abstraction levels.
 
 ## Steps
 
@@ -30,7 +30,6 @@ Read `<repo-root>/ARCHITECTURE.md` if present. Preserve accurate sections; updat
 
 - **Level 1**: whole-system map.
 - **Level 2**: internal decomposition of each Level 1 module.
-- **Level 3**: only for subsystems with 3+ internal components; otherwise write a one-line note.
 
 ### 4. Write to disk
 
@@ -46,7 +45,9 @@ File exists at repo root. Every module name matches across TOC, headings, and di
 - Each module entry: responsibilities, file paths, inbound deps, outbound deps, boundary constraints.
 - Show only architecturally significant externals in diagrams.
 - State unknowns in the Assumptions section.
-- **Mermaid fence height (hard requirement)**: Inside every ` ```mermaid ` … ` ``` ` block, there must be **at least 10 lines of content** (diagram lines + blank padding lines). Small diagrams overlay adjacent markdown in some editors; pad with blank lines after the last mermaid line until the inner line count reaches 20.
+- **Mermaid fence height (hard requirement)**: Small diagrams overlay adjacent markdown in some editors; pad with blank lines after the last diagram line until the inner line count is high enough.
+  - **Mostly horizontal** (`flowchart LR`, `flowchart RL`, `graph LR`, `graph RL`): target **about 5 inner lines total** (diagram + padding). Add only the blanks needed so the fence is roughly that tall, not a tall stack of padding.
+  - **Vertical or mixed** (`flowchart TD`/`TB`, `graph TD`/`TB`, sequence/state, and other layouts): target **at least 15 inner lines** (diagram + padding).
 
 ## Template
 
@@ -55,91 +56,70 @@ File exists at repo root. Every module name matches across TOC, headings, and di
 
 ## Table of Contents
 
-- [1. System Context](#1-system-context)
-- [2. Subsystem Boundaries](#2-subsystem-boundaries)
-- [3. Component Boundaries](#3-component-boundaries)
-- [4. Cross-Cutting Concerns](#4-cross-cutting-concerns)
-- [5. Assumptions](#5-assumptions)
+- [System Context](#system-context)
+- [Subsystem Boundaries](#subsystem-boundaries)
+- [Cross-Cutting Concerns](#cross-cutting-concerns)
+- [Assumptions](#assumptions)
 
-## 1. System Context
+## Layer 1 — System Context
+
+> The 10,000-foot view. What exists, what it owns, and how the top-level modules relate to each other and the outside world.
 
 **Scope**: <what this document covers>
 
-**Submodules**
+**Modules**
 
-- **<Module A>** (`src/module-a/`): <1 sentence>
-- **<Module B>** (`src/module-b/`): <1 sentence>
-
-| Module     | Paths           | Owns  | Depends On | Must Not Depend On |
+| Module     | Path            | Owns  | Depends On | Must Not Depend On |
 | ---------- | --------------- | ----- | ---------- | ------------------ |
 | <Module A> | `src/module-a/` | <...> | <...>      | <...>              |
+| <Module B> | `src/module-b/` | <...> | <...>      | <...>              |
 
 ```mermaid
 flowchart TD
   A[Module A] --> B[Module B]
-  B --> D[(External)]
-
-
-
-
-
-
-
+  B --> D[(External System)]
 ```
 
-## 2. Subsystem Boundaries
+## Layer 2 — Subsystem Boundaries
 
-### 2.1 <Subsystem A>
+> The mid-level view. Each module is broken into subsystems with clear responsibilities, interfaces, and constraints.
 
-**Paths**: `src/module-a/`
+### <Module A> / <Subsystem A>
+
+**Path**: `src/module-a/subsystem-a/`
+**Responsibilities**: <what this subsystem is solely responsible for>
+**Inbound**: <who calls into this subsystem and how>
+**Outbound**: <what this subsystem calls or emits>
+**Constraints**: <rules this subsystem must never violate>
+
+```mermaid
+flowchart LR
+  SA1[Subsystem A] --> SA2[Subsystem B]
+  SA2 --> EXT[(External)]
+```
+
+### <Module B> / <Subsystem B>
+
+**Path**: `src/module-b/subsystem-b/`
 **Responsibilities**: <...>
 **Inbound**: <...>
 **Outbound**: <...>
 **Constraints**: <...>
 
-```mermaid
-flowchart LR
-  A1[Area A1] --> A2[Area A2]
+## Cross-Cutting Concerns
 
+> Concerns that apply across both layers and must not be silently re-implemented inside any single subsystem.
 
+- **Auth**: <...>
+- **Logging**: <...>
+- **Config**: <...>
+- **Observability**: <...>
+- **Error handling**: <...>
+- **Feature flags**: <...>
 
+---
 
-
-
-
-
-```
-
-## 3. Component Boundaries
-
-### 3.1 <Subsystem A> / <Component Group>
-
-- **<Component A1>** (`src/module-a/component-a1/`): <...>
-- **<Component A2>** (`src/module-a/component-a2/`): <...>
-- **<Component A3>** (`src/module-a/component-a3/`): <...>
-
-```mermaid
-flowchart TB
-  C1[Component A1] --> C2[Component A2]
-
-
-
-
-
-
-
-
-```
-
-### 3.2 <Subsystem B>
-
-_Fewer than 3 components — no decomposition._
-
-## 4. Cross-Cutting Concerns
-
-- <auth, logging, config, observability, feature flags, error handling>
-
-## 5. Assumptions
+## Assumptions
 
 - <...>
 ````
@@ -151,6 +131,5 @@ _Fewer than 3 components — no decomposition._
 - [ ] Source files sampled per module
 - [ ] Import graph confirmed via `Grep`
 - [ ] All cited paths exist
-- [ ] Level 3 only where 3+ components exist
 - [ ] Names consistent across TOC, headings, diagrams
-- [ ] Mermaid diagram at every documented level; each ` ```mermaid ` block has ≥20 inner lines (pad with blanks)
+- [ ] Mermaid diagram at every documented level; horizontal `LR`/`RL` fences ≈5 inner lines; other layouts ≥10 inner lines (pad with blanks)
