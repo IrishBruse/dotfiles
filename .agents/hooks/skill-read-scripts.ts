@@ -2,9 +2,10 @@
 /// <reference types="node" />
 
 /**
- * preToolUse (Read): SKILL.md may contain ```!name\n...\n``` blocks. Runs
- * command-injection/<name>.sh (adds .sh if missing) with stdin = inner text, replaces inner
- * with stdout. cwd = command-injection/. Always allows the Read.
+ * preToolUse (Read): SKILL.md may contain ```!name\n...\n``` blocks. Runs the matching file
+ * under command-injection/ (basename `!name` or `name`, with any extension, or no extension)
+ * with stdin = inner text, replaces inner with stdout. Prefers `!name` over `name` when both
+ * exist. cwd = command-injection/. Always allows the Read.
  */
 
 import crypto from "node:crypto";
@@ -68,10 +69,40 @@ function underCommandInjection(commandInjectionDir: string, rel: string): string
   return resolved;
 }
 
-function shName(markerName: string): string {
-  const t = markerName.trim();
-  if (!t) return "";
-  return t.endsWith(".sh") ? t : `${t}.sh`;
+/**
+ * Finds an executable in command-injection for fence marker `name` (e.g. `jira-tickets`).
+ * Matches basename `!name` or `name` with any suffix (`.ts`, `.sh`, none, …).
+ */
+function resolveCommandInjectionScript(
+  commandInjectionDir: string,
+  markerName: string
+): string | null {
+  const n = markerName.trim();
+  if (!n) return null;
+  if (!fs.existsSync(commandInjectionDir) || !fs.statSync(commandInjectionDir).isDirectory()) {
+    return null;
+  }
+
+  const primaryBase = `!${n}`;
+  const primary: string[] = [];
+  const legacy: string[] = [];
+
+  for (const ent of fs.readdirSync(commandInjectionDir)) {
+    const full = underCommandInjection(commandInjectionDir, ent);
+    if (!full) continue;
+    if (!fs.statSync(full).isFile()) continue;
+    const ext = path.extname(ent);
+    const base = ext ? ent.slice(0, -ext.length) : ent;
+    if (base === primaryBase) primary.push(full);
+    else if (base === n) legacy.push(full);
+  }
+
+  const sortBasenames = (a: string, b: string) =>
+    path.basename(a).localeCompare(path.basename(b), undefined, { sensitivity: "base" });
+  primary.sort(sortBasenames);
+  legacy.sort(sortBasenames);
+
+  return primary[0] ?? legacy[0] ?? null;
 }
 
 function fenceScriptBlocks(body: string): FenceBlock[] {
@@ -133,8 +164,7 @@ function main(): number {
   const scriptExists = new Map<string, boolean>();
 
   const runScript = (markerName: string, stdin: string | null | undefined) => {
-    const file = shName(markerName);
-    const script = underCommandInjection(commandInjectionDir, file);
+    const script = resolveCommandInjectionScript(commandInjectionDir, markerName);
     if (!script) return null;
     let ok = scriptExists.get(script);
     if (ok === undefined) {
