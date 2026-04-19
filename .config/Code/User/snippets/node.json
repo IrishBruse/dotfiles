@@ -72,5 +72,10 @@
     "description": "Typescript record snippet",
     "isFileTemplate": false,
     "body": ["Record<${1:string},${2:string}>"]
+  },
+  "node-types": {
+    "prefix": "node-types",
+    "isFileTemplate": false,
+    "body": ["/// <reference types=\"node\" />"]
   }
 }

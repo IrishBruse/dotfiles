@@ -1293,7 +1293,6 @@
     "files.trimFinalNewlines": false,
     "files.trimTrailingWhitespace": false,
     "editor.indentSize": 4,
-    "editor.defaultFormatter": "yzhang.markdown-all-in-one",
   },
   "[snippets]": {
     "files.insertFinalNewline": false,
@@ -1553,7 +1552,6 @@
   "terminal.integrated.gpuAcceleration": "on",
   "workbench.editor.useModal": "off",
   "markdown.extension.tableFormatter.enabled": false,
-  "markdown.extension.tableFormatter.delimiterRowNoPadding": true,
   "workbench.browser.showInTitleBar": true,
   "network.meteredConnection": "off",
   "material-icon-theme.hidesExplorerArrows": true,
@@ -1569,4 +1567,5 @@
     "gemini",
     "agent",
   ],
+  "markdown.extension.italic.indicator": "_",
 }
