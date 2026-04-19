@@ -47,8 +47,8 @@ File exists at repo root. Every module name matches across TOC, headings, and di
 - Each module entry: responsibilities, file paths, inbound deps, outbound deps, boundary constraints.
 - Show only architecturally significant externals in diagrams.
 - Document **public interfaces** explicitly: name each entry surface, who invokes it, protocol or contract, and which Level 1 module owns it; separate inbound (world → system) from outbound (system → world) where it clarifies the boundary.
-- State unknowns in the Assumptions section.
-- **Table of Contents shape**: Mirror document tree — use nested list (2 spaces per level). Optional bold **group labels** (`System boundary`, `Internal decomposition`, `Cross-cutting`) group related `##` sections; under each `##` / `###` / `####`, indent TOC children to match heading depth. Every linked TOC line must match a real heading so anchors resolve (add `###` / `####` subheadings where the TOC nests deeper).
+- State unknowns inline in **Scope and coverage**, **Cross-Cutting Concerns**, or module/subsystem entries. If you add a standalone `## Assumptions` (or similar), put it in the TOC with a real anchor — otherwise skip it.
+- **Table of Contents shape**: Mirror document tree — use nested list (2 spaces per level). Optional bold **group labels** (`System boundary`, `Internal decomposition`) group related `##` sections; under each `##` / `###` / `####`, indent TOC children to match heading depth. Every linked TOC line must match a real heading so anchors resolve (add `###` / `####` subheadings where the TOC nests deeper).
 - **Layer 1 ↔ Layer 2 continuity**: Same canonical **module name** appears in TOC twice — once under **Layer 1** (context: `### <Module X>`) and once under **Layer 2** (`### <Module X> — subsystems` → subsystems). Body text cross-links (Layer 1 → “subsystems below”; Layer 2 → “expands [Module X](#…) from system context”).
 - **Mermaid fence height (hard requirement)**: Small diagrams overlay adjacent markdown in some editors; pad with blank lines after the last diagram line until the inner line count is high enough.
   - **Mostly horizontal** (`flowchart LR`, `flowchart RL`, `graph LR`, `graph RL`): target **about 5 inner lines total** (diagram + padding). Add only the blanks needed so the fence is roughly that tall, not a tall stack of padding.
@@ -78,7 +78,6 @@ File exists at repo root. Every module name matches across TOC, headings, and di
       - [<Subsystem A>](#subsystem-a)
     - [<Module B>](#module-b--subsystems)
       - [<Subsystem B>](#subsystem-b)
-- **Cross-cutting**
 
 ## Layer 1 — System Context
 
@@ -122,6 +121,18 @@ Internal detail: [<Module B> — subsystems](#module-b--subsystems).
 flowchart TD
   A[Module A] --> B[Module B]
   B --> D[(External System)]
+
+
+
+
+
+
+
+
+
+
+
+
 ```
 
 ## Public interface
@@ -169,8 +180,9 @@ Expands [<Module A>](#module-a) from system context.
 
 ```mermaid
 flowchart LR
-  SA1[Subsystem A] --> SA2[Subsystem B]
+  SA1[Subsystem A] --> SA2[Internal boundary]
   SA2 --> EXT[(External)]
+
 ```
 
 ### <Module B> — subsystems
@@ -184,6 +196,14 @@ Expands [<Module B>](#module-b) from system context.
 **Inbound**: <...>
 **Outbound**: <...>
 **Constraints**: <...>
+
+```mermaid
+flowchart LR
+  SB1[Subsystem B] --> SB2[Internal boundary]
+  SB2 --> EXT2[(External)]
+
+```
+
 ````
 
 ## Checklist
@@ -197,4 +217,4 @@ Expands [<Module B>](#module-b) from system context.
 - [ ] Each Level 1 `### <Module …>` has a Level 2 `### <Module …> — subsystems`; same module name in TOC under both **System boundary** and **Internal decomposition**
 - [ ] Names consistent across TOC, headings, diagrams
 - [ ] Public interface section lists entry surfaces, owners, and inbound vs outbound where useful
-- [ ] Mermaid diagram at every documented level; horizontal `LR`/`RL` fences ≈5 inner lines; other layouts ≥10 inner lines (pad with blanks)
+- [ ] Mermaid diagram at every documented level; horizontal `LR`/`RL` fences ≈5 inner lines; vertical `TD`/`TB` (and similar) ≥15 inner lines (pad with blanks)
