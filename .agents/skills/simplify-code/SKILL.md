@@ -1,5 +1,5 @@
 ---
-name: simplify
+name: simplify-code
 description: >-
   Simplifies and refines code for clarity, consistency, and maintainability while preserving all functionality.
   Focuses on recently modified code unless instructed otherwise.
