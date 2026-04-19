@@ -1,7 +1,7 @@
 # Cursor `agent` CLI completions (fish)
 # Skills: ~/.cursor/skills, ~/.agents/skills, $PWD/.cursor/skills, git root .cursor/skills, …
-# Global /-skill list (plain text, one name per line; optional leading /; # comments): ~/.cursor/agent-global-skills.txt
-#   Override path: set -Ux AGENT_GLOBAL_SKILLS_FILE /path/to/list.txt
+# Global /-skill list (plain text, one name per line; must start with /; # comments):
+#   ~/dotfiles/.config/fish/global-skills.txt
 # Skill picks: /name only — @ prefixes file refs; no bare filenames in completions (use -f)
 # Optional fzf: Ctrl-G runs agent_fzf_path (~/.config/fish/functions/agent-fzf.fish) — respects @path prefix
 
@@ -35,6 +35,13 @@ end
 
 function __fish_agent_skills
     set -l seen
+
+    for name in (__fish_agent_skills_from_files)
+        contains -- $name $seen; and continue
+        set -a seen $name
+        printf '/%s\tglobal\n' $name
+    end
+
     for root in (__fish_agent_skill_roots)
         test -d $root; or continue
         for d in $root/*/
@@ -46,20 +53,10 @@ function __fish_agent_skills
             printf '/%s\n' $name
         end
     end
-
-    for name in (__fish_agent_skills_from_files)
-        contains -- $name $seen; and continue
-        set -a seen $name
-        printf '/%s\n' $name
-    end
 end
 
 function __fish_agent_global_skills_list_file
-    if set -q AGENT_GLOBAL_SKILLS_FILE
-        test -f "$AGENT_GLOBAL_SKILLS_FILE"; and path resolve $AGENT_GLOBAL_SKILLS_FILE
-        return 0
-    end
-    set -l def $HOME/.cursor/agent-global-skills.txt
+    set -l def $HOME/dotfiles/.config/fish/global-skills.txt
     test -f $def; and path resolve $def
 end
 
@@ -108,7 +105,9 @@ function __fish_agent_skills_from_files
             test -n "$no_comment"; or continue
 
             set -l tok (string split --max 1 ' ' -- $no_comment)[1]
-            set -l name (string replace -r '^/' '' -- (string trim -- $tok))
+            set -l trimmed_tok (string trim -- $tok)
+            string match -qr '^/' -- $trimmed_tok; or continue
+            set -l name (string replace -r '^/' '' -- $trimmed_tok)
             test -n "$name"; or continue
 
             contains -- $name $out; and continue

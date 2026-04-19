@@ -1,0 +1,12 @@
+# One skill name per line for `agent` /-command autocomplete.
+# Leading "/" is required.
+# Lines starting with "#" are ignored.
+
+/simplify
+/best-of-n
+/worktree
+/babysit
+/create-hook
+/create-skill
+/create-rule
+/create-subagent

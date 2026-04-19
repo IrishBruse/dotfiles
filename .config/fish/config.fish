@@ -63,6 +63,8 @@ alias showkey="fish_key_reader --verbose"
 alias nano="micro"
 alias snano="sudo micro"
 
+abbr neofetch fastfetch
+
 # Scripts
 alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LDtk.Codegen.csproj"
 
@@ -71,5 +73,7 @@ abbr nvm fnm
 
 # Keybinds
 bind ctrl-w backward-kill-word
+bind \t __agent_complete_or_fzf_ref
+bind -M insert \t __agent_complete_or_fzf_ref
 
 alias stow="echo 'use ./stow.fish'"
