@@ -123,16 +123,6 @@ flowchart TD
   B --> D[(External System)]
 
 
-
-
-
-
-
-
-
-
-
-
 ```
 
 ## Public interface
@@ -203,7 +193,6 @@ flowchart LR
   SB2 --> EXT2[(External)]
 
 ```
-
 ````
 
 ## Checklist
