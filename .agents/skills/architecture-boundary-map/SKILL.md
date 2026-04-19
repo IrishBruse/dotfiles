@@ -25,10 +25,12 @@ Read `<repo-root>/ARCHITECTURE.md` if present. Preserve accurate sections; updat
 - Sample 2–3 source files per candidate module — never describe a module from its name alone.
 - Map the import graph with `Grep` to confirm dependency directions.
 - Locate the data layer (schemas, migrations, API contracts) and runtime boundaries (services, workers, CLIs).
+- Identify **public entry surfaces**: HTTP/RPC routes, CLI mains, published library exports, webhooks, message consumers, scheduled jobs, and how auth or credentials apply at each boundary.
 
 ### 3. Build hierarchy
 
 - **Level 1**: whole-system map.
+- **Public interface** (in the written doc): how the external world enters and interacts — not a third abstraction layer, but a dedicated section tied to Level 1 modules and entry surfaces.
 - **Level 2**: internal decomposition of each Level 1 module.
 
 ### 4. Write to disk
@@ -44,6 +46,7 @@ File exists at repo root. Every module name matches across TOC, headings, and di
 - One canonical name per module everywhere.
 - Each module entry: responsibilities, file paths, inbound deps, outbound deps, boundary constraints.
 - Show only architecturally significant externals in diagrams.
+- Document **public interfaces** explicitly: name each entry surface, who invokes it, protocol or contract, and which Level 1 module owns it; separate inbound (world → system) from outbound (system → world) where it clarifies the boundary.
 - State unknowns in the Assumptions section.
 - **Mermaid fence height (hard requirement)**: Small diagrams overlay adjacent markdown in some editors; pad with blank lines after the last diagram line until the inner line count is high enough.
   - **Mostly horizontal** (`flowchart LR`, `flowchart RL`, `graph LR`, `graph RL`): target **about 5 inner lines total** (diagram + padding). Add only the blanks needed so the fence is roughly that tall, not a tall stack of padding.
@@ -56,8 +59,11 @@ File exists at repo root. Every module name matches across TOC, headings, and di
 
 ## Table of Contents
 
-- [System Context](#system-context)
-- [Subsystem Boundaries](#subsystem-boundaries)
+- [Layer 1 — System Context](#layer-1--system-context)
+- [Public interface](#public-interface)
+- [Layer 2 — Subsystem Boundaries](#layer-2--subsystem-boundaries)
+  - [<Module A> / <Subsystem A>](#module-a--subsystem-a)
+  - [<Module B> / <Subsystem B>](#module-b--subsystem-b)
 - [Cross-Cutting Concerns](#cross-cutting-concerns)
 - [Assumptions](#assumptions)
 
@@ -78,6 +84,29 @@ File exists at repo root. Every module name matches across TOC, headings, and di
 flowchart TD
   A[Module A] --> B[Module B]
   B --> D[(External System)]
+```
+
+## Public interface
+
+> The **contract with the outside world**: how external actors invoke, authenticate to, subscribe to, or observe this system. This section names **entry surfaces** (the doors in), not internal subsystems. Tie each surface to the owning Level 1 module.
+
+**Summary**
+
+| Direction | Surface (examples) | Owned by module | Contract / notes |
+| --------- | ------------------- | --------------- | ---------------- |
+| Inbound   | <HTTP API, CLI, npm exports, webhook URL, queue subscription> | <Module A> | <protocol, auth model, idempotency> |
+| Outbound  | <callbacks, webhooks you call, client SDKs to third parties> | <Module B> | <when they fire, failure semantics> |
+
+**Actors**: <humans via CLI, browser clients, partner backends, other repos importing this package, …>
+
+**Constraints at the boundary**: <what callers must not do, rate limits, versioning, breaking-change policy for public API>
+
+```mermaid
+flowchart LR
+  EXT1[External actors] --> GATE[Entry surface]
+  GATE --> MA[Module A]
+  GATE --> MB[Module B]
+  MA --> OUT[(Outbound to external systems)]
 ```
 
 ## Layer 2 — Subsystem Boundaries
@@ -132,4 +161,5 @@ flowchart LR
 - [ ] Import graph confirmed via `Grep`
 - [ ] All cited paths exist
 - [ ] Names consistent across TOC, headings, diagrams
+- [ ] Public interface section lists entry surfaces, owners, and inbound vs outbound where useful
 - [ ] Mermaid diagram at every documented level; horizontal `LR`/`RL` fences ≈5 inner lines; other layouts ≥10 inner lines (pad with blanks)
