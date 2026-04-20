@@ -1523,7 +1523,6 @@
   "workbench.settings.alwaysShowAdvancedSettings": true,
   "explorer.fileNesting.enabled": true,
   "workbench.layoutControl.enabled": false,
-  "chat.agentsControl.enabled": false,
   "workbench.navigationControl.enabled": false,
   "window.menuBarVisibility": "toggle",
   "window.commandCenter": false,
