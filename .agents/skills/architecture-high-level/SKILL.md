@@ -3,7 +3,6 @@ name: architecture-high-level
 description: >-
   High-level architecture: create or update repo-root ARCHITECTURE.md with scope, top-level modules,
   boundaries, and public entry surfaces—plus diagrams. Skips subsystem and component drill-down
-  (use architecture-modules-detail next for companion ARCHITECTURE_MODULES.md).
 disable-model-invocation: true
 ---
 
@@ -11,23 +10,29 @@ disable-model-invocation: true
 
 Write **`ARCHITECTURE.md`** at the repository root: **what the system is**, **major modules**, **how they relate**, and **how the outside world connects**.
 
+## Mandatory artifact (non-negotiable)
+
+- **You MUST create or update** `<repo-root>/ARCHITECTURE.md` using the **`Write`** tool (or equivalent patch that persists to disk). **A chat-only reply is not a completed run of this skill.**
+- **Do not** tell the user you are done until **`ARCHITECTURE.md` exists** at the repository root and contains the full draft (not an empty stub).
+- If the user names a different path for the high-level architecture doc, use that path instead—but you must still **write a file**; streaming the same content only in chat does not count.
+
 **Out of scope for this skill**: per-module subsystem trees, folder-by-folder breakdowns, component inventories, deep import graphs inside a module—run **`architecture-modules-detail`** after this (writes **`ARCHITECTURE_MODULES.md`** next to **`ARCHITECTURE.md`**).
 
 ## Architecture skills pipeline
 
 Execution order: **`architecture-high-level`** → **`architecture-modules-detail`** (step 2 is optional).
 
-| Step | Skill | Artifact |
-| ---- | ----- | ---------- |
-| **1** | **`architecture-high-level`** (this) | `ARCHITECTURE.md` — scope, modules, public interface |
-| **2** | **`architecture-modules-detail`** | `ARCHITECTURE_MODULES.md` — per-module subsystems, entry points, internal boundaries (reads step 1) |
+| Step  | Skill                                | Artifact                                                                                            |
+| ----- | ------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| **1** | **`architecture-high-level`** (this) | `ARCHITECTURE.md` — scope, modules, public interface                                                |
+| **2** | **`architecture-modules-detail`**    | `ARCHITECTURE_MODULES.md` — per-module subsystems, entry points, internal boundaries (reads step 1) |
 
 ## Output contract
 
 - **Table of contents** at the top; entries must match real headings (no numeric section titles like `1.` or “Layer 1”).
 - **System context**: scope; optional cross-cutting concerns; module inventory + one-line roles; **one** whole-system Mermaid diagram.
 - **Public interface**: surfaces (who owns what), actors, constraints; **one** Mermaid diagram.
-- Persist with the **`Write`** tool (not chat-only).
+- All of the above must live **in the saved `ARCHITECTURE.md` file**—not only in the chat transcript.
 
 ## Steps
 
@@ -89,10 +94,10 @@ TOC links resolve; names match across TOC, tables, and diagrams; every cited pat
 
 ### Modules
 
-| Module | Path | Role | Depends on | Must not depend on |
-| ------ | ---- | ---- | ---------- | ------------------- |
-| <Module A> | `<path>/` | <one phrase> | <modules / externals> | <modules> |
-| <Module B> | `<path>/` | <one phrase> | <…> | <…> |
+| Module     | Path      | Role         | Depends on            | Must not depend on |
+| ---------- | --------- | ------------ | --------------------- | ------------------ |
+| <Module A> | `<path>/` | <one phrase> | <modules / externals> | <modules>          |
+| <Module B> | `<path>/` | <one phrase> | <…>                   | <…>                |
 
 ### <Module A>
 
@@ -112,10 +117,10 @@ flowchart TD
 
 ### Surfaces
 
-| Direction | Surface | Owned by | Notes |
-| --------- | ------- | -------- | ----- |
-| Inbound | <API / CLI / …> | <Module> | <auth, contract> |
-| Outbound | <webhooks / SDK calls / …> | <Module> | <failure semantics> |
+| Direction | Surface                    | Owned by | Notes               |
+| --------- | -------------------------- | -------- | ------------------- |
+| Inbound   | <API / CLI / …>            | <Module> | <auth, contract>    |
+| Outbound  | <webhooks / SDK calls / …> | <Module> | <failure semantics> |
 
 ### Actors
 
@@ -135,12 +140,8 @@ flowchart LR
 
 ## Checklist
 
-- [ ] `ARCHITECTURE.md` written to repo root via `Write`
+- [ ] `ARCHITECTURE.md` written or updated via `Write` / persisted patch
 - [ ] No subsystem or component decomposition sections
 - [ ] TOC matches headings; links work
 - [ ] One Mermaid diagram under **System context**, one under **Public interface**
 - [ ] Module names consistent across TOC, tables, and diagrams
-
-## Related skills
-
-- **`architecture-modules-detail`**: **step 2** — reads this `ARCHITECTURE.md`, runs parallel subagents per module when useful, writes **`ARCHITECTURE_MODULES.md`**.
