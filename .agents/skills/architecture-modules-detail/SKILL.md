@@ -18,6 +18,15 @@ disable-model-invocation: true
 - If `ARCHITECTURE.md` is missing or has no usable **Modules** inventory, run **`architecture-high-level`** first (or stop and ask the user).
 - **Do not** duplicate the full high-level system story in the companion file; **link** back to `ARCHITECTURE.md` instead.
 
+## Architecture skills pipeline
+
+Execution order: **`architecture-high-level`** → **`architecture-modules-detail`** (this skill is step 2; optional if only an overview is needed).
+
+| Step | Skill | Artifact |
+| ---- | ----- | -------- |
+| **1** | **`architecture-high-level`** | `ARCHITECTURE.md` (modules + public interface; no subsystem trees) |
+| **2** | **`architecture-modules-detail`** (this) | **`ARCHITECTURE_MODULES.md`** (per-module depth; links to step 1) |
+
 ## Output: separate file
 
 Write **`<repo-root>/ARCHITECTURE_MODULES.md`** using the **`Write`** tool.
@@ -31,9 +40,8 @@ Write **`<repo-root>/ARCHITECTURE_MODULES.md`** using the **`Write`** tool.
 | ----- | ---------------- | ----- |
 | **`architecture-high-level`** | `ARCHITECTURE.md` | System + modules + public interface only |
 | **`architecture-modules-detail`** (this) | `ARCHITECTURE_MODULES.md` | Per-module subsystems, entry points, internal boundaries |
-| **`architecture-boundary-map`** | single `ARCHITECTURE.md` | System + public interface + **Subsystems** inlined in one doc |
 
-Use **this** skill when the user wants **split docs** (overview stays short; detail lives beside it). Use **`architecture-boundary-map`** when they want **one** `ARCHITECTURE.md` with inlined subsystem sections.
+**This** skill always adds **`ARCHITECTURE_MODULES.md`** for subsystem depth; keep **`ARCHITECTURE.md`** as the short overview unless the user explicitly asks to change it.
 
 ## Depth contract
 
@@ -71,7 +79,7 @@ The **orchestrator** (you):
 **When to skip subagents**
 
 - **One module** (or a trivially small repo): you may analyze directly without `Task`.
-- User asks for a **single** combined `ARCHITECTURE.md` instead: use **`architecture-boundary-map`**, not this skill.
+- User asks for subsystem detail **only** inside `ARCHITECTURE.md`: confirm—this pair puts that depth in **`ARCHITECTURE_MODULES.md`**. Do not duplicate full subsystem trees into `ARCHITECTURE.md` unless they explicitly override the two-file layout.
 
 ### Subagent prompt template
 
@@ -161,3 +169,7 @@ Companion to [Architecture overview](./ARCHITECTURE.md). High-level scope, actor
 - [ ] No full duplicate of high-level **System context** / **Public interface** (links only)
 - [ ] Depth stays at subsystem / entry-point / interface level—not class inventories
 - [ ] TOC matches `##` headings; paths cited exist; names match `ARCHITECTURE.md`
+
+## Related skills
+
+- **`architecture-high-level`**: **step 1** — produces or refreshes the `ARCHITECTURE.md` inventory this skill depends on (see [Architecture skills pipeline](#architecture-skills-pipeline)).

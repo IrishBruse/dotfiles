@@ -3,7 +3,7 @@ name: architecture-high-level
 description: >-
   High-level architecture: create or update repo-root ARCHITECTURE.md with scope, top-level modules,
   boundaries, and public entry surfaces—plus diagrams. Skips subsystem and component drill-down
-  (use architecture-modules-detail for a companion deep doc, or architecture-boundary-map for subsystems inlined in ARCHITECTURE.md).
+  (use architecture-modules-detail next for companion ARCHITECTURE_MODULES.md).
 disable-model-invocation: true
 ---
 
@@ -11,7 +11,16 @@ disable-model-invocation: true
 
 Write **`ARCHITECTURE.md`** at the repository root: **what the system is**, **major modules**, **how they relate**, and **how the outside world connects**.
 
-**Out of scope for this skill**: per-module subsystem trees, folder-by-folder breakdowns, component inventories, deep import graphs inside a module—use **`architecture-modules-detail`** (writes `ARCHITECTURE_MODULES.md` beside this file) or **`architecture-boundary-map`** (inlines **Subsystems** into a single `ARCHITECTURE.md`).
+**Out of scope for this skill**: per-module subsystem trees, folder-by-folder breakdowns, component inventories, deep import graphs inside a module—run **`architecture-modules-detail`** after this (writes **`ARCHITECTURE_MODULES.md`** next to **`ARCHITECTURE.md`**).
+
+## Architecture skills pipeline
+
+Execution order: **`architecture-high-level`** → **`architecture-modules-detail`** (step 2 is optional).
+
+| Step | Skill | Artifact |
+| ---- | ----- | ---------- |
+| **1** | **`architecture-high-level`** (this) | `ARCHITECTURE.md` — scope, modules, public interface |
+| **2** | **`architecture-modules-detail`** | `ARCHITECTURE_MODULES.md` — per-module subsystems, entry points, internal boundaries (reads step 1) |
 
 ## Output contract
 
@@ -134,5 +143,4 @@ flowchart LR
 
 ## Related skills
 
-- **`architecture-modules-detail`**: reads this `ARCHITECTURE.md`, runs parallel subagents per module, writes **`ARCHITECTURE_MODULES.md`** for medium-depth module and interface detail.
-- **`architecture-boundary-map`**: keeps everything in one `ARCHITECTURE.md` including **Subsystems** sections.
+- **`architecture-modules-detail`**: **step 2** — reads this `ARCHITECTURE.md`, runs parallel subagents per module when useful, writes **`ARCHITECTURE_MODULES.md`**.
