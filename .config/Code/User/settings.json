@@ -1567,5 +1567,6 @@
     "gemini",
     "agent"
   ],
-  "markdown.extension.italic.indicator": "_"
+  "markdown.extension.italic.indicator": "_",
+  "markdownInlineEditor.links.singleClickOpen": true
 }
