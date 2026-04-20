@@ -3,12 +3,9 @@
     "noEmit": true,
     "target": "esnext",
     "module": "nodenext",
-    "lib": ["ES2022"],
-    "types": ["node"],
     "rewriteRelativeImportExtensions": true,
     "erasableSyntaxOnly": true,
-    "verbatimModuleSyntax": true,
-    "skipLibCheck": true
+    "verbatimModuleSyntax": true
   },
   "exclude": ["node_modules"]
 }

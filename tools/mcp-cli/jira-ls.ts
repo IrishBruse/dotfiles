@@ -635,7 +635,7 @@ async function main(): Promise<void> {
 
     for (const item of await searchJqlAllIssues(
       serverConfig,
-      serverName,
+      args.serverName,
       toolName,
       cloudId,
       jql,
@@ -646,7 +646,7 @@ async function main(): Promise<void> {
     }
     for (const item of await searchJqlAllIssuesLenient(
       serverConfig,
-      serverName,
+      args.serverName,
       toolName,
       cloudId,
       jqlEpic,

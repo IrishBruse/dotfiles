@@ -1,13 +1,3 @@
----
-name: pr-review
-description: >
-  Reviews a remote GitHub Pull Request from a team member. Use when given a PR
-  number, PR URL, or asked to review someone's PR. Fetches the diff and context
-  via the GitHub CLI, analyzes for correctness, security, and maintainability,
-  and produces a structured review with an optional posted comment.
-disable-model-invocation: true
----
-
 # PR Reviewer
 
 Conducts thorough, constructive code reviews of remote GitHub Pull Requests.

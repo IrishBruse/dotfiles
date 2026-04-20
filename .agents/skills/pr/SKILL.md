@@ -1,22 +1,14 @@
 ---
 name: pr
 description: >-
-  Automates the creation, updating, and previewing of Pull Requests while enforcing
-  repository templates,Jira ticket integration, and conventional commit standards.
+  Automates Pull Request creation from the branch (Jira, template, gh). Prefer
+  the dotfiles pr-cli (`pr open`, or `pr add` / `pr new` / `pr create`, tools/pr-cli); it injects tools/pr-cli/skills/create.md.
 disable-model-invocation: true
 ---
 
-# Requirements
+Full workflow: `tools/pr-cli/skills/create.md` in this repository (injected by `pr open` and aliases).
 
-- Jira MCP access **Fail** if missing
-
-# Steps
-
-- Pull down the users currently assigned jira tickets with the mcp tool or use the provided NOVACORE-... provided by the user
-- Run `git diff origin/main` to use with the description.
-- Read and use the local PR template if it exists.
-- Create the PR with the title `NOVACORE-123 - <title>` and the body following the template.
-
-# Output
-
-Return the link to the PR only unless there are issues.
+```bash
+cd tools/pr-cli && npm install && npm link
+pr open              # same flow: pr add | pr new | pr create; optional ticket, e.g. NOVACORE-123
+```
