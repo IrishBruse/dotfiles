@@ -1,12 +1,9 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import process from "node:process";
 
 function stateDir(): string {
-  const base =
-    process.env.XDG_STATE_HOME ?? path.join(os.homedir(), ".local", "state");
-  return path.join(base, "pr-cli");
+  return path.join(os.homedir(), ".local", "state", "pr-cli");
 }
 
 function stateFile(): string {

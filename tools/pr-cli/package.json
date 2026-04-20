@@ -1,7 +1,7 @@
 {
   "name": "pr-cli",
   "version": "1.0.0",
-  "description": "Launch Cursor Agent with pr-cli skills for GitHub PRs",
+  "description": "Launch Cursor Agent with pr-cli markdown prompts for GitHub PRs",
   "license": "ISC",
   "type": "module",
   "scripts": {

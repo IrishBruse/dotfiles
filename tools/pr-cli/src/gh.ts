@@ -1,4 +1,4 @@
-import { execFileSync, spawnSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -16,19 +16,6 @@ function escapeRegex(s: string): string {
 
 export function prTitleMatchesJiraKey(title: string, key: string): boolean {
   return new RegExp(`^${escapeRegex(key)}-\\d+`).test(title.trim());
-}
-
-export function tryGhPrTitle(workspace: string, pr: string): string | null {
-  try {
-    const out = execFileSync("gh", ["pr", "view", pr, "--json", "title"], {
-      encoding: "utf8",
-      cwd: workspace,
-    });
-    const j = JSON.parse(out) as { title: string };
-    return j.title;
-  } catch {
-    return null;
-  }
 }
 
 /** Canonical ref for gh and prompts: accepts PR numbers, org/repo#n, and github.com PR URLs. */
@@ -49,24 +36,35 @@ export function normalizePrRef(raw: string): string {
   return s;
 }
 
-export function parseGhPrStateJson(out: string): { key: string; headOid: string } {
+export function parseGhPrStateJson(out: string): {
+  key: string;
+  headOid: string;
+  title: string;
+} {
   const j = JSON.parse(out) as {
     headRefOid: string;
     number: number;
+    title: string;
     baseRepository: { nameWithOwner: string };
   };
   const key = `${j.baseRepository.nameWithOwner}#${j.number}`;
-  return { key, headOid: j.headRefOid };
+  return { key, headOid: j.headRefOid, title: j.title };
 }
 
 /** Resolves the PR with `gh pr view` or exits if it does not exist here. */
 export function requireGhPr(
   workspace: string,
   pr: string,
-): { key: string; headOid: string } {
+): { key: string; headOid: string; title: string } {
   const r = spawnSync(
     "gh",
-    ["pr", "view", pr, "--json", "headRefOid,number,baseRepository"],
+    [
+      "pr",
+      "view",
+      pr,
+      "--json",
+      "headRefOid,number,baseRepository,title",
+    ],
     { encoding: "utf8", cwd: workspace },
   );
   if (r.error) {

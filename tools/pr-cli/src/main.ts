@@ -1,7 +1,7 @@
 /// <reference types="node" />
 
 /**
- * Wraps Cursor Agent: skills/review.md (review flows) or skills/create.md (`pr open` and `add`/`new`/`create`).
+ * Wraps Cursor Agent: `prompts/review.md` (review) and `prompts/open.md` (create PR).
  */
 import process from "node:process";
 
@@ -11,18 +11,19 @@ import {
   ghPrCreateFromPayload,
   jiraTitleKeyFromEnv,
   prTitleMatchesJiraKey,
-  tryGhPrTitle,
 } from "./gh.ts";
 import {
   buildOpenPrompt,
   buildReviewPrompt,
-  createSkillPath,
-  readCreateSkill,
-  readReviewSkill,
-  reviewSkillPath,
+  openPromptPath,
+  reviewPromptPath,
 } from "./prompts.ts";
 import { extractPrPayloadFromAgentOutput, waitEnterOrEscape } from "./open.ts";
 import { writeStateEntry } from "./state.ts";
+
+function formatErr(e: unknown): string {
+  return e instanceof Error ? e.message : String(e);
+}
 
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
@@ -30,10 +31,10 @@ async function main(): Promise<void> {
   const jiraTitleKey = jiraTitleKeyFromEnv();
 
   if (parsed.mode !== "open" && jiraTitleKey && parsed.pr) {
-    const title = tryGhPrTitle(parsed.workspace, parsed.pr);
+    const title = parsed.prTitle;
     if (title === null) {
       process.stderr.write(
-        "pr: gh pr view failed; cannot enforce PR_TITLE_JIRA_KEY\n",
+        "pr: internal error: missing PR title after gh pr view\n",
       );
       process.exit(1);
     }
@@ -48,14 +49,11 @@ async function main(): Promise<void> {
   let prompt: string;
   if (parsed.mode === "open") {
     try {
-      prompt = buildOpenPrompt(
-        parsed.ticket,
-        readCreateSkill(),
-        jiraTitleKey,
-      );
+      prompt = buildOpenPrompt(parsed.ticket, jiraTitleKey);
     } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      process.stderr.write(`pr: cannot read ${createSkillPath()}: ${msg}\n`);
+      process.stderr.write(
+        `pr: cannot read ${openPromptPath()}: ${formatErr(e)}\n`,
+      );
       process.exit(1);
     }
 
@@ -67,8 +65,7 @@ async function main(): Promise<void> {
         prompt,
       );
     } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      process.stderr.write(`pr: ${msg}\n`);
+      process.stderr.write(`pr: ${formatErr(e)}\n`);
       process.exit(1);
     }
 
@@ -76,8 +73,7 @@ async function main(): Promise<void> {
     try {
       payload = extractPrPayloadFromAgentOutput(combined);
     } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      process.stderr.write(`pr: ${msg}\n`);
+      process.stderr.write(`pr: ${formatErr(e)}\n`);
       process.exit(1);
     }
 
@@ -101,8 +97,7 @@ async function main(): Promise<void> {
     try {
       choice = await waitEnterOrEscape();
     } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      process.stderr.write(`pr: ${msg}\n`);
+      process.stderr.write(`pr: ${formatErr(e)}\n`);
       process.exit(1);
     }
     if (choice === "escape") {
@@ -113,32 +108,33 @@ async function main(): Promise<void> {
     process.exit(0);
   }
 
-  let skillBody: string;
   try {
-    skillBody = readReviewSkill();
+    prompt = buildReviewPrompt(
+      parsed.mode,
+      parsed.pr,
+      parsed.hint,
+      jiraTitleKey,
+    );
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    process.stderr.write(`pr: cannot read ${reviewSkillPath()}: ${msg}\n`);
+    process.stderr.write(
+      `pr: cannot read ${reviewPromptPath()}: ${formatErr(e)}\n`,
+    );
     process.exit(1);
   }
-  prompt = buildReviewPrompt(
-    parsed.mode as "add" | "update",
-    parsed.pr,
-    skillBody,
-    parsed.hint,
-    jiraTitleKey,
-  );
 
-  const agentArgs = ["--trust", "--workspace", parsed.workspace];
-  if (parsed.print) agentArgs.push("--print");
-  agentArgs.push(...parsed.agentForward, prompt);
+  const agentArgs = [
+    "--trust",
+    "--workspace",
+    parsed.workspace,
+    ...parsed.agentForward,
+    prompt,
+  ];
 
   let code: number;
   try {
     code = await spawnAgentInherit(agentArgs);
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    process.stderr.write(`pr: failed to start agent: ${msg}\n`);
+    process.stderr.write(`pr: failed to start agent: ${formatErr(e)}\n`);
     process.exit(1);
   }
   if (code === 0 && parsed.stateKey && parsed.headOid) {
@@ -148,6 +144,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((e) => {
-  process.stderr.write(`${e}\n`);
+  process.stderr.write(`${formatErr(e)}\n`);
   process.exit(1);
 });
