@@ -336,6 +336,7 @@
           "customrule",
           "support.type.property-name",
           "markup.heading.setext",
+          "source.markdown support.function",
         ],
         "settings": {
           "foreground": "#ABB2BF",
@@ -956,7 +957,7 @@
         },
       },
       {
-        "scope": ["source.qbe constant.other"],
+        "scope": ["source.qbe constant.other", "source.markdown constant"],
         "settings": {
           "foreground": "#56B6C2",
         },
@@ -1038,6 +1039,7 @@
     "local": "ini",
     "*.glsl": "bat",
     "*.ejs.t": "ejs",
+    "*.feature": "feature",
     "*.ast": "graphql",
     "*.sh": "shellscript",
     "*.yaml": "yaml",
@@ -1199,18 +1201,17 @@
   "terminal.integrated.defaultProfile.osx": "fish",
   "terminal.external.linuxExec": "ghostty",
   "terminal.external.osxExec": "Ghostty.app",
-  "terminal.integrated.automationProfile.linux": {
-    "args": ["-li"],
-    "path": "fish",
-  },
-  "terminal.integrated.automationProfile.osx": {
-    "args": ["-li"],
-    "path": "/opt/homebrew/bin/fish",
-  },
+  // "terminal.integrated.automationProfile.linux": {
+  //   "args": ["-li"],
+  //   "path": "fish",
+  // },
+  // "terminal.integrated.automationProfile.osx": {
+  //   "args": ["-li"],
+  //   "path": "/opt/homebrew/bin/fish",
+  // },
   "terminal.explorerKind": "both",
   "terminal.integrated.commandsToSkipShell": [
     "workbench.action.createTerminalEditor",
-    "workbench.action.terminal.copySelection",
     "workbench.action.terminal.paste",
     "workbench.action.terminal.startVoice",
     "workbench.action.terminal.stopVoice",
@@ -1292,7 +1293,6 @@
     "files.trimFinalNewlines": false,
     "files.trimTrailingWhitespace": false,
     "editor.indentSize": 4,
-    "editor.defaultFormatter": "yzhang.markdown-all-in-one",
   },
   "[snippets]": {
     "files.insertFinalNewline": false,
@@ -1551,20 +1551,9 @@
   "markdownInlineEditor.math.enabled": false,
   "diffEditor.ignoreTrimWhitespace": false,
   "terminal.integrated.gpuAcceleration": "on",
-  "git.repositoryScanMaxDepth": 2,
-  "acp.agents": {
-    "Cursor": {
-      "command": "agent",
-      "args": ["acp"],
-    },
-  },
   "workbench.editor.useModal": "off",
   "markdown.extension.tableFormatter.enabled": false,
-  "markdown.extension.tableFormatter.delimiterRowNoPadding": true,
   "workbench.browser.showInTitleBar": true,
-  "ib-utilities.acpAgents": [
-    { "name": "Cursor", "command": "agent", "args": ["acp"] },
-  ],
   "network.meteredConnection": "off",
   "material-icon-theme.hidesExplorerArrows": true,
   "editor.scrollbar.horizontalScrollbarSize": 8,
@@ -1579,4 +1568,5 @@
     "gemini",
     "agent",
   ],
+  "markdown.extension.italic.indicator": "_",
 }
