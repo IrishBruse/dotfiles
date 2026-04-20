@@ -1569,4 +1569,5 @@
     "agent",
   ],
   "markdown.extension.italic.indicator": "_",
+  "markdownInlineEditor.links.singleClickOpen": true,
 }
