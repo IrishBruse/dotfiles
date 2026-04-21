@@ -1,8 +1,8 @@
-**First-pass PR review.** You were started from **`pr review`** (always first-pass; the CLI does not use saved HEAD for that subcommand) or from default **`pr`** after the CLI chose **add** (first run for this PR, same-HEAD compact pass, or no PR on the argv — see stderr hints from the CLI).
+**Follow-up PR review.** You were started from **`pr update`** or from default **`pr`** after the CLI detected **new commits** vs the last successful run for this PR (saved HEAD changed).
 
 {{prLine}}
 
-Do a first-pass review: follow every step in this document (resolve PR, diff, context, analysis, structured feedback). End with an explicit verdict (**Approved** / **Request changes** / **Needs discussion**) and state whether the change is merge-ready from a review perspective.
+The PR may have new commits or new threads. Re-fetch diff and review/comment state, then write an updated review: what changed, resolved items, and any new findings. End with an explicit verdict and merge readiness (approve to merge vs blockers).
 
 {{hintBlock}}{{jiraBlock}}
 

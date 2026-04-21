@@ -1,7 +1,7 @@
 /// <reference types="node" />
 
 /**
- * Wraps Cursor Agent: `prompts/review.md` (review) and `prompts/open.md` (create PR).
+ * Wraps Cursor Agent: markdown templates under `prompts/` (default `pr` reuses review vs update).
  */
 import process from "node:process";
 
@@ -13,10 +13,11 @@ import {
   prTitleMatchesJiraKey,
 } from "./gh.ts";
 import {
-  buildOpenPrompt,
-  buildReviewPrompt,
-  openPromptPath,
-  reviewPromptPath,
+  buildCreatePrPrompt,
+  buildReviewCmdPrompt,
+  buildUpdateCmdPrompt,
+  promptPath,
+  reviewAgentTemplate,
 } from "./prompts.ts";
 import { extractPrPayloadFromAgentOutput, waitEnterOrEscape } from "./open.ts";
 import { writeStateEntry } from "./state.ts";
@@ -49,21 +50,17 @@ async function main(): Promise<void> {
   let prompt: string;
   if (parsed.mode === "open") {
     try {
-      prompt = buildOpenPrompt(parsed.ticket, jiraTitleKey);
+      prompt = buildCreatePrPrompt(parsed.ticket, jiraTitleKey);
     } catch (e) {
       process.stderr.write(
-        `pr: cannot read ${openPromptPath()}: ${formatErr(e)}\n`,
+        `pr: cannot read ${promptPath("create")}: ${formatErr(e)}\n`,
       );
       process.exit(1);
     }
 
     let combined: string;
     try {
-      combined = await runOpenAgentCapture(
-        parsed.workspace,
-        parsed.agentForward,
-        prompt,
-      );
+      combined = await runOpenAgentCapture(parsed.workspace, prompt);
     } catch (e) {
       process.stderr.write(`pr: ${formatErr(e)}\n`);
       process.exit(1);
@@ -108,27 +105,20 @@ async function main(): Promise<void> {
     process.exit(0);
   }
 
+  const tmpl = reviewAgentTemplate(parsed);
   try {
-    prompt = buildReviewPrompt(
-      parsed.mode,
-      parsed.pr,
-      parsed.hint,
-      jiraTitleKey,
-    );
+    prompt =
+      tmpl === "review"
+        ? buildReviewCmdPrompt(parsed.pr, parsed.hint, jiraTitleKey)
+        : buildUpdateCmdPrompt(parsed.pr, parsed.hint, jiraTitleKey);
   } catch (e) {
     process.stderr.write(
-      `pr: cannot read ${reviewPromptPath()}: ${formatErr(e)}\n`,
+      `pr: cannot read ${promptPath(tmpl)}: ${formatErr(e)}\n`,
     );
     process.exit(1);
   }
 
-  const agentArgs = [
-    "--trust",
-    "--workspace",
-    parsed.workspace,
-    ...parsed.agentForward,
-    prompt,
-  ];
+  const agentArgs = ["--trust", "--workspace", parsed.workspace, prompt];
 
   let code: number;
   try {

@@ -3,7 +3,6 @@ import process from "node:process";
 
 export function runOpenAgentCapture(
   workspace: string,
-  agentForward: string[],
   prompt: string,
 ): Promise<string> {
   const args = [
@@ -11,7 +10,6 @@ export function runOpenAgentCapture(
     "--workspace",
     workspace,
     "--print",
-    ...agentForward.filter((a) => a !== "--print"),
     prompt,
   ];
   return new Promise((resolve, reject) => {

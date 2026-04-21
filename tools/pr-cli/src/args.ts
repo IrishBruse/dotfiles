@@ -12,24 +12,15 @@ function isReviewCmd(sub: string): boolean {
   return sub === "review";
 }
 
-/** Create PR from branch (`pr open` and aliases `add` / `new` / `create`). */
-function isPrCreateCmd(sub: string): boolean {
-  return sub === "open" || sub === "add" || sub === "new" || sub === "create";
+/** Create PR from branch (`pr create`). */
+function isCreateCmd(sub: string): boolean {
+  return sub === "create";
 }
 
 function explicitReviewModeFromSub(sub: string): "add" | "update" | null {
   if (sub === "update") return "update";
   if (isReviewCmd(sub)) return "add";
   return null;
-}
-
-function parseMainAndForward(argv: string[]): {
-  main: string[];
-  agentForward: string[];
-} {
-  const dd = argv.indexOf("--");
-  if (dd === -1) return { main: argv, agentForward: [] };
-  return { main: argv.slice(0, dd), agentForward: argv.slice(dd + 1) };
 }
 
 function parsePositionals(main: string[]): string[] {
@@ -51,12 +42,12 @@ export function parseArgs(argv: string[]): Parsed {
 
   if (argv.length === 0) {
     return {
+      command: "pr",
       mode: "add",
       pr: null,
       prTitle: null,
       ticket: null,
       workspace: ws,
-      agentForward: [],
       hint: null,
       stateKey: null,
       headOid: null,
@@ -64,25 +55,25 @@ export function parseArgs(argv: string[]): Parsed {
   }
   if (argv[0] === "-h" || argv[0] === "--help") usage();
 
-  const { main, agentForward } = parseMainAndForward(argv);
+  const main = argv;
   const sub = main[0];
 
-  if (isPrCreateCmd(sub)) {
+  if (isCreateCmd(sub)) {
     const positional = parsePositionals(main.slice(1));
     if (positional.length > 1) {
       process.stderr.write(
-        `pr: ${sub}: at most one optional Jira key (e.g. NOVACORE-123)\n`,
+        "pr: create: at most one optional Jira key (e.g. NOVACORE-123)\n",
       );
       usage();
     }
     const ticket = positional[0]?.trim() ?? null;
     return {
+      command: "create",
       mode: "open",
       pr: null,
       prTitle: null,
       ticket,
       workspace: ws,
-      agentForward,
       hint: null,
       stateKey: null,
       headOid: null,
@@ -99,12 +90,12 @@ export function parseArgs(argv: string[]): Parsed {
     const pr = positional[0] != null ? normalizePrRef(positional[0]) : null;
     const gh = pr ? requireGhPr(ws, pr) : null;
     return {
+      command: sub === "update" ? "update" : "review",
       mode: explicitMode,
       pr,
       prTitle: gh?.title ?? null,
       ticket: null,
       workspace: ws,
-      agentForward,
       hint: null,
       stateKey: gh?.key ?? null,
       headOid: gh?.headOid ?? null,
@@ -120,12 +111,12 @@ export function parseArgs(argv: string[]): Parsed {
 
   if (!pr) {
     return {
+      command: "pr",
       mode: "add",
       pr: null,
       prTitle: null,
       ticket: null,
       workspace: ws,
-      agentForward,
       hint: null,
       stateKey: null,
       headOid: null,
@@ -141,12 +132,12 @@ export function parseArgs(argv: string[]): Parsed {
       `pr: first run for ${gh.key} — initial review (add)\n`,
     );
     return {
+      command: "pr",
       mode: "add",
       pr,
       prTitle: gh.title,
       ticket: null,
       workspace: ws,
-      agentForward,
       hint: null,
       stateKey: gh.key,
       headOid: gh.headOid,
@@ -157,12 +148,12 @@ export function parseArgs(argv: string[]): Parsed {
       `pr: new commits on ${gh.key} — follow-up review (update)\n`,
     );
     return {
+      command: "pr",
       mode: "update",
       pr,
       prTitle: gh.title,
       ticket: null,
       workspace: ws,
-      agentForward,
       hint: null,
       stateKey: gh.key,
       headOid: gh.headOid,
@@ -173,12 +164,12 @@ export function parseArgs(argv: string[]): Parsed {
     `pr: same HEAD as last completed run for ${gh.key} — compact pass\n`,
   );
   return {
+    command: "pr",
     mode: "add",
     pr,
     prTitle: gh.title,
     ticket: null,
     workspace: ws,
-    agentForward,
     hint: "The PR branch HEAD is unchanged since the last successful `pr` run for this PR. Keep the review concise: merge readiness, regressions, or gaps you might have missed.",
     stateKey: gh.key,
     headOid: gh.headOid,

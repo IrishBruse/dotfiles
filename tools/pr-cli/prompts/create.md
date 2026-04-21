@@ -1,4 +1,4 @@
-You are executing **create a new GitHub PR from the current branch** (`pr open`, `pr add`, `pr new`, or `pr create`). Follow this document exactly. Use the ticket and policy lines below when present.
+You are executing **`pr create`**: create a new GitHub PR from the current branch when none exists yet. Follow this document exactly. Use the ticket and policy lines below when present.
 
 {{ticketLine}}{{jiraBlock}}
 

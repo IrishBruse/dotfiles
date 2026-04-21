@@ -5,7 +5,7 @@ export function usage(): never {
   pr [<pr-number-or-url>]
   pr review [<pr-number-or-url>]
   pr update [<pr-number-or-url>]
-  pr open|add|new|create [<jira-key e.g. NOVACORE-123>]
+  pr create [<jira-key e.g. NOVACORE-123>]
 
 Flags:
   -h, --help     Print this message and exit
@@ -15,11 +15,9 @@ current working directory first. The default command picks add vs update from th
 successful run (stored under ~/.local/state/pr-cli/last-head.json):
 first time for that PR → add, new commits → update, same HEAD → short add-style pass.
 
-\`pr review\` forces first-pass review (\`prompts/review.md\`). Same prompt as default \`pr <pr>\` / \`pr update\`, without that state-based choice.
+Default \`pr\` picks \`prompts/review.md\` vs \`prompts/update.md\` from saved HEAD (same as explicit \`pr review\` / \`pr update\`).
 
-\`pr open\` (same as \`add\` / \`new\` / \`create\`) drafts a new PR when none exists yet (\`prompts/open.md\`): runs the agent with \`--print\`, expects a final \`\`\`json\`\`\` block with {"title","body"}, shows a preview, then ENTER runs \`gh pr create\` or ESC cancels.
-
-Use \`--\` before extra arguments to forward them to \`agent\` (e.g. \`pr 42 -- --model sonnet-4\`).
+\`pr create\` drafts a new PR when none exists yet (\`prompts/create.md\`): runs the agent with \`--print\`, expects a final \`\`\`json\`\`\` block with {"title","body"}, shows a preview, then ENTER runs \`gh pr create\` or ESC cancels.
 
 Requires \`gh\` and \`agent\` on PATH.
 
