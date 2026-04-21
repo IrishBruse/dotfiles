@@ -66,6 +66,7 @@ interface PageViewJson {
 
 function parseArgs(argv: string[]): {
   url: string;
+  pageId: string;
   outDir: string;
   acli: string;
   rawStorage: boolean;
@@ -133,6 +134,7 @@ function parseArgs(argv: string[]): {
   const c = Math.min(64, Math.max(1, Math.floor(concurrency)));
   return {
     url,
+    pageId,
     outDir: outDir ?? rest[1] ?? defaultOut,
     acli,
     rawStorage,
@@ -204,7 +206,7 @@ async function runAcliPageAsync(
   }
 }
 
-/** Bounded concurrency for acli (replaces p-limit dependency). */
+/** Bounded concurrency for subprocess-backed page fetches. */
 function createFetchLimiter(concurrency: number) {
   const queue: (() => void)[] = [];
   let active = 0;
@@ -356,8 +358,7 @@ async function walk(
 
 async function main(): Promise<void> {
   const parsed = parseArgs(process.argv.slice(2));
-  const pageId = pageIdFromUrl(parsed.url);
-  if (!pageId) process.exit(1);
+  const pageId = parsed.pageId;
 
   const limit = createFetchLimiter(parsed.concurrency);
   const fetchPage = (id: string) =>

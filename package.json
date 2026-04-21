@@ -2,6 +2,9 @@
   "name": "dotfiles",
   "private": true,
   "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate.ts"
+  },
   "devDependencies": {
     "@types/node": "^24.0.0",
     "typescript": "^5.8.3"

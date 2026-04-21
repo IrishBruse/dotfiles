@@ -7,7 +7,7 @@
   "license": "",
   "description": "",
   "devDependencies": {
-    "@types/node": "^22.15.3"
+    "@types/node": "^24.0.0"
   },
   "dependencies": {
     "jsonc": "^2.0.0"

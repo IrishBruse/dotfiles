@@ -11,8 +11,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const tsc = path.join(root, "node_modules", ".bin", "tsc");
 
 const projects = [
-  "tools/pr-cli",
-  "tools/mcp-cli",
+  "tools/pr",
   "tools/atlassian",
   "scripts",
   "vscode",
