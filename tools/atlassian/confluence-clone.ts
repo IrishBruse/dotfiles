@@ -11,6 +11,31 @@ import { storageToMarkdown } from "./confluence-storage-to-markdown.ts";
 
 const ACLI_DEFAULT = "acli";
 
+function relativeToCwd(p: string): string {
+  const rel = path.relative(process.cwd(), path.resolve(p));
+  return rel === "" ? "." : rel;
+}
+
+function formatBytes(n: number): string {
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KiB`;
+  return `${(n / (1024 * 1024)).toFixed(1)} MiB`;
+}
+
+function sourceLabel(url: string): string {
+  try {
+    const u = new URL(url);
+    return `${u.origin}${u.pathname}`;
+  } catch {
+    return url;
+  }
+}
+
+interface CloneStats {
+  filesWritten: number;
+  totalBytes: number;
+}
+
 interface ChildRef {
   id: string;
   title?: string;
@@ -211,12 +236,15 @@ function writePageFile(
   dir: string,
   baseName: string,
   data: PageViewJson,
-  opts: { rawStorage: boolean },
+  opts: { rawStorage: boolean; stats: CloneStats },
 ): void {
   fs.mkdirSync(dir, { recursive: true });
   const filePath = path.join(dir, `${baseName}.md`);
-  fs.writeFileSync(filePath, buildFileContent(data, opts), "utf-8");
-  console.error(filePath);
+  const content = buildFileContent(data, { rawStorage: opts.rawStorage });
+  fs.writeFileSync(filePath, content, "utf-8");
+  opts.stats.filesWritten += 1;
+  opts.stats.totalBytes += Buffer.byteLength(content, "utf8");
+  console.error(relativeToCwd(filePath));
 }
 
 function walk(
@@ -228,9 +256,10 @@ function walk(
     visited: Set<string>;
     prefetched?: PageViewJson;
     rawStorage: boolean;
+    stats: CloneStats;
   },
 ): void {
-  const { leafSlug, visited, prefetched, rawStorage } = opts;
+  const { leafSlug, visited, prefetched, rawStorage, stats } = opts;
   if (visited.has(pageId)) {
     console.error(`confluence-clone: skip duplicate id ${pageId}`);
     return;
@@ -246,7 +275,7 @@ function walk(
 
   const children = sortChildren(data.directChildren?.results ?? []);
   const baseName = leafSlug ?? markdownBasename(data.title, pageId);
-  writePageFile(dir, baseName, data, { rawStorage });
+  writePageFile(dir, baseName, data, { rawStorage, stats });
 
   const childFolders = folderNamesForSiblings(children);
   for (let i = 0; i < children.length; i++) {
@@ -257,7 +286,7 @@ function walk(
     if (subKids.length === 0) {
       if (visited.has(ch.id)) continue;
       visited.add(ch.id);
-      writePageFile(dir, seg, childData, { rawStorage });
+      writePageFile(dir, seg, childData, { rawStorage, stats });
     } else {
       const childDir = path.join(dir, seg);
       fs.mkdirSync(childDir, { recursive: true });
@@ -266,6 +295,7 @@ function walk(
         visited,
         prefetched: childData,
         rawStorage,
+        stats,
       });
     }
   }
@@ -282,13 +312,27 @@ function main(): void {
   ]);
   const rootDir = path.join(path.resolve(parsed.outDir), rootSeg);
   const visited = new Set<string>();
+  const stats: CloneStats = { filesWritten: 0, totalBytes: 0 };
   walk(parsed.acli, rootDir, pageId, {
     leafSlug: null,
     visited,
     prefetched: titleProbe,
     rawStorage: parsed.rawStorage,
+    stats,
   });
-  console.error(`confluence-clone: done → ${path.resolve(parsed.outDir)}`);
+  const rootTitle = titleProbe.title?.trim() || `(page ${pageId})`;
+  const bodyMode = parsed.rawStorage
+    ? "raw Confluence storage (XML/HTML in .md bodies)"
+    : "Markdown (storage HTML converted)";
+  console.error("");
+  console.error("confluence-clone: finished");
+  console.error(`  source:   ${sourceLabel(parsed.url)}`);
+  console.error(`  root:     ${rootTitle} — id ${pageId}`);
+  console.error(`  output:   ${relativeToCwd(rootDir)}/`);
+  console.error(
+    `  wrote:    ${stats.filesWritten} page file(s), ${formatBytes(stats.totalBytes)} total`,
+  );
+  console.error(`  body:     ${bodyMode}`);
 }
 
 main();

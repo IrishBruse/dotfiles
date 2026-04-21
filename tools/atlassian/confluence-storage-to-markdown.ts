@@ -173,6 +173,42 @@ function unwrapRemainingStructuredMacros(html: string): string {
   return cur;
 }
 
+/** Confluence uses `<td><p>…</p></td>`; Turndown then puts newlines in cells and breaks GFM tables. */
+function flattenParagraphsInTableCells(root: Element): void {
+  const doc = root.ownerDocument;
+  for (const cell of root.querySelectorAll("td, th")) {
+    const ps = cell.querySelectorAll(":scope > p");
+    if (ps.length === 0) continue;
+    if (ps.length === 1) {
+      const p = ps[0]!;
+      while (p.firstChild) cell.insertBefore(p.firstChild, p);
+      p.remove();
+      continue;
+    }
+    const list = Array.from(ps);
+    let first = true;
+    for (const p of list) {
+      if (!first && doc) cell.insertBefore(doc.createTextNode(" "), p);
+      first = false;
+      while (p.firstChild) cell.insertBefore(p.firstChild, p);
+      p.remove();
+    }
+  }
+}
+
+/** Collapse whitespace/newlines in a table cell's markdown (GFM tables must be single-line per row). */
+function collapseCellMarkdown(s: string): string {
+  const parts = s.split("```");
+  return parts
+    .map((part, i) =>
+      i % 2 === 1
+        ? part
+        : part.replace(/\s*\n\s*/g, " ").replace(/[ \t]{2,}/g, " ").trim(),
+    )
+    .join("```")
+    .trim();
+}
+
 function createTurndown(): TurndownService {
   const td = new TurndownService({
     headingStyle: "atx",
@@ -181,6 +217,17 @@ function createTurndown(): TurndownService {
     emDelimiter: "_",
   });
   td.use(gfm);
+  td.addRule("tableCellCollapse", {
+    filter: ["th", "td"],
+    replacement(content, node) {
+      const collapsed = collapseCellMarkdown(content);
+      const parent = node.parentNode;
+      if (!parent) return collapsed;
+      const index = Array.prototype.indexOf.call(parent.childNodes, node);
+      const prefix = index === 0 ? "| " : " ";
+      return prefix + collapsed + " |";
+    },
+  });
   td.addRule("attachmentImage", {
     filter(node) {
       return (
@@ -215,6 +262,8 @@ export function storageToMarkdown(storage: string): string {
   const fragment = JSDOM.fragment(`<div id="root">${html}</div>`);
   const root = fragment.firstChild;
   if (!root || root.nodeType !== 1) return he.decode(storage).trim();
+
+  flattenParagraphsInTableCells(root as Element);
 
   const td = createTurndown();
   const out = td.turndown(root as unknown as HTMLElement).trim();
