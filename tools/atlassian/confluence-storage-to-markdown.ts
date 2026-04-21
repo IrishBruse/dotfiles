@@ -5,14 +5,7 @@ import he from "he";
 import { JSDOM } from "jsdom";
 import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";
-
-function sanitizeTitle(title: string): string {
-  return title
-    .replace(/[/\\:*?"<>|]/g, "-")
-    .replace(/\s+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 200);
-}
+import { slugifyConfluenceTitle } from "./confluence-slug.ts";
 
 function escapeHtml(s: string): string {
   return s
@@ -102,7 +95,7 @@ function replacePageLinks(html: string): string {
       }
       if (pageM) {
         const title = pageM[1]!;
-        const path = `${sanitizeTitle(title)}.md`;
+        const path = `${slugifyConfluenceTitle(title)}.md`;
         return `<a href="./${escapeAttr(path)}">${escapeHtml(text)}</a>`;
       }
       if (anchorM) {
@@ -209,7 +202,7 @@ function collapseCellMarkdown(s: string): string {
     .trim();
 }
 
-function createTurndown(): TurndownService {
+function buildTurndown(): TurndownService {
   const td = new TurndownService({
     headingStyle: "atx",
     bulletListMarker: "-",
@@ -245,6 +238,8 @@ function createTurndown(): TurndownService {
   return td;
 }
 
+const turndown = buildTurndown();
+
 export function storageToMarkdown(storage: string): string {
   let html = storage.trim();
   if (!html) return "";
@@ -265,8 +260,7 @@ export function storageToMarkdown(storage: string): string {
 
   flattenParagraphsInTableCells(root as Element);
 
-  const td = createTurndown();
-  const out = td.turndown(root as unknown as HTMLElement).trim();
+  const out = turndown.turndown(root as unknown as HTMLElement).trim();
 
   return out
     .replace(/\n{3,}/g, "\n\n")

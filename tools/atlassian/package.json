@@ -12,6 +12,7 @@
     "bin",
     "jira-board-sync.ts",
     "confluence-clone.ts",
+    "confluence-slug.ts",
     "confluence-storage-to-markdown.ts"
   ],
   "scripts": {
@@ -29,7 +30,6 @@
   "dependencies": {
     "he": "1.2.0",
     "jsdom": "29.0.2",
-    "p-limit": "7.3.0",
     "turndown": "7.2.4",
     "turndown-plugin-gfm": "1.0.2"
   }

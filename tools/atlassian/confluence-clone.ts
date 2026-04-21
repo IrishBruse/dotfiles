@@ -3,12 +3,15 @@
  * Clone a Confluence page subtree to local markdown files using
  * `acli confluence page view --json --include-direct-children`.
  */
-import { spawn } from "node:child_process";
+import { execFile as execFileCb } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
-import pLimit from "p-limit";
+import { promisify } from "node:util";
+import { slugifyConfluenceTitle } from "./confluence-slug.ts";
 import { storageToMarkdown } from "./confluence-storage-to-markdown.ts";
+
+const execFile = promisify(execFileCb);
 
 const ACLI_DEFAULT = "acli";
 const DEFAULT_CONCURRENCY = 8;
@@ -163,11 +166,13 @@ function pageIdFromUrl(urlString: string): string | null {
   return m ? m[1]! : null;
 }
 
-function runAcliPageAsync(acli: string, pageId: string): Promise<PageViewJson> {
-  return new Promise((resolve, reject) => {
-    const chunks: Buffer[] = [];
-    const errChunks: Buffer[] = [];
-    const child = spawn(
+async function runAcliPageAsync(
+  acli: string,
+  pageId: string,
+): Promise<PageViewJson> {
+  let stdout: string;
+  try {
+    const r = await execFile(
       acli,
       [
         "confluence",
@@ -180,44 +185,49 @@ function runAcliPageAsync(acli: string, pageId: string): Promise<PageViewJson> {
         "--body-format",
         "storage",
       ],
-      { stdio: ["ignore", "pipe", "pipe"] },
+      { maxBuffer: 64 * 1024 * 1024, encoding: "utf8" },
     );
-    child.on("error", (err) =>
-      reject(new Error(`Failed to run ${acli}: ${err.message}`)),
-    );
-    child.stdout?.on("data", (c: Buffer) => chunks.push(c));
-    child.stderr?.on("data", (c: Buffer) => errChunks.push(c));
-    child.on("close", (code) => {
-      const stdout = Buffer.concat(chunks).toString("utf-8").trim();
-      if (code !== 0) {
-        const err =
-          Buffer.concat(errChunks).toString("utf-8").trim() ||
-          stdout ||
-          `exit ${code}`;
-        reject(new Error(err));
-        return;
-      }
-      try {
-        resolve(JSON.parse(stdout) as PageViewJson);
-      } catch {
-        reject(
-          new Error(`Expected JSON from acli; got: ${stdout.slice(0, 200)}…`),
-        );
-      }
-    });
-  });
+    stdout = String(r.stdout ?? "").trim();
+  } catch (e: unknown) {
+    const err = e as { stderr?: Buffer; stdout?: Buffer; message?: string };
+    const msg =
+      err.stderr?.toString().trim() ||
+      err.stdout?.toString().trim() ||
+      err.message ||
+      String(e);
+    throw new Error(msg);
+  }
+  try {
+    return JSON.parse(stdout) as PageViewJson;
+  } catch {
+    throw new Error(`Expected JSON from acli; got: ${stdout.slice(0, 200)}…`);
+  }
 }
 
-function sanitize(title: string): string {
-  return title
-    .replace(/[/\\:*?"<>|]/g, "-")
-    .replace(/\s+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 200);
+/** Bounded concurrency for acli (replaces p-limit dependency). */
+function createFetchLimiter(concurrency: number) {
+  const queue: (() => void)[] = [];
+  let active = 0;
+  return function limit<T>(fn: () => Promise<T>): Promise<T> {
+    return new Promise((resolve, reject) => {
+      const run = () => {
+        active++;
+        fn()
+          .then(resolve, reject)
+          .finally(() => {
+            active--;
+            const next = queue.shift();
+            if (next) next();
+          });
+      };
+      if (active < concurrency) run();
+      else queue.push(run);
+    });
+  };
 }
 
 function folderBase(page: { id: string; title?: string }): string {
-  return sanitize(page.title ?? "") || "page";
+  return slugifyConfluenceTitle(page.title ?? "") || "page";
 }
 
 function folderNamesForSiblings(
@@ -238,7 +248,7 @@ function folderNamesForSiblings(
 
 function markdownBasename(title: string | undefined, pageId: string): string {
   const t = title != null ? String(title).trim() : "";
-  const s = sanitize(t || `page-${pageId}`);
+  const s = slugifyConfluenceTitle(t || `page-${pageId}`);
   return s || `page-${pageId}`;
 }
 
@@ -349,7 +359,7 @@ async function main(): Promise<void> {
   const pageId = pageIdFromUrl(parsed.url);
   if (!pageId) process.exit(1);
 
-  const limit = pLimit(parsed.concurrency);
+  const limit = createFetchLimiter(parsed.concurrency);
   const fetchPage = (id: string) =>
     limit(() => runAcliPageAsync(parsed.acli, id));
 
