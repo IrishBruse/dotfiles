@@ -168,6 +168,19 @@ function pageIdFromUrl(urlString: string): string | null {
   return m ? m[1]! : null;
 }
 
+function execFailureMessage(err: unknown): string {
+  if (!(err instanceof Error)) return String(err);
+  const ex = err as Error & {
+    stderr?: string | Buffer;
+    stdout?: string | Buffer;
+  };
+  const stderr =
+    ex.stderr !== undefined ? String(ex.stderr).trim() : "";
+  const stdout =
+    ex.stdout !== undefined ? String(ex.stdout).trim() : "";
+  return stderr || stdout || ex.message;
+}
+
 async function runAcliPageAsync(
   acli: string,
   pageId: string,
@@ -191,13 +204,7 @@ async function runAcliPageAsync(
     );
     stdout = String(r.stdout ?? "").trim();
   } catch (e: unknown) {
-    const err = e as { stderr?: Buffer; stdout?: Buffer; message?: string };
-    const msg =
-      err.stderr?.toString().trim() ||
-      err.stdout?.toString().trim() ||
-      err.message ||
-      String(e);
-    throw new Error(msg);
+    throw new Error(execFailureMessage(e));
   }
   try {
     return JSON.parse(stdout) as PageViewJson;
@@ -206,7 +213,6 @@ async function runAcliPageAsync(
   }
 }
 
-/** Bounded concurrency for subprocess-backed page fetches. */
 function createFetchLimiter(concurrency: number) {
   const queue: (() => void)[] = [];
   let active = 0;
@@ -365,9 +371,7 @@ async function main(): Promise<void> {
     limit(() => runAcliPageAsync(parsed.acli, id));
 
   const titleProbe = await fetchPage(pageId);
-  const [rootSeg] = folderNamesForSiblings([
-    { id: pageId, title: titleProbe.title },
-  ]);
+  const rootSeg = folderBase({ id: pageId, title: titleProbe.title });
   const rootDir = path.join(path.resolve(parsed.outDir), rootSeg);
   const visited = new Set<string>();
   const stats: CloneStats = { filesWritten: 0, totalBytes: 0 };

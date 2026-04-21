@@ -22,13 +22,11 @@
     "node": ">=24"
   },
   "devDependencies": {
-    "@types/he": "1.2.3",
     "@types/jsdom": "28.0.1",
     "@types/node": "^24.0.0",
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "he": "1.2.0",
     "jsdom": "29.0.2",
     "turndown": "7.2.4",
     "turndown-plugin-gfm": "1.0.2"

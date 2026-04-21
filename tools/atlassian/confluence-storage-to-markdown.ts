@@ -1,7 +1,6 @@
 /**
  * Confluence storage format (XHTML + ac:/ri: macros) → Markdown for local docs.
  */
-import he from "he";
 import { JSDOM } from "jsdom";
 import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";
@@ -26,8 +25,51 @@ function linkBodyPlain(html: string): string {
   return (f.textContent ?? "").trim();
 }
 
-function decodeAttr(s: string): string {
-  return he.decode(s.replace(/&amp;/g, "&"));
+/** Named refs resolved before `&amp;` each round (subset of HTML5 references). */
+const NAMED_ENTITY_CHARS: [string, string][] = [
+  ["quot", '"'],
+  ["apos", "'"],
+  ["lt", "<"],
+  ["gt", ">"],
+  ["nbsp", "\u00a0"],
+  ["hellip", "\u2026"],
+  ["mdash", "\u2014"],
+  ["ndash", "\u2013"],
+  ["lsquo", "\u2018"],
+  ["rsquo", "\u2019"],
+  ["ldquo", "\u201C"],
+  ["rdquo", "\u201D"],
+  ["middot", "\u00b7"],
+  ["bull", "\u2022"],
+  ["copy", "\u00a9"],
+  ["reg", "\u00ae"],
+  ["trade", "\u2122"],
+  ["euro", "\u20ac"],
+  ["pound", "\u00a3"],
+  ["yen", "\u00a5"],
+  ["cent", "\u00a2"],
+];
+
+function decodeHtmlEntities(raw: string): string {
+  let s = raw;
+  for (let i = 0; i < 64; i++) {
+    const prev = s;
+    s = s
+      .replace(/&#(\d{1,7});/g, (_, d) => {
+        const n = Number(d);
+        return n >= 0 && n <= 0x10ffff ? String.fromCodePoint(n) : _;
+      })
+      .replace(/&#x([\da-fA-F]{1,6});/gi, (_, h) => {
+        const n = parseInt(h, 16);
+        return n >= 0 && n <= 0x10ffff ? String.fromCodePoint(n) : _;
+      });
+    for (const [name, ch] of NAMED_ENTITY_CHARS) {
+      s = s.replace(new RegExp(`&${name};`, "gi"), ch);
+    }
+    s = s.replace(/&amp;/g, "&");
+    if (s === prev) break;
+  }
+  return s;
 }
 
 /** Strip Confluence editor noise attributes before HTML→MD. */
@@ -71,7 +113,7 @@ function replaceIframeMacros(html: string): string {
     (block) => {
       const urlM = block.match(/<ri:url[^>]*\bri:value="([^"]*)"/i);
       if (!urlM) return "";
-      const url = decodeAttr(urlM[1]!);
+      const url = decodeHtmlEntities(urlM[1]!);
       return `<p><a href="${escapeAttr(url)}">${escapeHtml(url)}</a> (embedded content)</p>`;
     },
   );
@@ -90,7 +132,7 @@ function replacePageLinks(html: string): string {
       );
       const urlM = inner.match(/<ri:url[^>]*\bri:value="([^"]*)"/i);
       if (urlM) {
-        const url = decodeAttr(urlM[1]!);
+        const url = decodeHtmlEntities(urlM[1]!);
         return `<a href="${escapeAttr(url)}">${escapeHtml(text)}</a>`;
       }
       if (pageM) {
@@ -256,7 +298,7 @@ export function storageToMarkdown(storage: string): string {
 
   const fragment = JSDOM.fragment(`<div id="root">${html}</div>`);
   const root = fragment.firstChild;
-  if (!root || root.nodeType !== 1) return he.decode(storage).trim();
+  if (!root || root.nodeType !== 1) return decodeHtmlEntities(storage).trim();
 
   flattenParagraphsInTableCells(root as Element);
 
