@@ -54,7 +54,11 @@ function handleStreamEvent(ev: JsonObject, assistantSt: { acc: string }): void {
   const type = ev.type;
   const subtype = ev.subtype;
 
-  if (type === "thinking" && subtype === "delta" && typeof ev.text === "string") {
+  if (
+    type === "thinking" &&
+    subtype === "delta" &&
+    typeof ev.text === "string"
+  ) {
     process.stderr.write(`\x1b[90m${ev.text}\x1b[0m`);
     return;
   }
@@ -64,7 +68,9 @@ function handleStreamEvent(ev: JsonObject, assistantSt: { acc: string }): void {
   }
 
   if (type === "tool_call" && subtype === "started") {
-    process.stderr.write(`\x1b[36m▶\x1b[0m ${summarizeToolCall(ev.tool_call)}\n`);
+    process.stderr.write(
+      `\x1b[36m$\x1b[0m ${summarizeToolCall(ev.tool_call)}\n`,
+    );
     return;
   }
 
@@ -110,8 +116,7 @@ export function runOpenAgentCapture(
       } catch (e) {
         parseError =
           e instanceof Error ? e : new Error("invalid JSON line from agent");
-        const snip =
-          trimmed.length > 80 ? `${trimmed.slice(0, 80)}…` : trimmed;
+        const snip = trimmed.length > 80 ? `${trimmed.slice(0, 80)}…` : trimmed;
         process.stderr.write(`\npr: agent stdout line was not JSON: ${snip}\n`);
         return false;
       }
