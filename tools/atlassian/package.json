@@ -10,8 +10,7 @@
   },
   "files": [
     "bin",
-    "sync-board.ts",
-    "board_lib.ts",
+    "jira-board-sync.ts",
     "confluence-clone.ts"
   ],
   "scripts": {
