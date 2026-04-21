@@ -79,17 +79,19 @@ function parseArgs(argv: string[]): {
   const defaultOut = `./confluence-${pageId}`;
   return {
     url,
-    outDir: outDir ?? (rest[1] ?? defaultOut),
+    outDir: outDir ?? rest[1] ?? defaultOut,
     acli,
   };
 }
 
 function usage(code: number): never {
-  const prog = path.basename(process.argv[1] ?? "confluence-tree-clone");
+  const prog = path.basename(process.argv[1] ?? "confluence-clone");
   console.error(`Usage: ${prog} <confluencePageUrl> [outputDir]`);
   console.error(`       ${prog} --url <url> [--out|-o <dir>] [--acli <path>]`);
   console.error("");
-  console.error("  Clones the page and all descendants via Atlassian CLI (acli).");
+  console.error(
+    "  Clones the page and all descendants via Atlassian CLI (acli).",
+  );
   console.error(`  Default output: ./confluence-<pageId>`);
   console.error("  Requires: acli authenticated (acli confluence auth).");
   process.exit(code);
@@ -143,7 +145,9 @@ function folderBase(page: { id: string; title?: string }): string {
   return sanitize(page.title ?? "") || "page";
 }
 
-function folderNamesForSiblings(pages: { id: string; title?: string }[]): string[] {
+function folderNamesForSiblings(
+  pages: { id: string; title?: string }[],
+): string[] {
   if (pages.length === 0) return [];
   const bases = pages.map(folderBase);
   const counts = new Map<string, number>();
@@ -184,7 +188,11 @@ function buildFileContent(page: PageViewJson): string {
   return `${lines.join("\n")}\n${html}\n`;
 }
 
-function writePageFile(dir: string, baseName: string, data: PageViewJson): void {
+function writePageFile(
+  dir: string,
+  baseName: string,
+  data: PageViewJson,
+): void {
   fs.mkdirSync(dir, { recursive: true });
   const filePath = path.join(dir, `${baseName}.md`);
   fs.writeFileSync(filePath, buildFileContent(data), "utf-8");
@@ -203,7 +211,7 @@ function walk(
 ): void {
   const { leafSlug, visited, prefetched } = opts;
   if (visited.has(pageId)) {
-    console.error(`confluence-tree-clone: skip duplicate id ${pageId}`);
+    console.error(`confluence-clone: skip duplicate id ${pageId}`);
     return;
   }
   visited.add(pageId);
@@ -211,13 +219,12 @@ function walk(
   const data = prefetched ?? runAcliPage(acli, pageId);
   if (data.directChildren?.meta?.hasMore) {
     console.error(
-      `confluence-tree-clone: warning: page ${pageId} has more direct children than returned; clone may be incomplete.`,
+      `confluence-clone: warning: page ${pageId} has more direct children than returned; clone may be incomplete.`,
     );
   }
 
   const children = sortChildren(data.directChildren?.results ?? []);
-  const baseName =
-    leafSlug ?? markdownBasename(data.title, pageId);
+  const baseName = leafSlug ?? markdownBasename(data.title, pageId);
   writePageFile(dir, baseName, data);
 
   const childFolders = folderNamesForSiblings(children);
@@ -258,7 +265,7 @@ function main(): void {
     visited,
     prefetched: titleProbe,
   });
-  console.error(`confluence-tree-clone: done → ${path.resolve(parsed.outDir)}`);
+  console.error(`confluence-clone: done → ${path.resolve(parsed.outDir)}`);
 }
 
 main();
