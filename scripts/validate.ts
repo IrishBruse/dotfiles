@@ -13,7 +13,7 @@ const tsc = path.join(root, "node_modules", ".bin", "tsc");
 const projects = [
   "tools/pr-cli",
   "tools/mcp-cli",
-  "tools/jira-board-sync",
+  "tools/atlassian",
   "scripts",
   "vscode",
 ] as const;

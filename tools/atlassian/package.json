@@ -5,12 +5,14 @@
   "license": "ISC",
   "type": "module",
   "bin": {
-    "jira-board-sync": "./bin/jira-board-sync.js"
+    "jira-board-sync": "./bin/jira-board-sync.js",
+    "confluence-clone": "./bin/confluence-clone.js"
   },
   "files": [
     "bin",
     "sync-board.ts",
-    "board_lib.ts"
+    "board_lib.ts",
+    "confluence-clone.ts"
   ],
   "scripts": {
     "validate": "tsc --noEmit"
