@@ -19,7 +19,5 @@ else
     # Only run code if it's not already visible to avoid duplicate instances/forks
     code "$HOME/dotfiles"
 
-    sleep 1
-
     hyprctl dispatch movetoworkspacesilent special,title:^DOTFILES\$
 fi
