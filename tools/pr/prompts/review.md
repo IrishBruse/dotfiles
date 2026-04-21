@@ -1,103 +1,44 @@
-## What you are doing
+Analyze the provided Pull Request (PR) by deploying parallel read-only review agents, then provide a consolidated summary and targeted inline suggestions or fixes.
 
-Conduct thorough, constructive code reviews of remote GitHub Pull Requests.
+### 1. Scope Selection
 
-### Inputs
+1. **Primary Scope:** Use the provided PR diff (the delta between the source branch and the target branch).
+2. **Contextual Awareness:** If the diff is small, pull in the full content of modified files to understand the surrounding logic.
+3. **Preservation:** Focus strictly on the changes introduced in the PR. Avoid "scope creep" into unrelated legacy code unless the PR directly interacts with it in a way that breaks invariants.
 
-- **PR number** (e.g. `42`) — assumes current repo
-- **PR URL** (e.g. `https://github.com/org/repo/pull/42`)
+### 2. Parallel Subagents
 
-If no PR is specified, list open PRs for the user to pick from:
+Launch three subagents to audit the PR simultaneously. They must only report findings and cannot modify code during the analysis phase.
 
-```bash
-gh pr list --limit 20
-```
+#### **Agent A: Code Quality & Maintainability**
 
-### Requirements
+- **Logic Simplification:** Identify complex conditionals that can be flattened or replaced with guard clauses.
+- **Clarity over Cleverness:** Flag "magic numbers," cryptic naming, or "clever" one-liners that hinder readability.
+- **Defensive Over-engineering:** Look for unnecessary null checks where types already guarantee presence, or broad `try/catch` blocks that swallow meaningful errors.
+- **Type Safety:** Identify `any` types, unnecessary casts, or loose interfaces that weaken the contract of the code.
 
-- `gh` CLI must be installed
+#### **Agent B: Performance & Scalability**
 
-### Workflow
+- **Resource Efficiency:** Spot N+1 queries, heavy operations inside map/filter loops, and lack of memoization for expensive computations.
+- **Concurrency:** Check for blocking I/O on the main thread or missing `await` calls that lead to race conditions.
+- **Memory Footprint:** Identify large object allocations in hot paths or closures that might cause unintended memory leaks.
+- **Payload Bloat:** Look for excessive logging or telemetry being sent from high-frequency loops.
 
-#### 1. Resolve the PR
+#### **Agent C: Consistency & Reuse**
 
-```bash
-gh pr view <number-or-url> --json number,title,author,baseRefName,headRefName,body,state,labels,reviewRequests
-```
+- **Pattern Matching:** Ensure the PR follows existing architectural patterns (e.g., using the project's standard error-handling utility or logging wrapper).
+- **DRY (Don't Repeat Yourself):** Identify logic in the PR that duplicates functionality already existing elsewhere in the codebase.
+- **API Design:** Check if new public methods or components align with the ergonomics of the existing library/service.
 
-Note the PR title, author, description, and base branch. This provides intent context for the review.
+### 3. Synthesis & Feedback
 
-#### 2. Fetch the diff and file list
+Aggregate the findings into a structured response:
 
-```bash
-gh pr diff <number-or-url>
-gh pr view <number-or-url> --json files
-```
+1.  **Executive Summary:** A high-level assessment of the PR (e.g., "Safe to merge," "Needs architectural changes," or "Minor cleanup required").
+2.  **Actionable Suggestions:** Provide specific, refactored code blocks for the issues identified.
+3.  **Automated Fixes:** If requested, apply the non-controversial "cleanup" fixes (formatting, renaming, simple inlining) directly.
+4.  **Discussion Points:** Highlight high-level concerns (e.g., "This approach might not scale if X happens") that require human architectural input.
 
-For large diffs, review file-by-file:
+### 4. Post-Review Validation
 
-```bash
-gh api repos/{owner}/{repo}/pulls/<number>/files
-```
-
-#### 3. Gather PR context
-
-```bash
-# Existing review comments (avoid duplicate feedback)
-gh pr view <number-or-url> --json reviews,comments
-```
-
-Check open/resolved threads before raising an issue that's already being discussed.
-
-#### 4. In-depth analysis
-
-Analyze changes across these pillars:
-
-- **Correctness** — Does the code achieve its stated purpose without bugs or logic errors?
-- **Maintainability** — Is it clean, modular, and consistent with project patterns?
-- **Readability** — Clear naming, appropriate comments, consistent formatting?
-- **Efficiency** — Any obvious performance bottlenecks or unnecessary allocations?
-- **Security** — Input validation, auth checks, secrets handling, injection risks?
-- **Edge cases & error handling** — Are failure paths handled gracefully?
-- **Test coverage** — Are new paths covered? Suggest specific missing test cases.
-
-#### 5. Provide feedback
-
-##### Structure
-
-- **Heading** Add a `> Reviewed by Cursor` at the top of the comment
-- **PR summary**: One-paragraph overview of what the change does and its intent.
-- **Findings**:
-  - **Critical** — Bugs, security issues, or breaking changes. Must be fixed.
-  - **Improvements** — Better approaches for quality, performance, or clarity.
-  - **Nitpicks** — Minor style or formatting suggestions (optional for author).
-- **Verdict**:
-  - **Approved** — Ready to merge; acknowledge the contribution specifically.
-  - **Request changes** — List what must change before approval.
-  - **Needs discussion** — Architectural or intent questions before proceeding.
-
-##### Tone
-
-- Be constructive, professional, and friendly — you're a collaborator, not a gatekeeper.
-- Always explain _why_ a change is requested, not just _what_ to change.
-- For approvals, call out something specific and valuable in the contribution.
-
-#### 6. Final response (required)
-
-Do **not** run `gh pr review` yourself. The CLI parses your last message, shows a terminal preview (markdown rendered), then posts with `gh pr review --comment` after the user presses **ENTER** (or **ESC** to cancel).
-
-When the review is ready, your **last** message must contain **only** one markdown fenced code block tagged `json` with exactly this shape (valid JSON strings; use `\n` inside `body` for newlines if you emit a single-line string):
-
-- **`title`**: Short one-line summary shown in the terminal preview (markdown allowed).
-- **`body`**: Full GitHub review comment in markdown (this is what gets posted), including the `> Reviewed by Cursor` line and the structured sections from step 5.
-- **`pr`**: Required only when the user did **not** pass a PR on the command line — the PR number, `org/repo#n`, or a `github.com` pull URL string the CLI can pass to `gh pr view`. Omit when the CLI already printed a resolved PR in stderr.
-
-```json
-{
-  "title": "Summary for the author",
-  "body": "> Reviewed by Cursor\n\n…",
-  "pr": "42"
-}
-```
-
-Do not write anything after the closing fence of that block.
+If fixes were applied, run available lightweight linters or tests. Clearly state which checks passed and which were skipped.
