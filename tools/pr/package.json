@@ -7,9 +7,6 @@
   "scripts": {
     "validate": "node validate.ts"
   },
-  "bin": {
-    "pr": "./bin/pr.js"
-  },
   "engines": {
     "node": ">=24"
   },

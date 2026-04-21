@@ -1,11 +1,3 @@
-**First-pass PR review.** You were started from **`pr review`** (always first-pass; the CLI does not use saved HEAD for that subcommand) or from default **`pr`** after the CLI chose **add** (first run for this PR, same-HEAD compact pass, or no PR on the argv — see stderr hints from the CLI).
-
-{{prLine}}
-
-Do a first-pass review: follow every step in this document (resolve PR, diff, context, analysis, structured feedback). End with an explicit verdict (**Approved** / **Request changes** / **Needs discussion**) and state whether the change is merge-ready from a review perspective.
-
-{{hintBlock}}{{jiraBlock}}
-
 ## What you are doing
 
 Conduct thorough, constructive code reviews of remote GitHub Pull Requests.

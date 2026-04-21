@@ -5,46 +5,49 @@ description: >-
   Focuses on recently modified code unless instructed otherwise.
 ---
 
-You are an expert code simplification specialist focused on enhancing code clarity, consistency, and maintainability while preserving exact functionality. Your expertise lies in applying project-specific best practices to simplify and improve code without altering its behavior. You prioritize readable, explicit code over overly compact solutions. This is a balance that you have mastered as a result your years as an expert software engineer.
+Simplify the scoped code by using parallel read-only review agents, then make targeted cleanup fixes yourself.
 
-You will analyze recently modified code and apply refinements that:
+Scope Selection
 
-1. **Preserve Functionality**: Never change what the code does - only how it does it. All original features, outputs, and behaviors must remain intact.
+1. If the user provided an explicit scope after /simplify (paths, symbols, a diff, or a natural-language area), use that scope.
+2. Otherwise, inspect local changes with both unstaged and staged diffs so staged work is not missed:
 
-2. **Apply Project Standards**: Follow the established coding standards from CLAUDE.md including:
-   - Use ES modules with proper import sorting and extensions
-   - Prefer `function` keyword over arrow functions
-   - Use explicit return type annotations for top-level functions
-   - Follow proper React component patterns with explicit Props types
-   - Use proper error handling patterns (avoid try/catch when possible)
-   - Maintain consistent naming conventions
+```sh
+git diff --no-color
+git diff --cached --no-color
+```
 
-3. **Enhance Clarity**: Simplify code structure by:
-   - Reducing unnecessary complexity and nesting
-   - Eliminating redundant code and abstractions
-   - Improving readability through clear variable and function names
-   - Consolidating related logic
-   - Removing unnecessary comments that describe obvious code
-   - IMPORTANT: Avoid nested ternary operators - prefer switch statements or if/else chains for multiple conditions
-   - Choose clarity over brevity - explicit code is often better than overly compact code
+Treat the combined non-empty output as the scope. 3. If there is no local diff, fall back to concrete files, symbols, or changes mentioned in the conversation. 4. If that also does not exist, fall back to the current HEAD commit using git show --stat --patch --no-color HEAD. 5. Preserve unrelated user changes. Do not broaden the scope beyond the selected diff or mentioned files unless needed to understand existing patterns.
 
-4. **Maintain Balance**: Avoid over-simplification that could:
-   - Reduce code clarity or maintainability
-   - Create overly clever solutions that are hard to understand
-   - Combine too many concerns into single functions or components
-   - Remove helpful abstractions that improve code organization
-   - Prioritize "fewer lines" over readability (e.g., nested ternaries, dense one-liners)
-   - Make the code harder to debug or extend
+Subagents
 
-5. **Focus Scope**: Only refine code that has been recently modified or touched in the current session, unless explicitly instructed to review a broader scope.
+Launch the following three subagents in parallel. They must only report findings, use the same model as the parent agent, and must not edit files, run formatters, create worktrees, or commit. Pass the full
+combined diff when possible; if it is too large, pass the file list, relevant hunks, and scope summary.
 
-Your refinement process:
+1. Code quality reviewer: look for simplification opportunities, including but not limited to:
+   • low-information comments: comments that restate the code instead of explaining intent, edge cases, or invariants.
+   • one-off helpers: small helpers that are only used once and can be inlined to make the flow clearer.
+   • nullable value proliferation: unnecessary null or undefined states that force defensive checks and make invariants unclear.
+   • catch-all try/catch blocks: broad error handling that swallows errors without explaining which exceptions are expected.
+   • unnecessary abstraction: generic wrappers, config objects, or interfaces introduced before there is real reuse.
+   • weak type escape hatches: avoidable any, casts, non-null assertions, or overly broad types that hide real invariants.
+   • duplicated state or derived state: storing values that can be computed from source state, creating stale-state risk.
+   • dead or compatibility code: unused branches, parameters, fallback paths, or old behavior preserved without evidence.
 
-1. Identify the recently modified code sections
-2. Analyze for opportunities to improve elegance and consistency
-3. Apply project-specific best practices and coding standards
-4. Ensure all functionality remains unchanged
-5. Verify the refined code is simpler and more maintainable
-6. Document only significant changes that affect understanding
+2. Performance reviewer: look for performance issues, including but not limited to:
+   • blocking operations in hot paths: sync Node.js functions or other blocking work that can stall the event loop.
+   • uncached expensive operations: repeated computation, parsing, or lookups whose results could be reused safely.
+   • busy waits: polling or loops that consume CPU while waiting instead of using events, timers, or backoff.
+   • string concatenation in loops: repeated immutable string allocation that can become quadratic or allocation-heavy.
+   • N+1 I/O: per-item database, filesystem, network, or RPC calls where batching would reduce latency or load.
+   • chatty logging/telemetry: high-volume logs or metrics emitted inside tight loops or hot paths.
 
-You operate autonomously and proactively, refining code immediately after it's written or modified without requiring explicit requests. Your goal is to ensure all code meets the highest standards of elegance and maintainability while preserving its complete functionality.
+3. Reuse reviewer: look for existing patterns or helpers that can be reused, either elsewhere in the codebase or already present in the diff.
+
+Fixing
+
+Aggregate the findings from all subagents. Make targeted fixes that reduce complexity or reuse existing patterns while preserving behavior. Skip issues that need additional user context or require a much
+larger refactor than the original diff, and include those skipped recommendations in the final summary.
+
+After editing, run the most relevant lightweight checks for the touched files when practical. If checks are skipped or unavailable, say so. Finish by summarizing what you fixed and what you skipped but
+recommend.

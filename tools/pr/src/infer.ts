@@ -1,0 +1,40 @@
+import { spawnSync } from "node:child_process";
+
+import { runCreate } from "./commands/create.ts";
+import { runUpdate } from "./commands/update.ts";
+
+function currentBranchHasOpenPr(): boolean {
+  const result = spawnSync(
+    "gh",
+    ["pr", "view", "--json", "number"],
+    { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] },
+  );
+  if (result.status !== 0) {
+    return false;
+  }
+  try {
+    const parsed: unknown = JSON.parse(result.stdout ?? "{}");
+    if (
+      typeof parsed === "object" &&
+      parsed !== null &&
+      "number" in parsed &&
+      typeof (parsed as { number: unknown }).number === "number"
+    ) {
+      return true;
+    }
+  } catch {
+    return false;
+  }
+  return false;
+}
+
+export function inferAndRun(restArgs: string[]): void {
+  console.log("pr: no subcommand — inferring create vs update…");
+  if (currentBranchHasOpenPr()) {
+    console.log("pr: open PR found for this branch — update");
+    runUpdate(restArgs);
+    return;
+  }
+  console.log("pr: no open PR detected — create");
+  runCreate(restArgs);
+}
