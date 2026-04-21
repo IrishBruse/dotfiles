@@ -1,5 +1,5 @@
 {
-  "name": "jira-board-sync",
+  "name": "atlassian-cli-helpers",
   "version": "0.1.0",
   "description": "Sync Jira issues to ~/jira-board markdown via Atlassian CLI (acli)",
   "license": "ISC",
