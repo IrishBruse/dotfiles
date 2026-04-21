@@ -3,13 +3,15 @@
  * Clone a Confluence page subtree to local markdown files using
  * `acli confluence page view --json --include-direct-children`.
  */
-import { spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import pLimit from "p-limit";
 import { storageToMarkdown } from "./confluence-storage-to-markdown.ts";
 
 const ACLI_DEFAULT = "acli";
+const DEFAULT_CONCURRENCY = 8;
 
 function relativeToCwd(p: string): string {
   const rel = path.relative(process.cwd(), path.resolve(p));
@@ -64,11 +66,16 @@ function parseArgs(argv: string[]): {
   outDir: string;
   acli: string;
   rawStorage: boolean;
+  concurrency: number;
 } {
   let url: string | null = null;
   let outDir: string | null = null;
   let acli = process.env.ACLI_BIN?.trim() || ACLI_DEFAULT;
   let rawStorage = false;
+  let concurrency = Number(process.env.CONFLUENCE_CLONE_CONCURRENCY);
+  if (!Number.isFinite(concurrency) || concurrency < 1) {
+    concurrency = DEFAULT_CONCURRENCY;
+  }
   const rest: string[] = [];
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;
@@ -86,6 +93,17 @@ function parseArgs(argv: string[]): {
     if (a === "--url") {
       url = argv[++i] ?? null;
       if (!url) usage(1);
+      continue;
+    }
+    if (a === "--concurrency" || a === "-j") {
+      const v = argv[++i];
+      if (!v) usage(1);
+      const n = Number(v);
+      if (!Number.isFinite(n) || n < 1) {
+        console.error("confluence-clone: --concurrency must be a positive number");
+        usage(1);
+      }
+      concurrency = n;
       continue;
     }
     if (a === "--raw-storage") {
@@ -109,11 +127,13 @@ function parseArgs(argv: string[]): {
     process.exit(1);
   }
   const defaultOut = `./confluence-${pageId}`;
+  const c = Math.min(64, Math.max(1, Math.floor(concurrency)));
   return {
     url,
     outDir: outDir ?? rest[1] ?? defaultOut,
     acli,
     rawStorage,
+    concurrency: c,
   };
 }
 
@@ -121,7 +141,7 @@ function usage(code: number): never {
   const prog = path.basename(process.argv[1] ?? "confluence-clone");
   console.error(`Usage: ${prog} <confluencePageUrl> [outputDir]`);
   console.error(
-    `       ${prog} --url <url> [--out|-o <dir>] [--acli <path>] [--raw-storage]`,
+    `       ${prog} --url <url> [--out|-o <dir>] [--acli <path>] [--raw-storage] [--concurrency|-j <n>]`,
   );
   console.error("");
   console.error(
@@ -130,6 +150,9 @@ function usage(code: number): never {
   console.error(`  Default output: ./confluence-<pageId>`);
   console.error(
     "  Body is converted from Confluence storage HTML to Markdown unless --raw-storage.",
+  );
+  console.error(
+    `  Downloads run in parallel (default ${DEFAULT_CONCURRENCY} concurrent page fetches; env CONFLUENCE_CLONE_CONCURRENCY).`,
   );
   console.error("  Requires: acli authenticated (acli confluence auth).");
   process.exit(code);
@@ -140,35 +163,49 @@ function pageIdFromUrl(urlString: string): string | null {
   return m ? m[1]! : null;
 }
 
-function runAcliPage(acli: string, pageId: string): PageViewJson {
-  const r = spawnSync(
-    acli,
-    [
-      "confluence",
-      "page",
-      "view",
-      "--id",
-      pageId,
-      "--json",
-      "--include-direct-children",
-      "--body-format",
-      "storage",
-    ],
-    { encoding: "utf-8", maxBuffer: 64 * 1024 * 1024 },
-  );
-  if (r.error) {
-    throw new Error(`Failed to run ${acli}: ${(r.error as Error).message}`);
-  }
-  if (r.status !== 0) {
-    const err = r.stderr?.trim() || r.stdout?.trim() || `exit ${r.status}`;
-    throw new Error(err);
-  }
-  const raw = r.stdout?.trim() ?? "";
-  try {
-    return JSON.parse(raw) as PageViewJson;
-  } catch {
-    throw new Error(`Expected JSON from acli; got: ${raw.slice(0, 200)}…`);
-  }
+function runAcliPageAsync(acli: string, pageId: string): Promise<PageViewJson> {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    const errChunks: Buffer[] = [];
+    const child = spawn(
+      acli,
+      [
+        "confluence",
+        "page",
+        "view",
+        "--id",
+        pageId,
+        "--json",
+        "--include-direct-children",
+        "--body-format",
+        "storage",
+      ],
+      { stdio: ["ignore", "pipe", "pipe"] },
+    );
+    child.on("error", (err) =>
+      reject(new Error(`Failed to run ${acli}: ${err.message}`)),
+    );
+    child.stdout?.on("data", (c: Buffer) => chunks.push(c));
+    child.stderr?.on("data", (c: Buffer) => errChunks.push(c));
+    child.on("close", (code) => {
+      const stdout = Buffer.concat(chunks).toString("utf-8").trim();
+      if (code !== 0) {
+        const err =
+          Buffer.concat(errChunks).toString("utf-8").trim() ||
+          stdout ||
+          `exit ${code}`;
+        reject(new Error(err));
+        return;
+      }
+      try {
+        resolve(JSON.parse(stdout) as PageViewJson);
+      } catch {
+        reject(
+          new Error(`Expected JSON from acli; got: ${stdout.slice(0, 200)}…`),
+        );
+      }
+    });
+  });
 }
 
 function sanitize(title: string): string {
@@ -247,8 +284,7 @@ function writePageFile(
   console.error(relativeToCwd(filePath));
 }
 
-function walk(
-  acli: string,
+async function walk(
   dir: string,
   pageId: string,
   opts: {
@@ -257,16 +293,17 @@ function walk(
     prefetched?: PageViewJson;
     rawStorage: boolean;
     stats: CloneStats;
+    fetchPage: (pageId: string) => Promise<PageViewJson>;
   },
-): void {
-  const { leafSlug, visited, prefetched, rawStorage, stats } = opts;
+): Promise<void> {
+  const { leafSlug, visited, prefetched, rawStorage, stats, fetchPage } = opts;
   if (visited.has(pageId)) {
     console.error(`confluence-clone: skip duplicate id ${pageId}`);
     return;
   }
   visited.add(pageId);
 
-  const data = prefetched ?? runAcliPage(acli, pageId);
+  const data = prefetched ?? (await fetchPage(pageId));
   if (data.directChildren?.meta?.hasMore) {
     console.error(
       `confluence-clone: warning: page ${pageId} has more direct children than returned; clone may be incomplete.`,
@@ -277,48 +314,59 @@ function walk(
   const baseName = leafSlug ?? markdownBasename(data.title, pageId);
   writePageFile(dir, baseName, data, { rawStorage, stats });
 
+  if (children.length === 0) return;
+
   const childFolders = folderNamesForSiblings(children);
-  for (let i = 0; i < children.length; i++) {
-    const ch = children[i]!;
-    const seg = childFolders[i]!;
-    const childData = runAcliPage(acli, ch.id);
-    const subKids = sortChildren(childData.directChildren?.results ?? []);
-    if (subKids.length === 0) {
-      if (visited.has(ch.id)) continue;
-      visited.add(ch.id);
-      writePageFile(dir, seg, childData, { rawStorage, stats });
-    } else {
-      const childDir = path.join(dir, seg);
-      fs.mkdirSync(childDir, { recursive: true });
-      walk(acli, childDir, ch.id, {
-        leafSlug: null,
-        visited,
-        prefetched: childData,
-        rawStorage,
-        stats,
-      });
-    }
-  }
+  const childDatas = await Promise.all(children.map((ch) => fetchPage(ch.id)));
+
+  await Promise.all(
+    children.map(async (ch, i) => {
+      const childData = childDatas[i]!;
+      const seg = childFolders[i]!;
+      const subKids = sortChildren(childData.directChildren?.results ?? []);
+      if (subKids.length === 0) {
+        if (visited.has(ch.id)) return;
+        visited.add(ch.id);
+        writePageFile(dir, seg, childData, { rawStorage, stats });
+      } else {
+        const childDir = path.join(dir, seg);
+        fs.mkdirSync(childDir, { recursive: true });
+        await walk(childDir, ch.id, {
+          leafSlug: null,
+          visited,
+          prefetched: childData,
+          rawStorage,
+          stats,
+          fetchPage,
+        });
+      }
+    }),
+  );
 }
 
-function main(): void {
+async function main(): Promise<void> {
   const parsed = parseArgs(process.argv.slice(2));
   const pageId = pageIdFromUrl(parsed.url);
   if (!pageId) process.exit(1);
 
-  const titleProbe = runAcliPage(parsed.acli, pageId);
+  const limit = pLimit(parsed.concurrency);
+  const fetchPage = (id: string) =>
+    limit(() => runAcliPageAsync(parsed.acli, id));
+
+  const titleProbe = await fetchPage(pageId);
   const [rootSeg] = folderNamesForSiblings([
     { id: pageId, title: titleProbe.title },
   ]);
   const rootDir = path.join(path.resolve(parsed.outDir), rootSeg);
   const visited = new Set<string>();
   const stats: CloneStats = { filesWritten: 0, totalBytes: 0 };
-  walk(parsed.acli, rootDir, pageId, {
+  await walk(rootDir, pageId, {
     leafSlug: null,
     visited,
     prefetched: titleProbe,
     rawStorage: parsed.rawStorage,
     stats,
+    fetchPage,
   });
   const rootTitle = titleProbe.title?.trim() || `(page ${pageId})`;
   const bodyMode = parsed.rawStorage
@@ -332,7 +380,11 @@ function main(): void {
   console.error(
     `  wrote:    ${stats.filesWritten} page file(s), ${formatBytes(stats.totalBytes)} total`,
   );
+  console.error(`  fetch:    up to ${parsed.concurrency} concurrent acli requests`);
   console.error(`  body:     ${bodyMode}`);
 }
 
-main();
+main().catch((err) => {
+  console.error(err instanceof Error ? err.message : err);
+  process.exit(1);
+});
