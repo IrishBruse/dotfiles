@@ -121,7 +121,18 @@ export function issueDescriptionMarkdown(fields: Record<string, unknown>): strin
 }
 
 export function yamlScalar(s: string): string {
-  return JSON.stringify(s ?? "");
+  return JSON.stringify(s);
+}
+
+function assigneeRecord(value: unknown): Record<string, unknown> | null {
+  return value != null && typeof value === "object"
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+/** Strip scheme and trailing slash (idempotent). */
+function normalizeSiteHost(host: string): string {
+  return host.replace(/^https?:\/\//, "").replace(/\/$/, "");
 }
 
 export function formatTicketMarkdown(
@@ -136,16 +147,11 @@ export function formatTicketMarkdown(
     itypeObj && typeof itypeObj === "object" && "name" in itypeObj
       ? String((itypeObj as { name?: string }).name ?? "Issue")
       : "Issue";
-  const assignee =
-    fields.assignee != null && typeof fields.assignee === "object"
-      ? (fields.assignee as Record<string, unknown>)
-      : null;
+  const assignee = assigneeRecord(fields.assignee);
   const folder = classifyFolder(assignee, meAccountId);
   const assigned = assigneeLabel(assignee);
-  const body = issueDescriptionMarkdown(fields);
-  const site = siteHost
-    .replace(/^https?:\/\//, "")
-    .replace(/\/$/, "");
+  const descriptionMd = issueDescriptionMarkdown(fields);
+  const site = normalizeSiteHost(siteHost);
   const url = `https://${site}/browse/${key}`;
 
   const md = `---
@@ -155,9 +161,19 @@ type: ${yamlScalar(itype)}
 url: ${url}
 ---
 
-${body}
+${descriptionMd}
 `;
   return { folder, body: md };
+}
+
+function* issuesWithKeys(
+  issues: Array<{ key?: string; fields?: Record<string, unknown> }>,
+): Generator<{ key: string; fields: Record<string, unknown> }> {
+  for (const issue of issues) {
+    const key = issue.key;
+    if (typeof key !== "string" || !key) continue;
+    yield { key, fields: issue.fields ?? {} };
+  }
 }
 
 export function writeBoard(
@@ -191,10 +207,7 @@ export function writeBoard(
   }
 
   const counts: Record<Folder, number> = { me: 0, unassigned: 0, team: 0 };
-  for (const issue of issues) {
-    const key = issue.key;
-    if (typeof key !== "string" || !key) continue;
-    const fields = issue.fields ?? {};
+  for (const { key, fields } of issuesWithKeys(issues)) {
     const { folder, body } = formatTicketMarkdown(key, fields, siteHost, meAccountId);
     const out = path.join(roots[folder], `${key}.md`);
     fs.writeFileSync(out, body, "utf-8");
@@ -219,18 +232,11 @@ export function formatJiraTicketsSkillMd(
   const team: string[] = [];
   const unassigned: string[] = [];
 
-  for (const issue of issues) {
-    const key = issue.key;
-    if (typeof key !== "string" || !key) continue;
-    const fields = issue.fields ?? {};
+  for (const { key, fields } of issuesWithKeys(issues)) {
     const summary = ticketsSkillOneLine(
       typeof fields.summary === "string" ? fields.summary : "",
     );
-    const assigneeRaw = fields.assignee;
-    const assignee =
-      assigneeRaw != null && typeof assigneeRaw === "object"
-        ? (assigneeRaw as Record<string, unknown>)
-        : null;
+    const assignee = assigneeRecord(fields.assignee);
     const label = assigneeLabel(assignee);
     const line = `- ${key}: ${summary} — ${label}`;
     const folder = classifyFolder(assignee, meAccountId);
@@ -304,10 +310,14 @@ function truncate(s: string, max: number): string {
 function summarizeAcliArgs(args: string[]): string {
   const parts: string[] = [];
   for (let i = 0; i < args.length; i++) {
-    const a = args[i]!;
-    if (a === "--jql" && i + 1 < args.length) {
-      parts.push("--jql", truncate(args[i + 1]!, 100));
-      i += 1;
+    const a = args[i];
+    if (a === undefined) continue;
+    if (a === "--jql") {
+      const jql = args[i + 1];
+      if (jql !== undefined) {
+        parts.push("--jql", truncate(jql, 100));
+        i += 1;
+      }
       continue;
     }
     parts.push(a);
@@ -327,7 +337,8 @@ function runAcliJson(acli: string, args: string[]): unknown {
     maxBuffer: 64 * 1024 * 1024,
   });
   if (r.error) {
-    throw new Error(`Failed to run ${acli}: ${(r.error as Error).message}`);
+    const msg = r.error instanceof Error ? r.error.message : String(r.error);
+    throw new Error(`Failed to run ${acli}: ${msg}`);
   }
   if (r.status !== 0) {
     const err = r.stderr?.trim() || r.stdout?.trim() || `exit ${r.status}`;
@@ -339,8 +350,11 @@ function runAcliJson(acli: string, args: string[]): unknown {
   }
   try {
     return JSON.parse(raw) as unknown;
-  } catch {
-    throw new Error(`Expected JSON from acli; got: ${raw.slice(0, 200)}…`);
+  } catch (e) {
+    const hint = e instanceof Error ? e.message : String(e);
+    throw new Error(
+      `Expected JSON from acli (${hint}); got: ${raw.slice(0, 200)}…`,
+    );
   }
 }
 
@@ -418,7 +432,7 @@ function main(): void {
     process.stderr.write("jira-board-sync: set CONFIG.site.\n");
     process.exit(1);
   }
-  siteHost = siteHost.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  siteHost = normalizeSiteHost(siteHost);
 
   let effectiveJql = jql;
   if (boardId) {
