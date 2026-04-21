@@ -36,7 +36,7 @@ export function normalizePrRef(raw: string): string {
   return s;
 }
 
-export function parseGhPrStateJson(out: string): {
+function parseGhPrStateJson(out: string): {
   key: string;
   headOid: string;
   title: string;
@@ -86,25 +86,22 @@ export function requireGhPr(
   }
 }
 
-export function ghPrReviewFromPayload(
+function runGhWithBodyFile(
   workspace: string,
-  prRef: string,
+  ghArgs: (bodyFile: string) => string[],
   body: string,
+  tmpBasename: string,
 ): void {
   const bodyFile = path.join(
     os.tmpdir(),
-    `pr-cli-review-${process.pid}-${Date.now()}.md`,
+    `${tmpBasename}-${process.pid}-${Date.now()}.md`,
   );
   fs.writeFileSync(bodyFile, body, "utf8");
-  const r = spawnSync(
-    "gh",
-    ["pr", "review", prRef, "--comment", "--body-file", bodyFile],
-    {
-      cwd: workspace,
-      encoding: "utf8",
-      stdio: ["ignore", "inherit", "inherit"],
-    },
-  );
+  const r = spawnSync("gh", ghArgs(bodyFile), {
+    cwd: workspace,
+    encoding: "utf8",
+    stdio: ["ignore", "inherit", "inherit"],
+  });
   try {
     fs.unlinkSync(bodyFile);
   } catch {
@@ -115,31 +112,28 @@ export function ghPrReviewFromPayload(
   }
 }
 
+export function ghPrReviewFromPayload(
+  workspace: string,
+  prRef: string,
+  body: string,
+): void {
+  runGhWithBodyFile(
+    workspace,
+    (bf) => ["pr", "review", prRef, "--comment", "--body-file", bf],
+    body,
+    "pr-cli-review",
+  );
+}
+
 export function ghPrCreateFromPayload(
   workspace: string,
   title: string,
   body: string,
 ): void {
-  const bodyFile = path.join(
-    os.tmpdir(),
-    `pr-cli-body-${process.pid}-${Date.now()}.md`,
+  runGhWithBodyFile(
+    workspace,
+    (bf) => ["pr", "create", "--title", title, "--body-file", bf],
+    body,
+    "pr-cli-body",
   );
-  fs.writeFileSync(bodyFile, body, "utf8");
-  const r = spawnSync(
-    "gh",
-    ["pr", "create", "--title", title, "--body-file", bodyFile],
-    {
-      cwd: workspace,
-      encoding: "utf8",
-      stdio: ["ignore", "inherit", "inherit"],
-    },
-  );
-  try {
-    fs.unlinkSync(bodyFile);
-  } catch {
-    /* ignore */
-  }
-  if (r.status !== 0) {
-    process.exit(r.status ?? 1);
-  }
 }

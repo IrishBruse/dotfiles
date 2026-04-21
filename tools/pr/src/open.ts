@@ -29,15 +29,18 @@ function parseAgentJsonObject(text: string): Record<string, unknown> {
   return j as Record<string, unknown>;
 }
 
-export function extractPrPayloadFromAgentOutput(text: string): {
-  title: string;
-  body: string;
-} {
-  const o = parseAgentJsonObject(text);
+function readTitleBody(o: Record<string, unknown>): { title: string; body: string } {
   if (typeof o.title !== "string" || typeof o.body !== "string") {
     throw new Error('JSON must include string fields "title" and "body"');
   }
   return { title: o.title, body: o.body };
+}
+
+export function extractPrPayloadFromAgentOutput(text: string): {
+  title: string;
+  body: string;
+} {
+  return readTitleBody(parseAgentJsonObject(text));
 }
 
 /** Same JSON as create, plus optional `pr` when the CLI was started without a PR ref. */
@@ -47,15 +50,13 @@ export function extractReviewPayloadFromAgentOutput(text: string): {
   pr: string | null;
 } {
   const o = parseAgentJsonObject(text);
-  if (typeof o.title !== "string" || typeof o.body !== "string") {
-    throw new Error('JSON must include string fields "title" and "body"');
-  }
+  const { title, body } = readTitleBody(o);
   const pr =
     typeof o.pr === "string" && o.pr.trim() ? o.pr.trim() : null;
-  return { title: o.title, body: o.body, pr };
+  return { title, body, pr };
 }
 
-export function waitEnterOrEscape(): Promise<"enter" | "escape"> {
+function waitEnterOrEscape(): Promise<"enter" | "escape"> {
   return new Promise((resolve, reject) => {
     const stdin = process.stdin;
     if (!stdin.isTTY || !process.stdout.isTTY) {

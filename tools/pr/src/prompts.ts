@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import type { Parsed } from "./types.ts";
 
 /** On-disk templates passed to `agent` (default `pr` maps to review vs update from state). */
-export type AgentPromptFile = "review" | "update" | "create";
+type AgentPromptFile = "review" | "update" | "create";
 
 const PROMPT_REL: Record<AgentPromptFile, string> = {
   review: "../prompts/review.md",

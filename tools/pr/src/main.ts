@@ -1,8 +1,5 @@
 /// <reference types="node" />
 
-/**
- * Wraps Cursor Agent: markdown templates under `prompts/` (default `pr` reuses review vs update).
- */
 import process from "node:process";
 
 import { runOpenAgentCapture } from "./agent.ts";
@@ -33,6 +30,19 @@ function formatErr(e: unknown): string {
   return e instanceof Error ? e.message : String(e);
 }
 
+function die(message: string, code = 1): never {
+  process.stderr.write(message.endsWith("\n") ? message : `${message}\n`);
+  process.exit(code);
+}
+
+function assertPrTitleMatchesJira(title: string, jiraTitleKey: string): void {
+  if (!prTitleMatchesJiraKey(title, jiraTitleKey)) {
+    die(
+      `pr: PR title must start with "${jiraTitleKey}-<issue number>" (got: ${JSON.stringify(title)})`,
+    );
+  }
+}
+
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   const parsed = parseArgs(argv);
@@ -41,17 +51,9 @@ async function main(): Promise<void> {
   if (parsed.mode !== "open" && jiraTitleKey && parsed.pr) {
     const title = parsed.prTitle;
     if (title === null) {
-      process.stderr.write(
-        "pr: internal error: missing PR title after gh pr view\n",
-      );
-      process.exit(1);
+      die("pr: internal error: missing PR title after gh pr view");
     }
-    if (!prTitleMatchesJiraKey(title, jiraTitleKey)) {
-      process.stderr.write(
-        `pr: PR title must start with "${jiraTitleKey}-<issue number>" (got: ${JSON.stringify(title)})\n`,
-      );
-      process.exit(1);
-    }
+    assertPrTitleMatchesJira(title, jiraTitleKey);
   }
 
   let prompt: string;
@@ -59,26 +61,21 @@ async function main(): Promise<void> {
     try {
       prompt = buildCreatePrPrompt(parsed.ticket, jiraTitleKey);
     } catch (e) {
-      process.stderr.write(
-        `pr: cannot read ${promptPath("create")}: ${formatErr(e)}\n`,
-      );
-      process.exit(1);
+      die(`pr: cannot read ${promptPath("create")}: ${formatErr(e)}`);
     }
 
     let combined: string;
     try {
       combined = await runOpenAgentCapture(parsed.workspace, prompt);
     } catch (e) {
-      process.stderr.write(`pr: ${formatErr(e)}\n`);
-      process.exit(1);
+      die(`pr: ${formatErr(e)}`);
     }
 
     let payload: { title: string; body: string };
     try {
       payload = extractPrPayloadFromAgentOutput(combined);
     } catch (e) {
-      process.stderr.write(`pr: ${formatErr(e)}\n`);
-      process.exit(1);
+      die(`pr: ${formatErr(e)}`);
     }
 
     try {
@@ -93,10 +90,9 @@ async function main(): Promise<void> {
       });
       if (!ok) process.exit(1);
     } catch (e) {
-      process.stderr.write(
-        `pr: create-pr flow needs an interactive terminal (TTY) to preview title/body and confirm with ENTER / ESC: ${formatErr(e)}\n`,
+      die(
+        `pr: create-pr flow needs an interactive terminal (TTY) to preview title/body and confirm with ENTER / ESC: ${formatErr(e)}`,
       );
-      process.exit(1);
     }
 
     ghPrCreateFromPayload(parsed.workspace, payload.title, payload.body);
@@ -110,34 +106,28 @@ async function main(): Promise<void> {
         ? buildReviewCmdPrompt(parsed.pr, parsed.hint, jiraTitleKey)
         : buildUpdateCmdPrompt(parsed.pr, parsed.hint, jiraTitleKey);
   } catch (e) {
-    process.stderr.write(
-      `pr: cannot read ${promptPath(tmpl)}: ${formatErr(e)}\n`,
-    );
-    process.exit(1);
+    die(`pr: cannot read ${promptPath(tmpl)}: ${formatErr(e)}`);
   }
 
   let combined: string;
   try {
     combined = await runOpenAgentCapture(parsed.workspace, prompt);
   } catch (e) {
-    process.stderr.write(`pr: ${formatErr(e)}\n`);
-    process.exit(1);
+    die(`pr: ${formatErr(e)}`);
   }
 
   let payload: { title: string; body: string; pr: string | null };
   try {
     payload = extractReviewPayloadFromAgentOutput(combined);
   } catch (e) {
-    process.stderr.write(`pr: ${formatErr(e)}\n`);
-    process.exit(1);
+    die(`pr: ${formatErr(e)}`);
   }
 
   const effectivePrRaw = (parsed.pr ?? payload.pr)?.trim();
   if (!effectivePrRaw) {
-    process.stderr.write(
-      'pr: review JSON must include string field "pr" when no PR was passed on the command line\n',
+    die(
+      'pr: review JSON must include string field "pr" when no PR was passed on the command line',
     );
-    process.exit(1);
   }
   const effectivePr = normalizePrRef(effectivePrRaw);
 
@@ -153,18 +143,14 @@ async function main(): Promise<void> {
     });
     if (!ok) process.exit(1);
   } catch (e) {
-    process.stderr.write(
-      `pr: review flow needs an interactive terminal (TTY) to preview and confirm with ENTER / ESC: ${formatErr(e)}\n`,
+    die(
+      `pr: review flow needs an interactive terminal (TTY) to preview and confirm with ENTER / ESC: ${formatErr(e)}`,
     );
-    process.exit(1);
   }
 
   const ghMeta = requireGhPr(parsed.workspace, effectivePr);
-  if (jiraTitleKey && !prTitleMatchesJiraKey(ghMeta.title, jiraTitleKey)) {
-    process.stderr.write(
-      `pr: PR title must start with "${jiraTitleKey}-<issue number>" (got: ${JSON.stringify(ghMeta.title)})\n`,
-    );
-    process.exit(1);
+  if (jiraTitleKey) {
+    assertPrTitleMatchesJira(ghMeta.title, jiraTitleKey);
   }
 
   ghPrReviewFromPayload(parsed.workspace, effectivePr, payload.body);
@@ -173,6 +159,5 @@ async function main(): Promise<void> {
 }
 
 main().catch((e) => {
-  process.stderr.write(`${formatErr(e)}\n`);
-  process.exit(1);
+  die(formatErr(e));
 });
