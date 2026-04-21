@@ -77,7 +77,10 @@ function hooksScriptsDir(root: string): string {
  * Finds an executable in `.agents/hooks/scripts` for fence marker `name` (e.g. `jira-tickets`).
  * Matches basename `!name` or `name` with any suffix (`.ts`, `.sh`, none, …).
  */
-function resolveHooksScript(scriptsDir: string, markerName: string): string | null {
+function resolveHooksScript(
+  scriptsDir: string,
+  markerName: string,
+): string | null {
   const n = markerName.trim();
   if (!n) return null;
   if (!fs.existsSync(scriptsDir) || !fs.statSync(scriptsDir).isDirectory()) {
@@ -99,7 +102,9 @@ function resolveHooksScript(scriptsDir: string, markerName: string): string | nu
   }
 
   const sortBasenames = (a: string, b: string) =>
-    path.basename(a).localeCompare(path.basename(b), undefined, { sensitivity: "base" });
+    path
+      .basename(a)
+      .localeCompare(path.basename(b), undefined, { sensitivity: "base" });
   primary.sort(sortBasenames);
   legacy.sort(sortBasenames);
 

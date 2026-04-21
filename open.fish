@@ -12,10 +12,3 @@ end
 
 zoxide init fish --cmd cd >.config/fish/conf.d/zoxide.fish
 fzf --fish >.config/fish/conf.d/fzf.fish
-
-# Ignore new changes to files
-# undo with
-# git update-index --no-assume-unchanged
-
-# git update-index --no-assume-unchanged .agents/skills/jira-tickets/SKILL.md
-git update-index --assume-unchanged .agents/skills/jira-tickets/SKILL.md

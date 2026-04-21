@@ -1,0 +1,25 @@
+{
+  "name": "jira-board-sync",
+  "version": "0.1.0",
+  "description": "Sync Jira issues to ~/jira-board markdown via Atlassian CLI (acli)",
+  "license": "ISC",
+  "type": "module",
+  "bin": {
+    "jira-board-sync": "./bin/jira-board-sync.js"
+  },
+  "files": [
+    "bin",
+    "sync-board.ts",
+    "board_lib.ts"
+  ],
+  "scripts": {
+    "validate": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.8.3"
+  }
+}

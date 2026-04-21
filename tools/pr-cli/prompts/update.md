@@ -1,6 +1,8 @@
 **Follow-up PR review.** You were started from **`pr update`** or from default **`pr`** after the CLI detected **new commits** vs the last successful run for this PR (saved HEAD changed).
 
-{{prLine}}
+```!gh pr view --json number --template '#{{.number}}'
+
+```
 
 The PR may have new commits or new threads. Re-fetch diff and review/comment state, then write an updated review: what changed, resolved items, and any new findings. End with an explicit verdict and merge readiness (approve to merge vs blockers).
 

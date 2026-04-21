@@ -10,7 +10,13 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const tsc = path.join(root, "node_modules", ".bin", "tsc");
 
-const projects = ["tools/pr-cli", "tools/mcp-cli", "scripts", "vscode"] as const;
+const projects = [
+  "tools/pr-cli",
+  "tools/mcp-cli",
+  "tools/jira-board-sync",
+  "scripts",
+  "vscode",
+] as const;
 
 for (const rel of projects) {
   const r = spawnSync(tsc, ["--noEmit", "-p", path.join(root, rel)], {
