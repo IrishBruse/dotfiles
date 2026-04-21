@@ -17,12 +17,13 @@ first time for that PR → add, new commits → update, same HEAD → short add-
 
 Default \`pr\` picks \`prompts/review.md\` vs \`prompts/update.md\` from saved HEAD (same as explicit \`pr review\` / \`pr update\`).
 
-\`pr create\` drafts a new PR when none exists yet (\`prompts/create.md\`): runs the agent with \`--print\`, expects a final \`\`\`json\`\`\` block with {"title","body"}, shows a preview, then ENTER runs \`gh pr create\` or ESC cancels.
+\`pr\`, \`pr review\`, and \`pr update\` run the agent with \`--print\`, expect a final \`\`\`json\`\`\` block with \`title\` and \`body\` (and \`pr\` only when no PR was passed on the argv), render markdown in the terminal, then ENTER runs \`gh pr review --comment\` or ESC cancels.
+
+\`pr create\` (\`prompts/create.md\`) uses the same JSON and TTY pattern; ENTER runs \`gh pr create\`.
 
 Requires \`gh\` and \`agent\` on PATH.
 
-If \`PR_TITLE_JIRA_KEY\` is set (e.g. NOVACORE), the PR title must match \`<KEY>-<digits>\` at the start
-when a PR is given; otherwise the CLI exits before starting the agent.
+If \`PR_TITLE_JIRA_KEY\` is set (e.g. NOVACORE), the PR title must match \`<KEY>-<digits>\` at the start when a PR is passed on the argv (before the agent) or when the PR is resolved from JSON (before posting).
 `);
   process.exit(2);
 }

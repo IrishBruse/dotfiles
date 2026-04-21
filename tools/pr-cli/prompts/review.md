@@ -90,8 +90,18 @@ Analyze changes across these pillars:
 - Always explain _why_ a change is requested, not just _what_ to change.
 - For approvals, call out something specific and valuable in the contribution.
 
-#### 6. Post comment to GitHub
+#### 6. Final response (required)
 
-```bash
-gh pr review <number> --comment --body "<your review text>"
+Do **not** run `gh pr review` yourself. The CLI parses your last message, shows a terminal preview (markdown rendered), then posts with `gh pr review --comment` after the user presses **ENTER** (or **ESC** to cancel).
+
+When the review is ready, your **last** message must contain **only** one markdown fenced code block tagged `json` with exactly this shape (valid JSON strings; use `\n` inside `body` for newlines if you emit a single-line string):
+
+- **`title`**: Short one-line summary shown in the terminal preview (markdown allowed).
+- **`body`**: Full GitHub review comment in markdown (this is what gets posted), including the `> Reviewed by Cursor` line and the structured sections from step 5.
+- **`pr`**: Required only when the user did **not** pass a PR on the command line — the PR number, `org/repo#n`, or a `github.com` pull URL string the CLI can pass to `gh pr view`. Omit when the CLI already printed a resolved PR in stderr.
+
+```json
+{"title":"Summary for the author","body":"> Reviewed by Cursor\n\n…","pr":"42"}
 ```
+
+Do not write anything after the closing fence of that block.

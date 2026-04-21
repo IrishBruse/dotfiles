@@ -40,16 +40,3 @@ export function runOpenAgentCapture(
     });
   });
 }
-
-export function spawnAgentInherit(agentArgs: string[]): Promise<number> {
-  return new Promise((resolve, reject) => {
-    const child = spawn("agent", agentArgs, { stdio: "inherit", shell: false });
-    child.on("error", (err: NodeJS.ErrnoException) => {
-      reject(err);
-    });
-    child.on("exit", (code, signal) => {
-      if (signal) resolve(1);
-      else resolve(code ?? 1);
-    });
-  });
-}

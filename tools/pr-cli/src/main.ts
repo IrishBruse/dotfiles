@@ -5,12 +5,15 @@
  */
 import process from "node:process";
 
-import { runOpenAgentCapture, spawnAgentInherit } from "./agent.ts";
+import { runOpenAgentCapture } from "./agent.ts";
 import { parseArgs } from "./args.ts";
 import {
   ghPrCreateFromPayload,
+  ghPrReviewFromPayload,
   jiraTitleKeyFromEnv,
+  normalizePrRef,
   prTitleMatchesJiraKey,
+  requireGhPr,
 } from "./gh.ts";
 import {
   buildCreatePrPrompt,
@@ -19,7 +22,11 @@ import {
   promptPath,
   reviewAgentTemplate,
 } from "./prompts.ts";
-import { extractPrPayloadFromAgentOutput, waitEnterOrEscape } from "./open.ts";
+import {
+  extractPrPayloadFromAgentOutput,
+  extractReviewPayloadFromAgentOutput,
+  ttyConfirmMarkdownSubmit,
+} from "./open.ts";
 import { writeStateEntry } from "./state.ts";
 
 function formatErr(e: unknown): string {
@@ -74,33 +81,24 @@ async function main(): Promise<void> {
       process.exit(1);
     }
 
-    if (!process.stdin.isTTY || !process.stdout.isTTY) {
+    try {
+      const ok = await ttyConfirmMarkdownSubmit({
+        titleLabel: "PR title",
+        titleMarkdown: payload.title,
+        bodyLabel: "PR body (markdown)",
+        bodyMarkdown: payload.body,
+        enterHint:
+          "\x1b[33mENTER\x1b[0m → run `gh pr create`    \x1b[33mESC\x1b[0m → cancel",
+        cancelMessage: "pr: cancelled (no PR created)",
+      });
+      if (!ok) process.exit(1);
+    } catch (e) {
       process.stderr.write(
-        "pr: create-pr flow needs an interactive terminal (TTY) to preview title/body and confirm with ENTER / ESC\n",
+        `pr: create-pr flow needs an interactive terminal (TTY) to preview title/body and confirm with ENTER / ESC: ${formatErr(e)}\n`,
       );
       process.exit(1);
     }
 
-    process.stdout.write(`\n\x1b[1mPR title\x1b[0m\n${payload.title}\n\n`);
-    process.stdout.write(`\x1b[1mPR body (markdown)\x1b[0m\n${payload.body}\n\n`);
-    process.stdout.write(
-      "\x1b[36m────────────────────────────────\x1b[0m\n",
-    );
-    process.stdout.write(
-      "\x1b[33mENTER\x1b[0m → run `gh pr create`    \x1b[33mESC\x1b[0m → cancel\n",
-    );
-
-    let choice: "enter" | "escape";
-    try {
-      choice = await waitEnterOrEscape();
-    } catch (e) {
-      process.stderr.write(`pr: ${formatErr(e)}\n`);
-      process.exit(1);
-    }
-    if (choice === "escape") {
-      process.stderr.write("pr: cancelled (no PR created)\n");
-      process.exit(1);
-    }
     ghPrCreateFromPayload(parsed.workspace, payload.title, payload.body);
     process.exit(0);
   }
@@ -118,19 +116,60 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const agentArgs = ["--trust", "--workspace", parsed.workspace, prompt];
-
-  let code: number;
+  let combined: string;
   try {
-    code = await spawnAgentInherit(agentArgs);
+    combined = await runOpenAgentCapture(parsed.workspace, prompt);
   } catch (e) {
-    process.stderr.write(`pr: failed to start agent: ${formatErr(e)}\n`);
+    process.stderr.write(`pr: ${formatErr(e)}\n`);
     process.exit(1);
   }
-  if (code === 0 && parsed.stateKey && parsed.headOid) {
-    writeStateEntry(parsed.stateKey, parsed.headOid);
+
+  let payload: { title: string; body: string; pr: string | null };
+  try {
+    payload = extractReviewPayloadFromAgentOutput(combined);
+  } catch (e) {
+    process.stderr.write(`pr: ${formatErr(e)}\n`);
+    process.exit(1);
   }
-  process.exit(code);
+
+  const effectivePrRaw = (parsed.pr ?? payload.pr)?.trim();
+  if (!effectivePrRaw) {
+    process.stderr.write(
+      'pr: review JSON must include string field "pr" when no PR was passed on the command line\n',
+    );
+    process.exit(1);
+  }
+  const effectivePr = normalizePrRef(effectivePrRaw);
+
+  try {
+    const ok = await ttyConfirmMarkdownSubmit({
+      titleLabel: "Review title",
+      titleMarkdown: payload.title,
+      bodyLabel: "Review body (markdown → GitHub comment)",
+      bodyMarkdown: payload.body,
+      enterHint:
+        "\x1b[33mENTER\x1b[0m → run `gh pr review --comment`    \x1b[33mESC\x1b[0m → cancel",
+      cancelMessage: "pr: cancelled (no review posted)",
+    });
+    if (!ok) process.exit(1);
+  } catch (e) {
+    process.stderr.write(
+      `pr: review flow needs an interactive terminal (TTY) to preview and confirm with ENTER / ESC: ${formatErr(e)}\n`,
+    );
+    process.exit(1);
+  }
+
+  const ghMeta = requireGhPr(parsed.workspace, effectivePr);
+  if (jiraTitleKey && !prTitleMatchesJiraKey(ghMeta.title, jiraTitleKey)) {
+    process.stderr.write(
+      `pr: PR title must start with "${jiraTitleKey}-<issue number>" (got: ${JSON.stringify(ghMeta.title)})\n`,
+    );
+    process.exit(1);
+  }
+
+  ghPrReviewFromPayload(parsed.workspace, effectivePr, payload.body);
+  writeStateEntry(ghMeta.key, ghMeta.headOid);
+  process.exit(0);
 }
 
 main().catch((e) => {

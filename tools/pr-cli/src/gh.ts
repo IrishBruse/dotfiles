@@ -86,6 +86,35 @@ export function requireGhPr(
   }
 }
 
+export function ghPrReviewFromPayload(
+  workspace: string,
+  prRef: string,
+  body: string,
+): void {
+  const bodyFile = path.join(
+    os.tmpdir(),
+    `pr-cli-review-${process.pid}-${Date.now()}.md`,
+  );
+  fs.writeFileSync(bodyFile, body, "utf8");
+  const r = spawnSync(
+    "gh",
+    ["pr", "review", prRef, "--comment", "--body-file", bodyFile],
+    {
+      cwd: workspace,
+      encoding: "utf8",
+      stdio: ["ignore", "inherit", "inherit"],
+    },
+  );
+  try {
+    fs.unlinkSync(bodyFile);
+  } catch {
+    /* ignore */
+  }
+  if (r.status !== 0) {
+    process.exit(r.status ?? 1);
+  }
+}
+
 export function ghPrCreateFromPayload(
   workspace: string,
   title: string,

@@ -26,4 +26,4 @@ When the PR title and body are ready for GitHub, your **last** message must cont
 {"title":"NOVACORE-1 - Example title","body":"## Summary\n\n…markdown…"}
 ```
 
-Do not write anything after the closing fence of that block. The CLI parses this block and, after the user confirms in the terminal, runs `gh pr create`.
+Do not write anything after the closing fence of that block. The CLI parses this block, renders **title** and **body** as markdown in the terminal, then after **ENTER** (or **ESC** to cancel) runs `gh pr create`.

@@ -24,23 +24,23 @@ Any other option starting with `-` is rejected.
 
 | Variable | Description |
 |----------|-------------|
-| `PR_TITLE_JIRA_KEY` | Optional project key (e.g. `NOVACORE`). When set and you pass a PR for a review command, the CLI checks the PR title starts with `KEY-<digits>` before starting `agent`. The same variable is reflected in the review prompts. |
+| `PR_TITLE_JIRA_KEY` | Optional project key (e.g. `NOVACORE`). When set, the CLI checks the resolved PR title starts with `KEY-<digits>` before starting `agent` (PR on the argv) or before `gh pr review` (PR only in the agent JSON). The same variable is reflected in the review prompts. |
 
-Review auto add/update state is stored at **`~/.local/state/pr-cli/last-head.json`** (created on first successful default `pr` review with a PR).
+HEAD state for default `pr` add/update is stored at **`~/.local/state/pr-cli/last-head.json`** (updated after each successful posted review for that PR).
 
 ## Prompt templates (`prompts/`)
 
 | File | Command | Role |
 |------|---------|------|
-| `review.md` | `pr review`, default `pr` (add) | First-pass; `{{prLine}}`, `{{hintBlock}}`, `{{jiraBlock}}`. |
-| `update.md` | `pr update`, default `pr` (update) | Follow-up; same placeholders. |
-| `create.md` | `pr create` | New PR from branch; `{{ticketLine}}`, `{{jiraBlock}}`, steps, JSON **Final response**. |
+| `review.md` | `pr review`, default `pr` (add) | First-pass; `{{prLine}}`, `{{hintBlock}}`, `{{jiraBlock}}`; ends with fenced JSON (`title`, `body`, optional `pr`). |
+| `update.md` | `pr update`, default `pr` (update) | Follow-up; same placeholders and JSON contract. |
+| `create.md` | `pr create` | New PR from branch; `{{ticketLine}}`, `{{jiraBlock}}`; JSON `title` / `body`. |
 
 ## Commands
 
 ### `pr` (default)
 
-**What it does:** Compares `headRefOid` to `~/.local/state/pr-cli/last-head.json` and loads **`prompts/review.md`** (add / first run / same-HEAD compact) or **`prompts/update.md`** (new commits). Without a PR, the agent should use `gh pr list` per the prompt.
+**What it does:** Compares `headRefOid` to `~/.local/state/pr-cli/last-head.json` and loads **`prompts/review.md`** (add / first run / same-HEAD compact) or **`prompts/update.md`** (new commits). Runs `agent` with `--print`, parses a final **`json`** fence (`title`, `body`, and **`pr`** if you did not pass a PR on the argv), renders markdown in the terminal, then **Enter** posts **`gh pr review --comment`** or **Esc** cancels.
 
 **Forms:** `pr`, `pr <pr>`
 
@@ -48,7 +48,7 @@ Review auto add/update state is stored at **`~/.local/state/pr-cli/last-head.jso
 
 ### `pr review`
 
-**What it does:** Loads **`prompts/review.md`** — always first-pass review.
+**What it does:** Loads **`prompts/review.md`** — always first-pass; same JSON + TTY + `gh pr review` flow as default `pr`.
 
 **Form:** `pr review [<pr>]`
 
@@ -56,7 +56,7 @@ Review auto add/update state is stored at **`~/.local/state/pr-cli/last-head.jso
 
 ### `pr update`
 
-**What it does:** Loads **`prompts/update.md`** — always follow-up review.
+**What it does:** Loads **`prompts/update.md`** — always follow-up; same JSON + TTY + `gh pr review` flow.
 
 **Form:** `pr update [<pr>]`
 
@@ -64,6 +64,6 @@ Review auto add/update state is stored at **`~/.local/state/pr-cli/last-head.jso
 
 ### `pr create`
 
-**What it does:** Loads **`prompts/create.md`**. Runs `agent` with `--print`, expects a final fenced `json` block with `title` and `body`, TTY preview, then **Enter** → `gh pr create` or **Esc** cancel.
+**What it does:** Loads **`prompts/create.md`**. Same **`--print`** / JSON / markdown terminal preview pattern; **Enter** → `gh pr create` or **Esc** cancel.
 
 **Form:** `pr create [<jira-key>]`
