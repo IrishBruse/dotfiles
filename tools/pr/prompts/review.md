@@ -1,44 +1,45 @@
-Analyze the provided Pull Request (PR) by deploying parallel read-only review agents, then provide a consolidated summary and targeted inline suggestions or fixes.
+# First-pass review (`pr review`)
 
-### 1. Scope Selection
+You are executing **`pr review`**: a first-pass review of the PR identified above (shared **Resolve and inspect** section). Perform the analysis below, then satisfy **Final response** in the shared preamble (single `json` fence only).
 
-1. **Primary Scope:** Use the provided PR diff (the delta between the source branch and the target branch).
-2. **Contextual Awareness:** If the diff is small, pull in the full content of modified files to understand the surrounding logic.
-3. **Preservation:** Focus strictly on the changes introduced in the PR. Avoid "scope creep" into unrelated legacy code unless the PR directly interacts with it in a way that breaks invariants.
+## 1. Scope selection
 
-### 2. Parallel Subagents
+1. **Primary scope:** Use the PR diff (delta between head and base).
+2. **Context:** If the diff is small, read full modified files when needed for surrounding logic.
+3. **Preservation:** Stay on changes introduced in the PR; avoid scope creep into unrelated legacy code unless the PR directly breaks invariants there.
 
-Launch three subagents to audit the PR simultaneously. They must only report findings and cannot modify code during the analysis phase.
+## 2. Parallel subagents (read-only)
 
-#### **Agent A: Code Quality & Maintainability**
+Launch three subagents to audit the PR simultaneously. They must only report findings and cannot modify code during analysis.
 
-- **Logic Simplification:** Identify complex conditionals that can be flattened or replaced with guard clauses.
-- **Clarity over Cleverness:** Flag "magic numbers," cryptic naming, or "clever" one-liners that hinder readability.
-- **Defensive Over-engineering:** Look for unnecessary null checks where types already guarantee presence, or broad `try/catch` blocks that swallow meaningful errors.
-- **Type Safety:** Identify `any` types, unnecessary casts, or loose interfaces that weaken the contract of the code.
+### Agent A: Code quality and maintainability
 
-#### **Agent B: Performance & Scalability**
+- **Logic simplification:** Complex conditionals that could use guard clauses or flattening.
+- **Clarity:** Magic numbers, unclear naming, overly clever one-liners.
+- **Defensive over-engineering:** Redundant null checks, broad `try/catch` that hides errors.
+- **Types:** `any`, unnecessary casts, loose interfaces.
 
-- **Resource Efficiency:** Spot N+1 queries, heavy operations inside map/filter loops, and lack of memoization for expensive computations.
-- **Concurrency:** Check for blocking I/O on the main thread or missing `await` calls that lead to race conditions.
-- **Memory Footprint:** Identify large object allocations in hot paths or closures that might cause unintended memory leaks.
-- **Payload Bloat:** Look for excessive logging or telemetry being sent from high-frequency loops.
+### Agent B: Performance and scalability
 
-#### **Agent C: Consistency & Reuse**
+- **Resources:** N+1 patterns, heavy work inside tight loops, missing memoization.
+- **Concurrency:** Blocking I/O, missing `await`, race risks.
+- **Memory:** Large allocations in hot paths, leaky closures.
+- **Payload:** Excessive logging or telemetry in high-frequency paths.
 
-- **Pattern Matching:** Ensure the PR follows existing architectural patterns (e.g., using the project's standard error-handling utility or logging wrapper).
-- **DRY (Don't Repeat Yourself):** Identify logic in the PR that duplicates functionality already existing elsewhere in the codebase.
-- **API Design:** Check if new public methods or components align with the ergonomics of the existing library/service.
+### Agent C: Consistency and reuse
 
-### 3. Synthesis & Feedback
+- **Patterns:** Alignment with project architecture and shared utilities.
+- **DRY:** Duplication of existing functionality.
+- **API design:** Ergonomics of new public surfaces.
 
-Aggregate the findings into a structured response:
+## 3. Synthesis
 
-1.  **Executive Summary:** A high-level assessment of the PR (e.g., "Safe to merge," "Needs architectural changes," or "Minor cleanup required").
-2.  **Actionable Suggestions:** Provide specific, refactored code blocks for the issues identified.
-3.  **Automated Fixes:** If requested, apply the non-controversial "cleanup" fixes (formatting, renaming, simple inlining) directly.
-4.  **Discussion Points:** Highlight high-level concerns (e.g., "This approach might not scale if X happens") that require human architectural input.
+Produce consolidated feedback suitable for **body** in the final JSON:
 
-### 4. Post-Review Validation
+1. **Executive summary** — High-level assessment (e.g. safe to merge, needs changes, minor cleanup).
+2. **Actionable suggestions** — Specific improvements; use fenced code only where it helps.
+3. **Discussion points** — Architectural or product questions for humans.
 
-If fixes were applied, run available lightweight linters or tests. Clearly state which checks passed and which were skipped.
+## 4. Post-review validation
+
+If you applied any fixes locally, note which checks you ran or skipped. (This flow is read-only unless the user explicitly asked otherwise.)

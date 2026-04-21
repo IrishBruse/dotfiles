@@ -2,9 +2,9 @@
 
 import process from "node:process";
 
-import { runCreate } from "./commands/create.ts";
-import { runUpdate } from "./commands/update.ts";
-import { runReview } from "./commands/review.ts";
+import { runCreate } from "./commands/create/index.ts";
+import { runUpdate } from "./commands/update/index.ts";
+import { runReview } from "./commands/review/index.ts";
 import { printHelp } from "./commands/help.ts";
 import { inferAndRun } from "./infer.ts";
 

@@ -1,7 +1,7 @@
 import { spawnSync } from "node:child_process";
 
-import { runCreate } from "./commands/create.ts";
-import { runUpdate } from "./commands/update.ts";
+import { runCreate } from "./commands/create/index.ts";
+import { runUpdate } from "./commands/update/index.ts";
 
 function currentBranchHasOpenPr(): boolean {
   const result = spawnSync(

@@ -9,7 +9,7 @@ export function printHelp(): void {
       "Commands:",
       "  create         Prepare or open a new pull request for this branch",
       "  update         Refresh an existing pull request for this branch",
-      "  review         Review a provided pull request url or number (skeleton)",
+      "  review         Review a PR by URL or number (loads prompts; agent wiring stub)",
       "  none           Picks create or updated based on the open repo",
       "",
       "Global options:",
