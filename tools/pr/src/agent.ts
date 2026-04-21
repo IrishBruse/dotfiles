@@ -28,29 +28,7 @@ function summarizeToolCall(toolCall: unknown): string {
   return keys[0] ?? "tool";
 }
 
-function assistantText(ev: JsonObject): string | null {
-  if (ev.type !== "assistant") return null;
-  const message = ev.message;
-  if (!message || typeof message !== "object") return null;
-  const content = (message as JsonObject).content;
-  if (!Array.isArray(content) || content.length === 0) return null;
-  const block0 = content[0] as JsonObject;
-  return typeof block0.text === "string" ? block0.text : null;
-}
-
-/** Stream assistant tokens to stdout without duplicating the final cumulative message. */
-function streamAssistantFragment(text: string, st: { acc: string }): void {
-  if (text.startsWith(st.acc)) {
-    process.stdout.write(text.slice(st.acc.length));
-    st.acc = text;
-    return;
-  }
-  if (st.acc.startsWith(text)) return;
-  process.stdout.write(text);
-  st.acc += text;
-}
-
-function handleStreamEvent(ev: JsonObject, assistantSt: { acc: string }): void {
+function handleStreamEvent(ev: JsonObject): void {
   const type = ev.type;
   const subtype = ev.subtype;
 
@@ -69,14 +47,9 @@ function handleStreamEvent(ev: JsonObject, assistantSt: { acc: string }): void {
 
   if (type === "tool_call" && subtype === "started") {
     process.stderr.write(
-      `\x1b[36m$\x1b[0m ${summarizeToolCall(ev.tool_call)}\n`,
+      `\x1b[36m▶\x1b[0m ${summarizeToolCall(ev.tool_call)}\n`,
     );
     return;
-  }
-
-  const at = assistantText(ev);
-  if (at != null) {
-    streamAssistantFragment(at, assistantSt);
   }
 }
 
@@ -95,7 +68,6 @@ export function runOpenAgentCapture(
     prompt,
   ];
   return new Promise((resolve, reject) => {
-    const assistantSt = { acc: "" };
     let finalText: string | null = null;
     let parseError: Error | null = null;
     let lineBuf = "";
@@ -138,7 +110,7 @@ export function runOpenAgentCapture(
         return true;
       }
 
-      handleStreamEvent(ev, assistantSt);
+      handleStreamEvent(ev);
       return false;
     };
 

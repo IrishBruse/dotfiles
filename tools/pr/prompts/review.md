@@ -101,7 +101,11 @@ When the review is ready, your **last** message must contain **only** one markdo
 - **`pr`**: Required only when the user did **not** pass a PR on the command line — the PR number, `org/repo#n`, or a `github.com` pull URL string the CLI can pass to `gh pr view`. Omit when the CLI already printed a resolved PR in stderr.
 
 ```json
-{"title":"Summary for the author","body":"> Reviewed by Cursor\n\n…","pr":"42"}
+{
+  "title": "Summary for the author",
+  "body": "> Reviewed by Cursor\n\n…",
+  "pr": "42"
+}
 ```
 
 Do not write anything after the closing fence of that block.

@@ -3,13 +3,6 @@ import process from "node:process";
 
 import { markdownToAnsi } from "./markdown.ts";
 
-/** Scroll roughly one viewport so streamed agent output is separated from the preview. */
-function writeFullTerminalHeightBlank(): void {
-  if (!process.stdout.isTTY) return;
-  const rows = Math.max(1, process.stdout.rows ?? 24);
-  process.stdout.write("\n".repeat(rows));
-}
-
 function parseAgentJsonObject(text: string): Record<string, unknown> {
   const marker = "```json";
   const open = text.lastIndexOf(marker);
@@ -100,8 +93,6 @@ export async function ttyConfirmMarkdownSubmit(opts: {
   if (!process.stdin.isTTY || !process.stdout.isTTY) {
     throw new Error("stdin and stdout must be TTYs");
   }
-
-  writeFullTerminalHeightBlank();
 
   process.stdout.write(`\n\x1b[1m${opts.titleLabel}\x1b[0m\n`);
   process.stdout.write(`${markdownToAnsi(opts.titleMarkdown)}\n\n`);
