@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Sync Jira issues to ~/jira-board-style folders using `acli jira workitem search` (Atlassian CLI).
- * Edit CONFIG below, then run: node bin/jira-board-sync.js
+ * Edit CONFIG.ts, then run: node bin/jira-board-sync.js
  */
 import { spawnSync } from "node:child_process";
 import os from "node:os";
@@ -9,32 +9,24 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { writeBoard, writeJiraTicketsSkill } from "./board_lib.ts";
+import { CONFIG } from "./CONFIG.ts";
 
-// --- Edit CONFIG (only source of settings) ---
-const CONFIG = {
-  /** Host only, e.g. "your-org.atlassian.net" */
-  site: "globalization-partners.atlassian.net",
-  /** Your Atlassian account ID (Jira profile / issue JSON assignee.accountId) */
-  meAccountId: "712020:b030f3e6-786d-46ed-94cd-df2ac4b68532",
-  /**
-   * Jira Agile board id. When non-empty, active sprints on this board only are used
-   * (`sprint in (…)`) so you do not match every open sprint on the site.
-   */
-  boardId: "691",
-  /** JQL (put ORDER BY at the end; avoid `sprint in openSprints()` when boardId is set) */
-  boardJql: "project = NOVACORE ORDER BY assignee, key",
-  /** Output root; empty = ~/jira-board */
-  outputDir: "",
-  /** Clear existing *.md under me/, unassigned/, team/ before writing */
-  clean: true,
-  /**
-   * Path to jira-tickets SKILL.md. Empty = `<repo>/.agents/skills/jira-tickets/SKILL.md`
-   * (repo = two levels up from this file).
-   */
-  jiraTicketsSkillPath: "",
-  /** `acli` binary */
-  acli: "acli",
-} as const;
+/** Fixed output tree: ~/jira-board/{me,unassigned,team}/ */
+const BOARD_OUTPUT_ROOT = path.join(os.homedir(), "jira-board");
+
+/** Fixed skill file: `<repo>/.agents/skills/jira-tickets/SKILL.md` (repo = two levels up from this tool). */
+const JIRA_TICKETS_SKILL_PATH = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+  ".agents",
+  "skills",
+  "jira-tickets",
+  "SKILL.md",
+);
+
+/** Atlassian CLI binary (must be on `PATH` or change this string). */
+const ACLI = "acli";
 
 const SEARCH_FIELDS = "key,summary,assignee,issuetype,description";
 
@@ -64,11 +56,6 @@ function summarizeAcliArgs(args: string[]): string {
 function nonEmpty(s: string): string | null {
   const t = s.trim();
   return t.length > 0 ? t : null;
-}
-
-function defaultJiraTicketsSkillPath(): string {
-  const here = path.dirname(fileURLToPath(import.meta.url));
-  return path.resolve(here, "..", "..", ".agents", "skills", "jira-tickets", "SKILL.md");
 }
 
 function runAcliJson(acli: string, args: string[]): unknown {
@@ -103,7 +90,10 @@ function stripOpenSprintsClause(jql: string): string {
     .trim();
 }
 
-function splitJqlOrderBy(jql: string): { main: string; orderBy: string | null } {
+function splitJqlOrderBy(jql: string): {
+  main: string;
+  orderBy: string | null;
+} {
   const trimmed = jql.trim();
   const m = /\s+ORDER\s+BY\s+(.+)$/i.exec(trimmed);
   if (!m) return { main: trimmed, orderBy: null };
@@ -151,9 +141,6 @@ function main(): void {
   const jql = nonEmpty(CONFIG.boardJql);
   const meAccountId = nonEmpty(CONFIG.meAccountId);
   let siteHost = nonEmpty(CONFIG.site);
-  const acli = nonEmpty(CONFIG.acli) ?? "acli";
-  const output =
-    nonEmpty(CONFIG.outputDir) ?? path.join(os.homedir(), "jira-board");
   const clean = CONFIG.clean;
   const boardId = nonEmpty(CONFIG.boardId);
 
@@ -174,7 +161,7 @@ function main(): void {
   let effectiveJql = jql;
   if (boardId) {
     log(`board id ${boardId} — resolving active sprints on this board only…`);
-    const sprintIds = fetchActiveSprintIdsForBoard(acli, boardId);
+    const sprintIds = fetchActiveSprintIdsForBoard(ACLI, boardId);
     if (sprintIds.length === 0) {
       process.stderr.write(
         `jira-board-sync: no active sprints on board ${boardId}.\n`,
@@ -185,12 +172,12 @@ function main(): void {
     effectiveJql = scopeJqlToBoardSprints(effectiveJql, sprintIds);
   }
 
-  const outRoot = path.resolve(output);
+  const outRoot = path.resolve(BOARD_OUTPUT_ROOT);
   log(`site ${siteHost}, output ${outRoot}, clean=${clean}`);
   log(`JQL ${truncate(effectiveJql, 120)}`);
   log("fetching issues from Jira via acli…");
 
-  const data = runAcliJson(acli, [
+  const data = runAcliJson(ACLI, [
     "jira",
     "workitem",
     "search",
@@ -215,7 +202,10 @@ function main(): void {
   );
   log("writing ticket markdown…");
 
-  const issues = data as Array<{ key?: string; fields?: Record<string, unknown> }>;
+  const issues = data as Array<{
+    key?: string;
+    fields?: Record<string, unknown>;
+  }>;
 
   const counts = writeBoard(issues, {
     outputRoot: outRoot,
@@ -224,14 +214,12 @@ function main(): void {
     clean,
   });
 
-  const skillPath =
-    nonEmpty(CONFIG.jiraTicketsSkillPath) ?? defaultJiraTicketsSkillPath();
-  log(`writing jira-tickets skill → ${skillPath}`);
-  writeJiraTicketsSkill(issues, skillPath, meAccountId);
+  log(`writing jira-tickets skill → ${JIRA_TICKETS_SKILL_PATH}`);
+  writeJiraTicketsSkill(issues, JIRA_TICKETS_SKILL_PATH, meAccountId);
 
   log("done.");
   process.stdout.write(
-    `Wrote ${counts.me + counts.team + counts.unassigned} issues to ${outRoot} (me: ${counts.me}, team: ${counts.team}, unassigned: ${counts.unassigned}). Updated jira-tickets skill: ${skillPath}\n`,
+    `Wrote ${counts.me + counts.team + counts.unassigned} issues to ${outRoot} (me: ${counts.me}, team: ${counts.team}, unassigned: ${counts.unassigned}). Updated jira-tickets skill: ${JIRA_TICKETS_SKILL_PATH}\n`,
   );
 }
 

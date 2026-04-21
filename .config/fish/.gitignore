@@ -2,3 +2,4 @@ conf.d/fly.fish
 conf.d/fzf.fish
 conf.d/zoxide.fish
 conf.d/brew.fish
+completions/acli.fish

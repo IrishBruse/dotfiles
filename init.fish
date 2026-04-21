@@ -1,3 +1,3 @@
 #!/usr/bin/env fish
 
-ln -s ~/dotfiles/.agents/hooks.json .cursor/hooks.json
+acli completion fish >.config/fish/completions/acli.fish
