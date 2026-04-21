@@ -17,4 +17,5 @@ fzf --fish >.config/fish/conf.d/fzf.fish
 # undo with
 # git update-index --no-assume-unchanged
 
+# git update-index --no-assume-unchanged .agents/skills/jira-tickets/SKILL.md
 git update-index --assume-unchanged .agents/skills/jira-tickets/SKILL.md
