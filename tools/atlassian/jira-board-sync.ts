@@ -37,26 +37,25 @@ export function adfToMarkdown(adf: unknown): string {
 
   const lines: string[] = [];
 
-  function collectText(n: unknown): string[] {
-    const parts: string[] = [];
-    if (n == null) return parts;
+  /** Depth-first text fragments; appends to `out` to avoid per-node array allocation. */
+  function appendCollectText(out: string[], n: unknown): void {
+    if (n == null) return;
     if (typeof n === "object" && n !== null && "type" in n) {
       const o = n as Record<string, unknown>;
       if (o.type === "text" && typeof o.text === "string") {
-        parts.push(o.text);
+        out.push(o.text);
       }
       const content = o.content;
       if (Array.isArray(content)) {
         for (const c of content) {
-          parts.push(...collectText(c));
+          appendCollectText(out, c);
         }
       }
     } else if (Array.isArray(n)) {
       for (const x of n) {
-        parts.push(...collectText(x));
+        appendCollectText(out, x);
       }
     }
-    return parts;
   }
 
   function walk(node: unknown): void {
@@ -72,14 +71,14 @@ export function adfToMarkdown(adf: unknown): string {
     if (t === "paragraph") {
       const inner: string[] = [];
       for (const c of (o.content as unknown[]) ?? []) {
-        inner.push(...collectText(c));
+        appendCollectText(inner, c);
       }
       lines.push(inner.join(""));
     } else if (t === "heading") {
       const level = Number((o.attrs as { level?: number } | undefined)?.level ?? 1);
       const inner: string[] = [];
       for (const c of (o.content as unknown[]) ?? []) {
-        inner.push(...collectText(c));
+        appendCollectText(inner, c);
       }
       const prefix = "#".repeat(Math.max(1, Math.min(level, 6)));
       lines.push(`${prefix} ${inner.join("").trimEnd()}`);
@@ -90,13 +89,13 @@ export function adfToMarkdown(adf: unknown): string {
     } else if (t === "listItem") {
       const inner: string[] = [];
       for (const c of (o.content as unknown[]) ?? []) {
-        inner.push(...collectText(c));
+        appendCollectText(inner, c);
       }
       lines.push(`- ${inner.join("")}`);
     } else if (t === "codeBlock") {
       const parts: string[] = [];
       for (const c of (o.content as unknown[]) ?? []) {
-        parts.push(...collectText(c));
+        appendCollectText(parts, c);
       }
       const body = parts.join("");
       const lang = String((o.attrs as { language?: string } | undefined)?.language ?? "");
