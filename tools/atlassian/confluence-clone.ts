@@ -7,6 +7,7 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { storageToMarkdown } from "./confluence-storage-to-markdown.ts";
 
 const ACLI_DEFAULT = "acli";
 
@@ -37,10 +38,12 @@ function parseArgs(argv: string[]): {
   url: string;
   outDir: string;
   acli: string;
+  rawStorage: boolean;
 } {
   let url: string | null = null;
   let outDir: string | null = null;
   let acli = process.env.ACLI_BIN?.trim() || ACLI_DEFAULT;
+  let rawStorage = false;
   const rest: string[] = [];
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;
@@ -58,6 +61,10 @@ function parseArgs(argv: string[]): {
     if (a === "--url") {
       url = argv[++i] ?? null;
       if (!url) usage(1);
+      continue;
+    }
+    if (a === "--raw-storage") {
+      rawStorage = true;
       continue;
     }
     if (a === "-h" || a === "--help") usage(0);
@@ -81,18 +88,24 @@ function parseArgs(argv: string[]): {
     url,
     outDir: outDir ?? rest[1] ?? defaultOut,
     acli,
+    rawStorage,
   };
 }
 
 function usage(code: number): never {
   const prog = path.basename(process.argv[1] ?? "confluence-clone");
   console.error(`Usage: ${prog} <confluencePageUrl> [outputDir]`);
-  console.error(`       ${prog} --url <url> [--out|-o <dir>] [--acli <path>]`);
+  console.error(
+    `       ${prog} --url <url> [--out|-o <dir>] [--acli <path>] [--raw-storage]`,
+  );
   console.error("");
   console.error(
     "  Clones the page and all descendants via Atlassian CLI (acli).",
   );
   console.error(`  Default output: ./confluence-<pageId>`);
+  console.error(
+    "  Body is converted from Confluence storage HTML to Markdown unless --raw-storage.",
+  );
   console.error("  Requires: acli authenticated (acli confluence auth).");
   process.exit(code);
 }
@@ -176,7 +189,10 @@ function sortChildren(children: ChildRef[]): ChildRef[] {
   });
 }
 
-function buildFileContent(page: PageViewJson): string {
+function buildFileContent(
+  page: PageViewJson,
+  opts: { rawStorage: boolean },
+): string {
   const lines = ["---"];
   lines.push(`id: "${page.id}"`);
   if (page.title != null) lines.push(`title: ${JSON.stringify(page.title)}`);
@@ -184,18 +200,22 @@ function buildFileContent(page: PageViewJson): string {
   if (page.version?.number != null)
     lines.push(`version: ${page.version.number}`);
   lines.push("---", "");
-  const html = page.body?.storage?.value ?? "";
-  return `${lines.join("\n")}\n${html}\n`;
+  const storage = page.body?.storage?.value ?? "";
+  const body = opts.rawStorage
+    ? storage
+    : storageToMarkdown(storage);
+  return `${lines.join("\n")}\n${body}\n`;
 }
 
 function writePageFile(
   dir: string,
   baseName: string,
   data: PageViewJson,
+  opts: { rawStorage: boolean },
 ): void {
   fs.mkdirSync(dir, { recursive: true });
   const filePath = path.join(dir, `${baseName}.md`);
-  fs.writeFileSync(filePath, buildFileContent(data), "utf-8");
+  fs.writeFileSync(filePath, buildFileContent(data, opts), "utf-8");
   console.error(filePath);
 }
 
@@ -207,9 +227,10 @@ function walk(
     leafSlug: string | null;
     visited: Set<string>;
     prefetched?: PageViewJson;
+    rawStorage: boolean;
   },
 ): void {
-  const { leafSlug, visited, prefetched } = opts;
+  const { leafSlug, visited, prefetched, rawStorage } = opts;
   if (visited.has(pageId)) {
     console.error(`confluence-clone: skip duplicate id ${pageId}`);
     return;
@@ -225,7 +246,7 @@ function walk(
 
   const children = sortChildren(data.directChildren?.results ?? []);
   const baseName = leafSlug ?? markdownBasename(data.title, pageId);
-  writePageFile(dir, baseName, data);
+  writePageFile(dir, baseName, data, { rawStorage });
 
   const childFolders = folderNamesForSiblings(children);
   for (let i = 0; i < children.length; i++) {
@@ -236,7 +257,7 @@ function walk(
     if (subKids.length === 0) {
       if (visited.has(ch.id)) continue;
       visited.add(ch.id);
-      writePageFile(dir, seg, childData);
+      writePageFile(dir, seg, childData, { rawStorage });
     } else {
       const childDir = path.join(dir, seg);
       fs.mkdirSync(childDir, { recursive: true });
@@ -244,6 +265,7 @@ function walk(
         leafSlug: null,
         visited,
         prefetched: childData,
+        rawStorage,
       });
     }
   }
@@ -264,6 +286,7 @@ function main(): void {
     leafSlug: null,
     visited,
     prefetched: titleProbe,
+    rawStorage: parsed.rawStorage,
   });
   console.error(`confluence-clone: done → ${path.resolve(parsed.outDir)}`);
 }
