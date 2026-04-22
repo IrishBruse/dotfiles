@@ -5,11 +5,13 @@
   "license": "ISC",
   "type": "module",
   "bin": {
+    "jira-board": "./bin/jira-board.js",
     "jira-board-sync": "./bin/jira-board-sync.js",
     "confluence-clone": "./bin/confluence-clone.js"
   },
   "files": [
     "bin",
+    "jira-board.ts",
     "jira-board-sync.ts",
     "confluence-clone.ts",
     "confluence-slug.ts",
@@ -28,6 +30,7 @@
   },
   "dependencies": {
     "jsdom": "29.0.2",
+    "string-width": "7.0.0",
     "turndown": "7.2.4",
     "turndown-plugin-gfm": "1.0.2"
   }
