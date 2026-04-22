@@ -67,7 +67,7 @@ async function runReviewAsync(args: string[]): Promise<void> {
 
   let stdout: string;
   try {
-    console.error("pr review: running agent (print mode)…");
+    console.error("pr review: running agent (stream-json)…");
     stdout = await runAgentPrint(prompt);
   } catch (e) {
     fail(

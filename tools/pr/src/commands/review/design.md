@@ -43,8 +43,8 @@ The first section of **`prompt.md`** (through **Final response** / JSON contract
 **`runReview`**:
 
 - Builds the composed prompt via **`loadReviewAgentPrompt`**.
-- Runs **`agent -p`** (or **`PR_AGENT`**, with **`cursor-agent`** fallback) via **`runAgentPrint`**; timeout **`PR_AGENT_TIMEOUT_MS`**.
-- Parses the last **`json`** fence with **`parseLastJsonFence`**; expects **`title`** and **`body`**.
+- Runs **`agent -p --output-format stream-json --stream-partial-output`** (or **`PR_AGENT`**, with **`cursor-agent`** fallback) via **`runAgentPrint`**; live stream is formatted to **stderr**; final assistant text is taken from the stream’s terminal **`result`** line (not raw stdout). Timeout: **`PR_AGENT_TIMEOUT_MS`**.
+- Parses the last **`json`** fence in that result string with **`parseLastJsonFence`**; expects **`title`** and **`body`**.
 - If interactive TTY and **`PR_REVIEW_NO_CONFIRM`** is unset, **`printMarkdownPreview`** then **`waitForPostOrCancel`**; otherwise with **`PR_REVIEW_NO_CONFIRM=1`**, skips preview and posts.
 - On confirm: **`gh pr review`**, PR from argv, **`--comment -F`** (temp file with **body**).
 
@@ -57,7 +57,8 @@ The first section of **`prompt.md`** (through **Final response** / JSON contract
 | `../create/work/jiraTitlePolicy.ts` | **`buildWorkJiraTitleSection`** for **`{{workJiraTitleSection}}`** |
 | `prompt.md` | Full template: shared + first-pass review |
 | `src/parseJsonFence.ts` | Last markdown `json` code fence → parsed object |
-| `src/runAgentPrint.ts` | Subprocess **agent** in print mode |
+| `src/runAgentPrint.ts` | Subprocess **agent** (stream-json + partial) |
+| `src/agentStreamFormat.ts` | NDJSON → stderr (model, assistant stream, tools) |
 | `src/reviewPreview.ts` | Marked terminal preview + raw TTY one-key confirm |
 
 ## Notes

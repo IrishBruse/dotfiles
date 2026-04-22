@@ -1,12 +1,10 @@
 /**
  * Formats Cursor CLI stream-json (NDJSON) to stderr.
  * @see https://www.cursor.com/docs/cli/reference/output-format
- *
- * Thinking events are not emitted in print mode; streaming assistant
- * (partial) output is shown as the model “thinks out loud” before tool calls.
  */
 
 import process from "node:process";
+import * as npath from "node:path";
 
 const tty = process.stderr.isTTY === true;
 const CY = tty ? "\x1b[36m" : "";
@@ -14,7 +12,33 @@ const DIM = tty ? "\x1b[2m" : "";
 const BOLD = tty ? "\x1b[1m" : "";
 const GRN = tty ? "\x1b[32m" : "";
 const YLW = tty ? "\x1b[33m" : "";
+const BLU = tty ? "\x1b[34m" : "";
+const MAG = tty ? "\x1b[35m" : "";
 const RST = tty ? "\x1b[0m" : "";
+
+function oneLine(s: string, max: number): string {
+  const t = s.replace(/\s+/g, " ").trim();
+  if (t.length <= max) {
+    return t;
+  }
+  return t.slice(0, max - 1) + "…";
+}
+
+/** Shorten paths and agent-tools file names for display */
+function shortPath(p: string, max = 64): string {
+  if (p.length <= max) {
+    return p;
+  }
+  const base = npath.basename(p);
+  if (base.length > 0 && base.length < max) {
+    const dir = npath.dirname(p);
+    if (dir.length < 8) {
+      return p.slice(0, 28) + "…" + p.slice(-(max - 30));
+    }
+    return "…/" + oneLine(base, max - 2);
+  }
+  return p.slice(0, 28) + "…" + p.slice(-(max - 30));
+}
 
 function getAssistantText(message: unknown): string {
   if (typeof message !== "object" || message === null) {
@@ -37,58 +61,142 @@ function getAssistantText(message: unknown): string {
   return out;
 }
 
-function describeToolStart(
-  toolCall: unknown,
-  callId: string,
-): void {
-  const idShort = callId.length > 10 ? `${callId.slice(0, 10)}…` : callId;
+function firstString(obj: unknown, keys: string[]): string {
+  if (obj === null || typeof obj !== "object") {
+    return "";
+  }
+  const o = obj as Record<string, unknown>;
+  for (const k of keys) {
+    const v = o[k];
+    if (typeof v === "string" && v.trim() !== "") {
+      return v;
+    }
+  }
+  return "";
+}
+
+type ToolLine = { label: string; detail: string; color: string };
+
+function toolStartLine(toolCall: unknown, callId: string): ToolLine {
+  const id = callId.length > 12 ? `${callId.slice(0, 12)}…` : callId;
   if (toolCall === null || typeof toolCall !== "object") {
-    process.stderr.write(
-      `\n${YLW}▸${RST} tool ${DIM}${idShort}${RST}\n`,
-    );
-    return;
+    return { label: "tool", detail: id, color: YLW };
   }
   const tc = toolCall as Record<string, unknown>;
-  if ("readToolCall" in tc && typeof tc.readToolCall === "object" && tc.readToolCall) {
+
+  if (typeof tc.readToolCall === "object" && tc.readToolCall) {
     const a = (tc.readToolCall as { args?: { path?: string } }).args;
-    const path = a?.path ?? "?";
-    process.stderr.write(
-      `\n${YLW}▸${RST} read ${BOLD}${path}${RST} ${DIM}${idShort}${RST}\n`,
-    );
-    return;
+    const p = a?.path ?? "?";
+    return { label: "read", detail: shortPath(p), color: BLU };
   }
-  if ("writeToolCall" in tc && typeof tc.writeToolCall === "object" && tc.writeToolCall) {
+  if (typeof tc.writeToolCall === "object" && tc.writeToolCall) {
     const a = (tc.writeToolCall as { args?: { path?: string } }).args;
-    const path = a?.path ?? "?";
-    process.stderr.write(
-      `\n${t(YLW)}▸${RST} write ${BOLD}${path}${RST} ${t(DIM)}${idShort}${RST}\n`,
-    );
-    return;
+    const p = a?.path ?? "?";
+    return { label: "write", detail: shortPath(p), color: BLU };
+  }
+  if (typeof tc.shellToolCall === "object" && tc.shellToolCall) {
+    const args = (tc.shellToolCall as { args?: Record<string, unknown> }).args;
+    const s =
+      firstString(args, ["command", "script", "line"]) ||
+      (args
+        ? oneLine(
+            Object.entries(args)
+              .map(([, v]) => String(v))
+              .join(" "),
+            100,
+          )
+        : "");
+    return {
+      label: "shell",
+      detail: s || id,
+      color: YLW,
+    };
+  }
+  if (typeof tc.taskToolCall === "object" && tc.taskToolCall) {
+    const args = (tc.taskToolCall as { args?: Record<string, unknown> }).args;
+    const s =
+      firstString(args, [
+        "prompt",
+        "description",
+        "task",
+        "name",
+        "instruction",
+      ]) ||
+      (args
+        ? oneLine(
+            Object.entries(args)
+              .map(([k, v]) => `${k}=${String(v).slice(0, 40)}`)
+              .join(" "),
+            120,
+        )
+        : "");
+    return { label: "task", detail: s || id, color: MAG };
   }
   if ("function" in tc) {
     const f = tc.function as { name?: string; arguments?: string };
     const n = f.name ?? "function";
-    const args = (f.arguments ?? "").slice(0, 200);
-    process.stderr.write(
-      `\n${t(YLW)}▸${RST} ${BOLD}${n}${RST}${args ? ` ${t(DIM)}${args}${RST}` : ""}\n`,
-    );
-    return;
+    const a = (f.arguments ?? "").slice(0, 200);
+    return { label: n, detail: oneLine(a, 100), color: YLW };
   }
   const keys = Object.keys(tc);
-  const label = keys[0] ?? "tool";
+  if (keys.length > 0) {
+    const k0 = keys[0] as string;
+    if (k0) {
+      const v = tc[k0 as keyof typeof tc];
+      const d =
+        v !== null && typeof v === "object"
+          ? oneLine(
+              (v as { args?: unknown }).args
+                ? JSON.stringify((v as { args: unknown }).args)
+                : JSON.stringify(v),
+              100,
+            )
+          : String(v);
+      return { label: k0.replace(/ToolCall$/, ""), detail: d, color: YLW };
+    }
+  }
+  return { label: "tool", detail: id, color: YLW };
+}
+
+function printToolStart(toolCall: unknown, callId: string): void {
+  const { label, detail, color } = toolStartLine(toolCall, callId);
   process.stderr.write(
-    `\n${t(YLW)}▸${RST} ${BOLD}${label}${RST} ${t(DIM)}${idShort}${RST}\n`,
+    `\n${color}▶ ${BOLD}${label}${RST} ${DIM}${detail}${RST}\n`,
   );
+}
+
+function formatReadSuccess(s: Record<string, unknown>): string {
+  const parts: string[] = [];
+  if (s.totalLines != null) {
+    parts.push(String(s.totalLines) + " lines");
+  }
+  if (s.totalChars != null) {
+    parts.push(String(s.totalChars) + " chars");
+  }
+  return parts.length > 0 ? parts.join(" · ") : "done";
+}
+
+function formatWriteSuccess(s: Record<string, unknown>): string {
+  const a = s.linesCreated;
+  const b = s.fileSize;
+  const p: string[] = ["wrote"];
+  if (a !== undefined) {
+    p.push(String(a) + " lines");
+  }
+  if (b !== undefined) {
+    p.push(String(b) + " bytes");
+  }
+  return p.length > 1 ? p.join(" · ") : "wrote file";
 }
 
 function printToolDone(toolCall: unknown): void {
   if (toolCall === null || typeof toolCall !== "object") {
-    process.stderr.write(`  ${t(GRN)}✓${RST}\n`);
+    process.stderr.write(`  ${GRN}ok${RST}\n`);
     return;
   }
   const o = toolCall as Record<string, unknown>;
-  for (const k of Object.keys(o)) {
-    const inner = o[k];
+  for (const key of Object.keys(o)) {
+    const inner = o[key];
     if (inner === null || typeof inner !== "object") {
       continue;
     }
@@ -100,27 +208,30 @@ function printToolDone(toolCall: unknown): void {
     const s = result.success;
     if ("totalLines" in s) {
       process.stderr.write(
-        `  ${t(GRN)}✓${RST} read ${t(DIM)}${String(s.totalLines)} lines · ${String(
-          s.totalChars,
-        )} chars${RST}\n`,
+        `  ${GRN}ok${RST}  ${DIM}${formatReadSuccess(s)}${RST}\n`,
       );
       return;
     }
     if ("linesCreated" in s) {
       process.stderr.write(
-        `  ${t(GRN)}✓${RST} wrote ${t(DIM)}${String(s.linesCreated)} lines · ${
-          String(s.fileSize)
-        } bytes${RST}\n`,
+        `  ${GRN}ok${RST}  ${DIM}${formatWriteSuccess(s)}${RST}\n`,
+      );
+      return;
+    }
+    if ("exitCode" in s) {
+      process.stderr.write(
+        `  ${GRN}ok${RST}  ${DIM}exit ${String(s.exitCode)}${RST}\n`,
       );
       return;
     }
   }
-  process.stderr.write(`  ${t(GRN)}✓${RST}\n`);
+  process.stderr.write(`  ${GRN}ok${RST}\n`);
 }
 
 export class AgentStreamHandler {
   private lastResult: string | undefined;
-  private pendingAssistantText = false;
+  private resultError: string | undefined;
+  private assistantStreamActive = false;
 
   handleObject(ev: unknown): void {
     if (typeof ev !== "object" || ev === null) {
@@ -132,9 +243,8 @@ export class AgentStreamHandler {
       const model = o.model;
       const cwd = o.cwd;
       process.stderr.write(
-        `${t(CY)}━━ agent ━━${RST} ${BOLD}${String(model)}${RST}  ${DIM}${String(
-          cwd,
-        )}${RST}\n\n`,
+        `${CY}━━ pr-cli · ${String(model)}${RST}\n` +
+          `${DIM}   ${String(cwd)}${RST}\n\n`,
       );
       return;
     }
@@ -146,58 +256,86 @@ export class AgentStreamHandler {
       return;
     }
     if (typ === "tool_call" && o.subtype === "started") {
-      this.newlineIfMidAssistant();
+      this.endAssistantBlock();
       const id =
         typeof o.call_id === "string" ? o.call_id : String(o.call_id ?? "…");
-      describeToolStart(o.tool_call, id);
+      printToolStart(o.tool_call, id);
       return;
     }
     if (typ === "tool_call" && o.subtype === "completed") {
       printToolDone(o.tool_call);
       return;
     }
+    if (typ === "result" && o.is_error === true) {
+      this.endAssistantBlock();
+      this.resultError =
+        typeof o.error === "string"
+          ? o.error
+          : JSON.stringify(o, null, 0).slice(0, 2_000);
+      process.stderr.write(
+        `\n${YLW}error${RST} ${DIM}${this.resultError}${RST}\n\n`,
+      );
+      return;
+    }
     if (typ === "result" && o.is_error === false) {
-      this.newlineIfMidAssistant();
+      this.endAssistantBlock();
       const r = o.result;
       if (typeof r === "string") {
         this.lastResult = r;
         const ms = o.duration_ms;
         process.stderr.write(
-          `\n${t(CY)}━━ done (${String(ms)} ms) ━━${RST}\n\n`,
+          `\n${CY}── finished in ${String(ms)} ms${RST}\n\n`,
         );
       }
     }
   }
 
   /**
-   * Partial-output rules: append only when timestamp_ms is set and model_call_id
-   * is not (true streaming delta).
+   * Streaming: print one header then append text only (no prefix per token).
+   * See Cursor output-format partial-output rules.
    */
   private handleAssistant(o: Record<string, unknown>): void {
     const hasTs = "timestamp_ms" in o;
     const hasMc = Boolean(o.model_call_id);
-    if (!hasTs) {
-      return; // end flush duplicate, or other
-    }
-    if (hasMc) {
-      return; // pre-tool buffer duplicate
+    if (hasTs && hasMc) {
+      return;
     }
     const text = getAssistantText(o.message);
     if (text.length === 0) {
       return;
     }
-    this.pendingAssistantText = true;
-    process.stderr.write(`${t(DIM)}│${RST} ${text}`);
+    if (hasTs && !hasMc) {
+      if (!this.assistantStreamActive) {
+        process.stderr.write(
+          `\n${DIM}Response${RST}\n` + `${BOLD}│${RST} `,
+        );
+        this.assistantStreamActive = true;
+      }
+      process.stderr.write(text);
+      return;
+    }
+    if (!hasTs) {
+      this.endAssistantBlock();
+      process.stderr.write(
+        `\n${DIM}Message${RST}\n` +
+          `  ` +
+          text.split("\n").join("\n  ") +
+          "\n",
+      );
+    }
   }
 
-  private newlineIfMidAssistant(): void {
-    if (this.pendingAssistantText) {
+  private endAssistantBlock(): void {
+    if (this.assistantStreamActive) {
       process.stderr.write("\n");
-      this.pendingAssistantText = false;
+      this.assistantStreamActive = false;
     }
   }
 
   getFinalResult(): string {
+    if (this.resultError !== undefined) {
+      throw new Error(this.resultError);
+    }
     if (this.lastResult === undefined) {
       throw new Error("stream ended without a success result line");
     }

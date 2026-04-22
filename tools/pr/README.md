@@ -53,7 +53,7 @@ HEAD state for default `pr` add/update is stored at **`~/.local/state/pr-cli/las
 
 ### `pr review`
 
-**What it does:** Loads **`src/commands/review/prompt.md`**, runs **`agent -p`** (see env above), takes the last **`json`** fence from stdout (`title`, `body`), shows a terminal markdown preview, then **Enter** runs **`gh pr review <pr> --comment -F`** with **body** (or **Esc** to cancel). With **`PR_REVIEW_NO_CONFIRM=1`**, skips preview and posts when stdout parses.
+**What it does:** Loads **`src/commands/review/prompt.md`**, runs **`agent -p --output-format stream-json --stream-partial-output`** (see env above). Progress (model, streaming assistant text, read/write tools) is printed to **stderr**; the final **`result`** string is used to find the last **`json`** fence (`title`, `body`). Then a markdown preview on stdout, **Enter** → **`gh pr review <pr> --comment -F`**, **Esc** cancels. With **`PR_REVIEW_NO_CONFIRM=1`**, skips preview and posts when parsing succeeds.
 
 **Form:** `pr review <pr>` (URL or number; required)
 
