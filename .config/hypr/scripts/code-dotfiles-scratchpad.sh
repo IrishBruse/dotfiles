@@ -16,8 +16,12 @@ else
     # Show the special workspace
     hyprctl dispatch togglespecialworkspace special
 
+    sleep 0.25
+
     # Only run code if it's not already visible to avoid duplicate instances/forks
     code "$HOME/dotfiles"
+
+    sleep 0.25
 
     hyprctl dispatch movetoworkspacesilent special,title:^DOTFILES\$
 fi
