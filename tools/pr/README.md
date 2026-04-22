@@ -1,6 +1,6 @@
 # pr-cli
 
-Runs [Cursor Agent](https://cursor.com) (`agent`) with one markdown template per command under **`prompts/`**. Needs **`gh`** and **`agent`** on `PATH`, and Node **24+**.
+Runs [Cursor Agent](https://cursor.com) (`agent`) with one **`prompt.md`** (plus create **`work/prompt.md`** when `PR_TITLE_JIRA_KEY` is set) per command under **`src/commands/{review,update,create}/`**. Needs **`gh`** and **`agent`** on `PATH`, and Node **24+**.
 
 ## Install
 
@@ -25,23 +25,27 @@ Any other option starting with `-` is rejected.
 | Variable | Description |
 |----------|-------------|
 | `PR_TITLE_JIRA_KEY` | **Work-only toggle:** optional project key (e.g. `NOVACORE`). When **set** in your environment (e.g. work repo / `direnv`), prompts require a PR title matching `KEY-<digits>` and the agent uses Jira MCP where applicable; the CLI may validate the resolved title before `gh` commands. When **unset** (default for personal use), no Jira ID is required on the title and create/review flows do not assume Jira. Not a CLI flag — global env only. |
+| `PR_AGENT` | Binary for [Cursor print mode](https://www.cursor.com/docs/cli/headless) (default: `agent`, with `cursor-agent` tried if the first is missing). |
+| `PR_AGENT_TIMEOUT_MS` | Max time in milliseconds for one `agent -p` run (default: 1,200,000 = 20 minutes). |
+| `CURSOR_API_KEY` | Required for headless `agent` in some setups; see Cursor CLI auth docs. |
+| `PR_REVIEW_NO_CONFIRM` | Set to `1` to skip the markdown preview and TTY confirm for `pr review` (e.g. in scripts or CI), and post the comment if parsing succeeds. |
 
 HEAD state for default `pr` add/update is stored at **`~/.local/state/pr-cli/last-head.json`** (updated after each successful posted review for that PR).
 
-## Prompt templates (`prompts/`)
+## Prompt files (`src/commands/…/prompt.md`)
 
-| File | Command | Role |
+| Path | Command | Role |
 |------|---------|------|
-| `review.md` | `pr review`, default `pr` (add) | First-pass; `{{prLine}}`, `{{hintBlock}}`, `{{workJiraTitleSection}}` when `PR_TITLE_JIRA_KEY` set; fenced JSON (`title`, `body`, optional `pr`). |
-| `update.md` | `pr update`, default `pr` (update) | Follow-up; same placeholders and JSON contract. |
-| `create.md` | `pr create` | Core prompt: new PR from branch; JSON `title` / `body`. |
-| `work/create-appendix.md` | `pr create` | **Only if** `PR_TITLE_JIRA_KEY` set — Jira title + jira-board skill instructions. |
+| `review/prompt.md` | `pr review`, default `pr` (add) | First-pass review: shared + first-pass body; `{{prLine}}`, `{{hintBlock}}`, `{{workJiraTitleSection}}` when `PR_TITLE_JIRA_KEY` set; fenced JSON (`title`, `body`, optional `pr`). |
+| `update/prompt.md` | `pr update`, default `pr` (update) | Follow-up; `{{hintBlock}}` / `{{workJiraTitleSection}}` when env set. |
+| `create/prompt.md` | `pr create` | New PR from branch; JSON `title` / `body`. |
+| `create/work/prompt.md` | `pr create` | **Only if** `PR_TITLE_JIRA_KEY` set — Jira title + jira-board skill; appended to base. |
 
 ## Commands
 
 ### `pr` (default)
 
-**What it does:** Compares `headRefOid` to `~/.local/state/pr-cli/last-head.json` and loads **`prompts/review.md`** (add / first run / same-HEAD compact) or **`prompts/update.md`** (new commits). Runs `agent` with `--print`, parses a final **`json`** fence (`title`, `body`, and **`pr`** if you did not pass a PR on the argv), renders markdown in the terminal, then **Enter** posts **`gh pr review --comment`** or **Esc** cancels.
+**What it does:** Compares `headRefOid` to `~/.local/state/pr-cli/last-head.json` and loads **`src/commands/review/prompt.md`** (add / first run / same-HEAD compact) or **`src/commands/update/prompt.md`** (new commits). Runs `agent` with `--print`, parses a final **`json`** fence (`title`, `body`, and **`pr`** if you did not pass a PR on the argv), renders markdown in the terminal, then **Enter** posts **`gh pr review --comment`** or **Esc** cancels.
 
 **Forms:** `pr`, `pr <pr>`
 
@@ -49,15 +53,15 @@ HEAD state for default `pr` add/update is stored at **`~/.local/state/pr-cli/las
 
 ### `pr review`
 
-**What it does:** Loads **`prompts/review.md`** — always first-pass; same JSON + TTY + `gh pr review` flow as default `pr`.
+**What it does:** Loads **`src/commands/review/prompt.md`**, runs **`agent -p`** (see env above), takes the last **`json`** fence from stdout (`title`, `body`), shows a terminal markdown preview, then **Enter** runs **`gh pr review <pr> --comment -F`** with **body** (or **Esc** to cancel). With **`PR_REVIEW_NO_CONFIRM=1`**, skips preview and posts when stdout parses.
 
-**Form:** `pr review [<pr>]`
+**Form:** `pr review <pr>` (URL or number; required)
 
 ---
 
 ### `pr update`
 
-**What it does:** Loads **`prompts/update.md`** — always follow-up; same JSON + TTY + `gh pr review` flow.
+**What it does:** Loads **`src/commands/update/prompt.md`** — always follow-up; same JSON + TTY + `gh pr review` flow.
 
 **Form:** `pr update [<pr>]`
 
@@ -65,6 +69,6 @@ HEAD state for default `pr` add/update is stored at **`~/.local/state/pr-cli/las
 
 ### `pr create`
 
-**What it does:** Loads **`prompts/create.md`**. Same **`--print`** / JSON / markdown terminal preview pattern; **Enter** → `gh pr create` or **Esc** cancel.
+**What it does:** Loads **`src/commands/create/prompt.md`** (and **`work/prompt.md`** when `PR_TITLE_JIRA_KEY` is set). Same **`--print`** / JSON / markdown terminal preview pattern; **Enter** → `gh pr create` or **Esc** cancel.
 
 **Form:** `pr create`

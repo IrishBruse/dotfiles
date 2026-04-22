@@ -1,7 +1,7 @@
 export function printHelp(): void {
   console.log(
     [
-      "pr — GitHub pull request helper (skeleton)",
+      "pr — GitHub pull request helper",
       "",
       "Usage:",
       "  pr [command]",
@@ -9,8 +9,8 @@ export function printHelp(): void {
       "Commands:",
       "  create         Prepare or open a new pull request for this branch",
       "  update         Refresh an existing pull request for this branch",
-      "  review         Review a PR by URL or number (loads prompts; agent wiring stub)",
-      "  none           Picks create or updated based on the open repo",
+      "  review         Run agent on a PR, preview comment, then gh pr review --comment",
+      "  (default)      Picks create or update from open PR on this branch",
       "",
       "Global options:",
       "  -h, --help     Show this message",

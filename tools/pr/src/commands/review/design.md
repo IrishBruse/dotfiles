@@ -15,22 +15,17 @@ This document describes how **`pr review`** fits the wider CLI and how the revie
 
 ## Prompt assembly
 
-Review runs by composing two markdown templates from **`tools/pr/prompts/`**:
-
-| Piece | Role |
-|--------|------|
-| **`shared.md`** | Shared preamble: resolve/inspect PR via `gh`, diff/files, threads; **Final response** machine-parse rules (single fenced `json` block last). |
-| **`review.md`** | First-pass review instructions: scope, parallel audit angles (quality, performance, consistency), synthesis sections, post-review validation note. |
+A single file **`prompt.md`** next to **`reviewPrompt.ts`** in **`src/commands/review/`** contains the full template (shared **Resolve and inspect** / JSON contract first, then first-pass review body).
 
 Substitution is implemented in **`reviewPrompt.ts`**:
 
 - **`{{prLine}}`** — Built from the CLI target; tells the agent to use `gh pr view`, `gh pr diff`, etc. with that PR.
 - **`{{hintBlock}}`** — Currently empty when invoked from `runReview`.
-- **`{{workJiraTitleSection}}`** — Optional **work overlay**: non-empty only when **`PR_TITLE_JIRA_KEY`** is set. Markdown is produced by **`buildWorkJiraTitleSection()`** in **`src/work/jiraTitlePolicy.ts`** (same toggle as create; separate from **`prompts/work/create-appendix.md`**, which is create-only).
+- **`{{workJiraTitleSection}}`** — Optional **work overlay**: non-empty only when **`PR_TITLE_JIRA_KEY`** is set. Markdown is produced by **`buildWorkJiraTitleSection()`** in **`../create/work/jiraTitlePolicy.ts`** (same toggle as create; separate from create’s **`work/prompt.md`** appendix, which is create-only).
 
-When **`PR_TITLE_JIRA_KEY`** is unset, **`buildWorkJiraTitleSection`** returns **`""`** — no extra markdown is injected; review prompt assembly does not touch **`prompts/work/`**.
+When **`PR_TITLE_JIRA_KEY`** is unset, **`buildWorkJiraTitleSection`** returns **`""`** — no extra markdown is injected.
 
-The composed string is the full agent prompt.
+The expanded string is the full agent prompt.
 
 ## Intended runtime (prompt contract)
 
@@ -41,27 +36,29 @@ The prompts describe an end-to-end flow that is **not fully implemented** in Typ
 3. Show **title** / **body** in the terminal for human approval.
 4. On approval, post via **`gh pr review --comment`** (or equivalent); on cancel, exit without posting.
 
-**`shared.md`** is the source of truth for JSON shape and approval semantics.
+The first section of **`prompt.md`** (through **Final response** / JSON contract) is the source of truth for JSON shape and approval semantics.
 
 ## Current implementation status
 
-**`runReview`** today:
+**`runReview`**:
 
 - Builds the composed prompt via **`loadReviewAgentPrompt`**.
-- Does **not** invoke **`agent`**, does **not** parse JSON, does **not** call **`gh pr review`**.
-- Prints a **stub** message (composed length and target) to **`stderr`** and exits successfully.
-
-So: **prompt composition and contracts are in place; orchestration (agent → parse → TTY → GitHub) is still to be wired.**
+- Runs **`agent -p`** (or **`PR_AGENT`**, with **`cursor-agent`** fallback) via **`runAgentPrint`**; timeout **`PR_AGENT_TIMEOUT_MS`**.
+- Parses the last **`json`** fence with **`parseLastJsonFence`**; expects **`title`** and **`body`**.
+- If interactive TTY and **`PR_REVIEW_NO_CONFIRM`** is unset, **`printMarkdownPreview`** then **`waitForPostOrCancel`**; otherwise with **`PR_REVIEW_NO_CONFIRM=1`**, skips preview and posts.
+- On confirm: **`gh pr review`**, PR from argv, **`--comment -F`** (temp file with **body**).
 
 ## Related files
 
 | File | Purpose |
 |------|---------|
-| `src/commands/review/index.ts` | CLI entry and stub orchestration |
-| `src/commands/review/reviewPrompt.ts` | Load templates, expand placeholders |
-| `src/work/jiraTitlePolicy.ts` | **`buildWorkJiraTitleSection`** for **`{{workJiraTitleSection}}`** |
-| `prompts/shared.md` | Shared gh instructions + JSON fence contract |
-| `prompts/review.md` | Review-specific instructions |
+| `src/commands/review/index.ts` | Orchestration |
+| `src/commands/review/reviewPrompt.ts` | Load **`prompt.md`**, expand placeholders |
+| `../create/work/jiraTitlePolicy.ts` | **`buildWorkJiraTitleSection`** for **`{{workJiraTitleSection}}`** |
+| `prompt.md` | Full template: shared + first-pass review |
+| `src/parseJsonFence.ts` | Last markdown `json` code fence → parsed object |
+| `src/runAgentPrint.ts` | Subprocess **agent** in print mode |
+| `src/reviewPreview.ts` | Marked terminal preview + raw TTY one-key confirm |
 
 ## Notes
 

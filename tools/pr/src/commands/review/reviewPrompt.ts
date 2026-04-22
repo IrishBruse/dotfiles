@@ -4,13 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import { buildWorkJiraTitleSection } from "../create/work/jiraTitlePolicy.ts";
 
-const promptsDir = path.join(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "..",
-  "..",
-  "..",
-  "prompts",
-);
+const reviewCommandDir = path.dirname(fileURLToPath(import.meta.url));
 
 export type ReviewPromptVars = {
   prLine: string;
@@ -30,9 +24,11 @@ export function expandReviewPlaceholders(
 }
 
 export function loadReviewAgentPrompt(vars: ReviewPromptVars): string {
-  const shared = fs.readFileSync(path.join(promptsDir, "shared.md"), "utf8");
-  const review = fs.readFileSync(path.join(promptsDir, "review.md"), "utf8");
-  return expandReviewPlaceholders(`${shared}\n\n${review}`, vars);
+  const template = fs.readFileSync(
+    path.join(reviewCommandDir, "prompt.md"),
+    "utf8",
+  );
+  return expandReviewPlaceholders(template, vars);
 }
 
 export function buildPrLine(target: string): string {

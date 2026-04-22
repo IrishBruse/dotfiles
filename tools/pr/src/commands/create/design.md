@@ -15,8 +15,8 @@ This document describes how **`pr create`** fits the wider CLI and how core vs *
 
 | `PR_TITLE_JIRA_KEY` | What runs |
 |---------------------|-----------|
-| **Unset** | **`loadCreateAgentPrompt`** reads **`prompts/create.md`** only — no `prompts/work/` files, no calls into **`src/work/jiraTitlePolicy.ts`** beyond **`isJiraTitlePolicyEnabled()`** (cheap env check). |
-| **Set** | Same loader appends **`prompts/work/create-appendix.md`** (substituted **`{{JIRA_PROJECT_KEY}}`**). All Jira-board skill and title-shape rules live in that appendix file, not in core markdown. |
+| **Unset** | **`loadCreateAgentPrompt`** reads **`prompt.md`** only — no `work/prompt.md`, no calls into **`work/jiraTitlePolicy.ts`** beyond **`isJiraTitlePolicyEnabled()`** (cheap env check). |
+| **Set** | Same loader appends **`work/prompt.md`** (substituted **`{{JIRA_PROJECT_KEY}}`**). All Jira-board skill and title-shape rules live in that appendix file, not in core markdown. |
 
 Code entry: **`createPrompt.ts`** exposes **`loadCreateBasePrompt`** (core only, useful for tests) and **`loadCreateAgentPrompt`** (conditional append).
 
@@ -24,7 +24,7 @@ Code entry: **`createPrompt.ts`** exposes **`loadCreateBasePrompt`** (core only,
 
 Personal use: leave **`PR_TITLE_JIRA_KEY`** unset — the create prompt never loads the work appendix.
 
-Work use: set the env var (e.g. **`direnv`**). The appendix instructs the agent to use the **jira-board** Agent Skill and produce **`KEY-<digits>`** titles. **`src/work/jiraTitlePolicy.ts`** only gates loading; prompt copy for create lives in **`prompts/work/create-appendix.md`** so it is visibly separate from core.
+Work use: set the env var (e.g. **`direnv`**). The appendix instructs the agent to use the **jira-board** Agent Skill and produce **`KEY-<digits>`** titles. **`work/jiraTitlePolicy.ts`** only gates loading; prompt copy for create lives in **`work/prompt.md`** so it is visibly separate from core.
 
 ### Inferring the ticket (work)
 
@@ -34,8 +34,8 @@ When the appendix is present, the agent invokes **jira-board**, matches branch /
 
 | File | Role |
 |------|------|
-| **`prompts/create.md`** | Personal/core: **`gh`**, diff, template, generic title, JSON fence — **no** org Jira rules. |
-| **`prompts/work/create-appendix.md`** | Loaded **only** when **`isJiraTitlePolicyEnabled()`** — Jira title policy + jira-board skill + examples using **`{{JIRA_PROJECT_KEY}}`** substitution. |
+| **`prompt.md`** | Personal/core: **`gh`**, diff, template, generic title, JSON fence — **no** org Jira rules. |
+| **`work/prompt.md`** | Loaded **only** when **`isJiraTitlePolicyEnabled()`** — Jira title policy + jira-board skill + examples using **`{{JIRA_PROJECT_KEY}}`** substitution. |
 
 ## Intended runtime (prompt contract)
 
@@ -55,11 +55,11 @@ When the appendix is present, the agent invokes **jira-board**, matches branch /
 |------|---------|
 | `src/commands/create/index.ts` | CLI entry and stub orchestration |
 | `src/commands/create/createPrompt.ts` | Core vs work composition |
-| `src/work/jiraTitlePolicy.ts` | **`isJiraTitlePolicyEnabled`** (shared gate; review uses **`buildWorkJiraTitleSection`** from the same module) |
+| `work/jiraTitlePolicy.ts` | **`isJiraTitlePolicyEnabled`** (shared gate; review uses **`buildWorkJiraTitleSection`** from the same module) |
 | `src/infer.ts` | Calls **`runCreate`** when inference chooses “no open PR” |
-| `prompts/create.md` | Core agent instructions |
-| `prompts/work/create-appendix.md` | Work-only appendix |
+| `prompt.md` | Core agent instructions |
+| `work/prompt.md` | Work-only appendix |
 
 ## Notes
 
-- Create does **not** prepend **`shared.md`**; only **`review`** composes **`shared.md`** + **`review.md`**.
+- Create does **not** use the first-pass **review** template; it uses its own **`prompt.md`** (plus optional **`work/prompt.md`**). **`pr review`** uses **`../review/prompt.md`** (shared + first-pass review in one file).

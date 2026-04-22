@@ -4,6 +4,9 @@
   "description": "Launch Cursor Agent with pr-cli markdown prompts for GitHub PRs",
   "license": "ISC",
   "type": "module",
+  "bin": {
+    "pr": "./bin/pr.js"
+  },
   "scripts": {
     "validate": "node validate.ts"
   },
