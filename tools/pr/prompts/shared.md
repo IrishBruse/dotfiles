@@ -4,7 +4,7 @@ This block is prepended to command-specific instructions. Follow it for any revi
 
 {{prLine}}
 
-{{hintBlock}}{{jiraBlock}}
+{{hintBlock}}{{workJiraTitleSection}}
 
 ## Requirements
 

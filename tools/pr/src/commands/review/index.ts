@@ -1,10 +1,7 @@
 import process from "node:process";
 
-import {
-  buildJiraBlockFromEnv,
-  buildPrLine,
-  loadReviewAgentPrompt,
-} from "./reviewPrompt.ts";
+import { buildWorkJiraTitleSection } from "../create/work/jiraTitlePolicy.ts";
+import { buildPrLine, loadReviewAgentPrompt } from "./reviewPrompt.ts";
 
 export function runReview(args: string[]): void {
   const target = args[0];
@@ -20,7 +17,7 @@ export function runReview(args: string[]): void {
   const prompt = loadReviewAgentPrompt({
     prLine: buildPrLine(target),
     hintBlock: "",
-    jiraBlock: buildJiraBlockFromEnv(),
+    workJiraTitleSection: buildWorkJiraTitleSection(),
   });
 
   // Stub: compose shared + review prompts; wire `agent --print` + JSON parse + TTY approve next.

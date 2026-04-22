@@ -24,7 +24,7 @@ Any other option starting with `-` is rejected.
 
 | Variable | Description |
 |----------|-------------|
-| `PR_TITLE_JIRA_KEY` | Optional project key (e.g. `NOVACORE`). When set, the CLI checks the resolved PR title starts with `KEY-<digits>` before starting `agent` (PR on the argv) or before `gh pr review` (PR only in the agent JSON). The same variable is reflected in the review prompts. |
+| `PR_TITLE_JIRA_KEY` | **Work-only toggle:** optional project key (e.g. `NOVACORE`). When **set** in your environment (e.g. work repo / `direnv`), prompts require a PR title matching `KEY-<digits>` and the agent uses Jira MCP where applicable; the CLI may validate the resolved title before `gh` commands. When **unset** (default for personal use), no Jira ID is required on the title and create/review flows do not assume Jira. Not a CLI flag — global env only. |
 
 HEAD state for default `pr` add/update is stored at **`~/.local/state/pr-cli/last-head.json`** (updated after each successful posted review for that PR).
 
@@ -32,9 +32,10 @@ HEAD state for default `pr` add/update is stored at **`~/.local/state/pr-cli/las
 
 | File | Command | Role |
 |------|---------|------|
-| `review.md` | `pr review`, default `pr` (add) | First-pass; `{{prLine}}`, `{{hintBlock}}`, `{{jiraBlock}}`; ends with fenced JSON (`title`, `body`, optional `pr`). |
+| `review.md` | `pr review`, default `pr` (add) | First-pass; `{{prLine}}`, `{{hintBlock}}`, `{{workJiraTitleSection}}` when `PR_TITLE_JIRA_KEY` set; fenced JSON (`title`, `body`, optional `pr`). |
 | `update.md` | `pr update`, default `pr` (update) | Follow-up; same placeholders and JSON contract. |
-| `create.md` | `pr create` | New PR from branch; `{{ticketLine}}`, `{{jiraBlock}}`; JSON `title` / `body`. |
+| `create.md` | `pr create` | Core prompt: new PR from branch; JSON `title` / `body`. |
+| `work/create-appendix.md` | `pr create` | **Only if** `PR_TITLE_JIRA_KEY` set — Jira title + jira-board skill instructions. |
 
 ## Commands
 
@@ -66,4 +67,4 @@ HEAD state for default `pr` add/update is stored at **`~/.local/state/pr-cli/las
 
 **What it does:** Loads **`prompts/create.md`**. Same **`--print`** / JSON / markdown terminal preview pattern; **Enter** → `gh pr create` or **Esc** cancel.
 
-**Form:** `pr create [<jira-key>]`
+**Form:** `pr create`

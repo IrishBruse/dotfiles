@@ -6,7 +6,7 @@
 
 The PR may have new commits or new threads. Re-fetch diff and review/comment state, then write an updated review: what changed, resolved items, and any new findings. End with an explicit verdict and merge readiness (approve to merge vs blockers).
 
-{{hintBlock}}{{jiraBlock}}
+{{hintBlock}}{{workJiraTitleSection}}
 
 ## What you are doing
 
