@@ -23,7 +23,9 @@ export function classifyFolder(
   return "team";
 }
 
-export function assigneeLabel(assignee: Record<string, unknown> | null | undefined): string {
+export function assigneeLabel(
+  assignee: Record<string, unknown> | null | undefined,
+): string {
   if (assignee == null) return "Unassigned";
   const name = assignee.displayName;
   return typeof name === "string" ? name : "Unknown";
@@ -75,7 +77,9 @@ export function adfToMarkdown(adf: unknown): string {
       }
       lines.push(inner.join(""));
     } else if (t === "heading") {
-      const level = Number((o.attrs as { level?: number } | undefined)?.level ?? 1);
+      const level = Number(
+        (o.attrs as { level?: number } | undefined)?.level ?? 1,
+      );
       const inner: string[] = [];
       for (const c of (o.content as unknown[]) ?? []) {
         appendCollectText(inner, c);
@@ -98,7 +102,9 @@ export function adfToMarkdown(adf: unknown): string {
         appendCollectText(parts, c);
       }
       const body = parts.join("");
-      const lang = String((o.attrs as { language?: string } | undefined)?.language ?? "");
+      const lang = String(
+        (o.attrs as { language?: string } | undefined)?.language ?? "",
+      );
       lines.push(`\`\`\`${lang}\n${body}\n\`\`\``);
     } else {
       for (const c of (o.content as unknown[]) ?? []) {
@@ -111,7 +117,9 @@ export function adfToMarkdown(adf: unknown): string {
   return lines.filter((line) => line.trim().length > 0).join("\n\n");
 }
 
-export function issueDescriptionMarkdown(fields: Record<string, unknown>): string {
+export function issueDescriptionMarkdown(
+  fields: Record<string, unknown>,
+): string {
   const desc = fields.description;
   if (desc == null) return "";
   if (typeof desc === "string") return desc;
@@ -207,7 +215,12 @@ export function writeBoard(
 
   const counts: Record<Folder, number> = { me: 0, unassigned: 0, team: 0 };
   for (const { key, fields } of issuesWithKeys(issues)) {
-    const { folder, body } = formatTicketMarkdown(key, fields, siteHost, meAccountId);
+    const { folder, body } = formatTicketMarkdown(
+      key,
+      fields,
+      siteHost,
+      meAccountId,
+    );
     const out = path.join(roots[folder], `${key}.md`);
     fs.writeFileSync(out, body, "utf-8");
     counts[folder] += 1;
@@ -223,13 +236,120 @@ export function ticketsSkillOneLine(summary: string): string {
     .trim();
 }
 
+export type StatusBucket =
+  | "todo"
+  | "inProgress"
+  | "codeReview"
+  | "inTest"
+  | "done";
+
+const STATUS_HEADINGS: Record<StatusBucket, string> = {
+  todo: "Todo",
+  inProgress: "In progress",
+  codeReview: "Code review",
+  inTest: "In test",
+  done: "Done",
+};
+
+const STATUS_ORDER: StatusBucket[] = [
+  "todo",
+  "inProgress",
+  "codeReview",
+  "inTest",
+  "done",
+];
+
+function emptyStatusBuckets(): Record<StatusBucket, string[]> {
+  return {
+    todo: [],
+    inProgress: [],
+    codeReview: [],
+    inTest: [],
+    done: [],
+  };
+}
+
+/**
+ * Map Jira status (name + category) into skill subsections. Tuned for typical Scrum boards;
+ * anything unclear defaults to In progress.
+ */
+export function statusBucketFromFields(
+  fields: Record<string, unknown>,
+): StatusBucket {
+  const raw = fields.status;
+  const name =
+    raw &&
+    typeof raw === "object" &&
+    typeof (raw as { name?: unknown }).name === "string"
+      ? (raw as { name: string }).name.trim()
+      : "";
+  const lower = name.toLowerCase();
+  const catKey =
+    (raw &&
+      typeof raw === "object" &&
+      (raw as { statusCategory?: { key?: string } }).statusCategory?.key) ??
+    "";
+  const category = String(catKey).toLowerCase();
+
+  if (
+    category === "done" ||
+    /^(done|closed|resolved|complete)$/i.test(name.trim())
+  ) {
+    return "done";
+  }
+
+  if (
+    /\b(uat|qa|in test|system test|sit|staging)\b/.test(lower) ||
+    (/\btest(ing)?\b/.test(lower) && !/retest/.test(lower))
+  ) {
+    return "inTest";
+  }
+  if (
+    /\b(review|revising)\b/.test(lower) ||
+    /code review|peer review|pull request/i.test(name)
+  ) {
+    return "codeReview";
+  }
+  if (
+    category === "new" ||
+    /^(to do|open)$/i.test(name.trim()) ||
+    /backlog|ready for (dev|development|sprint)/i.test(name)
+  ) {
+    return "todo";
+  }
+  if (
+    category === "indeterminate" ||
+    /progress|develop|active|wip|build|implementation/i.test(lower)
+  ) {
+    return "inProgress";
+  }
+  return "inProgress";
+}
+
+function formatStatusSubsections(
+  byStatus: Record<StatusBucket, string[]>,
+): string {
+  const sortLines = (lines: string[]) =>
+    lines.sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: "base" }),
+    );
+  const parts: string[] = [];
+  for (const bucket of STATUS_ORDER) {
+    const lines = byStatus[bucket];
+    if (lines.length === 0) continue;
+    sortLines(lines);
+    parts.push(`**${STATUS_HEADINGS[bucket]}:**\n\n${lines.join("\n")}`);
+  }
+  return parts.join("\n\n");
+}
+
 export function formatJiraTicketsSkillMd(
   issues: Array<{ key?: string; fields?: Record<string, unknown> }>,
   meAccountId: string,
 ): string {
-  const me: string[] = [];
-  const team: string[] = [];
-  const unassigned: string[] = [];
+  const me = emptyStatusBuckets();
+  const team = emptyStatusBuckets();
+  const unassigned = emptyStatusBuckets();
 
   for (const { key, fields } of issuesWithKeys(issues)) {
     const summary = ticketsSkillOneLine(
@@ -237,21 +357,16 @@ export function formatJiraTicketsSkillMd(
     );
     const assignee = assigneeRecord(fields.assignee);
     const label = assigneeLabel(assignee);
-    const line = `- ${key}: ${summary} — ${label}`;
+    const line = `- ${key}: ${summary} — \`${label}\``;
+    const bucket = statusBucketFromFields(fields);
     const folder = classifyFolder(assignee, meAccountId);
-    if (folder === "me") me.push(line);
-    else if (folder === "unassigned") unassigned.push(line);
-    else team.push(line);
+    if (folder === "me") me[bucket].push(line);
+    else if (folder === "unassigned") unassigned[bucket].push(line);
+    else team[bucket].push(line);
   }
 
-  const sortLines = (lines: string[]) =>
-    lines.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
-  sortLines(me);
-  sortLines(team);
-  sortLines(unassigned);
-
-  const section = (title: string, lines: string[]) =>
-    `# ${title}\n\n${lines.length > 0 ? lines.join("\n") : "(none)"}`;
+  const section = (title: string, byStatus: Record<StatusBucket, string[]>) =>
+    `# ${title}\n\n${formatStatusSubsections(byStatus)}`;
 
   return `---
 name: jira-tickets
@@ -295,7 +410,7 @@ const JIRA_TICKETS_SKILL_PATH = path.resolve(
 /** Atlassian CLI binary (must be on `PATH` or change this string). */
 const ACLI = "acli";
 
-const SEARCH_FIELDS = "key,summary,assignee,issuetype,description";
+const SEARCH_FIELDS = "key,summary,assignee,issuetype,description,status";
 
 function log(msg: string): void {
   process.stderr.write(`jira-board-sync: ${msg}\n`);
