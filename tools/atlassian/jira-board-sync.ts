@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * Sync Jira issues to ~/jira-board-style folders using `acli jira workitem search` (Atlassian CLI).
- * Markdown helpers mirror `.agents/skills/jira-board-sync/scripts/board_sync_lib.py`.
+ * Sync Jira issues into the jira-tickets skill via `acli jira workitem search` (Atlassian CLI).
+ * Writes per-ticket markdown into `.agents/skills/jira-tickets/references/{me,team,unassigned}/`
+ * and regenerates the skill summary at `.agents/skills/jira-tickets/SKILL.md`.
  * Edit CONFIG.ts, then run: node bin/jira-board-sync.js
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -373,7 +373,7 @@ name: jira-tickets
 description: This skill contains in plaintext the current state of the board no need for MCP
 ---
 
-Here is the current Jira board status
+Here is the current Jira board status. For the full description of any ticket below, read \`references/{me,team,unassigned}/<KEY>.md\` relative to this skill (e.g. \`references/me/NOVACORE-39308.md\`).
 
 ${section("My tickets", me)}
 
@@ -393,19 +393,20 @@ export function writeJiraTicketsSkill(
   fs.writeFileSync(skillPath, body, "utf-8");
 }
 
-/** Fixed output tree: ~/jira-board/{me,unassigned,team}/ */
-const BOARD_OUTPUT_ROOT = path.join(os.homedir(), "jira-board");
-
-/** Fixed skill file: `<repo>/.agents/skills/jira-tickets/SKILL.md` (repo = two levels up from this tool). */
-const JIRA_TICKETS_SKILL_PATH = path.resolve(
+/** Skill folder: `<repo>/.agents/skills/jira-tickets/` (repo = two levels up from this tool). */
+const JIRA_TICKETS_SKILL_DIR = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "..",
   "..",
   ".agents",
   "skills",
   "jira-tickets",
-  "SKILL.md",
 );
+
+/** Per-ticket markdown lives under `<skill>/references/{me,team,unassigned}/` so the skill self-references its own detail. */
+const BOARD_OUTPUT_ROOT = path.join(JIRA_TICKETS_SKILL_DIR, "references");
+
+const JIRA_TICKETS_SKILL_PATH = path.join(JIRA_TICKETS_SKILL_DIR, "SKILL.md");
 
 /** Atlassian CLI binary (must be on `PATH` or change this string). */
 const ACLI = "acli";

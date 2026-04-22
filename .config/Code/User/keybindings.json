@@ -285,8 +285,13 @@
     },
     {
         "key": "ctrl+u",
-        "command": "editor.action.transformToUppercase",
-        "when": "editorTextFocus"
+        "command": "workbench.action.editorDictation.start",
+        "when": "editorTextFocus && !editorDictation.inProgress"
+    },
+    {
+        "key": "ctrl+u",
+        "command": "workbench.action.editorDictation.stop",
+        "when": "editorDictation.inProgress"
     },
     {
         "key": "enter",
@@ -313,6 +318,11 @@
     {
         "key": "ctrl+u",
         "command": "workbench.action.terminal.startVoice",
-        "when": "terminalDictation.inProgress"
+        "when": "terminalFocus && !terminalDictationInProgress"
+    },
+    {
+        "key": "ctrl+u",
+        "command": "workbench.action.terminal.stopVoice",
+        "when": "terminalDictationInProgress"
     }
 ]
