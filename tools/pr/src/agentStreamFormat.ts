@@ -198,16 +198,25 @@ function toolStartLine(toolCall: unknown, callId: string): ToolLine {
   return { label: "tool", detail: id, color: YLW };
 }
 
+/**
+ * If set, shell `started` is only registered for a later `completed` pair; no `$` line yet
+ * (avoids 3× `$` then 3× `✓` when the stream batched all starts before completes).
+ */
 function printToolStart(
   toolCall: unknown,
   callId: string,
   projectCwd: string | undefined,
+  registerShellForPair?: (id: string, command: string) => void,
 ): void {
   if (typeof toolCall === "object" && toolCall !== null) {
     const tc = toolCall as Record<string, unknown>;
     if (typeof tc.shellToolCall === "object" && tc.shellToolCall) {
       const raw = shellCommandRaw(toolCall);
       const cmd = raw ? stripImpliedCd(raw, projectCwd) : "?";
+      if (registerShellForPair) {
+        registerShellForPair(callId, cmd);
+        return;
+      }
       process.stderr.write(
         `\n${DIM}$${RST} ${BOLD}${cmd}${RST}\n`,
       );
@@ -273,7 +282,7 @@ function formatWriteSuccess(s: Record<string, unknown>): string {
 
 type ToolDoneHooks = { onTaskEvent?: () => void };
 
-/** One line per tool_call completed; pick read → write → shell to avoid double lines. */
+/** One line per tool_call completed; read / write / task (shell is paired in `printShellPaired`). */
 function printToolDone(toolCall: unknown, hooks?: ToolDoneHooks): void {
   if (toolCall !== null && typeof toolCall === "object" && "taskToolCall" in toolCall) {
     hooks?.onTaskEvent?.();
@@ -307,26 +316,6 @@ function printToolDone(toolCall: unknown, hooks?: ToolDoneHooks): void {
       if (s !== null && typeof s === "object") {
         process.stderr.write(
           `  ${GRN}✓${RST} ${BOLD}write${RST}  ${DIM}${formatWriteSuccess(s)}${RST}\n`,
-        );
-        return;
-      }
-    }
-  }
-  const sh = o.shellToolCall;
-  if (sh !== null && typeof sh === "object") {
-    const result = (sh as { result?: { success?: Record<string, unknown> } })
-      .result;
-    if (result?.success) {
-      const s = result.success;
-      if (s !== null && typeof s === "object" && "exitCode" in s) {
-        process.stderr.write(
-          `  ${GRN}✓${RST} ${BOLD}shell${RST}  ${DIM}exit ${String(s.exitCode)}${RST}\n`,
-        );
-        return;
-      }
-      if (s !== null && typeof s === "object") {
-        process.stderr.write(
-          `  ${GRN}✓${RST} ${BOLD}shell${RST}  ${DIM}done${RST}\n`,
         );
         return;
       }
@@ -397,6 +386,8 @@ export class AgentStreamHandler {
   private projectCwd: string | undefined;
   private subagentWaitTimer: ReturnType<typeof setInterval> | null = null;
   private subagentSpinnerFrame = 0;
+  /** Pairs `tool_call` · `shell` `started` → `completed` when the stream batch-reorders events. */
+  private shellByCallId = new Map<string, string>();
 
   private startSubagentWaitVisual(): void {
     this.stopSubagentWaitVisual();
@@ -430,6 +421,51 @@ export class AgentStreamHandler {
   /** Stops the subagent line when the agent process exits (avoids a stuck spinner). */
   endStream(): void {
     this.stopSubagentWaitVisual();
+    this.shellByCallId.clear();
+  }
+
+  private printShellPaired(callId: string, toolCall: unknown): void {
+    const cmd = this.shellByCallId.get(callId) ?? "?";
+    this.shellByCallId.delete(callId);
+    if (typeof toolCall !== "object" || toolCall === null) {
+      process.stderr.write(
+        `\n${DIM}$${RST} ${BOLD}${cmd}${RST}\n` +
+          `  ${DIM}· done (tool)${RST}\n`,
+      );
+      return;
+    }
+    const o = toolCall as Record<string, unknown>;
+    const sh = o.shellToolCall;
+    if (sh === null || typeof sh !== "object") {
+      process.stderr.write(
+        `\n${DIM}$${RST} ${BOLD}${cmd}${RST}\n` +
+          `  ${DIM}· done (tool)${RST}\n`,
+      );
+      return;
+    }
+    const result = (sh as { result?: { success?: Record<string, unknown> } })
+      .result;
+    if (result?.success) {
+      const s = result.success;
+      if (s !== null && typeof s === "object" && "exitCode" in s) {
+        process.stderr.write(
+          `\n${DIM}$${RST} ${BOLD}${cmd}${RST}\n` +
+            `  ${GRN}✓${RST} ${BOLD}shell${RST}  ${DIM}exit ${String(s.exitCode)}${RST}\n`,
+        );
+        return;
+      }
+      if (s !== null && typeof s === "object") {
+        process.stderr.write(
+          `\n${DIM}$${RST} ${BOLD}${cmd}${RST}\n` +
+            `  ${GRN}✓${RST} ${BOLD}shell${RST}  ${DIM}done${RST}\n`,
+        );
+        return;
+      }
+    }
+    process.stderr.write(
+      `\n${DIM}$${RST} ${BOLD}${cmd}${RST}\n` +
+        `  ${DIM}· done (tool)${RST}\n`,
+    );
   }
 
   handleObject(ev: unknown): void {
@@ -465,14 +501,29 @@ export class AgentStreamHandler {
       this.endAssistantBlock();
       const id =
         typeof o.call_id === "string" ? o.call_id : String(o.call_id ?? "…");
-      printToolStart(o.tool_call, id, this.projectCwd);
+      printToolStart(o.tool_call, id, this.projectCwd, (cid, command) => {
+        this.shellByCallId.set(cid, command);
+      });
       if (isTaskToolStart(o.tool_call)) {
         this.startSubagentWaitVisual();
       }
       return;
     }
     if (typ === "tool_call" && o.subtype === "completed") {
-      printToolDone(o.tool_call, {
+      const tc = o.tool_call;
+      if (
+        typeof tc === "object" &&
+        tc !== null &&
+        (tc as Record<string, unknown>).shellToolCall != null
+      ) {
+        const cid =
+          typeof o.call_id === "string"
+            ? o.call_id
+            : String(o.call_id ?? "…");
+        this.printShellPaired(cid, tc);
+        return;
+      }
+      printToolDone(tc, {
         onTaskEvent: () => {
           this.stopSubagentWaitVisual();
         },
