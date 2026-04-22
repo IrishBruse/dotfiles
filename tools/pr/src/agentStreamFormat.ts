@@ -204,6 +204,33 @@ function printToolStart(
       );
       return;
     }
+    if (typeof tc.taskToolCall === "object" && tc.taskToolCall) {
+      const args = (tc.taskToolCall as { args?: Record<string, unknown> }).args;
+      const s =
+        firstString(args, [
+          "prompt",
+          "description",
+          "task",
+          "name",
+          "instruction",
+        ]) ||
+        (args
+          ? oneLine(
+              Object.entries(args)
+                .map(([k, v]) => `${k}=${String(v).slice(0, 40)}`)
+                .join(" "),
+              120,
+            )
+          : "");
+      const line = s.length > 0
+        ? oneLine(s, 500)
+        : (callId.length > 0 ? oneLine(callId, 50) : "…");
+      // taskToolCall = parallel subagent; distinct from in-process read/shell
+      process.stderr.write(
+        `\n${DIM}[${RST}${MAG}subagent${DIM}]${RST}  ${line}\n`,
+      );
+      return;
+    }
   }
   const { label, detail, color } = toolStartLine(toolCall, callId);
   process.stderr.write(
@@ -291,8 +318,23 @@ function printToolDone(toolCall: unknown): void {
       }
     }
   }
+  const tsk = o.taskToolCall;
+  if (tsk !== null && typeof tsk === "object") {
+    const result = (tsk as { result?: { success?: unknown } }).result;
+    if (result != null && result.success != null) {
+      process.stderr.write(
+        `  ${GRN}✓${RST} ${DIM}[${MAG}subagent${DIM}]${RST}  ${DIM}finished${RST}\n`,
+      );
+      return;
+    }
+  }
   for (const key of Object.keys(o)) {
-    if (key === "readToolCall" || key === "writeToolCall" || key === "shellToolCall") {
+    if (
+      key === "readToolCall" ||
+      key === "writeToolCall" ||
+      key === "shellToolCall" ||
+      key === "taskToolCall"
+    ) {
       continue;
     }
     const inner = o[key];

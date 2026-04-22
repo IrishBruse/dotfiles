@@ -4,7 +4,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import { parseLastJsonFence } from "../../parseJsonFence.ts";
+import {
+  getLastJsonFenceRaw,
+  type PrReviewJson,
+  parsePrReviewFromJsonString,
+} from "../../parseJsonFence.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
 import {
   printMarkdownPreview,
@@ -47,22 +51,26 @@ function prReviewJsonPathFromTarget(target: string): string {
   return path.join(process.cwd(), `pr-review-${id}.json`);
 }
 
-/**
- * Write title/body to cwd so the user can re-post or retry after fixing gh.
- */
-function saveReviewToCwd(
-  pr: string,
-  p: { title: string; body: string },
-  lastError: string,
-): string {
+type ReviewSave = {
+  agentResult: string;
+  jsonFenceRaw: string;
+  review: PrReviewJson;
+  lastError?: string;
+};
+
+/** Save agent output and parsed review for offline re-post or after gh fix */
+function writeReviewFile(pr: string, s: ReviewSave): string {
   const f = prReviewJsonPathFromTarget(pr);
-  const o = {
+  const o: Record<string, unknown> = {
     pr,
-    title: p.title,
-    body: p.body,
     savedAt: new Date().toISOString(),
-    lastError,
+    agentResult: s.agentResult,
+    jsonFenceRaw: s.jsonFenceRaw,
+    review: s.review,
   };
+  if (s.lastError !== undefined) {
+    o.lastError = s.lastError;
+  }
   fs.writeFileSync(f, JSON.stringify(o, null, 2) + "\n", "utf8");
   return f;
 }
@@ -103,9 +111,11 @@ async function runReviewAsync(args: string[]): Promise<void> {
     return;
   }
 
-  let parsed: ReturnType<typeof parseLastJsonFence>;
+  let jsonFenceRaw: string;
+  let parsed: PrReviewJson;
   try {
-    parsed = parseLastJsonFence(stdout);
+    jsonFenceRaw = getLastJsonFenceRaw(stdout);
+    parsed = parsePrReviewFromJsonString(jsonFenceRaw);
   } catch (e) {
     fail(
       e instanceof Error
@@ -114,6 +124,15 @@ async function runReviewAsync(args: string[]): Promise<void> {
     );
     return;
   }
+
+  const outPath = writeReviewFile(target, {
+    agentResult: stdout,
+    jsonFenceRaw,
+    review: parsed,
+  });
+  console.error(
+    `pr review: saved ${outPath} (agent result text, jsonFenceRaw, and review; re-post with gh or edit and paste body)`,
+  );
 
   if (!noConfirmFromEnv()) {
     if (!process.stdout.isTTY || !process.stdin.isTTY) {
@@ -147,7 +166,12 @@ async function runReviewAsync(args: string[]): Promise<void> {
     if (postPrReviewComment(target, parsed.body)) {
       return;
     }
-    const f = saveReviewToCwd(target, parsed, "gh pr review failed");
+    const f = writeReviewFile(target, {
+      agentResult: stdout,
+      jsonFenceRaw,
+      review: parsed,
+      lastError: "gh pr review failed (non-zero exit or gh error)",
+    });
     console.error(
       `pr review: could not post via gh. Wrote: ${f}\n` +
         "Fix the issue (e.g. run `gh auth login` or `gh repo set-default`), then " +

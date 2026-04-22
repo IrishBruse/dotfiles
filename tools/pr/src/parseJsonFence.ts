@@ -4,20 +4,23 @@ export type PrReviewJson = {
   pr?: string;
 };
 
-/**
- * Find the last markdown ```json``` fence, parse it, expect string title and body.
- */
-export function parseLastJsonFence(text: string): PrReviewJson {
-  const re = /```json\s*([\s\S]*?)```/g;
+const JSON_FENCE_RE = /```json\s*([\s\S]*?)```/g;
+
+/** Raw text of the last ```json``` fence in the agent result (unparsed). */
+export function getLastJsonFenceRaw(text: string): string {
   let m: RegExpExecArray | null;
   let last: RegExpExecArray | null = null;
-  while ((m = re.exec(text)) !== null) {
+  while ((m = JSON_FENCE_RE.exec(text)) !== null) {
     last = m;
   }
   if (last === null) {
     throw new Error("no ```json``` fence in agent output");
   }
-  const raw = last[1]!.trim();
+  return last[1]!.trim();
+}
+
+/** Parse the JSON from a string (what was inside the ```json``` block). */
+export function parsePrReviewFromJsonString(raw: string): PrReviewJson {
   let parsed: unknown;
   try {
     parsed = JSON.parse(raw) as unknown;
@@ -39,4 +42,11 @@ export function parseLastJsonFence(text: string): PrReviewJson {
     out.pr = o.pr;
   }
   return out;
+}
+
+/**
+ * Find the last markdown ```json``` fence in the full agent result, parse to title/body.
+ */
+export function parseLastJsonFence(text: string): PrReviewJson {
+  return parsePrReviewFromJsonString(getLastJsonFenceRaw(text));
 }
