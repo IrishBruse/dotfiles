@@ -44,7 +44,7 @@ The first section of **`prompt.md`** (through **Final response** / JSON contract
 
 - Builds the composed prompt via **`loadReviewAgentPrompt`**.
 - Runs **`agent -p --output-format stream-json --stream-partial-output`** (or **`PR_AGENT`**, with **`cursor-agent`** fallback) via **`runAgentPrint`**; live stream is formatted to **stderr**; final assistant text is taken from the stream’s terminal **`result`** line (not raw stdout). Timeout: **`PR_AGENT_TIMEOUT_MS`**.
-- Extracts the last **`json`** fence with **`getLastJsonFenceRaw`**, then **`parsePrReviewFromJsonString`**; expects **`title`** and **`body`**. A **`pr-review-<n>.json`** file in cwd stores **`agentResult`**, **`jsonFenceRaw`**, and **`review`** (and **`lastError`** if `gh` failed).
+- Extracts the last **`json`** fence with **`getLastJsonFenceRaw`**, then **`parsePrReviewFromJsonString`**; expects **`title`** and **`body`**. A **`pr-review-<n>.json`** file in cwd stores **`pr`**, **`savedAt`**, **`title`**, **`body`** (and **`lastError`** if `gh` failed).
 - If interactive TTY and **`PR_REVIEW_NO_CONFIRM`** is unset, **`printMarkdownPreview`** then **`waitForPostOrCancel`**; otherwise with **`PR_REVIEW_NO_CONFIRM=1`**, skips preview and posts.
 - On confirm: **`gh pr review`**, PR from argv, **`--comment -F`** (temp file with **body**).
 

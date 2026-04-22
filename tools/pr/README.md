@@ -29,7 +29,7 @@ Any other option starting with `-` is rejected.
 | `PR_AGENT_TIMEOUT_MS` | Max time in milliseconds for one `agent -p` run (default: 1,200,000 = 20 minutes). |
 | `CURSOR_API_KEY` | Required for headless `agent` in some setups; see Cursor CLI auth docs. |
 | `PR_REVIEW_NO_CONFIRM` | Set to `1` to skip the markdown preview and TTY confirm for `pr review` (e.g. in scripts or CI), and post the comment if parsing succeeds. |
-| (none) | After the agent returns, **`pr-review-<num>.json`** in the current directory is written with the full **`agentResult`** (Cursor `result` text), the raw last **`jsonFenceRaw`** string (inside the ```json``` block), and parsed **`review`** — so you can re-post or edit later. The file is updated on **`gh pr review` failure** (adds **`lastError`**). In a TTY, you can **press Enter to retry** posting, or **Esc** to exit without posting. |
+| (none) | After the agent returns, **`pr-review-<num>.json`** in the current directory is written with **`pr`**, **`savedAt`**, **`title`**, and **`body`** — so you can re-post or edit later. The file is updated on **`gh pr review` failure** (adds **`lastError`**). In a TTY, you can **press Enter to retry** posting, or **Esc** to exit without posting. |
 
 HEAD state for default `pr` add/update is stored at **`~/.local/state/pr-cli/last-head.json`** (updated after each successful posted review for that PR).
 

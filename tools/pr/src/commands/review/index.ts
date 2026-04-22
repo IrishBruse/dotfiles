@@ -61,22 +61,18 @@ function prReviewJsonPathFromTarget(target: string): string {
   return path.join(process.cwd(), `pr-review-${id}.json`);
 }
 
-type ReviewSave = {
-  agentResult: string;
-  jsonFenceRaw: string;
-  review: PrReviewJson;
+type ReviewSave = PrReviewJson & {
   lastError?: string;
 };
 
-/** Save agent output and parsed review for offline re-post or after gh fix */
+/** Save parsed review for offline re-post or after gh fix */
 function writeReviewFile(pr: string, s: ReviewSave): string {
   const f = prReviewJsonPathFromTarget(pr);
   const o: Record<string, unknown> = {
     pr,
     savedAt: new Date().toISOString(),
-    agentResult: s.agentResult,
-    jsonFenceRaw: s.jsonFenceRaw,
-    review: s.review,
+    title: s.title,
+    body: s.body,
   };
   if (s.lastError !== undefined) {
     o.lastError = s.lastError;
@@ -87,9 +83,7 @@ function writeReviewFile(pr: string, s: ReviewSave): string {
 
 export function runReview(args: string[]): void {
   void runReviewAsync(args).catch((e) => {
-    console.error(
-      e instanceof Error ? e.message : `pr review: ${String(e)}`,
-    );
+    console.error(e instanceof Error ? e.message : `pr review: ${String(e)}`);
     process.exitCode = 1;
   });
 }
@@ -112,7 +106,6 @@ async function runReviewAsync(args: string[]): Promise<void> {
 
   let stdout: string;
   try {
-    console.error("pr review: agent…");
     stdout = await runAgentPrint(prompt);
   } catch (e) {
     fail(
@@ -135,13 +128,9 @@ async function runReviewAsync(args: string[]): Promise<void> {
     return;
   }
 
-  const outPath = writeReviewFile(target, {
-    agentResult: stdout,
-    jsonFenceRaw,
-    review: parsed,
-  });
+  const outPath = writeReviewFile(target, parsed);
   console.error(
-    `pr review: saved ${outPath} (agent result text, jsonFenceRaw, and review; re-post with gh or edit and paste body)`,
+    `pr review: saved ${outPath} (title, body; re-post with gh or edit and paste body)`,
   );
 
   if (!noConfirmFromEnv()) {
@@ -156,9 +145,7 @@ async function runReviewAsync(args: string[]): Promise<void> {
     try {
       choice = await waitForPostOrCancel();
     } catch (e) {
-      fail(
-        e instanceof Error ? e.message : `pr review: ${String(e)}`,
-      );
+      fail(e instanceof Error ? e.message : `pr review: ${String(e)}`);
       return;
     }
     if (choice === "cancel") {
@@ -177,9 +164,7 @@ async function runReviewAsync(args: string[]): Promise<void> {
       return;
     }
     const f = writeReviewFile(target, {
-      agentResult: stdout,
-      jsonFenceRaw,
-      review: parsed,
+      ...parsed,
       lastError: "gh pr review failed (non-zero exit or gh error)",
     });
     console.error(
@@ -198,9 +183,7 @@ async function runReviewAsync(args: string[]): Promise<void> {
     try {
       r = await waitForEnterRetryOrCancel();
     } catch (e) {
-      fail(
-        e instanceof Error ? e.message : `pr review: ${String(e)}`,
-      );
+      fail(e instanceof Error ? e.message : `pr review: ${String(e)}`);
       return;
     }
     if (r === "cancel") {
