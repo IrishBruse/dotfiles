@@ -12,18 +12,75 @@ function ensureMarked(): void {
   configured = true;
 }
 
+/** Drop HR / table-border-style lines of only punctuation for TTY preview */
+function bodyForPreview(body: string): string {
+  return body
+    .split("\n")
+    .filter((line) => {
+      const t = line.trim();
+      if (t.length < 3) {
+        return true;
+      }
+      if (/^[-= *_#·─\s]+$/u.test(t)) {
+        return false;
+      }
+      return true;
+    })
+    .join("\n");
+}
+
 export function printMarkdownPreview(title: string, body: string): void {
   ensureMarked();
-  const legend =
-    "Preview — press Enter to post, Esc to cancel, Ctrl+C to exit.\n" +
-    "─".repeat(60) +
-    "\n";
-  console.log(legend);
+  console.log("Preview: Enter = post, Esc = cancel, Ctrl+C = exit\n");
   if (title.trim() !== "") {
-    console.log(String(marked.parse(`## ${title.replace(/\n/g, " ")}\n`)));
+    console.log(
+      String(marked.parse(`## ${title.replace(/\n/g, " ")}\n`)),
+    );
   }
-  console.log(String(marked.parse(body)));
-  console.log("─".repeat(60));
+  console.log(String(marked.parse(bodyForPreview(body))));
+}
+
+/**
+ * After a failed `gh` post: Enter to retry, Esc to quit.
+ */
+export function waitForEnterRetryOrCancel(): Promise<"retry" | "cancel"> {
+  if (!process.stdin.isTTY) {
+    return Promise.reject(
+      new Error("stdin is not a TTY"),
+    );
+  }
+  return new Promise((resolve) => {
+    const stdin = process.stdin;
+    stdin.setRawMode(true);
+    stdin.resume();
+    const onData = (buf: Buffer): void => {
+      if (buf.length < 1) {
+        return;
+      }
+      const c = buf[0]!;
+      if (c === 0x0d || c === 0x0a) {
+        cleanup();
+        resolve("retry");
+        return;
+      }
+      if (c === 0x1b) {
+        cleanup();
+        resolve("cancel");
+        return;
+      }
+      if (c === 0x03) {
+        process.exitCode = 130;
+        process.exit(130);
+      }
+    };
+    const cleanup = (): void => {
+      if (process.stdin.isTTY) {
+        stdin.setRawMode(false);
+      }
+      stdin.removeListener("data", onData);
+    };
+    stdin.on("data", onData);
+  });
 }
 
 /**

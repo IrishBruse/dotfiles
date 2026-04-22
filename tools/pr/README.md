@@ -29,6 +29,7 @@ Any other option starting with `-` is rejected.
 | `PR_AGENT_TIMEOUT_MS` | Max time in milliseconds for one `agent -p` run (default: 1,200,000 = 20 minutes). |
 | `CURSOR_API_KEY` | Required for headless `agent` in some setups; see Cursor CLI auth docs. |
 | `PR_REVIEW_NO_CONFIRM` | Set to `1` to skip the markdown preview and TTY confirm for `pr review` (e.g. in scripts or CI), and post the comment if parsing succeeds. |
+| (none) | On **`gh pr review` failure** (e.g. no `gh` default repo), the review is written to **`pr-review-<num>.json`** in the current directory. In a TTY, you can **press Enter to retry** posting, or **Esc** to exit without posting. |
 
 HEAD state for default `pr` add/update is stored at **`~/.local/state/pr-cli/last-head.json`** (updated after each successful posted review for that PR).
 

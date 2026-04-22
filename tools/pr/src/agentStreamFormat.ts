@@ -24,6 +24,30 @@ function oneLine(s: string, max: number): string {
   return t.slice(0, max - 1) + "…";
 }
 
+/** If command is `cd <dir> && …` and <dir> is the project cwd, return the rest. */
+function stripImpliedCd(command: string, projectRoot: string | undefined): string {
+  if (projectRoot === undefined) {
+    return command;
+  }
+  const root = npath.normalize(projectRoot);
+  const t = command.trim();
+  for (const re of [
+    /^cd\s+(\S+)\s*&&\s*(.*)$/s,
+    /^cd\s+"([^"]+)"\s*&&\s*(.*)$/s,
+    /^cd\s+'([^']+)'\s*&&\s*(.*)$/s,
+  ]) {
+    const m = t.match(re);
+    if (m) {
+      const p = m[1]!;
+      const rest = m[2]!.trim();
+      if (npath.normalize(p) === root && rest.length > 0) {
+        return rest;
+      }
+    }
+  }
+  return command;
+}
+
 /** Shorten paths and agent-tools file names for display */
 function shortPath(p: string, max = 64): string {
   if (p.length <= max) {
@@ -31,8 +55,7 @@ function shortPath(p: string, max = 64): string {
   }
   const base = npath.basename(p);
   if (base.length > 0 && base.length < max) {
-    const dir = npath.dirname(p);
-    if (dir.length < 8) {
+    if (npath.dirname(p).length < 8) {
       return p.slice(0, 28) + "…" + p.slice(-(max - 30));
     }
     return "…/" + oneLine(base, max - 2);
@@ -77,6 +100,29 @@ function firstString(obj: unknown, keys: string[]): string {
 
 type ToolLine = { label: string; detail: string; color: string };
 
+function shellCommandRaw(toolCall: unknown): string {
+  if (toolCall === null || typeof toolCall !== "object") {
+    return "";
+  }
+  const tc = toolCall as Record<string, unknown>;
+  if (typeof tc.shellToolCall !== "object" || !tc.shellToolCall) {
+    return "";
+  }
+  const args = (tc.shellToolCall as { args?: Record<string, unknown> }).args;
+  if (!args) {
+    return "";
+  }
+  return (
+    firstString(args, ["command", "script", "line"]) ||
+    oneLine(
+      Object.entries(args)
+        .map(([, v]) => String(v))
+        .join(" "),
+      2_000,
+    )
+  );
+}
+
 function toolStartLine(toolCall: unknown, callId: string): ToolLine {
   const id = callId.length > 12 ? `${callId.slice(0, 12)}…` : callId;
   if (toolCall === null || typeof toolCall !== "object") {
@@ -84,6 +130,9 @@ function toolStartLine(toolCall: unknown, callId: string): ToolLine {
   }
   const tc = toolCall as Record<string, unknown>;
 
+  if (typeof tc.shellToolCall === "object" && tc.shellToolCall) {
+    return { label: "shell", detail: id, color: YLW };
+  }
   if (typeof tc.readToolCall === "object" && tc.readToolCall) {
     const a = (tc.readToolCall as { args?: { path?: string } }).args;
     const p = a?.path ?? "?";
@@ -93,24 +142,6 @@ function toolStartLine(toolCall: unknown, callId: string): ToolLine {
     const a = (tc.writeToolCall as { args?: { path?: string } }).args;
     const p = a?.path ?? "?";
     return { label: "write", detail: shortPath(p), color: BLU };
-  }
-  if (typeof tc.shellToolCall === "object" && tc.shellToolCall) {
-    const args = (tc.shellToolCall as { args?: Record<string, unknown> }).args;
-    const s =
-      firstString(args, ["command", "script", "line"]) ||
-      (args
-        ? oneLine(
-            Object.entries(args)
-              .map(([, v]) => String(v))
-              .join(" "),
-            100,
-          )
-        : "");
-    return {
-      label: "shell",
-      detail: s || id,
-      color: YLW,
-    };
   }
   if (typeof tc.taskToolCall === "object" && tc.taskToolCall) {
     const args = (tc.taskToolCall as { args?: Record<string, unknown> }).args;
@@ -158,10 +189,25 @@ function toolStartLine(toolCall: unknown, callId: string): ToolLine {
   return { label: "tool", detail: id, color: YLW };
 }
 
-function printToolStart(toolCall: unknown, callId: string): void {
+function printToolStart(
+  toolCall: unknown,
+  callId: string,
+  projectCwd: string | undefined,
+): void {
+  if (typeof toolCall === "object" && toolCall !== null) {
+    const tc = toolCall as Record<string, unknown>;
+    if (typeof tc.shellToolCall === "object" && tc.shellToolCall) {
+      const raw = shellCommandRaw(toolCall);
+      const cmd = raw ? stripImpliedCd(raw, projectCwd) : "?";
+      process.stderr.write(
+        `\n${DIM}$${RST} ${BOLD}${cmd}${RST}\n`,
+      );
+      return;
+    }
+  }
   const { label, detail, color } = toolStartLine(toolCall, callId);
   process.stderr.write(
-    `\n${color}▶ ${BOLD}${label}${RST} ${DIM}${detail}${RST}\n`,
+    `\n${color}· ${BOLD}${label}${RST} ${DIM}${detail}${RST}\n`,
   );
 }
 
@@ -173,29 +219,82 @@ function formatReadSuccess(s: Record<string, unknown>): string {
   if (s.totalChars != null) {
     parts.push(String(s.totalChars) + " chars");
   }
-  return parts.length > 0 ? parts.join(" · ") : "done";
+  return parts.length > 0 ? parts.join(" · ") : "finished";
 }
 
 function formatWriteSuccess(s: Record<string, unknown>): string {
   const a = s.linesCreated;
   const b = s.fileSize;
-  const p: string[] = ["wrote"];
-  if (a !== undefined) {
+  const p: string[] = [];
+  if (a != null) {
     p.push(String(a) + " lines");
   }
-  if (b !== undefined) {
+  if (b != null) {
     p.push(String(b) + " bytes");
   }
-  return p.length > 1 ? p.join(" · ") : "wrote file";
+  return p.length > 0 ? p.join(" · ") : "finished";
 }
 
+/** One line per tool_call completed; pick read → write → shell to avoid double lines. */
 function printToolDone(toolCall: unknown): void {
   if (toolCall === null || typeof toolCall !== "object") {
-    process.stderr.write(`  ${GRN}ok${RST}\n`);
+    process.stderr.write(`  ${DIM}· done (tool)${RST}\n`);
     return;
   }
   const o = toolCall as Record<string, unknown>;
+  const r = o.readToolCall;
+  if (r !== null && typeof r === "object") {
+    const result = (r as { result?: { success?: Record<string, unknown> } })
+      .result;
+    if (result?.success) {
+      const s = result.success;
+      if (s !== null && typeof s === "object") {
+        const detail = formatReadSuccess(s);
+        process.stderr.write(
+          `  ${GRN}✓${RST} ${BOLD}read${RST}  ${DIM}${detail}${RST}\n`,
+        );
+        return;
+      }
+    }
+  }
+  const w = o.writeToolCall;
+  if (w !== null && typeof w === "object") {
+    const result = (w as { result?: { success?: Record<string, unknown> } })
+      .result;
+    if (result?.success) {
+      const s = result.success;
+      if (s !== null && typeof s === "object") {
+        process.stderr.write(
+          `  ${GRN}✓${RST} ${BOLD}write${RST}  ${DIM}${formatWriteSuccess(s)}${RST}\n`,
+        );
+        return;
+      }
+    }
+  }
+  const sh = o.shellToolCall;
+  if (sh !== null && typeof sh === "object") {
+    const result = (sh as { result?: { success?: Record<string, unknown> } })
+      .result;
+    if (result?.success) {
+      const s = result.success;
+      if (s !== null && typeof s === "object" && "exitCode" in s) {
+        process.stderr.write(
+          `  ${GRN}✓${RST} ${BOLD}shell${RST}  ${DIM}exit ${String(s.exitCode)}${RST}\n`,
+        );
+        return;
+      }
+      if (s !== null && typeof s === "object") {
+        process.stderr.write(
+          `  ${GRN}✓${RST} ${BOLD}shell${RST}  ${DIM}done${RST}\n`,
+        );
+        return;
+      }
+    }
+  }
   for (const key of Object.keys(o)) {
+    if (key === "readToolCall" || key === "writeToolCall" || key === "shellToolCall") {
+      continue;
+    }
     const inner = o[key];
     if (inner === null || typeof inner !== "object") {
       continue;
@@ -206,32 +305,36 @@ function printToolDone(toolCall: unknown): void {
       continue;
     }
     const s = result.success;
+    if (s !== null && typeof s !== "object") {
+      continue;
+    }
     if ("totalLines" in s) {
       process.stderr.write(
-        `  ${GRN}ok${RST}  ${DIM}${formatReadSuccess(s)}${RST}\n`,
+        `  ${GRN}✓${RST} ${BOLD}read${RST}  ${DIM}${formatReadSuccess(s as Record<string, unknown>)}${RST}\n`,
       );
       return;
     }
-    if ("linesCreated" in s) {
+    if ("linesCreated" in s || "fileSize" in s) {
       process.stderr.write(
-        `  ${GRN}ok${RST}  ${DIM}${formatWriteSuccess(s)}${RST}\n`,
+        `  ${GRN}✓${RST} ${BOLD}write${RST}  ${DIM}${formatWriteSuccess(s as Record<string, unknown>)}${RST}\n`,
       );
       return;
     }
     if ("exitCode" in s) {
       process.stderr.write(
-        `  ${GRN}ok${RST}  ${DIM}exit ${String(s.exitCode)}${RST}\n`,
+        `  ${GRN}✓${RST} ${BOLD}shell${RST}  ${DIM}exit ${String(s.exitCode)}${RST}\n`,
       );
       return;
     }
   }
-  process.stderr.write(`  ${GRN}ok${RST}\n`);
+  process.stderr.write(`  ${DIM}· done (tool)${RST}\n`);
 }
 
 export class AgentStreamHandler {
   private lastResult: string | undefined;
   private resultError: string | undefined;
   private assistantStreamActive = false;
+  private projectCwd: string | undefined;
 
   handleObject(ev: unknown): void {
     if (typeof ev !== "object" || ev === null) {
@@ -241,6 +344,10 @@ export class AgentStreamHandler {
     const typ = o.type;
     if (typ === "system" && o.subtype === "init") {
       const model = o.model;
+      this.projectCwd =
+        typeof o.cwd === "string" && o.cwd.length > 0
+          ? o.cwd
+          : this.projectCwd;
       const cwd = o.cwd;
       process.stderr.write(
         `${CY}━━ pr-cli · ${String(model)}${RST}\n` +
@@ -259,7 +366,7 @@ export class AgentStreamHandler {
       this.endAssistantBlock();
       const id =
         typeof o.call_id === "string" ? o.call_id : String(o.call_id ?? "…");
-      printToolStart(o.tool_call, id);
+      printToolStart(o.tool_call, id, this.projectCwd);
       return;
     }
     if (typ === "tool_call" && o.subtype === "completed") {
@@ -284,16 +391,12 @@ export class AgentStreamHandler {
         this.lastResult = r;
         const ms = o.duration_ms;
         process.stderr.write(
-          `\n${CY}── finished in ${String(ms)} ms${RST}\n\n`,
+          `\n${DIM}finished in ${String(ms)} ms${RST}\n\n`,
         );
       }
     }
   }
 
-  /**
-   * Streaming: print one header then append text only (no prefix per token).
-   * See Cursor output-format partial-output rules.
-   */
   private handleAssistant(o: Record<string, unknown>): void {
     const hasTs = "timestamp_ms" in o;
     const hasMc = Boolean(o.model_call_id);
