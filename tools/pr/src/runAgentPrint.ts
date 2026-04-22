@@ -140,6 +140,7 @@ function spawnOnceStream(
       }
       if (code !== 0) {
         finish(() => {
+          handler.endStream();
           const detail = err.trim() || "no stderr";
           reject(
             new Error(
@@ -150,6 +151,7 @@ function spawnOnceStream(
         return;
       }
       finish(() => {
+        handler.endStream();
         try {
           resolve(handler.getFinalResult());
         } catch (e) {

@@ -28,9 +28,19 @@ function postPrReviewComment(pr: string, body: string): boolean {
   try {
     fs.writeFileSync(file, body, { encoding: "utf8" });
     const r = spawnSync("gh", ["pr", "review", pr, "--comment", "-F", file], {
-      stdio: "inherit",
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
     });
-    return r.status === 0;
+    if (r.status === 0) {
+      return true;
+    }
+    if (r.stderr) {
+      process.stderr.write(r.stderr);
+    }
+    if (r.stdout) {
+      process.stdout.write(r.stdout);
+    }
+    return false;
   } finally {
     try {
       fs.rmSync(dir, { recursive: true, force: true });
@@ -102,7 +112,7 @@ async function runReviewAsync(args: string[]): Promise<void> {
 
   let stdout: string;
   try {
-    console.error("pr review: running agent (stream-json)…");
+    console.error("pr review: agent…");
     stdout = await runAgentPrint(prompt);
   } catch (e) {
     fail(

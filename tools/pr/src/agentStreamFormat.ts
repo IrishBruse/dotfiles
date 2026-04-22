@@ -7,7 +7,6 @@ import process from "node:process";
 import * as npath from "node:path";
 
 const tty = process.stderr.isTTY === true;
-const CY = tty ? "\x1b[36m" : "";
 const DIM = tty ? "\x1b[2m" : "";
 const BOLD = tty ? "\x1b[1m" : "";
 const GRN = tty ? "\x1b[32m" : "";
@@ -99,6 +98,16 @@ function firstString(obj: unknown, keys: string[]): string {
 }
 
 type ToolLine = { label: string; detail: string; color: string };
+
+function isTaskToolStart(toolCall: unknown): boolean {
+  if (toolCall === null || typeof toolCall !== "object") {
+    return false;
+  }
+  return (
+    typeof (toolCall as Record<string, unknown>).taskToolCall === "object" &&
+    (toolCall as Record<string, unknown>).taskToolCall !== null
+  );
+}
 
 function shellCommandRaw(toolCall: unknown): string {
   if (toolCall === null || typeof toolCall !== "object") {
@@ -262,8 +271,13 @@ function formatWriteSuccess(s: Record<string, unknown>): string {
   return p.length > 0 ? p.join(" · ") : "finished";
 }
 
+type ToolDoneHooks = { onTaskEvent?: () => void };
+
 /** One line per tool_call completed; pick read → write → shell to avoid double lines. */
-function printToolDone(toolCall: unknown): void {
+function printToolDone(toolCall: unknown, hooks?: ToolDoneHooks): void {
+  if (toolCall !== null && typeof toolCall === "object" && "taskToolCall" in toolCall) {
+    hooks?.onTaskEvent?.();
+  }
   if (toolCall === null || typeof toolCall !== "object") {
     process.stderr.write(`  ${DIM}· done (tool)${RST}\n`);
     return;
@@ -372,11 +386,51 @@ function printToolDone(toolCall: unknown): void {
   process.stderr.write(`  ${DIM}· done (tool)${RST}\n`);
 }
 
+const SPINNER = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏" as const;
+const SUBAGENT_HANG_MSG =
+  "subagent run (separate workstream; often 30s–2m; still connected)";
+
 export class AgentStreamHandler {
   private lastResult: string | undefined;
   private resultError: string | undefined;
   private assistantStreamActive = false;
   private projectCwd: string | undefined;
+  private subagentWaitTimer: ReturnType<typeof setInterval> | null = null;
+  private subagentSpinnerFrame = 0;
+
+  private startSubagentWaitVisual(): void {
+    this.stopSubagentWaitVisual();
+    if (process.stderr.isTTY !== true) {
+      process.stderr.write(
+        `${DIM}  … ${SUBAGENT_HANG_MSG}${RST}\n`,
+      );
+      return;
+    }
+    this.subagentWaitTimer = setInterval(() => {
+      const c = SPINNER[this.subagentSpinnerFrame % SPINNER.length] ?? "·";
+      this.subagentSpinnerFrame += 1;
+      const t = `  ${DIM}${c}  ${SUBAGENT_HANG_MSG} …${RST}  `;
+      process.stderr.write(
+        "\r" + " ".repeat(Math.max(0, 88)) + "\r" + t,
+      );
+    }, 300);
+  }
+
+  private stopSubagentWaitVisual(): void {
+    if (this.subagentWaitTimer) {
+      clearInterval(this.subagentWaitTimer);
+      this.subagentWaitTimer = null;
+    }
+    this.subagentSpinnerFrame = 0;
+    if (process.stderr.isTTY) {
+      process.stderr.write(`\r${" ".repeat(96)}\r`);
+    }
+  }
+
+  /** Stops the subagent line when the agent process exits (avoids a stuck spinner). */
+  endStream(): void {
+    this.stopSubagentWaitVisual();
+  }
 
   handleObject(ev: unknown): void {
     if (typeof ev !== "object" || ev === null) {
@@ -385,16 +439,19 @@ export class AgentStreamHandler {
     const o = ev as Record<string, unknown>;
     const typ = o.type;
     if (typ === "system" && o.subtype === "init") {
-      const model = o.model;
       this.projectCwd =
         typeof o.cwd === "string" && o.cwd.length > 0
           ? o.cwd
           : this.projectCwd;
+      const model = o.model;
       const cwd = o.cwd;
-      process.stderr.write(
-        `${CY}━━ pr-cli · ${String(model)}${RST}\n` +
-          `${DIM}   ${String(cwd)}${RST}\n\n`,
-      );
+      if (typeof cwd === "string" && cwd.length > 0) {
+        process.stderr.write(
+          `${DIM}${String(model)}  ·  ${shortPath(cwd, 70)}${RST}\n\n`,
+        );
+      } else {
+        process.stderr.write(`\n${DIM}${String(model)}${RST}\n\n`);
+      }
       return;
     }
     if (typ === "user") {
@@ -409,14 +466,22 @@ export class AgentStreamHandler {
       const id =
         typeof o.call_id === "string" ? o.call_id : String(o.call_id ?? "…");
       printToolStart(o.tool_call, id, this.projectCwd);
+      if (isTaskToolStart(o.tool_call)) {
+        this.startSubagentWaitVisual();
+      }
       return;
     }
     if (typ === "tool_call" && o.subtype === "completed") {
-      printToolDone(o.tool_call);
+      printToolDone(o.tool_call, {
+        onTaskEvent: () => {
+          this.stopSubagentWaitVisual();
+        },
+      });
       return;
     }
     if (typ === "result" && o.is_error === true) {
       this.endAssistantBlock();
+      this.stopSubagentWaitVisual();
       this.resultError =
         typeof o.error === "string"
           ? o.error
@@ -428,6 +493,7 @@ export class AgentStreamHandler {
     }
     if (typ === "result" && o.is_error === false) {
       this.endAssistantBlock();
+      this.stopSubagentWaitVisual();
       const r = o.result;
       if (typeof r === "string") {
         this.lastResult = r;
