@@ -4,8 +4,6 @@ This block is prepended to command-specific instructions. Follow it for any revi
 
 {{prLine}}
 
-{{hintBlock}}
-
 ## Requirements
 
 - The CLI already prefetched PR data into the **workspace root** (`PR.md`, `commits.txt`, `checks.json`, `comments.md`, `files.json`, `diff.patch`, and optionally **`KEY-123.md`** Jira ticket copies such as `NOVACORE-39309.md`). Base your review on those files only (no `gh` or GitHub API tool calls for PR content). **`PR.md` is the current PR title and description** (for context only); you must **replace it entirely** with the **review comment** (`#` summary line + markdown body), not leave the PR’s text in place.

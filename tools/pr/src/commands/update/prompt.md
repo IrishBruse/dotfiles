@@ -1,34 +1,17 @@
-You are executing **`pr update`**: refresh the **title** and **description** (body) of an existing GitHub PR so they match the current branch state.
+You are running **`pr update`**: refresh an existing PR’s **title** and **body** to match the branch as it is now.
 
 {{prLine}}
 
-{{hintBlock}}
-
-## Requirements
-
-- The CLI already prefetched PR data into the **workspace root** (`PR.md`, `commits.txt`, `checks.json`, `comments.md`, `files.json`, `diff.patch`, optionally **`KEY-123.md`** ticket files like `NOVACORE-39309.md`). Use those files — do not run `gh` or the GitHub API again to fetch PR content.
+- Use the **prefetched files** in the workspace root (`PR.md`, `commits.txt`, `checks.json`, `comments.md`, `files.json`, `diff.patch`, optional ticket `KEY-123.md` files). Do not re-fetch with `gh` or the API.
+- Treat **`diff.patch`** and **`files.json`** as the source of truth for current changes. Use **`PR.md`** for the current title (first `# …` line) and prior body; keep what’s still true, revise where the diff demands it. **`comments.md`**: reflect review briefly if useful, don’t dump threads.
 
 {{prefetchedContextSection}}
 
-## What to produce
+**Overwrite `PR.md`** in the workspace root:
 
-1. Read **`PR.md`** — it contains the **current** PR title (first `# …` line) and description (rest). There is no separate metadata JSON; infer context from **`commits.txt`**, **`files.json`**, **`diff.patch`**, **`checks.json`**, and **`comments.md`** as needed.
-2. Use **`diff.patch`** and **`files.json`** as the source of truth for what the PR contains **now**.
-3. Plan an updated **title** and **markdown body** suitable for the PR description (summary, testing notes, breaking changes if any). Improve on the previous text where the diff warrants it; keep still-accurate context from the old body.
-4. If **`comments.md`** has review discussion, you may briefly reflect it when helpful; do not paste long threads.
+1. First line: `# <new title>`.
+2. Blank line, then the **new** full body (markdown).
 
-## Final deliverable (required)
+Title and body must be non-empty. The CLI will open `PR.md` for edits, then run **`gh pr edit`**.
 
-Overwrite **`PR.md`** in the **workspace root**:
-
-1. First line: **`# `** plus the **new** PR title (trimmed).
-2. A blank line.
-3. The **new** full markdown PR description.
-
-Title and body must both be **non-empty**. The CLI opens **`PR.md`** for a final edit, then runs **`gh pr edit`** after approval.
-
-### Output discipline (strict)
-
-- **Only** deliver by **overwriting** **`PR.md`** in this shape. Do not use **`Title.md`** / **`Body.md`**.
-- **Do not** use your final assistant message for PR title, body, summaries, bullet lists of changes, or review-style prose. **Do not** emit JSON, fenced code blocks, or a “here’s the updated PR…” writeup in chat.
-- **Do not** reply with anything substantive after the files are written. If the runtime still expects a final token, use at most a bare acknowledgment (e.g. `done`) with **no** PR content duplicated there.
+**Output:** deliver **only** by overwriting `PR.md` that way. Do not put the new title, body, or a writeup in your assistant reply—no JSON or fenced content in chat. After writing, you may say at most a token like `done`.

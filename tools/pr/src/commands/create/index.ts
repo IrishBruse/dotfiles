@@ -10,10 +10,12 @@ import {
 } from "../../prCreatePostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
+import { takePrintPromptFlag } from "../../printPromptFlag.ts";
 import { assertPrTitleMatchesJiraPolicy } from "../../jiraTitlePolicy.ts";
 import {
   buildCreateBranchLine,
   buildCreatePrefetchedContextSection,
+  buildCreateRepoCwdLine,
   loadCreateAgentPrompt,
 } from "./createPrompt.ts";
 
@@ -25,8 +27,9 @@ export function runCreate(args: string[]): void {
 }
 
 async function runCreateAsync(args: string[]): Promise<void> {
-  if (args.length > 0) {
-    console.log("pr create: extra args (ignored):", args.join(" "));
+  const { rest, printPrompt } = takePrintPromptFlag(args);
+  if (rest.length > 0) {
+    console.log("pr create: extra args (ignored):", rest.join(" "));
   }
 
   const repoRoot = path.resolve(process.cwd());
@@ -49,10 +52,15 @@ async function runCreateAsync(args: string[]): Promise<void> {
   console.error(`pr create: branch: ${branch}`);
 
   const prompt = loadCreateAgentPrompt({
+    repoCwdLine: buildCreateRepoCwdLine(repoRoot),
     branchLine: buildCreateBranchLine(branch),
     prefetchedContextSection: buildCreatePrefetchedContextSection(workspaceDir),
-    hintBlock: "",
   });
+
+  if (printPrompt) {
+    console.log(prompt);
+    return;
+  }
 
   try {
     await runAgentPrint(prompt, { cwd: workspaceDir });

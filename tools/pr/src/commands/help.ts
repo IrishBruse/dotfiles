@@ -15,8 +15,10 @@ export function printHelp(): void {
       "Work (optional):",
       "  PR_TITLE_JIRA_KEY   e.g. NOVACORE — pr create/update require title like KEY-123",
       "",
-      "Global options:",
-      "  -h, --help     Show this message",
+      "Options:",
+      "  --print-prompt   After workspace prefetch, print the full resolved agent prompt to stdout and exit",
+      "                   (no agent). Use as e.g. pr create --print-prompt, or pr --print-prompt alone to infer create|update.",
+      "  -h, --help       Show this message",
     ].join("\n"),
   );
 }

@@ -12,6 +12,7 @@ import {
   writeReviewFile,
 } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
+import { takePrintPromptFlag } from "../../printPromptFlag.ts";
 import {
   buildPrefetchedContextSection,
   buildPrLine,
@@ -26,13 +27,14 @@ export function runReview(args: string[]): void {
 }
 
 async function runReviewAsync(args: string[]): Promise<void> {
-  const target = args[0];
+  const { rest, printPrompt } = takePrintPromptFlag(args);
+  const target = rest[0];
   if (target === undefined) {
     failPrCli("pr review: expected a pull request URL or number");
     return;
   }
-  if (args.length > 1) {
-    console.log("pr review: extra args (ignored):", args.slice(1).join(" "));
+  if (rest.length > 1) {
+    console.log("pr review: extra args (ignored):", rest.slice(1).join(" "));
   }
 
   const workspaceDir = path.resolve(createReviewWorkspaceDir());
@@ -52,8 +54,12 @@ async function runReviewAsync(args: string[]): Promise<void> {
   const prompt = loadReviewAgentPrompt({
     prLine: buildPrLine(target),
     prefetchedContextSection: buildPrefetchedContextSection(workspaceDir),
-    hintBlock: "",
   });
+
+  if (printPrompt) {
+    console.log(prompt);
+    return;
+  }
 
   try {
     await runAgentPrint(prompt, { cwd: workspaceDir });

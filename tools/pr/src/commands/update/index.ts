@@ -13,9 +13,10 @@ import {
 } from "../../prEditPostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
+import { takePrintPromptFlag } from "../../printPromptFlag.ts";
 import { assertPrTitleMatchesJiraPolicy } from "../../jiraTitlePolicy.ts";
-import { buildPrefetchedContextSection } from "../review/reviewPrompt.ts";
 import {
+  buildUpdatePrefetchedContextSection,
   buildUpdatePrLine,
   loadUpdateAgentPrompt,
 } from "./updatePrompt.ts";
@@ -58,16 +59,17 @@ export function runUpdate(args: string[]): void {
 }
 
 async function runUpdateAsync(args: string[]): Promise<void> {
+  const { rest, printPrompt } = takePrintPromptFlag(args);
   let target: string;
   try {
-    target = resolveUpdatePrTarget(args[0]);
+    target = resolveUpdatePrTarget(rest[0]);
   } catch (e) {
     failPrCli(e instanceof Error ? e.message : `pr update: ${String(e)}`);
     return;
   }
 
-  if (args.length > 1) {
-    console.log("pr update: extra args (ignored):", args.slice(1).join(" "));
+  if (rest.length > 1) {
+    console.log("pr update: extra args (ignored):", rest.slice(1).join(" "));
   }
 
   const workspaceDir = path.resolve(createReviewWorkspaceDir());
@@ -86,9 +88,13 @@ async function runUpdateAsync(args: string[]): Promise<void> {
 
   const prompt = loadUpdateAgentPrompt({
     prLine: buildUpdatePrLine(target),
-    prefetchedContextSection: buildPrefetchedContextSection(workspaceDir),
-    hintBlock: "",
+    prefetchedContextSection: buildUpdatePrefetchedContextSection(workspaceDir),
   });
+
+  if (printPrompt) {
+    console.log(prompt);
+    return;
+  }
 
   try {
     await runAgentPrint(prompt, { cwd: workspaceDir });

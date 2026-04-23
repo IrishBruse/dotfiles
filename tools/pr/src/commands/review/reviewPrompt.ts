@@ -7,7 +7,6 @@ const reviewCommandDir = path.dirname(fileURLToPath(import.meta.url));
 export type ReviewPromptVars = {
   prLine: string;
   prefetchedContextSection: string;
-  hintBlock: string;
 };
 
 export function expandReviewPlaceholders(
@@ -16,8 +15,7 @@ export function expandReviewPlaceholders(
 ): string {
   return template
     .replaceAll("{{prLine}}", vars.prLine)
-    .replaceAll("{{prefetchedContextSection}}", vars.prefetchedContextSection)
-    .replaceAll("{{hintBlock}}", vars.hintBlock);
+    .replaceAll("{{prefetchedContextSection}}", vars.prefetchedContextSection);
 }
 
 export function loadReviewAgentPrompt(vars: ReviewPromptVars): string {
