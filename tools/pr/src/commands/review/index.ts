@@ -4,6 +4,7 @@ import { readAgentPrMarkdown } from "../../agentOutputFiles.ts";
 import { populateReviewWorkspace } from "../../prepareReviewWorkspace.ts";
 import {
   getGitRepoRoot,
+  logAgentWorkspacePreamble,
   preparePrAgentWorkspace,
   readPrHeadBranchName,
 } from "../../prAgentWorkspace.ts";
@@ -38,7 +39,6 @@ async function runReviewAsync(args: string[]): Promise<void> {
     failPrCli("pr review: expected a pull request URL or number");
     return;
   }
-  console.error(`pr review: agent model: ${model}`);
   if (rest.length > 1) {
     console.log("pr review: extra args (ignored):", rest.slice(1).join(" "));
   }
@@ -52,7 +52,7 @@ async function runReviewAsync(args: string[]): Promise<void> {
     failPrCli(e instanceof Error ? e.message : `pr review: ${String(e)}`);
     return;
   }
-  console.error(`pr review: agent workspace: ${workspaceDir}`);
+  logAgentWorkspacePreamble(workspaceDir);
 
   try {
     await populateReviewWorkspace(workspaceDir, target);

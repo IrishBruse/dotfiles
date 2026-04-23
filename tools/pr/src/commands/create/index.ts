@@ -4,6 +4,7 @@ import { readAgentPrMarkdown } from "../../agentOutputFiles.ts";
 import { populateCreateWorkspace } from "../../prepareCreateWorkspace.ts";
 import {
   getGitRepoRoot,
+  logAgentWorkspacePreamble,
   preparePrAgentWorkspace,
   readCurrentBranch,
 } from "../../prAgentWorkspace.ts";
@@ -35,12 +36,11 @@ async function runCreateAsync(args: string[]): Promise<void> {
   if (rest.length > 0) {
     console.log("pr create: extra args (ignored):", rest.join(" "));
   }
-  console.error(`pr create: agent model: ${model}`);
 
   const repoRoot = getGitRepoRoot(process.cwd());
   const branchForWorkspace = readCurrentBranch(repoRoot);
   const workspaceDir = preparePrAgentWorkspace(repoRoot, branchForWorkspace);
-  console.error(`pr create: agent workspace: ${workspaceDir}`);
+  logAgentWorkspacePreamble(workspaceDir);
   console.error(`pr create: repo (gh pr create cwd): ${repoRoot}`);
 
   let branch: string;

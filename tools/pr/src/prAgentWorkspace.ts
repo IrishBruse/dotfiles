@@ -141,3 +141,8 @@ export function readPrHeadBranchName(target: string): string {
   }
   return b;
 }
+
+/** One line: abs workspace path, then a blank line on stderr. */
+export function logAgentWorkspacePreamble(dir: string): void {
+  process.stderr.write(`${dir}\n\n`);
+}

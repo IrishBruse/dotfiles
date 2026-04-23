@@ -5,6 +5,7 @@ import { readAgentPrMarkdown } from "../../agentOutputFiles.ts";
 import { populateReviewWorkspace } from "../../prepareReviewWorkspace.ts";
 import {
   getGitRepoRoot,
+  logAgentWorkspacePreamble,
   preparePrAgentWorkspace,
   readPrHeadBranchName,
 } from "../../prAgentWorkspace.ts";
@@ -70,7 +71,6 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     failPrCli(e instanceof Error ? e.message : `pr update: ${String(e)}`);
     return;
   }
-  console.error(`pr update: agent model: ${model}`);
 
   if (rest.length > 1) {
     console.log("pr update: extra args (ignored):", rest.slice(1).join(" "));
@@ -85,7 +85,7 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     failPrCli(e instanceof Error ? e.message : `pr update: ${String(e)}`);
     return;
   }
-  console.error(`pr update: agent workspace: ${workspaceDir}`);
+  logAgentWorkspacePreamble(workspaceDir);
 
   try {
     await populateReviewWorkspace(workspaceDir, target);
