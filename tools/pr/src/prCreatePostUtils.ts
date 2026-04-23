@@ -1,12 +1,8 @@
-import { spawnSync } from "node:child_process";
 import process from "node:process";
-import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
 
 import { assertPrTitleMatchesJiraPolicy } from "./jiraTitlePolicy.ts";
 import { getPrViewUrl, printPrUrlWithMargins } from "./prViewUrl.ts";
-import { failPrCli } from "./reviewPostUtils.ts";
+import { failPrCli, runGhWithBodyFile } from "./reviewPostUtils.ts";
 import {
   confirmSubmitAfterEditorPreview,
   waitForEnterRetryOrCancel,
@@ -17,36 +13,12 @@ export function postPrCreate(
   body: string,
   repoRoot: string,
 ): boolean {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "pr-cli-create-"));
-  const file = path.join(dir, "body.md");
-  try {
-    fs.writeFileSync(file, body, { encoding: "utf8" });
-    const r = spawnSync(
-      "gh",
-      ["pr", "create", "--title", title, "--body-file", file],
-      {
-        encoding: "utf8",
-        stdio: ["ignore", "pipe", "pipe"],
-        cwd: repoRoot,
-      },
-    );
-    if (r.status === 0) {
-      return true;
-    }
-    if (r.stderr) {
-      process.stderr.write(r.stderr);
-    }
-    if (r.stdout) {
-      process.stdout.write(r.stdout);
-    }
-    return false;
-  } finally {
-    try {
-      fs.rmSync(dir, { recursive: true, force: true });
-    } catch {
-      // ignore
-    }
-  }
+  return runGhWithBodyFile(
+    "pr-cli-create-",
+    body,
+    (file) => ["pr", "create", "--title", title, "--body-file", file],
+    { cwd: repoRoot },
+  );
 }
 
 export async function confirmAndCreatePr(

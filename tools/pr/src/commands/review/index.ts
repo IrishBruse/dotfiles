@@ -1,6 +1,5 @@
 import process from "node:process";
 
-import { readAgentPrMarkdown } from "../../agentOutputFiles.ts";
 import { populateReviewWorkspace } from "../../prepareReviewWorkspace.ts";
 import {
   getGitRepoRoot,
@@ -93,17 +92,6 @@ async function runReviewAsync(args: string[]): Promise<void> {
       );
       return;
     }
-  }
-
-  try {
-    readAgentPrMarkdown(workspaceDir, "pr review");
-  } catch (e) {
-    failPrCli(
-      e instanceof Error
-        ? e.message
-        : `pr review: could not read agent output files: ${String(e)}`,
-    );
-    return;
   }
 
   await confirmAndPostReviewComment("pr review:", target, workspaceDir);

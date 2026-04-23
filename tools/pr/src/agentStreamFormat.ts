@@ -22,6 +22,12 @@ function oneLine(s: string, max: number): string {
   return t.slice(0, max - 1) + "…";
 }
 
+const CD_PREFIX_RES = [
+  /^cd\s+(\S+)\s*&&\s*(.*)$/s,
+  /^cd\s+"([^"]+)"\s*&&\s*(.*)$/s,
+  /^cd\s+'([^']+)'\s*&&\s*(.*)$/s,
+];
+
 /** If command is `cd <dir> && …` and <dir> is the project cwd, return the rest. */
 function stripImpliedCd(command: string, projectRoot: string | undefined): string {
   if (projectRoot === undefined) {
@@ -29,11 +35,7 @@ function stripImpliedCd(command: string, projectRoot: string | undefined): strin
   }
   const root = npath.normalize(projectRoot);
   const t = command.trim();
-  for (const re of [
-    /^cd\s+(\S+)\s*&&\s*(.*)$/s,
-    /^cd\s+"([^"]+)"\s*&&\s*(.*)$/s,
-    /^cd\s+'([^']+)'\s*&&\s*(.*)$/s,
-  ]) {
+  for (const re of CD_PREFIX_RES) {
     const m = t.match(re);
     if (m) {
       const p = m[1]!;
@@ -200,17 +202,17 @@ function getAssistantText(message: unknown): string {
   if (!Array.isArray(m.content)) {
     return "";
   }
-  let out = "";
+  const parts: string[] = [];
   for (const part of m.content) {
     if (typeof part !== "object" || part === null) {
       continue;
     }
     const p = part as { type?: unknown; text?: unknown };
     if (p.type === "text" && typeof p.text === "string") {
-      out += p.text;
+      parts.push(p.text);
     }
   }
-  return out;
+  return parts.join("");
 }
 
 function firstString(obj: unknown, keys: string[]): string {
@@ -236,6 +238,24 @@ function isTaskToolStart(toolCall: unknown): boolean {
   return (
     typeof (toolCall as Record<string, unknown>).taskToolCall === "object" &&
     (toolCall as Record<string, unknown>).taskToolCall !== null
+  );
+}
+
+const TASK_TEXT_KEYS = ["prompt", "description", "task", "name", "instruction"];
+
+function taskToolSummary(args: Record<string, unknown> | undefined): string {
+  const named = firstString(args, TASK_TEXT_KEYS);
+  if (named) {
+    return named;
+  }
+  if (!args) {
+    return "";
+  }
+  return oneLine(
+    Object.entries(args)
+      .map(([k, v]) => `${k}=${String(v).slice(0, 40)}`)
+      .join(" "),
+    120,
   );
 }
 
@@ -292,22 +312,7 @@ function toolStartLine(
   }
   if (typeof tc.taskToolCall === "object" && tc.taskToolCall) {
     const args = (tc.taskToolCall as { args?: Record<string, unknown> }).args;
-    const s =
-      firstString(args, [
-        "prompt",
-        "description",
-        "task",
-        "name",
-        "instruction",
-      ]) ||
-      (args
-        ? oneLine(
-            Object.entries(args)
-              .map(([k, v]) => `${k}=${String(v).slice(0, 40)}`)
-              .join(" "),
-            120,
-        )
-        : "");
+    const s = taskToolSummary(args);
     return { label: "task", detail: s || id, color: MAG };
   }
   if ("function" in tc) {
@@ -397,22 +402,7 @@ function printToolStart(
     }
     if (typeof tc.taskToolCall === "object" && tc.taskToolCall) {
       const args = (tc.taskToolCall as { args?: Record<string, unknown> }).args;
-      const s =
-        firstString(args, [
-          "prompt",
-          "description",
-          "task",
-          "name",
-          "instruction",
-        ]) ||
-        (args
-          ? oneLine(
-              Object.entries(args)
-                .map(([k, v]) => `${k}=${String(v).slice(0, 40)}`)
-                .join(" "),
-              120,
-            )
-          : "");
+      const s = taskToolSummary(args);
       const line = s.length > 0
         ? oneLine(s, 500)
         : (callId.length > 0 ? oneLine(callId, 50) : "…");

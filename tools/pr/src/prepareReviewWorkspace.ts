@@ -18,21 +18,23 @@ import { writePrCommentsMdAsync } from "./prCommentsMd.ts";
 function runGhAsync(args: string[]): Promise<string> {
   return new Promise((resolve, reject) => {
     const child = spawn("gh", args, { stdio: ["ignore", "pipe", "pipe"] });
-    let out = "";
-    let err = "";
+    const outChunks: string[] = [];
+    const errChunks: string[] = [];
     child.stdout.setEncoding("utf8");
     child.stderr.setEncoding("utf8");
     child.stdout.on("data", (c: string) => {
-      out += c;
+      outChunks.push(c);
     });
     child.stderr.on("data", (c: string) => {
-      err += c;
+      errChunks.push(c);
     });
     child.on("error", (e) => {
       reject(e);
     });
     child.on("close", (code) => {
+      const out = outChunks.join("");
       if (code !== 0) {
+        const err = errChunks.join("");
         reject(
           new Error(
             `gh ${args.slice(0, 4).join(" ")}… failed: ${(err || out).trim() || `exit ${code}`}`,

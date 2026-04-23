@@ -11,21 +11,23 @@ function ghApiPaginatedAsync(
     const child = spawn("gh", ["api", apiPath, "--paginate"], {
       stdio: ["ignore", "pipe", "pipe"],
     });
-    let out = "";
-    let err = "";
+    const outChunks: string[] = [];
+    const errChunks: string[] = [];
     child.stdout.setEncoding("utf8");
     child.stderr.setEncoding("utf8");
     child.stdout.on("data", (c: string) => {
-      out += c;
+      outChunks.push(c);
     });
     child.stderr.on("data", (c: string) => {
-      err += c;
+      errChunks.push(c);
     });
     child.on("error", (e) => {
       resolve({ ok: false, error: e.message });
     });
     child.on("close", (code) => {
+      const out = outChunks.join("");
       if (code !== 0) {
+        const err = errChunks.join("");
         resolve({
           ok: false,
           error: (err || out).trim() || `exit ${code}`,

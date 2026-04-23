@@ -17,57 +17,43 @@ export function isPrCliWork(): boolean {
   return process.env.PR_CLI_WORK === "true";
 }
 
-let cachedCreateWorkPrompt: string | null = null;
-let cachedUpdateWorkPrompt: string | null = null;
-let cachedReviewWorkPrompt: string | null = null;
+type WorkPromptKind = "create" | "update" | "review";
+
+const cachedWorkPrompts = new Map<WorkPromptKind, string>();
 
 function normalizeWorkMarkdown(s: string): string {
   return s.endsWith("\n") ? s : `${s}\n`;
 }
 
-/** Markdown appended to create agent prompt when {@link isPrCliWork}. */
-export function loadCreateWorkPromptAppendix(): string {
+function loadWorkPromptAppendix(kind: WorkPromptKind): string {
   if (!isPrCliWork()) {
     return "";
   }
-  if (cachedCreateWorkPrompt === null) {
-    const p = path.join(policyDir, "commands", "create", "prompt.work.md");
+  let cached = cachedWorkPrompts.get(kind);
+  if (cached === undefined) {
+    const p = path.join(policyDir, "commands", kind, "prompt.work.md");
     if (!fs.existsSync(p)) {
       throw new Error(`pr: PR_CLI_WORK=true but missing ${p}`);
     }
-    cachedCreateWorkPrompt = fs.readFileSync(p, "utf8");
+    cached = fs.readFileSync(p, "utf8");
+    cachedWorkPrompts.set(kind, cached);
   }
-  return normalizeWorkMarkdown(cachedCreateWorkPrompt);
+  return normalizeWorkMarkdown(cached);
+}
+
+/** Markdown appended to create agent prompt when {@link isPrCliWork}. */
+export function loadCreateWorkPromptAppendix(): string {
+  return loadWorkPromptAppendix("create");
 }
 
 /** Markdown appended to update agent prompt when {@link isPrCliWork}. */
 export function loadUpdateWorkPromptAppendix(): string {
-  if (!isPrCliWork()) {
-    return "";
-  }
-  if (cachedUpdateWorkPrompt === null) {
-    const p = path.join(policyDir, "commands", "update", "prompt.work.md");
-    if (!fs.existsSync(p)) {
-      throw new Error(`pr: PR_CLI_WORK=true but missing ${p}`);
-    }
-    cachedUpdateWorkPrompt = fs.readFileSync(p, "utf8");
-  }
-  return normalizeWorkMarkdown(cachedUpdateWorkPrompt);
+  return loadWorkPromptAppendix("update");
 }
 
 /** Markdown appended to review agent prompt when {@link isPrCliWork}. */
 export function loadReviewWorkPromptAppendix(): string {
-  if (!isPrCliWork()) {
-    return "";
-  }
-  if (cachedReviewWorkPrompt === null) {
-    const p = path.join(policyDir, "commands", "review", "prompt.work.md");
-    if (!fs.existsSync(p)) {
-      throw new Error(`pr: PR_CLI_WORK=true but missing ${p}`);
-    }
-    cachedReviewWorkPrompt = fs.readFileSync(p, "utf8");
-  }
-  return normalizeWorkMarkdown(cachedReviewWorkPrompt);
+  return loadWorkPromptAppendix("review");
 }
 
 export function assertPrTitleMatchesJiraPolicy(title: string): void {

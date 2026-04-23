@@ -3,15 +3,9 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { writeJiraSkillBoardSnapshot } from "./jiraSkillContext.ts";
-import { clearPrAgentWorkspaceDir } from "./prAgentWorkspace.ts";
+import { clearPrAgentWorkspaceDir, readCurrentBranch } from "./prAgentWorkspace.ts";
 
 const GIT_BUFFER = 100 * 1024 * 1024;
-
-function copyIfExists(from: string, to: string): void {
-  if (fs.existsSync(from)) {
-    fs.copyFileSync(from, to);
-  }
-}
 
 /**
  * Seeds **`diff.patch`** (from `git diff origin/main`), an optional **`PULL_REQUEST_TEMPLATE.md`**,
@@ -21,19 +15,7 @@ function copyIfExists(from: string, to: string): void {
  */
 export function populateCreateWorkspace(dir: string, repoRoot: string): string {
   try {
-    const head = spawnSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], {
-      encoding: "utf8",
-      cwd: repoRoot,
-      stdio: ["ignore", "pipe", "pipe"],
-    });
-    if (head.status !== 0) {
-      const msg = (head.stderr ?? head.stdout ?? "").trim() || `exit ${head.status}`;
-      throw new Error(`pr create: git rev-parse HEAD failed: ${msg}`);
-    }
-    const branch = (head.stdout ?? "").trim();
-    if (branch === "") {
-      throw new Error("pr create: could not resolve current branch name");
-    }
+    const branch = readCurrentBranch(repoRoot);
 
     const r = spawnSync("git", ["diff", "origin/main"], {
       encoding: "utf8",
@@ -54,7 +36,7 @@ export function populateCreateWorkspace(dir: string, repoRoot: string): string {
     ];
     for (const p of templateCandidates) {
       if (fs.existsSync(p)) {
-        copyIfExists(p, path.join(dir, "PULL_REQUEST_TEMPLATE.md"));
+        fs.copyFileSync(p, path.join(dir, "PULL_REQUEST_TEMPLATE.md"));
         break;
       }
     }

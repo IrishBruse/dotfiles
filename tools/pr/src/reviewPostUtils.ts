@@ -15,14 +15,24 @@ export function failPrCli(msg: string): void {
   process.exitCode = 1;
 }
 
-export function postPrReviewComment(pr: string, body: string): boolean {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "pr-cli-review-"));
+/**
+ * Write `body` to a temp `body.md`, run `gh` with `buildArgs(file)` substituted in, mirror its
+ * stderr/stdout on failure, then clean up the temp dir. Returns whether `gh` exited 0.
+ */
+export function runGhWithBodyFile(
+  tmpPrefix: string,
+  body: string,
+  buildArgs: (file: string) => string[],
+  opts: { cwd?: string } = {},
+): boolean {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), tmpPrefix));
   const file = path.join(dir, "body.md");
   try {
     fs.writeFileSync(file, body, { encoding: "utf8" });
-    const r = spawnSync("gh", ["pr", "review", pr, "--comment", "-F", file], {
+    const r = spawnSync("gh", buildArgs(file), {
       encoding: "utf8",
       stdio: ["ignore", "pipe", "pipe"],
+      ...(opts.cwd !== undefined ? { cwd: opts.cwd } : {}),
     });
     if (r.status === 0) {
       return true;
@@ -43,12 +53,22 @@ export function postPrReviewComment(pr: string, body: string): boolean {
   }
 }
 
+export function postPrReviewComment(pr: string, body: string): boolean {
+  return runGhWithBodyFile("pr-cli-review-", body, (file) => [
+    "pr",
+    "review",
+    pr,
+    "--comment",
+    "-F",
+    file,
+  ]);
+}
+
 export async function confirmAndPostReviewComment(
   logPrefix: string,
   target: string,
   workspaceDir: string,
 ): Promise<void> {
-  let title: string;
   let body: string;
 
   try {
@@ -61,7 +81,6 @@ export async function confirmAndPostReviewComment(
       console.error(`${logPrefix} cancelled, not posting`);
       return;
     }
-    title = out.title;
     body = out.body;
   } catch (e) {
     failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);

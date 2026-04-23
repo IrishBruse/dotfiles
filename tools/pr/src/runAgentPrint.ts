@@ -63,7 +63,7 @@ function spawnOnceStream(
       },
     );
     const handler = new AgentStreamHandler();
-    let err = "";
+    const errChunks: string[] = [];
     let lineBuf = "";
     let finished = false;
     const finish = (fn: () => void) => {
@@ -82,34 +82,40 @@ function spawnOnceStream(
     }, timeoutMs);
     child.stderr?.setEncoding("utf8");
     child.stderr?.on("data", (c: string) => {
-      err += c;
+      errChunks.push(c);
     });
     child.stdout?.setEncoding("utf8");
     child.stdout?.on("data", (chunk: string) => {
-      lineBuf += chunk;
-      const parts = lineBuf.split("\n");
-      lineBuf = parts.pop() ?? "";
-      for (const line of parts) {
+      let start = 0;
+      let nl = chunk.indexOf("\n");
+      while (nl !== -1) {
+        const line = lineBuf + chunk.slice(start, nl);
+        lineBuf = "";
+        start = nl + 1;
         const s = line.trim();
-        if (s === "") {
-          continue;
+        if (s !== "") {
+          let ev: unknown;
+          try {
+            ev = JSON.parse(s) as unknown;
+          } catch {
+            process.stderr.write(
+              `[pr] skip non-JSON line: ${s.slice(0, 200)}${s.length > 200 ? "…" : ""}\n`,
+            );
+            nl = chunk.indexOf("\n", start);
+            continue;
+          }
+          try {
+            handler.handleObject(ev);
+          } catch (e) {
+            process.stderr.write(
+              `[pr] stream handler: ${e instanceof Error ? e.message : String(e)}\n`,
+            );
+          }
         }
-        let ev: unknown;
-        try {
-          ev = JSON.parse(s) as unknown;
-        } catch {
-          process.stderr.write(
-            `[pr] skip non-JSON line: ${s.slice(0, 200)}${s.length > 200 ? "…" : ""}\n`,
-          );
-          continue;
-        }
-        try {
-          handler.handleObject(ev);
-        } catch (e) {
-          process.stderr.write(
-            `[pr] stream handler: ${e instanceof Error ? e.message : String(e)}\n`,
-          );
-        }
+        nl = chunk.indexOf("\n", start);
+      }
+      if (start < chunk.length) {
+        lineBuf += chunk.slice(start);
       }
     });
     child.on("error", (e) => {
@@ -138,7 +144,7 @@ function spawnOnceStream(
       if (code !== 0) {
         finish(() => {
           handler.endStream();
-          const detail = err.trim() || "no stderr";
+          const detail = errChunks.join("").trim() || "no stderr";
           reject(
             new Error(
               `agent ${command} exited ${String(code)}. stderr: ${detail.slice(0, 4000)}${detail.length > 4000 ? "…" : ""}`,
