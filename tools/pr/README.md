@@ -57,7 +57,7 @@ HEAD state for default `pr` add/update is stored at **`~/.local/state/pr-cli/las
 
 ### `pr review`
 
-**What it does:** Prefetches at the temp workspace root (see earlier docs: **`view.json`**, **`commits.txt`**, **`checks.json`**, **`comments.md`** (inline review + conversation comments via **`gh api`** REST), **`files.json`**, **`diff.patch`**, optional **`{KEY}.md`** Jira copies). Runs **`agent`** with **`cwd`** set there; the agent **writes `Title.md` and `Body.md`**. The CLI reads those files, previews markdown on stdout, **Enter** → **`gh pr review <pr> --comment -F`**, **Esc** cancels. With **`PR_REVIEW_NO_CONFIRM=1`**, skips preview and posts when the files are valid.
+**What it does:** Prefetches at the temp workspace root (see earlier docs: **`Title.md`** and **`Body.md`** (current PR title/body), **`commits.txt`**, **`checks.json`**, **`comments.md`** (inline review + conversation comments via **`gh api`** REST), **`files.json`**, **`diff.patch`**, optional **`{KEY}.md`** Jira copies). Runs **`agent`** with **`cwd`** set there; the agent **overwrites `Title.md` and `Body.md`** (review) or refreshes them (**`pr update`**). The CLI reads those files, previews markdown on stdout, **Enter** → **`gh pr review <pr> --comment -F`**, **Esc** cancels. With **`PR_REVIEW_NO_CONFIRM=1`**, skips preview and posts when the files are valid.
 
 **Form:** `pr review <pr>` (URL or number; required)
 

@@ -48,15 +48,14 @@ Use the files below **in that directory** (root of the workspace). Do not run \`
 
 | Path | Contents |
 |------|----------|
-| \`view.json\` | PR metadata (incl. \`baseRefOid\`, \`headRefOid\`, \`url\`) from \`gh pr view\` (pretty-printed) |
 | \`commits.txt\` | One line per commit: short SHA, subject, optional body (from \`gh pr view --json commits\`) |
 | \`checks.json\` | \`statusCheckRollup\` — CI/check pass-fail, job names, \`detailsUrl\` / \`targetUrl\` log links (pretty-printed) |
 | \`comments.md\` | Inline review comments (\`gh api\` pull review comments): each entry has \`path:line @author\`, a \`\`\`diff\`\`\` block with the \`diff_hunk\` GitHub provides, then the comment body; plus a section for PR conversation (\`issues/…/comments\`) |
 | \`files.json\` | Changed files from \`gh pr view --json files\` (pretty-printed) |
 | \`diff.patch\` | Full unified diff from \`gh pr diff\` |
 | \`KEY-123.md\` | One file per Jira key in the PR body (e.g. \`NOVACORE-39309.md\`): exact copy of \`references/**/{KEY}.md\` from the jira-tickets skill; if none match, \`{firstKey}.md\` holds the skill board text only (no API; optional files) |
-| \`Title.md\` | **You write:** short title for the review comment (terminal preview). Required; non-empty. |
-| \`Body.md\` | **You write:** full markdown for the review comment (e.g. \`> Reviewed by Cursor\` and findings). Required; non-empty. |
+| \`Title.md\` | **Prefetched:** the **current** GitHub PR title. **You overwrite** with a short title for the **review comment** (terminal preview). Required; non-empty when done. |
+| \`Body.md\` | **Prefetched:** the **current** GitHub PR description. **You overwrite** with the full markdown **review comment** (e.g. \`> Reviewed by Cursor\` and findings). Required; non-empty when done. |
 
 Parallel subagents must also read these same paths (this workspace is shared).`;
 }

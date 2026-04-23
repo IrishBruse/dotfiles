@@ -3,6 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
+import { AGENT_BODY_FILE, AGENT_TITLE_FILE } from "./agentOutputFiles.ts";
 import { prCoordsFromViewPayload } from "./githubPrPrefetchExtra.ts";
 import { writeJiraSkillContext } from "./jiraSkillContext.ts";
 import { writePrCommentsMdAsync } from "./prCommentsMd.ts";
@@ -42,14 +43,6 @@ function writeFormattedJsonFile(filePath: string, ghJsonStdout: string): void {
   fs.writeFileSync(
     filePath,
     JSON.stringify(parsed, null, 2) + "\n",
-    "utf8",
-  );
-}
-
-function writeFormattedJsonObject(filePath: string, obj: unknown): void {
-  fs.writeFileSync(
-    filePath,
-    JSON.stringify(obj, null, 2) + "\n",
     "utf8",
   );
 }
@@ -103,9 +96,25 @@ export async function populateReviewWorkspace(
     const viewObj = JSON.parse(viewRaw) as {
       number: number;
       url: string;
-      body?: string;
+      title?: string;
+      body?: string | null;
     };
-    writeFormattedJsonObject(path.join(dir, "view.json"), viewObj);
+    const titleStr = typeof viewObj.title === "string" ? viewObj.title : "";
+    const bodyStr =
+      typeof viewObj.body === "string"
+        ? viewObj.body
+        : viewObj.body == null
+          ? ""
+          : String(viewObj.body);
+
+    fs.writeFileSync(
+      path.join(dir, AGENT_TITLE_FILE),
+      titleStr === "" || titleStr.endsWith("\n")
+        ? titleStr
+        : `${titleStr}\n`,
+      "utf8",
+    );
+    fs.writeFileSync(path.join(dir, AGENT_BODY_FILE), bodyStr, "utf8");
 
     const coords = prCoordsFromViewPayload(viewObj);
 
@@ -122,7 +131,7 @@ export async function populateReviewWorkspace(
     writeCommitsTxtFromRaw(dir, commitsRaw);
     writeFormattedJsonFile(path.join(dir, "checks.json"), checksRaw);
 
-    writeJiraSkillContext(dir, typeof viewObj.body === "string" ? viewObj.body : "");
+    writeJiraSkillContext(dir, bodyStr);
   } catch (e) {
     try {
       fs.rmSync(dir, { recursive: true, force: true });
