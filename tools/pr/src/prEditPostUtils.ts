@@ -5,11 +5,11 @@ import os from "node:os";
 import path from "node:path";
 
 import type { PrReviewJson } from "./agentOutputFiles.ts";
+import { assertPrTitleMatchesJiraPolicy } from "./commands/create/work/jiraTitlePolicy.ts";
 import { failPrCli } from "./reviewPostUtils.ts";
 import {
-  printMarkdownPreview,
+  confirmSubmitAfterEditorPreview,
   waitForEnterRetryOrCancel,
-  waitForPostOrCancel,
 } from "./reviewPreview.ts";
 
 export function noUpdateConfirmFromEnv(): boolean {
@@ -83,23 +83,31 @@ export async function confirmAndApplyPrMetadata(
   parsed: PrReviewJson,
   workspaceDir: string,
 ): Promise<void> {
+  let title = parsed.title;
+  let body = parsed.body;
+
   if (!noUpdateConfirmFromEnv()) {
-    if (!process.stdout.isTTY || !process.stdin.isTTY) {
-      failPrCli(
-        `${logPrefix} need an interactive TTY to preview, or set PR_UPDATE_NO_CONFIRM=1`,
-      );
-      return;
-    }
-    printMarkdownPreview(parsed.title, parsed.body, { enterAction: "apply" });
-    let choice: "post" | "cancel";
     try {
-      choice = await waitForPostOrCancel("PR_UPDATE_NO_CONFIRM=1");
+      const out = await confirmSubmitAfterEditorPreview({
+        logPrefix,
+        initial: { title, body },
+        actionDescription: "update the PR on GitHub",
+        noConfirmEnvVar: "PR_UPDATE_NO_CONFIRM",
+      });
+      if (out === null) {
+        console.error(`${logPrefix} cancelled, not updating PR`);
+        return;
+      }
+      title = out.title;
+      body = out.body;
+      try {
+        assertPrTitleMatchesJiraPolicy(title);
+      } catch (e) {
+        failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
+        return;
+      }
     } catch (e) {
       failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
-      return;
-    }
-    if (choice === "cancel") {
-      console.error(`${logPrefix} cancelled, not updating PR`);
       return;
     }
   } else {
@@ -110,7 +118,7 @@ export async function confirmAndApplyPrMetadata(
     process.stdin.isTTY === true && process.stdout.isTTY === true;
 
   for (;;) {
-    if (postPrMetadataEdit(target, parsed.title, parsed.body)) {
+    if (postPrMetadataEdit(target, title, body)) {
       try {
         fs.rmSync(workspaceDir, { recursive: true, force: true });
       } catch {
@@ -120,6 +128,8 @@ export async function confirmAndApplyPrMetadata(
     }
     const f = writePrUpdateFile(target, {
       ...parsed,
+      title,
+      body,
       lastError: "gh pr edit failed (non-zero exit or gh error)",
     });
     console.error(

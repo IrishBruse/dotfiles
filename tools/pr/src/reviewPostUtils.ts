@@ -6,9 +6,8 @@ import path from "node:path";
 
 import type { PrReviewJson } from "./agentOutputFiles.ts";
 import {
-  printMarkdownPreview,
+  confirmSubmitAfterEditorPreview,
   waitForEnterRetryOrCancel,
-  waitForPostOrCancel,
 } from "./reviewPreview.ts";
 
 export function noConfirmFromEnv(): boolean {
@@ -79,23 +78,25 @@ export async function confirmAndPostReviewComment(
   parsed: PrReviewJson,
   workspaceDir: string,
 ): Promise<void> {
+  let title = parsed.title;
+  let body = parsed.body;
+
   if (!noConfirmFromEnv()) {
-    if (!process.stdout.isTTY || !process.stdin.isTTY) {
-      failPrCli(
-        `${logPrefix} need an interactive TTY to preview the comment, or set PR_REVIEW_NO_CONFIRM=1`,
-      );
-      return;
-    }
-    printMarkdownPreview(parsed.title, parsed.body);
-    let choice: "post" | "cancel";
     try {
-      choice = await waitForPostOrCancel("PR_REVIEW_NO_CONFIRM=1");
+      const out = await confirmSubmitAfterEditorPreview({
+        logPrefix,
+        initial: { title, body },
+        actionDescription: "post this review comment",
+        noConfirmEnvVar: "PR_REVIEW_NO_CONFIRM",
+      });
+      if (out === null) {
+        console.error(`${logPrefix} cancelled, not posting`);
+        return;
+      }
+      title = out.title;
+      body = out.body;
     } catch (e) {
       failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
-      return;
-    }
-    if (choice === "cancel") {
-      console.error(`${logPrefix} cancelled, not posting`);
       return;
     }
   } else {
@@ -106,7 +107,7 @@ export async function confirmAndPostReviewComment(
     process.stdin.isTTY === true && process.stdout.isTTY === true;
 
   for (;;) {
-    if (postPrReviewComment(target, parsed.body)) {
+    if (postPrReviewComment(target, body)) {
       try {
         fs.rmSync(workspaceDir, { recursive: true, force: true });
       } catch {
@@ -116,6 +117,8 @@ export async function confirmAndPostReviewComment(
     }
     const f = writeReviewFile(target, {
       ...parsed,
+      title,
+      body,
       lastError: "gh pr review failed (non-zero exit or gh error)",
     });
     console.error(

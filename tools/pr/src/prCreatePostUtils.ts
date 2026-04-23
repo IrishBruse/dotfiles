@@ -5,11 +5,11 @@ import os from "node:os";
 import path from "node:path";
 
 import type { PrReviewJson } from "./agentOutputFiles.ts";
+import { assertPrTitleMatchesJiraPolicy } from "./commands/create/work/jiraTitlePolicy.ts";
 import { failPrCli } from "./reviewPostUtils.ts";
 import {
-  printMarkdownPreview,
+  confirmSubmitAfterEditorPreview,
   waitForEnterRetryOrCancel,
-  waitForPostOrCancel,
 } from "./reviewPreview.ts";
 
 export function noCreateConfirmFromEnv(): boolean {
@@ -81,23 +81,31 @@ export async function confirmAndCreatePr(
   workspaceDir: string,
   repoRoot: string,
 ): Promise<void> {
+  let title = parsed.title;
+  let body = parsed.body;
+
   if (!noCreateConfirmFromEnv()) {
-    if (!process.stdout.isTTY || !process.stdin.isTTY) {
-      failPrCli(
-        `${logPrefix} need an interactive TTY to preview, or set PR_CREATE_NO_CONFIRM=1`,
-      );
-      return;
-    }
-    printMarkdownPreview(parsed.title, parsed.body, { enterAction: "create PR" });
-    let choice: "post" | "cancel";
     try {
-      choice = await waitForPostOrCancel("PR_CREATE_NO_CONFIRM=1");
+      const out = await confirmSubmitAfterEditorPreview({
+        logPrefix,
+        initial: { title, body },
+        actionDescription: "create this PR",
+        noConfirmEnvVar: "PR_CREATE_NO_CONFIRM",
+      });
+      if (out === null) {
+        console.error(`${logPrefix} cancelled, not creating PR`);
+        return;
+      }
+      title = out.title;
+      body = out.body;
+      try {
+        assertPrTitleMatchesJiraPolicy(title);
+      } catch (e) {
+        failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
+        return;
+      }
     } catch (e) {
       failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
-      return;
-    }
-    if (choice === "cancel") {
-      console.error(`${logPrefix} cancelled, not creating PR`);
       return;
     }
   } else {
@@ -108,7 +116,7 @@ export async function confirmAndCreatePr(
     process.stdin.isTTY === true && process.stdout.isTTY === true;
 
   for (;;) {
-    if (postPrCreate(parsed.title, parsed.body, repoRoot)) {
+    if (postPrCreate(title, body, repoRoot)) {
       try {
         fs.rmSync(workspaceDir, { recursive: true, force: true });
       } catch {
@@ -118,6 +126,8 @@ export async function confirmAndCreatePr(
     }
     const f = writePrCreateFile({
       ...parsed,
+      title,
+      body,
       lastError: "gh pr create failed (non-zero exit or gh error)",
     });
     console.error(
