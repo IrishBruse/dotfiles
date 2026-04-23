@@ -64,7 +64,7 @@ export function formatPrWorkspaceReadList(
     );
     addIfExists(
       "jira-tickets-board.md",
-      "Jira-tickets board snapshot when the skill is installed (e.g. title rules).",
+      "Board snapshot; full tickets also appear as `{KEY}.md` when copied from the skill `references/`.",
     );
   } else {
     const prLine =
@@ -88,7 +88,7 @@ export function formatPrWorkspaceReadList(
     addIfExists("comments.md", "PR thread + inline comments (path:line, hunks, bodies).");
     addIfExists(
       "jira-tickets-board.md",
-      "Jira-tickets board snapshot when the skill is installed.",
+      "Board snapshot; `{KEY}.md` rows are full ticket copies when present under the skill.",
     );
     for (const name of listJiraKeyMdFiles(workspaceDir)) {
       addIfExists(

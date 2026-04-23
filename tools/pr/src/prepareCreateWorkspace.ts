@@ -9,7 +9,8 @@ const GIT_BUFFER = 100 * 1024 * 1024;
 
 /**
  * Seeds **`diff.patch`** (from `git diff origin/main`), an optional **`PULL_REQUEST_TEMPLATE.md`**,
- * and **`jira-tickets-board.md`** (jira-tickets skill snapshot when installed) at the root of `dir`.
+ * **`jira-tickets-board.md`**, and per-key **`{KEY}.md`** full ticket copies from the jira-tickets skill `references/`
+ * when those files exist (same as review prefetch), at the root of `dir`.
  * **`repoRoot`** is the real Git repo (user cwd); **`dir`** is the agent temp workspace.
  * @returns Current branch name (`HEAD`) for prompts, stderr log, and the **Source branch** line in the agent prompt.
  */

@@ -64,6 +64,23 @@ function resolveTicketRefPath(skillRoot: string, key: string): string | null {
   return null;
 }
 
+/** Copies each `references/{me,team,unassigned}/{KEY}.md` to `{KEY}.md` in `dir` when that file exists. Returns how many were copied. */
+function copyJiraRefFilesForKeys(
+  skillRoot: string,
+  dir: string,
+  keys: string[],
+): number {
+  let copied = 0;
+  for (const key of keys) {
+    const src = resolveTicketRefPath(skillRoot, key);
+    if (src !== null) {
+      fs.copyFileSync(src, path.join(dir, `${key}.md`));
+      copied += 1;
+    }
+  }
+  return copied;
+}
+
 /**
  * For each Jira key in the PR body, copies the skill reference file to `{KEY}.md` in `dir` (exact bytes, no extra headers).
  * Searches `references/me|team/unassigned/{KEY}.md` under the skill root.
@@ -81,14 +98,7 @@ export function writeJiraSkillContext(dir: string, prBody: string): void {
     return;
   }
 
-  let copied = 0;
-  for (const key of keys) {
-    const src = resolveTicketRefPath(skillRoot, key);
-    if (src !== null) {
-      fs.copyFileSync(src, path.join(dir, `${key}.md`));
-      copied += 1;
-    }
-  }
+  const copied = copyJiraRefFilesForKeys(skillRoot, dir, keys);
 
   if (copied === 0) {
     const skillPath = path.join(skillRoot, "SKILL.md");
@@ -97,7 +107,11 @@ export function writeJiraSkillContext(dir: string, prBody: string): void {
   }
 }
 
-/** Snapshot of the jira-tickets skill board (`SKILL.md` body, frontmatter stripped) for agent matching. No-op if skill missing. */
+/**
+ * Snapshot of the jira-tickets skill board (`SKILL.md` body, frontmatter stripped) in **`jira-tickets-board.md`**, and for
+ * every issue key in that text, the full reference ticket file when present at **`references/me|team/unassigned/{KEY}.md`**
+ * copied to **`{KEY}.md`** (same as {@link writeJiraSkillContext}, without the no-reference fallback). No-op if skill missing.
+ */
 export function writeJiraSkillBoardSnapshot(dir: string): void {
   const skillRoot = resolveSkillRoot();
   if (skillRoot === null) {
@@ -109,4 +123,6 @@ export function writeJiraSkillBoardSnapshot(dir: string): void {
   }
   const body = stripYamlFrontmatter(fs.readFileSync(skillPath, "utf8")).trim();
   fs.writeFileSync(path.join(dir, "jira-tickets-board.md"), body + "\n", "utf8");
+  const keys = jiraKeysFromText(body);
+  copyJiraRefFilesForKeys(skillRoot, dir, keys);
 }
