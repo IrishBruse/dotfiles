@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 import { assertPrTitleMatchesJiraPolicy } from "./jiraTitlePolicy.ts";
+import { getPrViewUrl, printPrUrlWithMargins } from "./prViewUrl.ts";
 import { failPrCli } from "./reviewPostUtils.ts";
 import {
   confirmSubmitAfterEditorPreview,
@@ -85,6 +86,10 @@ export async function confirmAndCreatePr(
 
   for (;;) {
     if (postPrCreate(title, body, repoRoot)) {
+      const u = getPrViewUrl({ cwd: repoRoot });
+      if (u) {
+        printPrUrlWithMargins(u);
+      }
       return;
     }
     console.error(

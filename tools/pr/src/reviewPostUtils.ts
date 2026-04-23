@@ -4,6 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
+import { getPrViewUrl, printPrUrlWithMargins } from "./prViewUrl.ts";
 import {
   confirmSubmitAfterEditorPreview,
   waitForEnterRetryOrCancel,
@@ -72,6 +73,10 @@ export async function confirmAndPostReviewComment(
 
   for (;;) {
     if (postPrReviewComment(target, body)) {
+      const u = getPrViewUrl({ target });
+      if (u) {
+        printPrUrlWithMargins(u);
+      }
       return;
     }
     console.error(

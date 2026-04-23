@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 import { assertPrTitleMatchesJiraPolicy } from "./jiraTitlePolicy.ts";
+import { getPrViewUrl, printPrUrlWithMargins } from "./prViewUrl.ts";
 import { failPrCli } from "./reviewPostUtils.ts";
 import {
   confirmSubmitAfterEditorPreview,
@@ -84,6 +85,10 @@ export async function confirmAndApplyPrMetadata(
 
   for (;;) {
     if (postPrMetadataEdit(target, title, body)) {
+      const u = getPrViewUrl({ target });
+      if (u) {
+        printPrUrlWithMargins(u);
+      }
       return;
     }
     console.error(

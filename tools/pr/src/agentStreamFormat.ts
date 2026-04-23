@@ -596,7 +596,7 @@ export class AgentStreamHandler {
         this.lastResult = r;
         const ms = o.duration_ms;
         process.stderr.write(
-          `\n${DIM}finished in ${String(ms)} ms${RST}\n\n`,
+          `\n${DIM}finished in ${String(ms)} ms${RST}\n`,
         );
       }
     }
@@ -614,22 +614,18 @@ export class AgentStreamHandler {
     }
     if (hasTs && !hasMc) {
       if (!this.assistantStreamActive) {
-        process.stderr.write(
-          `\n${DIM}Response${RST}\n` + `${BOLD}│${RST} `,
-        );
+        process.stderr.write(`\n${DIM}Response${RST}\n`);
         this.assistantStreamActive = true;
+        process.stderr.write(text.replace(/^\n+/, ""));
+        return;
       }
       process.stderr.write(text);
       return;
     }
     if (!hasTs) {
       this.endAssistantBlock();
-      process.stderr.write(
-        `\n${DIM}Message${RST}\n` +
-          `  ` +
-          text.split("\n").join("\n  ") +
-          "\n",
-      );
+      const body = text.replace(/^\n+/, "").replace(/\n+$/, "");
+      process.stderr.write(`\n${DIM}Message${RST}\n${body}\n`);
     }
   }
 

@@ -6,25 +6,27 @@ Follow this preamble for any review flow the CLI launches.
 
 ## Requirements
 
-- Use **only** prefetched files in the workspace (table below). No `gh` or GitHub API for PR content.
+- Use **only** the **read** list below (workspace root). No `gh` or GitHub API for PR content. No **`glob`**, `codebase_search`, or `read`ing source files from the real repo, `~/.cursor`, or the jira-tickets skill directory—Jira is only in the prefetched `*.md` files here.
 - **`PR.md`** is the current PR title/description for context—you **replace it entirely** with the review: `#` summary line, blank line, then the full **GitHub review comment** markdown (e.g. `> Reviewed by Cursor` at the top unless policy says otherwise).
 
 ## PR context (prefetched local files)
 
-Your **current working directory** is `{{workspaceDir}}`.
+Your **current working directory** is `{{workspaceDir}}` — a **throwaway copy**; the rest of the repository is not available to tools.
 
-Use these paths at the workspace root. Do not run `gh pr …` again.
+**Read only** these paths **at the workspace root** (if a file is missing, it was not prefetched). Do not search the tree for anything else.
 
-| Path | Contents |
-|------|----------|
-| `commits.txt` | One line per commit: SHA, subject, optional body |
-| `checks.json` | `statusCheckRollup` — CI pass/fail, job names, log URLs |
-| `comments.md` | Inline review comments + PR conversation (path:line, diff hunks, bodies) |
-| `files.json` | Changed files from the PR |
-| `diff.patch` | Full unified diff |
-| `jira-tickets-board.md` | If present: jira-tickets skill board snapshot |
-| `KEY-123.md` | Per Jira key in the PR body: copy from jira-tickets `references/**/{KEY}.md`, or board-only fallback |
-| `PR.md` | **Prefetched** PR text. **Replace entirely** with `# …` review summary + full review comment. Both non-empty when done. |
+| Read                                | Contents                                                                                      |
+| ----------------------------------- | --------------------------------------------------------------------------------------------- |
+| `diff.patch`                        | Full unified diff — primary evidence.                                                         |
+| `files.json`                        | Changed paths in this PR.                                                                     |
+| `PR.md`                             | **Prefetched** PR text. **Replace entirely** with `# …` review summary + full review comment. |
+| `commits.txt`                       | One line per commit: SHA, subject, optional body.                                             |
+| `checks.json`                       | `statusCheckRollup` — CI pass/fail, job names, log URLs.                                      |
+| `comments.md`                       | Inline review + conversation (path:line, hunks, bodies).                                      |
+| `jira-tickets-board.md`             | Only if present — board snapshot.                                                             |
+| `{KEY}.md` (e.g. `NOVACORE-123.md`) | Only if present — per-key ticket context from the CLI prefetch.                               |
+
+Do not run `gh pr …` again.
 
 Parallel subagents share this workspace.
 
@@ -42,9 +44,8 @@ You are running **`pr review`**: first-pass review of the PR above. Complete the
 
 ## 1. Scope
 
-1. **Primary:** PR diff (head vs base).
-2. **Context:** If the diff is small, read full modified files when needed.
-3. **Stay in scope:** Changes this PR introduces; avoid unrelated legacy unless the PR breaks invariants there.
+1. **Primary:** **`diff.patch`** and **`files.json`** (and `PR.md` for stated intent). Do **not** `read` files from the product repo; the diff is the code window you get.
+2. **Stay in scope:** Changes this PR introduces; do not chase unrelated code outside the diff unless you infer a risk only from the patch text.
 
 ## 2. Parallel subagents (read-only)
 

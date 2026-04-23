@@ -15,16 +15,19 @@ You are running **`pr create`**: open a new GitHub PR from the **current branch*
 
 ## Create context (prefetched local files)
 
-Your **current working directory** is `{{workspaceDir}}`.
+Your **current working directory** is `{{workspaceDir}}` — a **throwaway copy**; nothing else from the real repo is mirrored here.
 
-Use these files at the workspace root. Do not run `gh pr …` (no PR yet). Facts about the change come from **`diff.patch`**, not the branch name or template alone.
+**Read only** these paths **at the workspace root** (if a file is missing, it was not prefetched—do not go find it). Do not **`glob`**, list, or `read` any other path (including the real `{{repoRoot}}` tree, `~/.cursor`, or skills on disk). All facts come from the files below; there is no other discoverable content.
 
-| Path | Contents |
-|------|----------|
-| `diff.patch` | `git diff origin/main` — **source of truth** for what will ship |
-| `jira-tickets-board.md` | If present: jira-tickets skill board snapshot (NOVACORE title rules when work policy applies) |
-| `PULL_REQUEST_TEMPLATE.md` | Repo template if any; mirror its structure in **PR.md** body |
-| `PR.md` | **You write:** `# <title>`, blank line, full body. Both non-empty. |
+| Read                       | When                                                                                                              |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `diff.patch`               | Always — `git diff origin/main`; **source of truth** for what will ship.                                          |
+| `PULL_REQUEST_TEMPLATE.md` | Only if the file exists here — copy of the repo’s PR template when the CLI found one.                             |
+| `jira-tickets-board.md`    | Only if the file exists — jira-tickets skill board snapshot (e.g. NOVACORE title rules when work policy applies). |
+
+**You write (only):** `PR.md` at the same root: `# <title>`, blank line, full body. Both non-empty.
+
+Do not run `gh pr …` (no PR yet). Facts about the change come from **`diff.patch`**, not the branch name or template alone.
 
 Parallel subagents share this workspace.
 

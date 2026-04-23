@@ -4,34 +4,30 @@ You are running **`pr update`**: refresh an existing PR’s **title** and **body
 
 - Use the **prefetched files** below. Do not re-fetch with `gh` or the API.
 
-**Source of truth:** If sources disagree on *what changed*, **`diff.patch`** then **`files.json`** win. Use **`PR.md`** for narrative, template sections, and links. Use **`commits.txt`** only when it matches the diff. If **`files.json`** and **`diff.patch`** disagree on behavior, trust **`diff.patch`**.
+**Source of truth:** If sources disagree on _what changed_, **`diff.patch`** then **`files.json`** win. Use **`PR.md`** for narrative, template sections, and links. Use **`commits.txt`** only when it matches the diff. If **`files.json`** and **`diff.patch`** disagree on behavior, trust **`diff.patch`**. If `{KEY}.md` exists, align body scope/acceptance with the ticket; otherwise use **`jira-tickets-board.md`** (if any) for key wording only.
 
-- **`checks.json`:** Mention CI only when it adds signal (failures, follow-ups, stale claims). No raw JSON dumps.
-- **`commits.txt`:** Align the commit story; never assert behavior the diff contradicts.
-- **`KEY-123.md`:** Align body scope/acceptance with the ticket.
-- **`comments.md`:** Reflect review briefly if useful; don’t paste threads.
-- **`PR.md`:** Current title and body—keep what’s still true; revise where the diff or review demands.
-
-When refreshing the **body**, follow **`PULL_REQUEST_TEMPLATE.md`** if the repo has one; otherwise use the default layout below (reconcile with **`diff.patch`**, review, and `PR.md` as needed).
+When refreshing the **body**, use the default layout below unless the current **`PR.md`** (or a repo template described there) already defines sections—reconcile with **`diff.patch`**, `comments.md`, and **`PR.md`**; this workspace has **no** separate copy of the host repo’s `PULL_REQUEST_TEMPLATE.md` unless the prefetched `PR.md` text itself references that structure.
 
 {{defaultPrBodyInstructions}}
 
 ## PR context (prefetched local files)
 
-Your **current working directory** is `{{workspaceDir}}`.
+Your **current working directory** is `{{workspaceDir}}` — a **throwaway copy**; the host repository tree is not browsable from here.
 
-Use these paths at the workspace root. Do not run `gh pr …` again. When unsure *what changed*, trust **`diff.patch`** (then **`files.json`**) over **`PR.md`** / **`commits.txt`**.
+**Read only** these paths **at the workspace root** (if a file is missing, it was not prefetched—do not search for it). Do not **`glob`**, `grep` the whole tree, `codebase_search`, or `read` paths under the real project, `~/.cursor`, or skills on disk. Jira context is only what appears in the listed files, not the live jira-tickets skill folder.
 
-| Path | Contents |
-|------|----------|
-| `commits.txt` | One line per commit: SHA, subject, optional body |
-| `checks.json` | `statusCheckRollup` — CI pass/fail, job names, log URLs |
-| `comments.md` | Inline review comments + PR conversation (path:line, diff hunks, bodies) |
-| `files.json` | Changed files from the PR |
-| `diff.patch` | Full unified diff |
-| `jira-tickets-board.md` | If present: jira-tickets skill board snapshot |
-| `KEY-123.md` | Per Jira key in the PR body: copy from jira-tickets `references/**/{KEY}.md`, or board-only fallback |
-| `PR.md` | **Prefetched** current PR. **Replace** entirely with `# <title>` and new body; both non-empty when done. |
+| Read                                | When                                                                                                                                        |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `diff.patch`                        | Always — full unified diff; top authority for _what the code does_.                                                                         |
+| `files.json`                        | Always — changed paths for this PR.                                                                                                         |
+| `PR.md`                             | Always — current title and body; **replace** entirely when done.                                                                            |
+| `commits.txt`                       | Always — one line per commit.                                                                                                               |
+| `checks.json`                       | Always — `statusCheckRollup` (CI).                                                                                                          |
+| `comments.md`                       | Always — review + inline comments.                                                                                                          |
+| `jira-tickets-board.md`             | Only if the file exists — board snapshot.                                                                                                   |
+| `{KEY}.md` (e.g. `NOVACORE-123.md`) | Only if the file exists — one per Jira key the CLI could resolve; if missing, `jira-tickets-board.md` (if any) is the only extra Jira help. |
+
+When unsure _what changed_, trust **`diff.patch`** (then **`files.json`**) over **`PR.md`** / **`commits.txt`**. In **`comments.md`**, use review signal briefly; don’t paste whole threads. For **`checks.json`**, mention CI only when it adds real signal (not raw JSON dumps). **`commits.txt`** is narrative-only if it still matches the diff.
 
 Parallel subagents share this workspace.
 
