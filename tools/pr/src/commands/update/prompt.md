@@ -12,20 +12,11 @@ When refreshing the **body**, use the default layout below unless the current **
 
 ## PR context (prefetched local files)
 
-Your **current working directory** is `{{workspaceDir}}` — a **throwaway copy**; the host repository tree is not browsable from here.
+Your **current working directory** is `{{workspaceDir}}` — a **throwaway copy**; the host repository tree is not browsable from here. The table under **Read-only paths** is generated from disk; if a name is absent, that file was not prefetched. Jira help is only from rows that appear (and `jira-tickets-board.md` / `{KEY}.md` when present), not the live skill folder on disk.
 
-**Read only** these paths **at the workspace root** (if a file is missing, it was not prefetched—do not search for it). Do not **`glob`**, `grep` the whole tree, `codebase_search`, or `read` paths under the real project, `~/.cursor`, or skills on disk. Jira context is only what appears in the listed files, not the live jira-tickets skill folder.
+## Read-only paths
 
-| Read                                | When                                                                                                                                        |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `diff.patch`                        | Always — full unified diff; top authority for _what the code does_.                                                                         |
-| `files.json`                        | Always — changed paths for this PR.                                                                                                         |
-| `PR.md`                             | Always — current title and body; **replace** entirely when done.                                                                            |
-| `commits.txt`                       | Always — one line per commit.                                                                                                               |
-| `checks.json`                       | Always — `statusCheckRollup` (CI).                                                                                                          |
-| `comments.md`                       | Always — review + inline comments.                                                                                                          |
-| `jira-tickets-board.md`             | Only if the file exists — board snapshot.                                                                                                   |
-| `{KEY}.md` (e.g. `NOVACORE-123.md`) | Only if the file exists — one per Jira key the CLI could resolve; if missing, `jira-tickets-board.md` (if any) is the only extra Jira help. |
+{{files}}
 
 When unsure _what changed_, trust **`diff.patch`** (then **`files.json`**) over **`PR.md`** / **`commits.txt`**. In **`comments.md`**, use review signal briefly; don’t paste whole threads. For **`checks.json`**, mention CI only when it adds real signal (not raw JSON dumps). **`commits.txt`** is narrative-only if it still matches the diff.
 

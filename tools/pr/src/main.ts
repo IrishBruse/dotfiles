@@ -28,7 +28,12 @@ export function main(argv: string[]): void {
     return;
   }
 
-  const inferOnlyFlags = new Set(["--print-prompt", "--opus", "--codex"]);
+  const inferOnlyFlags = new Set([
+    "--print-prompt",
+    "--no-agent",
+    "--opus",
+    "--codex",
+  ]);
   if (args.length > 0 && args.every((a) => inferOnlyFlags.has(a))) {
     inferAndRun(args);
     return;

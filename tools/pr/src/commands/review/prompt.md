@@ -6,25 +6,16 @@ Follow this preamble for any review flow the CLI launches.
 
 ## Requirements
 
-- Use **only** the **read** list below (workspace root). No `gh` or GitHub API for PR content. No **`glob`**, `codebase_search`, or `read`ing source files from the real repo, `~/.cursor`, or the jira-tickets skill directory—Jira is only in the prefetched `*.md` files here.
-- **`PR.md`** is the current PR title/description for context—you **replace it entirely** with the review: `#` summary line, blank line, then the full **GitHub review comment** markdown (e.g. `> Reviewed by Cursor` at the top unless policy says otherwise).
+- Use **only** the read-only table below; it is built from the files that exist in the workspace (column **What** is fixed copy; **File** is dynamic). No `gh` or GitHub API for PR content. No **`glob`**, `codebase_search`, or `read`ing source files from the real repo, `~/.cursor`, or the jira-tickets skill install—only rows that appear.
+- After reading them, you **replace `PR.md` entirely** with the review: `#` summary line, blank line, then the full **GitHub review comment** markdown (e.g. `> Reviewed by Cursor` at the top unless policy says otherwise).
 
 ## PR context (prefetched local files)
 
 Your **current working directory** is `{{workspaceDir}}` — a **throwaway copy**; the rest of the repository is not available to tools.
 
-**Read only** these paths **at the workspace root** (if a file is missing, it was not prefetched). Do not search the tree for anything else.
+## Read-only paths
 
-| Read                                | Contents                                                                                      |
-| ----------------------------------- | --------------------------------------------------------------------------------------------- |
-| `diff.patch`                        | Full unified diff — primary evidence.                                                         |
-| `files.json`                        | Changed paths in this PR.                                                                     |
-| `PR.md`                             | **Prefetched** PR text. **Replace entirely** with `# …` review summary + full review comment. |
-| `commits.txt`                       | One line per commit: SHA, subject, optional body.                                             |
-| `checks.json`                       | `statusCheckRollup` — CI pass/fail, job names, log URLs.                                      |
-| `comments.md`                       | Inline review + conversation (path:line, hunks, bodies).                                      |
-| `jira-tickets-board.md`             | Only if present — board snapshot.                                                             |
-| `{KEY}.md` (e.g. `NOVACORE-123.md`) | Only if present — per-key ticket context from the CLI prefetch.                               |
+{{files}}
 
 Do not run `gh pr …` again.
 

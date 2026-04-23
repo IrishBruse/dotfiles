@@ -7,6 +7,7 @@ import {
   loadReviewWorkPromptAppendix,
   loadUpdateWorkPromptAppendix,
 } from "../jiraTitlePolicy.ts";
+import { formatPrWorkspaceReadList } from "../prPromptWorkspaceFiles.ts";
 
 const commandsDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -43,9 +44,10 @@ export type CreatePromptVars = {
 };
 
 export function loadCreateAgentPrompt(vars: CreatePromptVars): string {
+  const files = formatPrWorkspaceReadList(vars.workspaceDir, "create");
   return loadAgentPrompt(
     "create",
-    { ...vars, defaultPrBodyInstructions },
+    { ...vars, defaultPrBodyInstructions, files },
     loadCreateWorkPromptAppendix,
   );
 }
@@ -56,9 +58,10 @@ export type UpdatePromptVars = {
 };
 
 export function loadUpdateAgentPrompt(vars: UpdatePromptVars): string {
+  const files = formatPrWorkspaceReadList(vars.workspaceDir, "update");
   return loadAgentPrompt(
     "update",
-    { ...vars, defaultPrBodyInstructions },
+    { ...vars, defaultPrBodyInstructions, files },
     loadUpdateWorkPromptAppendix,
   );
 }
@@ -69,5 +72,10 @@ export type ReviewPromptVars = {
 };
 
 export function loadReviewAgentPrompt(vars: ReviewPromptVars): string {
-  return loadAgentPrompt("review", vars, loadReviewWorkPromptAppendix);
+  const files = formatPrWorkspaceReadList(vars.workspaceDir, "review");
+  return loadAgentPrompt(
+    "review",
+    { ...vars, files },
+    loadReviewWorkPromptAppendix,
+  );
 }

@@ -14,7 +14,8 @@ import {
 } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
 import { takeModelFlags } from "../../modelFlags.ts";
-import { takePrintPromptFlag } from "../../printPromptFlag.ts";
+import { seedNoAgentPrReviewStub } from "../../noAgentPrStub.ts";
+import { takeNoAgentFlag, takePrintPromptFlag } from "../../printPromptFlag.ts";
 import { loadReviewAgentPrompt } from "../agentPrompts.ts";
 
 export function runReview(args: string[]): void {
@@ -26,10 +27,11 @@ export function runReview(args: string[]): void {
 
 async function runReviewAsync(args: string[]): Promise<void> {
   const { rest: a0, printPrompt } = takePrintPromptFlag(args);
+  const { rest: a1, noAgent } = takeNoAgentFlag(a0);
   let rest: string[];
   let model: string;
   try {
-    ({ rest, model } = takeModelFlags(a0));
+    ({ rest, model } = takeModelFlags(a1));
   } catch (e) {
     failPrCli(e instanceof Error ? e.message : String(e));
     return;
@@ -75,13 +77,22 @@ async function runReviewAsync(args: string[]): Promise<void> {
     return;
   }
 
-  try {
-    await runAgentPrint(prompt, { cwd: workspaceDir, model });
-  } catch (e) {
-    failPrCli(
-      e instanceof Error ? e.message : `pr review: agent failed: ${String(e)}`,
+  if (noAgent) {
+    console.error(
+      "pr review: --no-agent — skipping Cursor agent; filling PR.md with a review stub for you to edit.",
     );
-    return;
+    seedNoAgentPrReviewStub(workspaceDir);
+  } else {
+    try {
+      await runAgentPrint(prompt, { cwd: workspaceDir, model });
+    } catch (e) {
+      failPrCli(
+        e instanceof Error
+          ? e.message
+          : `pr review: agent failed: ${String(e)}`,
+      );
+      return;
+    }
   }
 
   try {

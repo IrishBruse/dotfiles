@@ -19,6 +19,8 @@ export function printHelp(): void {
       "Options:",
       "  --print-prompt   After workspace prefetch, print the full resolved agent prompt to stdout and exit",
       "                   (no agent). Combinable with --opus / --codex. With no subcommand, same flags infer create|update.",
+      "  --no-agent       Prepare the workspace the same way, but do not run the Cursor agent. create/review",
+      "                   write a small stub PR.md for you to edit; update uses the prefetched PR.md only.",
       "  --opus           Run the Cursor agent with the Opus model (claude-opus-4-7-high).",
       "  --codex          Run with Codex 5.3 (gpt-5.3-codex).",
       "  (default model)  If neither is set, uses composer-2-fast (agent --list-models).",

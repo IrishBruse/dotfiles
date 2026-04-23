@@ -13,7 +13,7 @@ import { confirmAndApplyPrMetadata } from "../../prEditPostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
 import { takeModelFlags } from "../../modelFlags.ts";
-import { takePrintPromptFlag } from "../../printPromptFlag.ts";
+import { takeNoAgentFlag, takePrintPromptFlag } from "../../printPromptFlag.ts";
 import { assertPrTitleMatchesJiraPolicy } from "../../jiraTitlePolicy.ts";
 import { loadUpdateAgentPrompt } from "../agentPrompts.ts";
 
@@ -56,10 +56,11 @@ export function runUpdate(args: string[]): void {
 
 async function runUpdateAsync(args: string[]): Promise<void> {
   const { rest: a0, printPrompt } = takePrintPromptFlag(args);
+  const { rest: a1, noAgent } = takeNoAgentFlag(a0);
   let rest: string[];
   let model: string;
   try {
-    ({ rest, model } = takeModelFlags(a0));
+    ({ rest, model } = takeModelFlags(a1));
   } catch (e) {
     failPrCli(e instanceof Error ? e.message : String(e));
     return;
@@ -108,13 +109,19 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     return;
   }
 
-  try {
-    await runAgentPrint(prompt, { cwd: workspaceDir, model });
-  } catch (e) {
-    failPrCli(
-      e instanceof Error ? e.message : `pr update: agent failed: ${String(e)}`,
-    );
-    return;
+  if (noAgent) {
+    console.error("pr update: --no-agent — skipping Cursor agent; edit PR.md in the next step.");
+  } else {
+    try {
+      await runAgentPrint(prompt, { cwd: workspaceDir, model });
+    } catch (e) {
+      failPrCli(
+        e instanceof Error
+          ? e.message
+          : `pr update: agent failed: ${String(e)}`,
+      );
+      return;
+    }
   }
 
   let parsed: ReturnType<typeof readAgentPrMarkdown>;
