@@ -4,6 +4,9 @@ export const PRINT_PROMPT_FLAG = "--print-prompt";
 /** Prefetch workspace and edit flow as usual, but do not run the Cursor agent. */
 export const NO_AGENT_FLAG = "--no-agent";
 
+/** Print the agent workspace path on stderr; otherwise the path is not logged. */
+export const PRINT_WORKSPACE_DIR_FLAG = "--dir";
+
 function takeFlag(args: string[], flag: string): { rest: string[]; on: boolean } {
   const on = args.includes(flag);
   const rest = on ? args.filter((a) => a !== flag) : args;
@@ -24,4 +27,12 @@ export function takeNoAgentFlag(args: string[]): {
 } {
   const { rest, on } = takeFlag(args, NO_AGENT_FLAG);
   return { rest, noAgent: on };
+}
+
+export function takePrintWorkspaceDirFlag(args: string[]): {
+  rest: string[];
+  printWorkspaceDir: boolean;
+} {
+  const { rest, on } = takeFlag(args, PRINT_WORKSPACE_DIR_FLAG);
+  return { rest, printWorkspaceDir: on };
 }

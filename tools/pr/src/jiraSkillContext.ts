@@ -53,6 +53,33 @@ function jiraKeysFromText(text: string): string[] {
   return out;
 }
 
+/** At most one key from the title line (first match in `title` only). */
+function jiraKeyFromTitle(title: string): string | undefined {
+  return jiraKeysFromText(title)[0];
+}
+
+/**
+ * First key from `prTitle` (if any) plus all keys in `prBody` in order, deduped.
+ * Title key wins first so a body mention of the same key does not reorder.
+ */
+function jiraRefKeysForTitleAndBody(prTitle: string, prBody: string): string[] {
+  const fromTitle = jiraKeyFromTitle(prTitle);
+  const fromBody = jiraKeysFromText(prBody);
+  const out: string[] = [];
+  const seen = new Set<string>();
+  if (fromTitle !== undefined) {
+    out.push(fromTitle);
+    seen.add(fromTitle);
+  }
+  for (const k of fromBody) {
+    if (!seen.has(k)) {
+      seen.add(k);
+      out.push(k);
+    }
+  }
+  return out;
+}
+
 function resolveTicketRefPath(skillRoot: string, key: string): string | null {
   const subdirs = ["me", "team", "unassigned"] as const;
   for (const sub of subdirs) {
@@ -82,13 +109,19 @@ function copyJiraRefFilesForKeys(
 }
 
 /**
- * For each Jira key in the PR body, copies the skill reference file to `{KEY}.md` in `dir` (exact bytes, no extra headers).
- * Searches `references/me|team/unassigned/{KEY}.md` under the skill root.
- * If no reference file exists for any key, writes `{firstKey}.md` with the skill `SKILL.md` body only (frontmatter stripped).
- * No network; skips silently if no keys or no skill on disk.
+ * Copies full ticket files from the jira-tickets skill for: the **first** Jira key in **`prTitle`** (e.g. GitHub PR
+ * title) if any, **plus** every distinct key in **`prBody`**, in that order. Does **not** copy every key that appears
+ * on `jira-tickets-board.md` — that file is for context only. For **`pr create`**, pass the current **branch** as
+ * `prTitle` and an optional **template** body. Searches `references/{me,team,unassigned}/{KEY}.md`. If at least one
+ * key was expected but no reference file exists for any, writes `{firstKey}.md` with the skill `SKILL.md` body
+ * (frontmatter stripped). No network; no-op if no keys or no skill on disk.
  */
-export function writeJiraSkillContext(dir: string, prBody: string): void {
-  const keys = jiraKeysFromText(prBody);
+export function writeJiraSkillContext(
+  dir: string,
+  prTitle: string,
+  prBody: string,
+): void {
+  const keys = jiraRefKeysForTitleAndBody(prTitle, prBody);
   if (keys.length === 0) {
     return;
   }
@@ -107,11 +140,7 @@ export function writeJiraSkillContext(dir: string, prBody: string): void {
   }
 }
 
-/**
- * Snapshot of the jira-tickets skill board (`SKILL.md` body, frontmatter stripped) in **`jira-tickets-board.md`**, and for
- * every issue key in that text, the full reference ticket file when present at **`references/me|team/unassigned/{KEY}.md`**
- * copied to **`{KEY}.md`** (same as {@link writeJiraSkillContext}, without the no-reference fallback). No-op if skill missing.
- */
+/** Snapshot of the jira-tickets skill board (`SKILL.md` body, frontmatter stripped) as **`jira-tickets-board.md`**. No-op if skill missing. */
 export function writeJiraSkillBoardSnapshot(dir: string): void {
   const skillRoot = resolveSkillRoot();
   if (skillRoot === null) {
@@ -123,6 +152,4 @@ export function writeJiraSkillBoardSnapshot(dir: string): void {
   }
   const body = stripYamlFrontmatter(fs.readFileSync(skillPath, "utf8")).trim();
   fs.writeFileSync(path.join(dir, "jira-tickets-board.md"), body + "\n", "utf8");
-  const keys = jiraKeysFromText(body);
-  copyJiraRefFilesForKeys(skillRoot, dir, keys);
 }

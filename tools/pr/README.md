@@ -22,13 +22,13 @@ The agent cwd is a **stable directory** under the OS temp tree: **`<tmpdir>/pr-c
 
 In that workspace the agent writes **`PR.md`** (`# Title`, blank line, body). For **`pr update`** / **`pr review`**, the CLI prefetches the PR into **`PR.md`** first; the agent overwrites it. The CLI opens **`PR.md`** in VS Code (`code --wait`), then **`[y/N]`** before **`gh pr create`**, **`gh pr edit`**, or **`gh pr review --comment`**. The first `# …` line is the title; the rest is the body.
 
-Jira: with the **jira-tickets** skill at **`<dotfiles>/.agents/skills/jira-tickets`** or **`~/.agents/skills/jira-tickets`**, the CLI writes **`jira-tickets-board.md`** (a snapshot of **`SKILL.md`**) and copies each full ticket file from **`references/{me,team,unassigned}/<KEY>.md`** into **`{KEY}.md`** for every issue key that appears on that board (no Jira API). For **review** / **update**, keys in the PR body get the same treatment (if a key has no reference file, review flow may still drop a board-only fallback into **`{KEY}.md`** as before).
+Jira: with the **jira-tickets** skill at **`<dotfiles>/.agents/skills/jira-tickets`** or **`~/.agents/skills/jira-tickets`**, the CLI writes **`jira-tickets-board.md`** (a snapshot of **`SKILL.md`**) and copies full ticket files from **`references/{me,team,unassigned}/<KEY>.md`** into **`{KEY}.md`** only for the **first** Jira key in the **PR title** (on **update** / **review**) or the **branch name** (on **create**), **plus** any other keys found in the **PR body** (or in the **host PR template** on **create**). Not every ticket listed on the board. If expected keys have no on-disk reference, the CLI may still write a board-text fallback to **`{KEY}.md`** as before (no Jira API).
 
 **Work:** set **`PR_CLI_WORK=true`**. Each subcommand appends work-only markdown beside its **`prompt.md`**: **`create/prompt.work.md`**, **`update/prompt.work.md`**, **`review/prompt.work.md`**. **`pr create`** / **`pr update`** require the PR title to begin with **`NOVACORE-<digits>`** (after the agent and again after you edit **`PR.md`**). Unset at home — no check.
 
 ## Commands
 
-- **`pr`** — Prints **`update`** or **`create`** on the first line of stdout, then runs **`pr update`** if this branch has an open PR, else **`pr create`**. (Use **`pr review`** explicitly; the default never picks review.)
-- **`pr review <pr>`** — Agent review → preview → post comment.
+- **`pr`** — Prints **`update`** or **`create`** on the first line and runs that command when there is no subcommand (open PR on branch → update; else create). If the first argument is a **GitHub PR URL** (`…/pull/<number>…`), prints **`review`** and runs **`pr review <url>`** (same as the **`review`** command).
+- **`pr review <pr>`** — Agent review → preview → post comment (`<pr>` is a number, URL, or branch; **`gh`-compatible).
 - **`pr update [<pr>]`** — Refresh title/body; PR optional if **`gh pr view`** resolves one.
 - **`pr create`** — New PR from current branch (`git diff origin/main` and optional jira-tickets board + per-ticket **`*.md`** in workspace).

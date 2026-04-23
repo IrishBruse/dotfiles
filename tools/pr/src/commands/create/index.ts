@@ -13,13 +13,17 @@ import { failPrCli } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
 import { takeModelFlags } from "../../modelFlags.ts";
 import { seedNoAgentPrCreateStub } from "../../noAgentPrStub.ts";
-import { takeNoAgentFlag, takePrintPromptFlag } from "../../printPromptFlag.ts";
+import {
+  takeNoAgentFlag,
+  takePrintPromptFlag,
+  takePrintWorkspaceDirFlag,
+} from "../../printPromptFlag.ts";
 import { assertPrTitleMatchesJiraPolicy } from "../../jiraTitlePolicy.ts";
 import { loadCreateAgentPrompt } from "../agentPrompts.ts";
 
 export function runCreate(args: string[]): void {
   void runCreateAsync(args).catch((e) => {
-    console.error(e instanceof Error ? e.message : `pr create: ${String(e)}`);
+    console.error(e instanceof Error ? e.message : String(e));
     process.exitCode = 1;
   });
 }
@@ -27,23 +31,19 @@ export function runCreate(args: string[]): void {
 async function runCreateAsync(args: string[]): Promise<void> {
   const { rest: a0, printPrompt } = takePrintPromptFlag(args);
   const { rest: a1, noAgent } = takeNoAgentFlag(a0);
+  const { rest: a2, printWorkspaceDir } = takePrintWorkspaceDirFlag(a1);
   let rest: string[];
   let model: string;
   try {
-    ({ rest, model } = takeModelFlags(a1));
+    ({ rest, model } = takeModelFlags(a2));
   } catch (e) {
     failPrCli(e instanceof Error ? e.message : String(e));
     return;
   }
-  if (rest.length > 0) {
-    console.log("pr create: extra args (ignored):", rest.join(" "));
-  }
-
   const repoRoot = getGitRepoRoot(process.cwd());
   const branchForWorkspace = readCurrentBranch(repoRoot);
   const workspaceDir = preparePrAgentWorkspace(repoRoot, branchForWorkspace);
-  logAgentWorkspacePreamble(workspaceDir);
-  console.error(`pr create: repo (gh pr create cwd): ${repoRoot}`);
+  logAgentWorkspacePreamble(workspaceDir, printWorkspaceDir);
 
   let branch: string;
   try {
@@ -57,8 +57,6 @@ async function runCreateAsync(args: string[]): Promise<void> {
     return;
   }
 
-  console.error(`pr create: branch: ${branch}`);
-
   const prompt = loadCreateAgentPrompt({
     branch,
     repoRoot,
@@ -71,7 +69,6 @@ async function runCreateAsync(args: string[]): Promise<void> {
   }
 
   if (noAgent) {
-    console.error("pr create: --no-agent — skipping Cursor agent; edit stub PR.md next.");
     seedNoAgentPrCreateStub(workspaceDir);
   } else {
     try {

@@ -13,7 +13,11 @@ import { confirmAndApplyPrMetadata } from "../../prEditPostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
 import { takeModelFlags } from "../../modelFlags.ts";
-import { takeNoAgentFlag, takePrintPromptFlag } from "../../printPromptFlag.ts";
+import {
+  takeNoAgentFlag,
+  takePrintPromptFlag,
+  takePrintWorkspaceDirFlag,
+} from "../../printPromptFlag.ts";
 import { assertPrTitleMatchesJiraPolicy } from "../../jiraTitlePolicy.ts";
 import { loadUpdateAgentPrompt } from "../agentPrompts.ts";
 
@@ -49,7 +53,7 @@ function resolveUpdatePrTarget(explicit: string | undefined): string {
 
 export function runUpdate(args: string[]): void {
   void runUpdateAsync(args).catch((e) => {
-    console.error(e instanceof Error ? e.message : `pr update: ${String(e)}`);
+    console.error(e instanceof Error ? e.message : String(e));
     process.exitCode = 1;
   });
 }
@@ -57,10 +61,11 @@ export function runUpdate(args: string[]): void {
 async function runUpdateAsync(args: string[]): Promise<void> {
   const { rest: a0, printPrompt } = takePrintPromptFlag(args);
   const { rest: a1, noAgent } = takeNoAgentFlag(a0);
+  const { rest: a2, printWorkspaceDir } = takePrintWorkspaceDirFlag(a1);
   let rest: string[];
   let model: string;
   try {
-    ({ rest, model } = takeModelFlags(a1));
+    ({ rest, model } = takeModelFlags(a2));
   } catch (e) {
     failPrCli(e instanceof Error ? e.message : String(e));
     return;
@@ -73,10 +78,6 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     return;
   }
 
-  if (rest.length > 1) {
-    console.log("pr update: extra args (ignored):", rest.slice(1).join(" "));
-  }
-
   let workspaceDir: string;
   try {
     const repoRoot = getGitRepoRoot(process.cwd());
@@ -86,7 +87,7 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     failPrCli(e instanceof Error ? e.message : `pr update: ${String(e)}`);
     return;
   }
-  logAgentWorkspacePreamble(workspaceDir);
+  logAgentWorkspacePreamble(workspaceDir, printWorkspaceDir);
 
   try {
     await populateReviewWorkspace(workspaceDir, target);
@@ -109,9 +110,7 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     return;
   }
 
-  if (noAgent) {
-    console.error("pr update: --no-agent — skipping Cursor agent; edit PR.md in the next step.");
-  } else {
+  if (!noAgent) {
     try {
       await runAgentPrint(prompt, { cwd: workspaceDir, model });
     } catch (e) {

@@ -3,6 +3,23 @@ import { spawnSync } from "node:child_process";
 import { runCreate } from "./commands/create/index.ts";
 import { runUpdate } from "./commands/update/index.ts";
 
+/**
+ * True for browser-style PR links: path contains `/pull/<digits>`. Works for github.com and GitHub
+ * Enterprise hosts.
+ */
+export function looksLikeGitHubPullRequestUrl(s: string): boolean {
+  const t = s.trim();
+  if (t === "" || t.startsWith("-")) {
+    return false;
+  }
+  try {
+    const u = new URL(t);
+    return /\/pull\/\d+(\/|$|\?|#)/.test(u.pathname);
+  } catch {
+    return false;
+  }
+}
+
 function currentBranchHasOpenPr(): boolean {
   const result = spawnSync(
     "gh",

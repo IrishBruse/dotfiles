@@ -14,12 +14,16 @@ import {
 import { runAgentPrint } from "../../runAgentPrint.ts";
 import { takeModelFlags } from "../../modelFlags.ts";
 import { seedNoAgentPrReviewStub } from "../../noAgentPrStub.ts";
-import { takeNoAgentFlag, takePrintPromptFlag } from "../../printPromptFlag.ts";
+import {
+  takeNoAgentFlag,
+  takePrintPromptFlag,
+  takePrintWorkspaceDirFlag,
+} from "../../printPromptFlag.ts";
 import { loadReviewAgentPrompt } from "../agentPrompts.ts";
 
 export function runReview(args: string[]): void {
   void runReviewAsync(args).catch((e) => {
-    console.error(e instanceof Error ? e.message : `pr review: ${String(e)}`);
+    console.error(e instanceof Error ? e.message : String(e));
     process.exitCode = 1;
   });
 }
@@ -27,10 +31,11 @@ export function runReview(args: string[]): void {
 async function runReviewAsync(args: string[]): Promise<void> {
   const { rest: a0, printPrompt } = takePrintPromptFlag(args);
   const { rest: a1, noAgent } = takeNoAgentFlag(a0);
+  const { rest: a2, printWorkspaceDir } = takePrintWorkspaceDirFlag(a1);
   let rest: string[];
   let model: string;
   try {
-    ({ rest, model } = takeModelFlags(a1));
+    ({ rest, model } = takeModelFlags(a2));
   } catch (e) {
     failPrCli(e instanceof Error ? e.message : String(e));
     return;
@@ -40,10 +45,6 @@ async function runReviewAsync(args: string[]): Promise<void> {
     failPrCli("pr review: expected a pull request URL or number");
     return;
   }
-  if (rest.length > 1) {
-    console.log("pr review: extra args (ignored):", rest.slice(1).join(" "));
-  }
-
   let workspaceDir: string;
   try {
     const repoRoot = getGitRepoRoot(process.cwd());
@@ -53,7 +54,7 @@ async function runReviewAsync(args: string[]): Promise<void> {
     failPrCli(e instanceof Error ? e.message : `pr review: ${String(e)}`);
     return;
   }
-  logAgentWorkspacePreamble(workspaceDir);
+  logAgentWorkspacePreamble(workspaceDir, printWorkspaceDir);
 
   try {
     await populateReviewWorkspace(workspaceDir, target);
@@ -77,9 +78,6 @@ async function runReviewAsync(args: string[]): Promise<void> {
   }
 
   if (noAgent) {
-    console.error(
-      "pr review: --no-agent — skipping Cursor agent; filling PR.md with a review stub for you to edit.",
-    );
     seedNoAgentPrReviewStub(workspaceDir);
   } else {
     try {

@@ -2,15 +2,18 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
-import { writeJiraSkillBoardSnapshot } from "./jiraSkillContext.ts";
+import {
+  writeJiraSkillBoardSnapshot,
+  writeJiraSkillContext,
+} from "./jiraSkillContext.ts";
 import { clearPrAgentWorkspaceDir, readCurrentBranch } from "./prAgentWorkspace.ts";
 
 const GIT_BUFFER = 100 * 1024 * 1024;
 
 /**
  * Seeds **`diff.patch`** (from `git diff origin/main`), an optional **`PULL_REQUEST_TEMPLATE.md`**,
- * **`jira-tickets-board.md`**, and per-key **`{KEY}.md`** full ticket copies from the jira-tickets skill `references/`
- * when those files exist (same as review prefetch), at the root of `dir`.
+ * **`jira-tickets-board.md`**, and **`{KEY}.md`** ticket copies for the first key in the **branch name** plus any keys
+ * in the host **PR template** (if any), at the root of `dir`. Same title+body rule as review/update prefetch.
  * **`repoRoot`** is the real Git repo (user cwd); **`dir`** is the agent temp workspace.
  * @returns Current branch name (`HEAD`) for prompts, stderr log, and the **Source branch** line in the agent prompt.
  */
@@ -35,13 +38,16 @@ export function populateCreateWorkspace(dir: string, repoRoot: string): string {
       path.join(repoRoot, ".github", "pull_request_template.md"),
       path.join(repoRoot, "docs", "pull_request_template.md"),
     ];
+    let templateText = "";
     for (const p of templateCandidates) {
       if (fs.existsSync(p)) {
         fs.copyFileSync(p, path.join(dir, "PULL_REQUEST_TEMPLATE.md"));
+        templateText = fs.readFileSync(p, "utf8");
         break;
       }
     }
     writeJiraSkillBoardSnapshot(dir);
+    writeJiraSkillContext(dir, branch, templateText);
     return branch;
   } catch (e) {
     try {

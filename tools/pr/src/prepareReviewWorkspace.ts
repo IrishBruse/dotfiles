@@ -124,7 +124,7 @@ export async function populateReviewWorkspace(
     writeFilesChangedTxt(dir, filesRaw);
     writeChecksSummaryTxt(dir, checksRaw);
 
-    writeJiraSkillContext(dir, bodyStr);
+    writeJiraSkillContext(dir, titleStr, bodyStr);
     writeJiraSkillBoardSnapshot(dir);
   } catch (e) {
     try {

@@ -142,7 +142,13 @@ export function readPrHeadBranchName(target: string): string {
   return b;
 }
 
-/** One line: abs workspace path, then a blank line on stderr. */
-export function logAgentWorkspacePreamble(dir: string): void {
+/**
+ * If **`printPath`** is true, one line: abs workspace path, then a blank line on stderr.
+ * Otherwise no output (default unless **`--dir`** is passed).
+ */
+export function logAgentWorkspacePreamble(dir: string, printPath: boolean): void {
+  if (!printPath) {
+    return;
+  }
   process.stderr.write(`${dir}\n\n`);
 }
