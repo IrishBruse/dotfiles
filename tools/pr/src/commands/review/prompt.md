@@ -1,67 +1,77 @@
 # Shared: GitHub PR review (pr-cli)
 
-This block is prepended to command-specific instructions. Follow it for any review flow the CLI launches.
+Follow this preamble for any review flow the CLI launches.
 
-{{prLine}}
+**Review target:** `{{target}}` — PR number (current repo) or full PR URL. The CLI posts the review with this target; all PR data is already in the **workspace root** (your agent cwd).
 
 ## Requirements
 
-- The CLI already prefetched PR data into the **workspace root** (`PR.md`, `commits.txt`, `checks.json`, `comments.md`, `files.json`, `diff.patch`, and optionally **`KEY-123.md`** Jira ticket copies). Base your review on those files only (no `gh` or GitHub API tool calls for PR content). **`PR.md` is the current PR title and description** (for context only); you must **replace it entirely** with the **review comment** (`#` summary line + markdown body), not leave the PR’s text in place.
+- Use **only** prefetched files in the workspace (table below). No `gh` or GitHub API for PR content.
+- **`PR.md`** is the current PR title/description for context—you **replace it entirely** with the review: `#` summary line, blank line, then the full **GitHub review comment** markdown (e.g. `> Reviewed by Cursor` at the top unless policy says otherwise).
 
-{{prefetchedContextSection}}
+## PR context (prefetched local files)
 
-Avoid duplicating feedback that is already under discussion (see `comments.md`).
+Your **current working directory** is `{{workspaceDir}}`.
 
-## Final deliverable (required)
+Use these paths at the workspace root. Do not run `gh pr …` again.
 
-When your review is ready, you **must** overwrite **`PR.md`** in the **workspace root**. It currently holds the **PR’s** title and body — replace it entirely with **`# `** plus a short **review** summary line, a blank line, then the full **GitHub review comment** markdown (including `> Reviewed by Cursor` at the top unless policy says otherwise). The CLI reads **`PR.md`** after you finish — do not rely on chat output for posting.
+| Path | Contents |
+|------|----------|
+| `commits.txt` | One line per commit: SHA, subject, optional body |
+| `checks.json` | `statusCheckRollup` — CI pass/fail, job names, log URLs |
+| `comments.md` | Inline review comments + PR conversation (path:line, diff hunks, bodies) |
+| `files.json` | Changed files from the PR |
+| `diff.patch` | Full unified diff |
+| `jira-tickets-board.md` | If present: jira-tickets skill board snapshot |
+| `KEY-123.md` | Per Jira key in the PR body: copy from jira-tickets `references/**/{KEY}.md`, or board-only fallback |
+| `PR.md` | **Prefetched** PR text. **Replace entirely** with `# …` review summary + full review comment. Both non-empty when done. |
 
-Title and body must both be **non-empty**. The human approves in VS Code preview, then the CLI runs `gh pr review --comment`.
+Parallel subagents share this workspace.
+
+Avoid repeating feedback already in `comments.md`.
+
+## Final deliverable
+
+Overwrite **`PR.md`** in the workspace root. The CLI reads it after you finish—do not rely on chat for posting.
+
+Title (`# …` line) and body must be **non-empty**. The human approves in VS Code preview, then the CLI runs `gh pr review --comment`.
 
 # First-pass review (`pr review`)
 
-You are executing **`pr review`**: a first-pass review of the PR identified above (shared **Resolve and inspect** section). Perform the analysis below, then satisfy **Final deliverable** in the shared preamble (**`PR.md`** only).
+You are running **`pr review`**: first-pass review of the PR above. Complete the analysis below, then satisfy **Final deliverable** (**`PR.md`** only).
 
-## 1. Scope selection
+## 1. Scope
 
-1. **Primary scope:** Use the PR diff (delta between head and base).
-2. **Context:** If the diff is small, read full modified files when needed for surrounding logic.
-3. **Preservation:** Stay on changes introduced in the PR; avoid scope creep into unrelated legacy code unless the PR directly breaks invariants there.
+1. **Primary:** PR diff (head vs base).
+2. **Context:** If the diff is small, read full modified files when needed.
+3. **Stay in scope:** Changes this PR introduces; avoid unrelated legacy unless the PR breaks invariants there.
 
 ## 2. Parallel subagents (read-only)
 
-Launch three subagents to audit the PR simultaneously. They must only report findings and cannot modify code during analysis.
+Launch three subagents in parallel. They report only; they do not edit code.
 
-### Agent A: Code quality and maintainability
+### Agent A: Code quality
 
-- **Logic simplification:** Complex conditionals that could use guard clauses or flattening.
-- **Clarity:** Magic numbers, unclear naming, overly clever one-liners.
-- **Defensive over-engineering:** Redundant null checks, broad `try/catch` that hides errors.
-- **Types:** `any`, unnecessary casts, loose interfaces.
+Logic clarity, naming, unnecessary complexity, defensive over-engineering, weak typing (`any`, loose casts).
 
-### Agent B: Performance and scalability
+### Agent B: Performance
 
-- **Resources:** N+1 patterns, heavy work inside tight loops, missing memoization.
-- **Concurrency:** Blocking I/O, missing `await`, race risks.
-- **Memory:** Large allocations in hot paths, leaky closures.
-- **Payload:** Excessive logging or telemetry in high-frequency paths.
+N+1, hot-loop cost, concurrency/`await`, memory in hot paths, noisy logging in tight loops.
 
-### Agent C: Consistency and reuse
+### Agent C: Consistency
 
-- **Patterns:** Alignment with project architecture and shared utilities.
-- **DRY:** Duplication of existing functionality.
-- **API design:** Ergonomics of new public surfaces.
+Project patterns, DRY, ergonomics of new public surfaces.
 
 ## 3. Synthesis
 
-Produce consolidated feedback suitable for the **body** of **`PR.md`** (after the `# …` summary line):
+Consolidate into **`PR.md`** body (after the `# …` line):
 
-1. **Executive summary** — High-level assessment (e.g. safe to merge, needs changes, minor cleanup).
-2. **Actionable suggestions** — Specific improvements; use fenced code only where it helps.
-3. **Discussion points** — Architectural or product questions for humans.
+1. **Executive summary** — merge posture (e.g. safe / needs changes / nits).
+2. **Actionable suggestions** — specific; fenced code only when it helps.
+3. **Discussion points** — architecture or product questions.
 
-Put a short summary in the **`# …`** line at the top of **`PR.md`** (mirrors the gist of the review).
+The **`# …`** line should mirror the gist of the review.
 
 ## 4. Post-review validation
 
-If you applied any fixes locally, note which checks you ran or skipped. (This flow is read-only unless the user explicitly asked otherwise.)
+If you ran any checks locally, note what ran or was skipped. (Default: read-only unless the user asked for fixes.)

@@ -13,11 +13,7 @@ import {
 } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
 import { takePrintPromptFlag } from "../../printPromptFlag.ts";
-import {
-  buildPrefetchedContextSection,
-  buildPrLine,
-  loadReviewAgentPrompt,
-} from "./reviewPrompt.ts";
+import { loadReviewAgentPrompt } from "../agentPrompts.ts";
 
 export function runReview(args: string[]): void {
   void runReviewAsync(args).catch((e) => {
@@ -52,8 +48,8 @@ async function runReviewAsync(args: string[]): Promise<void> {
   }
 
   const prompt = loadReviewAgentPrompt({
-    prLine: buildPrLine(target),
-    prefetchedContextSection: buildPrefetchedContextSection(workspaceDir),
+    target,
+    workspaceDir,
   });
 
   if (printPrompt) {

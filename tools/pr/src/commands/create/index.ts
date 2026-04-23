@@ -12,12 +12,7 @@ import { failPrCli } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
 import { takePrintPromptFlag } from "../../printPromptFlag.ts";
 import { assertPrTitleMatchesJiraPolicy } from "../../jiraTitlePolicy.ts";
-import {
-  buildCreateBranchLine,
-  buildCreatePrefetchedContextSection,
-  buildCreateRepoCwdLine,
-  loadCreateAgentPrompt,
-} from "./createPrompt.ts";
+import { loadCreateAgentPrompt } from "../agentPrompts.ts";
 
 export function runCreate(args: string[]): void {
   void runCreateAsync(args).catch((e) => {
@@ -52,9 +47,9 @@ async function runCreateAsync(args: string[]): Promise<void> {
   console.error(`pr create: branch: ${branch}`);
 
   const prompt = loadCreateAgentPrompt({
-    repoCwdLine: buildCreateRepoCwdLine(repoRoot),
-    branchLine: buildCreateBranchLine(branch),
-    prefetchedContextSection: buildCreatePrefetchedContextSection(workspaceDir),
+    branch,
+    repoRoot,
+    workspaceDir,
   });
 
   if (printPrompt) {

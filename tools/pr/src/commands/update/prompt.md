@@ -1,24 +1,41 @@
 You are running **`pr update`**: refresh an existing PR’s **title** and **body** to match the branch as it is now.
 
-{{prLine}}
+**PR to update:** `{{target}}` — number or URL. The CLI runs `gh pr edit` with your final **title** and **body**; prefetched files are in the **workspace root**.
 
-- Use the **prefetched files** in the workspace root (`PR.md`, `commits.txt`, `checks.json`, `comments.md`, `files.json`, `diff.patch`, optional ticket `KEY-123.md` files). Do not re-fetch with `gh` or the API.
+- Use the **prefetched files** below. Do not re-fetch with `gh` or the API.
 
-**Source of truth / precedence:** When anything disagrees about *what changed*, **`diff.patch`** and **`files.json`** win. Use **`PR.md`** to preserve accurate narrative, template sections, and links. Use **`commits.txt`** for intent or a short commit-series summary only when it aligns with the diff. If **`files.json`** and **`diff.patch`** disagree (rare), prefer **`diff.patch`** for behavioral claims.
+**Source of truth:** If sources disagree on *what changed*, **`diff.patch`** then **`files.json`** win. Use **`PR.md`** for narrative, template sections, and links. Use **`commits.txt`** only when it matches the diff. If **`files.json`** and **`diff.patch`** disagree on behavior, trust **`diff.patch`**.
 
-- **`checks.json`:** Mention CI in the body only when it adds signal (failing checks, follow-ups, or correcting a stale CI claim). Do not paste raw JSON.
-- **`commits.txt`:** Summarize or align the commit story; do not assert code behavior the diff contradicts.
-- **`KEY-123.md`:** Align scope and acceptance wording in the body with the ticket.
-- **`comments.md`:** Reflect review briefly if useful; don’t dump threads.
-- **`PR.md`:** Current title (first `# …` line) and prior body—keep what’s still true, revise where the diff or review context demands it.
+- **`checks.json`:** Mention CI only when it adds signal (failures, follow-ups, stale claims). No raw JSON dumps.
+- **`commits.txt`:** Align the commit story; never assert behavior the diff contradicts.
+- **`KEY-123.md`:** Align body scope/acceptance with the ticket.
+- **`comments.md`:** Reflect review briefly if useful; don’t paste threads.
+- **`PR.md`:** Current title and body—keep what’s still true; revise where the diff or review demands.
 
-{{prefetchedContextSection}}
+## PR context (prefetched local files)
 
-**Write `PR.md`** in the workspace root (replace the prefetched file entirely):
+Your **current working directory** is `{{workspaceDir}}`.
+
+Use these paths at the workspace root. Do not run `gh pr …` again. When unsure *what changed*, trust **`diff.patch`** (then **`files.json`**) over **`PR.md`** / **`commits.txt`**.
+
+| Path | Contents |
+|------|----------|
+| `commits.txt` | One line per commit: SHA, subject, optional body |
+| `checks.json` | `statusCheckRollup` — CI pass/fail, job names, log URLs |
+| `comments.md` | Inline review comments + PR conversation (path:line, diff hunks, bodies) |
+| `files.json` | Changed files from the PR |
+| `diff.patch` | Full unified diff |
+| `jira-tickets-board.md` | If present: jira-tickets skill board snapshot |
+| `KEY-123.md` | Per Jira key in the PR body: copy from jira-tickets `references/**/{KEY}.md`, or board-only fallback |
+| `PR.md` | **Prefetched** current PR. **Replace** entirely with `# <title>` and new body; both non-empty when done. |
+
+Parallel subagents share this workspace.
+
+**Write `PR.md`** in the workspace root (replace the prefetched file):
 
 1. First line: `# <new title>`.
 2. Blank line, then the **new** full body (markdown).
 
-Title and body must be non-empty. The CLI will open `PR.md` for edits, then run **`gh pr edit`**.
+The CLI opens `PR.md` for edits, then runs **`gh pr edit`**.
 
-**Output:** deliver **only** by writing `PR.md` that way. Do not put the new title, body, or a writeup in your assistant reply—no JSON or fenced content in chat. After writing, you may say at most a token like `done`.
+**Output:** only `PR.md`—no title/body in chat. After writing, you may reply with at most a token like `done`.

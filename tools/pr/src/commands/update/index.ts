@@ -15,11 +15,7 @@ import { failPrCli } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
 import { takePrintPromptFlag } from "../../printPromptFlag.ts";
 import { assertPrTitleMatchesJiraPolicy } from "../../jiraTitlePolicy.ts";
-import {
-  buildUpdatePrefetchedContextSection,
-  buildUpdatePrLine,
-  loadUpdateAgentPrompt,
-} from "./updatePrompt.ts";
+import { loadUpdateAgentPrompt } from "../agentPrompts.ts";
 
 function resolveUpdatePrTarget(explicit: string | undefined): string {
   if (explicit !== undefined && explicit !== "") {
@@ -87,8 +83,8 @@ async function runUpdateAsync(args: string[]): Promise<void> {
   }
 
   const prompt = loadUpdateAgentPrompt({
-    prLine: buildUpdatePrLine(target),
-    prefetchedContextSection: buildUpdatePrefetchedContextSection(workspaceDir),
+    target,
+    workspaceDir,
   });
 
   if (printPrompt) {
