@@ -18,9 +18,11 @@ Run without linking: `node /path/to/tools/pr/bin/pr.js …`
 |------|-------------|
 | `-h`, `--help` | Print usage and exit |
 
-After the agent writes **`Title.md`** and **`Body.md`**, the CLI merges them into **`PR.md`** in the same workspace (`# Title` + body), opens **`PR.md`** in VS Code (`code --wait`), then asks **`[y/N]`** before **`gh pr create`**, **`gh pr edit`**, or **`gh pr review --comment`**. The first `# …` line in **`PR.md`** becomes the title; the rest is the body.
+The agent writes **`PR.md`** in the workspace (`# Title` line, blank line, then body). For **`pr update`** / **`pr review`**, the CLI prefetches the current PR into **`PR.md`** first; the agent overwrites it. The CLI opens **`PR.md`** in VS Code (`code --wait`), then asks **`[y/N]`** before **`gh pr create`**, **`gh pr edit`**, or **`gh pr review --comment`**. The first `# …` line becomes the title; the rest is the body.
 
 Jira ticket snippets: if the PR body mentions keys like **`PROJ-123`**, the CLI copies matching files from **`<dotfiles>/.agents/skills/jira-tickets`** or **`~/.agents/skills/jira-tickets`** into the workspace (no Jira API).
+
+**Work:** set **`PR_TITLE_JIRA_KEY`** (e.g. `NOVACORE`) in the environment (direnv, etc.). Then **`pr create`** and **`pr update`** require the PR title to begin with **`KEY-<digits>`** (after the agent and again after you edit **`PR.md`**). Unset at home — no check.
 
 ## Commands
 

@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import { AGENT_BODY_FILE, AGENT_TITLE_FILE } from "./agentOutputFiles.ts";
+import { MERGED_PREVIEW_FILE, buildPreviewMarkdown } from "./agentOutputFiles.ts";
 import { prCoordsFromViewPayload } from "./githubPrPrefetchExtra.ts";
 import { writeJiraSkillContext } from "./jiraSkillContext.ts";
 import { writePrCommentsMdAsync } from "./prCommentsMd.ts";
@@ -108,13 +108,10 @@ export async function populateReviewWorkspace(
           : String(viewObj.body);
 
     fs.writeFileSync(
-      path.join(dir, AGENT_TITLE_FILE),
-      titleStr === "" || titleStr.endsWith("\n")
-        ? titleStr
-        : `${titleStr}\n`,
+      path.join(dir, MERGED_PREVIEW_FILE),
+      buildPreviewMarkdown(titleStr, bodyStr),
       "utf8",
     );
-    fs.writeFileSync(path.join(dir, AGENT_BODY_FILE), bodyStr, "utf8");
 
     const coords = prCoordsFromViewPayload(viewObj);
 

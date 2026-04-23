@@ -1,7 +1,7 @@
 import process from "node:process";
 import path from "node:path";
 
-import { readAgentTitleAndBody } from "../../agentOutputFiles.ts";
+import { readAgentPrMarkdown } from "../../agentOutputFiles.ts";
 import {
   createReviewWorkspaceDir,
   populateReviewWorkspace,
@@ -64,9 +64,9 @@ async function runReviewAsync(args: string[]): Promise<void> {
     return;
   }
 
-  let parsed: ReturnType<typeof readAgentTitleAndBody>;
+  let parsed: ReturnType<typeof readAgentPrMarkdown>;
   try {
-    parsed = readAgentTitleAndBody(workspaceDir, "pr review");
+    parsed = readAgentPrMarkdown(workspaceDir, "pr review");
   } catch (e) {
     failPrCli(
       e instanceof Error
@@ -78,7 +78,7 @@ async function runReviewAsync(args: string[]): Promise<void> {
 
   const outPath = writeReviewFile(target, parsed);
   console.error(
-    `pr review: saved ${outPath} (copy of title/body; workspace still has Title.md & Body.md until posted)`,
+    `pr review: saved ${outPath} (backup copy; workspace PR.md removed after preview when you confirm)`,
   );
 
   await confirmAndPostReviewComment("pr review:", target, parsed, workspaceDir);

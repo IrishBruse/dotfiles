@@ -18,15 +18,16 @@ You are executing **`pr create`**: create a new GitHub PR from the **current bra
 
 ## Final deliverable (required)
 
-Write two files in the **workspace root**:
+Create **`PR.md`** in the **workspace root** with:
 
-1. **`Title.md`** — PR title (trimmed).
-2. **`Body.md`** — Full markdown PR description.
+1. First line: **`# `** plus the PR title (trimmed; single line).
+2. A blank line.
+3. Full markdown PR description.
 
-Both must exist and be **non-empty**. The CLI reads them, previews, then runs **`gh pr create`** from the **repository directory** you launched `pr` from (so the new PR uses **this branch** as the head).
+Title and body must both be **non-empty**. The CLI opens **`PR.md`** for a final edit, then runs **`gh pr create`** from the **repository directory** you launched `pr` from (so the new PR uses **this branch** as the head).
 
 ### Output discipline (strict)
 
-- **Only** deliver by **creating** **`Title.md`** and **`Body.md`**. Put every character of the title in **`Title.md`** and every character of the description in **`Body.md`**.
+- **Only** deliver by **creating** **`PR.md`** in this shape. Do not use separate **`Title.md`** / **`Body.md`** files.
 - **Do not** use your final assistant message for PR title, body, or long summaries. **Do not** emit JSON or fenced blocks with the PR payload in chat.
 - **Do not** reply with anything substantive after the files are written. If the runtime still expects a final token, use at most a bare acknowledgment (e.g. `done`) with **no** PR content duplicated there.

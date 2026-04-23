@@ -2,6 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { workJiraTitlePromptSection } from "../../jiraTitlePolicy.ts";
+
 const createCommandDir = path.dirname(fileURLToPath(import.meta.url));
 
 export type CreatePromptVars = {
@@ -37,9 +39,8 @@ Use the files below **in that directory** (workspace root).
 |------|----------|
 | \`branch.txt\` | Current branch name (\`git rev-parse --abbrev-ref HEAD\` from the user’s repo) — same as the PR head ref |
 | \`diff.patch\` | \`git diff origin/main\` from the user’s repo — primary change summary |
-| \`PULL_REQUEST_TEMPLATE.md\` | Present only if the repo had a GitHub PR template; follow its sections in **Body.md** |
-| \`Title.md\` | **You create** — PR title (non-empty when done) |
-| \`Body.md\` | **You create** — full markdown PR description (non-empty when done) |`;
+| \`PULL_REQUEST_TEMPLATE.md\` | Present only if the repo had a GitHub PR template; follow its sections in the **body** of **PR.md** |
+| \`PR.md\` | **You create** — \`# \` + PR title line, blank line, then full markdown description (both non-empty) |`;
 }
 
 export function loadCreateAgentPrompt(vars: CreatePromptVars): string {
@@ -47,5 +48,5 @@ export function loadCreateAgentPrompt(vars: CreatePromptVars): string {
     path.join(createCommandDir, "prompt.md"),
     "utf8",
   );
-  return expandCreatePlaceholders(template, vars);
+  return expandCreatePlaceholders(template, vars) + workJiraTitlePromptSection();
 }

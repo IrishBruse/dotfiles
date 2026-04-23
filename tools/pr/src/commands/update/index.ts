@@ -2,7 +2,7 @@ import { spawnSync } from "node:child_process";
 import process from "node:process";
 import path from "node:path";
 
-import { readAgentTitleAndBody } from "../../agentOutputFiles.ts";
+import { readAgentPrMarkdown } from "../../agentOutputFiles.ts";
 import {
   createReviewWorkspaceDir,
   populateReviewWorkspace,
@@ -13,6 +13,7 @@ import {
 } from "../../prEditPostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
+import { assertPrTitleMatchesJiraPolicy } from "../../jiraTitlePolicy.ts";
 import { buildPrefetchedContextSection } from "../review/reviewPrompt.ts";
 import {
   buildUpdatePrLine,
@@ -98,9 +99,9 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     return;
   }
 
-  let parsed: ReturnType<typeof readAgentTitleAndBody>;
+  let parsed: ReturnType<typeof readAgentPrMarkdown>;
   try {
-    parsed = readAgentTitleAndBody(workspaceDir, "pr update");
+    parsed = readAgentPrMarkdown(workspaceDir, "pr update");
   } catch (e) {
     failPrCli(
       e instanceof Error
@@ -110,9 +111,16 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     return;
   }
 
+  try {
+    assertPrTitleMatchesJiraPolicy(parsed.title);
+  } catch (e) {
+    failPrCli(e instanceof Error ? e.message : `pr update: ${String(e)}`);
+    return;
+  }
+
   const outPath = writePrUpdateFile(target, parsed);
   console.error(
-    `pr update: saved ${outPath} (copy of title/body; workspace still has Title.md & Body.md until applied)`,
+    `pr update: saved ${outPath} (backup copy; workspace PR.md removed after preview when you confirm)`,
   );
 
   await confirmAndApplyPrMetadata("pr update:", target, parsed, workspaceDir);

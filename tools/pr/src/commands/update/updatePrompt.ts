@@ -2,6 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { workJiraTitlePromptSection } from "../../jiraTitlePolicy.ts";
+
 const updateCommandDir = path.dirname(fileURLToPath(import.meta.url));
 
 export type UpdatePromptVars = {
@@ -25,7 +27,7 @@ export function loadUpdateAgentPrompt(vars: UpdatePromptVars): string {
     path.join(updateCommandDir, "prompt.md"),
     "utf8",
   );
-  return expandUpdatePlaceholders(template, vars);
+  return expandUpdatePlaceholders(template, vars) + workJiraTitlePromptSection();
 }
 
 export function buildUpdatePrLine(target: string): string {

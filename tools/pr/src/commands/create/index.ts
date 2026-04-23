@@ -1,7 +1,7 @@
 import process from "node:process";
 import path from "node:path";
 
-import { readAgentTitleAndBody } from "../../agentOutputFiles.ts";
+import { readAgentPrMarkdown } from "../../agentOutputFiles.ts";
 import { createReviewWorkspaceDir } from "../../prepareReviewWorkspace.ts";
 import { populateCreateWorkspace } from "../../prepareCreateWorkspace.ts";
 import {
@@ -10,6 +10,7 @@ import {
 } from "../../prCreatePostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
+import { assertPrTitleMatchesJiraPolicy } from "../../jiraTitlePolicy.ts";
 import {
   buildCreateBranchLine,
   buildCreatePrefetchedContextSection,
@@ -62,9 +63,9 @@ async function runCreateAsync(args: string[]): Promise<void> {
     return;
   }
 
-  let parsed: ReturnType<typeof readAgentTitleAndBody>;
+  let parsed: ReturnType<typeof readAgentPrMarkdown>;
   try {
-    parsed = readAgentTitleAndBody(workspaceDir, "pr create");
+    parsed = readAgentPrMarkdown(workspaceDir, "pr create");
   } catch (e) {
     failPrCli(
       e instanceof Error
@@ -74,9 +75,16 @@ async function runCreateAsync(args: string[]): Promise<void> {
     return;
   }
 
+  try {
+    assertPrTitleMatchesJiraPolicy(parsed.title);
+  } catch (e) {
+    failPrCli(e instanceof Error ? e.message : `pr create: ${String(e)}`);
+    return;
+  }
+
   const outPath = writePrCreateFile(parsed);
   console.error(
-    `pr create: saved ${outPath} (copy of title/body; workspace still has Title.md & Body.md until create)`,
+    `pr create: saved ${outPath} (backup copy; workspace PR.md removed after preview when you confirm)`,
   );
 
   await confirmAndCreatePr("pr create:", parsed, workspaceDir, repoRoot);

@@ -6,7 +6,9 @@ import process from "node:process";
 
 import {
   MERGED_PREVIEW_FILE,
-  readAgentTitleAndBody,
+  buildPreviewMarkdown,
+  parsePreviewMarkdownFile,
+  readAgentPrMarkdown,
 } from "./agentOutputFiles.ts";
 
 const VSCODE_CLI = "code";
@@ -15,39 +17,6 @@ export type SubmitPayload = {
   title: string;
   body: string;
 };
-
-/** First line `# Title` (or `##`), blank line, then markdown body — same idea as git commit message files. */
-export function buildPreviewMarkdown(title: string, body: string): string {
-  const t = title.trim().replace(/\n/g, " ");
-  return `# ${t}\n\n${body.replace(/^\n+/, "")}`;
-}
-
-/** Title = first markdown heading line (`# …`); everything after the first blank line following it = body. */
-export function parsePreviewMarkdownFile(content: string): SubmitPayload {
-  const normalized = content.replace(/^\uFEFF/, "").replace(/\r\n/g, "\n");
-  const lines = normalized.split("\n");
-  let i = 0;
-  while (i < lines.length && lines[i]!.trim() === "") {
-    i++;
-  }
-  if (i >= lines.length) {
-    return { title: "", body: "" };
-  }
-  const first = lines[i]!.trim();
-  let title: string;
-  if (first.startsWith("#")) {
-    title = first.replace(/^#+\s*/, "").trim();
-    i++;
-  } else {
-    title = first;
-    i++;
-  }
-  while (i < lines.length && lines[i]!.trim() === "") {
-    i++;
-  }
-  const body = lines.slice(i).join("\n");
-  return { title, body };
-}
 
 /**
  * Opens **`code --wait`** so the user can edit like **`git commit -e`**.
@@ -87,8 +56,8 @@ export type EditorConfirmOptions = {
 };
 
 /**
- * Merges **`Title.md`** and **`Body.md`** into **`PR.md`** in the workspace, opens **`PR.md`** in VS Code with **`--wait`**,
- * re-reads it (edits apply), then prompts **`[y/N]`**. Removes **`PR.md`** when done. Returns **`null`** if cancelled or invalid.
+ * Normalizes agent **`PR.md`**, opens it in VS Code with **`--wait`**, re-reads it (edits apply), then prompts **`[y/N]`**.
+ * Removes **`PR.md`** when done. Returns **`null`** if cancelled or invalid.
  */
 export async function confirmSubmitAfterEditorPreview(
   opts: EditorConfirmOptions,
@@ -98,7 +67,7 @@ export async function confirmSubmitAfterEditorPreview(
   }
 
   const cmdLabel = opts.logPrefix.replace(/:\s*$/, "").trim() || "pr";
-  const initial = readAgentTitleAndBody(opts.workspaceDir, cmdLabel);
+  const initial = readAgentPrMarkdown(opts.workspaceDir, cmdLabel);
 
   const mergedPath = path.join(opts.workspaceDir, MERGED_PREVIEW_FILE);
   const md = buildPreviewMarkdown(initial.title, initial.body);

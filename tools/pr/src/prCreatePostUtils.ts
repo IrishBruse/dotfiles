@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 import type { PrReviewJson } from "./agentOutputFiles.ts";
+import { assertPrTitleMatchesJiraPolicy } from "./jiraTitlePolicy.ts";
 import { failPrCli } from "./reviewPostUtils.ts";
 import {
   confirmSubmitAfterEditorPreview,
@@ -91,6 +92,13 @@ export async function confirmAndCreatePr(
     }
     title = out.title;
     body = out.body;
+  } catch (e) {
+    failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
+    return;
+  }
+
+  try {
+    assertPrTitleMatchesJiraPolicy(title);
   } catch (e) {
     failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
     return;
