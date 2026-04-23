@@ -11,6 +11,9 @@ export type PrReviewJson = {
 export const AGENT_TITLE_FILE = "Title.md";
 export const AGENT_BODY_FILE = "Body.md";
 
+/** CLI merges {@link AGENT_TITLE_FILE} + {@link AGENT_BODY_FILE} into this for VS Code preview (`code --wait`). */
+export const MERGED_PREVIEW_FILE = "PR.md";
+
 /**
  * Read **`Title.md`** and **`Body.md`** from the agent workspace (required; non-empty).
  */

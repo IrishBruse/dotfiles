@@ -18,7 +18,7 @@ Run without linking: `node /path/to/tools/pr/bin/pr.js …`
 |------|-------------|
 | `-h`, `--help` | Print usage and exit |
 
-After the agent writes **`Title.md`** and **`Body.md`**, the CLI opens a temp markdown file in VS Code, waits until you close it, then asks **`[y/N]`** before **`gh pr create`**, **`gh pr edit`**, or **`gh pr review --comment`**.
+After the agent writes **`Title.md`** and **`Body.md`**, the CLI merges them into **`PR.md`** in the same workspace (`# Title` + body), opens **`PR.md`** in VS Code (`code --wait`), then asks **`[y/N]`** before **`gh pr create`**, **`gh pr edit`**, or **`gh pr review --comment`**. The first `# …` line in **`PR.md`** becomes the title; the rest is the body.
 
 Jira ticket snippets: if the PR body mentions keys like **`PROJ-123`**, the CLI copies matching files from **`<dotfiles>/.agents/skills/jira-tickets`** or **`~/.agents/skills/jira-tickets`** into the workspace (no Jira API).
 

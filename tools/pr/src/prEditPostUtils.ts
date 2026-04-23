@@ -78,13 +78,13 @@ export async function confirmAndApplyPrMetadata(
   parsed: PrReviewJson,
   workspaceDir: string,
 ): Promise<void> {
-  let title = parsed.title;
-  let body = parsed.body;
+  let title: string;
+  let body: string;
 
   try {
     const out = await confirmSubmitAfterEditorPreview({
       logPrefix,
-      initial: { title, body },
+      workspaceDir,
       actionDescription: "update the PR on GitHub",
     });
     if (out === null) {

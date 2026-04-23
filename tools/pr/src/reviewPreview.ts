@@ -1,9 +1,13 @@
 import { spawnSync } from "node:child_process";
 import * as readline from "node:readline/promises";
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
 import process from "node:process";
+
+import {
+  MERGED_PREVIEW_FILE,
+  readAgentTitleAndBody,
+} from "./agentOutputFiles.ts";
 
 const VSCODE_CLI = "code";
 
@@ -18,6 +22,7 @@ export function buildPreviewMarkdown(title: string, body: string): string {
   return `# ${t}\n\n${body.replace(/^\n+/, "")}`;
 }
 
+/** Title = first markdown heading line (`# …`); everything after the first blank line following it = body. */
 export function parsePreviewMarkdownFile(content: string): SubmitPayload {
   const normalized = content.replace(/^\uFEFF/, "").replace(/\r\n/g, "\n");
   const lines = normalized.split("\n");
@@ -42,13 +47,6 @@ export function parsePreviewMarkdownFile(content: string): SubmitPayload {
   }
   const body = lines.slice(i).join("\n");
   return { title, body };
-}
-
-function writeTempPreviewFile(markdown: string): { file: string; dir: string } {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "pr-cli-preview-"));
-  const file = path.join(dir, "pr-preview.md");
-  fs.writeFileSync(file, markdown, "utf8");
-  return { file, dir };
 }
 
 /**
@@ -83,14 +81,14 @@ export async function waitForYesNo(question: string): Promise<boolean> {
 
 export type EditorConfirmOptions = {
   logPrefix: string;
-  initial: SubmitPayload;
+  workspaceDir: string;
   /** e.g. "create this PR", "update the PR", "post the review comment" */
   actionDescription: string;
 };
 
 /**
- * Writes a temp **.md**, opens it in VS Code with **`--wait`**, re-reads the file (so edits apply),
- * then prompts **`[y/N]`** to confirm submit. Returns **`null`** if cancelled or invalid content.
+ * Merges **`Title.md`** and **`Body.md`** into **`PR.md`** in the workspace, opens **`PR.md`** in VS Code with **`--wait`**,
+ * re-reads it (edits apply), then prompts **`[y/N]`**. Removes **`PR.md`** when done. Returns **`null`** if cancelled or invalid.
  */
 export async function confirmSubmitAfterEditorPreview(
   opts: EditorConfirmOptions,
@@ -99,21 +97,25 @@ export async function confirmSubmitAfterEditorPreview(
     throw new Error("need an interactive terminal (stdin/stdout TTY) for preview and confirm");
   }
 
-  const md = buildPreviewMarkdown(opts.initial.title, opts.initial.body);
-  const { file, dir } = writeTempPreviewFile(md);
+  const cmdLabel = opts.logPrefix.replace(/:\s*$/, "").trim() || "pr";
+  const initial = readAgentTitleAndBody(opts.workspaceDir, cmdLabel);
+
+  const mergedPath = path.join(opts.workspaceDir, MERGED_PREVIEW_FILE);
+  const md = buildPreviewMarkdown(initial.title, initial.body);
+  fs.writeFileSync(mergedPath, md, "utf8");
 
   console.error(
-    `${opts.logPrefix} Opening ${file} in ${VSCODE_CLI} — edit if needed, save, then close the tab.`,
+    `${opts.logPrefix} Opening ${mergedPath} in ${VSCODE_CLI} — edit if needed, save, then close the tab.`,
   );
 
   try {
-    openVsCodeWaitOnFile(file);
-    const content = fs.readFileSync(file, "utf8");
+    openVsCodeWaitOnFile(path.resolve(mergedPath));
+    const content = fs.readFileSync(mergedPath, "utf8");
     const parsed = parsePreviewMarkdownFile(content);
     if (parsed.title.trim() === "" || parsed.body.trim() === "") {
       console.error(
         `${opts.logPrefix} title and body must be non-empty after editing ` +
-          `(keep a \`# Title\` line, blank line, then the description). Cancelled.`,
+          `(start with one \`# Title\` line, a blank line, then the description). Cancelled.`,
       );
       return null;
     }
@@ -123,7 +125,9 @@ export async function confirmSubmitAfterEditorPreview(
     return ok ? parsed : null;
   } finally {
     try {
-      fs.rmSync(dir, { recursive: true, force: true });
+      if (fs.existsSync(mergedPath)) {
+        fs.unlinkSync(mergedPath);
+      }
     } catch {
       // ignore
     }

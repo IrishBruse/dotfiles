@@ -76,13 +76,13 @@ export async function confirmAndCreatePr(
   workspaceDir: string,
   repoRoot: string,
 ): Promise<void> {
-  let title = parsed.title;
-  let body = parsed.body;
+  let title: string;
+  let body: string;
 
   try {
     const out = await confirmSubmitAfterEditorPreview({
       logPrefix,
-      initial: { title, body },
+      workspaceDir,
       actionDescription: "create this PR",
     });
     if (out === null) {

@@ -74,13 +74,13 @@ export async function confirmAndPostReviewComment(
   parsed: PrReviewJson,
   workspaceDir: string,
 ): Promise<void> {
-  let title = parsed.title;
-  let body = parsed.body;
+  let title: string;
+  let body: string;
 
   try {
     const out = await confirmSubmitAfterEditorPreview({
       logPrefix,
-      initial: { title, body },
+      workspaceDir,
       actionDescription: "post this review comment",
     });
     if (out === null) {
