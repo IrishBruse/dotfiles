@@ -35,7 +35,7 @@ You are running **`pr review`**: first-pass review of the PR above. Complete the
 
 ## 1. Scope
 
-1. **Primary:** **`diff.patch`** and **`files.json`** (and `PR.md` for stated intent). Do **not** `read` files from the product repo; the diff is the code window you get.
+1. **Primary:** **`diff.patch`** and **`files.txt`** (and `PR.md` for stated intent). Do **not** `read` files from the product repo; the diff is the code window you get.
 2. **Stay in scope:** Changes this PR introduces; do not chase unrelated code outside the diff unless you infer a risk only from the patch text.
 
 ## 2. Parallel subagents (read-only)

@@ -72,12 +72,12 @@ export function formatPrWorkspaceReadList(
         ? "From GitHub. **Replace** with `#` review summary line + full review-comment markdown."
         : "From GitHub. **Replace** with new `#` title + full body for `gh pr edit`.";
     addIfExists(
-      "files-changed.txt",
-      "One line per path with `+add -del` and change type — read this before `diff.patch` / `files.json`.",
+      "files.txt",
+      "One line per path with `+add -del` and change type — read this before `diff.patch` for scope.",
     );
     addIfExists(
-      "checks-summary.txt",
-      "Short CI digest; only open `checks.json` if you need raw `statusCheckRollup`.",
+      "checks.txt",
+      "Short CI digest from `statusCheckRollup` (name and state per check).",
     );
     addIfExists(MERGED_PREVIEW_FILE, prLine);
     addIfExists(
@@ -86,8 +86,6 @@ export function formatPrWorkspaceReadList(
     );
     addIfExists("commits.txt", "One line per commit: short SHA, subject, optional body.");
     addIfExists("comments.md", "PR thread + inline comments (path:line, hunks, bodies).");
-    addIfExists("files.json", "Raw `gh` files JSON for this PR (use `files-changed.txt` first).");
-    addIfExists("checks.json", "Raw `statusCheckRollup` (use `checks-summary.txt` first).");
     addIfExists(
       "jira-tickets-board.md",
       "Jira-tickets board snapshot when the skill is installed.",

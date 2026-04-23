@@ -18,8 +18,8 @@ export function writeFilesChangedTxt(dir: string, filesJsonRaw: string): void {
   const files = j?.files;
   if (!Array.isArray(files) || files.length === 0) {
     fs.writeFileSync(
-      path.join(dir, "files-changed.txt"),
-      "(no files in gh JSON, or could not parse files.json)\n",
+      path.join(dir, "files.txt"),
+      "(no files in gh response, or could not parse `gh pr view --json files`)\n",
       "utf8",
     );
     return;
@@ -37,7 +37,7 @@ export function writeFilesChangedTxt(dir: string, filesJsonRaw: string): void {
     lines.push(`${p}  +${add} -${del}${tail}`);
   }
   fs.writeFileSync(
-    path.join(dir, "files-changed.txt"),
+    path.join(dir, "files.txt"),
     lines.join("\n") + "\n",
     "utf8",
   );
@@ -79,8 +79,8 @@ export function writeChecksSummaryTxt(dir: string, checksJsonRaw: string): void 
   const j = safeParseJson(checksJsonRaw);
   if (j === null) {
     fs.writeFileSync(
-      path.join(dir, "checks-summary.txt"),
-      "(could not parse checks.json)\n",
+      path.join(dir, "checks.txt"),
+      "(could not parse `gh pr view --json statusCheckRollup`)\n",
       "utf8",
     );
     return;
@@ -95,13 +95,13 @@ export function writeChecksSummaryTxt(dir: string, checksJsonRaw: string): void 
     const body =
       out.length > 0
         ? [...new Set(out)].sort().join("\n")
-        : "(no name/state lines parsed in rollup — see checks.json)";
-    fs.writeFileSync(path.join(dir, "checks-summary.txt"), body + "\n", "utf8");
+        : "(no name/state lines parsed in statusCheckRollup)";
+    fs.writeFileSync(path.join(dir, "checks.txt"), body + "\n", "utf8");
     return;
   }
   fs.writeFileSync(
-    path.join(dir, "checks-summary.txt"),
-    "(unexpected checks.json shape — open checks.json)\n",
+    path.join(dir, "checks.txt"),
+    "(unexpected `gh pr view` JSON shape for statusCheckRollup)\n",
     "utf8",
   );
 }

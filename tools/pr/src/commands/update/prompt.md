@@ -4,7 +4,7 @@ You are running **`pr update`**: refresh an existing PR’s **title** and **body
 
 - Use the **prefetched files** below. Do not re-fetch with `gh` or the API.
 
-**Source of truth:** If sources disagree on _what changed_, **`diff.patch`** then **`files.json`** win. Use **`PR.md`** for narrative, template sections, and links. Use **`commits.txt`** only when it matches the diff. If **`files.json`** and **`diff.patch`** disagree on behavior, trust **`diff.patch`**. If `{KEY}.md` exists, align body scope/acceptance with the ticket; otherwise use **`jira-tickets-board.md`** (if any) for key wording only.
+**Source of truth:** If sources disagree on _what changed_, **`diff.patch`** then **`files.txt`** win. Use **`PR.md`** for narrative, template sections, and links. Use **`commits.txt`** only when it matches the diff. If **`files.txt`** and **`diff.patch`** disagree on behavior, trust **`diff.patch`**. If `{KEY}.md` exists, align body scope/acceptance with the ticket; otherwise use **`jira-tickets-board.md`** (if any) for key wording only.
 
 When refreshing the **body**, use the default layout below unless the current **`PR.md`** (or a repo template described there) already defines sections—reconcile with **`diff.patch`**, `comments.md`, and **`PR.md`**; this workspace has **no** separate copy of the host repo’s `PULL_REQUEST_TEMPLATE.md` unless the prefetched `PR.md` text itself references that structure.
 
@@ -18,7 +18,7 @@ Your **current working directory** is `{{workspaceDir}}` — a **throwaway copy*
 
 {{files}}
 
-When unsure _what changed_, trust **`diff.patch`** (then **`files.json`**) over **`PR.md`** / **`commits.txt`**. In **`comments.md`**, use review signal briefly; don’t paste whole threads. For **`checks.json`**, mention CI only when it adds real signal (not raw JSON dumps). **`commits.txt`** is narrative-only if it still matches the diff.
+When unsure _what changed_, trust **`diff.patch`** (then **`files.txt`**) over **`PR.md`** / **`commits.txt`**. In **`comments.md`**, use review signal briefly; don’t paste whole threads. For **`checks.txt`**, mention CI only when it adds real signal (not long dumps). **`commits.txt`** is narrative-only if it still matches the diff.
 
 Parallel subagents share this workspace.
 

@@ -32,7 +32,7 @@ export function seedNoAgentPrReviewStub(workspaceDir: string): void {
   const body = [
     "> **Review** — add your `gh pr review --comment` body below.",
     "",
-    "No agent was run. Use `diff.patch`, `files.json`, `comments.md`, and other prefetched files in this directory as you write.",
+    "No agent was run. Use `diff.patch`, `files.txt`, `comments.md`, and other prefetched files in this directory as you write.",
   ].join("\n");
   const p = path.join(workspaceDir, MERGED_PREVIEW_FILE);
   fs.writeFileSync(p, buildPreviewMarkdown(title, body), "utf8");

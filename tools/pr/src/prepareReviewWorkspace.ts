@@ -47,15 +47,6 @@ function runGhAsync(args: string[]): Promise<string> {
   });
 }
 
-function writeFormattedJsonFile(filePath: string, ghJsonStdout: string): void {
-  const parsed: unknown = JSON.parse(ghJsonStdout);
-  fs.writeFileSync(
-    filePath,
-    JSON.stringify(parsed, null, 2) + "\n",
-    "utf8",
-  );
-}
-
 /** One line per commit: short SHA, subject, then body (if any) on the same line. */
 function writeCommitsTxtFromRaw(dir: string, commitsRaw: string): void {
   const j = JSON.parse(commitsRaw) as {
@@ -128,10 +119,8 @@ export async function populateReviewWorkspace(
       writePrCommentsMdAsync(dir, coords),
     ]);
 
-    writeFormattedJsonFile(path.join(dir, "files.json"), filesRaw);
     fs.writeFileSync(path.join(dir, "diff.patch"), diffText, "utf8");
     writeCommitsTxtFromRaw(dir, commitsRaw);
-    writeFormattedJsonFile(path.join(dir, "checks.json"), checksRaw);
     writeFilesChangedTxt(dir, filesRaw);
     writeChecksSummaryTxt(dir, checksRaw);
 
