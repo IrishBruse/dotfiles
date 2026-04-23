@@ -99,11 +99,6 @@ export async function confirmAndPostReviewComment(
 
   for (;;) {
     if (postPrReviewComment(target, body)) {
-      try {
-        fs.rmSync(workspaceDir, { recursive: true, force: true });
-      } catch {
-        // ignore
-      }
       return;
     }
     const f = writeReviewFile(target, {

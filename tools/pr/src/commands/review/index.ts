@@ -1,11 +1,12 @@
 import process from "node:process";
-import path from "node:path";
 
 import { readAgentPrMarkdown } from "../../agentOutputFiles.ts";
+import { populateReviewWorkspace } from "../../prepareReviewWorkspace.ts";
 import {
-  createReviewWorkspaceDir,
-  populateReviewWorkspace,
-} from "../../prepareReviewWorkspace.ts";
+  getGitRepoRoot,
+  preparePrAgentWorkspace,
+  readPrHeadBranchName,
+} from "../../prAgentWorkspace.ts";
 import {
   confirmAndPostReviewComment,
   failPrCli,
@@ -33,7 +34,15 @@ async function runReviewAsync(args: string[]): Promise<void> {
     console.log("pr review: extra args (ignored):", rest.slice(1).join(" "));
   }
 
-  const workspaceDir = path.resolve(createReviewWorkspaceDir());
+  let workspaceDir: string;
+  try {
+    const repoRoot = getGitRepoRoot(process.cwd());
+    const headBranch = readPrHeadBranchName(target);
+    workspaceDir = preparePrAgentWorkspace(repoRoot, headBranch);
+  } catch (e) {
+    failPrCli(e instanceof Error ? e.message : `pr review: ${String(e)}`);
+    return;
+  }
   console.error(`pr review: agent workspace: ${workspaceDir}`);
 
   try {

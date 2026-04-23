@@ -111,11 +111,6 @@ export async function confirmAndApplyPrMetadata(
 
   for (;;) {
     if (postPrMetadataEdit(target, title, body)) {
-      try {
-        fs.rmSync(workspaceDir, { recursive: true, force: true });
-      } catch {
-        // ignore
-      }
       return;
     }
     const f = writePrUpdateFile(target, {

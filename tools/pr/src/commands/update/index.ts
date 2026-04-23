@@ -1,12 +1,13 @@
 import { spawnSync } from "node:child_process";
 import process from "node:process";
-import path from "node:path";
 
 import { readAgentPrMarkdown } from "../../agentOutputFiles.ts";
+import { populateReviewWorkspace } from "../../prepareReviewWorkspace.ts";
 import {
-  createReviewWorkspaceDir,
-  populateReviewWorkspace,
-} from "../../prepareReviewWorkspace.ts";
+  getGitRepoRoot,
+  preparePrAgentWorkspace,
+  readPrHeadBranchName,
+} from "../../prAgentWorkspace.ts";
 import {
   confirmAndApplyPrMetadata,
   writePrUpdateFile,
@@ -68,7 +69,15 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     console.log("pr update: extra args (ignored):", rest.slice(1).join(" "));
   }
 
-  const workspaceDir = path.resolve(createReviewWorkspaceDir());
+  let workspaceDir: string;
+  try {
+    const repoRoot = getGitRepoRoot(process.cwd());
+    const headBranch = readPrHeadBranchName(target);
+    workspaceDir = preparePrAgentWorkspace(repoRoot, headBranch);
+  } catch (e) {
+    failPrCli(e instanceof Error ? e.message : `pr update: ${String(e)}`);
+    return;
+  }
   console.error(`pr update: agent workspace: ${workspaceDir}`);
 
   try {

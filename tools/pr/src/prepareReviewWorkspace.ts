@@ -1,9 +1,9 @@
 import { spawn } from "node:child_process";
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
 
 import { MERGED_PREVIEW_FILE, buildPreviewMarkdown } from "./agentOutputFiles.ts";
+import { clearPrAgentWorkspaceDir } from "./prAgentWorkspace.ts";
 import { prCoordsFromViewPayload } from "./githubPrPrefetchExtra.ts";
 import {
   writeJiraSkillBoardSnapshot,
@@ -76,13 +76,9 @@ function writeCommitsTxtFromRaw(dir: string, commitsRaw: string): void {
   fs.writeFileSync(path.join(dir, "commits.txt"), lines.join("\n") + "\n", "utf8");
 }
 
-export function createReviewWorkspaceDir(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "pr-cli-"));
-}
-
 /**
  * Write prefetched PR files at the root of `dir` using **`gh`** (REST).
- * Runs independent **`gh`** work in parallel after **`pr view`**. On failure, removes `dir` and rethrows.
+ * Runs independent **`gh`** work in parallel after **`pr view`**. On failure, clears `dir` and rethrows.
  */
 export async function populateReviewWorkspace(
   dir: string,
@@ -135,7 +131,7 @@ export async function populateReviewWorkspace(
     writeJiraSkillBoardSnapshot(dir);
   } catch (e) {
     try {
-      fs.rmSync(dir, { recursive: true, force: true });
+      clearPrAgentWorkspaceDir(dir);
     } catch {
       // ignore
     }

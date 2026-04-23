@@ -109,11 +109,6 @@ export async function confirmAndCreatePr(
 
   for (;;) {
     if (postPrCreate(title, body, repoRoot)) {
-      try {
-        fs.rmSync(workspaceDir, { recursive: true, force: true });
-      } catch {
-        // ignore
-      }
       return;
     }
     const f = writePrCreateFile({

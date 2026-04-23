@@ -9,7 +9,6 @@ import * as npath from "node:path";
 const tty = process.stderr.isTTY === true;
 const DIM = tty ? "\x1b[2m" : "";
 const BOLD = tty ? "\x1b[1m" : "";
-const GRN = tty ? "\x1b[32m" : "";
 const YLW = tty ? "\x1b[33m" : "";
 const BLU = tty ? "\x1b[34m" : "";
 const MAG = tty ? "\x1b[35m" : "";
@@ -198,6 +197,14 @@ function toolStartLine(toolCall: unknown, callId: string): ToolLine {
   return { label: "tool", detail: id, color: YLW };
 }
 
+const BAR = `${DIM}│${RST}`;
+
+function toolLeadNewline(separateFromPrevious: boolean): void {
+  if (separateFromPrevious) {
+    process.stderr.write("\n");
+  }
+}
+
 /**
  * If set, shell `started` is only registered for a later `completed` pair; no `$` line yet
  * (avoids 3× `$` then 3× `✓` when the stream batched all starts before completes).
@@ -206,6 +213,7 @@ function printToolStart(
   toolCall: unknown,
   callId: string,
   projectCwd: string | undefined,
+  separateFromPrevious: boolean,
   registerShellForPair?: (id: string, command: string) => void,
 ): void {
   if (typeof toolCall === "object" && toolCall !== null) {
@@ -217,8 +225,9 @@ function printToolStart(
         registerShellForPair(callId, cmd);
         return;
       }
+      toolLeadNewline(separateFromPrevious);
       process.stderr.write(
-        `\n${DIM}$${RST} ${BOLD}${cmd}${RST}\n`,
+        `${BAR} ${YLW}$${RST} ${BOLD}${cmd}${RST}\n`,
       );
       return;
     }
@@ -243,136 +252,27 @@ function printToolStart(
       const line = s.length > 0
         ? oneLine(s, 500)
         : (callId.length > 0 ? oneLine(callId, 50) : "…");
-      // taskToolCall = parallel subagent; distinct from in-process read/shell
+      toolLeadNewline(separateFromPrevious);
       process.stderr.write(
-        `\n${DIM}[${RST}${MAG}subagent${DIM}]${RST}  ${line}\n`,
+        `${BAR} ${MAG}${BOLD}subagent${RST}  ${DIM}${line}${RST}\n`,
       );
       return;
     }
   }
   const { label, detail, color } = toolStartLine(toolCall, callId);
+  toolLeadNewline(separateFromPrevious);
   process.stderr.write(
-    `\n${color}· ${BOLD}${label}${RST} ${DIM}${detail}${RST}\n`,
+    `${BAR} ${color}${BOLD}${label}${RST} ${DIM}${detail}${RST}\n`,
   );
-}
-
-function formatReadSuccess(s: Record<string, unknown>): string {
-  const parts: string[] = [];
-  if (s.totalLines != null) {
-    parts.push(String(s.totalLines) + " lines");
-  }
-  if (s.totalChars != null) {
-    parts.push(String(s.totalChars) + " chars");
-  }
-  return parts.length > 0 ? parts.join(" · ") : "finished";
-}
-
-function formatWriteSuccess(s: Record<string, unknown>): string {
-  const a = s.linesCreated;
-  const b = s.fileSize;
-  const p: string[] = [];
-  if (a != null) {
-    p.push(String(a) + " lines");
-  }
-  if (b != null) {
-    p.push(String(b) + " bytes");
-  }
-  return p.length > 0 ? p.join(" · ") : "finished";
 }
 
 type ToolDoneHooks = { onTaskEvent?: () => void };
 
-/** One line per tool_call completed; read / write / task (shell is paired in `printShellPaired`). */
+/** Hooks only — tool completion lines are omitted (starts already show what ran). */
 function printToolDone(toolCall: unknown, hooks?: ToolDoneHooks): void {
   if (toolCall !== null && typeof toolCall === "object" && "taskToolCall" in toolCall) {
     hooks?.onTaskEvent?.();
   }
-  if (toolCall === null || typeof toolCall !== "object") {
-    process.stderr.write(`  ${DIM}· done (tool)${RST}\n`);
-    return;
-  }
-  const o = toolCall as Record<string, unknown>;
-  const r = o.readToolCall;
-  if (r !== null && typeof r === "object") {
-    const result = (r as { result?: { success?: Record<string, unknown> } })
-      .result;
-    if (result?.success) {
-      const s = result.success;
-      if (s !== null && typeof s === "object") {
-        const detail = formatReadSuccess(s);
-        process.stderr.write(
-          `  ${GRN}✓${RST} ${BOLD}read${RST}  ${DIM}${detail}${RST}\n`,
-        );
-        return;
-      }
-    }
-  }
-  const w = o.writeToolCall;
-  if (w !== null && typeof w === "object") {
-    const result = (w as { result?: { success?: Record<string, unknown> } })
-      .result;
-    if (result?.success) {
-      const s = result.success;
-      if (s !== null && typeof s === "object") {
-        process.stderr.write(
-          `  ${GRN}✓${RST} ${BOLD}write${RST}  ${DIM}${formatWriteSuccess(s)}${RST}\n`,
-        );
-        return;
-      }
-    }
-  }
-  const tsk = o.taskToolCall;
-  if (tsk !== null && typeof tsk === "object") {
-    const result = (tsk as { result?: { success?: unknown } }).result;
-    if (result != null && result.success != null) {
-      process.stderr.write(
-        `  ${GRN}✓${RST} ${DIM}[${MAG}subagent${DIM}]${RST}  ${DIM}finished${RST}\n`,
-      );
-      return;
-    }
-  }
-  for (const key of Object.keys(o)) {
-    if (
-      key === "readToolCall" ||
-      key === "writeToolCall" ||
-      key === "shellToolCall" ||
-      key === "taskToolCall"
-    ) {
-      continue;
-    }
-    const inner = o[key];
-    if (inner === null || typeof inner !== "object") {
-      continue;
-    }
-    const result = (inner as { result?: { success?: Record<string, unknown> } })
-      .result;
-    if (!result?.success) {
-      continue;
-    }
-    const s = result.success;
-    if (s !== null && typeof s !== "object") {
-      continue;
-    }
-    if ("totalLines" in s) {
-      process.stderr.write(
-        `  ${GRN}✓${RST} ${BOLD}read${RST}  ${DIM}${formatReadSuccess(s as Record<string, unknown>)}${RST}\n`,
-      );
-      return;
-    }
-    if ("linesCreated" in s || "fileSize" in s) {
-      process.stderr.write(
-        `  ${GRN}✓${RST} ${BOLD}write${RST}  ${DIM}${formatWriteSuccess(s as Record<string, unknown>)}${RST}\n`,
-      );
-      return;
-    }
-    if ("exitCode" in s) {
-      process.stderr.write(
-        `  ${GRN}✓${RST} ${BOLD}shell${RST}  ${DIM}exit ${String(s.exitCode)}${RST}\n`,
-      );
-      return;
-    }
-  }
-  process.stderr.write(`  ${DIM}· done (tool)${RST}\n`);
 }
 
 const SPINNER = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏" as const;
@@ -386,6 +286,8 @@ export class AgentStreamHandler {
   private projectCwd: string | undefined;
   private subagentWaitTimer: ReturnType<typeof setInterval> | null = null;
   private subagentSpinnerFrame = 0;
+  /** After at least one tool line was written; next tool gets one blank line above it. */
+  private emittedToolLine = false;
   /** Pairs `tool_call` · `shell` `started` → `completed` when the stream batch-reorders events. */
   private shellByCallId = new Map<string, string>();
 
@@ -424,48 +326,12 @@ export class AgentStreamHandler {
     this.shellByCallId.clear();
   }
 
-  private printShellPaired(callId: string, toolCall: unknown): void {
+  private printShellPaired(callId: string, _toolCall: unknown): void {
     const cmd = this.shellByCallId.get(callId) ?? "?";
     this.shellByCallId.delete(callId);
-    if (typeof toolCall !== "object" || toolCall === null) {
-      process.stderr.write(
-        `\n${DIM}$${RST} ${BOLD}${cmd}${RST}\n` +
-          `  ${DIM}· done (tool)${RST}\n`,
-      );
-      return;
-    }
-    const o = toolCall as Record<string, unknown>;
-    const sh = o.shellToolCall;
-    if (sh === null || typeof sh !== "object") {
-      process.stderr.write(
-        `\n${DIM}$${RST} ${BOLD}${cmd}${RST}\n` +
-          `  ${DIM}· done (tool)${RST}\n`,
-      );
-      return;
-    }
-    const result = (sh as { result?: { success?: Record<string, unknown> } })
-      .result;
-    if (result?.success) {
-      const s = result.success;
-      if (s !== null && typeof s === "object" && "exitCode" in s) {
-        process.stderr.write(
-          `\n${DIM}$${RST} ${BOLD}${cmd}${RST}\n` +
-            `  ${GRN}✓${RST} ${BOLD}shell${RST}  ${DIM}exit ${String(s.exitCode)}${RST}\n`,
-        );
-        return;
-      }
-      if (s !== null && typeof s === "object") {
-        process.stderr.write(
-          `\n${DIM}$${RST} ${BOLD}${cmd}${RST}\n` +
-            `  ${GRN}✓${RST} ${BOLD}shell${RST}  ${DIM}done${RST}\n`,
-        );
-        return;
-      }
-    }
-    process.stderr.write(
-      `\n${DIM}$${RST} ${BOLD}${cmd}${RST}\n` +
-        `  ${DIM}· done (tool)${RST}\n`,
-    );
+    toolLeadNewline(this.emittedToolLine);
+    this.emittedToolLine = true;
+    process.stderr.write(`${BAR} ${YLW}$${RST} ${BOLD}${cmd}${RST}\n`);
   }
 
   handleObject(ev: unknown): void {
@@ -483,10 +349,10 @@ export class AgentStreamHandler {
       const cwd = o.cwd;
       if (typeof cwd === "string" && cwd.length > 0) {
         process.stderr.write(
-          `${DIM}${String(model)}  ·  ${shortPath(cwd, 70)}${RST}\n\n`,
+          `${DIM}${String(model)}  ·  ${shortPath(cwd, 70)}${RST}\n`,
         );
       } else {
-        process.stderr.write(`\n${DIM}${String(model)}${RST}\n\n`);
+        process.stderr.write(`${DIM}${String(model)}${RST}\n`);
       }
       return;
     }
@@ -501,9 +367,21 @@ export class AgentStreamHandler {
       this.endAssistantBlock();
       const id =
         typeof o.call_id === "string" ? o.call_id : String(o.call_id ?? "…");
-      printToolStart(o.tool_call, id, this.projectCwd, (cid, command) => {
-        this.shellByCallId.set(cid, command);
-      });
+      const separate = this.emittedToolLine;
+      let deferredShell = false;
+      printToolStart(
+        o.tool_call,
+        id,
+        this.projectCwd,
+        separate,
+        (cid, command) => {
+          deferredShell = true;
+          this.shellByCallId.set(cid, command);
+        },
+      );
+      if (!deferredShell) {
+        this.emittedToolLine = true;
+      }
       if (isTaskToolStart(o.tool_call)) {
         this.startSubagentWaitVisual();
       }

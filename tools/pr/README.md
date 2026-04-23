@@ -18,7 +18,9 @@ Run without linking: `node /path/to/tools/pr/bin/pr.js …`
 |------|-------------|
 | `-h`, `--help` | Print usage and exit |
 
-The agent writes **`PR.md`** in the workspace (`# Title` line, blank line, then body). For **`pr update`** / **`pr review`**, the CLI prefetches the current PR into **`PR.md`** first; the agent overwrites it. The CLI opens **`PR.md`** in VS Code (`code --wait`), then asks **`[y/N]`** before **`gh pr create`**, **`gh pr edit`**, or **`gh pr review --comment`**. The first `# …` line becomes the title; the rest is the body.
+The agent cwd is a **stable directory** under the OS temp tree: **`<tmpdir>/pr-cli/<repo-path>/<branch>/`** (default **`PR_CLI_WORKSPACE_ROOT`** = **`os.tmpdir()`**). **`repo-path`** is the repo relative to **`$HOME`** when it lies under your home directory (e.g. **`~/projects/acme/app`** → **`projects/acme/app`**); otherwise **`_abs/<slug-of-full-path>`**. Each run **clears** that folder and refills it. Override the root with **`PR_CLI_WORKSPACE_ROOT`** (absolute or **`~/…`**).
+
+In that workspace the agent writes **`PR.md`** (`# Title`, blank line, body). For **`pr update`** / **`pr review`**, the CLI prefetches the PR into **`PR.md`** first; the agent overwrites it. The CLI opens **`PR.md`** in VS Code (`code --wait`), then **`[y/N]`** before **`gh pr create`**, **`gh pr edit`**, or **`gh pr review --comment`**. The first `# …` line is the title; the rest is the body.
 
 Jira ticket snippets: if the PR body mentions keys like **`PROJ-123`**, the CLI copies matching files from **`<dotfiles>/.agents/skills/jira-tickets`** or **`~/.agents/skills/jira-tickets`** into the workspace (no Jira API). When that skill exists, **`jira-tickets-board.md`** (a snapshot of **`SKILL.md`**) is also written into every workspace so the agent can match **NOVACORE-** work to the board without the skill being attached.
 

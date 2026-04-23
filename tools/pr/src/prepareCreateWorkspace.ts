@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { writeJiraSkillBoardSnapshot } from "./jiraSkillContext.ts";
+import { clearPrAgentWorkspaceDir } from "./prAgentWorkspace.ts";
 
 const GIT_BUFFER = 100 * 1024 * 1024;
 
@@ -61,7 +62,7 @@ export function populateCreateWorkspace(dir: string, repoRoot: string): string {
     return branch;
   } catch (e) {
     try {
-      fs.rmSync(dir, { recursive: true, force: true });
+      clearPrAgentWorkspaceDir(dir);
     } catch {
       // ignore
     }

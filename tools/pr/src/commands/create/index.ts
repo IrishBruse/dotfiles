@@ -1,9 +1,12 @@
 import process from "node:process";
-import path from "node:path";
 
 import { readAgentPrMarkdown } from "../../agentOutputFiles.ts";
-import { createReviewWorkspaceDir } from "../../prepareReviewWorkspace.ts";
 import { populateCreateWorkspace } from "../../prepareCreateWorkspace.ts";
+import {
+  getGitRepoRoot,
+  preparePrAgentWorkspace,
+  readCurrentBranch,
+} from "../../prAgentWorkspace.ts";
 import {
   confirmAndCreatePr,
   writePrCreateFile,
@@ -27,8 +30,9 @@ async function runCreateAsync(args: string[]): Promise<void> {
     console.log("pr create: extra args (ignored):", rest.join(" "));
   }
 
-  const repoRoot = path.resolve(process.cwd());
-  const workspaceDir = path.resolve(createReviewWorkspaceDir());
+  const repoRoot = getGitRepoRoot(process.cwd());
+  const branchForWorkspace = readCurrentBranch(repoRoot);
+  const workspaceDir = preparePrAgentWorkspace(repoRoot, branchForWorkspace);
   console.error(`pr create: agent workspace: ${workspaceDir}`);
   console.error(`pr create: repo (gh pr create cwd): ${repoRoot}`);
 
