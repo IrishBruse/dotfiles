@@ -5,7 +5,7 @@ import path from "node:path";
 
 import { prCoordsFromViewPayload } from "./githubPrPrefetchExtra.ts";
 import { writeJiraSkillContext } from "./jiraSkillContext.ts";
-import { writePrCommentsTxt } from "./prCommentsTxt.ts";
+import { writePrCommentsMd } from "./prCommentsMd.ts";
 
 const GH_BUFFER = 100 * 1024 * 1024;
 
@@ -107,7 +107,7 @@ export function populateReviewWorkspace(dir: string, target: string): void {
       runGh(["pr", "view", target, "--json", "statusCheckRollup"]),
     );
 
-    writePrCommentsTxt(dir, coords);
+    writePrCommentsMd(dir, coords);
 
     writeJiraSkillContext(dir, typeof viewObj.body === "string" ? viewObj.body : "");
   } catch (e) {

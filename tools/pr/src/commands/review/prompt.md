@@ -8,11 +8,11 @@ This block is prepended to command-specific instructions. Follow it for any revi
 
 ## Requirements
 
-- The CLI already prefetched PR data into the **workspace root** (`view.json`, `commits.txt`, `checks.json`, `comments.txt`, `files.json`, `diff.patch`, and optionally **`KEY-123.md`** Jira ticket copies such as `NOVACORE-39309.md`). Base your review on those files only (no `gh` or GitHub API tool calls for PR content).
+- The CLI already prefetched PR data into the **workspace root** (`view.json`, `commits.txt`, `checks.json`, `comments.md`, `files.json`, `diff.patch`, and optionally **`KEY-123.md`** Jira ticket copies such as `NOVACORE-39309.md`). Base your review on those files only (no `gh` or GitHub API tool calls for PR content).
 
 {{prefetchedContextSection}}
 
-Avoid duplicating feedback that is already under discussion (see `comments.txt`).
+Avoid duplicating feedback that is already under discussion (see `comments.md`).
 
 ## Final deliverable (required)
 

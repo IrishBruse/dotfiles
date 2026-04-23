@@ -64,10 +64,10 @@ function formatIssueComment(c: Record<string, unknown>): string {
 }
 
 /**
- * **`comments.txt`**: inline review comments (with **`diff_hunk`** in a fenced block) + issue-style PR conversation comments.
+ * **`comments.md`**: inline review comments (with **`diff_hunk`** in a fenced block) + issue-style PR conversation comments.
  * Uses **`gh api`** REST only (no GraphQL). Never throws; on failure writes a short error note into the file.
  */
-export function writePrCommentsTxt(dir: string, coords: PrRepoCoords): void {
+export function writePrCommentsMd(dir: string, coords: PrRepoCoords): void {
   const parts: string[] = [];
 
   const pullCommentsPath = `repos/${coords.owner}/${coords.repo}/pulls/${coords.number}/comments`;
@@ -102,5 +102,5 @@ export function writePrCommentsTxt(dir: string, coords: PrRepoCoords): void {
     }
   }
 
-  fs.writeFileSync(path.join(dir, "comments.txt"), parts.join(""), "utf8");
+  fs.writeFileSync(path.join(dir, "comments.md"), parts.join(""), "utf8");
 }
