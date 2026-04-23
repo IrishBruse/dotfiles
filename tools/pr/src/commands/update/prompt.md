@@ -6,7 +6,7 @@ You are executing **`pr update`**: refresh the **title** and **description** (bo
 
 ## Requirements
 
-- The CLI already prefetched PR data into the **workspace root** (`view.json`, `commits.txt`, `checks.json`, `review-threads.json`, `files.json`, `threads.json`, `diff.patch`, optionally **`KEY-123.md`** ticket files like `NOVACORE-39309.md`). Use those files — do not run `gh` or the GitHub API again to fetch PR content.
+- The CLI already prefetched PR data into the **workspace root** (`view.json`, `commits.txt`, `checks.json`, `comments.txt`, `files.json`, `diff.patch`, optionally **`KEY-123.md`** ticket files like `NOVACORE-39309.md`). Use those files — do not run `gh` or the GitHub API again to fetch PR content.
 
 {{prefetchedContextSection}}
 
@@ -15,7 +15,7 @@ You are executing **`pr update`**: refresh the **title** and **description** (bo
 1. Read **`view.json`** for the current title and body (and metadata).
 2. Use **`diff.patch`** and **`files.json`** as the source of truth for what the PR contains **now**.
 3. Plan an updated **title** and **markdown body** suitable for the PR description (summary, testing notes, breaking changes if any). Improve on the previous text where the diff warrants it; keep still-accurate context from the old body.
-4. If **`threads.json`** has review discussion, you may briefly reflect it when helpful; do not paste long threads.
+4. If **`comments.txt`** has review discussion, you may briefly reflect it when helpful; do not paste long threads.
 
 ## Final deliverable (required)
 

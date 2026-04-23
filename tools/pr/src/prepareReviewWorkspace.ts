@@ -3,11 +3,9 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import {
-  prCoordsFromViewPayload,
-  writeReviewThreadsAndForcePush,
-} from "./githubPrPrefetchExtra.ts";
+import { prCoordsFromViewPayload } from "./githubPrPrefetchExtra.ts";
 import { writeJiraSkillContext } from "./jiraSkillContext.ts";
+import { writePrCommentsTxt } from "./prCommentsTxt.ts";
 
 const GH_BUFFER = 100 * 1024 * 1024;
 
@@ -72,7 +70,7 @@ export function createReviewWorkspaceDir(): string {
   return fs.mkdtempSync(path.join(os.tmpdir(), "pr-cli-"));
 }
 
-/** Write prefetched PR files at the root of `dir` using `gh` + one GraphQL call. On failure, removes `dir` and rethrows. */
+/** Write prefetched PR files at the root of `dir` using `gh` (REST). On failure, removes `dir` and rethrows. */
 export function populateReviewWorkspace(dir: string, target: string): void {
   try {
     const viewRaw = runGh([
@@ -96,11 +94,6 @@ export function populateReviewWorkspace(dir: string, target: string): void {
       runGh(["pr", "view", target, "--json", "files"]),
     );
 
-    writeFormattedJsonFile(
-      path.join(dir, "threads.json"),
-      runGh(["pr", "view", target, "--json", "reviews,comments"]),
-    );
-
     fs.writeFileSync(
       path.join(dir, "diff.patch"),
       runGh(["pr", "diff", target]),
@@ -114,7 +107,7 @@ export function populateReviewWorkspace(dir: string, target: string): void {
       runGh(["pr", "view", target, "--json", "statusCheckRollup"]),
     );
 
-    writeReviewThreadsAndForcePush(dir, coords);
+    writePrCommentsTxt(dir, coords);
 
     writeJiraSkillContext(dir, typeof viewObj.body === "string" ? viewObj.body : "");
   } catch (e) {
