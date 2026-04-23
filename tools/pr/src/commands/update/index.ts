@@ -11,6 +11,7 @@ import {
 import { confirmAndApplyPrMetadata } from "../../prEditPostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
+import { takeModelFlags } from "../../modelFlags.ts";
 import { takePrintPromptFlag } from "../../printPromptFlag.ts";
 import { assertPrTitleMatchesJiraPolicy } from "../../jiraTitlePolicy.ts";
 import { loadUpdateAgentPrompt } from "../agentPrompts.ts";
@@ -53,7 +54,15 @@ export function runUpdate(args: string[]): void {
 }
 
 async function runUpdateAsync(args: string[]): Promise<void> {
-  const { rest, printPrompt } = takePrintPromptFlag(args);
+  const { rest: a0, printPrompt } = takePrintPromptFlag(args);
+  let rest: string[];
+  let model: string;
+  try {
+    ({ rest, model } = takeModelFlags(a0));
+  } catch (e) {
+    failPrCli(e instanceof Error ? e.message : String(e));
+    return;
+  }
   let target: string;
   try {
     target = resolveUpdatePrTarget(rest[0]);
@@ -61,6 +70,7 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     failPrCli(e instanceof Error ? e.message : `pr update: ${String(e)}`);
     return;
   }
+  console.error(`pr update: agent model: ${model}`);
 
   if (rest.length > 1) {
     console.log("pr update: extra args (ignored):", rest.slice(1).join(" "));
@@ -99,7 +109,7 @@ async function runUpdateAsync(args: string[]): Promise<void> {
   }
 
   try {
-    await runAgentPrint(prompt, { cwd: workspaceDir });
+    await runAgentPrint(prompt, { cwd: workspaceDir, model });
   } catch (e) {
     failPrCli(
       e instanceof Error ? e.message : `pr update: agent failed: ${String(e)}`,

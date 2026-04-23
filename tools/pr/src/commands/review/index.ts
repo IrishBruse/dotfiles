@@ -12,6 +12,7 @@ import {
   failPrCli,
 } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
+import { takeModelFlags } from "../../modelFlags.ts";
 import { takePrintPromptFlag } from "../../printPromptFlag.ts";
 import { loadReviewAgentPrompt } from "../agentPrompts.ts";
 
@@ -23,12 +24,21 @@ export function runReview(args: string[]): void {
 }
 
 async function runReviewAsync(args: string[]): Promise<void> {
-  const { rest, printPrompt } = takePrintPromptFlag(args);
+  const { rest: a0, printPrompt } = takePrintPromptFlag(args);
+  let rest: string[];
+  let model: string;
+  try {
+    ({ rest, model } = takeModelFlags(a0));
+  } catch (e) {
+    failPrCli(e instanceof Error ? e.message : String(e));
+    return;
+  }
   const target = rest[0];
   if (target === undefined) {
     failPrCli("pr review: expected a pull request URL or number");
     return;
   }
+  console.error(`pr review: agent model: ${model}`);
   if (rest.length > 1) {
     console.log("pr review: extra args (ignored):", rest.slice(1).join(" "));
   }
@@ -66,7 +76,7 @@ async function runReviewAsync(args: string[]): Promise<void> {
   }
 
   try {
-    await runAgentPrint(prompt, { cwd: workspaceDir });
+    await runAgentPrint(prompt, { cwd: workspaceDir, model });
   } catch (e) {
     failPrCli(
       e instanceof Error ? e.message : `pr review: agent failed: ${String(e)}`,

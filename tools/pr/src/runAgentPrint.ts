@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import process from "node:process";
 
 import { AgentStreamHandler } from "./agentStreamFormat.ts";
+import { PR_AGENT_DEFAULT_MODEL } from "./modelFlags.ts";
 
 const AGENT_TIMEOUT_MS = 1_200_000; // 20 minutes
 
@@ -16,6 +17,8 @@ const AGENT_ARGS_BASE = [
 
 export type RunAgentPrintOptions = {
   cwd?: string;
+  /** Cursor agent model slug (`agent --list-models`); default {@link PR_AGENT_DEFAULT_MODEL}. */
+  model?: string;
 };
 
 /**
@@ -26,17 +29,17 @@ export async function runAgentPrint(
   prompt: string,
   options: RunAgentPrintOptions = {},
 ): Promise<string> {
-  const { cwd } = options;
+  const { cwd, model = PR_AGENT_DEFAULT_MODEL } = options;
 
   try {
-    return await spawnOnceStream("agent", prompt, AGENT_TIMEOUT_MS, cwd);
+    return await spawnOnceStream("agent", prompt, AGENT_TIMEOUT_MS, cwd, model);
   } catch (e) {
     if (!isEnoent(e)) {
       throw e;
     }
   }
 
-  return await spawnOnceStream("cursor-agent", prompt, AGENT_TIMEOUT_MS, cwd);
+  return await spawnOnceStream("cursor-agent", prompt, AGENT_TIMEOUT_MS, cwd, model);
 }
 
 function isEnoent(e: unknown): boolean {
@@ -47,13 +50,18 @@ function spawnOnceStream(
   command: string,
   prompt: string,
   timeoutMs: number,
-  cwd?: string,
+  cwd: string | undefined,
+  model: string,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, [...AGENT_ARGS_BASE, prompt], {
-      stdio: ["ignore", "pipe", "pipe"],
-      ...(cwd !== undefined ? { cwd } : {}),
-    });
+    const child = spawn(
+      command,
+      [...AGENT_ARGS_BASE, "--model", model, prompt],
+      {
+        stdio: ["ignore", "pipe", "pipe"],
+        ...(cwd !== undefined ? { cwd } : {}),
+      },
+    );
     const handler = new AgentStreamHandler();
     let err = "";
     let lineBuf = "";

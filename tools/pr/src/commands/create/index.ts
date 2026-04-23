@@ -10,6 +10,7 @@ import {
 import { confirmAndCreatePr } from "../../prCreatePostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
+import { takeModelFlags } from "../../modelFlags.ts";
 import { takePrintPromptFlag } from "../../printPromptFlag.ts";
 import { assertPrTitleMatchesJiraPolicy } from "../../jiraTitlePolicy.ts";
 import { loadCreateAgentPrompt } from "../agentPrompts.ts";
@@ -22,10 +23,19 @@ export function runCreate(args: string[]): void {
 }
 
 async function runCreateAsync(args: string[]): Promise<void> {
-  const { rest, printPrompt } = takePrintPromptFlag(args);
+  const { rest: a0, printPrompt } = takePrintPromptFlag(args);
+  let rest: string[];
+  let model: string;
+  try {
+    ({ rest, model } = takeModelFlags(a0));
+  } catch (e) {
+    failPrCli(e instanceof Error ? e.message : String(e));
+    return;
+  }
   if (rest.length > 0) {
     console.log("pr create: extra args (ignored):", rest.join(" "));
   }
+  console.error(`pr create: agent model: ${model}`);
 
   const repoRoot = getGitRepoRoot(process.cwd());
   const branchForWorkspace = readCurrentBranch(repoRoot);
@@ -59,7 +69,7 @@ async function runCreateAsync(args: string[]): Promise<void> {
   }
 
   try {
-    await runAgentPrint(prompt, { cwd: workspaceDir });
+    await runAgentPrint(prompt, { cwd: workspaceDir, model });
   } catch (e) {
     failPrCli(
       e instanceof Error ? e.message : `pr create: agent failed: ${String(e)}`,

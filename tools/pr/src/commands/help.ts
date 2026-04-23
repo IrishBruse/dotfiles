@@ -18,7 +18,10 @@ export function printHelp(): void {
       "",
       "Options:",
       "  --print-prompt   After workspace prefetch, print the full resolved agent prompt to stdout and exit",
-      "                   (no agent). Use as e.g. pr create --print-prompt, or pr --print-prompt alone to infer create|update.",
+      "                   (no agent). Combinable with --opus / --codex. With no subcommand, same flags infer create|update.",
+      "  --opus           Run the Cursor agent with the Opus model (claude-opus-4-7-high).",
+      "  --codex          Run with Codex 5.3 (gpt-5.3-codex).",
+      "  (default model)  If neither is set, uses composer-2-fast (agent --list-models).",
       "  -h, --help       Show this message",
     ].join("\n"),
   );

@@ -19,7 +19,7 @@ export function main(argv: string[]): void {
   const first = args[0];
 
   if (first === undefined) {
-    inferAndRun(args.slice(1));
+    inferAndRun([]);
     return;
   }
 
@@ -28,13 +28,9 @@ export function main(argv: string[]): void {
     return;
   }
 
-  if (first === "--print-prompt") {
-    if (args.length > 1) {
-      console.error("pr: with no subcommand, only `--print-prompt` is allowed");
-      process.exitCode = 1;
-      return;
-    }
-    inferAndRun(["--print-prompt"]);
+  const inferOnlyFlags = new Set(["--print-prompt", "--opus", "--codex"]);
+  if (args.length > 0 && args.every((a) => inferOnlyFlags.has(a))) {
+    inferAndRun(args);
     return;
   }
 
