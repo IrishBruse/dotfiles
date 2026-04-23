@@ -7,14 +7,11 @@ You are running **`pr create`**: open a new GitHub PR from the **current branch*
 - Use the **prefetched files** in the workspace root below. They materialize the branch and `origin/main` diff from the real repo; do not substitute live `git` output from elsewhere.
 - The host runs **`gh pr create`** from the **repository directory** after you finish; you only write **`PR.md`** in the workspace.
 
-**Source of truth:** **`diff.patch`** decides what ships. The **Source branch** line names the PR head. If **`PULL_REQUEST_TEMPLATE.md`** exists, shape the **body** with it—fill from the diff; do not contradict the diff.
+**Source of truth:** **`diff.patch`** decides what ships. The **Source branch** line names the PR head. If **`PULL_REQUEST_TEMPLATE.md`** exists, shape the **body** with it—fill from the diff; do not contradict the diff. If there is no repo template, or it is only placeholders, use the default layout below.
 
 - If **`diff.patch`** is empty or tiny, say so in the body instead of inventing scope.
 
-**PR description — do not:**
-
-- Add **How to verify** (or the same under another heading: verification steps, command checklists, “run `npm …`”, etc.).
-- Mention **Jira / PR title validation**, **missing issue key**, **NOVACORE title checks**, **previous title failed CI**, or **why the title was changed for a validator**. Use a correct `#` title and describe the work—no meta about validators or title gate failures.
+{{defaultPrBodyInstructions}}
 
 ## Create context (prefetched local files)
 

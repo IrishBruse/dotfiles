@@ -10,6 +10,11 @@ import {
 
 const commandsDir = path.dirname(fileURLToPath(import.meta.url));
 
+const defaultPrBodyInstructions = fs.readFileSync(
+  path.join(commandsDir, "pr-body-default.md"),
+  "utf8",
+);
+
 function expandPromptPlaceholders(
   template: string,
   vars: Record<string, string>,
@@ -38,7 +43,11 @@ export type CreatePromptVars = {
 };
 
 export function loadCreateAgentPrompt(vars: CreatePromptVars): string {
-  return loadAgentPrompt("create", vars, loadCreateWorkPromptAppendix);
+  return loadAgentPrompt(
+    "create",
+    { ...vars, defaultPrBodyInstructions },
+    loadCreateWorkPromptAppendix,
+  );
 }
 
 export type UpdatePromptVars = {
@@ -47,7 +56,11 @@ export type UpdatePromptVars = {
 };
 
 export function loadUpdateAgentPrompt(vars: UpdatePromptVars): string {
-  return loadAgentPrompt("update", vars, loadUpdateWorkPromptAppendix);
+  return loadAgentPrompt(
+    "update",
+    { ...vars, defaultPrBodyInstructions },
+    loadUpdateWorkPromptAppendix,
+  );
 }
 
 export type ReviewPromptVars = {
