@@ -8,11 +8,11 @@ This block is prepended to command-specific instructions. Follow it for any revi
 
 ## Requirements
 
-- The CLI already ran `gh` and wrote PR data into `context/`. Base your review on those files only (no `gh` or GitHub API tool calls for PR content).
+- The CLI already ran `gh` and wrote PR data into the **workspace root** (`view.json`, `files.json`, `threads.json`, `diff.patch`). Base your review on those files only (no `gh` or GitHub API tool calls for PR content).
 
 {{prefetchedContextSection}}
 
-Avoid duplicating feedback that is already under discussion (see `context/threads.json`).
+Avoid duplicating feedback that is already under discussion (see `threads.json`).
 
 ## Final response (required — machine parse)
 

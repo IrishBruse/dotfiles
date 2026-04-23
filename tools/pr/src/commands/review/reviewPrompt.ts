@@ -34,7 +34,7 @@ export function loadReviewAgentPrompt(vars: ReviewPromptVars): string {
 }
 
 export function buildPrLine(target: string): string {
-  return `**Review target:** \`${target}\` — PR number (current repo) or full PR URL. The CLI posts the review with this target; all PR data to analyze is already under \`context/\` in your workspace.`;
+  return `**Review target:** \`${target}\` — PR number (current repo) or full PR URL. The CLI posts the review with this target; all PR data to analyze is already in the **workspace root** (your agent cwd).`;
 }
 
 export function buildPrefetchedContextSection(workspaceDir: string): string {
@@ -44,14 +44,14 @@ Your **current working directory** for this agent run is:
 
 \`${workspaceDir}\`
 
-Use the files below **relative to that directory**. Do not run \`gh pr …\` to fetch the PR again (data is already materialized).
+Use the files below **in that directory** (root of the workspace). Do not run \`gh pr …\` to fetch the PR again (data is already materialized).
 
 | Path | Contents |
 |------|----------|
-| \`context/view.json\` | PR metadata from \`gh pr view --json number,title,author,baseRefName,headRefName,body,state,labels,reviewRequests\` |
-| \`context/files.json\` | Changed files from \`gh pr view --json files\` |
-| \`context/diff.patch\` | Full unified diff from \`gh pr diff\` |
-| \`context/threads.json\` | \`reviews\` and \`comments\` from \`gh pr view --json reviews,comments\` |
+| \`view.json\` | PR metadata from \`gh pr view --json number,title,author,baseRefName,headRefName,body,state,labels,reviewRequests\` (pretty-printed) |
+| \`files.json\` | Changed files from \`gh pr view --json files\` (pretty-printed) |
+| \`diff.patch\` | Full unified diff from \`gh pr diff\` |
+| \`threads.json\` | \`reviews\` and \`comments\` from \`gh pr view --json reviews,comments\` (pretty-printed) |
 
 Parallel subagents must also read these same paths (this workspace is shared).`;
 }

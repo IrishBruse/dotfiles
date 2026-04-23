@@ -29,9 +29,19 @@ function bodyForPreview(body: string): string {
     .join("\n");
 }
 
-export function printMarkdownPreview(title: string, body: string): void {
+export type MarkdownPreviewOptions = {
+  /** Shown in the TTY hint line, e.g. `apply` for `gh pr edit`. Default: `post`. */
+  enterAction?: string;
+};
+
+export function printMarkdownPreview(
+  title: string,
+  body: string,
+  options?: MarkdownPreviewOptions,
+): void {
   ensureMarked();
-  console.log("Preview: Enter = post, Esc = cancel, Ctrl+C = exit\n");
+  const enterAction = options?.enterAction ?? "post";
+  console.log(`Preview: Enter = ${enterAction}, Esc = cancel, Ctrl+C = exit\n`);
   if (title.trim() !== "") {
     console.log(
       String(marked.parse(`## ${title.replace(/\n/g, " ")}\n`)),
@@ -86,10 +96,12 @@ export function waitForEnterRetryOrCancel(): Promise<"retry" | "cancel"> {
 /**
  * Read one key in raw mode. Enter = post, Esc = cancel, Ctrl+C = exit 130.
  */
-export function waitForPostOrCancel(): Promise<"post" | "cancel"> {
+export function waitForPostOrCancel(
+  noConfirmHint: string = "PR_REVIEW_NO_CONFIRM=1",
+): Promise<"post" | "cancel"> {
   if (!process.stdin.isTTY) {
     return Promise.reject(
-      new Error("stdin is not a TTY; set PR_REVIEW_NO_CONFIRM=1 to skip"),
+      new Error(`stdin is not a TTY; set ${noConfirmHint} to skip`),
     );
   }
   return new Promise((resolve) => {

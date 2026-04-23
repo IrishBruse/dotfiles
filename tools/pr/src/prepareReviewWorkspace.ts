@@ -18,18 +18,24 @@ function runGh(args: string[]): string {
   return r.stdout ?? "";
 }
 
+function writeFormattedJsonFile(filePath: string, ghJsonStdout: string): void {
+  const parsed: unknown = JSON.parse(ghJsonStdout);
+  fs.writeFileSync(
+    filePath,
+    JSON.stringify(parsed, null, 2) + "\n",
+    "utf8",
+  );
+}
+
 export function createReviewWorkspaceDir(): string {
   return fs.mkdtempSync(path.join(os.tmpdir(), "pr-cli-"));
 }
 
-/** Write `context/*` under `dir` using `gh pr` for the given PR. On failure, removes `dir` and rethrows. */
+/** Write prefetched PR files at the root of `dir` using `gh pr`. On failure, removes `dir` and rethrows. */
 export function populateReviewWorkspace(dir: string, target: string): void {
   try {
-    const ctx = path.join(dir, "context");
-    fs.mkdirSync(ctx, { recursive: true });
-
-    fs.writeFileSync(
-      path.join(ctx, "view.json"),
+    writeFormattedJsonFile(
+      path.join(dir, "view.json"),
       runGh([
         "pr",
         "view",
@@ -37,23 +43,20 @@ export function populateReviewWorkspace(dir: string, target: string): void {
         "--json",
         "number,title,author,baseRefName,headRefName,body,state,labels,reviewRequests",
       ]),
-      "utf8",
     );
 
-    fs.writeFileSync(
-      path.join(ctx, "files.json"),
+    writeFormattedJsonFile(
+      path.join(dir, "files.json"),
       runGh(["pr", "view", target, "--json", "files"]),
-      "utf8",
     );
 
-    fs.writeFileSync(
-      path.join(ctx, "threads.json"),
+    writeFormattedJsonFile(
+      path.join(dir, "threads.json"),
       runGh(["pr", "view", target, "--json", "reviews,comments"]),
-      "utf8",
     );
 
     fs.writeFileSync(
-      path.join(ctx, "diff.patch"),
+      path.join(dir, "diff.patch"),
       runGh(["pr", "diff", target]),
       "utf8",
     );

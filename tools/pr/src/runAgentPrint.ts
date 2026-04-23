@@ -26,7 +26,9 @@ function resolveAgentBinary(): { agent: string; useFallback: boolean } {
   return { agent: "agent", useFallback: true };
 }
 
+/** Global flags before `-p` so headless runs trust the process cwd (e.g. temp PR workspace). */
 const AGENT_ARGS_BASE = [
+  "--trust",
   "-p",
   "--output-format",
   "stream-json",
