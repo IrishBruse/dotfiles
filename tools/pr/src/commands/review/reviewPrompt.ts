@@ -48,10 +48,16 @@ Use the files below **in that directory** (root of the workspace). Do not run \`
 
 | Path | Contents |
 |------|----------|
-| \`view.json\` | PR metadata from \`gh pr view --json number,title,author,baseRefName,headRefName,body,state,labels,reviewRequests\` (pretty-printed) |
+| \`view.json\` | PR metadata (incl. \`baseRefOid\`, \`headRefOid\`, \`url\`) from \`gh pr view\` (pretty-printed) |
+| \`commits.json\` | Commit list (\`commits\`, SHAs, messages, dates) plus \`compareRangeUrl\` (\`base...head\`) from \`gh pr view\` |
+| \`checks.json\` | \`statusCheckRollup\` — CI/check pass-fail, job names, \`detailsUrl\` / \`targetUrl\` log links (pretty-printed) |
+| \`review-threads.json\` | GraphQL: line-level \`reviewThreads\` (\`isResolved\`, path, line, \`diffHunk\`, bodies) and \`forcePushTimeline\` (\`HeadRefForcePushedEvent\` before/after SHAs) |
 | \`files.json\` | Changed files from \`gh pr view --json files\` (pretty-printed) |
 | \`diff.patch\` | Full unified diff from \`gh pr diff\` |
-| \`threads.json\` | \`reviews\` and \`comments\` from \`gh pr view --json reviews,comments\` (pretty-printed) |
+| \`threads.json\` | Top-level \`reviews\` and issue \`comments\` from \`gh pr view\` (pretty-printed); use with \`review-threads.json\` for inline threads |
+| \`jira.md\` | If the PR body mentions Jira keys (\`KEY-123\`): ticket text from the **jira-tickets** skill \`references/**\` files, or the skill board \`SKILL.md\` fallback (no API; optional file) |
+| \`Title.md\` | **You write:** short title for the review comment (terminal preview). Required; non-empty. |
+| \`Body.md\` | **You write:** full markdown for the review comment (e.g. \`> Reviewed by Cursor\` and findings). Required; non-empty. |
 
 Parallel subagents must also read these same paths (this workspace is shared).`;
 }

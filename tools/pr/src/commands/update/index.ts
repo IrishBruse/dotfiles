@@ -2,10 +2,7 @@ import { spawnSync } from "node:child_process";
 import process from "node:process";
 import path from "node:path";
 
-import {
-  getLastJsonFenceRaw,
-  parsePrReviewFromJsonString,
-} from "../../parseJsonFence.ts";
+import { readAgentTitleAndBody } from "../../agentOutputFiles.ts";
 import {
   createReviewWorkspaceDir,
   populateReviewWorkspace,
@@ -93,9 +90,8 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     hintBlock: "",
   });
 
-  let stdout: string;
   try {
-    stdout = await runAgentPrint(prompt, { cwd: workspaceDir });
+    await runAgentPrint(prompt, { cwd: workspaceDir });
   } catch (e) {
     failPrCli(
       e instanceof Error ? e.message : `pr update: agent failed: ${String(e)}`,
@@ -103,14 +99,14 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     return;
   }
 
-  let parsed: ReturnType<typeof parsePrReviewFromJsonString>;
+  let parsed: ReturnType<typeof readAgentTitleAndBody>;
   try {
-    parsed = parsePrReviewFromJsonString(getLastJsonFenceRaw(stdout));
+    parsed = readAgentTitleAndBody(workspaceDir, "pr update");
   } catch (e) {
     failPrCli(
       e instanceof Error
         ? e.message
-        : `pr update: could not parse agent output: ${String(e)}`,
+        : `pr update: could not read agent output files: ${String(e)}`,
     );
     return;
   }
@@ -124,7 +120,7 @@ async function runUpdateAsync(args: string[]): Promise<void> {
 
   const outPath = writePrUpdateFile(target, parsed);
   console.error(
-    `pr update: saved ${outPath} (title, body; re-apply with gh or edit file)`,
+    `pr update: saved ${outPath} (copy of title/body; workspace still has Title.md & Body.md until applied)`,
   );
 
   await confirmAndApplyPrMetadata("pr update:", target, parsed, workspaceDir);

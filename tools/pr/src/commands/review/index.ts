@@ -1,10 +1,7 @@
 import process from "node:process";
 import path from "node:path";
 
-import {
-  getLastJsonFenceRaw,
-  parsePrReviewFromJsonString,
-} from "../../parseJsonFence.ts";
+import { readAgentTitleAndBody } from "../../agentOutputFiles.ts";
 import {
   createReviewWorkspaceDir,
   populateReviewWorkspace,
@@ -60,9 +57,8 @@ async function runReviewAsync(args: string[]): Promise<void> {
     workJiraTitleSection: buildWorkJiraTitleSection(),
   });
 
-  let stdout: string;
   try {
-    stdout = await runAgentPrint(prompt, { cwd: workspaceDir });
+    await runAgentPrint(prompt, { cwd: workspaceDir });
   } catch (e) {
     failPrCli(
       e instanceof Error ? e.message : `pr review: agent failed: ${String(e)}`,
@@ -70,21 +66,21 @@ async function runReviewAsync(args: string[]): Promise<void> {
     return;
   }
 
-  let parsed: ReturnType<typeof parsePrReviewFromJsonString>;
+  let parsed: ReturnType<typeof readAgentTitleAndBody>;
   try {
-    parsed = parsePrReviewFromJsonString(getLastJsonFenceRaw(stdout));
+    parsed = readAgentTitleAndBody(workspaceDir, "pr review");
   } catch (e) {
     failPrCli(
       e instanceof Error
         ? e.message
-        : `pr review: could not parse agent output: ${String(e)}`,
+        : `pr review: could not read agent output files: ${String(e)}`,
     );
     return;
   }
 
   const outPath = writeReviewFile(target, parsed);
   console.error(
-    `pr review: saved ${outPath} (title, body; re-post with gh or edit and paste body)`,
+    `pr review: saved ${outPath} (copy of title/body; workspace still has Title.md & Body.md until posted)`,
   );
 
   await confirmAndPostReviewComment("pr review:", target, parsed, workspaceDir);

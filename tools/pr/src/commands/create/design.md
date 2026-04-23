@@ -34,26 +34,26 @@ When the appendix is present, the agent invokes **jira-board**, matches branch /
 
 | File | Role |
 |------|------|
-| **`prompt.md`** | Personal/core: **`gh`**, diff, template, generic title, JSON fence — **no** org Jira rules. |
+| **`prompt.md`** | Personal/core: prefetched **`diff.patch`**, optional template, **`Title.md`/`Body.md`** — **no** org Jira rules. |
 | **`work/prompt.md`** | Loaded **only** when **`isJiraTitlePolicyEnabled()`** — Jira title policy + jira-board skill + examples using **`{{JIRA_PROJECT_KEY}}`** substitution. |
 
 ## Intended runtime (prompt contract)
 
-1. Compose via **`loadCreateAgentPrompt`** (core ± work appendix).
-2. Run **`agent`** with that string (e.g. **`--print`**).
-3. Parse the **last** **`json`** fence for **`title`** and **`body`**.
-4. Optionally validate **title** against **`KEY-<digits>`** when **`PR_TITLE_JIRA_KEY`** is set.
-5. Render markdown in the terminal; on **Enter** run **`gh pr create`**, on **Esc** cancel.
+1. **`populateCreateWorkspace`** — **`git diff origin/main`** → **`diff.patch`**; optional **`PULL_REQUEST_TEMPLATE.md`** copy.
+2. Compose via **`loadCreateAgentPrompt`** (core ± work appendix).
+3. Run **`agent`** with **`cwd`** in the temp workspace.
+4. Read **`Title.md`** / **`Body.md`**; validate title when **`PR_TITLE_JIRA_KEY`** is set.
+5. Preview; on **Enter** run **`gh pr create --title … --body-file …`**, on **Esc** cancel.
 
 ## Current implementation status
 
-**`runCreate`** builds the composed prompt via **`loadCreateAgentPrompt`** and prints a **stub** line (length) to **`stderr`**; it does **not** invoke **`agent`** or **`gh`** yet.
+**`runCreate`** implements the full flow (see **`src/commands/create/index.ts`**, **`prepareCreateWorkspace.ts`**, **`prCreatePostUtils.ts`**).
 
 ## Related files
 
 | File | Purpose |
 |------|---------|
-| `src/commands/create/index.ts` | CLI entry and stub orchestration |
+| `src/commands/create/index.ts` | CLI entry and orchestration |
 | `src/commands/create/createPrompt.ts` | Core vs work composition |
 | `work/jiraTitlePolicy.ts` | **`isJiraTitlePolicyEnabled`** (shared gate; review uses **`buildWorkJiraTitleSection`** from the same module) |
 | `src/infer.ts` | Calls **`runCreate`** when inference chooses “no open PR” |

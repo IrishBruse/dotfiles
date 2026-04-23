@@ -8,37 +8,24 @@ This block is prepended to command-specific instructions. Follow it for any revi
 
 ## Requirements
 
-- The CLI already ran `gh` and wrote PR data into the **workspace root** (`view.json`, `files.json`, `threads.json`, `diff.patch`). Base your review on those files only (no `gh` or GitHub API tool calls for PR content).
+- The CLI already prefetched PR data into the **workspace root** (`view.json`, `commits.json`, `checks.json`, `review-threads.json`, `files.json`, `threads.json`, `diff.patch`, and optionally `jira.md`). Base your review on those files only (no `gh` or GitHub API tool calls for PR content).
 
 {{prefetchedContextSection}}
 
-Avoid duplicating feedback that is already under discussion (see `threads.json`).
+Avoid duplicating feedback that is already under discussion (see `threads.json` and inline threads in `review-threads.json`).
 
-## Final response (required — machine parse)
+## Final deliverable (required)
 
-When your review text is ready for GitHub, your **last** message must contain **only** one markdown fenced code block tagged `json`. Do not put prose, headings, or commentary outside that block. Do not write anything after the closing fence.
+When your review is ready, you **must** write two files in the **workspace root** (same directory as this prefetch data). The CLI reads them after you finish — do not rely on chat output for posting.
 
-The CLI will show **title** and **body** to the user; they approve or cancel before `gh pr review --comment` runs.
+1. **`Title.md`** — Short line for the review comment (shown in the terminal preview). Plain text or minimal markdown; trimmed.
+2. **`Body.md`** — Full markdown for the GitHub review comment, including `> Reviewed by Cursor` at the top unless policy says otherwise.
 
-Shape (valid JSON strings; use `\n` inside **body** for newlines if you emit a single-line string):
-
-```json
-{
-  "title": "Short summary for the review comment",
-  "body": "> Reviewed by Cursor\n\n…markdown review…",
-  "pr": "42"
-}
-```
-
-- **title** — Short line for the terminal preview (often mirrors the first line or summary).
-- **body** — Full markdown for the PR review comment, including `> Reviewed by Cursor` at the top unless the user’s policy says otherwise.
-- **pr** — Include when the review target was **not** fixed by the CLI argv (omit or repeat the same value when the user already passed an explicit PR number or URL on the command line; the CLI will use argv in that case).
-
-If your final message contains anything other than that single fenced `json` block, the CLI cannot safely post the comment for human approval.
+Both files must exist and be **non-empty**. The human approves in the terminal preview, then the CLI runs `gh pr review --comment`.
 
 # First-pass review (`pr review`)
 
-You are executing **`pr review`**: a first-pass review of the PR identified above (shared **Resolve and inspect** section). Perform the analysis below, then satisfy **Final response** in the shared preamble (single `json` fence only).
+You are executing **`pr review`**: a first-pass review of the PR identified above (shared **Resolve and inspect** section). Perform the analysis below, then satisfy **Final deliverable** in the shared preamble (`Title.md` + `Body.md` only).
 
 ## 1. Scope selection
 
@@ -72,11 +59,13 @@ Launch three subagents to audit the PR simultaneously. They must only report fin
 
 ## 3. Synthesis
 
-Produce consolidated feedback suitable for **body** in the final JSON:
+Produce consolidated feedback suitable for **`Body.md`**:
 
 1. **Executive summary** — High-level assessment (e.g. safe to merge, needs changes, minor cleanup).
 2. **Actionable suggestions** — Specific improvements; use fenced code only where it helps.
 3. **Discussion points** — Architectural or product questions for humans.
+
+Put a short summary line in **`Title.md`** (mirrors the gist of the review).
 
 ## 4. Post-review validation
 

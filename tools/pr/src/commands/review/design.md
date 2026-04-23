@@ -15,11 +15,11 @@ This document describes how **`pr review`** fits the wider CLI and how the revie
 
 ## Prompt assembly
 
-A single file **`prompt.md`** next to **`reviewPrompt.ts`** in **`src/commands/review/`** contains the full template (shared **Resolve and inspect** / JSON contract first, then first-pass review body).
+A single file **`prompt.md`** next to **`reviewPrompt.ts`** in **`src/commands/review/`** contains the full template (shared **Resolve and inspect** / **`Title.md`+`Body.md`** contract first, then first-pass review body).
 
 Substitution is implemented in **`reviewPrompt.ts`**:
 
-- **`{{prLine}}`** — Built from the CLI target; tells the agent to use `gh pr view`, `gh pr diff`, etc. with that PR.
+- **`{{prLine}}`** — Built from the CLI target; prefetched files replace ad-hoc `gh` in-agent.
 - **`{{hintBlock}}`** — Currently empty when invoked from `runReview`.
 - **`{{workJiraTitleSection}}`** — Optional **work overlay**: non-empty only when **`PR_TITLE_JIRA_KEY`** is set. Markdown is produced by **`buildWorkJiraTitleSection()`** in **`../create/work/jiraTitlePolicy.ts`** (same toggle as create; separate from create’s **`work/prompt.md`** appendix, which is create-only).
 
@@ -29,24 +29,23 @@ The expanded string is the full agent prompt.
 
 ## Intended runtime (prompt contract)
 
-The prompts describe an end-to-end flow that is **not fully implemented** in TypeScript yet:
+1. Prefetch PR files into a temp workspace (**`prepareReviewWorkspace`**).
+2. Run **`agent`** with **`cwd`** set to that workspace (**`runAgentPrint`**).
+3. Read **`Title.md`** and **`Body.md`** from the workspace (**`readAgentTitleAndBody`**).
+4. Show **title** / **body** in the terminal for human approval.
+5. On approval, post via **`gh pr review --comment`**; on cancel, exit without posting.
 
-1. Run **`agent`** (Cursor Agent) with the composed prompt (e.g. **`--print`** pattern used elsewhere in this repo).
-2. Parse the **last** message for a single fenced **`json`** block with **`title`**, **`body`**, and optionally **`pr`** when the target was not fixed on the argv.
-3. Show **title** / **body** in the terminal for human approval.
-4. On approval, post via **`gh pr review --comment`** (or equivalent); on cancel, exit without posting.
-
-The first section of **`prompt.md`** (through **Final response** / JSON contract) is the source of truth for JSON shape and approval semantics.
+The first section of **`prompt.md`** (through **Final deliverable**) is the source of truth for file names and approval semantics.
 
 ## Current implementation status
 
 **`runReview`**:
 
 - Builds the composed prompt via **`loadReviewAgentPrompt`**.
-- Runs **`agent -p --output-format stream-json --stream-partial-output`** (or **`PR_AGENT`**, with **`cursor-agent`** fallback) via **`runAgentPrint`**; live stream is formatted to **stderr**; final assistant text is taken from the stream’s terminal **`result`** line (not raw stdout). Timeout: **`PR_AGENT_TIMEOUT_MS`**.
-- Extracts the last **`json`** fence with **`getLastJsonFenceRaw`**, then **`parsePrReviewFromJsonString`**; expects **`title`** and **`body`**. A **`pr-review-<n>.json`** file in cwd stores **`pr`**, **`savedAt`**, **`title`**, **`body`** (and **`lastError`** if `gh` failed).
-- If interactive TTY and **`PR_REVIEW_NO_CONFIRM`** is unset, **`printMarkdownPreview`** then **`waitForPostOrCancel`**; otherwise with **`PR_REVIEW_NO_CONFIRM=1`**, skips preview and posts.
-- On confirm: **`gh pr review`**, PR from argv, **`--comment -F`** (temp file with **body**).
+- Runs **`agent`** via **`runAgentPrint`** with **`--trust`**; stream to **stderr**; timeout **`PR_AGENT_TIMEOUT_MS`**.
+- Reads **`Title.md`** / **`Body.md`**; writes **`pr-review-<n>.json`** for retry (and **`lastError`** if `gh` failed).
+- TTY: **`printMarkdownPreview`** + **`waitForPostOrCancel`**; **`PR_REVIEW_NO_CONFIRM=1`** skips preview.
+- On confirm: **`gh pr review`**, **`--comment -F`** (temp file with **body**).
 
 ## Related files
 
@@ -56,7 +55,7 @@ The first section of **`prompt.md`** (through **Final response** / JSON contract
 | `src/commands/review/reviewPrompt.ts` | Load **`prompt.md`**, expand placeholders |
 | `../create/work/jiraTitlePolicy.ts` | **`buildWorkJiraTitleSection`** for **`{{workJiraTitleSection}}`** |
 | `prompt.md` | Full template: shared + first-pass review |
-| `src/parseJsonFence.ts` | Last markdown `json` code fence → parsed object |
+| `src/agentOutputFiles.ts` | Read **`Title.md`** / **`Body.md`** → **`PrReviewJson`** |
 | `src/runAgentPrint.ts` | Subprocess **agent** (stream-json + partial) |
 | `src/agentStreamFormat.ts` | NDJSON → stderr (model, assistant stream, tools) |
 | `src/reviewPreview.ts` | Marked terminal preview + raw TTY one-key confirm |

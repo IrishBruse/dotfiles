@@ -5,30 +5,30 @@ import os from "node:os";
 import path from "node:path";
 
 import type { PrReviewJson } from "./agentOutputFiles.ts";
+import { failPrCli } from "./reviewPostUtils.ts";
 import {
   printMarkdownPreview,
   waitForEnterRetryOrCancel,
   waitForPostOrCancel,
 } from "./reviewPreview.ts";
 
-export function noConfirmFromEnv(): boolean {
-  return process.env.PR_REVIEW_NO_CONFIRM === "1";
+export function noCreateConfirmFromEnv(): boolean {
+  return process.env.PR_CREATE_NO_CONFIRM === "1";
 }
 
-export function failPrCli(msg: string): void {
-  console.error(msg);
-  process.exitCode = 1;
-}
-
-export function postPrReviewComment(pr: string, body: string): boolean {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "pr-cli-review-"));
+export function postPrCreate(title: string, body: string): boolean {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "pr-cli-create-"));
   const file = path.join(dir, "body.md");
   try {
     fs.writeFileSync(file, body, { encoding: "utf8" });
-    const r = spawnSync("gh", ["pr", "review", pr, "--comment", "-F", file], {
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"],
-    });
+    const r = spawnSync(
+      "gh",
+      ["pr", "create", "--title", title, "--body-file", file],
+      {
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "pipe"],
+      },
+    );
     if (r.status === 0) {
       return true;
     }
@@ -48,20 +48,17 @@ export function postPrReviewComment(pr: string, body: string): boolean {
   }
 }
 
-export function prReviewJsonPathFromTarget(target: string): string {
-  const m = target.match(/(\d+)/);
-  const id = m ? m[1]! : "pr";
-  return path.join(process.cwd(), `pr-review-${id}.json`);
+export function prCreateJsonPath(): string {
+  return path.join(process.cwd(), "pr-create.json");
 }
 
-type ReviewSave = PrReviewJson & {
+type CreateSave = PrReviewJson & {
   lastError?: string;
 };
 
-export function writeReviewFile(pr: string, s: ReviewSave): string {
-  const f = prReviewJsonPathFromTarget(pr);
+export function writePrCreateFile(s: CreateSave): string {
+  const f = prCreateJsonPath();
   const o: Record<string, unknown> = {
-    pr,
     savedAt: new Date().toISOString(),
     title: s.title,
     body: s.body,
@@ -73,40 +70,39 @@ export function writeReviewFile(pr: string, s: ReviewSave): string {
   return f;
 }
 
-export async function confirmAndPostReviewComment(
+export async function confirmAndCreatePr(
   logPrefix: string,
-  target: string,
   parsed: PrReviewJson,
   workspaceDir: string,
 ): Promise<void> {
-  if (!noConfirmFromEnv()) {
+  if (!noCreateConfirmFromEnv()) {
     if (!process.stdout.isTTY || !process.stdin.isTTY) {
       failPrCli(
-        `${logPrefix} need an interactive TTY to preview the comment, or set PR_REVIEW_NO_CONFIRM=1`,
+        `${logPrefix} need an interactive TTY to preview, or set PR_CREATE_NO_CONFIRM=1`,
       );
       return;
     }
-    printMarkdownPreview(parsed.title, parsed.body);
+    printMarkdownPreview(parsed.title, parsed.body, { enterAction: "create PR" });
     let choice: "post" | "cancel";
     try {
-      choice = await waitForPostOrCancel("PR_REVIEW_NO_CONFIRM=1");
+      choice = await waitForPostOrCancel("PR_CREATE_NO_CONFIRM=1");
     } catch (e) {
       failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
       return;
     }
     if (choice === "cancel") {
-      console.error(`${logPrefix} cancelled, not posting`);
+      console.error(`${logPrefix} cancelled, not creating PR`);
       return;
     }
   } else {
-    console.error(`${logPrefix} PR_REVIEW_NO_CONFIRM=1, posting without preview`);
+    console.error(`${logPrefix} PR_CREATE_NO_CONFIRM=1, creating without preview`);
   }
 
-  const canRetryPost =
+  const canRetry =
     process.stdin.isTTY === true && process.stdout.isTTY === true;
 
   for (;;) {
-    if (postPrReviewComment(target, parsed.body)) {
+    if (postPrCreate(parsed.title, parsed.body)) {
       try {
         fs.rmSync(workspaceDir, { recursive: true, force: true });
       } catch {
@@ -114,19 +110,19 @@ export async function confirmAndPostReviewComment(
       }
       return;
     }
-    const f = writeReviewFile(target, {
+    const f = writePrCreateFile({
       ...parsed,
-      lastError: "gh pr review failed (non-zero exit or gh error)",
+      lastError: "gh pr create failed (non-zero exit or gh error)",
     });
     console.error(
-      `${logPrefix} could not post via gh. Wrote: ${f}\n` +
+      `${logPrefix} could not run gh pr create. Wrote: ${f}\n` +
         "Fix the issue (e.g. run `gh auth login` or `gh repo set-default`), then " +
-        (canRetryPost
+        (canRetry
           ? "press Enter to retry, or Esc to quit"
-          : "re-run with the same PR after fixing gh") +
+          : "re-run after fixing gh") +
         ".",
     );
-    if (!canRetryPost) {
+    if (!canRetry) {
       process.exitCode = 1;
       return;
     }
@@ -138,7 +134,7 @@ export async function confirmAndPostReviewComment(
       return;
     }
     if (r === "cancel") {
-      console.error(`${logPrefix} not posted. Review is still in ` + f);
+      console.error(`${logPrefix} not created. Payload is still in ` + f);
       process.exitCode = 1;
       return;
     }

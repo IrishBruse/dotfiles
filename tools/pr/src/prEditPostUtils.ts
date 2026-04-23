@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import type { PrReviewJson } from "./parseJsonFence.ts";
+import type { PrReviewJson } from "./agentOutputFiles.ts";
 import { failPrCli } from "./reviewPostUtils.ts";
 import {
   printMarkdownPreview,

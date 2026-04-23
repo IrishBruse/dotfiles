@@ -6,7 +6,7 @@ You are executing **`pr update`**: refresh the **title** and **description** (bo
 
 ## Requirements
 
-- The CLI already ran `gh` and wrote PR data into the **workspace root** (`view.json`, `files.json`, `threads.json`, `diff.patch`). Use those files for the current title, body, base/head, diff, and threads — do not run `gh` or the GitHub API again to fetch PR content.
+- The CLI already prefetched PR data into the **workspace root** (`view.json`, `commits.json`, `checks.json`, `review-threads.json`, `files.json`, `threads.json`, `diff.patch`, optionally `jira.md`). Use those files — do not run `gh` or the GitHub API again to fetch PR content.
 
 {{prefetchedContextSection}}
 
@@ -14,15 +14,14 @@ You are executing **`pr update`**: refresh the **title** and **description** (bo
 
 1. Read **`view.json`** for the current title and body (and metadata).
 2. Use **`diff.patch`** and **`files.json`** as the source of truth for what the PR contains **now**.
-3. Write a **clear, accurate title** and a **markdown body** suitable for the PR description (summary, testing notes, breaking changes if any). Improve on the previous text where the diff warrants it; keep still-accurate context from the old body.
+3. Plan an updated **title** and **markdown body** suitable for the PR description (summary, testing notes, breaking changes if any). Improve on the previous text where the diff warrants it; keep still-accurate context from the old body.
 4. If **`threads.json`** has review discussion, you may briefly reflect it when helpful; do not paste long threads.
 
-## Final response (required)
+## Final deliverable (required)
 
-When the new title and body are ready, your **last** message must contain **only** one markdown fenced code block tagged `json` with exactly this shape (valid JSON strings; use `\n` inside **body** for newlines if you emit a single-line string):
+Write two files in the **workspace root**:
 
-```json
-{"title":"Example title","body":"## Summary\n\n…markdown…"}
-```
+1. **`Title.md`** — New PR title (trimmed).
+2. **`Body.md`** — Full markdown PR description.
 
-Do not write anything after the closing fence. The CLI parses this block, previews **title** and **body**, then after **Enter** (or **Esc** to cancel) runs **`gh pr edit`** for this PR.
+Both must exist and be **non-empty**. The CLI reads them, previews, then runs **`gh pr edit`** after approval.

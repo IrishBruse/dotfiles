@@ -11,8 +11,6 @@ Run the **jira-board** Agent Skill so you can read the current board and tickets
 - Match this branch / diff to the correct ticket from the skill output and put that id in the title.
 - PR title shape: `<KEY>-<digits> - <short title>` using project key **`{{JIRA_PROJECT_KEY}}`**.
 
-Example **Final response** shape (replace key with **`{{JIRA_PROJECT_KEY}}`**):
+Put the full title in **`Title.md`** and the description in **`Body.md`** (not JSON). Example title line inside **`Title.md`**:
 
-```json
-{"title":"{{JIRA_PROJECT_KEY}}-123 - Short title","body":"## Summary\n\n…markdown…"}
-```
+`{{JIRA_PROJECT_KEY}}-123 - Short title`
