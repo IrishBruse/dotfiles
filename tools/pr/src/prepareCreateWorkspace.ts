@@ -11,11 +11,27 @@ function copyIfExists(from: string, to: string): void {
 }
 
 /**
- * Seeds **`diff.patch`** (from `git diff origin/main`) and an optional **`PULL_REQUEST_TEMPLATE.md`**
+ * Seeds **`branch.txt`**, **`diff.patch`** (from `git diff origin/main`), and an optional **`PULL_REQUEST_TEMPLATE.md`**
  * at the root of `dir`. **`repoRoot`** is the real Git repo (user cwd); **`dir`** is the agent temp workspace.
+ * @returns Current branch name (`HEAD`) for prompts and logging.
  */
-export function populateCreateWorkspace(dir: string, repoRoot: string): void {
+export function populateCreateWorkspace(dir: string, repoRoot: string): string {
   try {
+    const head = spawnSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], {
+      encoding: "utf8",
+      cwd: repoRoot,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    if (head.status !== 0) {
+      const msg = (head.stderr ?? head.stdout ?? "").trim() || `exit ${head.status}`;
+      throw new Error(`pr create: git rev-parse HEAD failed: ${msg}`);
+    }
+    const branch = (head.stdout ?? "").trim();
+    if (branch === "") {
+      throw new Error("pr create: could not resolve current branch name");
+    }
+    fs.writeFileSync(path.join(dir, "branch.txt"), `${branch}\n`, "utf8");
+
     const r = spawnSync("git", ["diff", "origin/main"], {
       encoding: "utf8",
       cwd: repoRoot,
@@ -39,6 +55,7 @@ export function populateCreateWorkspace(dir: string, repoRoot: string): void {
         break;
       }
     }
+    return branch;
   } catch (e) {
     try {
       fs.rmSync(dir, { recursive: true, force: true });

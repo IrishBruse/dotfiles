@@ -11,7 +11,11 @@ import {
 import { failPrCli } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
 import { assertPrTitleMatchesJiraPolicy } from "./work/jiraTitlePolicy.ts";
-import { loadCreateAgentPrompt } from "./createPrompt.ts";
+import {
+  buildCreateBranchLine,
+  buildCreatePrefetchedContextSection,
+  loadCreateAgentPrompt,
+} from "./createPrompt.ts";
 
 export function runCreate(args: string[]): void {
   void runCreateAsync(args).catch((e) => {
@@ -25,12 +29,14 @@ async function runCreateAsync(args: string[]): Promise<void> {
     console.log("pr create: extra args (ignored):", args.join(" "));
   }
 
-  const repoRoot = process.cwd();
+  const repoRoot = path.resolve(process.cwd());
   const workspaceDir = path.resolve(createReviewWorkspaceDir());
   console.error(`pr create: agent workspace: ${workspaceDir}`);
+  console.error(`pr create: repo (gh pr create cwd): ${repoRoot}`);
 
+  let branch: string;
   try {
-    populateCreateWorkspace(workspaceDir, repoRoot);
+    branch = populateCreateWorkspace(workspaceDir, repoRoot);
   } catch (e) {
     failPrCli(
       e instanceof Error
@@ -40,7 +46,13 @@ async function runCreateAsync(args: string[]): Promise<void> {
     return;
   }
 
-  const prompt = loadCreateAgentPrompt();
+  console.error(`pr create: branch: ${branch}`);
+
+  const prompt = loadCreateAgentPrompt({
+    branchLine: buildCreateBranchLine(branch),
+    prefetchedContextSection: buildCreatePrefetchedContextSection(workspaceDir),
+    hintBlock: "",
+  });
 
   try {
     await runAgentPrint(prompt, { cwd: workspaceDir });
@@ -75,5 +87,5 @@ async function runCreateAsync(args: string[]): Promise<void> {
     `pr create: saved ${outPath} (copy of title/body; workspace still has Title.md & Body.md until create)`,
   );
 
-  await confirmAndCreatePr("pr create:", parsed, workspaceDir);
+  await confirmAndCreatePr("pr create:", parsed, workspaceDir, repoRoot);
 }

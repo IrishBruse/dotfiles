@@ -91,9 +91,8 @@ function sortRows(rows: BoardRow[]): BoardRow[] {
   });
 }
 
-const IND = "  ";
 /** Pipes and spaces for 4 cells (empty content, same shape as a data row). */
-const ROW_GLUE4 = IND + "│ " + " │ " + " │ " + " │ " + " │";
+const ROW_GLUE4 = "│ " + " │ " + " │ " + " │ " + " │";
 /** Do not let the title column grow past this (display columns). */
 const TITLE_MAX_CAP = 80;
 
@@ -156,17 +155,18 @@ function formatSectionPlain(
   const headers = ["Status", "Key", "Title", "Assignee"] as const;
   const wCols: number[] = [...widths];
   const dashes = (w: number) => "─".repeat(2 + w);
-  const topLine = IND + "┌" + wCols.map(dashes).join("┬") + "┐";
-  const sepLine = IND + "├" + wCols.map(dashes).join("┼") + "┤";
-  const botLine = IND + "└" + wCols.map(dashes).join("┴") + "┘";
+  const topLine = "┌" + wCols.map(dashes).join("┬") + "┐";
+  const sepLine = "├" + wCols.map(dashes).join("┼") + "┤";
+  const botLine = "└" + wCols.map(dashes).join("┴") + "┘";
   const rowLine = (cells: string[]) =>
-    IND +
     "│ " +
     cells.map((c, i) => padEndVis(c ?? "", wCols[i]!)).join(" │ ") +
     " │";
   const out: string[] = [topLine, rowLine([...headers]), sepLine];
   for (const r of rows) {
-    out.push(rowLine([r.status, r.key, clipVis(r.title, titleMax), r.assignee]));
+    out.push(
+      rowLine([r.status, r.key, clipVis(r.title, titleMax), r.assignee]),
+    );
   }
   out.push(botLine);
   return out.join("\n");
@@ -210,10 +210,12 @@ function formatTabGraphic(tabIndex: number): string {
   for (let i = 0; i < GROUP_ORDER.length; i++) {
     const name = GROUP_ORDER[i]!;
     parts.push(
-      i === tabIndex ? TAB_SELECTED + name + RESET : TAB_INACTIVE + name + RESET,
+      i === tabIndex
+        ? TAB_SELECTED + name + RESET
+        : TAB_INACTIVE + name + RESET,
     );
   }
-  return IND + parts.join(sep);
+  return parts.join(sep);
 }
 
 function renderInteractiveLines(
@@ -231,11 +233,10 @@ function renderInteractiveLines(
   const headers = ["Status", "Key", "Title", "Assignee"] as const;
   const wCols: number[] = [...widths];
   const dashes = (w: number) => "─".repeat(2 + w);
-  const topLine = IND + "┌" + wCols.map(dashes).join("┬") + "┐";
-  const sepLine = IND + "├" + wCols.map(dashes).join("┼") + "┤";
-  const botLine = IND + "└" + wCols.map(dashes).join("┴") + "┘";
+  const topLine = "┌" + wCols.map(dashes).join("┬") + "┐";
+  const sepLine = "├" + wCols.map(dashes).join("┼") + "┤";
+  const botLine = "└" + wCols.map(dashes).join("┴") + "┘";
   const rowLine = (cells: string[]) =>
-    IND +
     "│ " +
     cells.map((c, i) => padEndVis(c ?? "", wCols[i]!)).join(" │ ") +
     " │";
@@ -316,10 +317,7 @@ function runInteractive(
     );
 
     const dataCount = tr.length;
-    const scrollH = Math.max(
-      0,
-      bodyRows - prefixLineCount - suffixLineCount,
-    );
+    const scrollH = Math.max(0, bodyRows - prefixLineCount - suffixLineCount);
 
     let slice: string[];
     if (bodyRows <= prefixLineCount + suffixLineCount) {
@@ -328,9 +326,7 @@ function runInteractive(
       while (slice.length < bodyRows) slice.push("");
     } else {
       const selData =
-        tr.length > 0
-          ? dataLineIndexes[selected]! - prefixLineCount
-          : 0;
+        tr.length > 0 ? dataLineIndexes[selected]! - prefixLineCount : 0;
       if (selData < scrollTop) scrollTop = selData;
       else if (scrollH > 0 && selData >= scrollTop + scrollH) {
         scrollTop = selData - scrollH + 1;
@@ -361,9 +357,8 @@ function runInteractive(
       buf += CLR_EOL + "\r\n";
     }
     if (footerRows > 0) {
-      const budget = Math.max(0, termCols - vis(IND));
-      buf +=
-        IND + DIM + clipVis(HELP_CONTROLS, budget) + RESET + CLR_EOL + "\r\n";
+      const budget = Math.max(0, termCols);
+      buf += DIM + clipVis(HELP_CONTROLS, budget) + RESET + CLR_EOL + "\r\n";
     }
     const written = topMargin + slice.length + footerGapRows + footerRows;
     if (written < prevViewportLines) buf += CLR_EOS;
@@ -428,8 +423,7 @@ function runInteractive(
         return;
       }
       case "left": {
-        tabIndex =
-          (tabIndex - 1 + GROUP_ORDER.length) % GROUP_ORDER.length;
+        tabIndex = (tabIndex - 1 + GROUP_ORDER.length) % GROUP_ORDER.length;
         selected = 0;
         scrollTop = 0;
         draw();

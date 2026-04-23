@@ -16,7 +16,11 @@ export function noCreateConfirmFromEnv(): boolean {
   return process.env.PR_CREATE_NO_CONFIRM === "1";
 }
 
-export function postPrCreate(title: string, body: string): boolean {
+export function postPrCreate(
+  title: string,
+  body: string,
+  repoRoot: string,
+): boolean {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "pr-cli-create-"));
   const file = path.join(dir, "body.md");
   try {
@@ -27,6 +31,7 @@ export function postPrCreate(title: string, body: string): boolean {
       {
         encoding: "utf8",
         stdio: ["ignore", "pipe", "pipe"],
+        cwd: repoRoot,
       },
     );
     if (r.status === 0) {
@@ -74,6 +79,7 @@ export async function confirmAndCreatePr(
   logPrefix: string,
   parsed: PrReviewJson,
   workspaceDir: string,
+  repoRoot: string,
 ): Promise<void> {
   if (!noCreateConfirmFromEnv()) {
     if (!process.stdout.isTTY || !process.stdin.isTTY) {
@@ -102,7 +108,7 @@ export async function confirmAndCreatePr(
     process.stdin.isTTY === true && process.stdout.isTTY === true;
 
   for (;;) {
-    if (postPrCreate(parsed.title, parsed.body)) {
+    if (postPrCreate(parsed.title, parsed.body, repoRoot)) {
       try {
         fs.rmSync(workspaceDir, { recursive: true, force: true });
       } catch {
