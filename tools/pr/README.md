@@ -26,7 +26,7 @@ Any other option starting with `-` is rejected.
 |----------|-------------|
 | `PR_TITLE_JIRA_KEY` | **Work-only toggle:** optional project key (e.g. `NOVACORE`). When **set**, prompts require a PR title matching `KEY-<digits>`; the CLI validates **`Title.md`** for **`pr create`** and **`pr update`** before `gh`. When **unset**, no Jira ID is required. Not a CLI flag — global env only. |
 | `PR_AGENT` | Binary for [Cursor print mode](https://www.cursor.com/docs/cli/headless) (default: `agent`, with `cursor-agent` tried if the first is missing). The CLI always passes **`--trust`** with **`--print`** so agent runs in temp PR workspaces without an interactive trust prompt. |
-| `PR_JIRA_SKILL_DIR` | Optional absolute path to the **jira-tickets** skill folder (contains `SKILL.md` and `references/**`). Defaults to **`<dotfiles>/.agents/skills/jira-tickets`** (when running from this repo) then **`~/.agents/skills/jira-tickets`**. Used to build **`jira.md`** when the PR body mentions Jira keys — no Jira API calls. |
+| `PR_JIRA_SKILL_DIR` | Optional absolute path to the **jira-tickets** skill folder (contains `SKILL.md` and `references/**`). Defaults to **`<dotfiles>/.agents/skills/jira-tickets`** then **`~/.agents/skills/jira-tickets`**. When the PR body mentions Jira keys, copies each **`references/**/{KEY}.md`** into the workspace as **`{KEY}.md`** (e.g. **`NOVACORE-123.md`**) with no added headers — no Jira API calls. |
 | `PR_AGENT_TIMEOUT_MS` | Max time in milliseconds for one `agent -p` run (default: 1,200,000 = 20 minutes). |
 | `CURSOR_API_KEY` | Required for headless `agent` in some setups; see Cursor CLI auth docs. |
 | `PR_REVIEW_NO_CONFIRM` | Set to `1` to skip the markdown preview and TTY confirm for **`pr review`**, and post the comment after **`Title.md`** / **`Body.md`** are read. |
@@ -57,7 +57,7 @@ HEAD state for default `pr` add/update is stored at **`~/.local/state/pr-cli/las
 
 ### `pr review`
 
-**What it does:** Prefetches at the temp workspace root (see earlier docs: **`view.json`**, **`commits.json`**, **`checks.json`**, **`review-threads.json`**, **`files.json`**, **`threads.json`**, **`diff.patch`**, optional **`jira.md`**). Runs **`agent`** with **`cwd`** set there; the agent **writes `Title.md` and `Body.md`**. The CLI reads those files, previews markdown on stdout, **Enter** → **`gh pr review <pr> --comment -F`**, **Esc** cancels. With **`PR_REVIEW_NO_CONFIRM=1`**, skips preview and posts when the files are valid.
+**What it does:** Prefetches at the temp workspace root (see earlier docs: **`view.json`**, **`commits.txt`** (one line per commit), **`checks.json`**, **`review-threads.json`**, **`files.json`**, **`threads.json`**, **`diff.patch`**, optional **`{KEY}.md`** Jira copies). Runs **`agent`** with **`cwd`** set there; the agent **writes `Title.md` and `Body.md`**. The CLI reads those files, previews markdown on stdout, **Enter** → **`gh pr review <pr> --comment -F`**, **Esc** cancels. With **`PR_REVIEW_NO_CONFIRM=1`**, skips preview and posts when the files are valid.
 
 **Form:** `pr review <pr>` (URL or number; required)
 

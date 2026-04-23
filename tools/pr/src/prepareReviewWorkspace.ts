@@ -4,7 +4,6 @@ import os from "node:os";
 import path from "node:path";
 
 import {
-  compareRangeUrl,
   prCoordsFromViewPayload,
   writeReviewThreadsAndForcePush,
 } from "./githubPrPrefetchExtra.ts";
@@ -40,6 +39,33 @@ function writeFormattedJsonObject(filePath: string, obj: unknown): void {
     JSON.stringify(obj, null, 2) + "\n",
     "utf8",
   );
+}
+
+/** One line per commit: short SHA, subject, then body (if any) on the same line. */
+function writeCommitsTxt(dir: string, target: string): void {
+  const raw = runGh(["pr", "view", target, "--json", "commits"]);
+  const j = JSON.parse(raw) as {
+    commits?: Array<{
+      oid: string;
+      messageHeadline?: string;
+      messageBody?: string;
+    }>;
+  };
+  const lines: string[] = [];
+  for (const c of j.commits ?? []) {
+    const short = c.oid.length >= 7 ? c.oid.slice(0, 7) : c.oid;
+    const headline = (c.messageHeadline ?? "").trim();
+    const body = (c.messageBody ?? "").trim().replace(/\s+/g, " ");
+    let desc = headline;
+    if (body !== "") {
+      desc = headline === "" ? body : `${headline} — ${body}`;
+    }
+    if (desc === "") {
+      desc = c.oid;
+    }
+    lines.push(`${short} ${desc}`);
+  }
+  fs.writeFileSync(path.join(dir, "commits.txt"), lines.join("\n") + "\n", "utf8");
 }
 
 export function createReviewWorkspaceDir(): string {
@@ -81,26 +107,7 @@ export function populateReviewWorkspace(dir: string, target: string): void {
       "utf8",
     );
 
-    const commitsRaw = runGh([
-      "pr",
-      "view",
-      target,
-      "--json",
-      "commits,baseRefOid,headRefOid,baseRefName,headRefName,url,headRepository",
-    ]);
-    const commitsObj = JSON.parse(commitsRaw) as {
-      baseRefOid?: string;
-      headRefOid?: string;
-    };
-    const enriched = {
-      ...commitsObj,
-      compareRangeUrl:
-        commitsObj.baseRefOid !== undefined &&
-        commitsObj.headRefOid !== undefined
-          ? compareRangeUrl(coords, commitsObj.baseRefOid, commitsObj.headRefOid)
-          : null,
-    };
-    writeFormattedJsonObject(path.join(dir, "commits.json"), enriched);
+    writeCommitsTxt(dir, target);
 
     writeFormattedJsonFile(
       path.join(dir, "checks.json"),

@@ -106,11 +106,3 @@ export function writeReviewThreadsAndForcePush(
   };
   fs.writeFileSync(outPath, JSON.stringify(payload, null, 2) + "\n", "utf8");
 }
-
-export function compareRangeUrl(
-  coords: PrRepoCoords,
-  baseOid: string,
-  headOid: string,
-): string {
-  return `${coords.host}/${coords.owner}/${coords.repo}/compare/${baseOid}...${headOid}`;
-}

@@ -59,20 +59,22 @@ function jiraKeysFromText(text: string): string[] {
   return out;
 }
 
-function readTicketRef(skillRoot: string, key: string): string | null {
+function resolveTicketRefPath(skillRoot: string, key: string): string | null {
   const subdirs = ["me", "team", "unassigned"] as const;
   for (const sub of subdirs) {
     const p = path.join(skillRoot, "references", sub, `${key}.md`);
     if (fs.existsSync(p)) {
-      return fs.readFileSync(p, "utf8");
+      return p;
     }
   }
   return null;
 }
 
 /**
- * Writes `jira.md` in `dir` from the jira-tickets skill (ticket refs and/or board).
- * No network; skips silently if no skill on disk.
+ * For each Jira key in the PR body, copies the skill reference file to `{KEY}.md` in `dir` (exact bytes, no extra headers).
+ * Searches `references/me|team/unassigned/{KEY}.md` under the skill root.
+ * If no reference file exists for any key, writes `{firstKey}.md` with the skill `SKILL.md` body only (frontmatter stripped).
+ * No network; skips silently if no keys or no skill on disk.
  */
 export function writeJiraSkillContext(dir: string, prBody: string): void {
   const keys = jiraKeysFromText(prBody);
@@ -85,25 +87,18 @@ export function writeJiraSkillContext(dir: string, prBody: string): void {
     return;
   }
 
-  const sections: string[] = [];
-
+  let copied = 0;
   for (const key of keys) {
-    const ref = readTicketRef(skillRoot, key);
-    if (ref !== null) {
-      sections.push(`## ${key} (from skill references)\n\n${ref.trim()}\n`);
+    const src = resolveTicketRefPath(skillRoot, key);
+    if (src !== null) {
+      fs.copyFileSync(src, path.join(dir, `${key}.md`));
+      copied += 1;
     }
   }
 
-  if (sections.length === 0) {
-    const skillMd = fs.readFileSync(path.join(skillRoot, "SKILL.md"), "utf8");
-    sections.push(
-      `## Jira board (skill fallback — no references/**/${keys.join(", ")}.md)\n\n${stripYamlFrontmatter(skillMd).trim()}\n`,
-    );
+  if (copied === 0) {
+    const skillPath = path.join(skillRoot, "SKILL.md");
+    const body = stripYamlFrontmatter(fs.readFileSync(skillPath, "utf8")).trim();
+    fs.writeFileSync(path.join(dir, `${keys[0]}.md`), body + "\n", "utf8");
   }
-
-  fs.writeFileSync(
-    path.join(dir, "jira.md"),
-    sections.join("\n---\n\n") + "\n",
-    "utf8",
-  );
 }
