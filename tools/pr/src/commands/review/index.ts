@@ -40,7 +40,7 @@ async function runReviewAsync(args: string[]): Promise<void> {
   console.error(`pr review: agent workspace: ${workspaceDir}`);
 
   try {
-    populateReviewWorkspace(workspaceDir, target);
+    await populateReviewWorkspace(workspaceDir, target);
   } catch (e) {
     failPrCli(
       e instanceof Error

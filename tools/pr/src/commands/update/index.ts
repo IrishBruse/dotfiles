@@ -74,7 +74,7 @@ async function runUpdateAsync(args: string[]): Promise<void> {
   console.error(`pr update: agent workspace: ${workspaceDir}`);
 
   try {
-    populateReviewWorkspace(workspaceDir, target);
+    await populateReviewWorkspace(workspaceDir, target);
   } catch (e) {
     failPrCli(
       e instanceof Error

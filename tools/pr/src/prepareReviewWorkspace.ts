@@ -1,25 +1,40 @@
-import { spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
 import { prCoordsFromViewPayload } from "./githubPrPrefetchExtra.ts";
 import { writeJiraSkillContext } from "./jiraSkillContext.ts";
-import { writePrCommentsMd } from "./prCommentsMd.ts";
+import { writePrCommentsMdAsync } from "./prCommentsMd.ts";
 
-const GH_BUFFER = 100 * 1024 * 1024;
-
-function runGh(args: string[]): string {
-  const r = spawnSync("gh", args, {
-    encoding: "utf8",
-    maxBuffer: GH_BUFFER,
-    stdio: ["ignore", "pipe", "pipe"],
+function runGhAsync(args: string[]): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const child = spawn("gh", args, { stdio: ["ignore", "pipe", "pipe"] });
+    let out = "";
+    let err = "";
+    child.stdout.setEncoding("utf8");
+    child.stderr.setEncoding("utf8");
+    child.stdout.on("data", (c: string) => {
+      out += c;
+    });
+    child.stderr.on("data", (c: string) => {
+      err += c;
+    });
+    child.on("error", (e) => {
+      reject(e);
+    });
+    child.on("close", (code) => {
+      if (code !== 0) {
+        reject(
+          new Error(
+            `gh ${args.slice(0, 4).join(" ")}… failed: ${(err || out).trim() || `exit ${code}`}`,
+          ),
+        );
+        return;
+      }
+      resolve(out);
+    });
   });
-  if (r.status !== 0) {
-    const msg = (r.stderr ?? r.stdout ?? "").trim() || `exit ${r.status}`;
-    throw new Error(`gh ${args.slice(0, 4).join(" ")}… failed: ${msg}`);
-  }
-  return r.stdout ?? "";
 }
 
 function writeFormattedJsonFile(filePath: string, ghJsonStdout: string): void {
@@ -40,9 +55,8 @@ function writeFormattedJsonObject(filePath: string, obj: unknown): void {
 }
 
 /** One line per commit: short SHA, subject, then body (if any) on the same line. */
-function writeCommitsTxt(dir: string, target: string): void {
-  const raw = runGh(["pr", "view", target, "--json", "commits"]);
-  const j = JSON.parse(raw) as {
+function writeCommitsTxtFromRaw(dir: string, commitsRaw: string): void {
+  const j = JSON.parse(commitsRaw) as {
     commits?: Array<{
       oid: string;
       messageHeadline?: string;
@@ -70,10 +84,16 @@ export function createReviewWorkspaceDir(): string {
   return fs.mkdtempSync(path.join(os.tmpdir(), "pr-cli-"));
 }
 
-/** Write prefetched PR files at the root of `dir` using `gh` (REST). On failure, removes `dir` and rethrows. */
-export function populateReviewWorkspace(dir: string, target: string): void {
+/**
+ * Write prefetched PR files at the root of `dir` using **`gh`** (REST).
+ * Runs independent **`gh`** work in parallel after **`pr view`**. On failure, removes `dir` and rethrows.
+ */
+export async function populateReviewWorkspace(
+  dir: string,
+  target: string,
+): Promise<void> {
   try {
-    const viewRaw = runGh([
+    const viewRaw = await runGhAsync([
       "pr",
       "view",
       target,
@@ -89,25 +109,18 @@ export function populateReviewWorkspace(dir: string, target: string): void {
 
     const coords = prCoordsFromViewPayload(viewObj);
 
-    writeFormattedJsonFile(
-      path.join(dir, "files.json"),
-      runGh(["pr", "view", target, "--json", "files"]),
-    );
+    const [filesRaw, diffText, commitsRaw, checksRaw] = await Promise.all([
+      runGhAsync(["pr", "view", target, "--json", "files"]),
+      runGhAsync(["pr", "diff", target]),
+      runGhAsync(["pr", "view", target, "--json", "commits"]),
+      runGhAsync(["pr", "view", target, "--json", "statusCheckRollup"]),
+      writePrCommentsMdAsync(dir, coords),
+    ]);
 
-    fs.writeFileSync(
-      path.join(dir, "diff.patch"),
-      runGh(["pr", "diff", target]),
-      "utf8",
-    );
-
-    writeCommitsTxt(dir, target);
-
-    writeFormattedJsonFile(
-      path.join(dir, "checks.json"),
-      runGh(["pr", "view", target, "--json", "statusCheckRollup"]),
-    );
-
-    writePrCommentsMd(dir, coords);
+    writeFormattedJsonFile(path.join(dir, "files.json"), filesRaw);
+    fs.writeFileSync(path.join(dir, "diff.patch"), diffText, "utf8");
+    writeCommitsTxtFromRaw(dir, commitsRaw);
+    writeFormattedJsonFile(path.join(dir, "checks.json"), checksRaw);
 
     writeJiraSkillContext(dir, typeof viewObj.body === "string" ? viewObj.body : "");
   } catch (e) {

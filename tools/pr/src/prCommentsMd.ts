@@ -1,29 +1,48 @@
-import { spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
 import type { PrRepoCoords } from "./githubPrPrefetchExtra.ts";
 
-const GH_BUFFER = 100 * 1024 * 1024;
-
-function ghApiPaginated(
+function ghApiPaginatedAsync(
   apiPath: string,
-): { ok: true; data: unknown[] } | { ok: false; error: string } {
-  const r = spawnSync("gh", ["api", apiPath, "--paginate"], {
-    encoding: "utf8",
-    maxBuffer: GH_BUFFER,
-    stdio: ["ignore", "pipe", "pipe"],
+): Promise<{ ok: true; data: unknown[] } | { ok: false; error: string }> {
+  return new Promise((resolve) => {
+    const child = spawn("gh", ["api", apiPath, "--paginate"], {
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    let out = "";
+    let err = "";
+    child.stdout.setEncoding("utf8");
+    child.stderr.setEncoding("utf8");
+    child.stdout.on("data", (c: string) => {
+      out += c;
+    });
+    child.stderr.on("data", (c: string) => {
+      err += c;
+    });
+    child.on("error", (e) => {
+      resolve({ ok: false, error: e.message });
+    });
+    child.on("close", (code) => {
+      if (code !== 0) {
+        resolve({
+          ok: false,
+          error: (err || out).trim() || `exit ${code}`,
+        });
+        return;
+      }
+      try {
+        const parsed = JSON.parse(out || "[]") as unknown;
+        resolve({
+          ok: true,
+          data: Array.isArray(parsed) ? parsed : [],
+        });
+      } catch {
+        resolve({ ok: false, error: "gh api returned non-JSON" });
+      }
+    });
   });
-  if (r.status !== 0) {
-    const msg = (r.stderr ?? r.stdout ?? "").trim() || `exit ${r.status}`;
-    return { ok: false, error: msg };
-  }
-  try {
-    const parsed = JSON.parse(r.stdout ?? "[]") as unknown;
-    return { ok: true, data: Array.isArray(parsed) ? parsed : [] };
-  } catch {
-    return { ok: false, error: "gh api returned non-JSON" };
-  }
 }
 
 function loginOf(c: Record<string, unknown>): string {
@@ -63,15 +82,12 @@ function formatIssueComment(c: Record<string, unknown>): string {
   return `(PR conversation) @${login}\n\n${body}`;
 }
 
-/**
- * **`comments.md`**: inline review comments (with **`diff_hunk`** in a fenced block) + issue-style PR conversation comments.
- * Uses **`gh api`** REST only (no GraphQL). Never throws; on failure writes a short error note into the file.
- */
-export function writePrCommentsMd(dir: string, coords: PrRepoCoords): void {
+function buildCommentsMd(
+  pullResult: { ok: true; data: unknown[] } | { ok: false; error: string },
+  issueResult: { ok: true; data: unknown[] } | { ok: false; error: string },
+): string {
   const parts: string[] = [];
 
-  const pullCommentsPath = `repos/${coords.owner}/${coords.repo}/pulls/${coords.number}/comments`;
-  const pullResult = ghApiPaginated(pullCommentsPath);
   parts.push("## Inline review comments\n");
   if (pullResult.ok === false) {
     parts.push(`(could not load: ${pullResult.error})\n\n`);
@@ -86,8 +102,6 @@ export function writePrCommentsMd(dir: string, coords: PrRepoCoords): void {
     }
   }
 
-  const issueCommentsPath = `repos/${coords.owner}/${coords.repo}/issues/${coords.number}/comments`;
-  const issueResult = ghApiPaginated(issueCommentsPath);
   parts.push("## PR conversation comments\n");
   if (issueResult.ok === false) {
     parts.push(`(could not load: ${issueResult.error})\n\n`);
@@ -102,5 +116,26 @@ export function writePrCommentsMd(dir: string, coords: PrRepoCoords): void {
     }
   }
 
-  fs.writeFileSync(path.join(dir, "comments.md"), parts.join(""), "utf8");
+  return parts.join("");
+}
+
+/**
+ * **`comments.md`**: inline review comments (with **`diff_hunk`** in a fenced block) + issue-style PR conversation comments.
+ * Uses **`gh api`** REST only (no GraphQL). Fetches both endpoints in parallel. Never throws; on failure writes a short error note into the file.
+ */
+export async function writePrCommentsMdAsync(
+  dir: string,
+  coords: PrRepoCoords,
+): Promise<void> {
+  const pullCommentsPath = `repos/${coords.owner}/${coords.repo}/pulls/${coords.number}/comments`;
+  const issueCommentsPath = `repos/${coords.owner}/${coords.repo}/issues/${coords.number}/comments`;
+  const [pullResult, issueResult] = await Promise.all([
+    ghApiPaginatedAsync(pullCommentsPath),
+    ghApiPaginatedAsync(issueCommentsPath),
+  ]);
+  fs.writeFileSync(
+    path.join(dir, "comments.md"),
+    buildCommentsMd(pullResult, issueResult),
+    "utf8",
+  );
 }
