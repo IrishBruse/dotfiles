@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { MERGED_PREVIEW_FILE } from "./agentOutputFiles.ts";
+import { CURRENT_PR_SNAPSHOT_FILE, MERGED_PREVIEW_FILE } from "./agentOutputFiles.ts";
 
 const JIRA_KEY_FILE_RE = /^[A-Z][A-Z0-9]+-\d+\.md$/;
 const LARGE_BYTES = 1_000_000;
@@ -67,10 +67,6 @@ export function formatPrWorkspaceReadList(
       "Board list only; per-ticket `{KEY}.md` files follow title+body rules, not the whole board.",
     );
   } else {
-    const prLine =
-      mode === "review"
-        ? "From GitHub. **Replace** with `#` review summary line + full review-comment markdown."
-        : "From GitHub. **Replace** with new `#` title + full body for `gh pr edit`.";
     addIfExists(
       "files.txt",
       "One line per path with `+add -del` and change type — read this before `diff.patch` for scope.",
@@ -79,7 +75,17 @@ export function formatPrWorkspaceReadList(
       "checks.txt",
       "Short CI digest from `statusCheckRollup` (name and state per check).",
     );
-    addIfExists(MERGED_PREVIEW_FILE, prLine);
+    if (mode === "review") {
+      addIfExists(
+        MERGED_PREVIEW_FILE,
+        "From GitHub. **Replace** with `#` review summary line + full review-comment markdown.",
+      );
+    } else {
+      addIfExists(
+        CURRENT_PR_SNAPSHOT_FILE,
+        "Current PR on GitHub (read-only). **Write** the refreshed `#` title + body to `PR.md` for `gh pr edit`.",
+      );
+    }
     addIfExists(
       "diff.patch",
       "Full unified diff (head vs base) — top authority for *what the code does*.",

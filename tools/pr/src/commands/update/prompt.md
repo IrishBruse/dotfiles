@@ -2,9 +2,9 @@ You are running **`pr update`**: refresh an existing PR’s **title** and **body
 
 **PR to update:** `{{target}}` — number or URL. The CLI runs `gh pr edit` with your final **title** and **body**; prefetched files are in the **workspace root**.
 
-Use the **prefetched files** only—do not re-fetch with `gh` or the API. If sources disagree on _what changed_, trust **`diff.patch`**, then **`files.txt`**. Use prefetched **`PR.md`** for narrative; **`commits.txt`** only when it still matches the diff. Jira: **`{KEY}.md`** or **`jira-tickets-board.md`** for wording/scope when present.
+Use the **prefetched files** only—do not re-fetch with `gh` or the API. If sources disagree on _what changed_, trust **`diff.patch`**, then **`files.txt`**. Use **`CURRENT.md`** for the PR as it exists on GitHub today; **`commits.txt`** only when it still matches the diff. Jira: **`{KEY}.md`** or **`jira-tickets-board.md`** for wording/scope when present.
 
-When refreshing the **body**, use the default layout below unless the current **`PR.md`** (or a repo template described there) already defines sections—reconcile with **`diff.patch`**, `comments.md`, and **`PR.md`**; this workspace has **no** separate copy of the host repo’s `PULL_REQUEST_TEMPLATE.md` unless the prefetched `PR.md` text itself references that structure.
+When refreshing the **body**, use the default layout below unless **`CURRENT.md`** (or a repo template described there) already defines sections—reconcile with **`diff.patch`**, `comments.md`, and **`CURRENT.md`**; this workspace has **no** separate copy of the host repo’s `PULL_REQUEST_TEMPLATE.md` unless the snapshot text itself references that structure.
 
 {{defaultPrBodyInstructions}}
 
@@ -20,7 +20,7 @@ Your **current working directory** is `{{workspaceDir}}` — a **throwaway copy*
 
 Parallel subagents share this workspace.
 
-**Write `PR.md`** in the workspace root (replace the prefetched file):
+**Write `PR.md`** in the workspace root (create or overwrite; there is no prefetched `PR.md`—GitHub’s current title/body is in **`CURRENT.md`** only):
 
 1. First line: `# <new title>`.
 2. Blank line, then the **new** full body (markdown).

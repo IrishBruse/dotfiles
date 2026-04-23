@@ -15,6 +15,14 @@ import {
 } from "./jiraSkillContext.ts";
 import { writePrCommentsMdAsync } from "./prCommentsMd.ts";
 
+export type PopulateReviewWorkspaceOptions = {
+  /**
+   * Filename (under `dir`) for the GitHub title/body snapshot. Default is **`PR.md`** (review).
+   * For **`pr update`**, pass **`CURRENT.md`** so the agent writes the draft only to **`PR.md`**.
+   */
+  snapshotPrToFile?: string;
+};
+
 function runGhAsync(args: string[]): Promise<string> {
   return new Promise((resolve, reject) => {
     const child = spawn("gh", args, { stdio: ["ignore", "pipe", "pipe"] });
@@ -73,22 +81,30 @@ function writeCommitsTxtFromRaw(dir: string, commitsRaw: string): void {
   fs.writeFileSync(path.join(dir, "commits.txt"), lines.join("\n") + "\n", "utf8");
 }
 
+const viewJsonFields =
+  "number,title,author,baseRefName,headRefName,baseRefOid,headRefOid,body,state,labels,reviewRequests,url";
+
 /**
  * Write prefetched PR files at the root of `dir` using **`gh`** (REST).
- * Runs independent **`gh`** work in parallel after **`pr view`**. On failure, clears `dir` and rethrows.
+ * Runs the main **`gh pr view` / `gh pr diff` / JSON views** in one parallel batch, then
+ * **`comments.md`** (needs owner/repo/number from the first response), then local index + Jira files.
+ * On failure, clears `dir` and rethrows.
  */
 export async function populateReviewWorkspace(
   dir: string,
   target: string,
+  options?: PopulateReviewWorkspaceOptions,
 ): Promise<void> {
+  const snapshotName = options?.snapshotPrToFile ?? MERGED_PREVIEW_FILE;
   try {
-    const viewRaw = await runGhAsync([
-      "pr",
-      "view",
-      target,
-      "--json",
-      "number,title,author,baseRefName,headRefName,baseRefOid,headRefOid,body,state,labels,reviewRequests,url",
+    const [viewRaw, filesRaw, diffText, commitsRaw, checksRaw] = await Promise.all([
+      runGhAsync(["pr", "view", target, "--json", viewJsonFields]),
+      runGhAsync(["pr", "view", target, "--json", "files"]),
+      runGhAsync(["pr", "diff", target]),
+      runGhAsync(["pr", "view", target, "--json", "commits"]),
+      runGhAsync(["pr", "view", target, "--json", "statusCheckRollup"]),
     ]);
+
     const viewObj = JSON.parse(viewRaw) as {
       number: number;
       url: string;
@@ -104,20 +120,13 @@ export async function populateReviewWorkspace(
           : String(viewObj.body);
 
     fs.writeFileSync(
-      path.join(dir, MERGED_PREVIEW_FILE),
+      path.join(dir, snapshotName),
       buildPreviewMarkdown(titleStr, bodyStr),
       "utf8",
     );
 
     const coords = prCoordsFromViewPayload(viewObj);
-
-    const [filesRaw, diffText, commitsRaw, checksRaw] = await Promise.all([
-      runGhAsync(["pr", "view", target, "--json", "files"]),
-      runGhAsync(["pr", "diff", target]),
-      runGhAsync(["pr", "view", target, "--json", "commits"]),
-      runGhAsync(["pr", "view", target, "--json", "statusCheckRollup"]),
-      writePrCommentsMdAsync(dir, coords),
-    ]);
+    await writePrCommentsMdAsync(dir, coords);
 
     fs.writeFileSync(path.join(dir, "diff.patch"), diffText, "utf8");
     writeCommitsTxtFromRaw(dir, commitsRaw);

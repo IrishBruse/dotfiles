@@ -1,7 +1,10 @@
 import { spawnSync } from "node:child_process";
 import process from "node:process";
 
-import { readAgentPrMarkdown } from "../../agentOutputFiles.ts";
+import {
+  CURRENT_PR_SNAPSHOT_FILE,
+  readAgentPrMarkdown,
+} from "../../agentOutputFiles.ts";
 import { populateReviewWorkspace } from "../../prepareReviewWorkspace.ts";
 import {
   getGitRepoRoot,
@@ -13,6 +16,7 @@ import { confirmAndApplyPrMetadata } from "../../prEditPostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
 import { takeModelFlags } from "../../modelFlags.ts";
+import { seedNoAgentPrUpdateStub } from "../../noAgentPrStub.ts";
 import {
   takeNoAgentFlag,
   takePrintPromptFlag,
@@ -90,7 +94,9 @@ async function runUpdateAsync(args: string[]): Promise<void> {
   logAgentWorkspacePreamble(workspaceDir, printWorkspaceDir);
 
   try {
-    await populateReviewWorkspace(workspaceDir, target);
+    await populateReviewWorkspace(workspaceDir, target, {
+      snapshotPrToFile: CURRENT_PR_SNAPSHOT_FILE,
+    });
   } catch (e) {
     failPrCli(
       e instanceof Error
@@ -110,7 +116,9 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     return;
   }
 
-  if (!noAgent) {
+  if (noAgent) {
+    seedNoAgentPrUpdateStub(workspaceDir);
+  } else {
     try {
       await runAgentPrint(prompt, { cwd: workspaceDir, model });
     } catch (e) {

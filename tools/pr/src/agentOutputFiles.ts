@@ -11,6 +11,12 @@ export type PrReviewJson = {
 /** Agent writes this file; first line `# Title`, blank line, then markdown body (same shape as the VS Code preview). */
 export const MERGED_PREVIEW_FILE = "PR.md";
 
+/**
+ * **`pr update` only:** GitHub’s current title/body snapshot (read-only). The agent writes the refreshed PR to
+ * {@link MERGED_PREVIEW_FILE}. **`pr review`** still prefetches into **`PR.md`** instead.
+ */
+export const CURRENT_PR_SNAPSHOT_FILE = "CURRENT.md";
+
 /** First line `# Title` (or `##`), blank line, then markdown body — same idea as git commit message files. */
 export function buildPreviewMarkdown(title: string, body: string): string {
   const t = title.trim().replace(/\n/g, " ");

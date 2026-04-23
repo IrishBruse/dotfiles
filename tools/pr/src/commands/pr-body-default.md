@@ -13,4 +13,4 @@
 
 **Optional** — **`## Contract changes`** when API- or contract-facing work matters; omit if not.
 
-**Do not:** pad Summary; add **Testing** / run-this-command checklists; TODO or follow-up laundry lists; Jira or title-validator meta. On **`pr update`**, remove stale testing blocks from the prefetched `PR.md` if present.
+**Do not:** pad Summary; add **Testing** / run-this-command checklists; TODO or follow-up laundry lists; Jira or title-validator meta. On **`pr update`**, remove stale testing blocks from **`CURRENT.md`** (GitHub snapshot) when carrying content forward into **`PR.md`**.

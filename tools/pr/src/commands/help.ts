@@ -22,7 +22,7 @@ export function printHelp(): void {
       "                   (no agent). Combinable with --opus / --codex. With no subcommand, a short status line prints,",
       "                   then the chosen command runs. Put flags after a PR URL when using a URL without `review`.",
       "  --no-agent       Prepare the workspace the same way, but do not run the Cursor agent. create/review",
-      "                   write a small stub PR.md for you to edit; update uses the prefetched PR.md only.",
+      "                   write a small stub PR.md for you to edit; update seeds PR.md and keeps the GitHub snapshot in CURRENT.md.",
       "  --dir            Print the agent workspace directory on stderr; otherwise the path is not printed.",
       "  --opus           Run the Cursor agent with the Opus model (claude-opus-4-7-high).",
       "  --codex          Run with Codex 5.3 (gpt-5.3-codex).",
