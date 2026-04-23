@@ -8,6 +8,7 @@ const reviewCommandDir = path.dirname(fileURLToPath(import.meta.url));
 
 export type ReviewPromptVars = {
   prLine: string;
+  prefetchedContextSection: string;
   hintBlock: string;
   /** Non-empty only when PR_TITLE_JIRA_KEY is set (work overlay); see {@link buildWorkJiraTitleSection}. */
   workJiraTitleSection: string;
@@ -19,6 +20,7 @@ export function expandReviewPlaceholders(
 ): string {
   return template
     .replaceAll("{{prLine}}", vars.prLine)
+    .replaceAll("{{prefetchedContextSection}}", vars.prefetchedContextSection)
     .replaceAll("{{hintBlock}}", vars.hintBlock)
     .replaceAll("{{workJiraTitleSection}}", vars.workJiraTitleSection);
 }
@@ -32,5 +34,24 @@ export function loadReviewAgentPrompt(vars: ReviewPromptVars): string {
 }
 
 export function buildPrLine(target: string): string {
-  return `**Review target:** \`${target}\` — PR number (current repo) or full PR URL. Use this with \`gh pr view\`, \`gh pr diff\`, and related commands.`;
+  return `**Review target:** \`${target}\` — PR number (current repo) or full PR URL. The CLI posts the review with this target; all PR data to analyze is already under \`context/\` in your workspace.`;
+}
+
+export function buildPrefetchedContextSection(workspaceDir: string): string {
+  return `## PR context (prefetched local files)
+
+Your **current working directory** for this agent run is:
+
+\`${workspaceDir}\`
+
+Use the files below **relative to that directory**. Do not run \`gh pr …\` to fetch the PR again (data is already materialized).
+
+| Path | Contents |
+|------|----------|
+| \`context/view.json\` | PR metadata from \`gh pr view --json number,title,author,baseRefName,headRefName,body,state,labels,reviewRequests\` |
+| \`context/files.json\` | Changed files from \`gh pr view --json files\` |
+| \`context/diff.patch\` | Full unified diff from \`gh pr diff\` |
+| \`context/threads.json\` | \`reviews\` and \`comments\` from \`gh pr view --json reviews,comments\` |
+
+Parallel subagents must also read these same paths (this workspace is shared).`;
 }

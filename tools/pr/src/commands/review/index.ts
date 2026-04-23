@@ -9,6 +9,10 @@ import {
   type PrReviewJson,
   parsePrReviewFromJsonString,
 } from "../../parseJsonFence.ts";
+import {
+  createReviewWorkspaceDir,
+  populateReviewWorkspace,
+} from "../../prepareReviewWorkspace.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
 import {
   printMarkdownPreview,
@@ -16,7 +20,11 @@ import {
   waitForPostOrCancel,
 } from "../../reviewPreview.ts";
 import { buildWorkJiraTitleSection } from "../create/work/jiraTitlePolicy.ts";
-import { buildPrLine, loadReviewAgentPrompt } from "./reviewPrompt.ts";
+import {
+  buildPrefetchedContextSection,
+  buildPrLine,
+  loadReviewAgentPrompt,
+} from "./reviewPrompt.ts";
 
 function noConfirmFromEnv(): boolean {
   return process.env.PR_REVIEW_NO_CONFIRM === "1";
@@ -98,15 +106,30 @@ async function runReviewAsync(args: string[]): Promise<void> {
     console.log("pr review: extra args (ignored):", args.slice(1).join(" "));
   }
 
+  const workspaceDir = path.resolve(createReviewWorkspaceDir());
+  console.error(`pr review: agent workspace: ${workspaceDir}`);
+
+  try {
+    populateReviewWorkspace(workspaceDir, target);
+  } catch (e) {
+    fail(
+      e instanceof Error
+        ? e.message
+        : `pr review: failed to prefetch PR with gh: ${String(e)}`,
+    );
+    return;
+  }
+
   const prompt = loadReviewAgentPrompt({
     prLine: buildPrLine(target),
+    prefetchedContextSection: buildPrefetchedContextSection(workspaceDir),
     hintBlock: "",
     workJiraTitleSection: buildWorkJiraTitleSection(),
   });
 
   let stdout: string;
   try {
-    stdout = await runAgentPrint(prompt);
+    stdout = await runAgentPrint(prompt, { cwd: workspaceDir });
   } catch (e) {
     fail(
       e instanceof Error ? e.message : `pr review: agent failed: ${String(e)}`,
@@ -161,6 +184,11 @@ async function runReviewAsync(args: string[]): Promise<void> {
 
   for (;;) {
     if (postPrReviewComment(target, parsed.body)) {
+      try {
+        fs.rmSync(workspaceDir, { recursive: true, force: true });
+      } catch {
+        // ignore
+      }
       return;
     }
     const f = writeReviewFile(target, {

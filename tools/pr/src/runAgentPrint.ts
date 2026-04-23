@@ -33,23 +33,31 @@ const AGENT_ARGS_BASE = [
   "--stream-partial-output",
 ] as const;
 
+export type RunAgentPrintOptions = {
+  cwd?: string;
+};
+
 /**
  * Run agent in print mode with stream-json: stderr shows model, streaming text,
  * and tool lines; return value is the final `result` string (for JSON fence parse).
  */
-export async function runAgentPrint(prompt: string): Promise<string> {
+export async function runAgentPrint(
+  prompt: string,
+  options: RunAgentPrintOptions = {},
+): Promise<string> {
   const timeout = timeoutMsFromEnv();
   const { agent, useFallback } = resolveAgentBinary();
+  const { cwd } = options;
 
   try {
-    return await spawnOnceStream(agent, prompt, timeout);
+    return await spawnOnceStream(agent, prompt, timeout, cwd);
   } catch (e) {
     if (!useFallback || !isEnoent(e)) {
       throw e;
     }
   }
 
-  return await spawnOnceStream("cursor-agent", prompt, timeout);
+  return await spawnOnceStream("cursor-agent", prompt, timeout, cwd);
 }
 
 function isEnoent(e: unknown): boolean {
@@ -60,10 +68,12 @@ function spawnOnceStream(
   command: string,
   prompt: string,
   timeoutMs: number,
+  cwd?: string,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const child = spawn(command, [...AGENT_ARGS_BASE, prompt], {
       stdio: ["ignore", "pipe", "pipe"],
+      ...(cwd !== undefined ? { cwd } : {}),
     });
     const handler = new AgentStreamHandler();
     let err = "";

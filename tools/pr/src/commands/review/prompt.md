@@ -8,30 +8,11 @@ This block is prepended to command-specific instructions. Follow it for any revi
 
 ## Requirements
 
-- `gh` CLI must be installed and authenticated for the repository hosting the PR.
+- The CLI already ran `gh` and wrote PR data into `context/`. Base your review on those files only (no `gh` or GitHub API tool calls for PR content).
 
-## Resolve and inspect the PR
+{{prefetchedContextSection}}
 
-```bash
-gh pr view <number-or-url> --json number,title,author,baseRefName,headRefName,body,state,labels,reviewRequests
-```
-
-## Diff and files
-
-```bash
-gh pr diff <number-or-url>
-gh pr view <number-or-url> --json files
-```
-
-For large diffs, review file-by-file as needed (for example `gh api repos/{owner}/{repo}/pulls/<number>/files`).
-
-## Existing threads
-
-```bash
-gh pr view <number-or-url> --json reviews,comments
-```
-
-Avoid duplicating feedback that is already under discussion.
+Avoid duplicating feedback that is already under discussion (see `context/threads.json`).
 
 ## Final response (required — machine parse)
 
