@@ -4,7 +4,7 @@ This block is prepended to command-specific instructions. Follow it for any revi
 
 {{prLine}}
 
-{{hintBlock}}{{workJiraTitleSection}}
+{{hintBlock}}
 
 ## Requirements
 
@@ -18,10 +18,10 @@ Avoid duplicating feedback that is already under discussion (see `comments.md`).
 
 When your review is ready, you **must** overwrite two files in the **workspace root** (same directory as this prefetch data). They currently hold the **PR’s** title and body — replace them entirely with the **review** title line and review comment markdown. The CLI reads them after you finish — do not rely on chat output for posting.
 
-1. **`Title.md`** — Short line for the **review comment** (shown in the terminal preview). Plain text or minimal markdown; trimmed.
+1. **`Title.md`** — Short line for the **review comment** (shown in the editor preview). Plain text or minimal markdown; trimmed.
 2. **`Body.md`** — Full markdown for the **GitHub review comment**, including `> Reviewed by Cursor` at the top unless policy says otherwise.
 
-Both files must exist and be **non-empty**. The human approves in the terminal preview, then the CLI runs `gh pr review --comment`.
+Both files must exist and be **non-empty**. The human approves in VS Code preview, then the CLI runs `gh pr review --comment`.
 
 # First-pass review (`pr review`)
 

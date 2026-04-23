@@ -13,7 +13,6 @@ import {
 } from "../../prEditPostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
-import { assertPrTitleMatchesJiraPolicy } from "../create/work/jiraTitlePolicy.ts";
 import { buildPrefetchedContextSection } from "../review/reviewPrompt.ts";
 import {
   buildUpdatePrLine,
@@ -108,13 +107,6 @@ async function runUpdateAsync(args: string[]): Promise<void> {
         ? e.message
         : `pr update: could not read agent output files: ${String(e)}`,
     );
-    return;
-  }
-
-  try {
-    assertPrTitleMatchesJiraPolicy(parsed.title);
-  } catch (e) {
-    failPrCli(e instanceof Error ? e.message : `pr update: ${String(e)}`);
     return;
   }
 

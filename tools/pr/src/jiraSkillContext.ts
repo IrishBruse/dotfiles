@@ -17,7 +17,6 @@ function stripYamlFrontmatter(md: string): string {
 }
 
 function skillRootCandidates(): string[] {
-  const fromEnv = process.env.PR_JIRA_SKILL_DIR?.trim();
   const scriptDir = path.dirname(fileURLToPath(import.meta.url));
   const fromRepo = path.join(
     scriptDir,
@@ -27,12 +26,7 @@ function skillRootCandidates(): string[] {
     ".agents/skills/jira-tickets",
   );
   const fromHome = path.join(os.homedir(), ".agents/skills/jira-tickets");
-  const out: string[] = [];
-  if (fromEnv) {
-    out.push(fromEnv);
-  }
-  out.push(fromRepo, fromHome);
-  return out;
+  return [fromRepo, fromHome];
 }
 
 function resolveSkillRoot(): string | null {

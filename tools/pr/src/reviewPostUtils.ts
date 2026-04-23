@@ -10,10 +10,6 @@ import {
   waitForEnterRetryOrCancel,
 } from "./reviewPreview.ts";
 
-export function noConfirmFromEnv(): boolean {
-  return process.env.PR_REVIEW_NO_CONFIRM === "1";
-}
-
 export function failPrCli(msg: string): void {
   console.error(msg);
   process.exitCode = 1;
@@ -81,26 +77,21 @@ export async function confirmAndPostReviewComment(
   let title = parsed.title;
   let body = parsed.body;
 
-  if (!noConfirmFromEnv()) {
-    try {
-      const out = await confirmSubmitAfterEditorPreview({
-        logPrefix,
-        initial: { title, body },
-        actionDescription: "post this review comment",
-        noConfirmEnvVar: "PR_REVIEW_NO_CONFIRM",
-      });
-      if (out === null) {
-        console.error(`${logPrefix} cancelled, not posting`);
-        return;
-      }
-      title = out.title;
-      body = out.body;
-    } catch (e) {
-      failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
+  try {
+    const out = await confirmSubmitAfterEditorPreview({
+      logPrefix,
+      initial: { title, body },
+      actionDescription: "post this review comment",
+    });
+    if (out === null) {
+      console.error(`${logPrefix} cancelled, not posting`);
       return;
     }
-  } else {
-    console.error(`${logPrefix} PR_REVIEW_NO_CONFIRM=1, posting without preview`);
+    title = out.title;
+    body = out.body;
+  } catch (e) {
+    failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
+    return;
   }
 
   const canRetryPost =

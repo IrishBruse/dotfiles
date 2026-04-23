@@ -5,16 +5,11 @@ import os from "node:os";
 import path from "node:path";
 
 import type { PrReviewJson } from "./agentOutputFiles.ts";
-import { assertPrTitleMatchesJiraPolicy } from "./commands/create/work/jiraTitlePolicy.ts";
 import { failPrCli } from "./reviewPostUtils.ts";
 import {
   confirmSubmitAfterEditorPreview,
   waitForEnterRetryOrCancel,
 } from "./reviewPreview.ts";
-
-export function noCreateConfirmFromEnv(): boolean {
-  return process.env.PR_CREATE_NO_CONFIRM === "1";
-}
 
 export function postPrCreate(
   title: string,
@@ -84,32 +79,21 @@ export async function confirmAndCreatePr(
   let title = parsed.title;
   let body = parsed.body;
 
-  if (!noCreateConfirmFromEnv()) {
-    try {
-      const out = await confirmSubmitAfterEditorPreview({
-        logPrefix,
-        initial: { title, body },
-        actionDescription: "create this PR",
-        noConfirmEnvVar: "PR_CREATE_NO_CONFIRM",
-      });
-      if (out === null) {
-        console.error(`${logPrefix} cancelled, not creating PR`);
-        return;
-      }
-      title = out.title;
-      body = out.body;
-      try {
-        assertPrTitleMatchesJiraPolicy(title);
-      } catch (e) {
-        failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
-        return;
-      }
-    } catch (e) {
-      failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
+  try {
+    const out = await confirmSubmitAfterEditorPreview({
+      logPrefix,
+      initial: { title, body },
+      actionDescription: "create this PR",
+    });
+    if (out === null) {
+      console.error(`${logPrefix} cancelled, not creating PR`);
       return;
     }
-  } else {
-    console.error(`${logPrefix} PR_CREATE_NO_CONFIRM=1, creating without preview`);
+    title = out.title;
+    body = out.body;
+  } catch (e) {
+    failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
+    return;
   }
 
   const canRetry =

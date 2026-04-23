@@ -5,6 +5,8 @@ import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 
+const VSCODE_CLI = "code";
+
 export type SubmitPayload = {
   title: string;
   body: string;
@@ -50,17 +52,16 @@ function writeTempPreviewFile(markdown: string): { file: string; dir: string } {
 }
 
 /**
- * Opens **`code --wait`** (or **`PR_PREVIEW_CODE`** binary) so the user can edit like **`git commit -e`**.
+ * Opens **`code --wait`** so the user can edit like **`git commit -e`**.
  * Blocks until the editor process exits (tab/window closed).
  */
 export function openVsCodeWaitOnFile(filePath: string): void {
-  const bin = process.env.PR_PREVIEW_CODE?.trim() || "code";
-  const r = spawnSync(bin, ["--wait", filePath], { stdio: "inherit" });
+  const r = spawnSync(VSCODE_CLI, ["--wait", filePath], { stdio: "inherit" });
   if (r.error) {
-    throw new Error(`could not run ${bin}: ${r.error.message}`);
+    throw new Error(`could not run ${VSCODE_CLI}: ${r.error.message}`);
   }
   if (r.status !== 0 && r.status !== null) {
-    throw new Error(`${bin} --wait exited with code ${r.status}`);
+    throw new Error(`${VSCODE_CLI} --wait exited with code ${r.status}`);
   }
 }
 
@@ -85,7 +86,6 @@ export type EditorConfirmOptions = {
   initial: SubmitPayload;
   /** e.g. "create this PR", "update the PR", "post the review comment" */
   actionDescription: string;
-  noConfirmEnvVar: string;
 };
 
 /**
@@ -96,17 +96,14 @@ export async function confirmSubmitAfterEditorPreview(
   opts: EditorConfirmOptions,
 ): Promise<SubmitPayload | null> {
   if (!process.stdout.isTTY || !process.stdin.isTTY) {
-    throw new Error(
-      `need an interactive TTY for editor preview; set ${opts.noConfirmEnvVar}=1 to skip`,
-    );
+    throw new Error("need an interactive terminal (stdin/stdout TTY) for preview and confirm");
   }
 
   const md = buildPreviewMarkdown(opts.initial.title, opts.initial.body);
   const { file, dir } = writeTempPreviewFile(md);
-  const bin = process.env.PR_PREVIEW_CODE?.trim() || "code";
 
   console.error(
-    `${opts.logPrefix} Opening ${file} in ${bin} — edit if needed, save, then close the tab.`,
+    `${opts.logPrefix} Opening ${file} in ${VSCODE_CLI} — edit if needed, save, then close the tab.`,
   );
 
   try {

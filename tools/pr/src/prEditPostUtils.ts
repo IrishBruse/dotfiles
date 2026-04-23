@@ -5,16 +5,11 @@ import os from "node:os";
 import path from "node:path";
 
 import type { PrReviewJson } from "./agentOutputFiles.ts";
-import { assertPrTitleMatchesJiraPolicy } from "./commands/create/work/jiraTitlePolicy.ts";
 import { failPrCli } from "./reviewPostUtils.ts";
 import {
   confirmSubmitAfterEditorPreview,
   waitForEnterRetryOrCancel,
 } from "./reviewPreview.ts";
-
-export function noUpdateConfirmFromEnv(): boolean {
-  return process.env.PR_UPDATE_NO_CONFIRM === "1";
-}
 
 export function postPrMetadataEdit(
   pr: string,
@@ -86,32 +81,21 @@ export async function confirmAndApplyPrMetadata(
   let title = parsed.title;
   let body = parsed.body;
 
-  if (!noUpdateConfirmFromEnv()) {
-    try {
-      const out = await confirmSubmitAfterEditorPreview({
-        logPrefix,
-        initial: { title, body },
-        actionDescription: "update the PR on GitHub",
-        noConfirmEnvVar: "PR_UPDATE_NO_CONFIRM",
-      });
-      if (out === null) {
-        console.error(`${logPrefix} cancelled, not updating PR`);
-        return;
-      }
-      title = out.title;
-      body = out.body;
-      try {
-        assertPrTitleMatchesJiraPolicy(title);
-      } catch (e) {
-        failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
-        return;
-      }
-    } catch (e) {
-      failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
+  try {
+    const out = await confirmSubmitAfterEditorPreview({
+      logPrefix,
+      initial: { title, body },
+      actionDescription: "update the PR on GitHub",
+    });
+    if (out === null) {
+      console.error(`${logPrefix} cancelled, not updating PR`);
       return;
     }
-  } else {
-    console.error(`${logPrefix} PR_UPDATE_NO_CONFIRM=1, applying without preview`);
+    title = out.title;
+    body = out.body;
+  } catch (e) {
+    failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
+    return;
   }
 
   const canRetry =

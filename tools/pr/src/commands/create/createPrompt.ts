@@ -2,8 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { isJiraTitlePolicyEnabled } from "./work/jiraTitlePolicy.ts";
-
 const createCommandDir = path.dirname(fileURLToPath(import.meta.url));
 
 export type CreatePromptVars = {
@@ -44,21 +42,10 @@ Use the files below **in that directory** (workspace root).
 | \`Body.md\` | **You create** — full markdown PR description (non-empty when done) |`;
 }
 
-/**
- * Full prompt for \`pr create\`: template markdown, plus work appendix only when PR_TITLE_JIRA_KEY is set.
- */
 export function loadCreateAgentPrompt(vars: CreatePromptVars): string {
   const template = fs.readFileSync(
     path.join(createCommandDir, "prompt.md"),
     "utf8",
   );
-  let out = expandCreatePlaceholders(template, vars);
-  if (isJiraTitlePolicyEnabled()) {
-    const key = process.env.PR_TITLE_JIRA_KEY!.trim();
-    const appendix = fs
-      .readFileSync(path.join(createCommandDir, "work", "prompt.md"), "utf8")
-      .replaceAll("{{JIRA_PROJECT_KEY}}", key);
-    out = `${out}\n\n${appendix}`;
-  }
-  return out;
+  return expandCreatePlaceholders(template, vars);
 }

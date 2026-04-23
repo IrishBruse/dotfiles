@@ -12,7 +12,6 @@ import {
   writeReviewFile,
 } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
-import { buildWorkJiraTitleSection } from "../create/work/jiraTitlePolicy.ts";
 import {
   buildPrefetchedContextSection,
   buildPrLine,
@@ -54,7 +53,6 @@ async function runReviewAsync(args: string[]): Promise<void> {
     prLine: buildPrLine(target),
     prefetchedContextSection: buildPrefetchedContextSection(workspaceDir),
     hintBlock: "",
-    workJiraTitleSection: buildWorkJiraTitleSection(),
   });
 
   try {

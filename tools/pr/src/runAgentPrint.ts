@@ -3,28 +3,7 @@ import process from "node:process";
 
 import { AgentStreamHandler } from "./agentStreamFormat.ts";
 
-const DEFAULT_TIMEOUT_MS = 1_200_000; // 20 minutes
-
-function timeoutMsFromEnv(): number {
-  const raw = process.env.PR_AGENT_TIMEOUT_MS;
-  if (raw === undefined || raw.trim() === "") {
-    return DEFAULT_TIMEOUT_MS;
-  }
-  const n = Number.parseInt(raw, 10);
-  if (Number.isNaN(n) || n <= 0) {
-    return DEFAULT_TIMEOUT_MS;
-  }
-  return n;
-}
-
-/** PR_AGENT if set; else "agent" with "cursor-agent" fallback on ENOENT. */
-function resolveAgentBinary(): { agent: string; useFallback: boolean } {
-  const fromEnv = process.env.PR_AGENT?.trim();
-  if (fromEnv) {
-    return { agent: fromEnv, useFallback: false };
-  }
-  return { agent: "agent", useFallback: true };
-}
+const AGENT_TIMEOUT_MS = 1_200_000; // 20 minutes
 
 /** Global flags before `-p` so headless runs trust the process cwd (e.g. temp PR workspace). */
 const AGENT_ARGS_BASE = [
@@ -47,19 +26,17 @@ export async function runAgentPrint(
   prompt: string,
   options: RunAgentPrintOptions = {},
 ): Promise<string> {
-  const timeout = timeoutMsFromEnv();
-  const { agent, useFallback } = resolveAgentBinary();
   const { cwd } = options;
 
   try {
-    return await spawnOnceStream(agent, prompt, timeout, cwd);
+    return await spawnOnceStream("agent", prompt, AGENT_TIMEOUT_MS, cwd);
   } catch (e) {
-    if (!useFallback || !isEnoent(e)) {
+    if (!isEnoent(e)) {
       throw e;
     }
   }
 
-  return await spawnOnceStream("cursor-agent", prompt, timeout, cwd);
+  return await spawnOnceStream("cursor-agent", prompt, AGENT_TIMEOUT_MS, cwd);
 }
 
 function isEnoent(e: unknown): boolean {

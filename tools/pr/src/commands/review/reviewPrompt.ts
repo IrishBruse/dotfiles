@@ -2,16 +2,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { buildWorkJiraTitleSection } from "../create/work/jiraTitlePolicy.ts";
-
 const reviewCommandDir = path.dirname(fileURLToPath(import.meta.url));
 
 export type ReviewPromptVars = {
   prLine: string;
   prefetchedContextSection: string;
   hintBlock: string;
-  /** Non-empty only when PR_TITLE_JIRA_KEY is set (work overlay); see {@link buildWorkJiraTitleSection}. */
-  workJiraTitleSection: string;
 };
 
 export function expandReviewPlaceholders(
@@ -21,8 +17,7 @@ export function expandReviewPlaceholders(
   return template
     .replaceAll("{{prLine}}", vars.prLine)
     .replaceAll("{{prefetchedContextSection}}", vars.prefetchedContextSection)
-    .replaceAll("{{hintBlock}}", vars.hintBlock)
-    .replaceAll("{{workJiraTitleSection}}", vars.workJiraTitleSection);
+    .replaceAll("{{hintBlock}}", vars.hintBlock);
 }
 
 export function loadReviewAgentPrompt(vars: ReviewPromptVars): string {
@@ -54,7 +49,7 @@ Use the files below **in that directory** (root of the workspace). Do not run \`
 | \`files.json\` | Changed files from \`gh pr view --json files\` (pretty-printed) |
 | \`diff.patch\` | Full unified diff from \`gh pr diff\` |
 | \`KEY-123.md\` | One file per Jira key in the PR body (e.g. \`NOVACORE-39309.md\`): exact copy of \`references/**/{KEY}.md\` from the jira-tickets skill; if none match, \`{firstKey}.md\` holds the skill board text only (no API; optional files) |
-| \`Title.md\` | **Prefetched:** the **current** GitHub PR title. **You overwrite** with a short title for the **review comment** (terminal preview). Required; non-empty when done. |
+| \`Title.md\` | **Prefetched:** the **current** GitHub PR title. **You overwrite** with a short title for the **review comment**. Required; non-empty when done. |
 | \`Body.md\` | **Prefetched:** the **current** GitHub PR description. **You overwrite** with the full markdown **review comment** (e.g. \`> Reviewed by Cursor\` and findings). Required; non-empty when done. |
 
 Parallel subagents must also read these same paths (this workspace is shared).`;

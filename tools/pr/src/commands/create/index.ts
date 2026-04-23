@@ -10,7 +10,6 @@ import {
 } from "../../prCreatePostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
-import { assertPrTitleMatchesJiraPolicy } from "./work/jiraTitlePolicy.ts";
 import {
   buildCreateBranchLine,
   buildCreatePrefetchedContextSection,
@@ -72,13 +71,6 @@ async function runCreateAsync(args: string[]): Promise<void> {
         ? e.message
         : `pr create: could not read agent output files: ${String(e)}`,
     );
-    return;
-  }
-
-  try {
-    assertPrTitleMatchesJiraPolicy(parsed.title);
-  } catch (e) {
-    failPrCli(e instanceof Error ? e.message : `pr create: ${String(e)}`);
     return;
   }
 
