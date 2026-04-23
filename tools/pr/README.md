@@ -28,7 +28,7 @@ Jira: with the **jira-tickets** skill at **`<dotfiles>/.agents/skills/jira-ticke
 
 ## Commands
 
-- **`pr`** — If the current branch has an open PR, runs **`pr update`**; otherwise **`pr create`**.
+- **`pr`** — Prints **`update`** or **`create`** on the first line of stdout, then runs **`pr update`** if this branch has an open PR, else **`pr create`**. (Use **`pr review`** explicitly; the default never picks review.)
 - **`pr review <pr>`** — Agent review → preview → post comment.
 - **`pr update [<pr>]`** — Refresh title/body; PR optional if **`gh pr view`** resolves one.
 - **`pr create`** — New PR from current branch (`git diff origin/main` and optional jira-tickets board + per-ticket **`*.md`** in workspace).

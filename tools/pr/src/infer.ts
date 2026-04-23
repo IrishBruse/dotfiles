@@ -29,12 +29,11 @@ function currentBranchHasOpenPr(): boolean {
 }
 
 export function inferAndRun(restArgs: string[]): void {
-  console.log("pr: no subcommand — inferring create vs update…");
   if (currentBranchHasOpenPr()) {
-    console.log("pr: open PR found for this branch — update");
+    console.log("update");
     runUpdate(restArgs);
     return;
   }
-  console.log("pr: no open PR detected — create");
+  console.log("create");
   runCreate(restArgs);
 }
