@@ -28,7 +28,7 @@ Jira: with the **jira-tickets** skill at **`<dotfiles>/.agents/skills/jira-ticke
 
 ## Commands
 
-- **`pr`** — Prints **`update`** or **`create`** on the first line and runs that command when there is no subcommand (open PR on branch → update; else create). If the first argument is a **GitHub PR URL** (`…/pull/<number>…`), prints **`review`** and runs **`pr review <url>`** (same as the **`review`** command).
+- **`pr`** — Prints a **one-line status** (e.g. `Updating PR #N — <url>` or `Creating a new pull request from the current branch…`) then runs **`pr update`** or **`pr create`**. If the first argument is a **GitHub PR URL** (`…/pull/<number>…`), prints a short **review** line and runs **`pr review <url>`** (same as the **`review`** command).
 - **`pr review <pr>`** — Agent review → preview → post comment (`<pr>` is a number, URL, or branch; **`gh`-compatible).
 - **`pr update [<pr>]`** — Refresh title/body; PR optional if **`gh pr view`** resolves one.
 - **`pr create`** — New PR from current branch (`git diff origin/main` and optional jira-tickets board + per-ticket **`*.md`** in workspace).

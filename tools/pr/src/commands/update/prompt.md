@@ -2,9 +2,7 @@ You are running **`pr update`**: refresh an existing PR’s **title** and **body
 
 **PR to update:** `{{target}}` — number or URL. The CLI runs `gh pr edit` with your final **title** and **body**; prefetched files are in the **workspace root**.
 
-- Use the **prefetched files** below. Do not re-fetch with `gh` or the API.
-
-**Source of truth:** If sources disagree on _what changed_, **`diff.patch`** then **`files.txt`** win. Use **`PR.md`** for narrative, template sections, and links. Use **`commits.txt`** only when it matches the diff. If **`files.txt`** and **`diff.patch`** disagree on behavior, trust **`diff.patch`**. If `{KEY}.md` exists, align body scope/acceptance with the ticket; otherwise use **`jira-tickets-board.md`** (if any) for key wording only.
+Use the **prefetched files** only—do not re-fetch with `gh` or the API. If sources disagree on _what changed_, trust **`diff.patch`**, then **`files.txt`**. Use prefetched **`PR.md`** for narrative; **`commits.txt`** only when it still matches the diff. Jira: **`{KEY}.md`** or **`jira-tickets-board.md`** for wording/scope when present.
 
 When refreshing the **body**, use the default layout below unless the current **`PR.md`** (or a repo template described there) already defines sections—reconcile with **`diff.patch`**, `comments.md`, and **`PR.md`**; this workspace has **no** separate copy of the host repo’s `PULL_REQUEST_TEMPLATE.md` unless the prefetched `PR.md` text itself references that structure.
 
@@ -18,7 +16,7 @@ Your **current working directory** is `{{workspaceDir}}` — a **throwaway copy*
 
 {{files}}
 
-When unsure _what changed_, trust **`diff.patch`** (then **`files.txt`**) over **`PR.md`** / **`commits.txt`**. In **`comments.md`**, use review signal briefly; don’t paste whole threads. For **`checks.txt`**, mention CI only when it adds real signal (not long dumps). **`commits.txt`** is narrative-only if it still matches the diff.
+**`comments.md`** for review context (short signal only, not full threads). **`checks.txt`** for CI at a glance if useful.
 
 Parallel subagents share this workspace.
 

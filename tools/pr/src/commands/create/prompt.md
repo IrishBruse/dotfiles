@@ -4,12 +4,9 @@ You are running **`pr create`**: open a new GitHub PR from the **current branch*
 
 **Source branch:** `{{branch}}` — the CLI runs `gh pr create` from the **repository directory** (see below), so the new PR’s head is **this branch**. There is no GitHub PR on this branch yet.
 
-- Use the **prefetched files** in **Create context** (only those files exist; the CLI injects a fresh list of paths from disk in that section — there is nothing else to read). They materialize the branch and `origin/main` diff; do not substitute live `git` output from elsewhere.
-- The host runs **`gh pr create`** from the **repository directory** after you finish; you only write **`PR.md`** in the workspace.
+**Prefetched context** — Only the files under **Create context** exist; use that list. They capture this branch vs `origin/main`; do not substitute ad hoc `git` output. You only write **`PR.md`**; the host runs **`gh pr create`** from the repo directory after you finish.
 
-**Source of truth:** **`diff.patch`** decides what ships. The **Source branch** line names the PR head. If **`PULL_REQUEST_TEMPLATE.md`** exists, shape the **body** with it—fill from the diff; do not contradict the diff. If there is no repo template, or it is only placeholders, use the default layout below.
-
-- If **`diff.patch`** is empty or tiny, say so in the body instead of inventing scope.
+**Source of truth:** **`diff.patch`** decides what ships. The **Source branch** line is the PR head. If **`PULL_REQUEST_TEMPLATE.md`** exists, align the **body** with it from the diff; do not contradict the diff. Otherwise use the default layout. If **`diff.patch`** is empty or tiny, say so—do not invent scope.
 
 {{defaultPrBodyInstructions}}
 

@@ -6,7 +6,11 @@ import { runCreate } from "./commands/create/index.ts";
 import { runUpdate } from "./commands/update/index.ts";
 import { runReview } from "./commands/review/index.ts";
 import { printHelp } from "./commands/help.ts";
-import { inferAndRun, looksLikeGitHubPullRequestUrl } from "./infer.ts";
+import {
+  inferAndRun,
+  looksLikeGitHubPullRequestUrl,
+  printInferReviewLine,
+} from "./infer.ts";
 
 function printUnknown(command: string): void {
   console.error(`Unknown command: ${command}`);
@@ -41,7 +45,7 @@ export function main(argv: string[]): void {
   }
 
   if (first !== undefined && looksLikeGitHubPullRequestUrl(first)) {
-    console.log("review");
+    printInferReviewLine(first);
     runReview(args);
     return;
   }
