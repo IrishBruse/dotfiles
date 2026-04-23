@@ -96,3 +96,17 @@ export function writeJiraSkillContext(dir: string, prBody: string): void {
     fs.writeFileSync(path.join(dir, `${keys[0]}.md`), body + "\n", "utf8");
   }
 }
+
+/** Snapshot of the jira-tickets skill board (`SKILL.md` body, frontmatter stripped) for agent matching. No-op if skill missing. */
+export function writeJiraSkillBoardSnapshot(dir: string): void {
+  const skillRoot = resolveSkillRoot();
+  if (skillRoot === null) {
+    return;
+  }
+  const skillPath = path.join(skillRoot, "SKILL.md");
+  if (!fs.existsSync(skillPath)) {
+    return;
+  }
+  const body = stripYamlFrontmatter(fs.readFileSync(skillPath, "utf8")).trim();
+  fs.writeFileSync(path.join(dir, "jira-tickets-board.md"), body + "\n", "utf8");
+}

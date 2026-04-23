@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { workJiraTitlePromptSection } from "../../jiraTitlePolicy.ts";
+import { loadUpdateWorkPromptAppendix } from "../../jiraTitlePolicy.ts";
 
 const updateCommandDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -25,7 +25,7 @@ export function loadUpdateAgentPrompt(vars: UpdatePromptVars): string {
     path.join(updateCommandDir, "prompt.md"),
     "utf8",
   );
-  return expandUpdatePlaceholders(template, vars) + workJiraTitlePromptSection();
+  return expandUpdatePlaceholders(template, vars) + loadUpdateWorkPromptAppendix();
 }
 
 export function buildUpdatePrLine(target: string): string {
@@ -41,7 +41,7 @@ Your **current working directory** for this agent run is:
 
 \`${workspaceDir}\`
 
-Use the files below **in that directory** (root of the workspace). Do not run \`gh pr …\` to fetch the PR again (data is already materialized).
+Use the files below **in that directory** (root of the workspace). Do not run \`gh pr …\` to fetch the PR again (data is already materialized). When in doubt about *what changed*, trust **\`diff.patch\`** (then **\`files.json\`**) over **\`PR.md\`** / **\`commits.txt\`** (see prompt above).
 
 | Path | Contents |
 |------|----------|
@@ -50,8 +50,9 @@ Use the files below **in that directory** (root of the workspace). Do not run \`
 | \`comments.md\` | Inline review comments (\`gh api\` pull review comments): each entry has \`path:line @author\`, a \`\`\`diff\`\`\` block with the \`diff_hunk\` GitHub provides, then the comment body; plus a section for PR conversation (\`issues/…/comments\`) |
 | \`files.json\` | Changed files from \`gh pr view --json files\` (pretty-printed) |
 | \`diff.patch\` | Full unified diff from \`gh pr diff\` |
-| \`KEY-123.md\` | One file per Jira key in the PR body (e.g. \`NOVACORE-39309.md\`): exact copy of \`references/**/{KEY}.md\` from the jira-tickets skill; if none match, \`{firstKey}.md\` holds the skill board text only (no API; optional files) |
-| \`PR.md\` | **Prefetched:** current PR (\`# …\` + body). **Replace** with new \`# <title>\` and full new body: keep what is still true, revise where the diff or review context demands. Title and body must be non-empty when you finish. |
+| \`jira-tickets-board.md\` | Present when the **jira-tickets** skill is on disk: snapshot of its \`SKILL.md\` board |
+| \`KEY-123.md\` | One file per Jira key in the PR body: exact copy of \`references/**/{KEY}.md\` from the jira-tickets skill; if none match, \`{firstKey}.md\` holds the skill board text only (no API; optional files) |
+| \`PR.md\` | **Prefetched:** current PR (\`# …\` + body). **Replace** entirely with new \`# <title>\` and full new body; keep what is still true, revise where the diff or review context demands. Title and body must be non-empty when you finish. |
 
 Parallel subagents must also read these same paths (this workspace is shared).`;
 }

@@ -13,7 +13,7 @@ export function printHelp(): void {
       "  (default)      Picks create or update from open PR on this branch",
       "",
       "Work (optional):",
-      "  PR_TITLE_JIRA_KEY   e.g. NOVACORE — pr create/update require title like KEY-123",
+      "  PR_CLI_WORK=true     NOVACORE title prefix + …/create|update|review/prompt.work.md beside each prompt.md",
       "",
       "Options:",
       "  --print-prompt   After workspace prefetch, print the full resolved agent prompt to stdout and exit",

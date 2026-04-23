@@ -5,7 +5,10 @@ import path from "node:path";
 
 import { MERGED_PREVIEW_FILE, buildPreviewMarkdown } from "./agentOutputFiles.ts";
 import { prCoordsFromViewPayload } from "./githubPrPrefetchExtra.ts";
-import { writeJiraSkillContext } from "./jiraSkillContext.ts";
+import {
+  writeJiraSkillBoardSnapshot,
+  writeJiraSkillContext,
+} from "./jiraSkillContext.ts";
 import { writePrCommentsMdAsync } from "./prCommentsMd.ts";
 
 function runGhAsync(args: string[]): Promise<string> {
@@ -129,6 +132,7 @@ export async function populateReviewWorkspace(
     writeFormattedJsonFile(path.join(dir, "checks.json"), checksRaw);
 
     writeJiraSkillContext(dir, bodyStr);
+    writeJiraSkillBoardSnapshot(dir);
   } catch (e) {
     try {
       fs.rmSync(dir, { recursive: true, force: true });

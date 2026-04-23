@@ -20,13 +20,13 @@ Run without linking: `node /path/to/tools/pr/bin/pr.js …`
 
 The agent writes **`PR.md`** in the workspace (`# Title` line, blank line, then body). For **`pr update`** / **`pr review`**, the CLI prefetches the current PR into **`PR.md`** first; the agent overwrites it. The CLI opens **`PR.md`** in VS Code (`code --wait`), then asks **`[y/N]`** before **`gh pr create`**, **`gh pr edit`**, or **`gh pr review --comment`**. The first `# …` line becomes the title; the rest is the body.
 
-Jira ticket snippets: if the PR body mentions keys like **`PROJ-123`**, the CLI copies matching files from **`<dotfiles>/.agents/skills/jira-tickets`** or **`~/.agents/skills/jira-tickets`** into the workspace (no Jira API).
+Jira ticket snippets: if the PR body mentions keys like **`PROJ-123`**, the CLI copies matching files from **`<dotfiles>/.agents/skills/jira-tickets`** or **`~/.agents/skills/jira-tickets`** into the workspace (no Jira API). When that skill exists, **`jira-tickets-board.md`** (a snapshot of **`SKILL.md`**) is also written into every workspace so the agent can match **NOVACORE-** work to the board without the skill being attached.
 
-**Work:** set **`PR_TITLE_JIRA_KEY`** (e.g. `NOVACORE`) in the environment (direnv, etc.). Then **`pr create`** and **`pr update`** require the PR title to begin with **`KEY-<digits>`** (after the agent and again after you edit **`PR.md`**). Unset at home — no check.
+**Work:** set **`PR_CLI_WORK=true`**. Each subcommand appends work-only markdown beside its **`prompt.md`**: **`create/prompt.work.md`**, **`update/prompt.work.md`**, **`review/prompt.work.md`**. **`pr create`** / **`pr update`** require the PR title to begin with **`NOVACORE-<digits>`** (after the agent and again after you edit **`PR.md`**). Unset at home — no check.
 
 ## Commands
 
 - **`pr`** — If the current branch has an open PR, runs **`pr update`**; otherwise **`pr create`**.
 - **`pr review <pr>`** — Agent review → preview → post comment.
 - **`pr update [<pr>]`** — Refresh title/body; PR optional if **`gh pr view`** resolves one.
-- **`pr create`** — New PR from current branch (`git diff origin/main` in workspace).
+- **`pr create`** — New PR from current branch (`git diff origin/main` and optional **`jira-tickets-board.md`** in workspace).

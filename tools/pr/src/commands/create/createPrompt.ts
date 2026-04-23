@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { workJiraTitlePromptSection } from "../../jiraTitlePolicy.ts";
+import { loadCreateWorkPromptAppendix } from "../../jiraTitlePolicy.ts";
 
 const createCommandDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -39,12 +39,12 @@ Your **current working directory** for this agent run is:
 
 \`${workspaceDir}\`
 
-Use the files below **in that directory** (workspace root). They were copied or generated from the real repo; do not run \`gh pr …\` (no PR exists yet).
+Use the files below **in that directory** (workspace root). They were copied or generated from the real repo; do not run \`gh pr …\` (no PR exists yet). Factual claims about the change must follow **\`diff.patch\`**, not the **Source branch** line or template filler alone (see prompt above).
 
 | Path | Contents |
 |------|----------|
-| \`branch.txt\` | Current branch name (\`git rev-parse --abbrev-ref HEAD\` in the repo) — the PR head ref |
-| \`diff.patch\` | \`git diff origin/main\` from the repo — **source of truth** for what will ship |
+| \`diff.patch\` | \`git diff origin/main\` from the repo — **source of truth** for what will ship (over branch name and template prose for facts) |
+| \`jira-tickets-board.md\` | Present when the **jira-tickets** Cursor skill is on disk: snapshot of its \`SKILL.md\` board (use with work-policy NOVACORE title rules) |
 | \`PULL_REQUEST_TEMPLATE.md\` | Copied from the repo if a GitHub PR template exists; mirror its structure in the **body** of **PR.md** when present |
 | \`PR.md\` | **You create:** first line \`# <title>\`, blank line, then full body (markdown). Both non-empty. |
 
@@ -56,5 +56,5 @@ export function loadCreateAgentPrompt(vars: CreatePromptVars): string {
     path.join(createCommandDir, "prompt.md"),
     "utf8",
   );
-  return expandCreatePlaceholders(template, vars) + workJiraTitlePromptSection();
+  return expandCreatePlaceholders(template, vars) + loadCreateWorkPromptAppendix();
 }

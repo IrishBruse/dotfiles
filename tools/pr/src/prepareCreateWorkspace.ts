@@ -2,6 +2,8 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
+import { writeJiraSkillBoardSnapshot } from "./jiraSkillContext.ts";
+
 const GIT_BUFFER = 100 * 1024 * 1024;
 
 function copyIfExists(from: string, to: string): void {
@@ -11,9 +13,10 @@ function copyIfExists(from: string, to: string): void {
 }
 
 /**
- * Seeds **`branch.txt`**, **`diff.patch`** (from `git diff origin/main`), and an optional **`PULL_REQUEST_TEMPLATE.md`**
- * at the root of `dir`. **`repoRoot`** is the real Git repo (user cwd); **`dir`** is the agent temp workspace.
- * @returns Current branch name (`HEAD`) for prompts and logging.
+ * Seeds **`diff.patch`** (from `git diff origin/main`), an optional **`PULL_REQUEST_TEMPLATE.md`**,
+ * and **`jira-tickets-board.md`** (jira-tickets skill snapshot when installed) at the root of `dir`.
+ * **`repoRoot`** is the real Git repo (user cwd); **`dir`** is the agent temp workspace.
+ * @returns Current branch name (`HEAD`) for prompts, stderr log, and the **Source branch** line in the agent prompt.
  */
 export function populateCreateWorkspace(dir: string, repoRoot: string): string {
   try {
@@ -30,7 +33,6 @@ export function populateCreateWorkspace(dir: string, repoRoot: string): string {
     if (branch === "") {
       throw new Error("pr create: could not resolve current branch name");
     }
-    fs.writeFileSync(path.join(dir, "branch.txt"), `${branch}\n`, "utf8");
 
     const r = spawnSync("git", ["diff", "origin/main"], {
       encoding: "utf8",
@@ -55,6 +57,7 @@ export function populateCreateWorkspace(dir: string, repoRoot: string): string {
         break;
       }
     }
+    writeJiraSkillBoardSnapshot(dir);
     return branch;
   } catch (e) {
     try {
