@@ -4,7 +4,6 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import type { PrReviewJson } from "./agentOutputFiles.ts";
 import { assertPrTitleMatchesJiraPolicy } from "./jiraTitlePolicy.ts";
 import { failPrCli } from "./reviewPostUtils.ts";
 import {
@@ -48,35 +47,9 @@ export function postPrMetadataEdit(
   }
 }
 
-export function prUpdateJsonPathFromTarget(target: string): string {
-  const m = target.match(/(\d+)/);
-  const id = m ? m[1]! : "pr";
-  return path.join(process.cwd(), `pr-update-${id}.json`);
-}
-
-type UpdateSave = PrReviewJson & {
-  lastError?: string;
-};
-
-export function writePrUpdateFile(pr: string, s: UpdateSave): string {
-  const f = prUpdateJsonPathFromTarget(pr);
-  const o: Record<string, unknown> = {
-    pr,
-    savedAt: new Date().toISOString(),
-    title: s.title,
-    body: s.body,
-  };
-  if (s.lastError !== undefined) {
-    o.lastError = s.lastError;
-  }
-  fs.writeFileSync(f, JSON.stringify(o, null, 2) + "\n", "utf8");
-  return f;
-}
-
 export async function confirmAndApplyPrMetadata(
   logPrefix: string,
   target: string,
-  parsed: PrReviewJson,
   workspaceDir: string,
 ): Promise<void> {
   let title: string;
@@ -113,14 +86,8 @@ export async function confirmAndApplyPrMetadata(
     if (postPrMetadataEdit(target, title, body)) {
       return;
     }
-    const f = writePrUpdateFile(target, {
-      ...parsed,
-      title,
-      body,
-      lastError: "gh pr edit failed (non-zero exit or gh error)",
-    });
     console.error(
-      `${logPrefix} could not run gh pr edit. Wrote: ${f}\n` +
+      `${logPrefix} could not run gh pr edit.\n` +
         "Fix the issue (e.g. run `gh auth login` or `gh repo set-default`), then " +
         (canRetry
           ? "press Enter to retry, or Esc to quit"
@@ -139,7 +106,7 @@ export async function confirmAndApplyPrMetadata(
       return;
     }
     if (r === "cancel") {
-      console.error(`${logPrefix} not applied. Payload is still in ` + f);
+      console.error(`${logPrefix} not applied.`);
       process.exitCode = 1;
       return;
     }

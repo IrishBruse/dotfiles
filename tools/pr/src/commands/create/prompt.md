@@ -11,6 +11,11 @@ You are running **`pr create`**: open a new GitHub PR from the **current branch*
 
 - If **`diff.patch`** is empty or tiny, say so in the body instead of inventing scope.
 
+**PR description — do not:**
+
+- Add **How to verify** (or the same under another heading: verification steps, command checklists, “run `npm …`”, etc.).
+- Mention **Jira / PR title validation**, **missing issue key**, **NOVACORE title checks**, **previous title failed CI**, or **why the title was changed for a validator**. Use a correct `#` title and describe the work—no meta about validators or title gate failures.
+
 ## Create context (prefetched local files)
 
 Your **current working directory** is `{{workspaceDir}}`.

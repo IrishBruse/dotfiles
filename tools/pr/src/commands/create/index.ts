@@ -7,10 +7,7 @@ import {
   preparePrAgentWorkspace,
   readCurrentBranch,
 } from "../../prAgentWorkspace.ts";
-import {
-  confirmAndCreatePr,
-  writePrCreateFile,
-} from "../../prCreatePostUtils.ts";
+import { confirmAndCreatePr } from "../../prCreatePostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
 import { takePrintPromptFlag } from "../../printPromptFlag.ts";
@@ -89,10 +86,5 @@ async function runCreateAsync(args: string[]): Promise<void> {
     return;
   }
 
-  const outPath = writePrCreateFile(parsed);
-  console.error(
-    `pr create: saved ${outPath} (backup copy; workspace PR.md removed after preview when you confirm)`,
-  );
-
-  await confirmAndCreatePr("pr create:", parsed, workspaceDir, repoRoot);
+  await confirmAndCreatePr("pr create:", workspaceDir, repoRoot);
 }

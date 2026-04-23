@@ -4,7 +4,6 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import type { PrReviewJson } from "./agentOutputFiles.ts";
 import {
   confirmSubmitAfterEditorPreview,
   waitForEnterRetryOrCancel,
@@ -43,35 +42,9 @@ export function postPrReviewComment(pr: string, body: string): boolean {
   }
 }
 
-export function prReviewJsonPathFromTarget(target: string): string {
-  const m = target.match(/(\d+)/);
-  const id = m ? m[1]! : "pr";
-  return path.join(process.cwd(), `pr-review-${id}.json`);
-}
-
-type ReviewSave = PrReviewJson & {
-  lastError?: string;
-};
-
-export function writeReviewFile(pr: string, s: ReviewSave): string {
-  const f = prReviewJsonPathFromTarget(pr);
-  const o: Record<string, unknown> = {
-    pr,
-    savedAt: new Date().toISOString(),
-    title: s.title,
-    body: s.body,
-  };
-  if (s.lastError !== undefined) {
-    o.lastError = s.lastError;
-  }
-  fs.writeFileSync(f, JSON.stringify(o, null, 2) + "\n", "utf8");
-  return f;
-}
-
 export async function confirmAndPostReviewComment(
   logPrefix: string,
   target: string,
-  parsed: PrReviewJson,
   workspaceDir: string,
 ): Promise<void> {
   let title: string;
@@ -101,14 +74,8 @@ export async function confirmAndPostReviewComment(
     if (postPrReviewComment(target, body)) {
       return;
     }
-    const f = writeReviewFile(target, {
-      ...parsed,
-      title,
-      body,
-      lastError: "gh pr review failed (non-zero exit or gh error)",
-    });
     console.error(
-      `${logPrefix} could not post via gh. Wrote: ${f}\n` +
+      `${logPrefix} could not post via gh.\n` +
         "Fix the issue (e.g. run `gh auth login` or `gh repo set-default`), then " +
         (canRetryPost
           ? "press Enter to retry, or Esc to quit"
@@ -127,7 +94,7 @@ export async function confirmAndPostReviewComment(
       return;
     }
     if (r === "cancel") {
-      console.error(`${logPrefix} not posted. Review is still in ` + f);
+      console.error(`${logPrefix} not posted.`);
       process.exitCode = 1;
       return;
     }

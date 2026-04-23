@@ -10,7 +10,6 @@ import {
 import {
   confirmAndPostReviewComment,
   failPrCli,
-  writeReviewFile,
 } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
 import { takePrintPromptFlag } from "../../printPromptFlag.ts";
@@ -75,9 +74,8 @@ async function runReviewAsync(args: string[]): Promise<void> {
     return;
   }
 
-  let parsed: ReturnType<typeof readAgentPrMarkdown>;
   try {
-    parsed = readAgentPrMarkdown(workspaceDir, "pr review");
+    readAgentPrMarkdown(workspaceDir, "pr review");
   } catch (e) {
     failPrCli(
       e instanceof Error
@@ -87,10 +85,5 @@ async function runReviewAsync(args: string[]): Promise<void> {
     return;
   }
 
-  const outPath = writeReviewFile(target, parsed);
-  console.error(
-    `pr review: saved ${outPath} (backup copy; workspace PR.md removed after preview when you confirm)`,
-  );
-
-  await confirmAndPostReviewComment("pr review:", target, parsed, workspaceDir);
+  await confirmAndPostReviewComment("pr review:", target, workspaceDir);
 }

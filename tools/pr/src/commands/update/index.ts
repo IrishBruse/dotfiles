@@ -8,10 +8,7 @@ import {
   preparePrAgentWorkspace,
   readPrHeadBranchName,
 } from "../../prAgentWorkspace.ts";
-import {
-  confirmAndApplyPrMetadata,
-  writePrUpdateFile,
-} from "../../prEditPostUtils.ts";
+import { confirmAndApplyPrMetadata } from "../../prEditPostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
 import { takePrintPromptFlag } from "../../printPromptFlag.ts";
@@ -129,10 +126,5 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     return;
   }
 
-  const outPath = writePrUpdateFile(target, parsed);
-  console.error(
-    `pr update: saved ${outPath} (backup copy; workspace PR.md removed after preview when you confirm)`,
-  );
-
-  await confirmAndApplyPrMetadata("pr update:", target, parsed, workspaceDir);
+  await confirmAndApplyPrMetadata("pr update:", target, workspaceDir);
 }

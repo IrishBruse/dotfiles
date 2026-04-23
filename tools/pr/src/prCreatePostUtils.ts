@@ -4,7 +4,6 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import type { PrReviewJson } from "./agentOutputFiles.ts";
 import { assertPrTitleMatchesJiraPolicy } from "./jiraTitlePolicy.ts";
 import { failPrCli } from "./reviewPostUtils.ts";
 import {
@@ -49,31 +48,8 @@ export function postPrCreate(
   }
 }
 
-export function prCreateJsonPath(): string {
-  return path.join(process.cwd(), "pr-create.json");
-}
-
-type CreateSave = PrReviewJson & {
-  lastError?: string;
-};
-
-export function writePrCreateFile(s: CreateSave): string {
-  const f = prCreateJsonPath();
-  const o: Record<string, unknown> = {
-    savedAt: new Date().toISOString(),
-    title: s.title,
-    body: s.body,
-  };
-  if (s.lastError !== undefined) {
-    o.lastError = s.lastError;
-  }
-  fs.writeFileSync(f, JSON.stringify(o, null, 2) + "\n", "utf8");
-  return f;
-}
-
 export async function confirmAndCreatePr(
   logPrefix: string,
-  parsed: PrReviewJson,
   workspaceDir: string,
   repoRoot: string,
 ): Promise<void> {
@@ -111,14 +87,8 @@ export async function confirmAndCreatePr(
     if (postPrCreate(title, body, repoRoot)) {
       return;
     }
-    const f = writePrCreateFile({
-      ...parsed,
-      title,
-      body,
-      lastError: "gh pr create failed (non-zero exit or gh error)",
-    });
     console.error(
-      `${logPrefix} could not run gh pr create. Wrote: ${f}\n` +
+      `${logPrefix} could not run gh pr create.\n` +
         "Fix the issue (e.g. run `gh auth login` or `gh repo set-default`), then " +
         (canRetry
           ? "press Enter to retry, or Esc to quit"
@@ -137,7 +107,7 @@ export async function confirmAndCreatePr(
       return;
     }
     if (r === "cancel") {
-      console.error(`${logPrefix} not created. Payload is still in ` + f);
+      console.error(`${logPrefix} not created.`);
       process.exitCode = 1;
       return;
     }

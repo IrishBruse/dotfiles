@@ -61,6 +61,137 @@ function shortPath(p: string, max = 64): string {
   return p.slice(0, 28) + "…" + p.slice(-(max - 30));
 }
 
+/**
+ * Path relative to agent workspace when inside it; otherwise shortened absolute.
+ * Reads as `PR.md` / `src/foo.ts` instead of long tmp paths.
+ */
+function displayPath(
+  p: string | undefined,
+  projectCwd: string | undefined,
+  max = 72,
+): string {
+  if (p == null || p === "") {
+    return "?";
+  }
+  if (projectCwd === undefined || projectCwd === "") {
+    return shortPath(p, max);
+  }
+  let absP: string;
+  let absRoot: string;
+  try {
+    absP = npath.resolve(p);
+    absRoot = npath.resolve(projectCwd);
+  } catch {
+    return shortPath(p, max);
+  }
+  const rel = npath.relative(absRoot, absP).replace(/\\/g, "/");
+  if (rel !== "" && !rel.startsWith("..") && !npath.isAbsolute(rel)) {
+    const out = rel === "" ? "." : rel;
+    return out.length <= max ? out : shortPath(absP, max);
+  }
+  return shortPath(p, max);
+}
+
+function toolArgsRecord(inner: unknown): Record<string, unknown> | null {
+  if (inner === null || typeof inner !== "object") {
+    return null;
+  }
+  const a = (inner as { args?: unknown }).args;
+  if (a !== null && typeof a === "object" && !Array.isArray(a)) {
+    return a as Record<string, unknown>;
+  }
+  return null;
+}
+
+function summarizeGlobDetail(
+  args: Record<string, unknown>,
+  projectCwd: string | undefined,
+): string {
+  const rawDir =
+    (typeof args.targetDirectory === "string" && args.targetDirectory) ||
+    (typeof args.path === "string" && args.path) ||
+    "";
+  const pat =
+    (typeof args.globPattern === "string" && args.globPattern) ||
+    (typeof args.pattern === "string" && args.pattern) ||
+    (typeof args.glob === "string" && args.glob) ||
+    "**/*";
+  const patShow = oneLine(pat, 52);
+  if (
+    rawDir &&
+    projectCwd &&
+    npath.resolve(rawDir) === npath.resolve(projectCwd)
+  ) {
+    return `${patShow} · .`;
+  }
+  const dirShow = rawDir ? displayPath(rawDir, projectCwd, 40) : ".";
+  return `${patShow} · ${dirShow}`;
+}
+
+function summarizeGrepDetail(
+  args: Record<string, unknown>,
+  projectCwd: string | undefined,
+): string {
+  const pattern =
+    (typeof args.pattern === "string" && args.pattern) ||
+    (typeof args.regex === "string" && args.regex) ||
+    "?";
+  const filePath =
+    (typeof args.path === "string" && args.path) ||
+    (typeof args.file_path === "string" && args.file_path) ||
+    "";
+  const where = filePath ? displayPath(filePath, projectCwd, 44) : ".";
+  return `${oneLine(pattern, 44)} · ${where}`;
+}
+
+function summarizeListDirDetail(
+  args: Record<string, unknown>,
+  projectCwd: string | undefined,
+): string {
+  const p =
+    (typeof args.path === "string" && args.path) ||
+    (typeof args.targetDirectory === "string" && args.targetDirectory) ||
+    ".";
+  return displayPath(p, projectCwd, 72);
+}
+
+/** Prefer named fields over raw JSON for unknown tools. */
+function summarizeGenericToolArgs(args: unknown, projectCwd: string | undefined): string {
+  if (args === null || typeof args !== "object" || Array.isArray(args)) {
+    return oneLine(JSON.stringify(args), 96);
+  }
+  const o = args as Record<string, unknown>;
+  const parts: string[] = [];
+  const push = (label: string, val: string, cap: number) => {
+    const t = oneLine(val, cap);
+    if (t !== "") {
+      parts.push(`${label}:${t}`);
+    }
+  };
+  if (typeof o.pattern === "string") {
+    push("pat", o.pattern, 40);
+  }
+  if (typeof o.globPattern === "string") {
+    push("glob", o.globPattern, 40);
+  }
+  if (typeof o.query === "string") {
+    push("q", o.query, 36);
+  }
+  if (typeof o.path === "string") {
+    push("path", displayPath(o.path, projectCwd, 48), 52);
+  }
+  if (typeof o.targetDirectory === "string") {
+    push("dir", displayPath(o.targetDirectory, projectCwd, 48), 52);
+  }
+  if (typeof o.url === "string") {
+    push("url", o.url, 56);
+  }
+  if (parts.length > 0) {
+    return oneLine(parts.join(" "), 100);
+  }
+  return oneLine(JSON.stringify(o), 96);
+}
+
 function getAssistantText(message: unknown): string {
   if (typeof message !== "object" || message === null) {
     return "";
@@ -131,7 +262,15 @@ function shellCommandRaw(toolCall: unknown): string {
   );
 }
 
-function toolStartLine(toolCall: unknown, callId: string): ToolLine {
+function toolLabelFromKey(key: string): string {
+  return key.replace(/ToolCall$/i, "");
+}
+
+function toolStartLine(
+  toolCall: unknown,
+  callId: string,
+  projectCwd: string | undefined,
+): ToolLine {
   const id = callId.length > 12 ? `${callId.slice(0, 12)}…` : callId;
   if (toolCall === null || typeof toolCall !== "object") {
     return { label: "tool", detail: id, color: YLW };
@@ -144,12 +283,12 @@ function toolStartLine(toolCall: unknown, callId: string): ToolLine {
   if (typeof tc.readToolCall === "object" && tc.readToolCall) {
     const a = (tc.readToolCall as { args?: { path?: string } }).args;
     const p = a?.path ?? "?";
-    return { label: "read", detail: shortPath(p), color: BLU };
+    return { label: "read", detail: displayPath(p, projectCwd), color: BLU };
   }
   if (typeof tc.writeToolCall === "object" && tc.writeToolCall) {
     const a = (tc.writeToolCall as { args?: { path?: string } }).args;
     const p = a?.path ?? "?";
-    return { label: "write", detail: shortPath(p), color: BLU };
+    return { label: "write", detail: displayPath(p, projectCwd), color: BLU };
   }
   if (typeof tc.taskToolCall === "object" && tc.taskToolCall) {
     const args = (tc.taskToolCall as { args?: Record<string, unknown> }).args;
@@ -177,27 +316,54 @@ function toolStartLine(toolCall: unknown, callId: string): ToolLine {
     const a = (f.arguments ?? "").slice(0, 200);
     return { label: n, detail: oneLine(a, 100), color: YLW };
   }
+
+  const namedPairs: [keyof typeof tc, (args: Record<string, unknown>) => string][] = [
+    ["globToolCall", (args) => summarizeGlobDetail(args, projectCwd)],
+    ["grepToolCall", (args) => summarizeGrepDetail(args, projectCwd)],
+    ["ripgrepRawSearchToolCall", (args) => summarizeGrepDetail(args, projectCwd)],
+    ["listDirToolCall", (args) => summarizeListDirDetail(args, projectCwd)],
+    ["listDirectoryToolCall", (args) => summarizeListDirDetail(args, projectCwd)],
+    ["codebaseSearchToolCall", (args) =>
+      oneLine(
+        (typeof args.query === "string" ? args.query : JSON.stringify(args.query)) +
+          (typeof args.target_directories !== "undefined"
+            ? ` · ${oneLine(String(args.target_directories), 40)}`
+            : ""),
+        96,
+      )],
+  ];
+  for (const [k, fmt] of namedPairs) {
+    const inner = tc[k];
+    const args = toolArgsRecord(inner);
+    if (args !== null) {
+      const label = toolLabelFromKey(String(k));
+      return { label, detail: fmt(args), color: YLW };
+    }
+  }
+
   const keys = Object.keys(tc);
   if (keys.length > 0) {
     const k0 = keys[0] as string;
     if (k0) {
       const v = tc[k0 as keyof typeof tc];
-      const d =
-        v !== null && typeof v === "object"
-          ? oneLine(
-              (v as { args?: unknown }).args
-                ? JSON.stringify((v as { args: unknown }).args)
-                : JSON.stringify(v),
-              100,
-            )
-          : String(v);
-      return { label: k0.replace(/ToolCall$/, ""), detail: d, color: YLW };
+      if (v !== null && typeof v === "object") {
+        const args = toolArgsRecord(v);
+        if (args !== null) {
+          const label = toolLabelFromKey(k0);
+          return {
+            label,
+            detail: summarizeGenericToolArgs(args, projectCwd),
+            color: YLW,
+          };
+        }
+        const d = oneLine(JSON.stringify(v), 96);
+        return { label: toolLabelFromKey(k0), detail: d, color: YLW };
+      }
+      return { label: toolLabelFromKey(k0), detail: String(v), color: YLW };
     }
   }
   return { label: "tool", detail: id, color: YLW };
 }
-
-const BAR = `${DIM}│${RST}`;
 
 function toolLeadNewline(separateFromPrevious: boolean): void {
   if (separateFromPrevious) {
@@ -226,9 +392,7 @@ function printToolStart(
         return;
       }
       toolLeadNewline(separateFromPrevious);
-      process.stderr.write(
-        `${BAR} ${YLW}$${RST} ${BOLD}${cmd}${RST}\n`,
-      );
+      process.stderr.write(`${YLW}$${RST} ${BOLD}${cmd}${RST}\n`);
       return;
     }
     if (typeof tc.taskToolCall === "object" && tc.taskToolCall) {
@@ -254,15 +418,19 @@ function printToolStart(
         : (callId.length > 0 ? oneLine(callId, 50) : "…");
       toolLeadNewline(separateFromPrevious);
       process.stderr.write(
-        `${BAR} ${MAG}${BOLD}subagent${RST}  ${DIM}${line}${RST}\n`,
+        `${MAG}${BOLD}subagent${RST}  ${DIM}${line}${RST}\n`,
       );
       return;
     }
   }
-  const { label, detail, color } = toolStartLine(toolCall, callId);
+  const { label, detail, color } = toolStartLine(
+    toolCall,
+    callId,
+    projectCwd,
+  );
   toolLeadNewline(separateFromPrevious);
   process.stderr.write(
-    `${BAR} ${color}${BOLD}${label}${RST} ${DIM}${detail}${RST}\n`,
+    `${color}${BOLD}${label}${RST} ${DIM}${detail}${RST}\n`,
   );
 }
 
@@ -331,7 +499,7 @@ export class AgentStreamHandler {
     this.shellByCallId.delete(callId);
     toolLeadNewline(this.emittedToolLine);
     this.emittedToolLine = true;
-    process.stderr.write(`${BAR} ${YLW}$${RST} ${BOLD}${cmd}${RST}\n`);
+    process.stderr.write(`${YLW}$${RST} ${BOLD}${cmd}${RST}\n`);
   }
 
   handleObject(ev: unknown): void {

@@ -12,6 +12,11 @@ You are running **`pr update`**: refresh an existing PR’s **title** and **body
 - **`comments.md`:** Reflect review briefly if useful; don’t paste threads.
 - **`PR.md`:** Current title and body—keep what’s still true; revise where the diff or review demands.
 
+**PR description — do not:**
+
+- Add **How to verify** (or verification steps / command checklists / “run `npm …`”). **Remove** it when updating if the prefetched body still has that section.
+- Mention **Jira / PR title validation**, **missing issue key**, **NOVACORE title checks**, **previous title failed CI**, or **why the title was changed for a validator**. Refresh title and body for the diff; no meta about validators or title gate failures.
+
 ## PR context (prefetched local files)
 
 Your **current working directory** is `{{workspaceDir}}`.
