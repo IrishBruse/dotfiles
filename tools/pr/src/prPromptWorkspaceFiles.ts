@@ -4,27 +4,53 @@ import path from "node:path";
 import { MERGED_PREVIEW_FILE } from "./agentOutputFiles.ts";
 
 const JIRA_KEY_FILE_RE = /^[A-Z][A-Z0-9]+-\d+\.md$/;
+const LARGE_BYTES = 1_000_000;
 
 export type PrPromptWorkspaceMode = "create" | "update" | "review";
 
+type Row = { file: string; bytes: number; lines: string; what: string };
+
+function statSafely(abspath: string): { bytes: number; lines: string } | null {
+  let st: fs.Stats;
+  try {
+    st = fs.statSync(abspath);
+  } catch {
+    return null;
+  }
+  if (st.size > LARGE_BYTES) {
+    return { bytes: st.size, lines: "(large)" };
+  }
+  let text: string;
+  try {
+    text = fs.readFileSync(abspath, "utf8");
+  } catch {
+    return { bytes: st.size, lines: "?" };
+  }
+  return { bytes: st.size, lines: String(text.split("\n").length) };
+}
+
 /**
- * Markdown block for the agent prompt: table of **existing** files at `workspaceDir`
- * the agent is allowed to read, plus a short no-other-paths rule.
+ * Markdown block for the agent prompt: a table of the files at `workspaceDir`
+ * the agent is allowed to read (with bytes/lines and a one-line description),
+ * plus a hard rule that nothing else exists.
  */
 export function formatPrWorkspaceReadList(
   workspaceDir: string,
   mode: PrPromptWorkspaceMode,
 ): string {
-  const rows: { file: string; what: string }[] = [];
+  const rows: Row[] = [];
 
   const addIfExists = (name: string, what: string): void => {
-    try {
-      if (fs.existsSync(path.join(workspaceDir, name))) {
-        rows.push({ file: `\`${name}\``, what });
-      }
-    } catch {
-      // ignore
+    const stats = statSafely(path.join(workspaceDir, name));
+    if (stats === null) {
+      return;
     }
+    rows.push({
+      file: `\`${name}\``,
+      bytes: stats.bytes,
+      lines: stats.lines,
+      what,
+    });
   };
 
   if (mode === "create") {
@@ -34,23 +60,34 @@ export function formatPrWorkspaceReadList(
     );
     addIfExists(
       "PULL_REQUEST_TEMPLATE.md",
-      "Host repo’s PR template when the CLI found one; mirror in the body if useful.",
+      "Host repo PR template if the CLI found one; mirror its structure in the body.",
     );
     addIfExists(
       "jira-tickets-board.md",
-      "Jira-tickets board snapshot (e.g. title rules) when the skill is installed.",
+      "Jira-tickets board snapshot when the skill is installed (e.g. title rules).",
     );
   } else {
     const prLine =
       mode === "review"
-        ? "From GitHub; **replace** with your `#` one-line review summary plus the full **review comment** to post."
-        : "From GitHub; **replace** with your new `#` title and full body for `gh pr edit`.";
-    addIfExists("diff.patch", "Unified diff (head vs base) — top authority for *what the code does*.");
-    addIfExists("files.json", "Changed files list (`gh` JSON for this PR).");
+        ? "From GitHub. **Replace** with `#` review summary line + full review-comment markdown."
+        : "From GitHub. **Replace** with new `#` title + full body for `gh pr edit`.";
+    addIfExists(
+      "files-changed.txt",
+      "One line per path with `+add -del` and change type — read this before `diff.patch` / `files.json`.",
+    );
+    addIfExists(
+      "checks-summary.txt",
+      "Short CI digest; only open `checks.json` if you need raw `statusCheckRollup`.",
+    );
     addIfExists(MERGED_PREVIEW_FILE, prLine);
-    addIfExists("commits.txt", "One line per commit: short SHA, subject, optional message.");
-    addIfExists("checks.json", "`statusCheckRollup` — CI pass/fail, job names, log URLs.");
+    addIfExists(
+      "diff.patch",
+      "Full unified diff (head vs base) — top authority for *what the code does*.",
+    );
+    addIfExists("commits.txt", "One line per commit: short SHA, subject, optional body.");
     addIfExists("comments.md", "PR thread + inline comments (path:line, hunks, bodies).");
+    addIfExists("files.json", "Raw `gh` files JSON for this PR (use `files-changed.txt` first).");
+    addIfExists("checks.json", "Raw `statusCheckRollup` (use `checks-summary.txt` first).");
     addIfExists(
       "jira-tickets-board.md",
       "Jira-tickets board snapshot when the skill is installed.",
@@ -58,25 +95,27 @@ export function formatPrWorkspaceReadList(
     for (const name of listJiraKeyMdFiles(workspaceDir)) {
       addIfExists(
         name,
-        "Jira key reference the CLI could copy in (from the skill `references/…` when available).",
+        "Per-Jira-key reference copied from the jira-tickets skill when available.",
       );
     }
   }
 
   if (rows.length === 0) {
-    return "*(No readable prefetched files found in the workspace, which is unexpected.)*\n";
+    return "*(No prefetched files in the workspace — that is unexpected.)*\n";
   }
 
-  const table = [
-    "These are **the only** paths at the workspace root that exist **right now**; you may `read` only these files (and then write `PR.md` as instructed). There is no other project tree or file set to discover here.",
+  const lines = [
+    "These are **the only** files at the workspace root **right now**; you may `read` only these (and you write `PR.md`). Pick smaller files first when they cover what you need.",
     "",
-    "| File | What |",
-    "|------|------|",
-    ...rows.map((r) => `| ${r.file} | ${r.what} |`),
+    "| File | bytes | lines | What |",
+    "|------|------:|------:|------|",
+    ...rows.map(
+      (r) => `| ${r.file} | ${r.bytes} | ${r.lines} | ${r.what} |`,
+    ),
     "",
-    "Do not `glob`, `read`, or search outside the paths above (including the real repository checkout, `~/.cursor`, or jira-tickets skill install paths).",
+    "Do not `glob`, `read`, or search outside the paths above (no real repo checkout, no `~/.cursor`, no jira-tickets skill on disk).",
   ];
-  return table.join("\n");
+  return lines.join("\n");
 }
 
 function listJiraKeyMdFiles(dir: string): string[] {
@@ -87,9 +126,6 @@ function listJiraKeyMdFiles(dir: string): string[] {
     return [];
   }
   return names
-    .filter(
-      (n) =>
-        JIRA_KEY_FILE_RE.test(n) && n !== MERGED_PREVIEW_FILE,
-    )
+    .filter((n) => JIRA_KEY_FILE_RE.test(n) && n !== MERGED_PREVIEW_FILE)
     .sort();
 }

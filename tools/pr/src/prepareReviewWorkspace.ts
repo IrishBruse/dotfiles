@@ -6,6 +6,10 @@ import { MERGED_PREVIEW_FILE, buildPreviewMarkdown } from "./agentOutputFiles.ts
 import { clearPrAgentWorkspaceDir } from "./prAgentWorkspace.ts";
 import { prCoordsFromViewPayload } from "./githubPrPrefetchExtra.ts";
 import {
+  writeChecksSummaryTxt,
+  writeFilesChangedTxt,
+} from "./prefetchIndex.ts";
+import {
   writeJiraSkillBoardSnapshot,
   writeJiraSkillContext,
 } from "./jiraSkillContext.ts";
@@ -126,6 +130,8 @@ export async function populateReviewWorkspace(
     fs.writeFileSync(path.join(dir, "diff.patch"), diffText, "utf8");
     writeCommitsTxtFromRaw(dir, commitsRaw);
     writeFormattedJsonFile(path.join(dir, "checks.json"), checksRaw);
+    writeFilesChangedTxt(dir, filesRaw);
+    writeChecksSummaryTxt(dir, checksRaw);
 
     writeJiraSkillContext(dir, bodyStr);
     writeJiraSkillBoardSnapshot(dir);
