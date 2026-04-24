@@ -3,7 +3,7 @@
  * Sync Jira issues into the jira-tickets skill via `acli jira workitem search` (Atlassian CLI).
  * Writes per-ticket markdown into `.agents/skills/jira-tickets/references/{me,team,unassigned}/`
  * and regenerates the skill summary at `.agents/skills/jira-tickets/SKILL.md`.
- * Edit CONFIG.ts, then run: node bin/jira-board-sync.js
+ * Edit CONFIG.ts, then run: jira-board sync
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
@@ -528,7 +528,18 @@ function fetchActiveSprintIdsForBoard(acli: string, boardId: string): number[] {
   return ids;
 }
 
-function main(): void {
+/** Sync Jira → skill markdown; returns 0 on success. */
+export function runJiraBoardSync(): number {
+  try {
+    return runJiraBoardSyncImpl();
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    process.stderr.write(`jira-board-sync: ${msg}\n`);
+    return 1;
+  }
+}
+
+function runJiraBoardSyncImpl(): number {
   const jql = nonEmpty(CONFIG.boardJql);
   const meAccountId = nonEmpty(CONFIG.meAccountId);
   let siteHost = nonEmpty(CONFIG.site);
@@ -537,15 +548,15 @@ function main(): void {
 
   if (!jql) {
     process.stderr.write("jira-board-sync: set CONFIG.boardJql.\n");
-    process.exit(1);
+    return 1;
   }
   if (!meAccountId) {
     process.stderr.write("jira-board-sync: set CONFIG.meAccountId.\n");
-    process.exit(1);
+    return 1;
   }
   if (!siteHost) {
     process.stderr.write("jira-board-sync: set CONFIG.site.\n");
-    process.exit(1);
+    return 1;
   }
   siteHost = normalizeSiteHost(siteHost);
 
@@ -557,7 +568,7 @@ function main(): void {
       process.stderr.write(
         `jira-board-sync: no active sprints on board ${boardId}.\n`,
       );
-      process.exit(1);
+      return 1;
     }
     log(`active sprint id(s) on board: ${sprintIds.join(", ")}`);
     effectiveJql = scopeJqlToBoardSprints(effectiveJql, sprintIds);
@@ -582,7 +593,7 @@ function main(): void {
 
   if (!Array.isArray(data)) {
     process.stderr.write("jira-board-sync: expected JSON array from acli.\n");
-    process.exit(1);
+    return 1;
   }
 
   log(`received ${data.length} issue(s).`);
@@ -612,6 +623,21 @@ function main(): void {
   process.stdout.write(
     `Wrote ${counts.me + counts.team + counts.unassigned} issues to ${outRoot} (me: ${counts.me}, team: ${counts.team}, unassigned: ${counts.unassigned}). Updated jira-tickets skill: ${JIRA_TICKETS_SKILL_PATH}\n`,
   );
+  return 0;
 }
 
-main();
+function isCliEntry(): boolean {
+  const a1 = process.argv[1];
+  if (!a1) return false;
+  try {
+    return (
+      path.resolve(fileURLToPath(import.meta.url)) === path.resolve(a1)
+    );
+  } catch {
+    return false;
+  }
+}
+
+if (isCliEntry()) {
+  process.exit(runJiraBoardSync());
+}

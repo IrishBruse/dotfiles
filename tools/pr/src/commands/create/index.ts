@@ -7,6 +7,7 @@ import {
   logAgentWorkspacePreamble,
   preparePrAgentWorkspace,
   readCurrentBranch,
+  resolvePrCliGitCwd,
 } from "../../prAgentWorkspace.ts";
 import { confirmAndCreatePr } from "../../prCreatePostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
@@ -40,7 +41,7 @@ async function runCreateAsync(args: string[]): Promise<void> {
     failPrCli(e instanceof Error ? e.message : String(e));
     return;
   }
-  const repoRoot = getGitRepoRoot(process.cwd());
+  const repoRoot = getGitRepoRoot(resolvePrCliGitCwd());
   const branchForWorkspace = readCurrentBranch(repoRoot);
   const workspaceDir = preparePrAgentWorkspace(repoRoot, branchForWorkspace);
   logAgentWorkspacePreamble(workspaceDir, printWorkspaceDir);

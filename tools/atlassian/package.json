@@ -6,7 +6,6 @@
   "type": "module",
   "bin": {
     "jira-board": "./bin/jira-board.js",
-    "jira-board-sync": "./bin/jira-board-sync.js",
     "confluence-clone": "./bin/confluence-clone.js"
   },
   "files": [

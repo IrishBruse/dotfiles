@@ -82,7 +82,7 @@ function writeCommitsTxtFromRaw(dir: string, commitsRaw: string): void {
 }
 
 const viewJsonFields =
-  "number,title,author,baseRefName,headRefName,baseRefOid,headRefOid,body,state,labels,reviewRequests,url";
+  "number,title,author,baseRefName,headRefName,headRefOid,body,state,labels,reviewRequests,url";
 
 /**
  * Write prefetched PR files at the root of `dir` using **`gh`** (REST).

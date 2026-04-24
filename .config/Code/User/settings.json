@@ -1303,7 +1303,7 @@
     "editor.wordWrap": "on",
     "files.trimFinalNewlines": false,
     "files.trimTrailingWhitespace": false,
-    "editor.indentSize": 4,
+    "editor.defaultFormatter": null,
   },
   "[snippets]": {
     "files.insertFinalNewline": false,

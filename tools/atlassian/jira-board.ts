@@ -3,17 +3,18 @@
  * Print the local Jira board from `.agents/skills/jira-tickets/SKILL.md`.
  * In a TTY it is interactive: ↑/↓ (or j/k) between tickets, ←/→ to switch
  * tabs (row above the table), Enter to open the local md,
- * `o` for Jira in browser, `u` to run jira-board-sync and reload, q / Esc / Ctrl-C to quit.
- * Usage: jira-board [path-to-SKILL.md]
+ * `o` for Jira in browser, `u` to run sync and reload, q / Esc / Ctrl-C to quit.
+ * Usage: jira-board [path-to-SKILL.md] | jira-board sync
  */
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import readline from "node:readline";
-import { spawn, spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import stringWidth from "string-width";
 import { fileURLToPath } from "node:url";
 import { CONFIG } from "./CONFIG.ts";
+import { runJiraBoardSync } from "./jira-board-sync.ts";
 
 export type BoardRow = {
   group: string;
@@ -466,18 +467,14 @@ function runInteractive(
         return;
       }
       case "u": {
-        if (!fs.existsSync(JIRA_BOARD_SYNC_JS)) return;
         stdin.pause();
         stdin.setRawMode(false);
         stdout.write(SHOW_CURSOR + LEAVE_ALT);
-        const r = spawnSync(process.execPath, [JIRA_BOARD_SYNC_JS], {
-          stdio: "inherit",
-          env: process.env,
-        });
+        const code = runJiraBoardSync();
         stdin.resume();
         if (stdin.isTTY) stdin.setRawMode(true);
         stdout.write(ENTER_ALT + HIDE_CURSOR + HOME + CLR_EOS);
-        if (r.status === 0 && fs.existsSync(skillPath)) {
+        if (code === 0 && fs.existsSync(skillPath)) {
           const raw = fs.readFileSync(skillPath, "utf8");
           rows = sortRows(parseBoardMarkdown(raw));
           ({ widths, titleMax } = computeWidths(rows));
@@ -502,15 +499,29 @@ function runInteractive(
 // --- Entry point ----------------------------------------------------------
 
 const TOOL_DIR = path.dirname(fileURLToPath(import.meta.url));
-const JIRA_BOARD_SYNC_JS = path.join(TOOL_DIR, "bin", "jira-board-sync.js");
 const defaultSkillPath = path.join(
   TOOL_DIR,
   "../..",
   ".agents/skills/jira-tickets/SKILL.md",
 );
 
+function printHelp(): void {
+  process.stdout.write(`Usage:
+  jira-board [SKILL.md]   view board (default: jira-tickets skill)
+  jira-board sync         fetch Jira → skill markdown (needs CONFIG + acli)
+  jira-board -h|--help    this message
+`);
+}
+
 function main() {
   const arg = process.argv[2];
+  if (arg === "-h" || arg === "--help") {
+    printHelp();
+    return;
+  }
+  if (arg === "sync") {
+    process.exit(runJiraBoardSync());
+  }
   const skillPath = path.resolve(arg ?? defaultSkillPath);
   if (!fs.existsSync(skillPath)) {
     console.error(`jira-board: file not found: ${skillPath}`);

@@ -2,10 +2,8 @@ import process from "node:process";
 
 import { populateReviewWorkspace } from "../../prepareReviewWorkspace.ts";
 import {
-  getGitRepoRoot,
   logAgentWorkspacePreamble,
-  preparePrAgentWorkspace,
-  readPrHeadBranchName,
+  preparePrReviewWorkspace,
 } from "../../prAgentWorkspace.ts";
 import {
   confirmAndPostReviewComment,
@@ -47,9 +45,7 @@ async function runReviewAsync(args: string[]): Promise<void> {
   }
   let workspaceDir: string;
   try {
-    const repoRoot = getGitRepoRoot(process.cwd());
-    const headBranch = readPrHeadBranchName(target);
-    workspaceDir = preparePrAgentWorkspace(repoRoot, headBranch);
+    workspaceDir = preparePrReviewWorkspace(target);
   } catch (e) {
     failPrCli(e instanceof Error ? e.message : `pr review: ${String(e)}`);
     return;

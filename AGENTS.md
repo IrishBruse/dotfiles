@@ -5,3 +5,10 @@
 - All scripts should be in typescript executed with node 24
 - Dont add excessive edge case handling to script keep them simple and doing what the user requested
 - Before finishing work that touches TypeScript in this repo, run `npm run validate` (typecheck via `tsc --noEmit` for each project); it must pass
+
+## CLI Tools
+
+- `toosl/atlassian`
+  - `jira-board` (subcommand `sync` for Jira → markdown)
+- `toosl/pr`
+  - `pr`

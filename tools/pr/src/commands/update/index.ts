@@ -7,10 +7,8 @@ import {
 } from "../../agentOutputFiles.ts";
 import { populateReviewWorkspace } from "../../prepareReviewWorkspace.ts";
 import {
-  getGitRepoRoot,
   logAgentWorkspacePreamble,
-  preparePrAgentWorkspace,
-  readPrHeadBranchName,
+  preparePrReviewWorkspace,
 } from "../../prAgentWorkspace.ts";
 import { confirmAndApplyPrMetadata } from "../../prEditPostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
@@ -84,9 +82,7 @@ async function runUpdateAsync(args: string[]): Promise<void> {
 
   let workspaceDir: string;
   try {
-    const repoRoot = getGitRepoRoot(process.cwd());
-    const headBranch = readPrHeadBranchName(target);
-    workspaceDir = preparePrAgentWorkspace(repoRoot, headBranch);
+    workspaceDir = preparePrReviewWorkspace(target);
   } catch (e) {
     failPrCli(e instanceof Error ? e.message : `pr update: ${String(e)}`);
     return;

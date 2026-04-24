@@ -4,6 +4,22 @@ import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 
+/**
+ * Cwd for **`git rev-parse`** / branch detection. If unset, uses **`process.cwd()`**.
+ * Set to a work tree (or path inside it) when the shell is not inside a repo, e.g.
+ * **`export PR_GIT_CWD=~/code/dotfiles`**
+ */
+export function resolvePrCliGitCwd(): string {
+  const raw = process.env.PR_GIT_CWD?.trim();
+  if (raw && raw !== "") {
+    if (raw.startsWith("~/")) {
+      return path.join(os.homedir(), raw.slice(2));
+    }
+    return path.resolve(raw);
+  }
+  return process.cwd();
+}
+
 /** Default `os.tmpdir()`; override with `PR_CLI_WORKSPACE_ROOT` (absolute path or `~/…`). */
 export function workspaceAnchor(): string {
   const raw = process.env.PR_CLI_WORKSPACE_ROOT?.trim();
@@ -72,6 +88,158 @@ export function preparePrAgentWorkspace(
   return dir;
 }
 
+/** Path under the workspace anchor when there is no local git repo: `pr-cli/gh/<owner>/<repo>/<branch>/`. */
+export function repoPathSegmentsFromGitHubSlug(nameWithOwner: string): string[] {
+  const t = nameWithOwner.trim();
+  const slash = t.indexOf("/");
+  if (slash <= 0 || slash >= t.length - 1) {
+    return ["gh", slugSegment(t === "" ? "_" : t)];
+  }
+  return [
+    "gh",
+    slugSegment(t.slice(0, slash)),
+    slugSegment(t.slice(slash + 1)),
+  ];
+}
+
+export function resolvePrAgentWorkspaceDirRemote(
+  nameWithOwner: string,
+  branch: string,
+): string {
+  return path.join(
+    workspaceAnchor(),
+    "pr-cli",
+    ...repoPathSegmentsFromGitHubSlug(nameWithOwner),
+    safeBranchSlug(branch),
+  );
+}
+
+export function preparePrAgentWorkspaceRemote(
+  nameWithOwner: string,
+  branch: string,
+): string {
+  const dir = resolvePrAgentWorkspaceDirRemote(nameWithOwner, branch);
+  clearPrAgentWorkspaceDir(dir);
+  return dir;
+}
+
+function parseOwnerRepoFromGithubPrUrl(urlStr: string): string | null {
+  try {
+    const u = new URL(urlStr);
+    const m = /^\/([^/]+)\/([^/]+)\/pull\/\d/.exec(u.pathname);
+    if (m) {
+      return `${m[1]}/${m[2]}`;
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
+export type PrHeadWorkspaceFromGh = {
+  headBranch: string;
+  /** `owner/name` for the PR head repository (fork when cross-repo). */
+  nameWithOwner: string;
+};
+
+/**
+ * Resolves the PR head branch and repo slug via **`gh`** (one round trip). Used for agent workspace
+ * layout when **`git rev-parse`** is unavailable.
+ */
+export function readPrHeadWorkspaceFromGh(target: string): PrHeadWorkspaceFromGh {
+  const r = spawnSync(
+    "gh",
+    [
+      "pr",
+      "view",
+      target,
+      "--json",
+      "headRefName,headRepository,headRepositoryOwner,url",
+    ],
+    {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    },
+  );
+  if (r.status !== 0) {
+    const msg =
+      (r.stderr ?? r.stdout ?? "").trim() || `exit ${r.status ?? 1}`;
+    throw new Error(`pr: gh pr view (head workspace) failed: ${msg}`);
+  }
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(r.stdout ?? "{}");
+  } catch {
+    throw new Error("pr: could not parse gh pr view JSON for head workspace");
+  }
+  if (typeof parsed !== "object" || parsed === null) {
+    throw new Error("pr: invalid gh pr view JSON for head workspace");
+  }
+  const o = parsed as {
+    headRefName?: unknown;
+    headRepository?: unknown;
+    headRepositoryOwner?: unknown;
+    url?: unknown;
+  };
+  const headBranch =
+    typeof o.headRefName === "string" ? o.headRefName.trim() : "";
+  if (headBranch === "") {
+    throw new Error("pr: missing headRefName on PR");
+  }
+  let nameWithOwner = "";
+  const headRepo = o.headRepository;
+  const ownerObj = o.headRepositoryOwner;
+  if (
+    typeof headRepo === "object" &&
+    headRepo !== null &&
+    typeof ownerObj === "object" &&
+    ownerObj !== null
+  ) {
+    const repoName =
+      typeof (headRepo as { name?: unknown }).name === "string"
+        ? (headRepo as { name: string }).name.trim()
+        : "";
+    const login =
+      typeof (ownerObj as { login?: unknown }).login === "string"
+        ? (ownerObj as { login: string }).login.trim()
+        : "";
+    if (repoName !== "" && login !== "") {
+      nameWithOwner = `${login}/${repoName}`;
+    }
+  }
+  if (nameWithOwner === "" && typeof o.url === "string") {
+    const fromUrl = parseOwnerRepoFromGithubPrUrl(o.url);
+    if (fromUrl !== null) {
+      nameWithOwner = fromUrl;
+    }
+  }
+  if (nameWithOwner === "") {
+    throw new Error(
+      "pr: could not resolve PR repository slug from gh (no headRepository)",
+    );
+  }
+  return { headBranch, nameWithOwner };
+}
+
+/**
+ * Clears and returns the agent workspace directory for **`pr review`** / **`pr update`**: uses the
+ * local git repo path when **`git rev-parse`** succeeds from **`PR_GIT_CWD`** / cwd; otherwise
+ * **`pr-cli/gh/<owner>/<repo>/…`** from the PR head on GitHub.
+ */
+export function preparePrReviewWorkspace(target: string): string {
+  const { headBranch, nameWithOwner } = readPrHeadWorkspaceFromGh(target);
+  try {
+    const repoRoot = getGitRepoRoot(resolvePrCliGitCwd());
+    return preparePrAgentWorkspace(repoRoot, headBranch);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    if (msg.includes("not a git repository")) {
+      return preparePrAgentWorkspaceRemote(nameWithOwner, headBranch);
+    }
+    throw e;
+  }
+}
+
 export function getGitRepoRoot(cwd: string): string {
   const r = spawnSync("git", ["rev-parse", "--show-toplevel"], {
     cwd,
@@ -109,37 +277,7 @@ export function readCurrentBranch(repoRoot: string): string {
 }
 
 export function readPrHeadBranchName(target: string): string {
-  const r = spawnSync(
-    "gh",
-    ["pr", "view", target, "--json", "headRefName"],
-    {
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"],
-    },
-  );
-  if (r.status !== 0) {
-    const msg =
-      (r.stderr ?? r.stdout ?? "").trim() || `exit ${r.status ?? 1}`;
-    throw new Error(`pr: gh pr view (head branch) failed: ${msg}`);
-  }
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(r.stdout ?? "{}");
-  } catch {
-    throw new Error("pr: could not parse gh pr view JSON for head branch");
-  }
-  if (
-    typeof parsed !== "object" ||
-    parsed === null ||
-    typeof (parsed as { headRefName?: unknown }).headRefName !== "string"
-  ) {
-    throw new Error("pr: missing headRefName on PR");
-  }
-  const b = (parsed as { headRefName: string }).headRefName.trim();
-  if (b === "") {
-    throw new Error("pr: empty headRefName on PR");
-  }
-  return b;
+  return readPrHeadWorkspaceFromGh(target).headBranch;
 }
 
 /**

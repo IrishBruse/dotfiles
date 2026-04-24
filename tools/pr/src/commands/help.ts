@@ -16,6 +16,7 @@ export function printHelp(): void {
       "Work (optional):",
       "  PR_CLI_WORK=true           NOVACORE title prefix + …/create|update|review/prompt.work.md beside each prompt.md",
       "  PR_CLI_WORKSPACE_ROOT=…    Anchor for agent cwd (default os.tmpdir()); workspaces are <anchor>/pr-cli/<repo>/<branch>/",
+      "  PR_GIT_CWD=…                Directory inside a git work tree for `git` (default: current shell cwd).",
       "",
       "Options:",
       "  --print-prompt   After workspace prefetch, print the full resolved agent prompt to stdout and exit",
