@@ -27,7 +27,7 @@ export function printHelp(): void {
       "  --dir            Print the agent workspace directory on stderr; otherwise the path is not printed.",
       "  --opus           Run the Cursor agent with the Opus model (claude-opus-4-7-high).",
       "  --codex          Run with Codex 5.3 (gpt-5.3-codex).",
-      "  (default model)  If neither is set, uses composer-2-fast (agent --list-models).",
+      "  (default model)  If neither is set, uses composer-2 (agent --list-models).",
       "  -h, --help       Show this message",
     ].join("\n"),
   );

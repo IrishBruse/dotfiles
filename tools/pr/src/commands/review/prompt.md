@@ -7,7 +7,7 @@ Follow this preamble for any review flow the CLI launches.
 ## Requirements
 
 - Use **only** the read-only table below; it is built from the files that exist in the workspace (column **What** is fixed copy; **File** is dynamic). No `gh` or GitHub API for PR content. No **`glob`**, `codebase_search`, or `read`ing source files from the real repo, `~/.cursor`, or the jira-tickets skill install—only rows that appear.
-- After reading them, you **replace `PR.md` entirely** with the review: `#` summary line, blank line, then the full **GitHub review comment** markdown (e.g. `> Reviewed by Cursor` at the top unless policy says otherwise).
+- After reading them, you **replace `PR.md` entirely** with the review: `#` summary line, blank line, then the full **GitHub review comment** markdown. The first line of that body must be exactly `> Reviewed by Cursor ({{reviewModelLabel}})` (this run’s model; do not substitute a different name).
 
 ## PR context (prefetched local files)
 

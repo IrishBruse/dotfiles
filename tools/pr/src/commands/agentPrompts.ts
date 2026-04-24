@@ -69,6 +69,7 @@ export function loadUpdateAgentPrompt(vars: UpdatePromptVars): string {
 export type ReviewPromptVars = {
   target: string;
   workspaceDir: string;
+  reviewModelLabel: string;
 };
 
 export function loadReviewAgentPrompt(vars: ReviewPromptVars): string {

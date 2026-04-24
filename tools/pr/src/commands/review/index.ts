@@ -32,8 +32,9 @@ async function runReviewAsync(args: string[]): Promise<void> {
   const { rest: a2, printWorkspaceDir } = takePrintWorkspaceDirFlag(a1);
   let rest: string[];
   let model: string;
+  let reviewModelLabel: string;
   try {
-    ({ rest, model } = takeModelFlags(a2));
+    ({ rest, model, reviewModelLabel } = takeModelFlags(a2));
   } catch (e) {
     failPrCli(e instanceof Error ? e.message : String(e));
     return;
@@ -66,6 +67,7 @@ async function runReviewAsync(args: string[]): Promise<void> {
   const prompt = loadReviewAgentPrompt({
     target,
     workspaceDir,
+    reviewModelLabel,
   });
 
   if (printPrompt) {
