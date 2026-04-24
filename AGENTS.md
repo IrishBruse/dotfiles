@@ -8,7 +8,15 @@
 
 ## CLI Tools
 
-- `toosl/atlassian`
-  - `jira-board` (subcommand `sync` for Jira → markdown)
-- `toosl/pr`
-  - `pr`
+Packages live under `tools/`. Install per package: `cd tools/<name> && npm install && npm link` (or run `node tools/<name>/bin/<cmd>.js …`).
+
+- **`tools/atlassian`** — Node 24+; uses Atlassian CLI (`acli`) where noted.
+  - **`jira-board`** — Interactive TUI from `.agents/skills/jira-tickets/SKILL.md` (optional path); **`jira-board sync`** refreshes that markdown from Jira via `acli`.
+  - **`confluence-clone`** — Clone a Confluence page subtree to local markdown (`acli confluence page view …`).
+
+- **`tools/pr`** — GitHub PR helper: runs Cursor Agent with prefetched workspace (`gh`, `code --wait`, Node 24+). See `tools/pr/README.md` for env vars (`PR_CLI_WORKSPACE_ROOT`, `PR_CLI_WORK`, etc.).
+  - **`pr`** (no subcommand) — Infers **`update`** vs **`create`** from repo state; a GitHub PR URL as the first arg runs **`review`**.
+  - **`pr create`** — New PR from current branch (agent + `gh pr create`).
+  - **`pr update [<pr>]`** — Refresh title/body (`gh pr edit`).
+  - **`pr review <pr>`** — Agent review → preview → `gh pr review --comment` (`<pr>`: number, URL, or branch).
+  - Common flags: **`--print-prompt`**, **`--no-agent`**, **`--dir`**, **`--opus`**, **`--codex`**; **`--help`**.
