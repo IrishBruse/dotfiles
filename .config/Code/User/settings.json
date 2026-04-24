@@ -1299,7 +1299,7 @@
   "[ini]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml",
   },
-  "[markdown,skill]": {
+  "[markdown][skill]": {
     "editor.wordWrap": "on",
     "files.trimFinalNewlines": false,
     "files.trimTrailingWhitespace": false,
@@ -1565,6 +1565,5 @@
   "network.meteredConnection": "off",
   "material-icon-theme.hidesExplorerArrows": true,
   "editor.scrollbar.horizontalScrollbarSize": 8,
-  "markdown.extension.italic.indicator": "_",
   "markdownInlineEditor.links.singleClickOpen": true,
 }
