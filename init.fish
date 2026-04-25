@@ -1,13 +1,10 @@
 #!/usr/bin/env fish
 
-rm .cursor/ 2>/dev/null
-mkdir .cursor/
-
-# ln -s <real source> <symlinked target>
-
-ln -fs ~/.cursor/mcp.json ~/dotfiles/.cursor 2>/dev/null || echo Skipped mcp.json
-ln -fs ~/.cursor/cli-config.json ~/dotfiles/.cursor 2>/dev/null || echo Skipped cli-config.json
-ln -fs ~/dotfiles/.agents/skills/ ~/.cursor/skills 2>/dev/null || echo Skipped .agents/skills/
-
 set -l repo (path dirname (status filename))
+mkdir -p $repo/.cursor ~/.cursor
+ln -fs ~/.cursor/mcp.json ~/.cursor/cli-config.json $repo/.cursor/
+# rm first: re-run ln -fs with dest a symlink to the same dir creates .agents/skills/skills (GNU ln).
+rm -rf ~/.cursor/skills
+ln -s $repo/.agents/skills ~/.cursor/skills
+
 acli completion fish >$repo/home/.config/fish/completions/acli.fish
