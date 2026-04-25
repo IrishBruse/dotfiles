@@ -1,7 +1,7 @@
 # Cursor `agent` CLI completions (fish)
 # Skills: ~/.cursor/skills, ~/.agents/skills, $PWD/.cursor/skills, git root .cursor/skills, …
 # Global /-skill list (plain text, one name per line; must start with /; # comments):
-#   ~/dotfiles/.config/fish/global-skills.txt
+#   ~/dotfiles/home/.config/fish/global-skills.txt
 # Skill picks: /name only — @ prefixes file refs; no bare filenames in completions (use -f)
 # Optional fzf: Ctrl-G runs agent_fzf_path (~/.config/fish/functions/agent-fzf.fish) — respects @path prefix
 
@@ -56,7 +56,7 @@ function __fish_agent_skills
 end
 
 function __fish_agent_global_skills_list_file
-    set -l def $HOME/dotfiles/.config/fish/global-skills.txt
+    set -l def $HOME/dotfiles/home/.config/fish/global-skills.txt
     test -f $def; and path resolve $def
 end
 

@@ -143,11 +143,11 @@ const custom = await loadCustomBindings();
 await generateKeybindingEnums();
 
 await writeKeybindingsFile(
-  "../../../Library/Application Support/Code/User/keybindings.json",
+  "../../home/Library/Application Support/Code/User/keybindings.json",
   await buildMacosKeybinds(custom),
 );
 
-await writeKeybindingsFile("../../.config/Code/User/keybindings.json", [
+await writeKeybindingsFile("../../home/.config/Code/User/keybindings.json", [
   osMarker("linux"),
   SEPARATOR,
   ...custom,

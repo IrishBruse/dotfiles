@@ -1,6 +1,6 @@
 {
   "window.title": "DOTFILES",
   "files.associations": {
-    "**/.config/dconf/*.txt": "ini",
+    "**/home/.config/dconf/*.txt": "ini",
   }
 }

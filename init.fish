@@ -9,4 +9,5 @@ ln -fs ~/.cursor/mcp.json ~/dotfiles/.cursor 2>/dev/null || echo Skipped mcp.jso
 ln -fs ~/.cursor/cli-config.json ~/dotfiles/.cursor 2>/dev/null || echo Skipped cli-config.json
 ln -fs ~/dotfiles/.agents/skills/ ~/.cursor/skills 2>/dev/null || echo Skipped .agents/skills/
 
-acli completion fish >.config/fish/completions/acli.fish
+set -l repo (path dirname (status filename))
+acli completion fish >$repo/home/.config/fish/completions/acli.fish
