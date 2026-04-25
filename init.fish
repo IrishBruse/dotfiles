@@ -7,4 +7,6 @@ ln -fs ~/.cursor/mcp.json ~/.cursor/cli-config.json $repo/.cursor/
 rm -rf ~/.cursor/skills
 ln -s $repo/.agents/skills ~/.cursor/skills
 
-acli completion fish >$repo/home/.config/fish/completions/acli.fish
+acli completion fish >$repo/home/.config/fish/completions/acli.fish; or true
+zoxide init fish --cmd cd >$repo/home/.config/fish/conf.d/zoxide.fish; or true
+fzf --fish >$repo/home/.config/fish/conf.d/fzf.fish; or true
