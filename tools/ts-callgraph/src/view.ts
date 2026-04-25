@@ -146,7 +146,7 @@ function buildViewerHtml(mermaidSource: string, title: string): string {
       cursor: grab; touch-action: none;
     }
     #viewport:active { cursor: grabbing; }
-    #stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+    #stage { position: absolute; left: 0; top: 0; width: max-content; height: max-content; transform-origin: 0 0; }
     #stage svg { display: block; max-width: none !important; }
   </style>
 </head>
@@ -190,32 +190,86 @@ function buildViewerHtml(mermaidSource: string, title: string): string {
     }
 
     /* ---- simple pan/zoom ---- */
+    const MIN_SCALE = 0.00001;
+    /** Wheel zoom ceiling (fit-to-view can still use smaller scales). */
+    const MAX_SCALE = 4096;
+
     function setupPanZoom(stage, viewport) {
-      let scale = 1, x = 0, y = 0;
-      const setTransform = () =>
+      let scale = 1;
+      let x = 0;
+      let y = 0;
+
+      const setTransform = () => {
         stage.style.transform = \`translate(\${x}px,\${y}px) scale(\${scale})\`;
+      };
+
+      /** Mouse position relative to #viewport (matches x/y from fitAndCenter). */
+      function pointerInViewport(ev) {
+        const r = viewport.getBoundingClientRect();
+        return { mx: ev.clientX - r.left, my: ev.clientY - r.top };
+      }
+
+      function fitAndCenter() {
+        void stage.offsetWidth;
+        const w = stage.scrollWidth || 1;
+        const h = stage.scrollHeight || 1;
+        const vw = viewport.clientWidth;
+        const vh = viewport.clientHeight;
+        const pad = 32;
+        const sx = (vw - pad * 2) / w;
+        const sy = (vh - pad * 2) / h;
+        let s = Math.min(sx, sy);
+        if (!Number.isFinite(s) || s <= 0) s = 1;
+        scale = Math.min(s, MAX_SCALE);
+        x = (vw - w * scale) / 2;
+        y = (vh - h * scale) / 2;
+        setTransform();
+      }
 
       viewport.addEventListener('wheel', e => {
         e.preventDefault();
+        const { mx, my } = pointerInViewport(e);
         const delta = e.deltaY > 0 ? 0.9 : 1.1;
-        scale = Math.min(Math.max(scale * delta, 0.2), 5);
+        const prev = scale;
+        let next = prev * delta;
+        next = Math.min(Math.max(next, MIN_SCALE), MAX_SCALE);
+        if (next === prev) return;
+        x = mx - (mx - x) * (next / prev);
+        y = my - (my - y) * (next / prev);
+        scale = next;
         setTransform();
       });
 
-      let dragging = false, startX, startY;
-      viewport.addEventListener('mousedown', e => { dragging = true; startX = e.clientX - x; startY = e.clientY - y; });
+      let dragging = false;
+      let startX = 0;
+      let startY = 0;
+      viewport.addEventListener('mousedown', e => {
+        dragging = true;
+        const { mx, my } = pointerInViewport(e);
+        startX = mx - x;
+        startY = my - y;
+      });
       window.addEventListener('mousemove', e => {
         if (!dragging) return;
-        x = e.clientX - startX; y = e.clientY - startY;
+        const { mx, my } = pointerInViewport(e);
+        x = mx - startX;
+        y = my - startY;
         setTransform();
       });
-      window.addEventListener('mouseup', () => dragging = false);
-
-      document.getElementById('reset').addEventListener('click', () => {
-        scale = 1; x = 0; y = 0; setTransform();
+      window.addEventListener('mouseup', () => {
+        dragging = false;
       });
 
-      setTransform();
+      document.getElementById('reset').addEventListener('click', () => {
+        fitAndCenter();
+      });
+      viewport.addEventListener('dblclick', e => {
+        if (e.target === viewport || e.target === stage || stage.contains(e.target)) {
+          fitAndCenter();
+        }
+      });
+
+      fitAndCenter();
     }
 
     run();
