@@ -5,7 +5,7 @@ import { ARCHVIEW_MARKDOWN_FILES, renderArchitecturePages } from "./markdown.ts"
 
 export type WriteReportsOpts = RenderMarkdownOpts;
 
-const LEGACY_FILES = ["architecture.md", "architecture.json", "index.md"] as const;
+const LEGACY_FILES = ["architecture.md", "architecture.json", "index.md", "overview.md"] as const;
 
 export async function writeReports(
     report: ArchitectureReport,

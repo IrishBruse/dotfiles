@@ -10,7 +10,7 @@
 
 Packages live under `tools/`. Install per package: `cd tools/<name> && npm install && npm link` (or run `node tools/<name>/bin/<cmd>.js …`).
 
-- **`tools/archview`** — **`archview analyze`** reads **`tsconfig.json`** in **`cwd`** via **`ts-morph`**, writes topic pages under **`.context/architecture/`** (`overview.md`, `external-packages.md`, `entrypoints.md`, `roots-and-orphans.md`, `graph-metrics.md`, `import-edges.md`, `file-catalog.md`), and **prints a short guide** (which topic files to open) **to stdout** only. Install: `cd tools/archview && npm install && npm link` (or **`node tools/archview/bin/archview.js analyze`**). Agent skill: **`tools/archview/SKILL.md`**; symlink **`.agents/skills/archview/SKILL.md`** → **`../../../tools/archview/SKILL.md`** (same file).
+- **`tools/archview`** — **`archview analyze`** reads **`tsconfig.json`** in **`cwd`** via **`ts-morph`**, writes topic pages under **`.context/architecture/`** (`external-packages.md`, `entrypoints.md`, `roots-and-orphans.md`, `graph-metrics.md`, `import-edges.md`, `file-catalog.md`), and **prints a short guide** (which topic files to open) **to stdout** only. Install: `cd tools/archview && npm install && npm link` (or **`node tools/archview/bin/archview.js analyze`**). Agent skill: **`tools/archview/SKILL.md`**; symlink **`.agents/skills/archview/SKILL.md`** → **`../../../tools/archview/SKILL.md`** (same file).
 
 - **`tools/atlassian`** — uses Atlassian CLI (`acli`) where noted.
   - **`jira-board`** — Interactive TUI from `.agents/skills/jira-tickets/SKILL.md` (optional path); **`jira-board sync`** refreshes that markdown from Jira via `acli`.

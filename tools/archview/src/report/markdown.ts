@@ -12,7 +12,6 @@ const MAX_INLINE_EXPORTS = 12;
 
 /** Topic markdown files written under `.context/architecture/` (index is stdout only). */
 export const ARCHVIEW_MARKDOWN_FILES = [
-    "overview.md",
     "external-packages.md",
     "entrypoints.md",
     "roots-and-orphans.md",
@@ -329,8 +328,10 @@ function ensureTrailingNewline(s: string): string {
 export function renderArchitectureIndexMarkdown(report: ArchitectureReport): string {
     const tsRel = displayPath(report.projectRoot, report.tsConfigPath);
     const sections: [string, string][] = [
-        ["Scope, counts, conventions", "`.context/architecture/overview.md`"],
-        ["External imports (`node:`, builtins, npm)", "`.context/architecture/external-packages.md`"],
+        [
+            "Project snapshot, how to read, external imports",
+            "`.context/architecture/external-packages.md`",
+        ],
         ["Candidate entrypoints", "`.context/architecture/entrypoints.md`"],
         ["No incoming imports; orphan candidates", "`.context/architecture/roots-and-orphans.md`"],
         ["Import cycles; fan-in", "`.context/architecture/graph-metrics.md`"],
@@ -353,16 +354,6 @@ export function renderArchitectureIndexMarkdown(report: ArchitectureReport): str
     return ensureTrailingNewline(body);
 }
 
-function renderOverviewPage(report: ArchitectureReport, buckets: ExternalBuckets): string {
-    const body = [
-        "# Overview",
-        "",
-        renderAtAGlance(report, buckets),
-        renderHowToRead(),
-    ].join("\n");
-    return ensureTrailingNewline(body);
-}
-
 /** All markdown pages for `.context/architecture/`. */
 export function renderArchitecturePages(
     report: ArchitectureReport,
@@ -370,9 +361,19 @@ export function renderArchitecturePages(
 ): Record<ArchviewMarkdownFile, string> {
     const buckets = collectExternalBuckets(report.files);
     return {
-        "overview.md": renderOverviewPage(report, buckets),
         "external-packages.md": ensureTrailingNewline(
-            ["# External packages", "", renderExternalPackagesBody(buckets).trimEnd(), ""].join("\n"),
+            [
+                "# External packages",
+                "",
+                renderAtAGlance(report, buckets).trimEnd(),
+                "",
+                renderHowToRead().trimEnd(),
+                "",
+                "## External import specifiers",
+                "",
+                renderExternalPackagesBody(buckets).trimEnd(),
+                "",
+            ].join("\n"),
         ),
         "entrypoints.md": ensureTrailingNewline(
             ["# Candidate entrypoints", "", renderEntryPointsBody(report).trimEnd(), ""].join("\n"),

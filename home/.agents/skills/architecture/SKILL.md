@@ -1,6 +1,6 @@
 ---
 name: architecture
-description: Use when you want to analyze a TypeScript project's architecture and file structure.
+description: Use when you need to get an understanding of a TypeScript project's architecture and file structure.
 ---
 
 # archview
@@ -32,7 +32,7 @@ Run with **`cwd`** set to the repo you want analyzed (the tool does not take a p
 ## Output
 
 - **Stdout:** Brief pointer to which **`.context/architecture/*.md`** file covers what (counts + paths). Redirect if you want a copy, e.g. `archview analyze > .context/architecture-index.md`.
-- **Disk:** `.context/architecture/` — `overview.md`, `external-packages.md`, `entrypoints.md`, `roots-and-orphans.md`, `graph-metrics.md`, `import-edges.md`, `file-catalog.md`.
+- **Disk:** `.context/architecture/` — `external-packages.md` (snapshot + how to read + externals), `entrypoints.md`, `roots-and-orphans.md`, `graph-metrics.md`, `import-edges.md`, `file-catalog.md`.
 
 ## Flags
 
