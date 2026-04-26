@@ -1,0 +1,1 @@
+../../home/.agents/skills/architecture/SKILL.md

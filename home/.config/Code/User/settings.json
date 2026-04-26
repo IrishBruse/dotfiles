@@ -1314,6 +1314,7 @@
     "files.trimFinalNewlines": false,
     "files.trimTrailingWhitespace": false,
     "editor.defaultFormatter": null,
+    "editor.formatOnSave": false,
   },
   "[snippets]": {
     "files.insertFinalNewline": false,
