@@ -10,7 +10,7 @@ function displayPath(projectRoot: string, absPath: string): string {
 const MAX_EDGE_LINES = 500;
 const MAX_INLINE_EXPORTS = 12;
 
-/** Topic markdown files written under `.context/architecture/` (index is stdout only). */
+/** Topic markdown files written under `.context/architecture/`. */
 export const ARCHVIEW_MARKDOWN_FILES = [
     "external-packages.md",
     "entrypoints.md",
@@ -90,7 +90,7 @@ function renderHowToRead(): string {
     return [
         "## How to read these documents",
         "",
-        "Running **`archview analyze`** prints a short **stdout** guide to which files here to open (not written to disk).",
+        "Topic pages are written under **`.context/architecture/`** when you run **`archview analyze`**.",
         "",
         "File paths in tables and lists use Markdown code spans.",
         "",
@@ -322,36 +322,6 @@ function renderFileCatalogBody(report: ArchitectureReport, opts: RenderMarkdownO
 
 function ensureTrailingNewline(s: string): string {
     return s.endsWith("\n") ? s : `${s}\n`;
-}
-
-/** Short stdout guide: which `.context/architecture/*.md` files to read (not written to disk). */
-export function renderArchitectureIndexMarkdown(report: ArchitectureReport): string {
-    const tsRel = displayPath(report.projectRoot, report.tsConfigPath);
-    const sections: [string, string][] = [
-        [
-            "Project snapshot, how to read, external imports",
-            "`.context/architecture/external-packages.md`",
-        ],
-        ["Candidate entrypoints", "`.context/architecture/entrypoints.md`"],
-        ["No incoming imports; orphan candidates", "`.context/architecture/roots-and-orphans.md`"],
-        ["Import cycles; fan-in", "`.context/architecture/graph-metrics.md`"],
-        ["All internal import edges", "`.context/architecture/import-edges.md`"],
-        ["Per-file exports, imports, specifiers", "`.context/architecture/file-catalog.md`"],
-    ];
-    const toc = sections
-        .map(([title, p]) => `## ${title}\n\n${p}\n`)
-        .join("\n");
-
-    const body = [
-        "# Architecture (archview)",
-        "",
-        `Topic pages: **\`.context/architecture/\`** (from project \`${report.projectRoot}\`, tsconfig \`${tsRel}\`).`,
-        "",
-        `**${report.fileCount}** source files, **${report.edgeCount}** internal edges.`,
-        "",
-        toc,
-    ].join("\n");
-    return ensureTrailingNewline(body);
 }
 
 /** All markdown pages for `.context/architecture/`. */

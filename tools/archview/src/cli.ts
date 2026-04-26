@@ -2,7 +2,6 @@
 import { Command } from "commander";
 import path from "node:path";
 import { analyzeProject } from "./core/analyze.ts";
-import { renderArchitectureIndexMarkdown } from "./report/markdown.ts";
 import { writeReports } from "./report/write.ts";
 
 const program = new Command();
@@ -15,7 +14,7 @@ program
 program
     .command("analyze")
     .description(
-        "Write .context/architecture/*.md (topic pages); print a short reading guide on stdout",
+        "Write .context/architecture/*.md (topic pages)",
     )
     .option(
         "--prefix <dir>",
@@ -65,8 +64,6 @@ program
         await writeReports(report, outputDir, {
             catalogLimit: catalogLimit !== undefined && !Number.isNaN(catalogLimit) ? catalogLimit : undefined,
         });
-
-        process.stdout.write(renderArchitectureIndexMarkdown(report));
     });
 
 await program.parseAsync(process.argv);
