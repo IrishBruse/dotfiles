@@ -1,1 +1,0 @@
-../../../tools/archview/SKILL.md

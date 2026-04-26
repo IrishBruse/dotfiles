@@ -6267,8 +6267,14 @@
         "when": "editorTextFocus"
     },
     {
-        "key": "ctrl+oem_5",
-        "command": "workbench.action.terminal.toggleTerminal"
+        "key": "tab",
+        "command": "-tab",
+        "when": "editorTextFocus && !editorReadonly && !editorTabMovesFocus && !editorHasSelection && !suggestWidgetVisible && !inSnippetMode"
+    },
+    {
+        "key": "tab",
+        "command": "workbench.action.terminal.toggleTerminal",
+        "when": "!editorHasSelection"
     },
     {
         "key": "shift+alt+up",
