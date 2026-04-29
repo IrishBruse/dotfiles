@@ -1,4 +1,5 @@
 import * as fs from "fs/promises";
+import * as path from "node:path";
 import { generateKeybindingEnums } from "./generate-enums.ts";
 
 export type Keybind = {
@@ -113,6 +114,7 @@ function osMarker(os: OS): Keybind {
 }
 
 async function writeKeybindingsFile(outputFile: string, entries: Keybind[]) {
+  await fs.mkdir(path.dirname(outputFile), { recursive: true });
   await fs.writeFile(outputFile, JSON.stringify(entries, null, 4));
 }
 
@@ -144,6 +146,11 @@ await generateKeybindingEnums();
 
 await writeKeybindingsFile(
   "../../home/Library/Application Support/Code/User/keybindings.json",
+  await buildMacosKeybinds(custom),
+);
+
+await writeKeybindingsFile(
+  "../../home/Library/Application Support/Cursor/User/keybindings.json",
   await buildMacosKeybinds(custom),
 );
 

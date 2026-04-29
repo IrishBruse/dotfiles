@@ -4,6 +4,22 @@
       "complex_modifications": {
         "rules": [
           {
+            "description": "Caps Lock → F19 (no Caps Lock state; VS Code: toggle terminal)",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "caps_lock"
+                },
+                "to": [
+                  {
+                    "key_code": "f19"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
             "description": "Ctrl + Left Click -> Cmd + Left Click",
             "manipulators": [
               {

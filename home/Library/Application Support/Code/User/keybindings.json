@@ -6267,14 +6267,14 @@
         "when": "editorTextFocus"
     },
     {
-        "key": "tab",
-        "command": "-tab",
-        "when": "editorTextFocus && !editorReadonly && !editorTabMovesFocus && !editorHasSelection && !suggestWidgetVisible && !inSnippetMode"
+        "key": "f19",
+        "command": "workbench.action.terminal.toggleTerminal",
+        "when": "isMac"
     },
     {
-        "key": "tab",
+        "key": "capslock",
         "command": "workbench.action.terminal.toggleTerminal",
-        "when": "!editorHasSelection"
+        "when": "isLinux"
     },
     {
         "key": "shift+alt+up",
