@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Print the local Jira board from `.agents/skills/jira-tickets/SKILL.md`.
+ * Print the local Jira board from `home/.agents/skills/jira-tickets/SKILL.md` (under dotfiles).
  * In a TTY it is interactive: ↑/↓ (or j/k) between tickets, ←/→ to switch
  * tabs (row above the table), Enter to open the local md,
  * `o` for Jira in browser, `u` to run sync and reload, q / Esc / Ctrl-C to quit.
@@ -501,8 +501,13 @@ function runInteractive(
 const TOOL_DIR = path.dirname(fileURLToPath(import.meta.url));
 const defaultSkillPath = path.join(
   TOOL_DIR,
-  "../..",
-  ".agents/skills/jira-tickets/SKILL.md",
+  "..",
+  "..",
+  "home",
+  ".agents",
+  "skills",
+  "jira-tickets",
+  "SKILL.md",
 );
 
 function printHelp(): void {

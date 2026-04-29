@@ -18,7 +18,7 @@ Packages live under `tools/`. Install per package: `cd tools/<name> && npm insta
 - **`tools/archview`** — **`archview analyze`** reads **`tsconfig.json`** in **`cwd`** via **`ts-morph`**, writes topic pages under **`.context/architecture/`** (`external-packages.md`, `entrypoints.md`, `roots-and-orphans.md`, `graph-metrics.md`, `import-edges.md`, `file-catalog.md`). Install: `cd tools/archview && npm install && npm link` (or **`node tools/archview/bin/archview.js analyze`**). Agent skill: **`tools/archview/SKILL.md`**; symlink **`.agents/skills/archview/SKILL.md`** → **`../../../tools/archview/SKILL.md`** (same file).
 
 - **`tools/atlassian`** — uses Atlassian CLI (`acli`) where noted.
-  - **`jira-board`** — Interactive TUI from `.agents/skills/jira-tickets/SKILL.md` (optional path); **`jira-board sync`** refreshes that markdown from Jira via `acli`.
+  - **`jira-board`** — Interactive TUI from `home/.agents/skills/jira-tickets/SKILL.md` (optional path); **`jira-board sync`** refreshes that markdown from Jira via `acli`.
   - **`confluence-clone`** — Clone a Confluence page subtree to local markdown (`acli confluence page view …`).
 
 - **`tools/pr`** — GitHub PR helper: runs Cursor Agent with prefetched workspace (`gh`, `code --wait`, Node 24+). See `tools/pr/README.md` for env vars (`PR_CLI_WORKSPACE_ROOT`, `PR_CLI_WORK`, etc.).

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * Sync Jira issues into the jira-tickets skill via `acli jira workitem search` (Atlassian CLI).
- * Writes per-ticket markdown into `.agents/skills/jira-tickets/references/{me,team,unassigned}/`
- * and regenerates the skill summary at `.agents/skills/jira-tickets/SKILL.md`.
+ * Writes per-ticket markdown into `home/.agents/skills/jira-tickets/references/{me,team,unassigned}/`
+ * and regenerates the skill summary at `home/.agents/skills/jira-tickets/SKILL.md`.
  * Edit CONFIG.ts, then run: jira-board sync
  */
 import { spawnSync } from "node:child_process";
@@ -393,11 +393,12 @@ export function writeJiraTicketsSkill(
   fs.writeFileSync(skillPath, body, "utf-8");
 }
 
-/** Skill folder: `<repo>/.agents/skills/jira-tickets/` (repo = two levels up from this tool). */
+/** Skill folder: `<dotfiles>/home/.agents/skills/jira-tickets/` (dotfiles root = two levels up from this tool). */
 const JIRA_TICKETS_SKILL_DIR = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "..",
   "..",
+  "home",
   ".agents",
   "skills",
   "jira-tickets",

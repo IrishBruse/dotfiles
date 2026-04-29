@@ -23,7 +23,10 @@ function skillRootCandidates(): string[] {
     "..",
     "..",
     "..",
-    ".agents/skills/jira-tickets",
+    "home",
+    ".agents",
+    "skills",
+    "jira-tickets",
   );
   const fromHome = path.join(os.homedir(), ".agents/skills/jira-tickets");
   return [fromRepo, fromHome];
