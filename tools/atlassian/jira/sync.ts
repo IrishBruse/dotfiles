@@ -11,7 +11,7 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { CONFIG } from "../CONFIG.ts";
 
-export type Folder = "me" | "unassigned" | "team";
+export type Folder = "me" | "unassigned" | "team" | "misc";
 
 export function classifyFolder(
   assignee: Record<string, unknown> | null | undefined,
@@ -159,12 +159,14 @@ export function formatTicketMarkdown(
   const descriptionMd = issueDescriptionMarkdown(fields);
   const site = normalizeSiteHost(siteHost);
   const url = `https://${site}/browse/${key}`;
+  const statusBucket = statusBucketFromFields(fields);
 
   const md = `---
 title: ${yamlScalar(summary)}
 assigned: ${yamlScalar(assigned)}
 type: ${yamlScalar(itype)}
 url: ${url}
+status: ${statusBucket}
 ---
 
 ${descriptionMd}
@@ -182,6 +184,22 @@ function* issuesWithKeys(
   }
 }
 
+function ticketKeyFromFilename(filename: string): string | null {
+  const m = /^([A-Z]+-\d+)\.md$/.exec(filename);
+  return m ? m[1] : null;
+}
+
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+function isFileOlderThanThirtyDays(filePath: string): boolean {
+  try {
+    const stat = fs.statSync(filePath);
+    return Date.now() - stat.mtimeMs >= THIRTY_DAYS_MS;
+  } catch {
+    return false;
+  }
+}
+
 export function writeBoard(
   issues: Array<{ key?: string; fields?: Record<string, unknown> }>,
   options: {
@@ -191,28 +209,53 @@ export function writeBoard(
     clean: boolean;
   },
 ): Record<Folder, number> {
-  const { outputRoot, meAccountId, siteHost, clean } = options;
+  const { outputRoot, meAccountId, siteHost } = options;
   const roots: Record<Folder, string> = {
     me: path.join(outputRoot, "me"),
     unassigned: path.join(outputRoot, "unassigned"),
     team: path.join(outputRoot, "team"),
+    misc: path.join(outputRoot, "misc"),
   };
   for (const p of Object.values(roots)) {
     fs.mkdirSync(p, { recursive: true });
   }
 
-  if (clean) {
-    for (const p of Object.values(roots)) {
-      if (!fs.existsSync(p)) continue;
-      for (const f of fs.readdirSync(p)) {
-        if (f.endsWith(".md")) {
-          fs.unlinkSync(path.join(p, f));
-        }
+  const fetchedKeys = new Set<string>();
+  for (const { key } of issuesWithKeys(issues)) {
+    fetchedKeys.add(key);
+  }
+
+  const existingFiles = new Map<string, { folder: Folder; path: string }>();
+  for (const [folder, dir] of Object.entries(roots)) {
+    if (!fs.existsSync(dir)) continue;
+    for ( const f of fs.readdirSync(dir)) {
+      if (!f.endsWith(".md")) continue;
+      const key = ticketKeyFromFilename(f);
+      if (key) {
+        existingFiles.set(key, { folder: folder as Folder, path: path.join(dir, f) });
       }
     }
   }
 
-  const counts: Record<Folder, number> = { me: 0, unassigned: 0, team: 0 };
+  for (const [key, { folder, path: filePath }] of existingFiles.entries()) {
+    if (fetchedKeys.has(key)) continue;
+    if (folder !== "misc") {
+      const miscPath = path.join(roots.misc, `${key}.md`);
+      fs.renameSync(filePath, miscPath);
+      existingFiles.set(key, { folder: "misc", path: miscPath });
+    }
+  }
+
+  for (const f of fs.readdirSync(roots.misc)) {
+    if (!f.endsWith(".md")) continue;
+    const filePath = path.join(roots.misc, f);
+    if (fetchedKeys.has(ticketKeyFromFilename(f) ?? "")) continue;
+    if (isFileOlderThanThirtyDays(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+  }
+
+  const counts: Record<Folder, number> = { me: 0, unassigned: 0, team: 0, misc: 0 };
   for (const { key, fields } of issuesWithKeys(issues)) {
     const { folder, body } = formatTicketMarkdown(
       key,
@@ -224,6 +267,11 @@ export function writeBoard(
     fs.writeFileSync(out, body, "utf-8");
     counts[folder] += 1;
   }
+
+  for (const f of fs.readdirSync(roots.misc)) {
+    if (f.endsWith(".md")) counts.misc += 1;
+  }
+
   return counts;
 }
 
@@ -349,6 +397,7 @@ export function formatJiraTicketsSkillMd(
   const me = emptyStatusBuckets();
   const team = emptyStatusBuckets();
   const unassigned = emptyStatusBuckets();
+  const misc = emptyStatusBuckets();
 
   for (const { key, fields } of issuesWithKeys(issues)) {
     const summary = ticketsSkillOneLine(
@@ -361,7 +410,8 @@ export function formatJiraTicketsSkillMd(
     const folder = classifyFolder(assignee, meAccountId);
     if (folder === "me") me[bucket].push(line);
     else if (folder === "unassigned") unassigned[bucket].push(line);
-    else team[bucket].push(line);
+    else if (folder === "team") team[bucket].push(line);
+    else misc[bucket].push(line);
   }
 
   const section = (title: string, byStatus: Record<StatusBucket, string[]>) =>
@@ -372,14 +422,51 @@ name: jira-tickets
 description: This skill contains in plaintext the current state of the board no need for MCP
 ---
 
-Here is the current Jira board status. For the full description of any ticket below, read \`references/{me,team,unassigned}/<KEY>.md\` relative to this skill (e.g. \`references/me/NOVACORE-39308.md\`).
+Here is the current Jira board status. For the full description of any ticket below, read \`references/{me,team,unassigned,misc}/<KEY>.md\` relative to this skill (e.g. \`references/me/NOVACORE-39308.md\`).
 
 ${section("My tickets", me)}
 
 ${section("Teammates", team)}
 
 ${section("Unassigned", unassigned)}
+
+${section("Misc (not in current sprint)", misc)}
 `;
+}
+
+function readTicketMarkdown(filePath: string): {
+  key: string;
+  fields: Record<string, unknown>;
+} | null {
+  try {
+    const content = fs.readFileSync(filePath, "utf-8");
+    const key = path.basename(filePath, ".md");
+    const frontmatterMatch = /^---\n([\s\S]*?)\n---/.exec(content);
+    if (!frontmatterMatch) return null;
+
+    const fm = frontmatterMatch[1];
+    const fields: Record<string, unknown> = {};
+
+    const titleMatch = /^title:\s*(.+)$/m.exec(fm);
+    if (titleMatch) {
+      fields.summary = JSON.parse(titleMatch[1]);
+    }
+
+    const assignedMatch = /^assigned:\s*(.+)$/m.exec(fm);
+    if (assignedMatch) {
+      const name = JSON.parse(assignedMatch[1]);
+      fields.assignee = name === "Unassigned" ? null : { displayName: name };
+    }
+
+    const statusMatch = /^status:\s*(\S+)$/m.exec(fm);
+    if (statusMatch) {
+      fields.status = { name: statusMatch[1] };
+    }
+
+    return { key, fields };
+  } catch {
+    return null;
+  }
 }
 
 export function writeJiraTicketsSkill(
@@ -387,7 +474,21 @@ export function writeJiraTicketsSkill(
   skillPath: string,
   meAccountId: string,
 ): void {
-  const body = formatJiraTicketsSkillMd(issues, meAccountId);
+  const miscDir = path.join(BOARD_OUTPUT_ROOT, "misc");
+  const miscIssues: Array<{ key?: string; fields?: Record<string, unknown> }> = [];
+
+  if (fs.existsSync(miscDir)) {
+    for (const f of fs.readdirSync(miscDir)) {
+      if (!f.endsWith(".md")) continue;
+      const parsed = readTicketMarkdown(path.join(miscDir, f));
+      if (parsed) {
+        miscIssues.push({ key: parsed.key, fields: parsed.fields });
+      }
+    }
+  }
+
+  const allIssues = [...issues, ...miscIssues];
+  const body = formatJiraTicketsSkillMd(allIssues, meAccountId);
   fs.mkdirSync(path.dirname(skillPath), { recursive: true });
   fs.writeFileSync(skillPath, body, "utf-8");
 }
