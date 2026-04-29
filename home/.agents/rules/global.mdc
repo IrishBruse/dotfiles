@@ -1,0 +1,9 @@
+---
+description: Always applied global coding standards
+globs: ["**/*"]
+alwaysApply: true
+---
+# Global Rules
+- Use TypeScript for all projects.
+- Prefer functional programming patterns.
+- Never use 'any'.

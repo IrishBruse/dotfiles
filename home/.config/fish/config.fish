@@ -19,32 +19,6 @@ end
 
 on_change_pwd
 
-function v
-    if test (count $argv) -eq 0
-        code .
-    else
-        code $argv
-    end
-end
-
-function repeat -a command time
-    if not set -q time[1]
-        set time 1
-    end
-    while true
-        fish -c $command
-        sleep $time
-    end
-end
-
-function envs
-    command env | sort | fzf
-end
-
-function paths
-    echo $PATH | string split ' ' | sort | fzf
-end
-
 alias clip fish_clipboard_copy
 alias rm trash
 alias bat="bat --theme OneHalfDark ---style grid,numbers"
@@ -59,6 +33,7 @@ alias ap="agent --mode=plan agent"
 alias aa="agent --mode=ask agent"
 
 alias jb="jira-board"
+alias jira "acli jira"
 
 alias showkey="fish_key_reader --verbose"
 

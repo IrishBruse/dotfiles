@@ -2,5 +2,5 @@
 
 set -l repo (path dirname (status filename))
 
-brew bundle dump --no-vscode -f --file=$repo/misc/Brewfile
-/opt/homebrew/bin/brew shellenv >$repo/home/.config/fish/conf.d/brew.fish
+brew bundle dump --no-vscode -f --file=$repo/Brewfile
+/opt/homebrew/bin/brew shellenv >$repo/.config/fish/conf.d/brew.fish
