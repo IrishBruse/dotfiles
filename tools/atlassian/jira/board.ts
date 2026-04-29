@@ -553,5 +553,5 @@ export function run(): number {
     return 0;
   }
   runInteractive(skillPath, rows, referencesDir);
-  return 0;
+  return -1;
 }

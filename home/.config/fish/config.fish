@@ -32,7 +32,7 @@ alias a="agent agent"
 alias ap="agent --mode=plan agent"
 alias aa="agent --mode=ask agent"
 
-alias jb="jira-board"
+alias jb="jira board"
 
 alias showkey="fish_key_reader --verbose"
 

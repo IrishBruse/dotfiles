@@ -63,16 +63,14 @@ function main() {
     }
     process.exit(runPull(key));
   }
-  // No subcommand — check if arg looks like a ticket key/URL (auto-pull then board)
   if (arg) {
     const key = parseJiraKey(arg);
     if (key) {
-      const code = runPull(key);
-      if (code !== 0) process.exit(code);
+      process.exit(runPull(key));
     }
   }
-  // Fall through to board view
-  process.exit(runBoard());
+  const code = runBoard();
+  if (code !== -1) process.exit(code);
 }
 
 main();
