@@ -10,6 +10,6 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "include": ["*.ts"],
+  "include": ["*.ts", "jira/*.ts"],
   "exclude": ["node_modules"]
 }

@@ -1,17 +1,17 @@
 {
   "name": "atlassian-cli-helpers",
   "version": "0.1.0",
-  "description": "Sync Jira issues to ~/jira-board markdown via Atlassian CLI (acli)",
+  "description": "View and sync Jira board to local markdown via Atlassian CLI (acli)",
   "license": "ISC",
   "type": "module",
   "bin": {
-    "jira-board": "./bin/jira-board.js",
+    "jira": "./bin/jira.js",
     "confluence-clone": "./bin/confluence-clone.js"
   },
   "files": [
     "bin",
-    "jira-board.ts",
-    "jira-board-sync.ts",
+    "jira",
+    "CONFIG.ts",
     "confluence-clone.ts",
     "confluence-slug.ts",
     "confluence-storage-to-markdown.ts"

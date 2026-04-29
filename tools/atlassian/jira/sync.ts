@@ -1,16 +1,15 @@
-#!/usr/bin/env node
 /**
  * Sync Jira issues into the jira-tickets skill via `acli jira workitem search` (Atlassian CLI).
  * Writes per-ticket markdown into `home/.agents/skills/jira-tickets/references/{me,team,unassigned}/`
  * and regenerates the skill summary at `home/.agents/skills/jira-tickets/SKILL.md`.
- * Edit CONFIG.ts, then run: jira-board sync
+ * Edit CONFIG.ts, then run: jira sync
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
-import { CONFIG } from "./CONFIG.ts";
+import { CONFIG } from "../CONFIG.ts";
 
 export type Folder = "me" | "unassigned" | "team";
 
@@ -393,9 +392,10 @@ export function writeJiraTicketsSkill(
   fs.writeFileSync(skillPath, body, "utf-8");
 }
 
-/** Skill folder: `<dotfiles>/home/.agents/skills/jira-tickets/` (dotfiles root = two levels up from this tool). */
+/** Skill folder: `<dotfiles>/home/.agents/skills/jira-tickets/` (dotfiles root = three levels up from this tool). */
 const JIRA_TICKETS_SKILL_DIR = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
+  "..",
   "..",
   "..",
   "home",
@@ -415,7 +415,7 @@ const ACLI = "acli";
 const SEARCH_FIELDS = "key,summary,assignee,issuetype,description,status";
 
 function log(msg: string): void {
-  process.stderr.write(`jira-board-sync: ${msg}\n`);
+  process.stderr.write(`jira sync: ${msg}\n`);
 }
 
 function truncate(s: string, max: number): string {
@@ -530,17 +530,17 @@ function fetchActiveSprintIdsForBoard(acli: string, boardId: string): number[] {
 }
 
 /** Sync Jira → skill markdown; returns 0 on success. */
-export function runJiraBoardSync(): number {
+export function run(): number {
   try {
-    return runJiraBoardSyncImpl();
+    return runImpl();
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    process.stderr.write(`jira-board-sync: ${msg}\n`);
+    process.stderr.write(`jira sync: ${msg}\n`);
     return 1;
   }
 }
 
-function runJiraBoardSyncImpl(): number {
+function runImpl(): number {
   const jql = nonEmpty(CONFIG.boardJql);
   const meAccountId = nonEmpty(CONFIG.meAccountId);
   let siteHost = nonEmpty(CONFIG.site);
@@ -548,15 +548,15 @@ function runJiraBoardSyncImpl(): number {
   const boardId = nonEmpty(CONFIG.boardId);
 
   if (!jql) {
-    process.stderr.write("jira-board-sync: set CONFIG.boardJql.\n");
+    process.stderr.write("jira sync: set CONFIG.boardJql.\n");
     return 1;
   }
   if (!meAccountId) {
-    process.stderr.write("jira-board-sync: set CONFIG.meAccountId.\n");
+    process.stderr.write("jira sync: set CONFIG.meAccountId.\n");
     return 1;
   }
   if (!siteHost) {
-    process.stderr.write("jira-board-sync: set CONFIG.site.\n");
+    process.stderr.write("jira sync: set CONFIG.site.\n");
     return 1;
   }
   siteHost = normalizeSiteHost(siteHost);
@@ -567,7 +567,7 @@ function runJiraBoardSyncImpl(): number {
     const sprintIds = fetchActiveSprintIdsForBoard(ACLI, boardId);
     if (sprintIds.length === 0) {
       process.stderr.write(
-        `jira-board-sync: no active sprints on board ${boardId}.\n`,
+        `jira sync: no active sprints on board ${boardId}.\n`,
       );
       return 1;
     }
@@ -593,7 +593,7 @@ function runJiraBoardSyncImpl(): number {
   ]);
 
   if (!Array.isArray(data)) {
-    process.stderr.write("jira-board-sync: expected JSON array from acli.\n");
+    process.stderr.write("jira sync: expected JSON array from acli.\n");
     return 1;
   }
 
@@ -625,20 +625,4 @@ function runJiraBoardSyncImpl(): number {
     `Wrote ${counts.me + counts.team + counts.unassigned} issues to ${outRoot} (me: ${counts.me}, team: ${counts.team}, unassigned: ${counts.unassigned}). Updated jira-tickets skill: ${JIRA_TICKETS_SKILL_PATH}\n`,
   );
   return 0;
-}
-
-function isCliEntry(): boolean {
-  const a1 = process.argv[1];
-  if (!a1) return false;
-  try {
-    return (
-      path.resolve(fileURLToPath(import.meta.url)) === path.resolve(a1)
-    );
-  } catch {
-    return false;
-  }
-}
-
-if (isCliEntry()) {
-  process.exit(runJiraBoardSync());
 }

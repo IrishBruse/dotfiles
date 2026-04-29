@@ -33,7 +33,6 @@ alias ap="agent --mode=plan agent"
 alias aa="agent --mode=ask agent"
 
 alias jb="jira-board"
-alias jira "acli jira"
 
 alias showkey="fish_key_reader --verbose"
 

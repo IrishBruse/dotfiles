@@ -1,16 +1,16 @@
 ---
 name: jira
-description: Use this skill when interacting with Jira, Jira urls, Jira Tickets, Jira Keys/Ticket ids
+description: Use this skill when interacting with Jira, acli Jira urls, acli Jira Tickets, acli Jira Keys/Ticket ids
 ---
 
-# Jira CLI Reference
+# acli Jira CLI Reference
 
 ## Prerequisites
 
 Verify availability:
 
 ```bash
-jira --help
+acli jira --help
 ```
 
 ## File sync
@@ -20,19 +20,19 @@ If you are interacting with a tickets description make sure to persist it in `~/
 ## Command Structure
 
 ```
-jira <subcommand> [<subcommand> ...] {MANDATORY FLAGS} [OPTIONAL FLAGS]
+acli jira <subcommand> [<subcommand> ...] {MANDATORY FLAGS} [OPTIONAL FLAGS]
 ```
 
 Available command groups:
 
-- `jira workitem` - Work item operations (create, edit, search, assign, transition, comment, clone, link, archive, attachment, watcher)
-- `jira project` - Project management
-- `jira board` - Board management
-- `jira sprint` - Sprint managementThis webview is used internally by the Markdown Inline Editor extension to render Mermaid diagrams inline in your markdown files.
+- `acli jira workitem` - Work item operations (create, edit, search, assign, transition, comment, clone, link, archive, attachment, watcher)
+- `acli jira project` - Project management
+- `acli jira board` - Board management
+- `acli jira sprint` - Sprint managementThis webview is used internally by the Markdown Inline Editor extension to render Mermaid diagrams inline in your markdown files.
 
-- `jira filter` - Saved filter management
-- `jira dashboard` - Dashboard management
-- `jira field` - Custom field management
+- `acli jira filter` - Saved filter management
+- `acli jira dashboard` - Dashboard management
+- `acli jira field` - Custom field management
 
 ## Common Patterns
 
@@ -62,9 +62,9 @@ Use `--yes` / `-y` to skip confirmation prompts (useful for automation).
 Many create/edit commands support `--generate-json` to produce a template, and `--from-json` to consume it:
 
 ```bash
-jira workitem create --generate-json > template.json
+acli jira workitem create --generate-json > template.json
 # edit template.json
-jira workitem create --from-json template.json
+acli jira workitem create --from-json template.json
 ```
 
 ## Quick Reference: Most Common Operations
@@ -73,48 +73,48 @@ jira workitem create --from-json template.json
 
 ```bash
 # Create
-jira workitem create --summary "Fix login bug" --project "TEAM" --type "Bug"
-jira workitem create --summary "New feature" --project "TEAM" --type "Story" --assignee "@me" --label "frontend,p1"
+acli jira workitem create --summary "Fix login bug" --project "TEAM" --type "Bug"
+acli jira workitem create --summary "New feature" --project "TEAM" --type "Story" --assignee "@me" --label "frontend,p1"
 
 # Search
-jira workitem search --jql "project = TEAM AND assignee = currentUser()" --json
-jira workitem search --jql "project = TEAM AND status = 'In Progress'" --fields "key,summary,assignee" --csv
+acli jira workitem search --jql "project = TEAM AND assignee = currentUser()" --json
+acli jira workitem search --jql "project = TEAM AND status = 'In Progress'" --fields "key,summary,assignee" --csv
 
 # View
-jira workitem view KEY-123
-jira workitem view KEY-123 --json --fields "*all"
+acli jira workitem view KEY-123
+acli jira workitem view KEY-123 --json --fields "*all"
 
 # Edit
-jira workitem edit --key "KEY-123" --summary "Updated title" --assignee "user@atlassian.com"
+acli jira workitem edit --key "KEY-123" --summary "Updated title" --assignee "user@atlassian.com"
 
 # Transition
-jira workitem transition --key "KEY-123" --status "Done"
-jira workitem transition --jql "project = TEAM AND sprint in openSprints()" --status "In Progress"
+acli jira workitem transition --key "KEY-123" --status "Done"
+acli jira workitem transition --jql "project = TEAM AND sprint in openSprints()" --status "In Progress"
 
 # Assign
-jira workitem assign --key "KEY-123" --assignee "@me"
+acli jira workitem assign --key "KEY-123" --assignee "@me"
 
 # Comment
-jira workitem comment create --key "KEY-123" --body "Work completed"
+acli jira workitem comment create --key "KEY-123" --body "Work completed"
 
 # Bulk create
-jira workitem create-bulk --from-csv issues.csv
+acli jira workitem create-bulk --from-csv issues.csv
 ```
 
 ### Projects
 
 ```bash
-jira project list --paginate --json
-jira project view --key "TEAM" --json
-jira project create --from-project "TEAM" --key "NEW" --name "New Project"
+acli jira project list --paginate --json
+acli jira project view --key "TEAM" --json
+acli jira project create --from-project "TEAM" --key "NEW" --name "New Project"
 ```
 
 ### Boards & Sprints
 
 ```bash
-jira board search --project "TEAM"
-jira board list-sprints --id 123 --state active
-jira sprint list-workitems --sprint 1 --board 6
+acli jira board search --project "TEAM"
+acli jira board list-sprints --id 123 --state active
+acli jira sprint list-workitems --sprint 1 --board 6
 ```
 
 ## Security
@@ -123,15 +123,15 @@ jira sprint list-workitems --sprint 1 --board 6
 
 The following commands are **destructive or irreversible** — always confirm with the user before executing:
 
-- `jira workitem delete` — permanently deletes work items
-- `jira project delete` — permanently deletes a project and all its work items
-- `jira field delete` — moves custom fields to trash
+- `acli jira workitem delete` — permanently deletes work items
+- `acli jira project delete` — permanently deletes a project and all its work items
+- `acli jira field delete` — moves custom fields to trash
 
 These commands are **impactful but reversible**:
 
-- `jira workitem archive` / `unarchive`
-- `jira project archive` / `restore`
-- `jira field cancel-delete` — restores field from trash
+- `acli jira workitem archive` / `unarchive`
+- `acli jira project archive` / `restore`
+- `acli jira field cancel-delete` — restores field from trash
 
 **Agent safety rules:**
 
