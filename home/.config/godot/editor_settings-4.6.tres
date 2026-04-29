@@ -58,7 +58,6 @@ run/output/font_size = 14
 run/output/max_lines = 100000
 run/platforms/linuxbsd/prefer_wayland = true
 network/connection/network_mode = 1
-project_manager/default_renderer = "gl_compatibility"
 export/android/java_sdk_path = ""
 export/android/android_sdk_path = ""
 export/android/debug_keystore = "/home/econn/.local/share/godot/keystores/debug.keystore"

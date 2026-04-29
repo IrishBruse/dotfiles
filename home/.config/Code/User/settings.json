@@ -1008,16 +1008,6 @@
       },
     ],
   },
-  "markdownInlineEditor.decorations.codeBlockLanguageOpacity": 0.5,
-  "markdownInlineEditor.decorations.ghostFaintOpacity": 0.5,
-  "markdownInlineEditor.colors.heading1": "#E06C75",
-  "markdownInlineEditor.colors.heading3": "#E06C75",
-  "markdownInlineEditor.colors.heading5": "#E06C75",
-  "markdownInlineEditor.colors.heading4": "#E06C75",
-  "markdownInlineEditor.colors.heading2": "#E06C75",
-  "markdownInlineEditor.colors.heading6": "#E06C75",
-  "markdownInlineEditor.colors.inlineCode": "#C678DD",
-  "markdownInlineEditor.colors.inlineCodeBackground": "#23282f00",
   //
   // File Associations
   //
@@ -1158,8 +1148,8 @@
   "editor.linkedEditing": true,
   "editor.semanticHighlighting.enabled": true,
   "editor.wordSeparators": "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?_",
-  "editor.smoothScrolling": true,
-  "editor.mouseWheelScrollSensitivity": 3,
+"editor.smoothScrolling": true,
+"editor.mouseWheelScrollSensitivity": 3,
   "editor.codeActions.triggerOnFocusChange": true,
   "editor.gotoLocation.alternativeImplementationCommand": "editor.action.goToImplementation",
   "editor.gotoLocation.alternativeReferenceCommand": "editor.action.goToImplementation",
@@ -1309,12 +1299,11 @@
   "[ini]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml",
   },
-  "[markdown][skill]": {
+  "[markdown,skill]": {
     "editor.wordWrap": "on",
     "files.trimFinalNewlines": false,
     "files.trimTrailingWhitespace": false,
-    "editor.defaultFormatter": null,
-    "editor.formatOnSave": false,
+    "editor.indentSize": 4,
   },
   "[snippets]": {
     "files.insertFinalNewline": false,
@@ -1555,6 +1544,16 @@
   "explorer.fileNesting.expand": false,
   "editor.experimental.preferTreeSitter.css": true,
   "accessibility.voice.speechLanguage": "en-IE",
+  "markdownInlineEditor.decorations.codeBlockLanguageOpacity": 0.5,
+  "markdownInlineEditor.decorations.ghostFaintOpacity": 0.5,
+  "markdownInlineEditor.colors.heading1": "#E06C75",
+  "markdownInlineEditor.colors.heading3": "#E06C75",
+  "markdownInlineEditor.colors.heading5": "#E06C75",
+  "markdownInlineEditor.colors.heading4": "#E06C75",
+  "markdownInlineEditor.colors.heading2": "#E06C75",
+  "markdownInlineEditor.colors.heading6": "#E06C75",
+  "markdownInlineEditor.colors.inlineCode": "#C678DD",
+  "markdownInlineEditor.colors.inlineCodeBackground": "#23282f00",
   "workbench.editor.enablePreview": false,
   "task.allowAutomaticTasks": "on",
   "scm.alwaysShowRepositories": true,
@@ -1566,5 +1565,6 @@
   "network.meteredConnection": "off",
   "material-icon-theme.hidesExplorerArrows": true,
   "editor.scrollbar.horizontalScrollbarSize": 8,
+  "markdown.extension.italic.indicator": "_",
   "markdownInlineEditor.links.singleClickOpen": true,
 }
