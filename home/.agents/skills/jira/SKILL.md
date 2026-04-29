@@ -13,28 +13,9 @@ Verify availability:
 jira --help
 ```
 
-## Security
+## File sync
 
-### Destructive Operations
-
-The following commands are **destructive or irreversible** — always confirm with the user before executing:
-
-- `jira workitem delete` — permanently deletes work items
-- `jira project delete` — permanently deletes a project and all its work items
-- `jira field delete` — moves custom fields to trash
-
-These commands are **impactful but reversible**:
-
-- `jira workitem archive` / `unarchive`
-- `jira project archive` / `restore`
-- `jira field cancel-delete` — restores field from trash
-
-**Agent safety rules:**
-
-1. Never run destructive commands without explicit user confirmation, even if `--yes` is available.
-2. When bulk-targeting via `--jql` or `--filter`, first run a search with the same query to show the user what will be affected.
-3. Prefer `--json` output to verify targets before applying destructive changes.
-4. Do not combine `--yes` with destructive bulk operations unless the user explicitly requests unattended execution.
+If you are interacting with a tickets description make sure to persist it in `~/dotfiles/.agents/skills/jira-tickets/`
 
 ## Command Structure
 
@@ -134,3 +115,26 @@ jira board search --project "TEAM"
 jira board list-sprints --id 123 --state active
 jira sprint list-workitems --sprint 1 --board 6
 ```
+
+## Security
+
+### Destructive Operations
+
+The following commands are **destructive or irreversible** — always confirm with the user before executing:
+
+- `jira workitem delete` — permanently deletes work items
+- `jira project delete` — permanently deletes a project and all its work items
+- `jira field delete` — moves custom fields to trash
+
+These commands are **impactful but reversible**:
+
+- `jira workitem archive` / `unarchive`
+- `jira project archive` / `restore`
+- `jira field cancel-delete` — restores field from trash
+
+**Agent safety rules:**
+
+1. Never run destructive commands without explicit user confirmation, even if `--yes` is available.
+2. When bulk-targeting via `--jql` or `--filter`, first run a search with the same query to show the user what will be affected.
+3. Prefer `--json` output to verify targets before applying destructive changes.
+4. Do not combine `--yes` with destructive bulk operations.
