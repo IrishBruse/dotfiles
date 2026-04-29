@@ -114,6 +114,7 @@ Sample ticket description for **${key}**.
   fs.mkdirSync(path.join(refsDir, "me"), { recursive: true });
   fs.mkdirSync(path.join(refsDir, "team"), { recursive: true });
   fs.mkdirSync(path.join(refsDir, "unassigned"), { recursive: true });
+  fs.mkdirSync(path.join(refsDir, "misc"), { recursive: true });
 
   for (const { folder, key, title } of tickets) {
     fs.writeFileSync(

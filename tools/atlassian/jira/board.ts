@@ -3,7 +3,7 @@
  * In a TTY it is interactive: ↑/↓ (or j/k) between tickets, ←/→ to switch
  * tabs (row above the table), Enter to open the local md,
  * `o` for Jira in browser, `u` to run sync and reload, q / Esc / Ctrl-C to quit.
- * Usage: jira board [path-to-SKILL.md]
+ * Usage: jira board
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -23,8 +23,8 @@ export type BoardRow = {
   assignee: string;
 };
 
-/** Print order: mine → unassigned → team. */
-const GROUP_ORDER = ["My tickets", "Unassigned", "Teammates"] as const;
+/** Print order: mine → unassigned → team → misc. */
+const GROUP_ORDER = ["My tickets", "Unassigned", "Teammates", "Misc"] as const;
 const STATUS_ORDER = ["Todo", "In progress", "Code review", "Done"] as const;
 
 /** Map display group name → references subfolder name. */
@@ -32,6 +32,7 @@ const GROUP_TO_FOLDER: Record<string, string> = {
   "My tickets": "me",
   Teammates: "team",
   Unassigned: "unassigned",
+  Misc: "misc",
 };
 
 const TICKET_RE = /^- \s*([A-Z][A-Z0-9_]*-\d+):\s*(.+?)\s+—\s+`([^`]+)`\s*$/u;
@@ -70,6 +71,28 @@ export function parseBoardMarkdown(markdown: string): BoardRow[] {
         assignee: t[3]!,
       });
     }
+  }
+  return rows;
+}
+
+function parseMiscFiles(referencesDir: string): BoardRow[] {
+  const miscDir = path.join(referencesDir, "misc");
+  if (!fs.existsSync(miscDir)) return [];
+  const files = fs.readdirSync(miscDir).filter((f) => f.endsWith(".md"));
+  const rows: BoardRow[] = [];
+  for (const f of files) {
+    const key = f.replace(/\.md$/, "");
+    const content = fs.readFileSync(path.join(miscDir, f), "utf8");
+    const titleMatch = content.match(/^title:\s*"(.+?)"/m);
+    const assigneeMatch = content.match(/^assigned:\s*"(.+?)"/m);
+    const typeMatch = content.match(/^type:\s*"(.+?)"/m);
+    rows.push({
+      group: "Misc",
+      status: typeMatch?.[1] ?? "Issue",
+      key,
+      title: titleMatch?.[1] ?? key,
+      assignee: assigneeMatch?.[1] ?? "Unknown",
+    });
   }
   return rows;
 }
@@ -475,7 +498,9 @@ function runInteractive(
         stdout.write(ENTER_ALT + HIDE_CURSOR + HOME + CLR_EOS);
         if (code === 0 && fs.existsSync(skillPath)) {
           const raw = fs.readFileSync(skillPath, "utf8");
-          rows = sortRows(parseBoardMarkdown(raw));
+          const boardRows = sortRows(parseBoardMarkdown(raw));
+          const miscRows = parseMiscFiles(referencesDir);
+          rows = [...boardRows, ...miscRows];
           ({ widths, titleMax } = computeWidths(rows));
           selected = 0;
           scrollTop = 0;
@@ -511,15 +536,17 @@ const defaultSkillPath = path.join(
 );
 
 /** Run the board subcommand; returns exit code. */
-export function run(skillArg: string | undefined): number {
-  const skillPath = path.resolve(skillArg ?? defaultSkillPath);
+export function run(): number {
+  const skillPath = path.resolve(defaultSkillPath);
   if (!fs.existsSync(skillPath)) {
     console.error(`jira board: file not found: ${skillPath}`);
     return 1;
   }
   const raw = fs.readFileSync(skillPath, "utf8");
-  const rows = sortRows(parseBoardMarkdown(raw));
   const referencesDir = path.join(path.dirname(skillPath), "references");
+  const boardRows = sortRows(parseBoardMarkdown(raw));
+  const miscRows = parseMiscFiles(referencesDir);
+  const rows = [...boardRows, ...miscRows];
 
   if (!process.stdout.isTTY || !process.stdin.isTTY || rows.length === 0) {
     process.stdout.write(formatTablePlain(rows));
