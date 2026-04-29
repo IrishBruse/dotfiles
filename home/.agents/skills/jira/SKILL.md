@@ -28,7 +28,8 @@ Available command groups:
 - `jira workitem` - Work item operations (create, edit, search, assign, transition, comment, clone, link, archive, attachment, watcher)
 - `jira project` - Project management
 - `jira board` - Board management
-- `jira sprint` - Sprint management
+- `jira sprint` - Sprint managementThis webview is used internally by the Markdown Inline Editor extension to render Mermaid diagrams inline in your markdown files.
+
 - `jira filter` - Saved filter management
 - `jira dashboard` - Dashboard management
 - `jira field` - Custom field management
