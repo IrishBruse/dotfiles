@@ -62,9 +62,6 @@ alias jb="jira-board"
 
 alias showkey="fish_key_reader --verbose"
 
-alias nano="micro"
-alias snano="sudo micro"
-
 abbr neofetch fastfetch
 
 # Scripts
@@ -72,8 +69,5 @@ alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LD
 
 # Node alias
 abbr nvm fnm
-
-# Keybinds
-bind ctrl-w backward-kill-word
 
 alias stow="echo 'use ./stow.fish'"
