@@ -75,7 +75,5 @@ abbr nvm fnm
 
 # Keybinds
 bind ctrl-w backward-kill-word
-bind \t __agent_complete_or_fzf_ref
-bind -M insert \t __agent_complete_or_fzf_ref
 
 alias stow="echo 'use ./stow.fish'"

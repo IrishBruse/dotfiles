@@ -3,7 +3,6 @@
 # Global /-skill list (plain text, one name per line; must start with /; # comments):
 #   ~/dotfiles/home/.config/fish/global-skills.txt
 # Skill picks: /name only — @ prefixes file refs; no bare filenames in completions (use -f)
-# Optional fzf: Ctrl-G runs agent_fzf_path (~/.config/fish/functions/agent-fzf.fish) — respects @path prefix
 
 function __fish_agent_skill_roots
     set -l roots ~/.cursor/skills ~/.agents/skills $HOME/dotfiles/.agents/skills
@@ -250,7 +249,7 @@ set -l __fish_agent_subcmds install-shell-integration uninstall-shell-integratio
     status whoami models about update create-chat generate-rule rule agent ls resume help
 complete -c agent -f -n '__fish_use_subcommand; and not __fish_agent_line_has_continue' -a "$__fish_agent_subcmds"
 
-# Prompt: /skills only — files: @… tab complete, or Ctrl-G (agent_fzf_path) with optional @prefix
+# Prompt: /skills; @path file refs tab-complete when token starts with @
 complete -c agent -f -n '__fish_agent_should_suggest_skills; and not __fish_agent_typing_at_ref' -a '(__fish_agent_skills)'
 
 # Prompt: @path file references
