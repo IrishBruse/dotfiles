@@ -34,6 +34,7 @@ export async function confirmAndCreatePr(
       logPrefix,
       workspaceDir,
       actionDescription: "create this PR",
+      skipConfirm: true,
     });
     if (out === null) {
       console.error(`${logPrefix} cancelled, not creating PR`);

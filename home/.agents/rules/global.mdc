@@ -6,22 +6,34 @@ alwaysApply: true
 
 # Personal Preferences
 
-## Responses
-
-- Keep your responses as short as possible they should only contain required information no fluff or unrelated wording.
-- When writting documents keep the language concise do not dump a massive document step through it piece by piece.
-- Never use weird unicode symbol variants e.g. emdashes, quotes, emojis, arrows. Prefer normal english ascii symbols.
-  - Prefer: `-` `"` `'` `_` `->`
-
 ## Typescript
 
-- Never use `any` unless absolutely required. Less strict in unit tests about this.
+- Use `unknown` over `any` unless absolutely required. Less strict in unit tests about this
+- Prefer type over interface: Use types for definitions unless declaration merging is specifically required.
+- Explicit return types: Always define return types for exported functions to improve readability and catch errors early.
+
+## Code
+
+- Use early returns to reduce nesting and indentation
+- Prioritize code readability over clever or "dry" abstractions
+- Use existing utility functions where applicable
 
 ## Markdown
 
-- Prefer headings over tables when the table would only have 2 columns
+- When writting documents keep the language concise
+- Prefer normal english ascii over obscure unicode symbol variants e.g. em dashes (`—`), dots `…`, quotes (`“`, `”`), emojis (`🚀`, `🛠️` `🧪` `👋`), arrows
+  - Prefer `-` `"` `'` `_` `->` `<-` `...`
+- Prefer normal english ascii symbols
+- Prefer headings over tables when the table would only have 2 columns with alot of text in second column
 
 ## Commands
 
+- Dont run the dev server or any command that are probably already running as a watcher just assume it is, unless requested
+- Always verify your work with check/linting commands e.g. `npm run lint`
+
+## Responses
+
+- Keep your responses as short as possible they should only contain required information no fluff or unrelated wording
+- Omit needless words: Remove filler phrases and keep sentences direct
 - Dont run the dev server or any command that are probably already running as a watcher just assume it is.
 - Prefer check/linting commands e.g. `npm run lint` etc

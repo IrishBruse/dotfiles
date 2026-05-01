@@ -53,11 +53,13 @@ export type EditorConfirmOptions = {
   workspaceDir: string;
   /** e.g. "create this PR", "update the PR", "post the review comment" */
   actionDescription: string;
+  /** When true, proceed after closing the editor without a `[y/N]` prompt */
+  skipConfirm?: boolean;
 };
 
 /**
- * Normalizes agent **`PR.md`**, opens it in VS Code with **`--wait`**, re-reads it (edits apply), then prompts **`[y/N]`**.
- * Removes **`PR.md`** when done. Returns **`null`** if cancelled or invalid.
+ * Normalizes agent **`PR.md`**, opens it in VS Code with **`--wait`**, re-reads it (edits apply), then optionally prompts **`[y/N]`** (unless **`skipConfirm`**).
+ * Removes the merged preview file when done. Returns **`null`** if cancelled or invalid.
  */
 export async function confirmSubmitAfterEditorPreview(
   opts: EditorConfirmOptions,
@@ -87,6 +89,9 @@ export async function confirmSubmitAfterEditorPreview(
           `(start with one \`# Title\` line, a blank line, then the description). Cancelled.`,
       );
       return null;
+    }
+    if (opts.skipConfirm === true) {
+      return parsed;
     }
     const ok = await waitForYesNo(
       `${opts.logPrefix} Ready to ${opts.actionDescription}? [y/N]: `,
