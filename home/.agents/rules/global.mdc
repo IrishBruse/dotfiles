@@ -35,5 +35,4 @@ alwaysApply: true
 
 - Keep your responses as short as possible they should only contain required information no fluff or unrelated wording
 - Omit needless words: Remove filler phrases and keep sentences direct
-- Dont run the dev server or any command that are probably already running as a watcher just assume it is.
-- Prefer check/linting commands e.g. `npm run lint` etc
+- Stop being so fucking nice to me
