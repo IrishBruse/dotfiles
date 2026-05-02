@@ -80,11 +80,11 @@ Run each principle as an explicit check across the module inventory:
 
 ### 5. Write the analysis report
 
-Structure the report exactly as follows. Use prose, not bullet lists, for each section body.
+Structure the report exactly as follows.
 
 ---
 
-```md
+````markdown
 # Architecture Analysis: <Project Name>
 
 ## Overview
@@ -92,39 +92,117 @@ Structure the report exactly as follows. Use prose, not bullet lists, for each s
 One paragraph. What is this project doing, and what is the dominant structural pattern
 (layered, pipeline, plugin host, hexagonal, etc.)? Use module/interface/seam vocabulary.
 
+Then emit a Mermaid pipeline/graph diagram showing how modules relate — data flow,
+ownership, seam crossings. Use `flowchart LR` for pipelines, `flowchart TD` for
+layered/hierarchical systems. Annotate edges with the type that crosses each seam
+(e.g. the token type, the AST node, the result type). Example shape:
+
+​```mermaid
+flowchart LR
+CLI["Program\n(CLI)"] -->|"string path"| C["Compiler\nCompile()"]
+C -->|"Stream"| L["Lexer\nLex()"]
+L -->|"IEnumerator&lt;Token&gt;"| P["Parser\nParse()"]
+P -->|"CompilationUnit"| B["GameBoyZ80\nGenerate()"]
+B -->|"Rom"| OUT["ROM file"]
+
+    style L fill:#d4edda
+    style P fill:#d4edda
+    style B fill:#d4edda
+    style C fill:#fff3cd
+    style CLI fill:#f8f9fa
+    style OUT fill:#f8f9fa
+
+​```
+
+Color convention (use in all diagrams):
+
+- `#d4edda` green — deep module (high leverage)
+- `#fff3cd` yellow — shallow module (low leverage, watch it)
+- `#f8d7da` red — problem area / missing seam
+- `#f8f9fa` grey — entry/exit / data-only node
+
 ## Module Inventory
 
-For each significant module: name, interface summary, depth verdict, seam location,
-adapter count. Two to five sentences per module. Group related modules under a subheading
-if it aids clarity.
+For each significant module, use a level-3 heading. Do not use bold prefixes.
+Write two to five sentences of prose per module. End each entry with a one-line
+metadata block. Group related modules under a level-2 subheading if it aids clarity.
 
-## Depth Assessment
+### ModuleName (`path/to/file`)
 
-Where does the codebase have real leverage? Where are interfaces nearly as complex as
-their implementations? Cite specific modules by name. Explain what "depth" means in
-context so the findings are actionable.
+Prose: interface summary, what callers must know, depth verdict with reason,
+seam location, adapter count and whether the seam is hypothetical or real.
+
+> **Depth:** Deep · **Seam:** `MethodName()` · **Adapters:** 1 (hypothetical)
+
+## Depth Map
+
+Emit a Mermaid bar/quadrant chart or a ranked table showing each module's depth
+verdict at a glance. A simple approach that always works is a flowchart grouping
+modules into swim-lanes by depth:
+
+​`mermaid
+flowchart TD
+    subgraph Deep["🟢 Deep — high leverage"]
+        Parser
+        GameBoyZ80
+        ResultT["Result&lt;T&gt;"]
+    end
+    subgraph Shallow["🟡 Shallow — low leverage"]
+        Rom
+        CompilerContext
+        Program
+    end
+​`
+
+Follow with one paragraph of prose: where is the real leverage concentrated, and
+where does interface complexity nearly match implementation complexity?
 
 ## Seam Quality
 
-Which seams are real (two+ adapters or a clear variation axis)? Which are hypothetical
-(one adapter — and is the abstraction paying off)? Which are missing but should exist?
+Prose section. Which seams are real (two+ adapters or a clear variation axis)?
+Which are hypothetical (one adapter — and is the abstraction paying for itself)?
+Which are missing but should exist?
+
+Optionally include a Mermaid diagram highlighting seam health if the project has
+many seams worth comparing at a glance:
+
+​```mermaid
+flowchart LR
+subgraph Real["Real seams (2+ adapters)"]
+end
+subgraph Hypo["Hypothetical seams (1 adapter)"]
+S1["Lexer → Parser\nIEnumerator&lt;Token&gt;"]
+S2["Parser → Backend\nCompilationUnit"]
+end
+subgraph Missing["Missing seams"]
+S3["CompilerContext\n(shared mutable state)"]
+end
+
+    style S3 fill:#f8d7da
+
+```
 
 ## Deletion Test Results
 
-Which modules are earning their keep? Which are pass-throughs? What complexity would
-reappear across callers if a shallow module were deleted?
+Prose section. Which modules are earning their keep? Which are pass-throughs?
+What complexity would reappear across callers if a shallow module were deleted?
 
 ## Risks & Recommendations
 
-Rank the top three to five concerns by severity. For each: describe the problem in terms
-of interface/seam/depth/adapter, explain the concrete consequence (change amplification,
-test fragility, poor locality), and suggest a specific remediation.
+Rank the top three to five concerns by severity. For each, use a level-3 heading.
+
+### Risk 1: <short title> — Severity: High / Medium / Low
+
+Prose: describe the problem using interface/seam/depth/adapter vocabulary, explain
+the concrete consequence (change amplification, test fragility, poor locality), and
+give a specific remediation with a file or method path where the fix should land.
 
 ## Summary
 
-Two to four sentences. What is architecturally strong? What is the single most important
-thing to change?
+Two to four sentences. What is architecturally strong? What is the single most
+important thing to change?
 ```
+````
 
 ---
 
@@ -133,12 +211,13 @@ thing to change?
 - **Use only the vocabulary from `references/LANGUAGE.md`** — module, interface, depth,
   seam, adapter, leverage, locality. If you catch yourself writing "component", "service",
   "API", or "boundary", stop and reword.
-- Write in prose. No bullet lists in section bodies.
+- **Each module gets a level-3 heading**, not a bold prefix. Never write `**ModuleName**`.
+- **Every diagram must use the colour convention** defined in the Overview section.
+- Write prose in sections — no bullet lists in section bodies.
 - Be direct. "This module is shallow and should be deleted" is better than hedging.
 - Cite file paths and function/class names when making specific claims.
 - Do not pad. If a section has nothing interesting to say, say so in one sentence and move on.
-- Do not emit the module inventory table verbatim — convert it to flowing prose in the
-  Module Inventory section.
+- Do not emit the module inventory internal table verbatim in the final report.
 - Write the document to `.context/ARCHITECTURE.md`
 
 ---
