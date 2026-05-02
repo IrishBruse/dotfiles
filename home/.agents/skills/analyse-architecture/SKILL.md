@@ -178,7 +178,7 @@ subgraph Missing["Missing seams"]
 S3["CompilerContext\n(shared mutable state)"]
 end
 
-    style S3 fill:#f8d7da
+<!-- No Styles -->
 
 ```
 
