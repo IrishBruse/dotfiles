@@ -1,26 +1,11 @@
 .DS_STORE
-
-home/.cinnamon/spices.cache
-
-home/.local/share/applications/mimeapps.list
-home/.local/share/applications/mimeinfo.cache
-home/.local/share/applications/google-chrome.desktop
-home/.config/cinnamon/spices/Cinnamenu@json/
+node_modules
 
 local.fish
 .cursor/
 
-home/.config/fish/fish_variables
-
-# generated configs
 home/.config/karabiner/assets/complex_modifications
 home/.config/karabiner/automatic_backups
-
 home/.config/ghostty/local
-home/.config/jgh/config.json
 home/.config/dconf/user
-
-node_modules
-
-home/.config/dconf/user
-
+home/.config/fish/fish_variables
