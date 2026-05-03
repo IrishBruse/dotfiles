@@ -40,45 +40,79 @@ Then read the files that are most likely to reveal module boundaries and seams:
 
 Read enough to form an honest opinion. Do not guess at interfaces you have not seen.
 
-### 3. Build the module inventory
+### 3. Run `archscan` (data-driven phase)
 
-For each significant module, record:
+Use the `archscan` tool to collect all module metrics and compute derived analysis.
+This replaces manual metric collection — the tool is deterministic, same code produces
+the same JSON every time.
 
-| Field                      | What to capture                                                                          |
-| -------------------------- | ---------------------------------------------------------------------------------------- |
-| **Name**                   | What the code calls it                                                                   |
-| **Interface**              | Everything a caller must know — types, invariants, ordering, errors, config, performance |
-| **Implementation summary** | One sentence on what's inside                                                            |
-| **Depth assessment**       | Deep / Shallow / Unclear — with a one-line reason                                        |
-| **Seam location**          | Where the interface lives (file, function, class, package boundary)                      |
-| **Adapters present**       | Zero / One (hypothetical seam) / Two+ (real seam)                                        |
+```bash
+# Scan + enrich in one step (produces .context/architecture.json)
+archscan /path/to/project
+```
 
-### 4. Apply the four principles
+If `archscan` is not available **STOP** and inform the user.
 
-Run each principle as an explicit check across the module inventory:
+The output file `.context/architecture.json` contains:
+
+| Field                  | Description                                                          |
+| ---------------------- | -------------------------------------------------------------------- |
+| `loc`                  | Lines of code (non-blank, non-comment)                               |
+| `exports.*`            | Exported types, functions (`()` suffix), classes, constants          |
+| `imports.list`         | Distinct import paths                                                |
+| `fanIn`                | Number of other files importing this module                          |
+| `fanOut`               | Number of other modules this file imports                            |
+| `adapterCount`         | Detected adapter implementations (by naming convention)              |
+| `adapterPaths`         | File paths of each detected adapter                                  |
+| `seamLocation`         | Primary entry point (first exported function/class + file path)      |
+| `testsPierceInterface` | Tests access private/internal symbols                                |
+| `testFilePaths`        | Matching test files (`*.test.*`, `*.spec.*`)                         |
+| `interfaceSurface`     | Total count of exported symbols                                      |
+| `depthRatio`           | `loc` / `interfaceSurface` — higher = deeper                         |
+| `depthAssessment`      | Deep / Shallow / Unclear                                             |
+| `seamQuality`          | Real (2+ adapters) / Hypothetical (1) / Missing (0 with surface > 3) |
+| `isPassThrough`        | True if low fan-in + tiny surface + small LOC                        |
+
+### 4. Read the data and verify
+
+Read `.context/architecture.json`. Skim the module list to confirm the tool
+captured the significant modules. Spot-check 2–3 modules by reading their source files
+to verify the exported symbols and LOC are accurate. If `archscan` missed key exports
+or misidentified a module, note the correction mentally — you will use it in the prose.
+
+At this stage you are reviewing the data, not rewriting it. The quantitative fields
+(loc, fan-in, exports) come from the tool. Your job is to supply qualitative judgments
+the tool cannot make: invariants, ordering constraints, error modes, performance
+characteristics.
+
+### 5. Apply the four principles
+
+Run each principle as an explicit check, using the data file as your primary source:
 
 **Depth check**
 
-- Which modules have large behaviour behind small interfaces? (Deep — good)
-- Which modules expose nearly as much complexity as they hide? (Shallow — flag it)
-- Shallow modules that exist only to delegate are pass-throughs: name them.
+- Sort modules by `depthRatio` descending. Modules marked `Deep` with high `fanIn` are
+  the leverage points. Modules marked `Shallow` with `fanIn` 0–1 are pass-throughs.
+- High `fanOut` + low `fanIn` confirms a pass-through: name them.
 
 **Deletion test**
 
-- Mentally delete each module. Does complexity vanish (pass-through) or reappear across N
-  callers (earning its keep)? Call out any module that fails this test.
+- For each module, note its `fanIn`. If `fanIn` is 0–1 and `adapterCount` is 0–1,
+  deleting it makes complexity vanish (pass-through). If `fanIn` is high, complexity
+  reappears across callers (earning its keep). Cite the `fanIn` number.
 
 **Interface-as-test-surface**
 
-- Are callers and tests crossing the same seam? If tests pierce past the interface into
-  implementation detail, flag the module as the wrong shape.
+- Check `testsPierceInterface` for each module. If true, flag the module as the wrong
+  shape and cite the `testFilePaths`.
 
 **One-adapter / Two-adapter rule**
 
-- Count adapters at each seam. A seam with one adapter (or zero) is hypothetical —
-  note whether it is justified or speculative complexity.
+- Use `adapterCount` from the data. A seam with one adapter (or zero) is hypothetical —
+  note whether it is justified or speculative complexity. Use `seamQuality` field as
+  a starting point.
 
-### 5. Write the analysis report
+### 6. Write the analysis report
 
 Structure the report exactly as follows.
 
@@ -97,29 +131,14 @@ ownership, seam crossings. Use `flowchart LR` for pipelines, `flowchart TD` for
 layered/hierarchical systems. Annotate edges with the type that crosses each seam
 (e.g. the token type, the AST node, the result type). Example shape:
 
-​```mermaid
+​`mermaid
 flowchart LR
 CLI["Program\n(CLI)"] -->|"string path"| C["Compiler\nCompile()"]
 C -->|"Stream"| L["Lexer\nLex()"]
 L -->|"IEnumerator&lt;Token&gt;"| P["Parser\nParse()"]
 P -->|"CompilationUnit"| B["GameBoyZ80\nGenerate()"]
 B -->|"Rom"| OUT["ROM file"]
-
-    style L fill:#d4edda
-    style P fill:#d4edda
-    style B fill:#d4edda
-    style C fill:#fff3cd
-    style CLI fill:#f8f9fa
-    style OUT fill:#f8f9fa
-
-​```
-
-Color convention (use in all diagrams):
-
-- `#d4edda` green — deep module (high leverage)
-- `#fff3cd` yellow — shallow module (low leverage, watch it)
-- `#f8d7da` red — problem area / missing seam
-- `#f8f9fa` grey — entry/exit / data-only node
+​`
 
 ## Module Inventory
 
@@ -140,19 +159,19 @@ Emit a Mermaid bar/quadrant chart or a ranked table showing each module's depth
 verdict at a glance. A simple approach that always works is a flowchart grouping
 modules into swim-lanes by depth:
 
-​`mermaid
+``​`mermaid
 flowchart TD
-    subgraph Deep["🟢 Deep — high leverage"]
-        Parser
-        GameBoyZ80
-        ResultT["Result&lt;T&gt;"]
-    end
-    subgraph Shallow["🟡 Shallow — low leverage"]
-        Rom
-        CompilerContext
-        Program
-    end
-​`
+subgraph Deep["🟢 Deep — high leverage"]
+Parser
+GameBoyZ80
+ResultT["Result&lt;T&gt;"]
+end
+subgraph Shallow["🟡 Shallow — low leverage"]
+Rom
+CompilerContext
+Program
+end
+​```
 
 Follow with one paragraph of prose: where is the real leverage concentrated, and
 where does interface complexity nearly match implementation complexity?
@@ -177,8 +196,6 @@ end
 subgraph Missing["Missing seams"]
 S3["CompilerContext\n(shared mutable state)"]
 end
-
-<!-- No Styles -->
 
 ```
 
@@ -208,6 +225,8 @@ important thing to change?
 
 ## Output rules
 
+- **Run `archscan` before writing prose.** If unavailable, collect metrics manually from
+  source files — every number must come from reading actual files, do not estimate or guess.
 - **Use only the vocabulary from `references/LANGUAGE.md`** — module, interface, depth,
   seam, adapter, leverage, locality. If you catch yourself writing "component", "service",
   "API", or "boundary", stop and reword.
@@ -219,9 +238,15 @@ important thing to change?
 - Do not pad. If a section has nothing interesting to say, say so in one sentence and move on.
 - Do not emit the module inventory internal table verbatim in the final report.
 - Write the document to `.context/ARCHITECTURE.md`
+- When citing quantitative claims (fan-in, adapter count, depth ratio), include the number
+  from the data file so the reader can verify.
+- The data file is the source of truth for metrics; do not contradict it in prose.
 
 ---
 
 ## Reference files
 
 - `references/LANGUAGE.md` — canonical vocabulary; read before starting.
+- `.context/architecture.json` — structured metrics produced by `archscan`; read before
+  writing prose or diagrams. If this file exists from a prior run, run `archscan` again to
+  refresh — do not rely on stale data.
