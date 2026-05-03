@@ -131,14 +131,21 @@ ownership, seam crossings. Use `flowchart LR` for pipelines, `flowchart TD` for
 layered/hierarchical systems. Annotate edges with the type that crosses each seam
 (e.g. the token type, the AST node, the result type). Example shape:
 
-​`mermaid
+```mermaid
 flowchart LR
-CLI["Program\n(CLI)"] -->|"string path"| C["Compiler\nCompile()"]
-C -->|"Stream"| L["Lexer\nLex()"]
-L -->|"IEnumerator&lt;Token&gt;"| P["Parser\nParse()"]
-P -->|"CompilationUnit"| B["GameBoyZ80\nGenerate()"]
-B -->|"Rom"| OUT["ROM file"]
-​`
+    CLI["Program (CLI)"] -->|"string path"| C["Compiler Compile()"]
+    C -->|"Stream"| L["Lexer Lex()"]
+    L -->|"IEnumerator<Token>"| P["Parser Parse()"]
+    P -->|"CompilationUnit"| B["GameBoyZ80 Generate()"]
+    B -->|"Rom"| OUT["ROM file"]
+```
+
+Color convention (convey via subgraph labels, not style blocks):
+
+- **Deep modules** — place in a subgraph labeled "Deep — high leverage"
+- **Shallow modules** — place in a subgraph labeled "Shallow — low leverage"
+- **Problem areas** — place in a subgraph labeled "Problem — missing seam"
+- **Entry/exit nodes** — use simple label nodes without subgraphs
 
 ## Module Inventory
 
@@ -159,19 +166,19 @@ Emit a Mermaid bar/quadrant chart or a ranked table showing each module's depth
 verdict at a glance. A simple approach that always works is a flowchart grouping
 modules into swim-lanes by depth:
 
-``​`mermaid
+```mermaid
 flowchart TD
-subgraph Deep["🟢 Deep — high leverage"]
-Parser
-GameBoyZ80
-ResultT["Result&lt;T&gt;"]
-end
-subgraph Shallow["🟡 Shallow — low leverage"]
-Rom
-CompilerContext
-Program
-end
-​```
+    subgraph Deep["Deep — high leverage"]
+        Parser
+        GameBoyZ80
+        ResultT["Result&lt;T&gt;"]
+    end
+    subgraph Shallow["Shallow — low leverage"]
+        Rom
+        CompilerContext
+        Program
+    end
+```
 
 Follow with one paragraph of prose: where is the real leverage concentrated, and
 where does interface complexity nearly match implementation complexity?
@@ -185,18 +192,17 @@ Which are missing but should exist?
 Optionally include a Mermaid diagram highlighting seam health if the project has
 many seams worth comparing at a glance:
 
-​```mermaid
+```mermaid
 flowchart LR
-subgraph Real["Real seams (2+ adapters)"]
-end
-subgraph Hypo["Hypothetical seams (1 adapter)"]
-S1["Lexer → Parser\nIEnumerator&lt;Token&gt;"]
-S2["Parser → Backend\nCompilationUnit"]
-end
-subgraph Missing["Missing seams"]
-S3["CompilerContext\n(shared mutable state)"]
-end
-
+    subgraph Real["Real seams (2+ adapters)"]
+    end
+    subgraph Hypo["Hypothetical seams (1 adapter)"]
+        H1["Lexer to Parser: IEnumerator of Token"]
+        H2["Parser to Backend: CompilationUnit"]
+    end
+    subgraph Missing["Missing seams"]
+        M1["CompilerContext shared mutable state"]
+    end
 ```
 
 ## Deletion Test Results
@@ -218,7 +224,6 @@ give a specific remediation with a file or method path where the fix should land
 
 Two to four sentences. What is architecturally strong? What is the single most
 important thing to change?
-```
 ````
 
 ---
@@ -231,7 +236,7 @@ important thing to change?
   seam, adapter, leverage, locality. If you catch yourself writing "component", "service",
   "API", or "boundary", stop and reword.
 - **Each module gets a level-3 heading**, not a bold prefix. Never write `**ModuleName**`.
-- **Every diagram must use the colour convention** defined in the Overview section.
+- **No style blocks in diagrams.** Use subgraph labels to convey depth/seam categories instead of fill colors.
 - Write prose in sections — no bullet lists in section bodies.
 - Be direct. "This module is shallow and should be deleted" is better than hedging.
 - Cite file paths and function/class names when making specific claims.
