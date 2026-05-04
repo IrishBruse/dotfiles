@@ -1,4 +1,5 @@
 command = fish -i -l
+shell-integration = fish
 
 font-family = Cascadia Code
 font-size = 9

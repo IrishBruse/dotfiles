@@ -2,7 +2,6 @@
 node_modules
 
 local.fish
-.cursor/
 
 home/.config/karabiner/assets/complex_modifications
 home/.config/karabiner/automatic_backups

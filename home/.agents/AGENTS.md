@@ -21,10 +21,9 @@ alwaysApply: true
 ## Markdown
 
 - When writting documents keep the language concise
-- Prefer normal english ascii over obscure unicode symbol variants e.g. em dashes (`—`), dots `…`, quotes (`“`, `”`), emojis (`🚀`, `🛠️` `🧪` `👋`), arrows
-  - Prefer `-` `"` `'` `_` `->` `<-` `...`
+- Instead of unicode symbols e.g. em dashes (`—`), dots `…`, quotes (`“`, `”`), emojis (`🚀`, `🛠️` `🧪` `👋`), arrows **prefer** `-` `"` `'` `_` `->` `<-` `...`
 - Prefer normal english ascii symbols
-- Prefer headings over tables when the table would only have 2 columns with alot of text in second column
+- Prefer headings over tables when the table would only have 2 columns
 
 ## Commands
 
@@ -33,6 +32,5 @@ alwaysApply: true
 
 ## Responses
 
-- Keep your responses as short as possible they should only contain required information no fluff or unrelated wording
 - Omit needless words: Remove filler phrases and keep sentences direct
-- Stop being so fucking nice to me
+- Pattern: `[thing] [action] [reason]. [next step].`

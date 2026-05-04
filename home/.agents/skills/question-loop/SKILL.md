@@ -9,6 +9,6 @@ Interview me relentlessly about every aspect of this plan until we reach a share
 Walk down each branch of the design tree, resolving dependencies between decisions one-by-one.
 For each question, provide your recommended answer.
 
-Ask the questions one at a time.
+Ask the questions one at a time. Use the question tool to populate your best guess if its available.
 
 If a question can be answered by exploring the codebase, explore the codebase instead.

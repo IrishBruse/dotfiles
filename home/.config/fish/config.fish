@@ -27,7 +27,7 @@ alias ll="eza -la --no-permissions --group-directories-first"
 alias reload="clear;exec fish"
 
 alias ac="agent --continue"
-alias a="agent agent"
+alias a="agent"
 alias ap="agent --mode=plan agent"
 alias aa="agent --mode=ask agent"
 

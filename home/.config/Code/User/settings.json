@@ -1621,6 +1621,7 @@
   "scm.alwaysShowRepositories": true,
   "markdownInlineEditor.math.enabled": false,
   "diffEditor.ignoreTrimWhitespace": false,
+  "terminal.integrated.enableKittyKeyboardProtocol": true,
   "workbench.editor.useModal": "off",
   "markdown.extension.tableFormatter.enabled": false,
   "workbench.browser.showInTitleBar": true,
@@ -1628,4 +1629,5 @@
   "material-icon-theme.hidesExplorerArrows": true,
   "editor.scrollbar.horizontalScrollbarSize": 8,
   "markdownInlineEditor.links.singleClickOpen": true,
+  "terminal.integrated.enableImages": true,
 }
