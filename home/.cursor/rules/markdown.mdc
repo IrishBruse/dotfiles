@@ -6,3 +6,6 @@ alwaysApply: true
 
 - Prefer headings over tables when the table would only have 2 columns
 - Do not use `;` in sentances it is not common for people to use them
+- After writing to a file, reread it before responding.
+  If the user has since edited your output, treat their edits as **required** corrections and follow that style
+  going forward
