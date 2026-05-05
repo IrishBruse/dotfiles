@@ -6,26 +6,12 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
-import { fileURLToPath } from "node:url";
 import { CONFIG } from "../CONFIG.ts";
+import { JIRA_MISC_DIR } from "./jiraTicketsPaths.ts";
 import { formatTicketMarkdown, classifyFolder, assigneeLabel, issueDescriptionMarkdown } from "./sync.ts";
 
 const ACLI = "acli";
 const SEARCH_FIELDS = "key,summary,assignee,issuetype,description,status";
-
-/** Skill folder: `<dotfiles>/home/.agents/skills/jira-tickets/` */
-const JIRA_TICKETS_SKILL_DIR = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "..",
-  "..",
-  "..",
-  "home",
-  ".agents",
-  "skills",
-  "jira-tickets",
-);
-
-const MISC_DIR = path.join(JIRA_TICKETS_SKILL_DIR, "references", "misc");
 
 function log(msg: string): void {
   process.stderr.write(`jira pull: ${msg}\n`);
@@ -101,8 +87,8 @@ function runImpl(ticketKey: string): number {
   const fields = issue.fields ?? {};
   const body = formatTicketMarkdown(key, fields, siteHost, meAccountId).body;
 
-  fs.mkdirSync(MISC_DIR, { recursive: true });
-  const outPath = path.join(MISC_DIR, `${key}.md`);
+  fs.mkdirSync(JIRA_MISC_DIR, { recursive: true });
+  const outPath = path.join(JIRA_MISC_DIR, `${key}.md`);
   fs.writeFileSync(outPath, body, "utf-8");
 
   const summary = typeof fields.summary === "string" ? fields.summary : "(no summary)";

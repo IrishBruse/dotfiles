@@ -1631,4 +1631,5 @@
   "editor.scrollbar.horizontalScrollbarSize": 8,
   "markdownInlineEditor.links.singleClickOpen": true,
   "terminal.integrated.enableImages": true,
+  "scm.repositories.selectionMode": "single",
 }
