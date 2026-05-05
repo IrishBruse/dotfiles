@@ -25,6 +25,7 @@ export function printHelp(): void {
       "  --no-agent       Prepare the workspace the same way, but do not run the Cursor agent. create/review",
       "                   write a small stub PR.md for you to edit; update seeds PR.md and keeps the GitHub snapshot in CURRENT.md.",
       "  --dir            Print the agent workspace directory on stderr; otherwise the path is not printed.",
+      "  -y, --yes        create only: skip opening PR.md in VS Code; gh pr create uses the agent file as-is",
       "  --opus           Run the Cursor agent with the Opus model (claude-opus-4-7-high).",
       "  --codex          Run with Codex 5.3 (gpt-5.3-codex).",
       "  (default model)  If neither is set, uses composer-2 (agent --list-models).",

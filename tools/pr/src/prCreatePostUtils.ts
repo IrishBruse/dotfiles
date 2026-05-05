@@ -21,30 +21,47 @@ export function postPrCreate(
   );
 }
 
+export type ConfirmAndCreatePrOptions = {
+  /** Use these title/body and skip the VS Code pass over PR.md. */
+  skipEditorPreview?: boolean;
+  title?: string;
+  body?: string;
+};
+
 export async function confirmAndCreatePr(
   logPrefix: string,
   workspaceDir: string,
   repoRoot: string,
+  opts?: ConfirmAndCreatePrOptions,
 ): Promise<void> {
   let title: string;
   let body: string;
 
-  try {
-    const out = await confirmSubmitAfterEditorPreview({
-      logPrefix,
-      workspaceDir,
-      actionDescription: "create this PR",
-      skipConfirm: true,
-    });
-    if (out === null) {
-      console.error(`${logPrefix} cancelled, not creating PR`);
+  if (opts?.skipEditorPreview === true) {
+    if (opts.title === undefined || opts.body === undefined) {
+      failPrCli(`${logPrefix} skipEditorPreview requires title and body`);
       return;
     }
-    title = out.title;
-    body = out.body;
-  } catch (e) {
-    failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
-    return;
+    title = opts.title;
+    body = opts.body;
+  } else {
+    try {
+      const out = await confirmSubmitAfterEditorPreview({
+        logPrefix,
+        workspaceDir,
+        actionDescription: "create this PR",
+        skipConfirm: true,
+      });
+      if (out === null) {
+        console.error(`${logPrefix} cancelled, not creating PR`);
+        return;
+      }
+      title = out.title;
+      body = out.body;
+    } catch (e) {
+      failPrCli(e instanceof Error ? e.message : `${logPrefix} ${String(e)}`);
+      return;
+    }
   }
 
   try {

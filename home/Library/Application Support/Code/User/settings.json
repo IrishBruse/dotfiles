@@ -1344,7 +1344,11 @@
   "github.copilot.nextEditSuggestions.fixes": false,
   "githubPullRequests.experimental.chat": false,
   "githubPullRequests.commentExpandState": "collapseAll",
+  "githubPullRequests.fileAutoReveal": false,
   "githubPullRequests.fileListLayout": "tree",
+  "githubPullRequests.focusedMode": false,
+  "githubPullRequests.postCreate": "none",
+  "githubPullRequests.webviewRefreshInterval": 600,
   "githubPullRequests.pullBranch": "never",
   "githubPullRequests.createOnPublishBranch": "never",
   //
@@ -1618,6 +1622,7 @@
   "scm.alwaysShowRepositories": true,
   "markdownInlineEditor.math.enabled": false,
   "diffEditor.ignoreTrimWhitespace": false,
+  "terminal.integrated.enableKittyKeyboardProtocol": true,
   "workbench.editor.useModal": "off",
   "markdown.extension.tableFormatter.enabled": false,
   "workbench.browser.showInTitleBar": true,
@@ -1625,4 +1630,5 @@
   "material-icon-theme.hidesExplorerArrows": true,
   "editor.scrollbar.horizontalScrollbarSize": 8,
   "markdownInlineEditor.links.singleClickOpen": true,
+  "terminal.integrated.enableImages": true,
 }

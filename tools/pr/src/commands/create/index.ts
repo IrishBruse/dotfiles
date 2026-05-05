@@ -15,6 +15,7 @@ import { runAgentPrint } from "../../runAgentPrint.ts";
 import { takeModelFlags } from "../../modelFlags.ts";
 import { seedNoAgentPrCreateStub } from "../../noAgentPrStub.ts";
 import {
+  takeAssumeYesFlag,
   takeNoAgentFlag,
   takePrintPromptFlag,
   takePrintWorkspaceDirFlag,
@@ -32,11 +33,12 @@ export function runCreate(args: string[]): void {
 async function runCreateAsync(args: string[]): Promise<void> {
   const { rest: a0, printPrompt } = takePrintPromptFlag(args);
   const { rest: a1, noAgent } = takeNoAgentFlag(a0);
-  const { rest: a2, printWorkspaceDir } = takePrintWorkspaceDirFlag(a1);
+  const { rest: a2, assumeYes } = takeAssumeYesFlag(a1);
+  const { rest: a3, printWorkspaceDir } = takePrintWorkspaceDirFlag(a2);
   let rest: string[];
   let model: string;
   try {
-    ({ rest, model } = takeModelFlags(a2));
+    ({ rest, model } = takeModelFlags(a3));
   } catch (e) {
     failPrCli(e instanceof Error ? e.message : String(e));
     return;
@@ -103,5 +105,9 @@ async function runCreateAsync(args: string[]): Promise<void> {
     return;
   }
 
-  await confirmAndCreatePr("pr create:", workspaceDir, repoRoot);
+  await confirmAndCreatePr("pr create:", workspaceDir, repoRoot, {
+    skipEditorPreview: assumeYes,
+    title: assumeYes ? parsed.title : undefined,
+    body: assumeYes ? parsed.body : undefined,
+  });
 }
