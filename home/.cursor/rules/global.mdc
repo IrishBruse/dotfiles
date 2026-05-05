@@ -20,5 +20,5 @@ alwaysApply: true
 
 - Omit needless words: Remove filler phrases and keep sentences direct
 - No `;` in sentances it is uncommon to use them
-- Use ASCII over unicode: `—` -> `-`, `…` -> `...`, `"`/`"` -> `"`, `→`/`←` -> `->`/`<-`
+- Use ASCII over unicode: `—` -> `-`, `…` -> `...`, `“`/`”`/`‘`/`’` -> `"`/`'`, `→`/`←` -> `->`/`<-`
 - Never use Emojis of any kind in responses
