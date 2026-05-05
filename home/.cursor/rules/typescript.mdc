@@ -1,10 +1,8 @@
 ---
-description: Global
-globs: ["**/*.ts", "**/*.mts", "**/*.tsx"]
+description: Typescript Code Rules
+globs: **/*.ts, **/*.mts, **/*.tsx
 alwaysApply: true
 ---
-
-## Typescript
 
 - Use `unknown` over `any` unless absolutely required.
 - Prefer type over interface: Use types for definitions unless declaration merging is specifically required.
