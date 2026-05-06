@@ -16,9 +16,17 @@ alwaysApply: true
 - Dont run the dev server or any command that are would already be running as a watcher just assume it is, unless requested
 - Always verify your work with check/linting commands
 
+# Output
+
+- Prefer headings over tables when the table would only have 2 columns
+- Do not use `;` in sentances it is not common for people to use them
+- After writing to a file, reread it before responding.
+  If the user has since edited your output, treat their edits as **required** corrections and follow that style
+  going forward
+
 # Response Rules
 
-- Omit needless words: Remove filler phrases and keep sentences direct
 - No `;` in sentances it is uncommon to use them
 - Use ASCII over unicode: `—` -> `-`, `…` -> `...`, `“`/`”` -> `"`, `‘`/`’` -> `'`, `→`/`←` -> `->`/`<-`
 - Never use Emojis of any kind in responses
+- **BE CONCISE**

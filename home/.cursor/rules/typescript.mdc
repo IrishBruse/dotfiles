@@ -5,5 +5,5 @@ alwaysApply: true
 ---
 
 - Use `unknown` over `any` unless absolutely required.
-- Prefer type over interface: Use types for definitions unless declaration merging is specifically required.
+- Prefer type over interface: Use `type <name> =` for definitions unless declaration merging is specifically required.
 - Explicit return types: Always define return types for exported functions to improve readability and catch errors early.

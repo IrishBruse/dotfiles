@@ -50,51 +50,10 @@
   flex-grow: 0 !important;
 }
 
-/* Scrollbar */
-
-.scrollbar.vertical .slider {
-  width: 8px !important;
-  border-radius: 4px;
-  opacity: 0;
-
-  background-color: rgba(78, 86, 102, 0.25);
-
-  left: auto !important;
-  right: 3px !important;
-}
-
-.scrollbar.vertical .slider:hover {
-  background-color: rgba(78, 86, 102, 0.75);
-}
-
-div:hover > .scrollbar.vertical .slider {
-  opacity: 1;
-}
-
-.scrollbar.horizontal .slider {
-  height: 8px !important;
-  border-radius: 4px;
-  opacity: 0;
-
-  background-color: rgba(78, 86, 102, 0.25);
-}
-
-.scrollbar.horizontal .slider:hover {
-  background-color: rgba(78, 86, 102, 0.75);
-}
-
 div:hover > .scrollbar.horizontal .slider {
   opacity: 1;
 }
 
 .explorer-folders-view .monaco-list-row .monaco-tl-row .monaco-tl-twistie {
-  padding-right: 0;
-  width: 0px;
-}
-
-.explorer-folders-view
-  .monaco-list-row[aria-expanded]
-  .monaco-tl-row
-  .codicon-tree-item-expanded::before {
-  margin-right: 14px;
+  padding-right: 2px;
 }
