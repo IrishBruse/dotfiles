@@ -1627,7 +1627,7 @@
   "markdown.extension.tableFormatter.enabled": false,
   "workbench.browser.showInTitleBar": true,
   "network.meteredConnection": "off",
-  "material-icon-theme.hidesExplorerArrows": true,
+  "material-icon-theme.hidesExplorerArrows": false,
   "editor.scrollbar.horizontalScrollbarSize": 8,
   "markdownInlineEditor.links.singleClickOpen": true,
   "terminal.integrated.enableImages": true,
