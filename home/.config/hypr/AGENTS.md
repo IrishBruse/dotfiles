@@ -1,1 +1,0 @@
-I am on hyprland 0.54.3

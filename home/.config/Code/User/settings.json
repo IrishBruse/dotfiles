@@ -1630,4 +1630,5 @@
   "markdownInlineEditor.links.singleClickOpen": true,
   "terminal.integrated.enableImages": true,
   "scm.repositories.selectionMode": "single",
+  "prettier.trailingComma": "none",
 }

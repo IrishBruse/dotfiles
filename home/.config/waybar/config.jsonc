@@ -7,10 +7,7 @@
     "position": "bottom",
     "height": 30,
     "output": "DP-1",
-    "modules-left": [
-      "custom/power",
-      "hyprland/workspaces",
-    ],
+    "modules-left": ["custom/power", "hyprland/workspaces"],
     "modules-center": ["wlr/taskbar"],
     "modules-right": [
       "custom/updates",
@@ -18,7 +15,7 @@
       "tray",
       "pulseaudio",
       "clock",
-      "custom/notification",
+      "custom/notification"
     ],
     "hyprland/workspaces": {
       "on-click": "activate",
@@ -35,28 +32,28 @@
         "8": "󰲮",
         "9": "󰲰",
         "active": "",
-        "urgent": "",
+        "urgent": ""
       },
       "persistent-workspaces": {
         "*": 3,
-        "HDMI-A-3": 0,
-      },
+        "HDMI-A-3": 0
+      }
     },
     "custom/power": {
       "format": "󰤆",
       "tooltip": false,
-      "on-click": "~/.config/hypr/scripts/power-menu.sh &",
+      "on-click": "~/.config/hypr/scripts/power-menu.sh &"
     },
     "wlr/taskbar": {
       "format": "{icon} {title:.20}",
       "on-click": "activate",
       "on-click-middle": "close",
-      "ignore-list": ["DOTFILES"],
+      "ignore-list": []
     },
     "clock": {
       "format": "{:%I:%M %p}",
       "format-alt": "{:%a %b %d}",
-      "tooltip-format": "{calendar}",
+      "tooltip-format": "{calendar}"
     },
     "network": {
       "format-wifi": "",
@@ -68,7 +65,7 @@
       "tooltip-format-disconnected": "Disconnected",
       "on-click": "nm-connection-editor",
       "tooltip-format": "Network",
-      "interval": 5,
+      "interval": 5
     },
     "pulseaudio": {
       "format": "{volume}% {icon}",
@@ -78,9 +75,9 @@
         "headphone": "",
         "headset": "",
         "hands-free": "",
-        "default": ["", "", ""],
+        "default": ["", "", ""]
       },
-      "on-click": "pavucontrol",
+      "on-click": "pavucontrol"
     },
     "tray": {
       "cursor": 60,
@@ -89,8 +86,8 @@
       "spacing": 10,
       "icons": {
         "easyeffects": "audio-input-microphone-symbolic",
-        "TelegramDesktop": "$HOME/.local/share/icons/hicolor/16x16/apps/telegram.png",
-      },
+        "TelegramDesktop": "$HOME/.local/share/icons/hicolor/16x16/apps/telegram.png"
+      }
     },
     "custom/notification": {
       "tooltip": true,
@@ -103,56 +100,52 @@
         "inhibited-notification": "󰂛",
         "inhibited-none": "󰪑",
         "dnd-inhibited-notification": "󰂛",
-        "dnd-inhibited-none": "󰪑",
+        "dnd-inhibited-none": "󰪑"
       },
       "return-type": "json",
       "exec-if": "which swaync-client",
       "exec": "swaync-client -swb",
       "on-click": "swaync-client -t -sw",
       "on-click-right": "swaync-client -d -sw",
-      "escape": true,
+      "escape": true
     },
     "custom/updates": {
       "format": "{icon}",
       "format-icons": "󰚰",
       "tooltip": true,
       "tooltip-format": "Open Mint Update",
-      "on-click": "mintupdate",
-    },
+      "on-click": "mintupdate"
+    }
   },
   {
     "layer": "top",
     "position": "bottom",
     "height": 30,
     "output": "!DP-1",
-    "modules-left": [
-      "cpu",
-      "memory",
-      "temperature",
-    ],
+    "modules-left": ["cpu", "memory", "temperature"],
     "modules-center": ["wlr/taskbar#other"],
     "modules-right": ["clock#other"],
     "cpu": {
       "cursor": 60,
-      "format": "{usage}%  ",
+      "format": "{usage}%  "
     },
     "memory": {
       "cursor": 60,
-      "format": "{}%  ",
+      "format": "{}%  "
     },
     "temperature": {
-      "cursor": 60,
+      "cursor": 60
     },
     "wlr/taskbar#other": {
       "format": "{icon} {title:.20}",
       "on-click": "activate",
       "on-click-middle": "close",
-      "ignore-list": ["DOTFILES"],
+      "ignore-list": ["DOTFILES"]
     },
     "clock#other": {
       "format": "{:%a %b %d  %I:%M %p}",
       "format-alt": "{:%Y-%m-%d %H:%M:%S}",
-      "tooltip-format": "{calendar}",
-    },
-  },
+      "tooltip-format": "{calendar}"
+    }
+  }
 ]
