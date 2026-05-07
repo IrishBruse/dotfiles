@@ -10,9 +10,11 @@ If a question might have been answered previously go read context files to get t
 ## Template
 
 ```md
+---
+
 [Some background or more detail on the question] (Optional)
 
-[1-2 line main question]
+Q1 [1-2 line main question]
 
 [Numbered list 1-3 of best guess answers the user can pick from 1 should be your recommended]
 ```
