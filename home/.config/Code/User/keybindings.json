@@ -152,6 +152,11 @@
         "command": "workbench.action.createTerminalEditor"
     },
     {
+        "key": "ctrl+v",
+        "command": "workbench.action.terminal.paste",
+        "when": "terminalFocus && !ib-utilities.clipboardHasImage"
+    },
+    {
         "key": "ctrl+shift+i",
         "command": "toggle",
         "args": {
@@ -285,6 +290,16 @@
         "when": "editorTextFocus"
     },
     {
+        "key": "ctrl+u",
+        "command": "workbench.action.editorDictation.start",
+        "when": "editorTextFocus && !editorDictation.inProgress"
+    },
+    {
+        "key": "ctrl+u",
+        "command": "workbench.action.editorDictation.stop",
+        "when": "editorDictation.inProgress"
+    },
+    {
         "key": "enter",
         "command": "workbench.action.terminal.sendSequence",
         "args": {
@@ -304,17 +319,7 @@
     },
     {
         "key": "ctrl+g",
-        "command": "ib-utilities.openPR"
-    },
-    {
-        "key": "ctrl+u",
-        "command": "workbench.action.editorDictation.start",
-        "when": "editorTextFocus && !editorDictation.inProgress"
-    },
-    {
-        "key": "ctrl+u",
-        "command": "workbench.action.editorDictation.stop",
-        "when": "editorDictation.inProgress"
+        "command": "workbench.action.gotoSymbol"
     },
     {
         "key": "ctrl+u",
