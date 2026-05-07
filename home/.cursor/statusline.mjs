@@ -15,17 +15,11 @@ function fmtk(tokenCount) {
   return `${whole}.${tenths}k`;
 }
 
-/**
- * @param {number | null | undefined} used
- * @param {number | null | undefined} limit
- */
-function usageColorAnsi(used, limit) {
-  const usedTokens = used ?? 0;
-  const limitTokens = limit ?? 100_000;
-  if (limitTokens <= 0) return "\x1b[37m";
-  if (usedTokens > limitTokens) return "\x1b[91m";
-  const pct = (usedTokens / limitTokens) * 100;
-  if (pct >= 80) return "\x1b[93m";
+/** @param {number | null | undefined} usedTokens */
+function usageColorAnsi(usedTokens) {
+  const n = usedTokens ?? 0;
+  if (n > 100_000) return "\x1b[91m";
+  if (n > 80_000) return "\x1b[93m";
   return "\x1b[37m";
 }
 
@@ -48,6 +42,113 @@ function pwdWithHomeTilde(path) {
   return path;
 }
 
+/** Drop ~/git/ so repos read shorter under a git work root */
+/** @param {string} path */
+function stripHomeGitPrefix(path) {
+  const prefix = "~/git/";
+  if (path.startsWith(prefix)) return path.slice(prefix.length);
+  return path;
+}
+
+const ELL = "...";
+
+/** Truncate path keeping the start (pwd on the left) */
+/** @param {string} path @param {number} maxLen */
+function shortenPathKeepLeft(path, maxLen) {
+  if (path.length <= maxLen) return path;
+  if (maxLen <= ELL.length) return path.slice(0, maxLen);
+  return `${path.slice(0, maxLen - ELL.length)}${ELL}`;
+}
+
+/** @param {string} label @param {number} maxPlainLen */
+function truncateModelPlain(label, maxPlainLen) {
+  if (label.length <= maxPlainLen) return label;
+  if (maxPlainLen <= ELL.length) return label.slice(0, maxPlainLen);
+  return `${label.slice(0, maxPlainLen - ELL.length)}${ELL}`;
+}
+
+/**
+ * One line: cwd, two spaces, model + usage. Width never exceeds cols.
+ * @param {number} cols
+ * @param {string} usageTone
+ * @param {string} modelLabel
+ * @param {string} usageDisplay
+ * @param {string} limitDisplay
+ * @param {string} cwdPlain
+ */
+function layoutPwdLeft(
+  cols,
+  usageTone,
+  modelLabel,
+  usageDisplay,
+  limitDisplay,
+  cwdPlain,
+) {
+  const gapCwdModel = 2;
+  let m = modelLabel;
+  let cwd = cwdPlain;
+
+  /** Two spaces between cwd and model block */
+  function lineAnsi() {
+    return `\x1b[90m${cwd}\x1b[0m${" ".repeat(gapCwdModel)}\x1b[90m${m}  \x1b[0m${usageTone}${usageDisplay}/${limitDisplay}\x1b[0m`;
+  }
+
+  function totalWidth() {
+    return stripAnsi(lineAnsi()).length;
+  }
+
+  const usageTailPlain = `  ${usageDisplay}/${limitDisplay}`;
+
+  function suffixLen(modelPart) {
+    return modelPart.length + usageTailPlain.length;
+  }
+
+  for (let i = 0; i < 500 && totalWidth() > cols; i++) {
+    const cwdLen = cwd.length;
+    const sufLen = suffixLen(m);
+
+    if (cwdLen > sufLen && cwdLen > 12) {
+      cwd = shortenPathKeepLeft(cwdPlain, cwdLen - 1);
+      continue;
+    }
+
+    const maxModel = cols - gapCwdModel - cwdLen - usageTailPlain.length;
+    if (maxModel >= ELL.length && m.length > maxModel) {
+      m = truncateModelPlain(modelLabel, maxModel);
+      continue;
+    }
+
+    if (cwdLen > 1) {
+      cwd = shortenPathKeepLeft(cwdPlain, cwdLen - 1);
+      continue;
+    }
+
+    m = truncateModelPlain(modelLabel, Math.max(ELL.length, maxModel));
+    break;
+  }
+
+  while (totalWidth() > cols) {
+    const cwdLen = cwd.length;
+    const sufLen = suffixLen(m);
+    if (cwdLen > 1 && cwdLen >= sufLen) {
+      cwd = shortenPathKeepLeft(cwdPlain, cwdLen - 1);
+      continue;
+    }
+    const budget = cols - gapCwdModel - cwdLen - usageTailPlain.length;
+    if (budget >= ELL.length && suffixLen(m) > cols - gapCwdModel - cwdLen) {
+      m = truncateModelPlain(modelLabel, budget);
+      continue;
+    }
+    if (cwdLen > 1) {
+      cwd = shortenPathKeepLeft(cwdPlain, cwdLen - 1);
+      continue;
+    }
+    break;
+  }
+
+  return lineAnsi();
+}
+
 const payload = JSON.parse(readFileSync(0, "utf8"));
 const contextWindow = payload.context_window ?? {};
 const totalInputTokens = contextWindow.total_input_tokens;
@@ -61,17 +162,19 @@ const usageDisplay =
 const limitDisplay = fmtk(effectiveLimit);
 const modelLabel = model.display_name ?? model.id ?? "?";
 
-const usageTone = usageColorAnsi(totalInputTokens, effectiveLimit);
+const usageTone = usageColorAnsi(totalInputTokens);
 const cwdRaw = payload.cwd ?? payload.workspace?.current_dir ?? "";
 const cwdDisplay =
-  cwdRaw === "" ? "?" : pwdWithHomeTilde(cwdRaw);
+  cwdRaw === "" ? "?" : stripHomeGitPrefix(pwdWithHomeTilde(cwdRaw));
 
-const left = `\x1b[90m${modelLabel}  \x1b[0m${usageTone}${usageDisplay}/${limitDisplay}\x1b[0m`;
-const right = `\x1b[90m${cwdDisplay}\x1b[0m`;
-const cols = payload.render_width_chars ?? 80;
-const gap = Math.max(
-  1,
-  cols - stripAnsi(left).length - stripAnsi(right).length,
+const cols = Math.max(1, payload.render_width_chars ?? 80);
+const line = layoutPwdLeft(
+  cols,
+  usageTone,
+  modelLabel,
+  usageDisplay,
+  limitDisplay,
+  cwdDisplay,
 );
 
-process.stdout.write(`${left}${" ".repeat(gap)}${right}\n`);
+process.stdout.write(`${line}\n`);
