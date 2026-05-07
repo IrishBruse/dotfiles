@@ -1,7 +1,6 @@
 ---
 description: Typescript Code Rules
 globs: **/*.ts, **/*.mts, **/*.tsx
-alwaysApply: true
 ---
 
 - Use `unknown` over `any` unless absolutely required.
