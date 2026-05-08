@@ -1,6 +1,5 @@
 ---
 description: Global Rules
-globs: **
 alwaysApply: true
 ---
 
@@ -19,10 +18,9 @@ alwaysApply: true
 # Output
 
 - Prefer headings over tables when the table would only have 2 columns
-- Do not use `;` in sentances it is not common for people to use them
 - After writing to a file, reread it before responding
   - If the user has since edited your output, treat their edits as **required** corrections
-- No `;` in sentances it is uncommon to use them
+- Do not use `;` in sentances for lists and the sort just use a `,`.
 - Use ASCII over unicode: `—` -> `-`, `…` -> `...`, `“`/`”` -> `"`, `‘`/`’` -> `'`, `→`/`←` -> `->`/`<-`
 - Never use Emojis of any kind in responses
 

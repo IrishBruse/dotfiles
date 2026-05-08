@@ -1,9 +1,17 @@
 #!/usr/bin/env node
 import { readFileSync } from "node:fs";
 
+const ESC = "\x1b";
+const ANSI_RESET = `${ESC}[0m`;
+const ANSI_FG_GRAY = `${ESC}[90m`;
+const ANSI_FG_BRIGHT_RED = `${ESC}[91m`;
+const ANSI_FG_BRIGHT_YELLOW = `${ESC}[93m`;
+const ANSI_FG_WHITE = `${ESC}[37m`;
+const ANSI_SGR_SEQ_RE = new RegExp(`${ESC}\\[[\\d;]*m`, "g");
+
 /** @param {string} s */
 function stripAnsi(s) {
-  return s.replace(/\x1b\[[\d;]*m/g, "");
+  return s.replace(ANSI_SGR_SEQ_RE, "");
 }
 
 /** @param {number | null | undefined} tokenCount */
@@ -18,9 +26,9 @@ function fmtk(tokenCount) {
 /** @param {number | null | undefined} usedTokens */
 function usageColorAnsi(usedTokens) {
   const n = usedTokens ?? 0;
-  if (n > 100_000) return "\x1b[91m";
-  if (n > 80_000) return "\x1b[93m";
-  return "\x1b[37m";
+  if (n > 100_000) return ANSI_FG_BRIGHT_RED;
+  if (n > 80_000) return ANSI_FG_BRIGHT_YELLOW;
+  return ANSI_FG_WHITE;
 }
 
 /** @param {{ id?: string, display_name?: string }} model */
@@ -90,7 +98,7 @@ function layoutPwdLeft(
 
   /** Two spaces between cwd and model block */
   function lineAnsi() {
-    return `\x1b[90m${cwd}\x1b[0m${" ".repeat(gapCwdModel)}\x1b[90m${m}  \x1b[0m${usageTone}${usageDisplay}/${limitDisplay}\x1b[0m`;
+    return `${ANSI_FG_GRAY}${cwd}${ANSI_RESET}${" ".repeat(gapCwdModel)}${ANSI_FG_GRAY}${m}  ${ANSI_RESET}${usageTone}${usageDisplay}/${limitDisplay}${ANSI_RESET}`;
   }
 
   function totalWidth() {

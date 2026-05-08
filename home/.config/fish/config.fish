@@ -28,8 +28,7 @@ alias reload="clear;exec fish"
 
 alias ac="agent --continue"
 alias ao="agent --model claude-4.6-opus-high-thinking"
-alias ap="agent --mode=plan agent"
-alias aa="agent --mode=ask agent"
+alias t="v ~/TODO.md"
 
 alias showkey="fish_key_reader --verbose"
 
