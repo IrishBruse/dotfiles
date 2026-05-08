@@ -1,0 +1,34 @@
+---
+description: Context Rules
+alwaysApply: false
+---
+
+# Context & Memory Management
+
+In every conversation, actively listen for key decisions, preferences, or constraints established by the user.
+Record these to a `CONTEXT.md` file to persist important information across sessions.
+
+## Agent Instructions:
+
+1. **Categorize:** Group decisions under relevant logical headers (e.g., `## Technical Stack`, `## Communication Style`, `## Project Alpha`).
+2. **Include Rationale:** Briefly note _why_ the decision was made, if stated.
+3. **Keep it Current:** If a new decision contradicts an old one, update or supersede the previous entry rather than simply appending to the bottom. Keep the file concise.
+4. **Be Silent:** Update the file quietly. Do not narrate the file update to the user unless explicitly asked.
+
+# Template Example (`CONTEXT.md`)
+
+```md
+# Active Context & Decisions
+
+## [Category Name, e.g., Communication Style]
+
+- **[YYYY-MM-DD] [Brief Decision Title]:** [The specific decision made]
+  - _Rationale:_ [Why it was decided]
+  - _Status:_ [Active | Superseded]
+
+## [Category Name, e.g., Tech Stack]
+
+- **[2026-05-08] Database Choice:** Use PostgreSQL for all backend persistence.
+  - _Rationale:_ User prioritizes relational data integrity over NoSQL flexibility for current client base.
+  - _Status:_ Active
+```

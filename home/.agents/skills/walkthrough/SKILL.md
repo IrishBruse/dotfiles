@@ -1,11 +1,16 @@
 ---
 name: walkthrough
-description: Walk through a skill, document, or plan step-by-step with the user, presenting one section at a time and waiting for approval or feedback before moving on. Use when the user asks to review, walk through, or get feedback on a multi-step skill, spec, or plan.
+description: >-
+  Walk through a skill, document, or plan step-by-step with the user, presenting one section at a time
+  and waiting for approval or feedback before moving on. Use when the user asks to review, walk through,
+  or get feedback on a multi-step skill, spec, or plan.
 ---
 
 # Review Walkthrough
 
-Presents a document or skill to the user one section at a time for iterative feedback. Only advances when the user approves. Collects and applies feedback inline.
+Presents a document or skill to the user one section at a time for iterative feedback.
+Only advances when the user approves.
+Collects and applies feedback inline.
 
 ## Process
 
