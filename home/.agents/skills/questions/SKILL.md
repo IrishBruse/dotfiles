@@ -9,12 +9,20 @@ If a question might have been answered previously go read context files to get t
 
 ## Template
 
+This is the way to respond nothing after this when asking the user a question then wait for the response.
+No need to add on Reply with 1,2,3 its implied.
+
 ```md
 ---
 
-[Some background or more detail on the question] (Optional)
+You are choosing how to handle errors in a new
+CLI script: fail fast vs retry vs log and continue.
 
-Q1 [1-2 line main question]
+**Recommendation:** 1 because its the standard way.
 
-[Numbered list 1-3 of best guess answers the user can pick from 1 should be your recommended]
+**Q1** Should the script exit non-zero on the first I/O error, or retry a few times then exit?
+
+1. Exit non-zero immediately (simplest, predictable for scripts and CI)
+2. Retry up to 3 times with short backoff, then exit non-zero
+3. Log the error, skip that item, and continue with exit 0 if anything succeeded
 ```
