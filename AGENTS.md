@@ -6,10 +6,28 @@
 - Dont add excessive edge case handling to script keep them simple and doing what the user requested
 - Before finishing work that touches TypeScript in this repo, run `npm run validate` (typecheck via `tsc --noEmit` for each project); it must pass
 
-## VS Code keybindings
+## Repo layout
 
-- **Do not ask to run `gen.ts` manually** its running in a watcher
+### `home/`
 
-## CLI Tools
+Files here mirror `~` and are meant to be stowed into the real home directory (`.config`, `.cursor`, `.agents`, VS Code `Code/User`, fish, hypr, etc.).
 
-Packages live under `tools/`. Install per package: `cd tools/<name> && npm install && npm link`
+### `vscode/keybindings`
+
+TypeScript and JSON used to generate VS Code keybindings.
+
+### `vscode/theme`
+
+Custom VS Code UI CSS.
+
+### `tools/`
+
+Standalone CLI packages (`archscan`, `atlassian`, `pr`), each with its own `package.json`. Install and link per package from that directory.
+
+### `scripts/`
+
+Extra npm dependencies used by repo automation (see `Justfile` `install-all`).
+
+### Repo root
+
+`Justfile` for common tasks, root `package.json` for shared TypeScript validation, fish helpers (`init.fish`, `stow.fish`, `open-*.fish`), `Brewfile`, and editor metadata under `.vscode` / `.cursor`.
