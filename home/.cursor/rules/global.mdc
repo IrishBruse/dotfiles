@@ -17,11 +17,10 @@ alwaysApply: true
 
 # Output
 
-- Prefer headings over tables when the table would only have 2 columns
 - After writing to a file, reread it before responding
   - If the user has since edited your output, treat their edits as **required** corrections
-- Do not use `;` in sentances for lists and the sort just use a `,`.
-- Use ASCII over unicode: `—` -> `-`, `…` -> `...`, `“`/`”` -> `"`, `‘`/`’` -> `'`, `→`/`←` -> `->`/`<-`
+- Do not use `;` just use a `,` or `.`.
+- Use ASCII over unicode: `—` -> `-`, `…` -> `...`, `“`/`”` -> `"`, `‘`/`’` -> `'`, `→`/`←` -> `->`/`<-` `≤` -> `<=`
 - Never use Emojis of any kind in responses
 
 **BE CONCISE**
