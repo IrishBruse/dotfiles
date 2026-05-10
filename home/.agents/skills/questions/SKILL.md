@@ -34,11 +34,11 @@ proceed or ask a focused follow-up. Never restart the whole sequence.
 **Context**
 One or two sentences max. Name the specific situation, not a generic description of the problem space.
 
-**Q**
+**Question**
 Write the question as if asking a colleague. Avoid jargon. End with a `?`.
 
 **Options**
-2-4 options. Each option label is short (<=6 words); the dash-separated clarification adds detail. Mutually exclusive and collectively exhaustive for the decision at hand.
+1-4 options. Each option label is short (<=6 words); the dash-separated clarification adds detail. Mutually exclusive and collectively exhaustive for the decision at hand.
 
 **Recommendation**
 Always present. Reference the option number. Keep the reason to one clause - do not over-justify.
@@ -49,14 +49,17 @@ Use this exact layout - nothing before or after it when asking a question:
 
 ---
 
-**Context** (1-2 sentences explaining the decision the user is facing)
+**Context:**
+[1-2 sentences explaining the decision the user is facing]
 
-**Q:** The question, phrased as a concrete choice.
+**Question:**
+[The question, phrased as a concrete choice]
 
-1. Option A - what it means / when to choose it
-2. Option B - what it means / when to choose it
-3. Option C - what it means / when to choose it
+1. what it means / when to choose it
+2. what it means / when to choose it
+3. what it means / when to choose it
 
-**Recommendation:** option N - brief reason (what makes it the safest default)
+**Recommendation:** Option 1/2/3/4
+[brief reason (what makes it the safest default)]
 
 ---
