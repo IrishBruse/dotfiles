@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "validate": "tsc --noEmit"
+    "validate": "tsc --noEmit -p tools/pr/tsconfig.json && tsc --noEmit -p tools/atlassian/tsconfig.json && tsc --noEmit -p tools/archscan/tsconfig.json && tsc --noEmit -p vscode/tsconfig.json && tsc --noEmit -p home/.agents/skills/standup/scripts/tsconfig.json"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
