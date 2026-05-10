@@ -59,7 +59,7 @@ Use this exact layout - nothing before or after it when asking a question:
 2. what it means / when to choose it
 3. what it means / when to choose it
 
-**Recommendation:** Option 1/2/3/4
+**Recommendation: 1./2./3./4.**
 [brief reason (what makes it the safest default)]
 
 ---
