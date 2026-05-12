@@ -1,14 +1,16 @@
 import { spawnSync } from "node:child_process";
+import fs from "node:fs";
 import process from "node:process";
 
 import {
   CURRENT_PR_SNAPSHOT_FILE,
   readAgentPrMarkdown,
 } from "../../agentOutputFiles.ts";
-import { populateReviewWorkspace } from "../../prepareReviewWorkspace.ts";
+import { fetchReviewPrefetchFiles } from "../../prepareReviewWorkspace.ts";
 import {
-  logAgentWorkspacePreamble,
-  preparePrReviewWorkspace,
+  logAgentOutputDirPreamble,
+  prepareAgentOutputDir,
+  resolvePrPromptDebugPath,
 } from "../../prAgentWorkspace.ts";
 import { confirmAndApplyPrMetadata } from "../../prEditPostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
@@ -16,12 +18,16 @@ import { runAgentPrint } from "../../runAgentPrint.ts";
 import { takeModelFlags } from "../../modelFlags.ts";
 import { seedNoAgentPrUpdateStub } from "../../noAgentPrStub.ts";
 import {
+  takeDebugPromptFlag,
   takeNoAgentFlag,
   takePrintPromptFlag,
   takePrintWorkspaceDirFlag,
 } from "../../printPromptFlag.ts";
 import { assertPrTitleMatchesJiraPolicy } from "../../jiraTitlePolicy.ts";
 import { loadUpdateAgentPrompt } from "../agentPrompts.ts";
+
+const PROMPT_ONLY_AGENT_DIR =
+  "(not used: --print-prompt or --debug - no agent run)";
 
 function resolveUpdatePrTarget(explicit: string | undefined): string {
   if (explicit !== undefined && explicit !== "") {
@@ -34,7 +40,7 @@ function resolveUpdatePrTarget(explicit: string | undefined): string {
   if (r.status !== 0) {
     const msg =
       (r.stderr ?? r.stdout ?? "").trim() ||
-      "gh pr view failed — pass a PR number/URL or open a PR from this branch";
+      "gh pr view failed - pass a PR number/URL or open a PR from this branch";
     throw new Error(`pr update: ${msg}`);
   }
   let parsed: unknown;
@@ -62,12 +68,13 @@ export function runUpdate(args: string[]): void {
 
 async function runUpdateAsync(args: string[]): Promise<void> {
   const { rest: a0, printPrompt } = takePrintPromptFlag(args);
-  const { rest: a1, noAgent } = takeNoAgentFlag(a0);
-  const { rest: a2, printWorkspaceDir } = takePrintWorkspaceDirFlag(a1);
+  const { rest: a1, debugPrompt } = takeDebugPromptFlag(a0);
+  const { rest: a2, noAgent } = takeNoAgentFlag(a1);
+  const { rest: a3, printWorkspaceDir } = takePrintWorkspaceDirFlag(a2);
   let rest: string[];
   let model: string;
   try {
-    ({ rest, model } = takeModelFlags(a2));
+    ({ rest, model } = takeModelFlags(a3));
   } catch (e) {
     failPrCli(e instanceof Error ? e.message : String(e));
     return;
@@ -79,18 +86,14 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     failPrCli(e instanceof Error ? e.message : `pr update: ${String(e)}`);
     return;
   }
-
-  let workspaceDir: string;
-  try {
-    workspaceDir = preparePrReviewWorkspace(target);
-  } catch (e) {
-    failPrCli(e instanceof Error ? e.message : `pr update: ${String(e)}`);
+  if (rest.length > 1) {
+    failPrCli(`pr update: unexpected arguments: ${rest.slice(1).join(" ")}`);
     return;
   }
-  logAgentWorkspacePreamble(workspaceDir, printWorkspaceDir);
 
+  let bundledFiles: Record<string, string>;
   try {
-    await populateReviewWorkspace(workspaceDir, target, {
+    bundledFiles = await fetchReviewPrefetchFiles(target, {
       snapshotPrToFile: CURRENT_PR_SNAPSHOT_FILE,
     });
   } catch (e) {
@@ -102,9 +105,18 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     return;
   }
 
+  const promptOnly = printPrompt || debugPrompt;
+  const agentOutputDir = promptOnly
+    ? PROMPT_ONLY_AGENT_DIR
+    : prepareAgentOutputDir();
+  if (!promptOnly) {
+    logAgentOutputDirPreamble(agentOutputDir, printWorkspaceDir);
+  }
+
   const prompt = loadUpdateAgentPrompt({
     target,
-    workspaceDir,
+    agentOutputDir,
+    bundledFiles,
   });
 
   if (printPrompt) {
@@ -112,11 +124,18 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     return;
   }
 
+  if (debugPrompt) {
+    const dest = resolvePrPromptDebugPath();
+    fs.writeFileSync(dest, prompt, "utf8");
+    console.error(`pr update: wrote prompt to ${dest}`);
+    return;
+  }
+
   if (noAgent) {
-    seedNoAgentPrUpdateStub(workspaceDir);
+    seedNoAgentPrUpdateStub(agentOutputDir);
   } else {
     try {
-      await runAgentPrint(prompt, { cwd: workspaceDir, model });
+      await runAgentPrint(prompt, { cwd: agentOutputDir, model });
     } catch (e) {
       failPrCli(
         e instanceof Error
@@ -129,7 +148,7 @@ async function runUpdateAsync(args: string[]): Promise<void> {
 
   let parsed: ReturnType<typeof readAgentPrMarkdown>;
   try {
-    parsed = readAgentPrMarkdown(workspaceDir, "pr update");
+    parsed = readAgentPrMarkdown(agentOutputDir, "pr update");
   } catch (e) {
     failPrCli(
       e instanceof Error
@@ -146,5 +165,5 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     return;
   }
 
-  await confirmAndApplyPrMetadata("pr update:", target, workspaceDir);
+  await confirmAndApplyPrMetadata("pr update:", target, agentOutputDir);
 }

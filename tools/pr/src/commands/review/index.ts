@@ -1,9 +1,11 @@
+import fs from "node:fs";
 import process from "node:process";
 
-import { populateReviewWorkspace } from "../../prepareReviewWorkspace.ts";
+import { fetchReviewPrefetchFiles } from "../../prepareReviewWorkspace.ts";
 import {
-  logAgentWorkspacePreamble,
-  preparePrReviewWorkspace,
+  logAgentOutputDirPreamble,
+  prepareAgentOutputDir,
+  resolvePrPromptDebugPath,
 } from "../../prAgentWorkspace.ts";
 import {
   confirmAndPostReviewComment,
@@ -13,11 +15,15 @@ import { runAgentPrint } from "../../runAgentPrint.ts";
 import { takeModelFlags } from "../../modelFlags.ts";
 import { seedNoAgentPrReviewStub } from "../../noAgentPrStub.ts";
 import {
+  takeDebugPromptFlag,
   takeNoAgentFlag,
   takePrintPromptFlag,
   takePrintWorkspaceDirFlag,
 } from "../../printPromptFlag.ts";
 import { loadReviewAgentPrompt } from "../agentPrompts.ts";
+
+const PROMPT_ONLY_AGENT_DIR =
+  "(not used: --print-prompt or --debug - no agent run)";
 
 export function runReview(args: string[]): void {
   void runReviewAsync(args).catch((e) => {
@@ -28,13 +34,14 @@ export function runReview(args: string[]): void {
 
 async function runReviewAsync(args: string[]): Promise<void> {
   const { rest: a0, printPrompt } = takePrintPromptFlag(args);
-  const { rest: a1, noAgent } = takeNoAgentFlag(a0);
-  const { rest: a2, printWorkspaceDir } = takePrintWorkspaceDirFlag(a1);
+  const { rest: a1, debugPrompt } = takeDebugPromptFlag(a0);
+  const { rest: a2, noAgent } = takeNoAgentFlag(a1);
+  const { rest: a3, printWorkspaceDir } = takePrintWorkspaceDirFlag(a2);
   let rest: string[];
   let model: string;
   let reviewModelLabel: string;
   try {
-    ({ rest, model, reviewModelLabel } = takeModelFlags(a2));
+    ({ rest, model, reviewModelLabel } = takeModelFlags(a3));
   } catch (e) {
     failPrCli(e instanceof Error ? e.message : String(e));
     return;
@@ -44,17 +51,14 @@ async function runReviewAsync(args: string[]): Promise<void> {
     failPrCli("pr review: expected a pull request URL or number");
     return;
   }
-  let workspaceDir: string;
-  try {
-    workspaceDir = preparePrReviewWorkspace(target);
-  } catch (e) {
-    failPrCli(e instanceof Error ? e.message : `pr review: ${String(e)}`);
+  if (rest.length > 1) {
+    failPrCli(`pr review: unexpected arguments: ${rest.slice(1).join(" ")}`);
     return;
   }
-  logAgentWorkspacePreamble(workspaceDir, printWorkspaceDir);
 
+  let bundledFiles: Record<string, string>;
   try {
-    await populateReviewWorkspace(workspaceDir, target);
+    bundledFiles = await fetchReviewPrefetchFiles(target);
   } catch (e) {
     failPrCli(
       e instanceof Error
@@ -64,10 +68,19 @@ async function runReviewAsync(args: string[]): Promise<void> {
     return;
   }
 
+  const promptOnly = printPrompt || debugPrompt;
+  const agentOutputDir = promptOnly
+    ? PROMPT_ONLY_AGENT_DIR
+    : prepareAgentOutputDir();
+  if (!promptOnly) {
+    logAgentOutputDirPreamble(agentOutputDir, printWorkspaceDir);
+  }
+
   const prompt = loadReviewAgentPrompt({
     target,
-    workspaceDir,
+    agentOutputDir,
     reviewModelLabel,
+    bundledFiles,
   });
 
   if (printPrompt) {
@@ -75,11 +88,18 @@ async function runReviewAsync(args: string[]): Promise<void> {
     return;
   }
 
+  if (debugPrompt) {
+    const dest = resolvePrPromptDebugPath();
+    fs.writeFileSync(dest, prompt, "utf8");
+    console.error(`pr review: wrote prompt to ${dest}`);
+    return;
+  }
+
   if (noAgent) {
-    seedNoAgentPrReviewStub(workspaceDir);
+    seedNoAgentPrReviewStub(agentOutputDir);
   } else {
     try {
-      await runAgentPrint(prompt, { cwd: workspaceDir, model });
+      await runAgentPrint(prompt, { cwd: agentOutputDir, model });
     } catch (e) {
       failPrCli(
         e instanceof Error
@@ -90,5 +110,5 @@ async function runReviewAsync(args: string[]): Promise<void> {
     }
   }
 
-  await confirmAndPostReviewComment("pr review:", target, workspaceDir);
+  await confirmAndPostReviewComment("pr review:", target, agentOutputDir);
 }

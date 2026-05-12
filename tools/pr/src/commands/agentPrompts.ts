@@ -7,7 +7,7 @@ import {
   loadReviewWorkPromptAppendix,
   loadUpdateWorkPromptAppendix,
 } from "../jiraTitlePolicy.ts";
-import { formatPrWorkspaceReadList } from "../prPromptWorkspaceFiles.ts";
+import { formatBundledPrefetchForPrompt } from "../prPromptWorkspaceFiles.ts";
 
 const commandsDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -40,43 +40,49 @@ function loadAgentPrompt(
 export type CreatePromptVars = {
   branch: string;
   repoRoot: string;
-  workspaceDir: string;
+  agentOutputDir: string;
+  bundledFiles: Record<string, string>;
 };
 
 export function loadCreateAgentPrompt(vars: CreatePromptVars): string {
-  const files = formatPrWorkspaceReadList(vars.workspaceDir, "create");
+  const { bundledFiles, ...rest } = vars;
+  const files = formatBundledPrefetchForPrompt(bundledFiles, "create");
   return loadAgentPrompt(
     "create",
-    { ...vars, defaultPrBodyInstructions, files },
+    { ...rest, defaultPrBodyInstructions, files },
     loadCreateWorkPromptAppendix,
   );
 }
 
 export type UpdatePromptVars = {
   target: string;
-  workspaceDir: string;
+  agentOutputDir: string;
+  bundledFiles: Record<string, string>;
 };
 
 export function loadUpdateAgentPrompt(vars: UpdatePromptVars): string {
-  const files = formatPrWorkspaceReadList(vars.workspaceDir, "update");
+  const { bundledFiles, ...rest } = vars;
+  const files = formatBundledPrefetchForPrompt(bundledFiles, "update");
   return loadAgentPrompt(
     "update",
-    { ...vars, defaultPrBodyInstructions, files },
+    { ...rest, defaultPrBodyInstructions, files },
     loadUpdateWorkPromptAppendix,
   );
 }
 
 export type ReviewPromptVars = {
   target: string;
-  workspaceDir: string;
+  agentOutputDir: string;
   reviewModelLabel: string;
+  bundledFiles: Record<string, string>;
 };
 
 export function loadReviewAgentPrompt(vars: ReviewPromptVars): string {
-  const files = formatPrWorkspaceReadList(vars.workspaceDir, "review");
+  const { bundledFiles, ...rest } = vars;
+  const files = formatBundledPrefetchForPrompt(bundledFiles, "review");
   return loadAgentPrompt(
     "review",
-    { ...vars, files },
+    { ...rest, files },
     loadReviewWorkPromptAppendix,
   );
 }

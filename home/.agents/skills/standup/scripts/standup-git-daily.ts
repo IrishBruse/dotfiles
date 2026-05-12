@@ -100,7 +100,7 @@ function parsePrListJson(raw: string): GhPr[] {
     const isDraft = o.isDraft;
     const updatedAt = o.updatedAt;
     const url = o.url;
-    const mergedAt = o.mergedAt;
+    const mergedAtRaw = o.mergedAt;
     if (
       typeof number !== "number" ||
       typeof title !== "string" ||
@@ -111,11 +111,23 @@ function parsePrListJson(raw: string): GhPr[] {
     ) {
       continue;
     }
-    const m = mergedAt === null || mergedAt === undefined ? null : mergedAt;
-    if (m !== null && typeof m !== "string") {
+    let mergedAt: string | null;
+    if (mergedAtRaw === null || mergedAtRaw === undefined) {
+      mergedAt = null;
+    } else if (typeof mergedAtRaw === "string") {
+      mergedAt = mergedAtRaw;
+    } else {
       continue;
     }
-    out.push({ number, title, state, isDraft, updatedAt, url, mergedAt: m });
+    out.push({
+      number,
+      title,
+      state,
+      isDraft,
+      updatedAt,
+      url,
+      mergedAt,
+    });
   }
   return out;
 }

@@ -1,135 +1,134 @@
-import fs from "node:fs";
-import path from "node:path";
-
 import { CURRENT_PR_SNAPSHOT_FILE, MERGED_PREVIEW_FILE } from "./agentOutputFiles.ts";
-
-const JIRA_KEY_FILE_RE = /^[A-Z][A-Z0-9]+-\d+\.md$/;
-const LARGE_BYTES = 1_000_000;
 
 export type PrPromptWorkspaceMode = "create" | "update" | "review";
 
-type Row = { file: string; bytes: number; lines: string; what: string };
+const JIRA_KEY_FILE_RE = /^[A-Z][A-Z0-9]+-\d+\.md$/;
 
-function statSafely(abspath: string): { bytes: number; lines: string } | null {
-  let st: fs.Stats;
-  try {
-    st = fs.statSync(abspath);
-  } catch {
-    return null;
+function prefetchFileOrder(mode: PrPromptWorkspaceMode): string[] {
+  if (mode === "create") {
+    return [
+      "diff.patch",
+      "PULL_REQUEST_TEMPLATE.md",
+      "jira-tickets-board.md",
+    ];
   }
-  if (st.size > LARGE_BYTES) {
-    return { bytes: st.size, lines: "(large)" };
+  const snapshot =
+    mode === "review" ? MERGED_PREVIEW_FILE : CURRENT_PR_SNAPSHOT_FILE;
+  return [
+    "files.txt",
+    "checks.txt",
+    snapshot,
+    "diff.patch",
+    "commits.txt",
+    "comments.md",
+    "jira-tickets-board.md",
+  ];
+}
+
+function sortPrefetchKeys(
+  keys: string[],
+  mode: PrPromptWorkspaceMode,
+): string[] {
+  const preferred = prefetchFileOrder(mode);
+  const rest = keys.filter((k) => !preferred.includes(k)).sort();
+  const out: string[] = [];
+  for (const p of preferred) {
+    if (keys.includes(p)) {
+      out.push(p);
+    }
   }
-  let text: string;
-  try {
-    text = fs.readFileSync(abspath, "utf8");
-  } catch {
-    return { bytes: st.size, lines: "?" };
+  out.push(...rest);
+  return out;
+}
+
+function describePrefetchFile(
+  name: string,
+  mode: PrPromptWorkspaceMode,
+): string {
+  if (name === "diff.patch") {
+    if (mode === "create") {
+      return "`git diff origin/main` - **source of truth** for what will ship (may be empty).";
+    }
+    return "Full unified diff (head vs base) - top authority for *what the code does*.";
   }
-  return { bytes: st.size, lines: String(text.split("\n").length) };
+  if (name === "PULL_REQUEST_TEMPLATE.md") {
+    return "Host repo PR template if the CLI found one; mirror its structure in the body.";
+  }
+  if (name === "files.txt") {
+    return "One line per path with `+add -del` and change type - read this before `diff.patch` for scope.";
+  }
+  if (name === "checks.txt") {
+    return "Short CI digest from `statusCheckRollup` (name and state per check).";
+  }
+  if (name === MERGED_PREVIEW_FILE && mode === "review") {
+    return "From GitHub. **Replace** with `#` review summary line + full review-comment markdown.";
+  }
+  if (name === CURRENT_PR_SNAPSHOT_FILE && mode === "update") {
+    return "Current PR on GitHub (read-only). **Write** the refreshed `#` title + body to `PR.md` for `gh pr edit`.";
+  }
+  if (name === "commits.txt") {
+    return "One line per commit: short SHA, subject, optional body.";
+  }
+  if (name === "comments.md") {
+    return "PR thread + inline comments (path:line, hunks, bodies).";
+  }
+  if (name === "jira-tickets-board.md") {
+    return "Board list; `{KEY}.md` copies are for title + body keys (see skill `references/`), not every board line.";
+  }
+  if (JIRA_KEY_FILE_RE.test(name) && name !== MERGED_PREVIEW_FILE) {
+    return "Per-Jira-key reference copied from the jira-tickets skill when available.";
+  }
+  return "Prefetched context file.";
 }
 
 /**
- * Markdown block for the agent prompt: a table of the files at `workspaceDir`
- * the agent is allowed to read (with bytes/lines and a one-line description),
- * plus a hard rule that nothing else exists.
+ * Markdown block for the agent prompt: table of prefetched files plus full contents between `<<<BEGIN` / `<<<END` markers.
+ * Nothing is on disk for the agent to read except **`PR.md`** in its cwd.
  */
-export function formatPrWorkspaceReadList(
-  workspaceDir: string,
+export function formatBundledPrefetchForPrompt(
+  files: Record<string, string>,
   mode: PrPromptWorkspaceMode,
 ): string {
-  const rows: Row[] = [];
-
-  const addIfExists = (name: string, what: string): void => {
-    const stats = statSafely(path.join(workspaceDir, name));
-    if (stats === null) {
-      return;
-    }
-    rows.push({
-      file: `\`${name}\``,
-      bytes: stats.bytes,
-      lines: stats.lines,
-      what,
-    });
-  };
-
-  if (mode === "create") {
-    addIfExists(
-      "diff.patch",
-      "`git diff origin/main` — **source of truth** for what will ship (may be empty).",
-    );
-    addIfExists(
-      "PULL_REQUEST_TEMPLATE.md",
-      "Host repo PR template if the CLI found one; mirror its structure in the body.",
-    );
-    addIfExists(
-      "jira-tickets-board.md",
-      "Board list only; per-ticket `{KEY}.md` files follow title+body rules, not the whole board.",
-    );
-  } else {
-    addIfExists(
-      "files.txt",
-      "One line per path with `+add -del` and change type — read this before `diff.patch` for scope.",
-    );
-    addIfExists(
-      "checks.txt",
-      "Short CI digest from `statusCheckRollup` (name and state per check).",
-    );
-    if (mode === "review") {
-      addIfExists(
-        MERGED_PREVIEW_FILE,
-        "From GitHub. **Replace** with `#` review summary line + full review-comment markdown.",
-      );
-    } else {
-      addIfExists(
-        CURRENT_PR_SNAPSHOT_FILE,
-        "Current PR on GitHub (read-only). **Write** the refreshed `#` title + body to `PR.md` for `gh pr edit`.",
-      );
-    }
-    addIfExists(
-      "diff.patch",
-      "Full unified diff (head vs base) — top authority for *what the code does*.",
-    );
-    addIfExists("commits.txt", "One line per commit: short SHA, subject, optional body.");
-    addIfExists("comments.md", "PR thread + inline comments (path:line, hunks, bodies).");
-    addIfExists(
-      "jira-tickets-board.md",
-      "Board list; `{KEY}.md` copies are for title + body keys (see skill `references/`), not every board line.",
-    );
-    for (const name of listJiraKeyMdFiles(workspaceDir)) {
-      addIfExists(
-        name,
-        "Per-Jira-key reference copied from the jira-tickets skill when available.",
-      );
-    }
+  const names = sortPrefetchKeys(Object.keys(files), mode);
+  if (names.length === 0) {
+    return "*(No prefetched context - unexpected.)*\n";
   }
 
-  if (rows.length === 0) {
-    return "*(No prefetched files in the workspace — that is unexpected.)*\n";
-  }
+  const rows = names.map((name) => {
+    const content = files[name] ?? "";
+    const bytes = Buffer.byteLength(content, "utf8");
+    const lines = String(content.split("\n").length);
+    return {
+      name,
+      bytes,
+      lines,
+      what: describePrefetchFile(name, mode),
+      content,
+    };
+  });
 
-  const lines = [
-    "These are **the only** files at the workspace root **right now**; you may `read` only these (and you write `PR.md`). Pick smaller files first when they cover what you need.",
+  const linesOut = [
+    "Prefetched **PR context** is fully embedded below (table then raw file blocks). This is **all** of it - do not assume other paths, and do not `glob`/`read` outside your agent cwd for more GitHub or Jira context.",
+    "",
+    "Pick smaller files first when they cover what you need (often `files.txt` before `diff.patch`).",
     "",
     "| File | bytes | lines | What |",
     "|------|------:|------:|------|",
     ...rows.map(
-      (r) => `| ${r.file} | ${r.bytes} | ${r.lines} | ${r.what} |`,
+      (r) =>
+        `| \`${r.name}\` | ${String(r.bytes)} | ${r.lines} | ${r.what} |`,
     ),
     "",
-    "Do not `glob`, `read`, or search outside the paths above (no real repo checkout, no `~/.cursor`, no jira-tickets skill on disk).",
+    "## Prefetched file contents",
+    "",
+    ...rows.flatMap((r) => [
+      `### \`${r.name}\``,
+      "",
+      `<<<BEGIN ${r.name}>>>`,
+      r.content,
+      `<<<END ${r.name}>>>`,
+      "",
+    ]),
   ];
-  return lines.join("\n");
-}
-
-function listJiraKeyMdFiles(dir: string): string[] {
-  let names: string[] = [];
-  try {
-    names = fs.readdirSync(dir);
-  } catch {
-    return [];
-  }
-  return names
-    .filter((n) => JIRA_KEY_FILE_RE.test(n) && n !== MERGED_PREVIEW_FILE)
-    .sort();
+  return linesOut.join("\n");
 }

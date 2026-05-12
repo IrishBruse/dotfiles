@@ -1,24 +1,21 @@
 import { spawn } from "node:child_process";
-import fs from "node:fs";
-import path from "node:path";
 
-import { MERGED_PREVIEW_FILE, buildPreviewMarkdown } from "./agentOutputFiles.ts";
-import { clearPrAgentWorkspaceDir } from "./prAgentWorkspace.ts";
+import { buildPreviewMarkdown, MERGED_PREVIEW_FILE } from "./agentOutputFiles.ts";
 import { prCoordsFromViewPayload } from "./githubPrPrefetchExtra.ts";
 import {
-  writeChecksSummaryTxt,
-  writeFilesChangedTxt,
+  checksSummaryTextFromJson,
+  filesChangedTextFromJson,
 } from "./prefetchIndex.ts";
 import {
-  writeJiraSkillBoardSnapshot,
-  writeJiraSkillContext,
+  collectJiraKeyMarkdownFiles,
+  readJiraSkillBoardText,
 } from "./jiraSkillContext.ts";
-import { writePrCommentsMdAsync } from "./prCommentsMd.ts";
+import { fetchPrCommentsMdContentAsync } from "./prCommentsMd.ts";
 
-export type PopulateReviewWorkspaceOptions = {
+export type FetchReviewPrefetchOptions = {
   /**
-   * Filename (under `dir`) for the GitHub title/body snapshot. Default is **`PR.md`** (review).
-   * For **`pr update`**, pass **`CURRENT.md`** so the agent writes the draft only to **`PR.md`**.
+   * Filename for the GitHub title/body snapshot. Default **`PR.md`** (review).
+   * For **`pr update`**, use **`CURRENT.md`** so the agent writes only to **`PR.md`**.
    */
   snapshotPrToFile?: string;
 };
@@ -56,7 +53,7 @@ function runGhAsync(args: string[]): Promise<string> {
 }
 
 /** One line per commit: short SHA, subject, then body (if any) on the same line. */
-function writeCommitsTxtFromRaw(dir: string, commitsRaw: string): void {
+export function commitsTxtFromRaw(commitsRaw: string): string {
   const j = JSON.parse(commitsRaw) as {
     commits?: Array<{
       oid: string;
@@ -71,76 +68,66 @@ function writeCommitsTxtFromRaw(dir: string, commitsRaw: string): void {
     const body = (c.messageBody ?? "").trim().replace(/\s+/g, " ");
     let desc = headline;
     if (body !== "") {
-      desc = headline === "" ? body : `${headline} — ${body}`;
+      desc = headline === "" ? body : `${headline} - ${body}`;
     }
     if (desc === "") {
       desc = c.oid;
     }
     lines.push(`${short} ${desc}`);
   }
-  fs.writeFileSync(path.join(dir, "commits.txt"), lines.join("\n") + "\n", "utf8");
+  return lines.join("\n") + "\n";
 }
 
 const viewJsonFields =
   "number,title,author,baseRefName,headRefName,headRefOid,body,state,labels,reviewRequests,url";
 
 /**
- * Write prefetched PR files at the root of `dir` using **`gh`** (REST).
- * Runs the main **`gh pr view` / `gh pr diff` / JSON views** in one parallel batch, then
- * **`comments.md`** (needs owner/repo/number from the first response), then local index + Jira files.
- * On failure, clears `dir` and rethrows.
+ * Fetches the same data as the former review workspace **`gh`** batch: PR snapshot, diff, files list,
+ * commits digest, checks, comments, Jira snapshots. Values are inlined into the agent prompt (no prefetch dir).
  */
-export async function populateReviewWorkspace(
-  dir: string,
+export async function fetchReviewPrefetchFiles(
   target: string,
-  options?: PopulateReviewWorkspaceOptions,
-): Promise<void> {
+  options?: FetchReviewPrefetchOptions,
+): Promise<Record<string, string>> {
   const snapshotName = options?.snapshotPrToFile ?? MERGED_PREVIEW_FILE;
-  try {
-    const [viewRaw, filesRaw, diffText, commitsRaw, checksRaw] = await Promise.all([
-      runGhAsync(["pr", "view", target, "--json", viewJsonFields]),
-      runGhAsync(["pr", "view", target, "--json", "files"]),
-      runGhAsync(["pr", "diff", target]),
-      runGhAsync(["pr", "view", target, "--json", "commits"]),
-      runGhAsync(["pr", "view", target, "--json", "statusCheckRollup"]),
-    ]);
+  const [viewRaw, filesRaw, diffText, commitsRaw, checksRaw] = await Promise.all([
+    runGhAsync(["pr", "view", target, "--json", viewJsonFields]),
+    runGhAsync(["pr", "view", target, "--json", "files"]),
+    runGhAsync(["pr", "diff", target]),
+    runGhAsync(["pr", "view", target, "--json", "commits"]),
+    runGhAsync(["pr", "view", target, "--json", "statusCheckRollup"]),
+  ]);
 
-    const viewObj = JSON.parse(viewRaw) as {
-      number: number;
-      url: string;
-      title?: string;
-      body?: string | null;
-    };
-    const titleStr = typeof viewObj.title === "string" ? viewObj.title : "";
-    const bodyStr =
-      typeof viewObj.body === "string"
-        ? viewObj.body
-        : viewObj.body == null
-          ? ""
-          : String(viewObj.body);
+  const viewObj = JSON.parse(viewRaw) as {
+    number: number;
+    url: string;
+    title?: string;
+    body?: string | null;
+  };
+  const titleStr = typeof viewObj.title === "string" ? viewObj.title : "";
+  const bodyStr =
+    typeof viewObj.body === "string"
+      ? viewObj.body
+      : viewObj.body == null
+        ? ""
+        : String(viewObj.body);
 
-    fs.writeFileSync(
-      path.join(dir, snapshotName),
-      buildPreviewMarkdown(titleStr, bodyStr),
-      "utf8",
-    );
+  const out: Record<string, string> = {};
+  out[snapshotName] = buildPreviewMarkdown(titleStr, bodyStr);
 
-    const coords = prCoordsFromViewPayload(viewObj);
-    await writePrCommentsMdAsync(dir, coords);
+  const coords = prCoordsFromViewPayload(viewObj);
+  out["comments.md"] = await fetchPrCommentsMdContentAsync(coords);
 
-    fs.writeFileSync(path.join(dir, "diff.patch"), diffText, "utf8");
-    writeCommitsTxtFromRaw(dir, commitsRaw);
-    writeFilesChangedTxt(dir, filesRaw);
-    writeChecksSummaryTxt(dir, checksRaw);
+  out["diff.patch"] = diffText;
+  out["commits.txt"] = commitsTxtFromRaw(commitsRaw);
+  out["files.txt"] = filesChangedTextFromJson(filesRaw);
+  out["checks.txt"] = checksSummaryTextFromJson(checksRaw);
 
-    writeJiraSkillContext(dir, titleStr, bodyStr);
-    writeJiraSkillBoardSnapshot(dir);
-  } catch (e) {
-    try {
-      clearPrAgentWorkspaceDir(dir);
-    } catch {
-      // ignore
-    }
-    throw e;
+  const board = readJiraSkillBoardText();
+  if (board !== null) {
+    out["jira-tickets-board.md"] = board;
   }
+  Object.assign(out, collectJiraKeyMarkdownFiles(titleStr, bodyStr));
+
+  return out;
 }
