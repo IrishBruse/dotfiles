@@ -15,7 +15,7 @@ acli jira --help
 
 ## File sync
 
-If you are interacting with a tickets description make sure to persist it in `~/dotfiles/.agents/skills/jira-tickets/`
+If you are interacting with a tickets description make sure to persist it in `~/.agents/skills/jira-tickets/`
 
 ## Command Structure
 
@@ -28,8 +28,7 @@ Available command groups:
 - `acli jira workitem` - Work item operations (create, edit, search, assign, transition, comment, clone, link, archive, attachment, watcher)
 - `acli jira project` - Project management
 - `acli jira board` - Board management
-- `acli jira sprint` - Sprint managementThis webview is used internally by the Markdown Inline Editor extension to render Mermaid diagrams inline in your markdown files.
-
+- `acli jira sprint` - Sprint management
 - `acli jira filter` - Saved filter management
 - `acli jira dashboard` - Dashboard management
 - `acli jira field` - Custom field management
