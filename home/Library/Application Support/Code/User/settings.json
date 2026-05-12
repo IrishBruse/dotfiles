@@ -1630,5 +1630,7 @@
   "editor.scrollbar.horizontalScrollbarSize": 8,
   "markdownInlineEditor.links.singleClickOpen": true,
   "terminal.integrated.enableImages": true,
-  "prettier.trailingComma": "none"
+  "prettier.trailingComma": "none",
+  "mermaid.vscode.maxZoom": 20,
+  "mermaid.vscode.aiExportName": false
 }

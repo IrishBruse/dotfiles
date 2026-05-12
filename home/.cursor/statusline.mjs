@@ -90,7 +90,7 @@ function layoutPwdLeft(
   modelLabel,
   usageDisplay,
   limitDisplay,
-  cwdPlain,
+  cwdPlain
 ) {
   const gapCwdModel = 2;
   let m = modelLabel;
@@ -182,7 +182,7 @@ const line = layoutPwdLeft(
   modelLabel,
   usageDisplay,
   limitDisplay,
-  cwdDisplay,
+  cwdDisplay
 );
 
 process.stdout.write(`${line}\n`);
