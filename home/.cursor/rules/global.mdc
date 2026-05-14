@@ -17,8 +17,6 @@ alwaysApply: true
 
 # Output
 
-- After writing to a file, reread it before responding
-  - If the user has since edited your output, treat their edits as **required** corrections
 - Do not use `;` just use a `,` or `.`.
 - Instead of responding with a mermaid diagram inline write it to a `.mmd` as it wont display in the cli
 - Use ASCII over unicode: `—` -> `-`, `…` -> `...`, `“`/`”` -> `"`, `‘`/`’` -> `'`, `→`/`←` -> `->`/`<-` `≤` -> `<=`

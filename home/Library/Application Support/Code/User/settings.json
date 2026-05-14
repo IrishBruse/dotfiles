@@ -1355,12 +1355,6 @@
   //
   "chat.editing.confirmEditRequestRemoval": false,
   "chat.editing.confirmEditRequestRetry": false,
-  "chat.tools.terminal.autoApprove": {
-    "dotnet build": true,
-    "dotnet run": true,
-    "dotnet test": true,
-    "bc": true
-  },
   //
   // Languages
   //
@@ -1370,8 +1364,10 @@
   "[ini]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml"
   },
-  "[markdown,skill]": {
-    "editor.wordWrap": "on",
+  "editor.wordWrap": "bounded",
+  "editor.wordWrapColumn": 1000,
+  "[markdown][skill]": {
+    "editor.wordWrap": "off",
     "files.trimFinalNewlines": false,
     "files.trimTrailingWhitespace": false,
     "editor.indentSize": 4
