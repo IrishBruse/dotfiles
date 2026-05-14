@@ -1,6 +1,4 @@
 import { spawn } from "node:child_process";
-import fs from "node:fs";
-import path from "node:path";
 
 import type { PrRepoCoords } from "./githubPrPrefetchExtra.ts";
 
@@ -123,21 +121,16 @@ function buildCommentsMd(
 
 /**
  * **`comments.md`**: inline review comments (with **`diff_hunk`** in a fenced block) + issue-style PR conversation comments.
- * Uses **`gh api`** REST only (no GraphQL). Fetches both endpoints in parallel. Never throws; on failure writes a short error note into the file.
+ * Uses **`gh api`** REST only (no GraphQL). Fetches both endpoints in parallel.
  */
-export async function writePrCommentsMdAsync(
-  dir: string,
+export async function fetchPrCommentsMdContentAsync(
   coords: PrRepoCoords,
-): Promise<void> {
+): Promise<string> {
   const pullCommentsPath = `repos/${coords.owner}/${coords.repo}/pulls/${coords.number}/comments`;
   const issueCommentsPath = `repos/${coords.owner}/${coords.repo}/issues/${coords.number}/comments`;
   const [pullResult, issueResult] = await Promise.all([
     ghApiPaginatedAsync(pullCommentsPath),
     ghApiPaginatedAsync(issueCommentsPath),
   ]);
-  fs.writeFileSync(
-    path.join(dir, "comments.md"),
-    buildCommentsMd(pullResult, issueResult),
-    "utf8",
-  );
+  return buildCommentsMd(pullResult, issueResult);
 }

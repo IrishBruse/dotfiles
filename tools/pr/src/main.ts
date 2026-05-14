@@ -34,6 +34,7 @@ export function main(argv: string[]): void {
 
   const inferOnlyFlags = new Set([
     "--print-prompt",
+    "--debug",
     "--no-agent",
     "--dir",
     "--opus",

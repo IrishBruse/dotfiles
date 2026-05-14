@@ -94,21 +94,56 @@ function resolveTicketRefPath(skillRoot: string, key: string): string | null {
   return null;
 }
 
-/** Copies each `references/{me,team,unassigned}/{KEY}.md` to `{KEY}.md` in `dir` when that file exists. Returns how many were copied. */
-function copyJiraRefFilesForKeys(
-  skillRoot: string,
-  dir: string,
-  keys: string[],
-): number {
+/**
+ * Markdown files keyed by basename (`{KEY}.md`) for Jira keys from title and body.
+ * Same resolution rules as the former disk copy: reference files when present, else
+ * one fallback from `SKILL.md` for the first key only.
+ */
+export function collectJiraKeyMarkdownFiles(
+  prTitle: string,
+  prBody: string,
+): Record<string, string> {
+  const keys = jiraRefKeysForTitleAndBody(prTitle, prBody);
+  if (keys.length === 0) {
+    return {};
+  }
+
+  const skillRoot = resolveSkillRoot();
+  if (skillRoot === null) {
+    return {};
+  }
+
+  const out: Record<string, string> = {};
   let copied = 0;
   for (const key of keys) {
     const src = resolveTicketRefPath(skillRoot, key);
     if (src !== null) {
-      fs.copyFileSync(src, path.join(dir, `${key}.md`));
+      out[`${key}.md`] = fs.readFileSync(src, "utf8");
       copied += 1;
     }
   }
-  return copied;
+
+  if (copied === 0) {
+    const skillPath = path.join(skillRoot, "SKILL.md");
+    const body =
+      stripYamlFrontmatter(fs.readFileSync(skillPath, "utf8")).trim() + "\n";
+    out[`${keys[0]}.md`] = body;
+  }
+  return out;
+}
+
+/** Snapshot body of the jira-tickets `SKILL.md` (frontmatter stripped), or `null` if missing. */
+export function readJiraSkillBoardText(): string | null {
+  const skillRoot = resolveSkillRoot();
+  if (skillRoot === null) {
+    return null;
+  }
+  const skillPath = path.join(skillRoot, "SKILL.md");
+  if (!fs.existsSync(skillPath)) {
+    return null;
+  }
+  const body = stripYamlFrontmatter(fs.readFileSync(skillPath, "utf8")).trim();
+  return body + "\n";
 }
 
 /**
@@ -124,35 +159,18 @@ export function writeJiraSkillContext(
   prTitle: string,
   prBody: string,
 ): void {
-  const keys = jiraRefKeysForTitleAndBody(prTitle, prBody);
-  if (keys.length === 0) {
-    return;
-  }
-
-  const skillRoot = resolveSkillRoot();
-  if (skillRoot === null) {
-    return;
-  }
-
-  const copied = copyJiraRefFilesForKeys(skillRoot, dir, keys);
-
-  if (copied === 0) {
-    const skillPath = path.join(skillRoot, "SKILL.md");
-    const body = stripYamlFrontmatter(fs.readFileSync(skillPath, "utf8")).trim();
-    fs.writeFileSync(path.join(dir, `${keys[0]}.md`), body + "\n", "utf8");
+  for (const [name, content] of Object.entries(
+    collectJiraKeyMarkdownFiles(prTitle, prBody),
+  )) {
+    fs.writeFileSync(path.join(dir, name), content, "utf8");
   }
 }
 
 /** Snapshot of the jira-tickets skill board (`SKILL.md` body, frontmatter stripped) as **`jira-tickets-board.md`**. No-op if skill missing. */
 export function writeJiraSkillBoardSnapshot(dir: string): void {
-  const skillRoot = resolveSkillRoot();
-  if (skillRoot === null) {
+  const text = readJiraSkillBoardText();
+  if (text === null) {
     return;
   }
-  const skillPath = path.join(skillRoot, "SKILL.md");
-  if (!fs.existsSync(skillPath)) {
-    return;
-  }
-  const body = stripYamlFrontmatter(fs.readFileSync(skillPath, "utf8")).trim();
-  fs.writeFileSync(path.join(dir, "jira-tickets-board.md"), body + "\n", "utf8");
+  fs.writeFileSync(path.join(dir, "jira-tickets-board.md"), text, "utf8");
 }

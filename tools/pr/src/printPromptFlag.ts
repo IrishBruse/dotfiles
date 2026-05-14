@@ -1,10 +1,13 @@
 /** If present in argv, only print the resolved agent prompt to stdout and exit. */
 export const PRINT_PROMPT_FLAG = "--print-prompt";
 
-/** Prefetch workspace and edit flow as usual, but do not run the Cursor agent. */
+/** Write the resolved agent prompt to **PR_PROMPT.md** in the repo root (or cwd) and exit (no agent). */
+export const DEBUG_PROMPT_FLAG = "--debug";
+
+/** Prefetch as usual, but do not run the Cursor agent. */
 export const NO_AGENT_FLAG = "--no-agent";
 
-/** Print the agent workspace path on stderr; otherwise the path is not logged. */
+/** Print the agent output directory on stderr when an agent run uses one; otherwise the path is not logged. */
 export const PRINT_WORKSPACE_DIR_FLAG = "--dir";
 
 /** Skip the PR.md editor preview (`pr create` only). */
@@ -23,6 +26,14 @@ export function takePrintPromptFlag(args: string[]): {
 } {
   const { rest, on } = takeFlag(args, PRINT_PROMPT_FLAG);
   return { rest, printPrompt: on };
+}
+
+export function takeDebugPromptFlag(args: string[]): {
+  rest: string[];
+  debugPrompt: boolean;
+} {
+  const { rest, on } = takeFlag(args, DEBUG_PROMPT_FLAG);
+  return { rest, debugPrompt: on };
 }
 
 export function takeNoAgentFlag(args: string[]): {

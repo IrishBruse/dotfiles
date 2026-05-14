@@ -1,6 +1,3 @@
-import fs from "node:fs";
-import path from "node:path";
-
 function safeParseJson(s: string): unknown {
   try {
     return JSON.parse(s) as unknown;
@@ -9,20 +6,15 @@ function safeParseJson(s: string): unknown {
   }
 }
 
-/** One path per line with ± counts when available (from `gh pr view --json files`). */
-export function writeFilesChangedTxt(dir: string, filesJsonRaw: string): void {
+/** One path per line with +/- counts when available (from `gh pr view --json files`). */
+export function filesChangedTextFromJson(filesJsonRaw: string): string {
   const j = safeParseJson(filesJsonRaw) as
     | { files?: Array<Record<string, unknown>> }
     | null
     | undefined;
   const files = j?.files;
   if (!Array.isArray(files) || files.length === 0) {
-    fs.writeFileSync(
-      path.join(dir, "files.txt"),
-      "(no files in gh response, or could not parse `gh pr view --json files`)\n",
-      "utf8",
-    );
-    return;
+    return "(no files in gh response, or could not parse `gh pr view --json files`)\n";
   }
   const lines: string[] = [];
   for (const f of files) {
@@ -36,11 +28,7 @@ export function writeFilesChangedTxt(dir: string, filesJsonRaw: string): void {
     const tail = ch !== "" ? `  [${ch}]` : "";
     lines.push(`${p}  +${add} -${del}${tail}`);
   }
-  fs.writeFileSync(
-    path.join(dir, "files.txt"),
-    lines.join("\n") + "\n",
-    "utf8",
-  );
+  return lines.join("\n") + "\n";
 }
 
 function collectCheckLines(rollup: unknown, out: string[], depth: number): void {
@@ -75,15 +63,10 @@ function collectCheckLines(rollup: unknown, out: string[], depth: number): void 
 }
 
 /** Short CI digest from `statusCheckRollup` JSON. */
-export function writeChecksSummaryTxt(dir: string, checksJsonRaw: string): void {
+export function checksSummaryTextFromJson(checksJsonRaw: string): string {
   const j = safeParseJson(checksJsonRaw);
   if (j === null) {
-    fs.writeFileSync(
-      path.join(dir, "checks.txt"),
-      "(could not parse `gh pr view --json statusCheckRollup`)\n",
-      "utf8",
-    );
-    return;
+    return "(could not parse `gh pr view --json statusCheckRollup`)\n";
   }
   if (typeof j === "object" && "statusCheckRollup" in j) {
     const out: string[] = [];
@@ -96,12 +79,7 @@ export function writeChecksSummaryTxt(dir: string, checksJsonRaw: string): void 
       out.length > 0
         ? [...new Set(out)].sort().join("\n")
         : "(no name/state lines parsed in statusCheckRollup)";
-    fs.writeFileSync(path.join(dir, "checks.txt"), body + "\n", "utf8");
-    return;
+    return body + "\n";
   }
-  fs.writeFileSync(
-    path.join(dir, "checks.txt"),
-    "(unexpected `gh pr view` JSON shape for statusCheckRollup)\n",
-    "utf8",
-  );
+  return "(unexpected `gh pr view` JSON shape for statusCheckRollup)\n";
 }
