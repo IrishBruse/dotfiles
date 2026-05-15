@@ -7,8 +7,6 @@ _G.HYPR_VARS = {
 	terminal = "ghostty",
 	fileManager = "nemo",
 	mod = "SUPER",
-	-- $menu was never set in the .conf chain, last SUPER+R bind used $menu
-	menu = "rofi -show drun -show-icons",
 	hyprDir = "~/dotfiles/home/.config/hypr",
 }
 

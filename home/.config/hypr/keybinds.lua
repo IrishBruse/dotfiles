@@ -20,8 +20,10 @@ hl.bind(
 	hl.dsp.exec_cmd("bash " .. v.hyprDir .. "/scripts/area-screenshot.sh")
 )
 
--- SUPER+R: keybinds.conf binds R twice, $menu wins (restart line is shadowed).
-hl.bind(mod .. " + R", hl.dsp.exec_cmd(v.menu))
+hl.bind(
+	mod .. " + R",
+	hl.dsp.exec_cmd(v.hyprDir .. "/scripts/restart-hyprland.fish")
+)
 hl.bind(mod .. " + W", hl.dsp.window.close())
 hl.bind(mod .. " + L", hl.dsp.exec_cmd("bash " .. v.hyprDir .. "/scripts/toggle-audio.sh"))
 
