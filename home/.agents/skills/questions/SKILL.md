@@ -28,9 +28,11 @@ keypress rather than having to think from scratch.
 Use this exact layout nothing after it when asking a question:
 
 **Context:**
+
 [One or two sentences max. Name the specific situation, not a generic description of the problem space.]
 
 **Question:**
+
 [1 line question. Avoid jargon. End with a `?`]
 
 1. [Answer 1]
