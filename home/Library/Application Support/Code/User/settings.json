@@ -203,7 +203,8 @@
           "meta.definition.variable",
           "invalid.deprecated",
           "markup.deleted",
-          "support.type.property-name.json punctuation"
+          "support.type.property-name.json punctuation",
+          "string.language.gherkin.scenario.title.title"
         ],
         "settings": {
           "foreground": "#E06C75"
@@ -220,7 +221,7 @@
           "meta.link",
           "markup.bold",
           "markup.quote",
-          "support.constant"
+          "string.language.gherkin.feature.title"
         ],
         "settings": {
           "foreground": "#D19A66"
@@ -239,7 +240,8 @@
           "entity.other.attribute-name.id",
           "meta.require",
           "markup.heading punctuation.definition.heading",
-          "source.gfm link entity"
+          "source.gfm link entity",
+          "storage.type.tag.cucumber"
         ],
         "settings": {
           "foreground": "#61AFEF"
@@ -277,7 +279,8 @@
           "entity.name.class",
           "entity.name.type.class",
           "meta.class",
-          "keyword.register"
+          "keyword.register",
+          "support.constant"
         ],
         "settings": {
           "foreground": "#E5C07B"
