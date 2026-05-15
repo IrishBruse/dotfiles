@@ -30,4 +30,4 @@ Extra npm dependencies used by repo automation (see `Justfile` `install-all`).
 
 ### Repo root
 
-`Justfile` for common tasks, root `package.json` for shared TypeScript validation, fish helpers (`init.fish`, `stow.fish`, `open-*.fish`), `Brewfile`, and editor metadata under `.vscode` / `.cursor`.
+`Justfile` for common tasks, root `package.json` for shared TypeScript validation, fish helpers (`init.fish`, `stow.fish`), `open-linux.ts` / `open-mac.ts` (VS Code folder-open tasks), `Brewfile`, and editor metadata under `.vscode` / `.cursor`.

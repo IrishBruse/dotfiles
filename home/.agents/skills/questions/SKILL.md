@@ -23,7 +23,8 @@ keypress rather than having to think from scratch.
 ## Response format
 
 Use this exact layout nothing after it when asking a question:
-[Indicates guidance on section].
+
+```template
 
 ---
 
@@ -41,3 +42,5 @@ Use this exact layout nothing after it when asking a question:
 [brief reason what makes it the safest default]
 
 ---
+
+```
