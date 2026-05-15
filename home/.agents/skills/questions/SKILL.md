@@ -9,6 +9,9 @@ description: >
 
 ## Rules
 
+Interview me relentlessly about every aspect of this plan until we reach a shared understanding.
+Walk down each branch of the design tree, resolving dependencies between decisions one-by-one.
+
 **Explore before asking.** If a question can be answered by reading the
 codebase, docs, or context, do that first and skip the question entirely.
 
@@ -24,10 +27,6 @@ keypress rather than having to think from scratch.
 
 Use this exact layout nothing after it when asking a question:
 
-```template
-
----
-
 **Context:**
 [One or two sentences max. Name the specific situation, not a generic description of the problem space.]
 
@@ -40,7 +39,3 @@ Use this exact layout nothing after it when asking a question:
 
 **Recommendation:** (Answer 1/2/3)
 [brief reason what makes it the safest default]
-
----
-
-```
