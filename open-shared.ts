@@ -1,4 +1,3 @@
-import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
@@ -8,26 +7,62 @@ export function repoDir(importMetaUrl: string): string {
   return dirname(fileURLToPath(importMetaUrl));
 }
 
+type CursorCliPermissionBlock = {
+  allow?: string[];
+  deny?: string[];
+};
+
+function dedupePreserveOrder(items: string[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const x of items) {
+    if (seen.has(x)) {
+      continue;
+    }
+    seen.add(x);
+    out.push(x);
+  }
+  return out;
+}
+
+function mergePermissionBlocks(
+  repo: CursorCliPermissionBlock,
+  cli: CursorCliPermissionBlock,
+): CursorCliPermissionBlock {
+  const ra = repo.allow ?? [];
+  const ca = cli.allow ?? [];
+  const rd = repo.deny ?? [];
+  const cd = cli.deny ?? [];
+  return {
+    allow: dedupePreserveOrder([...ra, ...ca]),
+    deny: dedupePreserveOrder([...rd, ...cd]),
+  };
+}
+
 export function mergeCursorCliPermissions(repo: string): void {
   const cursorDir = join(repo, "home/.cursor");
   mkdirSync(cursorDir, { recursive: true });
   const permFile = join(cursorDir, "permissions.json");
-  const jqMerge = join(repo, "lib/merge-cursor-permissions.jq");
   const cliConfig = join(homedir(), ".cursor/cli-config.json");
   if (!existsSync(cliConfig)) {
     return;
   }
-  let repoPerm = "{}";
+  let repoBlock: CursorCliPermissionBlock = {};
   if (existsSync(permFile)) {
-    repoPerm = readFileSync(permFile, "utf8").trim() || "{}";
+    const raw = readFileSync(permFile, "utf8").trim();
+    if (raw) {
+      repoBlock = JSON.parse(raw) as CursorCliPermissionBlock;
+    }
   }
-  const cliPerm = execFileSync("jq", ["-c", ".permissions // {}", cliConfig], {
-    encoding: "utf8",
-  }).trimEnd();
-  const merged = execFileSync(
-    "jq",
-    ["-n", "--argjson", "repo", repoPerm, "--argjson", "cli", cliPerm, "-f", jqMerge],
-    { encoding: "utf8" },
-  );
-  writeFileSync(permFile, merged.endsWith("\n") ? merged : `${merged}\n`, "utf8");
+  const cliRoot = JSON.parse(readFileSync(cliConfig, "utf8")) as {
+    permissions?: CursorCliPermissionBlock;
+  };
+  const cliBlock = cliRoot.permissions ?? {};
+  const merged = mergePermissionBlocks(repoBlock, cliBlock);
+  const sorted = {
+    allow: [...(merged.allow ?? [])].sort((a, b) => a.localeCompare(b)),
+    deny: [...(merged.deny ?? [])].sort((a, b) => a.localeCompare(b)),
+  };
+  const text = `${JSON.stringify(sorted, null, 2)}\n`;
+  writeFileSync(permFile, text, "utf8");
 }
