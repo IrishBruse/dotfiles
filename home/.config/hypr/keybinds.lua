@@ -46,6 +46,8 @@ hl.bind(mod .. " + right", hl.dsp.focus({ direction = "right" }))
 hl.bind(mod .. " + up", hl.dsp.focus({ direction = "up" }))
 hl.bind(mod .. " + down", hl.dsp.focus({ direction = "down" }))
 
+hl.bind(mod .. " + U", hl.dsp.pass({ window = "class:open-whispr" }))
+
 hl.bind(mod .. " + SHIFT + left", hl.dsp.window.move({ direction = "left", group_aware = true }))
 hl.bind(mod .. " + SHIFT + right", hl.dsp.window.move({ direction = "right", group_aware = true }))
 hl.bind(mod .. " + SHIFT + up", hl.dsp.window.move({ direction = "up", group_aware = true }))
