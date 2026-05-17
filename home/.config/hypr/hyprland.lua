@@ -291,6 +291,14 @@ hl.window_rule({
 })
 
 hl.window_rule({
+	name = "open_whispr_voice_recorder",
+	match = { class = "open-whispr", initial_title = "^Voice Recorder$" },
+	float = true,
+	center = true,
+	no_shadow = true,
+})
+
+hl.window_rule({
 	name = "power",
 	match = { initial_title = "Power Menu" },
 	float = true,

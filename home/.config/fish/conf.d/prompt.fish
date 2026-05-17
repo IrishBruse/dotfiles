@@ -7,7 +7,16 @@ function fish_prompt
         set -l ms $CMD_DURATION
         if test "$ms" -gt 0
             set -l dur_str
-            if test $ms -lt 1000
+            if test $ms -gt 120000
+                set -l total_sec (math -s0 "$ms / 1000")
+                set -l mins (math -s0 "$total_sec / 60")
+                set -l secs (math -s0 "$total_sec % 60")
+                if test $secs -eq 0
+                    set dur_str "$mins"m
+                else
+                    set dur_str "$mins"m" $secs"s
+                end
+            else if test $ms -lt 1000
                 set dur_str "$ms"ms
             else if test $ms -lt 10000
                 set dur_str (math -s1 "$ms / 1000")s
