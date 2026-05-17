@@ -6,7 +6,6 @@ const ANSI_RESET = `${ESC}[0m`;
 const ANSI_FG_GRAY = `${ESC}[90m`;
 const ANSI_FG_BRIGHT_RED = `${ESC}[91m`;
 const ANSI_FG_BRIGHT_YELLOW = `${ESC}[93m`;
-const ANSI_FG_WHITE = `${ESC}[37m`;
 const ANSI_SGR_SEQ_RE = new RegExp(`${ESC}\\[[\\d;]*m`, "g");
 
 /** @param {string} s */
@@ -28,7 +27,7 @@ function usageColorAnsi(usedTokens) {
   const n = usedTokens ?? 0;
   if (n > 100_000) return ANSI_FG_BRIGHT_RED;
   if (n > 80_000) return ANSI_FG_BRIGHT_YELLOW;
-  return ANSI_FG_WHITE;
+  return ANSI_FG_GRAY;
 }
 
 /** @param {{ id?: string, display_name?: string }} model */

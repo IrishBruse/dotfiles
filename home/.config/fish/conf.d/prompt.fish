@@ -5,15 +5,17 @@ function fish_prompt
         printf (set_color cyan)(prompt_pwd --full-length-dirs=20)
 
         set -l ms $CMD_DURATION
-        set -l dur_str
-        if test $ms -lt 1000
-            set dur_str "$ms"ms
-        else if test $ms -lt 10000
-            set dur_str (math -s1 "$ms / 1000")s
-        else
-            set dur_str (math -s0 "$ms / 1000")s
+        if test "$ms" -gt 0
+            set -l dur_str
+            if test $ms -lt 1000
+                set dur_str "$ms"ms
+            else if test $ms -lt 10000
+                set dur_str (math -s1 "$ms / 1000")s
+            else
+                set dur_str (math -s0 "$ms / 1000")s
+            end
+            printf (set_color brblack)" %s"(set_color normal) $dur_str
         end
-        printf (set_color brblack)" %s"(set_color normal) $dur_str
 
         if test $exit_code -ne 0
             printf (set_color red)" $exit_code "(set_color normal)
