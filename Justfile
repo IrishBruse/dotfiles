@@ -14,6 +14,7 @@ install:
 install-all: install
     npm --prefix tools/pr install
     npm --prefix tools/atlassian install
+    npm --prefix tools/agent-tool install
     npm --prefix scripts install
     npm --prefix vscode install
 
@@ -21,3 +22,4 @@ install-all: install
 link:
     cd "{{ justfile_directory() }}/tools/pr" && npm link
     cd "{{ justfile_directory() }}/tools/atlassian" && npm link
+    cd "{{ justfile_directory() }}/tools/agent-tool" && npm link

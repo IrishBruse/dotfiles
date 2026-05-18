@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 # Walkthrough
 
-Presents a document or skill one section at a time for iterative feedback. Only advances when the user approves. Collects and applies feedback inline.
+Presents the target one section at a time for iterative feedback. Only advances when the user approves. Collects and applies feedback inline.
 
 ## Process
 
@@ -17,7 +17,6 @@ Presents a document or skill one section at a time for iterative feedback. Only 
 3. **Present one section at a time** - For each section:
    - Summarise what it does in plain language (no raw markdown dump)
    - List the key actions or decisions in that section
-   - End with `Feedback?` or an equivalent short prompt
 4. **Wait for approval** - Do not move on until the user says it is good or gives feedback.
 5. **Apply feedback immediately** - If the user requests changes, make the edits and confirm before continuing.
 6. **Repeat** until all sections are covered.
