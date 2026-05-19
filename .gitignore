@@ -12,3 +12,4 @@ home/.cursor/cli-config.json
 home/.cursor/mcp.json
 home/dot-zshrc
 home/.agents/agent-failures.jsonl
+home/.cursor/rules/gp-rules.mdc
