@@ -219,6 +219,23 @@ function __fish_agent_line_has_continue
     contains -- --continue (commandline -opc)
 end
 
+function __fish_agent_typing_interpolate_template
+    set -l cl (commandline -opc)
+    test (count $cl) -ge 1; or return 1
+    contains -- $cl[1] a; or return 1
+    set -l ct (commandline -ct)
+    string match -qr '^!.*' -- $ct
+end
+
+function __fish_agent_interpolate_completions
+    set -l ct (commandline -ct)
+    set -l partial (string replace -r '^!' '' -- $ct)
+    for n in (__fish_interpolate_prompt_names)
+        string match -q "$partial*" $n; or continue
+        printf '!%s\tinterpolate template\n' $n
+    end
+end
+
 # --- Top-level flags (see `agent --help`) ---
 complete -c agent -s v -l version -d 'Print version'
 complete -c agent -l api-key -r -d 'API key (or CURSOR_API_KEY)'
@@ -268,5 +285,6 @@ complete -c agent -n '__fish_agent_last_token_is help' -f -a "$__fish_agent_subc
 # --- Shortcuts from ~/.config/fish/config.fish ---
 complete -c ac -w agent
 complete -c a -w 'agent agent'
+complete -c a -f -n __fish_agent_typing_interpolate_template -a '(__fish_agent_interpolate_completions)'
 complete -c ap -w 'agent --mode=plan agent'
 complete -c aa -w 'agent --mode=ask agent'

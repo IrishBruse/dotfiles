@@ -1,0 +1,20 @@
+{
+  "name": "interpolate-cli",
+  "version": "0.1.0",
+  "description": "Expand markdown prompt templates with interpolation",
+  "license": "ISC",
+  "type": "module",
+  "bin": {
+    "interpolate": "./bin/interpolate.js"
+  },
+  "scripts": {
+    "validate": "node validate.ts"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.8.3"
+  }
+}

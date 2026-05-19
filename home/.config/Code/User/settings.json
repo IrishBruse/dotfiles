@@ -1625,5 +1625,6 @@
   "terminal.integrated.enableImages": true,
   "prettier.trailingComma": "none",
   "mermaid.vscode.maxZoom": 20,
-  "mermaid.vscode.aiExportName": false
+  "mermaid.vscode.aiExportName": false,
+  "markdownInlineEditor.emojis.enabled": false
 }
