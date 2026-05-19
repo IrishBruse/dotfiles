@@ -2,11 +2,15 @@ import fs from "node:fs";
 import process from "node:process";
 
 import { readAgentPrMarkdown } from "../../agentOutputFiles.ts";
-import { fetchCreatePrefetchFiles } from "../../prepareCreateWorkspace.ts";
+import {
+  readRepoPrTemplate,
+} from "../../jiraPromptSection.ts";
+import { loadPrAgentPrompt } from "../../loadPrPrompt.ts";
 import {
   getGitRepoRoot,
   logAgentOutputDirPreamble,
   prepareAgentOutputDir,
+  readCurrentBranch,
   resolvePrCliGitCwd,
   resolvePrPromptDebugPath,
 } from "../../prAgentWorkspace.ts";
@@ -23,7 +27,6 @@ import {
   takePrintWorkspaceDirFlag,
 } from "../../printPromptFlag.ts";
 import { assertPrTitleMatchesJiraPolicy } from "../../jiraTitlePolicy.ts";
-import { loadCreateAgentPrompt } from "../agentPrompts.ts";
 
 const PROMPT_ONLY_AGENT_DIR =
   "(not used: --print-prompt or --debug - no agent run)";
@@ -57,17 +60,17 @@ async function runCreateAsync(args: string[]): Promise<void> {
   const repoRoot = getGitRepoRoot(resolvePrCliGitCwd());
 
   let branch: string;
-  let bundledFiles: Record<string, string>;
   try {
-    ({ branch, files: bundledFiles } = fetchCreatePrefetchFiles(repoRoot));
+    branch = readCurrentBranch(repoRoot);
   } catch (e) {
     failPrCli(
       e instanceof Error
         ? e.message
-        : `pr create: failed to prepare context: ${String(e)}`,
+        : `pr create: failed to read branch: ${String(e)}`,
     );
     return;
   }
+  const templateText = readRepoPrTemplate(repoRoot);
 
   const promptOnly = printPrompt || debugPrompt;
   const agentOutputDir = promptOnly
@@ -77,12 +80,23 @@ async function runCreateAsync(args: string[]): Promise<void> {
     logAgentOutputDirPreamble(agentOutputDir, printWorkspaceDir);
   }
 
-  const prompt = loadCreateAgentPrompt({
-    branch,
-    repoRoot,
-    agentOutputDir,
-    bundledFiles,
-  });
+  let prompt: string;
+  try {
+    prompt = loadPrAgentPrompt({
+      name: "pr-create",
+      repoRoot,
+      vars: { branch, agentOutputDir },
+      jiraTitle: branch,
+      jiraBody: templateText,
+    });
+  } catch (e) {
+    failPrCli(
+      e instanceof Error
+        ? e.message
+        : `pr create: failed to build prompt: ${String(e)}`,
+    );
+    return;
+  }
 
   if (printPrompt) {
     console.log(prompt);

@@ -1,59 +1,15 @@
-import fs from "node:fs";
-import path from "node:path";
 import process from "node:process";
-import { fileURLToPath } from "node:url";
 
 /**
  * When **`PR_CLI_WORK=true`**, **`pr create`** and **`pr update`** require the GitHub PR title
- * to start with **`NOVACORE-<digits>`**. Work-only prompt appendices live beside each command’s **`prompt.md`**:
- * **`commands/create/prompt.work.md`**, **`commands/update/prompt.work.md`**, **`commands/review/prompt.work.md`**.
- * Unset or any other value — no check and no work prompt appendix.
+ * to start with **`NOVACORE-<digits>`**. Work-only appendices live in the interpolate prompts dir:
+ * Work-only lines in `pr-create.md` / `pr-update.md` / `pr-review.md` use the `?work:` line prefix (via interpolate).
+ * Unset or any other value — no check and those lines are omitted.
  */
 export const PR_WORK_JIRA_KEY = "NOVACORE";
 
-const policyDir = path.dirname(fileURLToPath(import.meta.url));
-
 export function isPrCliWork(): boolean {
   return process.env.PR_CLI_WORK === "true";
-}
-
-type WorkPromptKind = "create" | "update" | "review";
-
-const cachedWorkPrompts = new Map<WorkPromptKind, string>();
-
-function normalizeWorkMarkdown(s: string): string {
-  return s.endsWith("\n") ? s : `${s}\n`;
-}
-
-function loadWorkPromptAppendix(kind: WorkPromptKind): string {
-  if (!isPrCliWork()) {
-    return "";
-  }
-  let cached = cachedWorkPrompts.get(kind);
-  if (cached === undefined) {
-    const p = path.join(policyDir, "commands", kind, "prompt.work.md");
-    if (!fs.existsSync(p)) {
-      throw new Error(`pr: PR_CLI_WORK=true but missing ${p}`);
-    }
-    cached = fs.readFileSync(p, "utf8");
-    cachedWorkPrompts.set(kind, cached);
-  }
-  return normalizeWorkMarkdown(cached);
-}
-
-/** Markdown appended to create agent prompt when {@link isPrCliWork}. */
-export function loadCreateWorkPromptAppendix(): string {
-  return loadWorkPromptAppendix("create");
-}
-
-/** Markdown appended to update agent prompt when {@link isPrCliWork}. */
-export function loadUpdateWorkPromptAppendix(): string {
-  return loadWorkPromptAppendix("update");
-}
-
-/** Markdown appended to review agent prompt when {@link isPrCliWork}. */
-export function loadReviewWorkPromptAppendix(): string {
-  return loadWorkPromptAppendix("review");
 }
 
 export function assertPrTitleMatchesJiraPolicy(title: string): void {

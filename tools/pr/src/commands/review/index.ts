@@ -1,10 +1,13 @@
 import fs from "node:fs";
 import process from "node:process";
 
-import { fetchReviewPrefetchFiles } from "../../prepareReviewWorkspace.ts";
+import { ghPrTitleBody } from "../../jiraPromptSection.ts";
+import { loadPrAgentPrompt } from "../../loadPrPrompt.ts";
 import {
+  getGitRepoRoot,
   logAgentOutputDirPreamble,
   prepareAgentOutputDir,
+  resolvePrCliGitCwd,
   resolvePrPromptDebugPath,
 } from "../../prAgentWorkspace.ts";
 import {
@@ -20,7 +23,6 @@ import {
   takePrintPromptFlag,
   takePrintWorkspaceDirFlag,
 } from "../../printPromptFlag.ts";
-import { loadReviewAgentPrompt } from "../agentPrompts.ts";
 
 const PROMPT_ONLY_AGENT_DIR =
   "(not used: --print-prompt or --debug - no agent run)";
@@ -56,14 +58,16 @@ async function runReviewAsync(args: string[]): Promise<void> {
     return;
   }
 
-  let bundledFiles: Record<string, string>;
+  const repoRoot = getGitRepoRoot(resolvePrCliGitCwd());
+  let jiraTitle: string;
+  let jiraBody: string;
   try {
-    bundledFiles = await fetchReviewPrefetchFiles(target);
+    ({ title: jiraTitle, body: jiraBody } = ghPrTitleBody(target, repoRoot));
   } catch (e) {
     failPrCli(
       e instanceof Error
         ? e.message
-        : `pr review: failed to prefetch PR with gh: ${String(e)}`,
+        : `pr review: failed to read PR with gh: ${String(e)}`,
     );
     return;
   }
@@ -76,12 +80,23 @@ async function runReviewAsync(args: string[]): Promise<void> {
     logAgentOutputDirPreamble(agentOutputDir, printWorkspaceDir);
   }
 
-  const prompt = loadReviewAgentPrompt({
-    target,
-    agentOutputDir,
-    reviewModelLabel,
-    bundledFiles,
-  });
+  let prompt: string;
+  try {
+    prompt = loadPrAgentPrompt({
+      name: "pr-review",
+      repoRoot,
+      vars: { target, agentOutputDir, reviewModelLabel },
+      jiraTitle,
+      jiraBody,
+    });
+  } catch (e) {
+    failPrCli(
+      e instanceof Error
+        ? e.message
+        : `pr review: failed to build prompt: ${String(e)}`,
+    );
+    return;
+  }
 
   if (printPrompt) {
     console.log(prompt);

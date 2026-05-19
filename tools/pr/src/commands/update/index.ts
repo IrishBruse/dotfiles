@@ -2,14 +2,14 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import process from "node:process";
 
+import { readAgentPrMarkdown } from "../../agentOutputFiles.ts";
+import { ghPrTitleBody } from "../../jiraPromptSection.ts";
+import { loadPrAgentPrompt } from "../../loadPrPrompt.ts";
 import {
-  CURRENT_PR_SNAPSHOT_FILE,
-  readAgentPrMarkdown,
-} from "../../agentOutputFiles.ts";
-import { fetchReviewPrefetchFiles } from "../../prepareReviewWorkspace.ts";
-import {
+  getGitRepoRoot,
   logAgentOutputDirPreamble,
   prepareAgentOutputDir,
+  resolvePrCliGitCwd,
   resolvePrPromptDebugPath,
 } from "../../prAgentWorkspace.ts";
 import { confirmAndApplyPrMetadata } from "../../prEditPostUtils.ts";
@@ -24,7 +24,6 @@ import {
   takePrintWorkspaceDirFlag,
 } from "../../printPromptFlag.ts";
 import { assertPrTitleMatchesJiraPolicy } from "../../jiraTitlePolicy.ts";
-import { loadUpdateAgentPrompt } from "../agentPrompts.ts";
 
 const PROMPT_ONLY_AGENT_DIR =
   "(not used: --print-prompt or --debug - no agent run)";
@@ -91,16 +90,16 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     return;
   }
 
-  let bundledFiles: Record<string, string>;
+  const repoRoot = getGitRepoRoot(resolvePrCliGitCwd());
+  let jiraTitle: string;
+  let jiraBody: string;
   try {
-    bundledFiles = await fetchReviewPrefetchFiles(target, {
-      snapshotPrToFile: CURRENT_PR_SNAPSHOT_FILE,
-    });
+    ({ title: jiraTitle, body: jiraBody } = ghPrTitleBody(target, repoRoot));
   } catch (e) {
     failPrCli(
       e instanceof Error
         ? e.message
-        : `pr update: failed to prefetch PR with gh: ${String(e)}`,
+        : `pr update: failed to read PR with gh: ${String(e)}`,
     );
     return;
   }
@@ -113,11 +112,23 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     logAgentOutputDirPreamble(agentOutputDir, printWorkspaceDir);
   }
 
-  const prompt = loadUpdateAgentPrompt({
-    target,
-    agentOutputDir,
-    bundledFiles,
-  });
+  let prompt: string;
+  try {
+    prompt = loadPrAgentPrompt({
+      name: "pr-update",
+      repoRoot,
+      vars: { target, agentOutputDir },
+      jiraTitle,
+      jiraBody,
+    });
+  } catch (e) {
+    failPrCli(
+      e instanceof Error
+        ? e.message
+        : `pr update: failed to build prompt: ${String(e)}`,
+    );
+    return;
+  }
 
   if (printPrompt) {
     console.log(prompt);

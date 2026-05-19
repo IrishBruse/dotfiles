@@ -1,4 +1,5 @@
 import { builtinVars, expandPatternBuiltins } from "./builtins/index.ts";
+import { expandLineConditions } from "./conditions.ts";
 import type { InterpolationError } from "./errors.ts";
 import { findUndefinedVariables } from "./validate.ts";
 
@@ -22,13 +23,16 @@ export function expandTemplate(
   template: string,
   cliVars: Record<string, string>,
 ): ExpandResult {
-  const errors = findUndefinedVariables(template, cliVars);
+  const merged = { ...builtinVars(), ...cliVars };
+  const conditioned = expandLineConditions(template, merged);
+  const errors = findUndefinedVariables(conditioned, cliVars);
   if (errors.length > 0) {
     return { ok: false as const, errors };
   }
 
-  const merged = { ...builtinVars(), ...cliVars };
-  const expanded = expandPatternBuiltins(expandPlaceholders(template, merged));
+  const expanded = expandPatternBuiltins(
+    expandPlaceholders(conditioned, merged),
+  );
   if (expanded.errors.length > 0) {
     return { ok: false as const, errors: expanded.errors };
   }

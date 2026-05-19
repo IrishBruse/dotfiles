@@ -4,6 +4,9 @@
   "description": "Expand markdown prompt templates with interpolation",
   "license": "ISC",
   "type": "module",
+  "exports": {
+    "./api": "./src/api.ts"
+  },
   "bin": {
     "interpolate": "./bin/interpolate.js"
   },
