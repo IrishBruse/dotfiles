@@ -1,6 +1,7 @@
 ---
 description: CSharp Code Rules
 globs: **/*.cs
+alwaysApply: true
 ---
 
 # Code Style

@@ -1,0 +1,21 @@
+---
+description: Jira Rules
+globs: **/*NOVACORE*.md
+alwaysApply: true
+---
+
+# Rules
+
+Always include a frontmatter when creating jira ticket files.
+
+```format
+---
+title: Ticket title
+assigned: None
+type: Task/Story/Epic
+url: https://globalization-partners.atlassian.net/browse/NOVACORE-40565
+status: todo/readyForDevelopment/inProgress/codeReview/
+---
+
+[Markdown Ticket body]
+```

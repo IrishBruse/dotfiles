@@ -15,10 +15,6 @@ alwaysApply: true
 - Dont run the dev server or any command that are would already be running as a watcher just assume it is, unless requested
 - Always verify your work with check/linting commands
 
-# Rules
-
-- For any agent failures run the `agent-failures` skill
-
 # Output
 
 - Do not use `;` just use a `,` or `.`.
