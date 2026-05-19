@@ -1146,6 +1146,9 @@
     "*.glsl": "${capture}.vert,${capture}.frag"
   },
   "files.enableTrash": true,
+  "extensions.supportAgentsWindow": {
+    "irishbruse.ib-utilities": true
+  },
   //
   // Settings
   //
@@ -1272,14 +1275,6 @@
   "terminal.integrated.defaultProfile.osx": "fish",
   "terminal.external.linuxExec": "ghostty",
   "terminal.external.osxExec": "Ghostty.app",
-  // "terminal.integrated.automationProfile.linux": {
-  //   "args": ["-li"],
-  //   "path": "fish",
-  // },
-  // "terminal.integrated.automationProfile.osx": {
-  //   "args": ["-li"],
-  //   "path": "/opt/homebrew/bin/fish",
-  // },
   "terminal.explorerKind": "both",
   "terminal.integrated.commandsToSkipShell": [
     "workbench.action.createTerminalEditor",
