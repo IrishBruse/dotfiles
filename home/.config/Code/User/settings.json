@@ -1181,7 +1181,6 @@
   "workbench.colorTheme": "Empty Dark Theme",
   "workbench.editor.empty.hint": "hidden",
   "workbench.editor.limit.enabled": true,
-  "workbench.editor.limit.value": 10,
   "workbench.iconTheme": "material-icon-theme",
   "workbench.productIconTheme": "material-product-icons",
   "workbench.sideBar.location": "right",
@@ -1209,10 +1208,6 @@
   "http.experimental.systemCertificatesV2": true,
   "breadcrumbs.enabled": false,
   "settingsSync.ignoredSettings": ["editor.mouseWheelScrollSensitivity"],
-  //
-  //
-  //
-  "editor.accessibilitySupport": "off",
   "editor.bracketPairColorization.enabled": false,
   "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
   "editor.cursorBlinking": "phase",
@@ -1602,7 +1597,6 @@
   "workbench.navigationControl.enabled": false,
   "window.menuBarVisibility": "toggle",
   "window.commandCenter": false,
-  "accessibility.signalOptions.volume": 0,
   "github.copilot.nextEditSuggestions.enabled": true,
   "emmet.useInlineCompletions": true,
   "zenMode.fullScreen": false,
@@ -1612,7 +1606,6 @@
   "workbench.editor.enablePreview": false,
   "task.allowAutomaticTasks": "on",
   "scm.alwaysShowRepositories": true,
-  "markdownInlineEditor.math.enabled": false,
   "diffEditor.ignoreTrimWhitespace": false,
   "terminal.integrated.enableKittyKeyboardProtocol": true,
   "workbench.editor.useModal": "off",
@@ -1626,5 +1619,10 @@
   "prettier.trailingComma": "none",
   "mermaid.vscode.maxZoom": 20,
   "mermaid.vscode.aiExportName": false,
-  "markdownInlineEditor.emojis.enabled": false
+  "markdownInlineEditor.emojis.enabled": false,
+  "editor.accessibilitySupport": "off",
+  "markdownInlineEditor.math.enabled": false,
+  "editor.allowVariableFontsInAccessibilityMode": true,
+  "markdownInlineEditor.tables.renderingMode": "custom",
+  "workbench.editor.wrapTabs": true
 }

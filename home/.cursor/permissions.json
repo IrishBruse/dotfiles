@@ -23,6 +23,7 @@
     "Shell(echo)",
     "Shell(find)",
     "Shell(gh auth status)",
+    "Shell(gh issue view)",
     "Shell(gh pr diff)",
     "Shell(gh pr list)",
     "Shell(gh pr view)",
