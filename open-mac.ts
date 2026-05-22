@@ -7,6 +7,6 @@ const repo = repoDir(import.meta.url);
 mkdirSync(join(repo, ".config/fish/conf.d"), { recursive: true });
 
 $(`brew bundle dump --no-vscode -f --file=./brewfile`);
-$(`brew shellenv >home/.config/fish/conf.d/brew.fish`);
+$(`brew shellenv fish >home/.config/fish/conf.d/brew.fish`);
 
 mergeCursorCliPermissions(repo);
