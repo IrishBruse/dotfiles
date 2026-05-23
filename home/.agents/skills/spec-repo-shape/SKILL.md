@@ -22,9 +22,8 @@ Invoke by name (all have `spec-` prefix, `disable-model-invocation: true`):
 | `spec-design-docs-sync` | Persist decisions across design docs |
 | `spec-gap-analysis` | Why a build target fails |
 | `spec-task-implement` | Implement Task-N specs in order |
-| `spec-docs-code-audit` | Align code with user docs |
 
-Non-framework helpers (no `spec-` prefix): `questions`, `walkthrough`, etc.
+Non-framework helpers (no `spec-` prefix): `code-from-docs`, `docs-from-code`, `questions`, `walkthrough`, etc.
 
 ## Layout
 
@@ -68,7 +67,8 @@ Optional: `specs/README` (task conventions), `docs/status.md`, `docs/limitations
 | `spec-design-docs-sync` | decisions log, glossary, main design, diagrams, agents |
 | `spec-task-implement`   | task index, task spec, agents (verify)                 |
 | `spec-gap-analysis`     | agents, user docs, optional status/limitations         |
-| `spec-docs-code-audit`  | user docs, agents                                      |
+| `code-from-docs`        | user docs, agents                                      |
+| `docs-from-code`        | user docs, agents, code entrypoints                     |
 
 ## Bootstrap
 
