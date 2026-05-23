@@ -1,17 +1,18 @@
 ---
-name: gap-analysis
+name: spec-gap-analysis
 description: >-
-  Analyzes why a target does not build or run yet by compiling it, classifying errors, and mapping gaps to docs and nearest passing examples.
-  Use when the user asks what is missing to compile, build, or support a feature, or names an example that fails.
+  Spec framework: analyzes why a build target fails (compile errors, doc cross-check, nearest passing example).
+  Invoke explicitly (/spec-gap-analysis). Use when asking what is missing to compile or support a feature.
+disable-model-invocation: true
 ---
 
-# Gap analysis
+# Spec gap analysis
 
 Find what the current codebase still lacks for a user-named build target. Report gaps only unless the user asks to implement.
 
 ## Process
 
-1. **Discover** - Read `AGENTS.md`, `README`, `Justfile`, or package scripts for the standard build/test CLI and doc roots (status, limitations, roadmap).
+1. **Discover** - Read `spec-repo-shape` for doc paths and optional status/limitations files; read **agents**, `README`, `Justfile`, or package scripts for build/test CLI.
 2. **Target** - Use the path or entry the user named (file, example, app, milestone). If unclear, ask once.
 3. **Reproduce** - Run the documented build/compile command on that target. Capture full errors and warnings that block success.
 4. **Classify** each blocker:
@@ -56,3 +57,7 @@ Find what the current codebase still lacks for a user-named build target. Report
 - **Already builds:** say so and list optional polish or missing tests only if relevant.
 - **Environment missing:** say which tool or SDK is absent; do not blame the compiler.
 - **Huge error spam:** fix the first root error, re-run once, then report.
+
+## Related skills
+
+- `spec-repo-shape` - paths and layout (read first).

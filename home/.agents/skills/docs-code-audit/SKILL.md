@@ -1,18 +1,18 @@
 ---
 name: docs-code-audit
 description: >-
-  Audits a codebase against user-facing docs to remove undocumented dead code, record unsupported surface, flag untested features, and optionally rewrite docs for consumers.
-  Use when the user asks to align code with docs, remove unused code based on documentation, or make docs consumer-facing.
+  Spec framework: audits code against user-facing docs (dead code, drift, untested surface, optional consumer rewrite).
+  Invoke explicitly (/spec-docs-code-audit). Use when aligning code with docs or making docs consumer-facing.
 ---
 
-# Docs-code audit
+# Spec docs-code audit
 
 Treat documented behavior as the supported contract. Shrink code to match, or update docs when the code is intentionally ahead of the docs.
 
 ## Process
 
-1. **Discover** - Read `AGENTS.md` for doc roots, test commands, and style rules.
-2. **Inventory docs** - Scan user-facing `docs/` (or the path the user named). List documented features, APIs, syntax, and stated limitations.
+1. **Discover** - Read `spec-repo-shape` for **user docs** path; read **agents** (`AGENTS.md`) for verify commands and style rules.
+2. **Inventory docs** - Scan **user docs** (see `spec-repo-shape`). Do not treat **main design** as the consumer contract. List documented features, APIs, syntax, and stated limitations.
 3. **Map to code** - For each documented item, confirm implementation exists and is reachable from entrypoints or public API.
 4. **Find dead surface** - Grep for tokens, AST nodes, opcodes, modules, or flags with no doc mention and no test/reference. Mark as candidate removal; do not delete without user confirmation on large cuts.
 5. **Find doc drift** - Documented items missing or stubbed in code go to limitations/status (or user confirms docs are aspirational).
@@ -54,4 +54,8 @@ Treat documented behavior as the supported contract. Shrink code to match, or up
 
 - **Docs aspirational:** report as gaps; do not delete working code to match outdated docs without explicit user direction.
 - **Generated docs:** exclude from "source of truth" unless user says otherwise.
-- **Only consumer rewrite:** skip code deletion; only edit markdown under `docs/`.
+- **Only consumer rewrite:** skip code deletion; only edit markdown under **user docs**.
+
+## Related skills
+
+- `spec-repo-shape` - paths and layout (read first).

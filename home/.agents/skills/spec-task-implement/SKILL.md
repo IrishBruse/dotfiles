@@ -1,26 +1,31 @@
 ---
 name: spec-task-implement
 description: >-
-  Implements numbered task specs in order from a specs directory, verifying after each task per project AGENTS.md.
-  Use when the user says implement specs/tasks, work through milestone tasks, or points at Task-*.md files in order.
+  Spec framework: implements numbered task specs in order, verifying after each task per project AGENTS.md.
+  Invoke explicitly (/spec-task-implement). Use when working through specs/tasks or Task-*.md files in order.
+disable-model-invocation: true
 ---
 
-# Spec-task implement
+# Spec task implement
 
 Execute written task specs sequentially. Each task is one unit of done when its acceptance criteria pass verify.
 
 ## Process
 
-1. **Discover** - Read `AGENTS.md` (or `specs/README`) for verify commands, dependency rules, and coding constraints.
-2. **Locate tasks** - Default: `specs/tasks/` or path the user gave. Find index file (`Milestone_1.md`, `README`) if present for order.
-3. **Order** - Implement `Task-1`, `Task-2`, ... or numbered files in sort order. Skip tasks already marked done in the spec unless user says redo.
+1. **Discover** - Read `spec-repo-shape` for task paths; read **agents** (`AGENTS.md`) for verify commands, dependency rules, and coding constraints. Optional `specs/README` for conventions.
+2. **Locate tasks** - **task index** and **task spec** paths from `spec-repo-shape`, or path the user gave.
+3. **Order** - Implement tasks in `spec-repo-shape` sort order (`Task-1`, `Task-2`, ...). Skip tasks already marked done unless user says redo.
 4. **Per task:**
-   - Read the full task file before coding.
+   - Read the full **task spec** file before coding.
    - Implement only what the task requires (no milestone scope creep).
-   - Run verify from AGENTS.md (`dotnet build`, `npm test`, `just test`, etc.).
+   - Run verify from **agents** (`dotnet build`, `npm test`, `just test`, etc.).
    - Update task checkboxes or status lines only if the spec defines them.
 5. **Stop** on task failure: fix or report blocker; do not start the next task until the current one verifies.
-6. **Handoff** - After the last requested task, summarize what shipped and what remains in the milestone index.
+6. **Handoff** - After the last requested task, summarize what shipped and what remains in the **task index**.
+
+## Related skills
+
+- `spec-repo-shape` - paths and layout (read first).
 
 ## Rules
 
@@ -33,4 +38,4 @@ Execute written task specs sequentially. Each task is one unit of done when its 
 
 - **User names one task:** implement only that file; still verify.
 - **Tasks overlap implemented code:** diff spec vs tree, implement the delta only.
-- **Spec contradicts AGENTS.md:** ask which wins before large edits.
+- **Spec contradicts agents:** ask which wins before large edits.
