@@ -2,6 +2,12 @@
  * Sync Jira issues into the jira-tickets skill via `acli jira workitem search` (Atlassian CLI).
  * Writes per-ticket markdown into `home/.agents/skills/jira-tickets/references/{me,team,unassigned}/`
  * and regenerates the skill summary at `home/.agents/skills/jira-tickets/SKILL.md`.
+ *
+ * When CONFIG.boardId is set, only sprints whose window overlaps today are fetched
+ * (from 2 days before sprint start through 2 days after sprint end). Tickets that drop
+ * out of the fetch are archived to `references/misc/` and removed once every sprint on
+ * the board is past end + 2 days.
+ *
  * Edit CONFIG.ts, then run: jira sync
  */
 import { spawnSync } from "node:child_process";
@@ -189,15 +195,67 @@ function ticketKeyFromFilename(filename: string): string | null {
   return m ? m[1] : null;
 }
 
-const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+/** Keep tickets from sprints within this many days before start and after end. */
+export const SPRINT_RETENTION_BUFFER_MS = 2 * 24 * 60 * 60 * 1000;
 
-function isFileOlderThanThirtyDays(filePath: string): boolean {
-  try {
-    const stat = fs.statSync(filePath);
-    return Date.now() - stat.mtimeMs >= THIRTY_DAYS_MS;
-  } catch {
-    return false;
+export type BoardSprint = {
+  id: number;
+  startDate?: string;
+  endDate?: string;
+  state?: string;
+};
+
+function parseSprintInstant(iso: string | undefined): number | null {
+  if (!iso) return null;
+  const ms = Date.parse(iso);
+  return Number.isNaN(ms) ? null : ms;
+}
+
+/** Inclusive window: [start - 2d, end + 2d]. Sprints missing dates are excluded. */
+export function isSprintInRetentionWindow(
+  sprint: BoardSprint,
+  nowMs: number = Date.now(),
+): boolean {
+  const start = parseSprintInstant(sprint.startDate);
+  const end = parseSprintInstant(sprint.endDate);
+  if (start == null || end == null) return false;
+  const windowStart = start - SPRINT_RETENTION_BUFFER_MS;
+  const windowEnd = end + SPRINT_RETENTION_BUFFER_MS;
+  return nowMs >= windowStart && nowMs <= windowEnd;
+}
+
+export function sprintsInRetentionWindow(
+  sprints: BoardSprint[],
+  nowMs: number = Date.now(),
+): BoardSprint[] {
+  return sprints.filter((s) => isSprintInRetentionWindow(s, nowMs));
+}
+
+/** Delete misc tickets not in the current fetch once any sprint is past end + 2d. */
+export function miscDeleteCutoffMs(
+  sprints: BoardSprint[],
+  nowMs: number = Date.now(),
+): number {
+  let cutoff = 0;
+  for (const sprint of sprints) {
+    const end = parseSprintInstant(sprint.endDate);
+    if (end == null) continue;
+    const sprintCutoff = end + SPRINT_RETENTION_BUFFER_MS;
+    if (nowMs > sprintCutoff) {
+      cutoff = Math.max(cutoff, sprintCutoff);
+    }
   }
+  return cutoff;
+}
+
+export function shouldDeleteMiscTicket(
+  inCurrentFetch: boolean,
+  sprints: BoardSprint[],
+  nowMs: number = Date.now(),
+): boolean {
+  if (inCurrentFetch) return false;
+  const cutoff = miscDeleteCutoffMs(sprints, nowMs);
+  return cutoff > 0 && nowMs > cutoff;
 }
 
 export type WriteBoardResult = {
@@ -216,9 +274,13 @@ export function writeBoard(
     meAccountId: string;
     siteHost: string;
     clean: boolean;
+    /** All board sprints (for misc cleanup vs sprint end + 2d). */
+    boardSprints: BoardSprint[];
+    nowMs?: number;
   },
 ): WriteBoardResult {
-  const { outputRoot, meAccountId, siteHost } = options;
+  const { outputRoot, meAccountId, siteHost, boardSprints } = options;
+  const nowMs = options.nowMs ?? Date.now();
   const roots: Record<Folder, string> = {
     me: path.join(outputRoot, "me"),
     unassigned: path.join(outputRoot, "unassigned"),
@@ -262,8 +324,10 @@ export function writeBoard(
     if (!f.endsWith(".md")) continue;
     const filePath = path.join(roots.misc, f);
     const key = ticketKeyFromFilename(f);
-    if (key && fetchedKeys.has(key)) continue;
-    if (isFileOlderThanThirtyDays(filePath)) {
+    if (
+      key &&
+      shouldDeleteMiscTicket(fetchedKeys.has(key), boardSprints, nowMs)
+    ) {
       fs.unlinkSync(filePath);
       if (key) {
         existingFiles.delete(key);
@@ -477,7 +541,7 @@ ${section("Teammates", team)}
 
 ${section("Unassigned", unassigned)}
 
-${section("Misc (not in current sprint)", misc)}
+${section("Misc (outside current sprint fetch)", misc)}
 `;
 }
 
@@ -664,6 +728,57 @@ function nonEmpty(s: string): string | null {
   return t.length > 0 ? t : null;
 }
 
+/** acli --paginate on board list-sprints concatenates one JSON page object per line chunk. */
+function parseConcatenatedJsonObjects(raw: string): unknown[] {
+  const objects: unknown[] = [];
+  let pos = 0;
+  while (pos < raw.length) {
+    while (pos < raw.length && raw[pos] !== "{" && raw[pos] !== "[") {
+      pos++;
+    }
+    if (pos >= raw.length) break;
+    const start = pos;
+    const open = raw[pos];
+    const close = open === "{" ? "}" : "]";
+    let depth = 0;
+    let found = false;
+    for (let i = pos; i < raw.length; i++) {
+      const c = raw[i];
+      if (c === open) depth++;
+      else if (c === close) {
+        depth--;
+        if (depth === 0) {
+          objects.push(JSON.parse(raw.slice(start, i + 1)) as unknown);
+          pos = i + 1;
+          found = true;
+          break;
+        }
+      }
+    }
+    if (!found) break;
+  }
+  return objects;
+}
+
+function parseAcliStdoutJson(raw: string): unknown {
+  const trimmed = raw.trim();
+  if (!trimmed) return [];
+  try {
+    return JSON.parse(trimmed) as unknown;
+  } catch (firstErr) {
+    const objects = parseConcatenatedJsonObjects(trimmed);
+    if (objects.length === 0) {
+      const hint =
+        firstErr instanceof Error ? firstErr.message : String(firstErr);
+      throw new Error(
+        `Expected JSON from acli (${hint}); got: ${trimmed.slice(0, 200)}…`,
+      );
+    }
+    if (objects.length === 1) return objects[0];
+    return objects;
+  }
+}
+
 function runAcliJson(acli: string, args: string[]): unknown {
   log(`run ${acli} ${summarizeAcliArgs(args)}`);
   const r = spawnSync(acli, args, {
@@ -679,17 +794,7 @@ function runAcliJson(acli: string, args: string[]): unknown {
     throw new Error(err);
   }
   const raw = r.stdout?.trim() ?? "";
-  if (!raw) {
-    return [];
-  }
-  try {
-    return JSON.parse(raw) as unknown;
-  } catch (e) {
-    const hint = e instanceof Error ? e.message : String(e);
-    throw new Error(
-      `Expected JSON from acli (${hint}); got: ${raw.slice(0, 200)}…`,
-    );
-  }
+  return parseAcliStdoutJson(raw);
 }
 
 function stripOpenSprintsClause(jql: string): string {
@@ -722,7 +827,51 @@ function scopeJqlToBoardSprints(userJql: string, sprintIds: number[]): string {
   return orderBy ? `${core} ORDER BY ${orderBy}` : core;
 }
 
-function fetchActiveSprintIdsForBoard(acli: string, boardId: string): number[] {
+function isSprintListPage(value: unknown): value is { sprints?: unknown } {
+  return value != null && typeof value === "object" && "sprints" in value;
+}
+
+function parseBoardSprintsFromAcli(data: unknown): BoardSprint[] {
+  if (!isSprintListPage(data)) return [];
+  const sprints = data.sprints;
+  if (!Array.isArray(sprints)) return [];
+  const out: BoardSprint[] = [];
+  for (const s of sprints) {
+    if (!s || typeof s !== "object" || !("id" in s)) continue;
+    const row = s as {
+      id?: unknown;
+      startDate?: unknown;
+      endDate?: unknown;
+      state?: unknown;
+    };
+    if (typeof row.id !== "number") continue;
+    out.push({
+      id: row.id,
+      startDate:
+        typeof row.startDate === "string" ? row.startDate : undefined,
+      endDate: typeof row.endDate === "string" ? row.endDate : undefined,
+      state: typeof row.state === "string" ? row.state : undefined,
+    });
+  }
+  return out;
+}
+
+function mergeBoardSprintPages(data: unknown): BoardSprint[] {
+  const pages: unknown[] = Array.isArray(data)
+    ? data.filter(isSprintListPage)
+    : isSprintListPage(data)
+      ? [data]
+      : [];
+  const byId = new Map<number, BoardSprint>();
+  for (const page of pages) {
+    for (const sprint of parseBoardSprintsFromAcli(page)) {
+      byId.set(sprint.id, sprint);
+    }
+  }
+  return [...byId.values()];
+}
+
+function fetchBoardSprints(acli: string, boardId: string): BoardSprint[] {
   const data = runAcliJson(acli, [
     "jira",
     "board",
@@ -730,21 +879,11 @@ function fetchActiveSprintIdsForBoard(acli: string, boardId: string): number[] {
     "--id",
     boardId,
     "--state",
-    "active",
+    "active,closed,future",
     "--json",
     "--paginate",
   ]);
-  if (!data || typeof data !== "object") return [];
-  const sprints = (data as { sprints?: unknown }).sprints;
-  if (!Array.isArray(sprints)) return [];
-  const ids: number[] = [];
-  for (const s of sprints) {
-    if (s && typeof s === "object" && "id" in s) {
-      const id = (s as { id?: unknown }).id;
-      if (typeof id === "number") ids.push(id);
-    }
-  }
-  return ids;
+  return mergeBoardSprintPages(data);
 }
 
 /** Sync Jira → skill markdown; returns 0 on success. */
@@ -781,16 +920,21 @@ function runImpl(): number {
 
   let effectiveJql = jql;
   let sprintIds: number[] = [];
+  let boardSprints: BoardSprint[] = [];
   if (boardId) {
-    log(`board id ${boardId} — resolving active sprints on this board only…`);
-    sprintIds = fetchActiveSprintIdsForBoard(ACLI, boardId);
+    log(
+      `board id ${boardId} — resolving sprints within 2d of start/end on this board…`,
+    );
+    boardSprints = fetchBoardSprints(ACLI, boardId);
+    const retained = sprintsInRetentionWindow(boardSprints);
+    sprintIds = retained.map((s) => s.id);
     if (sprintIds.length === 0) {
       process.stderr.write(
-        `jira sync: no active sprints on board ${boardId}.\n`,
+        `jira sync: no sprints in retention window (±2 days of start/end) on board ${boardId}.\n`,
       );
       return 1;
     }
-    log(`active sprint id(s) on board: ${sprintIds.join(", ")}`);
+    log(`retained sprint id(s) on board: ${sprintIds.join(", ")}`);
     effectiveJql = scopeJqlToBoardSprints(effectiveJql, sprintIds);
   }
 
@@ -832,6 +976,7 @@ function runImpl(): number {
     meAccountId,
     siteHost,
     clean,
+    boardSprints,
   });
 
   log(`writing jira-tickets skill → ${JIRA_TICKETS_SKILL_PATH}`);
