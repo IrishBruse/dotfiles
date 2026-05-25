@@ -2,7 +2,7 @@
 # Run by default when you type `just`
 default: validate
 
-# Typecheck all TypeScript projects (see scripts/validate.ts)
+# Typecheck root, tools, and vscode (see package.json validate script)
 validate:
     npm run validate
 
@@ -10,11 +10,14 @@ validate:
 export-cursor-chats out="cursor-chats-export":
     node --experimental-strip-types tools/export-cursor-chats/main.ts --out {{out}}
 
-# Root plus tools, scripts, and vscode packages
+# Root package only (shared tsc for validate)
+install:
+    npm install
+
+# Root plus tools and vscode packages
 [script]
-install: install
+install-all: install
     npm --prefix tools install &
-    npm --prefix scripts install &
     npm --prefix vscode install &
     wait
 

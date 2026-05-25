@@ -24,10 +24,6 @@ Custom VS Code UI CSS.
 
 Single Node package under `tools/` (`package.json`, `tsconfig.json`) with one folder per CLI (`jira`, `confluence`, `pr`, `interpolate`, etc.). Install and link from `tools/`.
 
-### `scripts/`
-
-Extra npm dependencies used by repo automation (see `Justfile` `install-all`).
-
 ### Repo root
 
 `Justfile` for common tasks, root `package.json` for shared TypeScript validation, fish helpers (`init.fish`, `stow.fish`), `open-linux.ts` / `open-mac.ts` (VS Code folder-open tasks), `Brewfile`, and editor metadata under `.vscode` / `.cursor`.

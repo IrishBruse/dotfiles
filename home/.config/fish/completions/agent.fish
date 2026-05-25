@@ -5,7 +5,7 @@
 # Skill picks: /name only — @ prefixes file refs; no bare filenames in completions (use -f)
 
 function __fish_agent_skill_roots
-    set -l roots ~/.cursor/skills ~/.agents/skills $HOME/dotfiles/.agents/skills
+    set -l roots ~/.cursor/skills ~/.agents/skills $HOME/dotfiles/home/.agents/skills
 
     # Workspace: cwd (e.g. open project) and git top-level when cwd is a subfolder
     set -l bases $PWD

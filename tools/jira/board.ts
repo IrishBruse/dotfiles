@@ -10,7 +10,6 @@ import path from "node:path";
 import process from "node:process";
 import readline from "node:readline";
 import { spawn } from "node:child_process";
-import stringWidth from "string-width";
 import { fileURLToPath } from "node:url";
 import { CONFIG } from "./CONFIG.ts";
 import { run as runSync } from "./sync.ts";
@@ -119,8 +118,54 @@ const ROW_GLUE4 = "│ " + " │ " + " │ " + " │ " + " │";
 /** Do not let the title column grow past this (display columns). */
 const TITLE_MAX_CAP = 80;
 
+const ANSI_RE = /\u001b\[[0-9;]*m/g;
+
+function isCombiningCodePoint(cp: number): boolean {
+  return (
+    (cp >= 0x0300 && cp <= 0x036f) ||
+    (cp >= 0x1ab0 && cp <= 0x1aff) ||
+    (cp >= 0x1dc0 && cp <= 0x1dff) ||
+    (cp >= 0x20d0 && cp <= 0x20ff) ||
+    (cp >= 0xfe00 && cp <= 0xfe0f) ||
+    (cp >= 0xfe20 && cp <= 0xfe2f)
+  );
+}
+
+/** Wide/full blocks (CJK, hangul, fullwidth, emoji) — terminal cols, not string length. */
+function isWideCodePoint(cp: number): boolean {
+  return (
+    (cp >= 0x1100 && cp <= 0x115f) ||
+    (cp >= 0x2e80 && cp <= 0xa4cf) ||
+    (cp >= 0xac00 && cp <= 0xd7a3) ||
+    (cp >= 0xf900 && cp <= 0xfaff) ||
+    (cp >= 0xfe10 && cp <= 0xfe6f) ||
+    (cp >= 0xff01 && cp <= 0xff60) ||
+    (cp >= 0xffe0 && cp <= 0xffe6) ||
+    (cp >= 0x1f300 && cp <= 0x1faff) ||
+    (cp >= 0x20000 && cp <= 0x3fffd)
+  );
+}
+
+/** Terminal display width (wide CJK and emoji count as 2). */
+function charDisplayWidth(ch: string): number {
+  const cp = ch.codePointAt(0);
+  if (cp === undefined) return 0;
+  if (isCombiningCodePoint(cp)) return 0;
+  if (isWideCodePoint(cp)) return 2;
+  return 1;
+}
+
+function displayWidth(s: string): number {
+  const plain = s.replace(ANSI_RE, "");
+  let w = 0;
+  for (const ch of Array.from(plain)) {
+    w += charDisplayWidth(ch);
+  }
+  return w;
+}
+
 function vis(s: string): number {
-  return stringWidth(s);
+  return displayWidth(s);
 }
 
 function padEndVis(s: string, w: number): string {

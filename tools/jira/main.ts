@@ -2,8 +2,8 @@
 /**
  * Jira CLI — view, sync, and initialize local Jira board.
  * Usage:
- *   jira                       view board (default: jira-tickets skill)
- *   jira board                 alias for above
+ *   jira                       print help
+ *   jira board                 view board (jira-tickets skill)
  *   jira sync                  fetch Jira → skill markdown (needs CONFIG + acli)
  *   jira init [path]           create empty skill directory structure
  *   jira pull <KEY|URL>        fetch a single ticket into references/misc
@@ -20,8 +20,8 @@ import { parseJiraKey } from "./jiraInput.ts";
 
 function printHelp(): void {
   process.stdout.write(`Usage:
-  jira                       view board (default: jira-tickets skill)
-  jira board                 alias for above
+  jira                       print help
+  jira board                 view board (jira-tickets skill)
   jira sync                  fetch Jira → skill markdown (needs CONFIG + acli)
   jira init [path]           create empty skill directory structure
   jira pull <KEY|URL>        fetch a single ticket into references/misc
@@ -32,7 +32,7 @@ function printHelp(): void {
 
 function main() {
   const arg = process.argv[2];
-  if (arg === "-h" || arg === "--help") {
+  if (arg === "-h" || arg === "--help" || !arg) {
     printHelp();
     process.exit(0);
     return;
@@ -64,11 +64,14 @@ function main() {
     }
     process.exit(runCopy(input, process.argv[4]));
   }
-  if (arg) {
-    const key = parseJiraKey(arg);
-    if (key) {
-      process.exit(runPull(key));
-    }
+  if (arg === "board") {
+    const code = runBoard();
+    if (code !== -1) process.exit(code);
+    return;
+  }
+  const key = parseJiraKey(arg);
+  if (key) {
+    process.exit(runPull(key));
   }
   const code = runBoard();
   if (code !== -1) process.exit(code);
