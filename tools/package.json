@@ -1,0 +1,38 @@
+{
+  "name": "dotfiles-tools",
+  "version": "0.1.0",
+  "description": "Dotfiles CLI tools (Jira, Confluence, PR, interpolate, and more)",
+  "private": true,
+  "license": "ISC",
+  "type": "module",
+  "bin": {
+    "agent-tool": "./bin/agent-tool.js",
+    "archscan": "./bin/archscan.js",
+    "confluence": "./bin/confluence.js",
+    "export-cursor-chats": "./bin/export-cursor-chats.js",
+    "interpolate": "./bin/interpolate.js",
+    "jira": "./bin/jira.js",
+    "pr": "./bin/pr.js",
+    "sprint": "./bin/sprint.js"
+  },
+  "exports": {
+    "./interpolate/api": "./interpolate/api.ts"
+  },
+  "scripts": {
+    "validate": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "jsdom": "29.0.2",
+    "string-width": "7.0.0",
+    "turndown": "7.2.4",
+    "turndown-plugin-gfm": "1.0.2"
+  },
+  "devDependencies": {
+    "@types/jsdom": "28.0.1",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.8.3"
+  }
+}

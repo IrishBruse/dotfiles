@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "validate": "tsc --noEmit -p tsconfig.open.json && tsc --noEmit -p tools/pr/tsconfig.json && tsc --noEmit -p tools/atlassian/tsconfig.json && tsc --noEmit -p tools/archscan/tsconfig.json && tsc --noEmit -p tools/agent-tool/tsconfig.json && tsc --noEmit -p tools/interpolate/tsconfig.json && tsc --noEmit -p tools/export-cursor-chats/tsconfig.json && tsc --noEmit -p tools/sprint/tsconfig.json && tsc --noEmit -p vscode/tsconfig.json && tsc --noEmit -p home/.agents/skills/sprint-log/scripts/tsconfig.json"
+    "validate": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tools/tsconfig.json && tsc --noEmit -p vscode/tsconfig.json"
   },
   "devDependencies": {
     "@types/node": "^24.12.4",

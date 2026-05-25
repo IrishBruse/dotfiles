@@ -22,7 +22,7 @@ Custom VS Code UI CSS.
 
 ### `tools/`
 
-Standalone CLI packages (`archscan`, `atlassian`, `export-cursor-chats`, `pr`), each with its own `package.json`. Install and link per package from that directory.
+Single Node package under `tools/` (`package.json`, `tsconfig.json`) with one folder per CLI (`jira`, `confluence`, `pr`, `interpolate`, etc.). Install and link from `tools/`.
 
 ### `scripts/`
 
