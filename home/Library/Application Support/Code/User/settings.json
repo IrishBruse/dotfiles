@@ -1128,7 +1128,6 @@
   },
   "explorer.fileNesting.patterns": {
     ".env": ".env.*",
-    // ".gitignore": ".*",
     "*": "${capture}.uid,${capture}.import",
     "*.db": "${capture}.${extname}-*",
     "*.db3": "${capture}.${extname}-*",
