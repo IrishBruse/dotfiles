@@ -2,7 +2,6 @@
   "compilerOptions": {
     "noEmit": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
     "target": "ES2020",
     "lib": ["ES2022"],
     "types": ["node"],

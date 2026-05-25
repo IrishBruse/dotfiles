@@ -10,13 +10,9 @@ validate:
 export-cursor-chats out="cursor-chats-export":
     node --experimental-strip-types tools/export-cursor-chats/main.ts --out {{out}}
 
-# Root package only (includes shared `tsc`)
-install:
-    npm install
-
 # Root plus tools, scripts, and vscode packages
 [script]
-install-all: install
+install: install
     npm --prefix tools install &
     npm --prefix scripts install &
     npm --prefix vscode install &

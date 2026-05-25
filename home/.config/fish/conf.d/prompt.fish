@@ -23,11 +23,11 @@ function fish_prompt
             else
                 set dur_str (math -s0 "$ms / 1000")s
             end
-            printf (set_color brblack)" %s"(set_color normal) $dur_str
+            printf (set_color brblack)"  %s"(set_color normal) $dur_str
         end
 
         if test $exit_code -ne 0
-            printf (set_color red)" $exit_code "(set_color normal)
+            printf (set_color red)"  $exit_code "(set_color normal)
         end
 
         printf '\n'
