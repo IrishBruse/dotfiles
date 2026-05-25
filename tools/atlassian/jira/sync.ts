@@ -200,6 +200,15 @@ function isFileOlderThanThirtyDays(filePath: string): boolean {
   }
 }
 
+export type WriteBoardResult = {
+  counts: Record<Folder, number>;
+  added: string[];
+  updated: string[];
+  moved: Array<{ key: string; from: Folder; to: Folder }>;
+  archived: string[];
+  deleted: string[];
+};
+
 export function writeBoard(
   issues: Array<{ key?: string; fields?: Record<string, unknown> }>,
   options: {
@@ -208,7 +217,7 @@ export function writeBoard(
     siteHost: string;
     clean: boolean;
   },
-): Record<Folder, number> {
+): WriteBoardResult {
   const { outputRoot, meAccountId, siteHost } = options;
   const roots: Record<Folder, string> = {
     me: path.join(outputRoot, "me"),
@@ -228,7 +237,7 @@ export function writeBoard(
   const existingFiles = new Map<string, { folder: Folder; path: string }>();
   for (const [folder, dir] of Object.entries(roots)) {
     if (!fs.existsSync(dir)) continue;
-    for ( const f of fs.readdirSync(dir)) {
+    for (const f of fs.readdirSync(dir)) {
       if (!f.endsWith(".md")) continue;
       const key = ticketKeyFromFilename(f);
       if (key) {
@@ -237,25 +246,37 @@ export function writeBoard(
     }
   }
 
+  const archived: string[] = [];
   for (const [key, { folder, path: filePath }] of existingFiles.entries()) {
     if (fetchedKeys.has(key)) continue;
     if (folder !== "misc") {
       const miscPath = path.join(roots.misc, `${key}.md`);
       fs.renameSync(filePath, miscPath);
       existingFiles.set(key, { folder: "misc", path: miscPath });
+      archived.push(key);
     }
   }
 
+  const deleted: string[] = [];
   for (const f of fs.readdirSync(roots.misc)) {
     if (!f.endsWith(".md")) continue;
     const filePath = path.join(roots.misc, f);
-    if (fetchedKeys.has(ticketKeyFromFilename(f) ?? "")) continue;
+    const key = ticketKeyFromFilename(f);
+    if (key && fetchedKeys.has(key)) continue;
     if (isFileOlderThanThirtyDays(filePath)) {
       fs.unlinkSync(filePath);
+      if (key) {
+        existingFiles.delete(key);
+        deleted.push(key);
+      }
     }
   }
 
+  const added: string[] = [];
+  const updated: string[] = [];
+  const moved: Array<{ key: string; from: Folder; to: Folder }> = [];
   const counts: Record<Folder, number> = { me: 0, unassigned: 0, team: 0, misc: 0 };
+
   for (const { key, fields } of issuesWithKeys(issues)) {
     const { folder, body } = formatTicketMarkdown(
       key,
@@ -264,7 +285,25 @@ export function writeBoard(
       meAccountId,
     );
     const out = path.join(roots[folder], `${key}.md`);
+    const prev = existingFiles.get(key);
+
+    if (!prev) {
+      added.push(key);
+    } else if (prev.folder !== folder) {
+      fs.unlinkSync(prev.path);
+      moved.push({ key, from: prev.folder, to: folder });
+    } else {
+      let prior = "";
+      try {
+        prior = fs.readFileSync(prev.path, "utf-8");
+      } catch {
+        prior = "";
+      }
+      if (prior !== body) updated.push(key);
+    }
+
     fs.writeFileSync(out, body, "utf-8");
+    existingFiles.set(key, { folder, path: out });
     counts[folder] += 1;
   }
 
@@ -272,7 +311,15 @@ export function writeBoard(
     if (f.endsWith(".md")) counts.misc += 1;
   }
 
-  return counts;
+  const sortKeys = (keys: string[]) =>
+    keys.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+  sortKeys(added);
+  sortKeys(updated);
+  sortKeys(archived);
+  sortKeys(deleted);
+  moved.sort((a, b) => a.key.localeCompare(b.key, undefined, { sensitivity: "base" }));
+
+  return { counts, added, updated, moved, archived, deleted };
 }
 
 /** Single-line summary safe for the skill list (matches Python board_sync_lib). */
@@ -515,8 +562,78 @@ const ACLI = "acli";
 
 const SEARCH_FIELDS = "key,summary,assignee,issuetype,description,status";
 
+const VERBOSE = process.env.JIRA_SYNC_VERBOSE === "1";
+
 function log(msg: string): void {
+  if (!VERBOSE) return;
   process.stderr.write(`jira sync: ${msg}\n`);
+}
+
+function formatKeyList(keys: string[]): string {
+  return keys.join(", ");
+}
+
+function printSyncSummary(options: {
+  boardId: string | null;
+  sprintIds: number[];
+  issueCount: number;
+  result: WriteBoardResult;
+  outRoot: string;
+  skillPath: string;
+}): void {
+  const { boardId, sprintIds, issueCount, result, outRoot, skillPath } =
+    options;
+  const { counts, added, updated, moved, archived, deleted } = result;
+  const sprint =
+    sprintIds.length > 0 ? sprintIds.join(", ") : "(no board filter)";
+  const board = boardId ? `board ${boardId}, ` : "";
+  const lines: string[] = [
+    `Jira sync: ${board}sprint ${sprint}`,
+    `Fetched ${issueCount} issue(s) from Jira`,
+  ];
+
+  const sprintTotal = counts.me + counts.team + counts.unassigned;
+  lines.push(
+    `References: ${sprintTotal} in sprint (me ${counts.me}, team ${counts.team}, unassigned ${counts.unassigned})` +
+      (counts.misc > 0 ? `, ${counts.misc} in misc` : ""),
+  );
+
+  if (added.length > 0) {
+    lines.push(`Added (${added.length}): ${formatKeyList(added)}`);
+  }
+  if (updated.length > 0) {
+    lines.push(`Updated (${updated.length}): ${formatKeyList(updated)}`);
+  }
+  if (moved.length > 0) {
+    const detail = moved
+      .map((m) => `${m.key} ${m.from} -> ${m.to}`)
+      .join(", ");
+    lines.push(`Moved (${moved.length}): ${detail}`);
+  }
+  if (archived.length > 0) {
+    lines.push(
+      `Archived to misc (${archived.length}): ${formatKeyList(archived)}`,
+    );
+  }
+  if (deleted.length > 0) {
+    lines.push(
+      `Removed from misc (${deleted.length}): ${formatKeyList(deleted)}`,
+    );
+  }
+
+  const changeCount =
+    added.length +
+    updated.length +
+    moved.length +
+    archived.length +
+    deleted.length;
+  if (changeCount === 0) {
+    lines.push("No file changes (all tickets already up to date)");
+  }
+
+  lines.push(`Output: ${outRoot}`);
+  lines.push(`Skill: ${skillPath}`);
+  process.stdout.write(`${lines.join("\n")}\n`);
 }
 
 function truncate(s: string, max: number): string {
@@ -663,9 +780,10 @@ function runImpl(): number {
   siteHost = normalizeSiteHost(siteHost);
 
   let effectiveJql = jql;
+  let sprintIds: number[] = [];
   if (boardId) {
     log(`board id ${boardId} — resolving active sprints on this board only…`);
-    const sprintIds = fetchActiveSprintIdsForBoard(ACLI, boardId);
+    sprintIds = fetchActiveSprintIdsForBoard(ACLI, boardId);
     if (sprintIds.length === 0) {
       process.stderr.write(
         `jira sync: no active sprints on board ${boardId}.\n`,
@@ -680,6 +798,9 @@ function runImpl(): number {
   log(`site ${siteHost}, output ${outRoot}, clean=${clean}`);
   log(`JQL ${truncate(effectiveJql, 120)}`);
   log("fetching issues from Jira via acli…");
+  if (!VERBOSE) {
+    process.stderr.write("jira sync: fetching from Jira...\n");
+  }
 
   const data = runAcliJson(ACLI, [
     "jira",
@@ -699,11 +820,6 @@ function runImpl(): number {
   }
 
   log(`received ${data.length} issue(s).`);
-  log(
-    clean
-      ? "clearing existing *.md under me/, unassigned/, team/…"
-      : "keeping existing *.md (CONFIG.clean is false).",
-  );
   log("writing ticket markdown…");
 
   const issues = data as Array<{
@@ -711,7 +827,7 @@ function runImpl(): number {
     fields?: Record<string, unknown>;
   }>;
 
-  const counts = writeBoard(issues, {
+  const result = writeBoard(issues, {
     outputRoot: outRoot,
     meAccountId,
     siteHost,
@@ -722,8 +838,13 @@ function runImpl(): number {
   writeJiraTicketsSkill(issues, JIRA_TICKETS_SKILL_PATH, meAccountId);
 
   log("done.");
-  process.stdout.write(
-    `Wrote ${counts.me + counts.team + counts.unassigned} issues to ${outRoot} (me: ${counts.me}, team: ${counts.team}, unassigned: ${counts.unassigned}). Updated jira-tickets skill: ${JIRA_TICKETS_SKILL_PATH}\n`,
-  );
+  printSyncSummary({
+    boardId,
+    sprintIds,
+    issueCount: issues.length,
+    result,
+    outRoot,
+    skillPath: JIRA_TICKETS_SKILL_PATH,
+  });
   return 0;
 }
