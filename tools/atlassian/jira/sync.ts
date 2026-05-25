@@ -525,23 +525,33 @@ export function formatJiraTicketsSkillMd(
     else misc[bucket].push(line);
   }
 
-  const section = (title: string, byStatus: Record<StatusBucket, string[]>) =>
-    `# ${title}\n\n${formatStatusSubsections(byStatus)}`;
+  const section = (heading: string, byStatus: Record<StatusBucket, string[]>) => {
+    const body = formatStatusSubsections(byStatus);
+    if (body) return `## ${heading}\n\n${body}`;
+    return `## ${heading}`;
+  };
+
+  const boardSections = [
+    section("My tickets", me),
+    section("Teammates", team),
+    section("Unassigned", unassigned),
+    section("Misc (outside current sprint fetch)", misc),
+  ];
 
   return `---
 name: jira-tickets
-description: This skill contains in plaintext the current state of the board no need for MCP
+description: >
+  This skill contains in plaintext the current state of the board no need for MCP. 
+  Use when needing to get the current state of the Jira Board, when needing to get a ticket for a PR.
 ---
 
-Here is the current Jira board status. For the full description of any ticket below, read \`references/{me,team,unassigned,misc}/<KEY>.md\` relative to this skill (e.g. \`references/me/NOVACORE-39308.md\`).
+# Board
 
-${section("My tickets", me)}
+Here is the current Jira board status.
+For the full description of any ticket below, read \`references/{me,team,unassigned,misc}/<KEY>.md\`
+Example: \`references/me/NOVACORE-12345.md\`
 
-${section("Teammates", team)}
-
-${section("Unassigned", unassigned)}
-
-${section("Misc (outside current sprint fetch)", misc)}
+${boardSections.join("\n\n")}
 `;
 }
 

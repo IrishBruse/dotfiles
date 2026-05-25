@@ -35,12 +35,18 @@ export function run(userPath: string | undefined): number {
 
   const skillMd = `---
 name: jira-tickets
-description: This skill contains in plaintext the current state of the board no need for MCP
+description: >
+  This skill contains in plaintext the current state of the board no need for MCP. 
+  Use when needing to get the current state of the Jira Board, when needing to get a ticket for a PR.
 ---
 
-Here is the current Jira board status. For the full description of any ticket below, read \`references/{me,team,unassigned}/<KEY>.md\` relative to this skill (e.g. \`references/me/JIRA-100.md\`).
+# Board
 
-# My tickets
+Here is the current Jira board status.
+For the full description of any ticket below, read \`references/{me,team,unassigned,misc}/<KEY>.md\`
+Example: \`references/me/JIRA-100.md\`
+
+## My tickets
 
 **Todo:**
 
@@ -59,7 +65,7 @@ Here is the current Jira board status. For the full description of any ticket be
 
 - JIRA-100: Initialize project scaffold — \`You\`
 
-# Teammates
+## Teammates
 
 **Todo:**
 
@@ -74,7 +80,7 @@ Here is the current Jira board status. For the full description of any ticket be
 
 - JIRA-200: Configure linting rules — \`Bob\`
 
-# Unassigned
+## Unassigned
 
 **Todo:**
 
