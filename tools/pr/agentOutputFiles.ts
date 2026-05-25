@@ -55,12 +55,12 @@ export function parsePreviewMarkdownFile(content: string): PrReviewJson {
  */
 export function readAgentPrMarkdown(
   workspaceDir: string,
-  cmdLabel: string,
+  cmdLabel: string
 ): PrReviewJson {
   const prPath = path.join(workspaceDir, MERGED_PREVIEW_FILE);
   if (!fs.existsSync(prPath)) {
     throw new Error(
-      `${cmdLabel}: missing ${MERGED_PREVIEW_FILE} in workspace — the agent must create this file in the workspace root`,
+      `${cmdLabel}: missing ${MERGED_PREVIEW_FILE} in workspace — the agent must create this file in the workspace root`
     );
   }
   const raw = fs.readFileSync(prPath, "utf8");
@@ -68,12 +68,12 @@ export function readAgentPrMarkdown(
   if (title.trim() === "") {
     throw new Error(
       `${cmdLabel}: ${MERGED_PREVIEW_FILE} must start with a non-empty title (` +
-        `\`# …\` heading or first line)`,
+        `\`# …\` heading or first line)`
     );
   }
   if (body.trim() === "") {
     throw new Error(
-      `${cmdLabel}: ${MERGED_PREVIEW_FILE} must have a non-empty body after the title`,
+      `${cmdLabel}: ${MERGED_PREVIEW_FILE} must have a non-empty body after the title`
     );
   }
   return { title, body };

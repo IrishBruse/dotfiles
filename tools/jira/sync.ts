@@ -21,7 +21,7 @@ export type Folder = "me" | "unassigned" | "team" | "misc";
 
 export function classifyFolder(
   assignee: Record<string, unknown> | null | undefined,
-  meAccountId: string,
+  meAccountId: string
 ): Folder {
   if (assignee == null) return "unassigned";
   if (assignee.accountId === meAccountId) return "me";
@@ -29,7 +29,7 @@ export function classifyFolder(
 }
 
 export function assigneeLabel(
-  assignee: Record<string, unknown> | null | undefined,
+  assignee: Record<string, unknown> | null | undefined
 ): string {
   if (assignee == null) return "Unassigned";
   const name = assignee.displayName;
@@ -83,7 +83,7 @@ export function adfToMarkdown(adf: unknown): string {
       lines.push(inner.join(""));
     } else if (t === "heading") {
       const level = Number(
-        (o.attrs as { level?: number } | undefined)?.level ?? 1,
+        (o.attrs as { level?: number } | undefined)?.level ?? 1
       );
       const inner: string[] = [];
       for (const c of (o.content as unknown[]) ?? []) {
@@ -108,7 +108,7 @@ export function adfToMarkdown(adf: unknown): string {
       }
       const body = parts.join("");
       const lang = String(
-        (o.attrs as { language?: string } | undefined)?.language ?? "",
+        (o.attrs as { language?: string } | undefined)?.language ?? ""
       );
       lines.push(`\`\`\`${lang}\n${body}\n\`\`\``);
     } else {
@@ -123,7 +123,7 @@ export function adfToMarkdown(adf: unknown): string {
 }
 
 export function issueDescriptionMarkdown(
-  fields: Record<string, unknown>,
+  fields: Record<string, unknown>
 ): string {
   const desc = fields.description;
   if (desc == null) return "";
@@ -151,7 +151,7 @@ export function formatTicketMarkdown(
   key: string,
   fields: Record<string, unknown>,
   siteHost: string,
-  meAccountId: string,
+  meAccountId: string
 ): { folder: Folder; body: string } {
   const summary = typeof fields.summary === "string" ? fields.summary : "";
   const itypeObj = fields.issuetype;
@@ -181,7 +181,7 @@ ${descriptionMd}
 }
 
 function* issuesWithKeys(
-  issues: Array<{ key?: string; fields?: Record<string, unknown> }>,
+  issues: Array<{ key?: string; fields?: Record<string, unknown> }>
 ): Generator<{ key: string; fields: Record<string, unknown> }> {
   for (const issue of issues) {
     const key = issue.key;
@@ -214,7 +214,7 @@ function parseSprintInstant(iso: string | undefined): number | null {
 /** Inclusive window: [start - 2d, end + 2d]. Sprints missing dates are excluded. */
 export function isSprintInRetentionWindow(
   sprint: BoardSprint,
-  nowMs: number = Date.now(),
+  nowMs: number = Date.now()
 ): boolean {
   const start = parseSprintInstant(sprint.startDate);
   const end = parseSprintInstant(sprint.endDate);
@@ -226,7 +226,7 @@ export function isSprintInRetentionWindow(
 
 export function sprintsInRetentionWindow(
   sprints: BoardSprint[],
-  nowMs: number = Date.now(),
+  nowMs: number = Date.now()
 ): BoardSprint[] {
   return sprints.filter((s) => isSprintInRetentionWindow(s, nowMs));
 }
@@ -234,7 +234,7 @@ export function sprintsInRetentionWindow(
 /** Delete misc tickets not in the current fetch once any sprint is past end + 2d. */
 export function miscDeleteCutoffMs(
   sprints: BoardSprint[],
-  nowMs: number = Date.now(),
+  nowMs: number = Date.now()
 ): number {
   let cutoff = 0;
   for (const sprint of sprints) {
@@ -251,7 +251,7 @@ export function miscDeleteCutoffMs(
 export function shouldDeleteMiscTicket(
   inCurrentFetch: boolean,
   sprints: BoardSprint[],
-  nowMs: number = Date.now(),
+  nowMs: number = Date.now()
 ): boolean {
   if (inCurrentFetch) return false;
   const cutoff = miscDeleteCutoffMs(sprints, nowMs);
@@ -277,7 +277,7 @@ export function writeBoard(
     /** All board sprints (for misc cleanup vs sprint end + 2d). */
     boardSprints: BoardSprint[];
     nowMs?: number;
-  },
+  }
 ): WriteBoardResult {
   const { outputRoot, meAccountId, siteHost, boardSprints } = options;
   const nowMs = options.nowMs ?? Date.now();
@@ -285,7 +285,7 @@ export function writeBoard(
     me: path.join(outputRoot, "me"),
     unassigned: path.join(outputRoot, "unassigned"),
     team: path.join(outputRoot, "team"),
-    misc: path.join(outputRoot, "misc"),
+    misc: path.join(outputRoot, "misc")
   };
   for (const p of Object.values(roots)) {
     fs.mkdirSync(p, { recursive: true });
@@ -303,7 +303,10 @@ export function writeBoard(
       if (!f.endsWith(".md")) continue;
       const key = ticketKeyFromFilename(f);
       if (key) {
-        existingFiles.set(key, { folder: folder as Folder, path: path.join(dir, f) });
+        existingFiles.set(key, {
+          folder: folder as Folder,
+          path: path.join(dir, f)
+        });
       }
     }
   }
@@ -339,14 +342,19 @@ export function writeBoard(
   const added: string[] = [];
   const updated: string[] = [];
   const moved: Array<{ key: string; from: Folder; to: Folder }> = [];
-  const counts: Record<Folder, number> = { me: 0, unassigned: 0, team: 0, misc: 0 };
+  const counts: Record<Folder, number> = {
+    me: 0,
+    unassigned: 0,
+    team: 0,
+    misc: 0
+  };
 
   for (const { key, fields } of issuesWithKeys(issues)) {
     const { folder, body } = formatTicketMarkdown(
       key,
       fields,
       siteHost,
-      meAccountId,
+      meAccountId
     );
     const out = path.join(roots[folder], `${key}.md`);
     const prev = existingFiles.get(key);
@@ -381,7 +389,9 @@ export function writeBoard(
   sortKeys(updated);
   sortKeys(archived);
   sortKeys(deleted);
-  moved.sort((a, b) => a.key.localeCompare(b.key, undefined, { sensitivity: "base" }));
+  moved.sort((a, b) =>
+    a.key.localeCompare(b.key, undefined, { sensitivity: "base" })
+  );
 
   return { counts, added, updated, moved, archived, deleted };
 }
@@ -406,7 +416,7 @@ const STATUS_HEADINGS: Record<StatusBucket, string> = {
   inProgress: "In progress",
   codeReview: "Code review",
   inTest: "In test",
-  done: "Done",
+  done: "Done"
 };
 
 const STATUS_ORDER: StatusBucket[] = [
@@ -414,7 +424,7 @@ const STATUS_ORDER: StatusBucket[] = [
   "inProgress",
   "codeReview",
   "inTest",
-  "done",
+  "done"
 ];
 
 function emptyStatusBuckets(): Record<StatusBucket, string[]> {
@@ -423,7 +433,7 @@ function emptyStatusBuckets(): Record<StatusBucket, string[]> {
     inProgress: [],
     codeReview: [],
     inTest: [],
-    done: [],
+    done: []
   };
 }
 
@@ -432,7 +442,7 @@ function emptyStatusBuckets(): Record<StatusBucket, string[]> {
  * anything unclear defaults to In progress.
  */
 export function statusBucketFromFields(
-  fields: Record<string, unknown>,
+  fields: Record<string, unknown>
 ): StatusBucket {
   const raw = fields.status;
   const name =
@@ -485,11 +495,11 @@ export function statusBucketFromFields(
 }
 
 function formatStatusSubsections(
-  byStatus: Record<StatusBucket, string[]>,
+  byStatus: Record<StatusBucket, string[]>
 ): string {
   const sortLines = (lines: string[]) =>
     lines.sort((a, b) =>
-      a.localeCompare(b, undefined, { sensitivity: "base" }),
+      a.localeCompare(b, undefined, { sensitivity: "base" })
     );
   const parts: string[] = [];
   for (const bucket of STATUS_ORDER) {
@@ -503,7 +513,7 @@ function formatStatusSubsections(
 
 export function formatJiraTicketsSkillMd(
   issues: Array<{ key?: string; fields?: Record<string, unknown> }>,
-  meAccountId: string,
+  meAccountId: string
 ): string {
   const me = emptyStatusBuckets();
   const team = emptyStatusBuckets();
@@ -512,7 +522,7 @@ export function formatJiraTicketsSkillMd(
 
   for (const { key, fields } of issuesWithKeys(issues)) {
     const summary = ticketsSkillOneLine(
-      typeof fields.summary === "string" ? fields.summary : "",
+      typeof fields.summary === "string" ? fields.summary : ""
     );
     const assignee = assigneeRecord(fields.assignee);
     const label = assigneeLabel(assignee);
@@ -525,7 +535,10 @@ export function formatJiraTicketsSkillMd(
     else misc[bucket].push(line);
   }
 
-  const section = (heading: string, byStatus: Record<StatusBucket, string[]>) => {
+  const section = (
+    heading: string,
+    byStatus: Record<StatusBucket, string[]>
+  ) => {
     const body = formatStatusSubsections(byStatus);
     if (body) return `## ${heading}\n\n${body}`;
     return `## ${heading}`;
@@ -535,7 +548,7 @@ export function formatJiraTicketsSkillMd(
     section("My tickets", me),
     section("Teammates", team),
     section("Unassigned", unassigned),
-    section("Misc (outside current sprint fetch)", misc),
+    section("Misc (outside current sprint fetch)", misc)
   ];
 
   return `---
@@ -593,10 +606,11 @@ function readTicketMarkdown(filePath: string): {
 export function writeJiraTicketsSkill(
   issues: Array<{ key?: string; fields?: Record<string, unknown> }>,
   skillPath: string,
-  meAccountId: string,
+  meAccountId: string
 ): void {
   const miscDir = path.join(BOARD_OUTPUT_ROOT, "misc");
-  const miscIssues: Array<{ key?: string; fields?: Record<string, unknown> }> = [];
+  const miscIssues: Array<{ key?: string; fields?: Record<string, unknown> }> =
+    [];
 
   if (fs.existsSync(miscDir)) {
     for (const f of fs.readdirSync(miscDir)) {
@@ -623,7 +637,7 @@ const JIRA_TICKETS_SKILL_DIR = path.resolve(
   "home",
   ".agents",
   "skills",
-  "jira-tickets",
+  "jira-tickets"
 );
 
 /** Per-ticket markdown lives under `<skill>/references/{me,team,unassigned}/` so the skill self-references its own detail. */
@@ -663,13 +677,13 @@ function printSyncSummary(options: {
   const board = boardId ? `board ${boardId}, ` : "";
   const lines: string[] = [
     `Jira sync: ${board}sprint ${sprint}`,
-    `Fetched ${issueCount} issue(s) from Jira`,
+    `Fetched ${issueCount} issue(s) from Jira`
   ];
 
   const sprintTotal = counts.me + counts.team + counts.unassigned;
   lines.push(
     `References: ${sprintTotal} in sprint (me ${counts.me}, team ${counts.team}, unassigned ${counts.unassigned})` +
-      (counts.misc > 0 ? `, ${counts.misc} in misc` : ""),
+      (counts.misc > 0 ? `, ${counts.misc} in misc` : "")
   );
 
   if (added.length > 0) {
@@ -679,19 +693,17 @@ function printSyncSummary(options: {
     lines.push(`Updated (${updated.length}): ${formatKeyList(updated)}`);
   }
   if (moved.length > 0) {
-    const detail = moved
-      .map((m) => `${m.key} ${m.from} -> ${m.to}`)
-      .join(", ");
+    const detail = moved.map((m) => `${m.key} ${m.from} -> ${m.to}`).join(", ");
     lines.push(`Moved (${moved.length}): ${detail}`);
   }
   if (archived.length > 0) {
     lines.push(
-      `Archived to misc (${archived.length}): ${formatKeyList(archived)}`,
+      `Archived to misc (${archived.length}): ${formatKeyList(archived)}`
     );
   }
   if (deleted.length > 0) {
     lines.push(
-      `Removed from misc (${deleted.length}): ${formatKeyList(deleted)}`,
+      `Removed from misc (${deleted.length}): ${formatKeyList(deleted)}`
     );
   }
 
@@ -781,7 +793,7 @@ function parseAcliStdoutJson(raw: string): unknown {
       const hint =
         firstErr instanceof Error ? firstErr.message : String(firstErr);
       throw new Error(
-        `Expected JSON from acli (${hint}); got: ${trimmed.slice(0, 200)}…`,
+        `Expected JSON from acli (${hint}); got: ${trimmed.slice(0, 200)}…`
       );
     }
     if (objects.length === 1) return objects[0];
@@ -793,7 +805,7 @@ function runAcliJson(acli: string, args: string[]): unknown {
   log(`run ${acli} ${summarizeAcliArgs(args)}`);
   const r = spawnSync(acli, args, {
     encoding: "utf-8",
-    maxBuffer: 64 * 1024 * 1024,
+    maxBuffer: 64 * 1024 * 1024
   });
   if (r.error) {
     const msg = r.error instanceof Error ? r.error.message : String(r.error);
@@ -857,10 +869,9 @@ function parseBoardSprintsFromAcli(data: unknown): BoardSprint[] {
     if (typeof row.id !== "number") continue;
     out.push({
       id: row.id,
-      startDate:
-        typeof row.startDate === "string" ? row.startDate : undefined,
+      startDate: typeof row.startDate === "string" ? row.startDate : undefined,
       endDate: typeof row.endDate === "string" ? row.endDate : undefined,
-      state: typeof row.state === "string" ? row.state : undefined,
+      state: typeof row.state === "string" ? row.state : undefined
     });
   }
   return out;
@@ -891,7 +902,7 @@ function fetchBoardSprints(acli: string, boardId: string): BoardSprint[] {
     "--state",
     "active,closed,future",
     "--json",
-    "--paginate",
+    "--paginate"
   ]);
   return mergeBoardSprintPages(data);
 }
@@ -933,14 +944,14 @@ function runImpl(): number {
   let boardSprints: BoardSprint[] = [];
   if (boardId) {
     log(
-      `board id ${boardId} — resolving sprints within 2d of start/end on this board…`,
+      `board id ${boardId} — resolving sprints within 2d of start/end on this board…`
     );
     boardSprints = fetchBoardSprints(ACLI, boardId);
     const retained = sprintsInRetentionWindow(boardSprints);
     sprintIds = retained.map((s) => s.id);
     if (sprintIds.length === 0) {
       process.stderr.write(
-        `jira sync: no sprints in retention window (±2 days of start/end) on board ${boardId}.\n`,
+        `jira sync: no sprints in retention window (±2 days of start/end) on board ${boardId}.\n`
       );
       return 1;
     }
@@ -965,7 +976,7 @@ function runImpl(): number {
     "--json",
     "--paginate",
     "--fields",
-    SEARCH_FIELDS,
+    SEARCH_FIELDS
   ]);
 
   if (!Array.isArray(data)) {
@@ -986,7 +997,7 @@ function runImpl(): number {
     meAccountId,
     siteHost,
     clean,
-    boardSprints,
+    boardSprints
   });
 
   log(`writing jira-tickets skill → ${JIRA_TICKETS_SKILL_PATH}`);
@@ -999,7 +1010,7 @@ function runImpl(): number {
     issueCount: issues.length,
     result,
     outRoot,
-    skillPath: JIRA_TICKETS_SKILL_PATH,
+    skillPath: JIRA_TICKETS_SKILL_PATH
   });
   return 0;
 }

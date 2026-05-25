@@ -7,7 +7,7 @@ import path from "node:path";
 import { getPrViewUrl, printPrUrlWithMargins } from "./prViewUrl.ts";
 import {
   confirmSubmitAfterEditorPreview,
-  waitForEnterRetryOrCancel,
+  waitForEnterRetryOrCancel
 } from "./reviewPreview.ts";
 
 export function failPrCli(msg: string): void {
@@ -23,7 +23,7 @@ export function runGhWithBodyFile(
   tmpPrefix: string,
   body: string,
   buildArgs: (file: string) => string[],
-  opts: { cwd?: string } = {},
+  opts: { cwd?: string } = {}
 ): boolean {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), tmpPrefix));
   const file = path.join(dir, "body.md");
@@ -32,7 +32,7 @@ export function runGhWithBodyFile(
     const r = spawnSync("gh", buildArgs(file), {
       encoding: "utf8",
       stdio: ["ignore", "pipe", "pipe"],
-      ...(opts.cwd !== undefined ? { cwd: opts.cwd } : {}),
+      ...(opts.cwd !== undefined ? { cwd: opts.cwd } : {})
     });
     if (r.status === 0) {
       return true;
@@ -60,14 +60,14 @@ export function postPrReviewComment(pr: string, body: string): boolean {
     pr,
     "--comment",
     "-F",
-    file,
+    file
   ]);
 }
 
 export async function confirmAndPostReviewComment(
   logPrefix: string,
   target: string,
-  workspaceDir: string,
+  workspaceDir: string
 ): Promise<void> {
   let body: string;
 
@@ -75,7 +75,7 @@ export async function confirmAndPostReviewComment(
     const out = await confirmSubmitAfterEditorPreview({
       logPrefix,
       workspaceDir,
-      actionDescription: "post this review comment",
+      actionDescription: "post this review comment"
     });
     if (out === null) {
       console.error(`${logPrefix} cancelled, not posting`);
@@ -104,7 +104,7 @@ export async function confirmAndPostReviewComment(
         (canRetryPost
           ? "press Enter to retry, or Esc to quit"
           : "re-run with the same PR after fixing gh") +
-        ".",
+        "."
     );
     if (!canRetryPost) {
       process.exitCode = 1;

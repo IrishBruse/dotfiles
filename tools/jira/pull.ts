@@ -8,7 +8,12 @@ import path from "node:path";
 import process from "node:process";
 import { CONFIG } from "./CONFIG.ts";
 import { JIRA_MISC_DIR } from "./jiraTicketsPaths.ts";
-import { formatTicketMarkdown, classifyFolder, assigneeLabel, issueDescriptionMarkdown } from "./sync.ts";
+import {
+  formatTicketMarkdown,
+  classifyFolder,
+  assigneeLabel,
+  issueDescriptionMarkdown
+} from "./sync.ts";
 
 const ACLI = "acli";
 const SEARCH_FIELDS = "key,summary,assignee,issuetype,description,status";
@@ -20,7 +25,7 @@ function log(msg: string): void {
 function runAcliJson(acli: string, args: string[]): unknown {
   const r = spawnSync(acli, args, {
     encoding: "utf-8",
-    maxBuffer: 64 * 1024 * 1024,
+    maxBuffer: 64 * 1024 * 1024
   });
   if (r.error) {
     const msg = r.error instanceof Error ? r.error.message : String(r.error);
@@ -39,7 +44,7 @@ function runAcliJson(acli: string, args: string[]): unknown {
   } catch (e) {
     const hint = e instanceof Error ? e.message : String(e);
     throw new Error(
-      `Expected JSON from acli (${hint}); got: ${raw.slice(0, 200)}…`,
+      `Expected JSON from acli (${hint}); got: ${raw.slice(0, 200)}…`
     );
   }
 }
@@ -69,7 +74,7 @@ function runImpl(ticketKey: string): number {
     ticketKey,
     "--fields",
     SEARCH_FIELDS,
-    "--json",
+    "--json"
   ]);
 
   if (!data || typeof data !== "object") {
@@ -91,9 +96,14 @@ function runImpl(ticketKey: string): number {
   const outPath = path.join(JIRA_MISC_DIR, `${key}.md`);
   fs.writeFileSync(outPath, body, "utf-8");
 
-  const summary = typeof fields.summary === "string" ? fields.summary : "(no summary)";
-  const assignee = assigneeLabel(fields.assignee as Record<string, unknown> | null | undefined);
+  const summary =
+    typeof fields.summary === "string" ? fields.summary : "(no summary)";
+  const assignee = assigneeLabel(
+    fields.assignee as Record<string, unknown> | null | undefined
+  );
   log(`saved ${key}: ${summary} → ${outPath}`);
-  process.stdout.write(`Pulled ${key} (${assignee}) → references/misc/${key}.md\n`);
+  process.stdout.write(
+    `Pulled ${key} (${assignee}) → references/misc/${key}.md\n`
+  );
   return 0;
 }

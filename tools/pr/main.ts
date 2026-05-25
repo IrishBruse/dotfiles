@@ -9,7 +9,7 @@ import { printHelp } from "./commands/help.ts";
 import {
   inferAndRun,
   looksLikeGitHubPullRequestUrl,
-  printInferReviewLine,
+  printInferReviewLine
 } from "./infer.ts";
 
 function printUnknown(command: string): void {
@@ -38,7 +38,7 @@ export function main(argv: string[]): void {
     "--no-agent",
     "--dir",
     "--opus",
-    "--codex",
+    "--codex"
   ]);
   if (args.length > 0 && args.every((a) => inferOnlyFlags.has(a))) {
     inferAndRun(args);

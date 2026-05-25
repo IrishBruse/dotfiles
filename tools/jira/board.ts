@@ -31,7 +31,7 @@ const GROUP_TO_FOLDER: Record<string, string> = {
   "My tickets": "me",
   Teammates: "team",
   Unassigned: "unassigned",
-  Misc: "misc",
+  Misc: "misc"
 };
 
 const TICKET_RE = /^- \s*([A-Z][A-Z0-9_]*-\d+):\s*(.+?)\s+—\s+`([^`]+)`\s*$/u;
@@ -67,7 +67,7 @@ export function parseBoardMarkdown(markdown: string): BoardRow[] {
         status,
         key: t[1]!,
         title: t[2]!.trim(),
-        assignee: t[3]!,
+        assignee: t[3]!
       });
     }
   }
@@ -90,7 +90,7 @@ function parseMiscFiles(referencesDir: string): BoardRow[] {
       status: typeMatch?.[1] ?? "Issue",
       key,
       title: titleMatch?.[1] ?? key,
-      assignee: assigneeMatch?.[1] ?? "Unknown",
+      assignee: assigneeMatch?.[1] ?? "Unknown"
     });
   }
   return rows;
@@ -195,7 +195,7 @@ function computeWidths(rows: BoardRow[]): { widths: Widths; titleMax: number } {
   const wKey = Math.max(vis(headers[1]!), ...rows.map((r) => vis(r.key)));
   const wAssignee = Math.max(
     vis(headers[3]!),
-    ...rows.map((r) => vis(r.assignee)),
+    ...rows.map((r) => vis(r.assignee))
   );
   const fixedGlueW = vis(ROW_GLUE4);
   const titleMax = Math.min(
@@ -203,8 +203,8 @@ function computeWidths(rows: BoardRow[]): { widths: Widths; titleMax: number } {
     Math.max(
       vis(headers[2]!),
       12,
-      termCols - fixedGlueW - wStatus - wKey - wAssignee,
-    ),
+      termCols - fixedGlueW - wStatus - wKey - wAssignee
+    )
   );
   return { widths: [wStatus, wKey, titleMax, wAssignee], titleMax };
 }
@@ -218,7 +218,7 @@ function rowsForGroup(rows: BoardRow[], group: string): BoardRow[] {
 function formatSectionPlain(
   rows: BoardRow[],
   titleMax: number,
-  widths: Widths,
+  widths: Widths
 ): string {
   const headers = ["Status", "Key", "Title", "Assignee"] as const;
   const wCols: number[] = [...widths];
@@ -233,7 +233,7 @@ function formatSectionPlain(
   const out: string[] = [topLine, rowLine([...headers]), sepLine];
   for (const r of rows) {
     out.push(
-      rowLine([r.status, r.key, clipVis(r.title, titleMax), r.assignee]),
+      rowLine([r.status, r.key, clipVis(r.title, titleMax), r.assignee])
     );
   }
   out.push(botLine);
@@ -278,9 +278,7 @@ function formatTabGraphic(tabIndex: number): string {
   for (let i = 0; i < GROUP_ORDER.length; i++) {
     const name = GROUP_ORDER[i]!;
     parts.push(
-      i === tabIndex
-        ? TAB_SELECTED + name + RESET
-        : TAB_INACTIVE + name + RESET,
+      i === tabIndex ? TAB_SELECTED + name + RESET : TAB_INACTIVE + name + RESET
     );
   }
   return parts.join(sep);
@@ -291,7 +289,7 @@ function renderInteractiveLines(
   tabRows: BoardRow[],
   selected: number,
   widths: Widths,
-  titleMax: number,
+  titleMax: number
 ): {
   lines: string[];
   dataLineIndexes: number[];
@@ -321,7 +319,7 @@ function renderInteractiveLines(
       r.status,
       r.key,
       clipVis(r.title, titleMax),
-      r.assignee,
+      r.assignee
     ]);
     out.push(idx === selected ? INVERT + line + RESET : line);
     dataLineIndexes[idx] = out.length - 1;
@@ -336,7 +334,7 @@ function renderInteractiveLines(
     lines: out,
     dataLineIndexes,
     prefixLineCount,
-    suffixLineCount,
+    suffixLineCount
   };
 }
 
@@ -354,7 +352,7 @@ function openUrl(url: string): void {
 function runInteractive(
   skillPath: string,
   initialRows: BoardRow[],
-  referencesDir: string,
+  referencesDir: string
 ): void {
   let rows = initialRows;
   let { widths, titleMax } = computeWidths(rows);
@@ -381,7 +379,7 @@ function runInteractive(
     const topMargin = termRows > footerRows + footerGapRows + 6 ? 1 : 0;
     const bodyRows = Math.max(
       1,
-      termRows - footerRows - footerGapRows - topMargin,
+      termRows - footerRows - footerGapRows - topMargin
     );
 
     const dataCount = tr.length;
@@ -407,7 +405,7 @@ function runInteractive(
       const firstIndexAfterDataRows = prefixLineCount + dataCount;
       const dataSlice = lines.slice(
         dataStart,
-        Math.min(dataStart + scrollH, firstIndexAfterDataRows),
+        Math.min(dataStart + scrollH, firstIndexAfterDataRows)
       );
       const tail = lines.slice(lines.length - suffixLineCount);
       slice = [...head, ...dataSlice, ...tail];
@@ -577,7 +575,7 @@ const defaultSkillPath = path.join(
   ".agents",
   "skills",
   "jira-tickets",
-  "SKILL.md",
+  "SKILL.md"
 );
 
 /** Run the board subcommand; returns exit code. */

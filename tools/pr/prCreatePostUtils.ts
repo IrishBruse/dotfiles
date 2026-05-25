@@ -5,19 +5,19 @@ import { getPrViewUrl, printPrUrlWithMargins } from "./prViewUrl.ts";
 import { failPrCli, runGhWithBodyFile } from "./reviewPostUtils.ts";
 import {
   confirmSubmitAfterEditorPreview,
-  waitForEnterRetryOrCancel,
+  waitForEnterRetryOrCancel
 } from "./reviewPreview.ts";
 
 export function postPrCreate(
   title: string,
   body: string,
-  repoRoot: string,
+  repoRoot: string
 ): boolean {
   return runGhWithBodyFile(
     "pr-cli-create-",
     body,
     (file) => ["pr", "create", "--title", title, "--body-file", file],
-    { cwd: repoRoot },
+    { cwd: repoRoot }
   );
 }
 
@@ -32,7 +32,7 @@ export async function confirmAndCreatePr(
   logPrefix: string,
   workspaceDir: string,
   repoRoot: string,
-  opts?: ConfirmAndCreatePrOptions,
+  opts?: ConfirmAndCreatePrOptions
 ): Promise<void> {
   let title: string;
   let body: string;
@@ -50,7 +50,7 @@ export async function confirmAndCreatePr(
         logPrefix,
         workspaceDir,
         actionDescription: "create this PR",
-        skipConfirm: true,
+        skipConfirm: true
       });
       if (out === null) {
         console.error(`${logPrefix} cancelled, not creating PR`);
@@ -88,7 +88,7 @@ export async function confirmAndCreatePr(
         (canRetry
           ? "press Enter to retry, or Esc to quit"
           : "re-run after fixing gh") +
-        ".",
+        "."
     );
     if (!canRetry) {
       process.exitCode = 1;

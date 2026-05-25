@@ -32,7 +32,10 @@ export function parseFailureArgs(argv: string[]): ParseFailureResult {
     if (a === "--skills") {
       const v = argv[i + 1];
       if (v === undefined || v.startsWith("--")) {
-        return { ok: false, error: "failure: --skills must be followed by a comma-separated list" };
+        return {
+          ok: false,
+          error: "failure: --skills must be followed by a comma-separated list"
+        };
       }
       i++;
       skills.push(...splitSkills(v));
@@ -41,7 +44,10 @@ export function parseFailureArgs(argv: string[]): ParseFailureResult {
     if (a.startsWith("--skills=")) {
       const rest = a.slice("--skills=".length);
       if (rest.length === 0) {
-        return { ok: false, error: "failure: --skills= needs a non-empty comma-separated list" };
+        return {
+          ok: false,
+          error: "failure: --skills= needs a non-empty comma-separated list"
+        };
       }
       skills.push(...splitSkills(rest));
       continue;
@@ -52,6 +58,6 @@ export function parseFailureArgs(argv: string[]): ParseFailureResult {
   return {
     ok: true,
     summary: summaryParts.join(" ").trim(),
-    skills: dedupeSkills(skills),
+    skills: dedupeSkills(skills)
   };
 }

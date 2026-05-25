@@ -16,14 +16,12 @@ const defaultSkillDir = path.join(
   "home",
   ".agents",
   "skills",
-  "jira-tickets",
+  "jira-tickets"
 );
 
 /** Run the init subcommand; returns exit code. */
 export function run(userPath: string | undefined): number {
-  const skillDir = userPath
-    ? path.resolve(userPath)
-    : defaultSkillDir;
+  const skillDir = userPath ? path.resolve(userPath) : defaultSkillDir;
 
   const refsDir = path.join(skillDir, "references");
   const skillMdPath = path.join(skillDir, "SKILL.md");
@@ -114,7 +112,7 @@ Sample ticket description for **${key}**.
     { folder: "team", key: "JIRA-203", title: "Add e2e test suite" },
     { folder: "unassigned", key: "JIRA-301", title: "Implement dark mode" },
     { folder: "unassigned", key: "JIRA-302", title: "Add rate limiting" },
-    { folder: "unassigned", key: "JIRA-303", title: "Optimize image uploads" },
+    { folder: "unassigned", key: "JIRA-303", title: "Optimize image uploads" }
   ];
 
   fs.mkdirSync(path.join(refsDir, "me"), { recursive: true });
@@ -126,7 +124,7 @@ Sample ticket description for **${key}**.
     fs.writeFileSync(
       path.join(refsDir, folder, `${key}.md`),
       fakeTicketTemplate(key, title),
-      "utf-8",
+      "utf-8"
     );
   }
 

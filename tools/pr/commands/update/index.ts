@@ -10,7 +10,7 @@ import {
   logAgentOutputDirPreamble,
   prepareAgentOutputDir,
   resolvePrCliGitCwd,
-  resolvePrPromptDebugPath,
+  resolvePrPromptDebugPath
 } from "../../prAgentWorkspace.ts";
 import { confirmAndApplyPrMetadata } from "../../prEditPostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
@@ -21,7 +21,7 @@ import {
   takeDebugPromptFlag,
   takeNoAgentFlag,
   takePrintPromptFlag,
-  takePrintWorkspaceDirFlag,
+  takePrintWorkspaceDirFlag
 } from "../../printPromptFlag.ts";
 import { assertPrTitleMatchesJiraPolicy } from "../../jiraTitlePolicy.ts";
 
@@ -34,7 +34,7 @@ function resolveUpdatePrTarget(explicit: string | undefined): string {
   }
   const r = spawnSync("gh", ["pr", "view", "--json", "number"], {
     encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"],
+    stdio: ["ignore", "pipe", "pipe"]
   });
   if (r.status !== 0) {
     const msg =
@@ -99,7 +99,7 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     failPrCli(
       e instanceof Error
         ? e.message
-        : `pr update: failed to read PR with gh: ${String(e)}`,
+        : `pr update: failed to read PR with gh: ${String(e)}`
     );
     return;
   }
@@ -119,13 +119,13 @@ async function runUpdateAsync(args: string[]): Promise<void> {
       repoRoot,
       vars: { target, agentOutputDir },
       jiraTitle,
-      jiraBody,
+      jiraBody
     });
   } catch (e) {
     failPrCli(
       e instanceof Error
         ? e.message
-        : `pr update: failed to build prompt: ${String(e)}`,
+        : `pr update: failed to build prompt: ${String(e)}`
     );
     return;
   }
@@ -149,9 +149,7 @@ async function runUpdateAsync(args: string[]): Promise<void> {
       await runAgentPrint(prompt, { cwd: agentOutputDir, model });
     } catch (e) {
       failPrCli(
-        e instanceof Error
-          ? e.message
-          : `pr update: agent failed: ${String(e)}`,
+        e instanceof Error ? e.message : `pr update: agent failed: ${String(e)}`
       );
       return;
     }
@@ -164,7 +162,7 @@ async function runUpdateAsync(args: string[]): Promise<void> {
     failPrCli(
       e instanceof Error
         ? e.message
-        : `pr update: could not read agent output files: ${String(e)}`,
+        : `pr update: could not read agent output files: ${String(e)}`
     );
     return;
   }

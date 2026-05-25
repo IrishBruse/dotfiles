@@ -17,7 +17,7 @@ function runCommand(cmd: string): string {
     cwd: process.cwd(),
     encoding: "utf8",
     shell: process.env.SHELL ?? "/bin/sh",
-    stdio: ["ignore", "pipe", "pipe"],
+    stdio: ["ignore", "pipe", "pipe"]
   });
 }
 
@@ -46,7 +46,7 @@ function expandInlineInSegment(
   segment: string,
   segmentStart: number,
   errors: InterpolationError[],
-  replacements: { index: number; length: number; output: string }[],
+  replacements: { index: number; length: number; output: string }[]
 ): void {
   for (const match of segment.matchAll(inlineCommandPattern)) {
     const cmd = match[1];
@@ -68,7 +68,7 @@ function expandInlineInSegment(
       errors.push({
         line,
         column,
-        message: `inline command output exceeds ${INLINE_COMMAND_MAX_LENGTH} characters (${output.length})`,
+        message: `inline command output exceeds ${INLINE_COMMAND_MAX_LENGTH} characters (${output.length})`
       });
       continue;
     }
@@ -76,7 +76,7 @@ function expandInlineInSegment(
     replacements.push({
       index: segmentStart + index,
       length: match[0].length,
-      output,
+      output
     });
   }
 }

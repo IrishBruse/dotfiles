@@ -1,7 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { buildPreviewMarkdown, MERGED_PREVIEW_FILE } from "./agentOutputFiles.ts";
+import {
+  buildPreviewMarkdown,
+  MERGED_PREVIEW_FILE
+} from "./agentOutputFiles.ts";
 import { isPrCliWork, PR_WORK_JIRA_KEY } from "./jiraTitlePolicy.ts";
 
 /**
@@ -15,7 +18,7 @@ export function seedNoAgentPrCreateStub(agentOutputDir: string): void {
   const body = [
     "No agent was run. Replace this with your real title and body, then close the editor and confirm.",
     "",
-    "Prefetched context (`diff.patch`, template, Jira files) was in the CLI prompt only, not on disk here.",
+    "Prefetched context (`diff.patch`, template, Jira files) was in the CLI prompt only, not on disk here."
   ].join("\n");
   const p = path.join(agentOutputDir, MERGED_PREVIEW_FILE);
   fs.writeFileSync(p, buildPreviewMarkdown(title, body), "utf8");
@@ -32,7 +35,7 @@ export function seedNoAgentPrReviewStub(agentOutputDir: string): void {
   const body = [
     "> **Review** - add your `gh pr review --comment` body below.",
     "",
-    "No agent was run. PR context was embedded in the CLI prompt; use that when writing.",
+    "No agent was run. PR context was embedded in the CLI prompt; use that when writing."
   ].join("\n");
   const p = path.join(agentOutputDir, MERGED_PREVIEW_FILE);
   fs.writeFileSync(p, buildPreviewMarkdown(title, body), "utf8");
@@ -49,7 +52,7 @@ export function seedNoAgentPrUpdateStub(agentOutputDir: string): void {
   const body = [
     "No agent was run. Replace this with your updated title and body for `gh pr edit`, then close the editor and confirm.",
     "",
-    "Current PR on GitHub was in the **`CURRENT.md`** block inside the CLI prompt.",
+    "Current PR on GitHub was in the **`CURRENT.md`** block inside the CLI prompt."
   ].join("\n");
   const p = path.join(agentOutputDir, MERGED_PREVIEW_FILE);
   fs.writeFileSync(p, buildPreviewMarkdown(title, body), "utf8");

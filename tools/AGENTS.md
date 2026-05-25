@@ -17,13 +17,13 @@ Or from repo root: `just install-all` then `just link`.
 
 ## CLIs
 
-| Command | Folder |
-|---------|--------|
-| `jira` | `jira/` |
-| `confluence` | `confluence/` (`clone` subcommand) |
-| `pr` | `pr/` |
-| `interpolate` | `interpolate/` |
-| `archscan` | `archscan/` |
-| `agent-tool` | `agent-tool/` |
-| `export-cursor-chats` | `export-cursor-chats/` |
-| `sprint` | `sprint/` |
+| Command               | Folder                             |
+| --------------------- | ---------------------------------- |
+| `jira`                | `jira/`                            |
+| `confluence`          | `confluence/` (`clone` subcommand) |
+| `pr`                  | `pr/`                              |
+| `interpolate`         | `interpolate/`                     |
+| `archscan`            | `archscan/`                        |
+| `agent-tool`          | `agent-tool/`                      |
+| `export-cursor-chats` | `export-cursor-chats/`             |
+| `sprint`              | `sprint/`                          |

@@ -2,9 +2,7 @@ import fs from "node:fs";
 import process from "node:process";
 
 import { readAgentPrMarkdown } from "../../agentOutputFiles.ts";
-import {
-  readRepoPrTemplate,
-} from "../../jiraPromptSection.ts";
+import { readRepoPrTemplate } from "../../jiraPromptSection.ts";
 import { loadPrAgentPrompt } from "../../loadPrPrompt.ts";
 import {
   getGitRepoRoot,
@@ -12,7 +10,7 @@ import {
   prepareAgentOutputDir,
   readCurrentBranch,
   resolvePrCliGitCwd,
-  resolvePrPromptDebugPath,
+  resolvePrPromptDebugPath
 } from "../../prAgentWorkspace.ts";
 import { confirmAndCreatePr } from "../../prCreatePostUtils.ts";
 import { failPrCli } from "../../reviewPostUtils.ts";
@@ -24,7 +22,7 @@ import {
   takeDebugPromptFlag,
   takeNoAgentFlag,
   takePrintPromptFlag,
-  takePrintWorkspaceDirFlag,
+  takePrintWorkspaceDirFlag
 } from "../../printPromptFlag.ts";
 import { assertPrTitleMatchesJiraPolicy } from "../../jiraTitlePolicy.ts";
 
@@ -66,7 +64,7 @@ async function runCreateAsync(args: string[]): Promise<void> {
     failPrCli(
       e instanceof Error
         ? e.message
-        : `pr create: failed to read branch: ${String(e)}`,
+        : `pr create: failed to read branch: ${String(e)}`
     );
     return;
   }
@@ -87,13 +85,13 @@ async function runCreateAsync(args: string[]): Promise<void> {
       repoRoot,
       vars: { branch, agentOutputDir },
       jiraTitle: branch,
-      jiraBody: templateText,
+      jiraBody: templateText
     });
   } catch (e) {
     failPrCli(
       e instanceof Error
         ? e.message
-        : `pr create: failed to build prompt: ${String(e)}`,
+        : `pr create: failed to build prompt: ${String(e)}`
     );
     return;
   }
@@ -117,9 +115,7 @@ async function runCreateAsync(args: string[]): Promise<void> {
       await runAgentPrint(prompt, { cwd: agentOutputDir, model });
     } catch (e) {
       failPrCli(
-        e instanceof Error
-          ? e.message
-          : `pr create: agent failed: ${String(e)}`,
+        e instanceof Error ? e.message : `pr create: agent failed: ${String(e)}`
       );
       return;
     }
@@ -132,7 +128,7 @@ async function runCreateAsync(args: string[]): Promise<void> {
     failPrCli(
       e instanceof Error
         ? e.message
-        : `pr create: could not read agent output files: ${String(e)}`,
+        : `pr create: could not read agent output files: ${String(e)}`
     );
     return;
   }
@@ -147,6 +143,6 @@ async function runCreateAsync(args: string[]): Promise<void> {
   await confirmAndCreatePr("pr create:", agentOutputDir, repoRoot, {
     skipEditorPreview: assumeYes,
     title: assumeYes ? parsed.title : undefined,
-    body: assumeYes ? parsed.body : undefined,
+    body: assumeYes ? parsed.body : undefined
   });
 }

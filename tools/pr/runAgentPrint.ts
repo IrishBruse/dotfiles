@@ -12,7 +12,7 @@ const AGENT_ARGS_BASE = [
   "-p",
   "--output-format",
   "stream-json",
-  "--stream-partial-output",
+  "--stream-partial-output"
 ] as const;
 
 export type RunAgentPrintOptions = {
@@ -27,7 +27,7 @@ export type RunAgentPrintOptions = {
  */
 export async function runAgentPrint(
   prompt: string,
-  options: RunAgentPrintOptions = {},
+  options: RunAgentPrintOptions = {}
 ): Promise<string> {
   const { cwd, model = PR_AGENT_DEFAULT_MODEL } = options;
 
@@ -39,11 +39,21 @@ export async function runAgentPrint(
     }
   }
 
-  return await spawnOnceStream("cursor-agent", prompt, AGENT_TIMEOUT_MS, cwd, model);
+  return await spawnOnceStream(
+    "cursor-agent",
+    prompt,
+    AGENT_TIMEOUT_MS,
+    cwd,
+    model
+  );
 }
 
 function isEnoent(e: unknown): boolean {
-  return e instanceof Error && "code" in e && (e as NodeJS.ErrnoException).code === "ENOENT";
+  return (
+    e instanceof Error &&
+    "code" in e &&
+    (e as NodeJS.ErrnoException).code === "ENOENT"
+  );
 }
 
 function spawnOnceStream(
@@ -51,7 +61,7 @@ function spawnOnceStream(
   prompt: string,
   timeoutMs: number,
   cwd: string | undefined,
-  model: string,
+  model: string
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const child = spawn(
@@ -59,8 +69,8 @@ function spawnOnceStream(
       [...AGENT_ARGS_BASE, "--model", model, prompt],
       {
         stdio: ["ignore", "pipe", "pipe"],
-        ...(cwd !== undefined ? { cwd } : {}),
-      },
+        ...(cwd !== undefined ? { cwd } : {})
+      }
     );
     const handler = new AgentStreamHandler();
     const errChunks: string[] = [];
@@ -99,7 +109,7 @@ function spawnOnceStream(
             ev = JSON.parse(s) as unknown;
           } catch {
             process.stderr.write(
-              `[pr] skip non-JSON line: ${s.slice(0, 200)}${s.length > 200 ? "…" : ""}\n`,
+              `[pr] skip non-JSON line: ${s.slice(0, 200)}${s.length > 200 ? "…" : ""}\n`
             );
             nl = chunk.indexOf("\n", start);
             continue;
@@ -108,7 +118,7 @@ function spawnOnceStream(
             handler.handleObject(ev);
           } catch (e) {
             process.stderr.write(
-              `[pr] stream handler: ${e instanceof Error ? e.message : String(e)}\n`,
+              `[pr] stream handler: ${e instanceof Error ? e.message : String(e)}\n`
             );
           }
         }
@@ -132,12 +142,12 @@ function spawnOnceStream(
             handler.handleObject(ev);
           } catch (e) {
             process.stderr.write(
-              `[pr] stream handler: ${e instanceof Error ? e.message : String(e)}\n`,
+              `[pr] stream handler: ${e instanceof Error ? e.message : String(e)}\n`
             );
           }
         } catch {
           process.stderr.write(
-            `[pr] trailing line not JSON: ${s.slice(0, 200)}${s.length > 200 ? "…" : ""}\n`,
+            `[pr] trailing line not JSON: ${s.slice(0, 200)}${s.length > 200 ? "…" : ""}\n`
           );
         }
       }
@@ -147,8 +157,8 @@ function spawnOnceStream(
           const detail = errChunks.join("").trim() || "no stderr";
           reject(
             new Error(
-              `agent ${command} exited ${String(code)}. stderr: ${detail.slice(0, 4000)}${detail.length > 4000 ? "…" : ""}`,
-            ),
+              `agent ${command} exited ${String(code)}. stderr: ${detail.slice(0, 4000)}${detail.length > 4000 ? "…" : ""}`
+            )
           );
         });
         return;
@@ -158,11 +168,7 @@ function spawnOnceStream(
         try {
           resolve(handler.getFinalResult());
         } catch (e) {
-          reject(
-            e instanceof Error
-              ? e
-              : new Error(`agent: ${String(e)}`),
-          );
+          reject(e instanceof Error ? e : new Error(`agent: ${String(e)}`));
         }
       });
     });

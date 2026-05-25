@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 const docPath = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
   "commands",
-  "builtins.md",
+  "builtins.md"
 );
 
 export function loadBuiltinsDoc(): string {

@@ -26,19 +26,19 @@ export function takeModelFlags(args: string[]): {
     return {
       rest,
       model: PR_OPUS_MODEL,
-      reviewModelLabel: PR_REVIEW_MODEL_LABEL_OPUS,
+      reviewModelLabel: PR_REVIEW_MODEL_LABEL_OPUS
     };
   }
   if (hasCodex) {
     return {
       rest,
       model: PR_CODEX_MODEL,
-      reviewModelLabel: PR_REVIEW_MODEL_LABEL_CODEX,
+      reviewModelLabel: PR_REVIEW_MODEL_LABEL_CODEX
     };
   }
   return {
     rest,
     model: PR_AGENT_DEFAULT_MODEL,
-    reviewModelLabel: PR_REVIEW_MODEL_LABEL_DEFAULT,
+    reviewModelLabel: PR_REVIEW_MODEL_LABEL_DEFAULT
   };
 }

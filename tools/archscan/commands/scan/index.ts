@@ -14,7 +14,7 @@ const SOURCE_EXTENSIONS = [
   ".go",
   ".rs",
   ".java",
-  ".cs",
+  ".cs"
 ];
 const IGNORE_DIRS = [
   "node_modules",
@@ -23,7 +23,7 @@ const IGNORE_DIRS = [
   "build",
   "out",
   "coverage",
-  ".next",
+  ".next"
 ];
 
 const BLANK_OR_COMMENT_TS_RE = /^\s*(?:\/\/|\/\*|\*|$)/;
@@ -41,9 +41,7 @@ function shouldIgnoreDir(name: string): boolean {
 
 async function findSourceFiles(root: string): Promise<string[]> {
   const files: string[] = [];
-  const entries = await Array.fromAsync(
-    glob("**/*", { cwd: root }),
-  );
+  const entries = await Array.fromAsync(glob("**/*", { cwd: root }));
   for (const rel of entries) {
     const base = path.basename(rel);
     if (!isSourceFile(base)) continue;
@@ -67,7 +65,7 @@ function countLoc(content: string, filePath: string): number {
 
 function extractExports(
   content: string,
-  filePath: string,
+  filePath: string
 ): {
   types: string[];
   functions: string[];
@@ -108,7 +106,7 @@ function extractTsExports(content: string): {
   while ((m = fnRe.exec(content)) !== null) {
     const line = content.substring(
       Math.max(0, m.index - 50),
-      m.index + m[0].length + 100,
+      m.index + m[0].length + 100
     );
     if (
       line.includes("=>") ||
@@ -129,7 +127,7 @@ function extractTsExports(content: string): {
     types: [...types].sort(),
     functions: [...functions].sort(),
     classes: [...classes].sort(),
-    constants: [...constants].sort(),
+    constants: [...constants].sort()
   };
 }
 
@@ -166,7 +164,7 @@ function extractPythonExports(content: string): {
     types: [...types].sort(),
     functions: [...functions].sort(),
     classes: [...classes].sort(),
-    constants: [...constants].sort(),
+    constants: [...constants].sort()
   };
 }
 
@@ -196,7 +194,7 @@ function extractGoExports(content: string): {
     types: [...types].sort(),
     functions: [...functions].sort(),
     classes: [...classes].sort(),
-    constants: [...constants].sort(),
+    constants: [...constants].sort()
   };
 }
 
@@ -244,7 +242,7 @@ function extractImports(content: string, filePath: string): string[] {
 }
 
 function computeFanIn(
-  allModules: Map<string, { imports: string[] }>,
+  allModules: Map<string, { imports: string[] }>
 ): Map<string, number> {
   const fanIn = new Map<string, number>();
   for (const [modPath] of allModules) {
@@ -268,7 +266,7 @@ function computeFanIn(
 function normalizeModulePath(filePath: string): string {
   const withoutExt = filePath.replace(
     /\.(ts|tsx|js|jsx|py|go|rs|java|cs)$/,
-    "",
+    ""
   );
   const withoutIndex = withoutExt.replace(/\/index$/, "");
   return withoutIndex;
@@ -319,7 +317,7 @@ function findTestFiles(sourceFiles: string[], modulePath: string): string[] {
 function detectAdapterPatterns(
   modulePath: string,
   content: string,
-  allSourceFiles: string[],
+  allSourceFiles: string[]
 ): { count: number; paths: string[] } {
   const baseName = path
     .basename(modulePath)
@@ -333,10 +331,10 @@ function detectAdapterPatterns(
     "provider",
     "backend",
     "repository",
-    "repo",
+    "repo"
   ];
   const siblingFiles = allSourceFiles.filter(
-    (f) => path.dirname(f) === dir && f !== modulePath,
+    (f) => path.dirname(f) === dir && f !== modulePath
   );
 
   const adapters: string[] = [];
@@ -346,7 +344,7 @@ function detectAdapterPatterns(
       const relatedBase = sf
         .replace(
           /\.(adapter|impl|driver|provider|backend|repository|repo)\.(ts|tsx|js|jsx|py)$/,
-          "",
+          ""
         )
         .replace(/\.(ts|tsx|js|jsx|py)$/, "");
       const moduleBase = baseName.toLowerCase();
@@ -377,14 +375,14 @@ function detectAdapterPatterns(
 
 async function checkTestPiercing(
   root: string,
-  testFiles: string[],
+  testFiles: string[]
 ): Promise<boolean> {
   for (const tf of testFiles) {
     try {
       const content = await readFile(path.join(root, tf), "utf-8");
       if (
         /__mocks__|jest\.spyOn.*private|vi\.spyOn.*private|_internal|_private/g.test(
-          content,
+          content
         )
       ) {
         return true;
@@ -398,7 +396,7 @@ async function checkTestPiercing(
 
 async function readAllFiles(
   root: string,
-  files: string[],
+  files: string[]
 ): Promise<Map<string, string>> {
   const contents = new Map<string, string>();
   for (const f of files) {
@@ -473,7 +471,7 @@ export async function runScan(args: string[]): Promise<void> {
       exports: exports_,
       imports: {
         uniqueModules: imports.length,
-        list: imports,
+        list: imports
       },
       fanIn: fanInMap.get(f) ?? 0,
       fanOut: imports.length,
@@ -481,7 +479,7 @@ export async function runScan(args: string[]): Promise<void> {
       adapterPaths: adapterInfo.paths,
       seamLocation,
       testsPierceInterface: testsPierce,
-      testFilePaths: testFiles,
+      testFilePaths: testFiles
     });
   }
 
@@ -492,7 +490,7 @@ export async function runScan(args: string[]): Promise<void> {
     analyzedAt: new Date().toISOString(),
     sourceFiles: sourceFiles.length,
     totalLoc,
-    modules: modules.sort((a, b) => b.loc - a.loc),
+    modules: modules.sort((a, b) => b.loc - a.loc)
   };
 
   const outDir = path.dirname(outPath);
@@ -514,7 +512,7 @@ async function detectProjectName(root: string): Promise<string> {
     path.join(root, "Cargo.toml"),
     path.join(root, "go.mod"),
     path.join(root, "pyproject.toml"),
-    path.join(root, "pom.xml"),
+    path.join(root, "pom.xml")
   ];
 
   for (const p of candidates) {

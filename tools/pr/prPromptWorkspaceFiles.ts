@@ -1,4 +1,7 @@
-import { CURRENT_PR_SNAPSHOT_FILE, MERGED_PREVIEW_FILE } from "./agentOutputFiles.ts";
+import {
+  CURRENT_PR_SNAPSHOT_FILE,
+  MERGED_PREVIEW_FILE
+} from "./agentOutputFiles.ts";
 
 export type PrPromptWorkspaceMode = "create" | "update" | "review";
 
@@ -6,11 +9,7 @@ const JIRA_KEY_FILE_RE = /^[A-Z][A-Z0-9]+-\d+\.md$/;
 
 function prefetchFileOrder(mode: PrPromptWorkspaceMode): string[] {
   if (mode === "create") {
-    return [
-      "diff.patch",
-      "PULL_REQUEST_TEMPLATE.md",
-      "jira-tickets-board.md",
-    ];
+    return ["diff.patch", "PULL_REQUEST_TEMPLATE.md", "jira-tickets-board.md"];
   }
   const snapshot =
     mode === "review" ? MERGED_PREVIEW_FILE : CURRENT_PR_SNAPSHOT_FILE;
@@ -21,13 +20,13 @@ function prefetchFileOrder(mode: PrPromptWorkspaceMode): string[] {
     "diff.patch",
     "commits.txt",
     "comments.md",
-    "jira-tickets-board.md",
+    "jira-tickets-board.md"
   ];
 }
 
 function sortPrefetchKeys(
   keys: string[],
-  mode: PrPromptWorkspaceMode,
+  mode: PrPromptWorkspaceMode
 ): string[] {
   const preferred = prefetchFileOrder(mode);
   const rest = keys.filter((k) => !preferred.includes(k)).sort();
@@ -43,7 +42,7 @@ function sortPrefetchKeys(
 
 function describePrefetchFile(
   name: string,
-  mode: PrPromptWorkspaceMode,
+  mode: PrPromptWorkspaceMode
 ): string {
   if (name === "diff.patch") {
     if (mode === "create") {
@@ -87,7 +86,7 @@ function describePrefetchFile(
  */
 export function formatBundledPrefetchForPrompt(
   files: Record<string, string>,
-  mode: PrPromptWorkspaceMode,
+  mode: PrPromptWorkspaceMode
 ): string {
   const names = sortPrefetchKeys(Object.keys(files), mode);
   if (names.length === 0) {
@@ -103,7 +102,7 @@ export function formatBundledPrefetchForPrompt(
       bytes,
       lines,
       what: describePrefetchFile(name, mode),
-      content,
+      content
     };
   });
 
@@ -115,8 +114,7 @@ export function formatBundledPrefetchForPrompt(
     "| File | bytes | lines | What |",
     "|------|------:|------:|------|",
     ...rows.map(
-      (r) =>
-        `| \`${r.name}\` | ${String(r.bytes)} | ${r.lines} | ${r.what} |`,
+      (r) => `| \`${r.name}\` | ${String(r.bytes)} | ${r.lines} | ${r.what} |`
     ),
     "",
     "## Prefetched file contents",
@@ -127,8 +125,8 @@ export function formatBundledPrefetchForPrompt(
       `<<<BEGIN ${r.name}>>>`,
       r.content,
       `<<<END ${r.name}>>>`,
-      "",
-    ]),
+      ""
+    ])
   ];
   return linesOut.join("\n");
 }

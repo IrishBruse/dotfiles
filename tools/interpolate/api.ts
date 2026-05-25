@@ -4,7 +4,7 @@ import { expandTemplate, type ExpandResult } from "./expand.ts";
 import {
   DEFAULT_PROMPTS_DIR,
   loadPromptTemplate,
-  resolvePromptsDir,
+  resolvePromptsDir
 } from "./promptsDir.ts";
 
 export { DEFAULT_PROMPTS_DIR, resolvePromptsDir, loadPromptTemplate };
@@ -22,7 +22,7 @@ export type ExpandNamedPromptOptions = {
  */
 export function expandNamedPrompt(
   name: string,
-  options?: ExpandNamedPromptOptions,
+  options?: ExpandNamedPromptOptions
 ): ExpandResult {
   const promptsDir = resolvePromptsDir(options?.promptsDir);
   const template = loadPromptTemplate(promptsDir, name);

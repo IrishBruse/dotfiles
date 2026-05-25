@@ -25,7 +25,10 @@ Examples:
 `);
 }
 
-function takeFlag(args: string[], flag: string): { rest: string[]; on: boolean } {
+function takeFlag(
+  args: string[],
+  flag: string
+): { rest: string[]; on: boolean } {
   const on = args.includes(flag);
   const rest = on ? args.filter((a) => a !== flag) : args;
   return { rest, on };
@@ -55,7 +58,10 @@ export function main(argv: string[]): void {
   }
 }
 
-async function runScanAndEnrich(dir: string | undefined, output: string | undefined): Promise<void> {
+async function runScanAndEnrich(
+  dir: string | undefined,
+  output: string | undefined
+): Promise<void> {
   const targetDir = dir ?? process.cwd();
   const outPath = output ?? `${targetDir}/.context/architecture-data.json`;
 

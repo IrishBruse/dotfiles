@@ -44,7 +44,7 @@ export function resolvePrPromptDebugPath(): string {
  */
 export function logAgentOutputDirPreamble(
   dir: string,
-  printPath: boolean,
+  printPath: boolean
 ): void {
   if (!printPath) {
     return;
@@ -56,11 +56,10 @@ export function getGitRepoRoot(cwd: string): string {
   const r = spawnSync("git", ["rev-parse", "--show-toplevel"], {
     cwd,
     encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"],
+    stdio: ["ignore", "pipe", "pipe"]
   });
   if (r.status !== 0) {
-    const msg =
-      (r.stderr ?? r.stdout ?? "").trim() || `exit ${r.status ?? 1}`;
+    const msg = (r.stderr ?? r.stdout ?? "").trim() || `exit ${r.status ?? 1}`;
     throw new Error(`pr: not a git repository (${msg})`);
   }
   const root = (r.stdout ?? "").trim();
@@ -74,7 +73,7 @@ export function readCurrentBranch(repoRoot: string): string {
   const head = spawnSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], {
     encoding: "utf8",
     cwd: repoRoot,
-    stdio: ["ignore", "pipe", "pipe"],
+    stdio: ["ignore", "pipe", "pipe"]
   });
   if (head.status !== 0) {
     const msg =

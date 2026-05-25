@@ -10,7 +10,7 @@ const ENV_PREFIX = "env:";
 
 export function findUndefinedVariables(
   template: string,
-  cliVars: Record<string, string>,
+  cliVars: Record<string, string>
 ): InterpolationError[] {
   const merged = { ...builtinVars(), ...cliVars };
   const errors: InterpolationError[] = [];

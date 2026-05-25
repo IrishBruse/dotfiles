@@ -1,7 +1,10 @@
 import { spawnSync } from "node:child_process";
 
 /** Resolves the web URL of a PR. Omit `target` to use the PR for the current branch (e.g. right after `gh pr create`). */
-export function getPrViewUrl(options: { target?: string; cwd?: string }): string | null {
+export function getPrViewUrl(options: {
+  target?: string;
+  cwd?: string;
+}): string | null {
   const { target, cwd } = options;
   const args = ["pr", "view"];
   if (target !== undefined && target !== "") {
@@ -11,7 +14,7 @@ export function getPrViewUrl(options: { target?: string; cwd?: string }): string
   const r = spawnSync("gh", args, {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
-    ...(cwd !== undefined ? { cwd } : {}),
+    ...(cwd !== undefined ? { cwd } : {})
   });
   if (r.status !== 0) {
     return null;

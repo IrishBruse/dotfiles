@@ -19,7 +19,7 @@ function isTruthyValue(value: string | undefined): boolean {
 function conditionMet(
   envName: string | undefined,
   varName: string | undefined,
-  vars: Record<string, string>,
+  vars: Record<string, string>
 ): boolean {
   if (envName !== undefined) {
     return isTruthyValue(process.env[envName]);
@@ -33,7 +33,7 @@ function conditionMet(
 /** Drop or unwrap lines prefixed with `?var:` / `?env:VAR:`. */
 export function expandLineConditions(
   template: string,
-  vars: Record<string, string>,
+  vars: Record<string, string>
 ): string {
   const out: string[] = [];
   for (const line of template.split("\n")) {

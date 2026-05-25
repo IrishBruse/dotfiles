@@ -27,7 +27,7 @@ export function printHelp(): void {
       "  --opus           Run the Cursor agent with the Opus model (claude-opus-4-7-high).",
       "  --codex          Run with Codex 5.3 (gpt-5.3-codex).",
       "  (default model)  If neither is set, uses composer-2 (agent --list-models).",
-      "  -h, --help       Show this message",
-    ].join("\n"),
+      "  -h, --help       Show this message"
+    ].join("\n")
   );
 }

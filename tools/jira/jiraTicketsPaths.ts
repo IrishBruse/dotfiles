@@ -14,12 +14,12 @@ export const JIRA_TICKETS_SKILL_DIR = path.resolve(
   "home",
   ".agents",
   "skills",
-  "jira-tickets",
+  "jira-tickets"
 );
 
 export const JIRA_REFERENCES_DIR = path.join(
   JIRA_TICKETS_SKILL_DIR,
-  "references",
+  "references"
 );
 
 export const JIRA_MISC_DIR = path.join(JIRA_REFERENCES_DIR, "misc");

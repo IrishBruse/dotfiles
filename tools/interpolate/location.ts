@@ -1,6 +1,6 @@
 export function locationAt(
   text: string,
-  index: number,
+  index: number
 ): { line: number; column: number } {
   const before = text.slice(0, index);
   const line = before.split("\n").length;

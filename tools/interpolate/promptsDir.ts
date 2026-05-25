@@ -5,7 +5,7 @@ import path from "node:path";
 export const DEFAULT_PROMPTS_DIR = path.join(
   os.homedir(),
   ".config",
-  "interpolate",
+  "interpolate"
 );
 
 export function resolvePromptsDir(flagValue: string | undefined): string {
@@ -31,8 +31,7 @@ export function loadPromptTemplate(promptsDir: string, name: string): string {
   const file = promptPath(promptsDir, name);
   if (!fs.existsSync(file)) {
     const known = listPromptNames(promptsDir);
-    const hint =
-      known.length > 0 ? ` Known prompts: ${known.join(", ")}.` : "";
+    const hint = known.length > 0 ? ` Known prompts: ${known.join(", ")}.` : "";
     throw new Error(`no prompt "${name}" at ${file}.${hint}`);
   }
   return fs.readFileSync(file, "utf8");

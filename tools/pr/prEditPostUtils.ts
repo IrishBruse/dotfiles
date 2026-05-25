@@ -5,13 +5,13 @@ import { getPrViewUrl, printPrUrlWithMargins } from "./prViewUrl.ts";
 import { failPrCli, runGhWithBodyFile } from "./reviewPostUtils.ts";
 import {
   confirmSubmitAfterEditorPreview,
-  waitForEnterRetryOrCancel,
+  waitForEnterRetryOrCancel
 } from "./reviewPreview.ts";
 
 export function postPrMetadataEdit(
   pr: string,
   title: string,
-  body: string,
+  body: string
 ): boolean {
   return runGhWithBodyFile("pr-cli-edit-", body, (file) => [
     "pr",
@@ -20,14 +20,14 @@ export function postPrMetadataEdit(
     "--title",
     title,
     "--body-file",
-    file,
+    file
   ]);
 }
 
 export async function confirmAndApplyPrMetadata(
   logPrefix: string,
   target: string,
-  workspaceDir: string,
+  workspaceDir: string
 ): Promise<void> {
   let title: string;
   let body: string;
@@ -36,7 +36,7 @@ export async function confirmAndApplyPrMetadata(
     const out = await confirmSubmitAfterEditorPreview({
       logPrefix,
       workspaceDir,
-      actionDescription: "update the PR on GitHub",
+      actionDescription: "update the PR on GitHub"
     });
     if (out === null) {
       console.error(`${logPrefix} cancelled, not updating PR`);
@@ -73,7 +73,7 @@ export async function confirmAndApplyPrMetadata(
         (canRetry
           ? "press Enter to retry, or Esc to quit"
           : "re-run after fixing gh") +
-        ".",
+        "."
     );
     if (!canRetry) {
       process.exitCode = 1;

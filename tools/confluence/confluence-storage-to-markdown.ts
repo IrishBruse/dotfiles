@@ -1,28 +1,21 @@
 /**
  * Confluence storage format (XHTML + ac:/ri: macros) → Markdown for local docs.
  */
-import { JSDOM } from "jsdom";
 import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";
 import { slugifyConfluenceTitle } from "./confluence-slug.ts";
 
 function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 function escapeAttr(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")
-    .replace(/</g, "&lt;");
+  return s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 }
 
 function linkBodyPlain(html: string): string {
-  const f = JSDOM.fragment(html);
-  return (f.textContent ?? "").trim();
+  const text = html.replace(/<[^>]+>/g, "");
+  return decodeHtmlEntities(text).trim();
 }
 
 /** Named refs resolved before `&amp;` each round (subset of HTML5 references). */
@@ -47,7 +40,7 @@ const NAMED_ENTITY_CHARS: [string, string][] = [
   ["euro", "\u20ac"],
   ["pound", "\u00a3"],
   ["yen", "\u00a5"],
-  ["cent", "\u00a2"],
+  ["cent", "\u00a2"]
 ];
 
 function decodeHtmlEntities(raw: string): string {
@@ -84,7 +77,7 @@ function stripEditorAttrs(html: string): string {
 function replaceAdfFallbacks(html: string): string {
   return html.replace(
     /<ac:adf-extension>[\s\S]*?<ac:adf-fallback>([\s\S]*?)<\/ac:adf-fallback>[\s\S]*?<\/ac:adf-extension>/gi,
-    "$1",
+    "$1"
   );
 }
 
@@ -93,17 +86,17 @@ function replaceCodeMacros(html: string): string {
     /<ac:structured-macro\b[^>]*\bac:name="code"[^>]*>[\s\S]*?<\/ac:structured-macro>/gi,
     (block) => {
       const langM = block.match(
-        /<ac:parameter\s+ac:name="language">([^<]*)<\/ac:parameter>/i,
+        /<ac:parameter\s+ac:name="language">([^<]*)<\/ac:parameter>/i
       );
       const lang = (langM?.[1] ?? "").trim();
       const cdataM = block.match(
-        /<ac:plain-text-body>\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*<\/ac:plain-text-body>/i,
+        /<ac:plain-text-body>\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*<\/ac:plain-text-body>/i
       );
       const body = cdataM?.[1] ?? "";
       const safeLang = lang.replace(/[^a-zA-Z0-9+#.-]/g, "");
       const cls = safeLang ? ` class="language-${safeLang}"` : "";
       return `<pre><code${cls}>${escapeHtml(body)}</code></pre>`;
-    },
+    }
   );
 }
 
@@ -115,7 +108,7 @@ function replaceIframeMacros(html: string): string {
       if (!urlM) return "";
       const url = decodeHtmlEntities(urlM[1]!);
       return `<p><a href="${escapeAttr(url)}">${escapeHtml(url)}</a> (embedded content)</p>`;
-    },
+    }
   );
 }
 
@@ -127,9 +120,7 @@ function replacePageLinks(html: string): string {
       const textRaw = bodyM?.[1] ?? "";
       const text = linkBodyPlain(textRaw) || "link";
       const anchorM = full.match(/\bac:anchor="([^"]+)"/i);
-      const pageM = inner.match(
-        /<ri:page[^>]*\bri:content-title="([^"]*)"/i,
-      );
+      const pageM = inner.match(/<ri:page[^>]*\bri:content-title="([^"]*)"/i);
       const urlM = inner.match(/<ri:url[^>]*\bri:value="([^"]*)"/i);
       if (urlM) {
         const url = decodeHtmlEntities(urlM[1]!);
@@ -145,29 +136,24 @@ function replacePageLinks(html: string): string {
         return `<a href="#${escapeAttr(id)}">${escapeHtml(text)}</a>`;
       }
       return escapeHtml(text);
-    },
+    }
   );
 }
 
 function replaceImages(html: string): string {
-  return html.replace(
-    /<ac:image\b[^>]*>[\s\S]*?<\/ac:image>/gi,
-    (full) => {
-      const altM = full.match(/\bac:alt="([^"]*)"/i);
-      const fileM = full.match(
-        /<ri:attachment[^>]*\bri:filename="([^"]*)"/i,
-      );
-      const alt = altM?.[1] ?? fileM?.[1] ?? "image";
-      const file = fileM?.[1] ?? "unknown";
-      return `<p><img src="attachment:${escapeAttr(file)}" alt="${escapeAttr(alt)}" /></p>`;
-    },
-  );
+  return html.replace(/<ac:image\b[^>]*>[\s\S]*?<\/ac:image>/gi, (full) => {
+    const altM = full.match(/\bac:alt="([^"]*)"/i);
+    const fileM = full.match(/<ri:attachment[^>]*\bri:filename="([^"]*)"/i);
+    const alt = altM?.[1] ?? fileM?.[1] ?? "image";
+    const file = fileM?.[1] ?? "unknown";
+    return `<p><img src="attachment:${escapeAttr(file)}" alt="${escapeAttr(alt)}" /></p>`;
+  });
 }
 
 function unwrapInlineCommentMarkers(html: string): string {
   return html.replace(
     /<ac:inline-comment-marker\b[^>]*>([\s\S]*?)<\/ac:inline-comment-marker>/gi,
-    "$1",
+    "$1"
   );
 }
 
@@ -175,7 +161,7 @@ function unwrapInlineCommentMarkers(html: string): string {
 function dropNavMacros(html: string): string {
   return html.replace(
     /<ac:structured-macro\b[^>]*\bac:name="(?:toc|children)"[^>]*>[\s\S]*?<\/ac:structured-macro>/gi,
-    "",
+    ""
   );
 }
 
@@ -193,42 +179,47 @@ function unwrapRemainingStructuredMacros(html: string): string {
       /<ac:structured-macro\b[^>]*>[\s\S]*?<\/ac:structured-macro>/gi,
       (block) => {
         const rich = block.match(
-          /<ac:rich-text-body>([\s\S]*?)<\/ac:rich-text-body>/i,
+          /<ac:rich-text-body>([\s\S]*?)<\/ac:rich-text-body>/i
         );
         if (rich) return `<blockquote>${rich[1]}</blockquote>`;
         const plain = block.match(
-          /<ac:plain-text-body>\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*<\/ac:plain-text-body>/i,
+          /<ac:plain-text-body>\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*<\/ac:plain-text-body>/i
         );
-        if (plain)
-          return `<pre><code>${escapeHtml(plain[1]!)}</code></pre>`;
+        if (plain) return `<pre><code>${escapeHtml(plain[1]!)}</code></pre>`;
         return "";
-      },
+      }
     );
   }
   return cur;
 }
 
-/** Confluence uses `<td><p>…</p></td>`; Turndown then puts newlines in cells and breaks GFM tables. */
-function flattenParagraphsInTableCells(root: Element): void {
-  const doc = root.ownerDocument;
-  for (const cell of root.querySelectorAll("td, th")) {
-    const ps = cell.querySelectorAll(":scope > p");
-    if (ps.length === 0) continue;
-    if (ps.length === 1) {
-      const p = ps[0]!;
-      while (p.firstChild) cell.insertBefore(p.firstChild, p);
-      p.remove();
-      continue;
-    }
-    const list = Array.from(ps);
-    let first = true;
-    for (const p of list) {
-      if (!first && doc) cell.insertBefore(doc.createTextNode(" "), p);
-      first = false;
-      while (p.firstChild) cell.insertBefore(p.firstChild, p);
-      p.remove();
-    }
+/** Unwrap direct-child `<p>` in a table cell (Confluence wraps cell text in `<p>`). */
+function flattenCellInner(inner: string): string {
+  const parts: string[] = [];
+  let rest = inner.trim();
+  while (true) {
+    const m = rest.match(/^<p\b[^>]*>([\s\S]*?)<\/p>/i);
+    if (!m) break;
+    parts.push(m[1]!);
+    rest = rest.slice(m[0].length).trimStart();
   }
+  if (parts.length === 0) return inner;
+  if (rest.length > 0) return inner;
+  if (parts.length === 1) return parts[0]!;
+  return parts.join(" ");
+}
+
+/** Confluence uses `<td><p>…</p></td>`; Turndown then puts newlines in cells and breaks GFM tables. */
+function flattenParagraphsInTableCells(html: string): string {
+  return html.replace(
+    /<(td|th)(\s[^>]*)?>([\s\S]*?)<\/\1>/gi,
+    (match, tag: string, attrs: string | undefined, inner: string) => {
+      const flat = flattenCellInner(inner);
+      if (flat === inner) return match;
+      const attr = attrs ?? "";
+      return `<${tag}${attr}>${flat}</${tag}>`;
+    }
+  );
 }
 
 /** Collapse whitespace/newlines in a table cell's markdown (GFM tables must be single-line per row). */
@@ -238,7 +229,10 @@ function collapseCellMarkdown(s: string): string {
     .map((part, i) =>
       i % 2 === 1
         ? part
-        : part.replace(/\s*\n\s*/g, " ").replace(/[ \t]{2,}/g, " ").trim(),
+        : part
+            .replace(/\s*\n\s*/g, " ")
+            .replace(/[ \t]{2,}/g, " ")
+            .trim()
     )
     .join("```")
     .trim();
@@ -249,7 +243,7 @@ function buildTurndown(): TurndownService {
     headingStyle: "atx",
     bulletListMarker: "-",
     codeBlockStyle: "fenced",
-    emDelimiter: "_",
+    emDelimiter: "_"
   });
   td.use(gfm);
   td.addRule("tableCellCollapse", {
@@ -261,7 +255,7 @@ function buildTurndown(): TurndownService {
       const index = Array.prototype.indexOf.call(parent.childNodes, node);
       const prefix = index === 0 ? "| " : " ";
       return prefix + collapsed + " |";
-    },
+    }
   });
   td.addRule("attachmentImage", {
     filter(node) {
@@ -275,7 +269,7 @@ function buildTurndown(): TurndownService {
       const file = src.replace(/^attachment:/, "");
       const alt = node.getAttribute("alt") ?? file;
       return `![${alt}](${src})`;
-    },
+    }
   });
   return td;
 }
@@ -296,15 +290,9 @@ export function storageToMarkdown(storage: string): string {
   html = unwrapRemainingStructuredMacros(html);
   html = stripEditorAttrs(html);
 
-  const fragment = JSDOM.fragment(`<div id="root">${html}</div>`);
-  const root = fragment.firstChild;
-  if (!root || root.nodeType !== 1) return decodeHtmlEntities(storage).trim();
+  html = flattenParagraphsInTableCells(html);
 
-  flattenParagraphsInTableCells(root as Element);
+  const out = turndown.turndown(html).trim();
 
-  const out = turndown.turndown(root as unknown as HTMLElement).trim();
-
-  return out
-    .replace(/\n{3,}/g, "\n\n")
-    .replace(/[ \t]+\n/g, "\n");
+  return out.replace(/\n{3,}/g, "\n\n").replace(/[ \t]+\n/g, "\n");
 }

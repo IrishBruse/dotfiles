@@ -36,11 +36,10 @@ export function printInferReviewLine(prUrl: string): void {
 type CurrentBranchPr = { number: number; url: string | undefined };
 
 function getOpenPrOnCurrentBranch(): CurrentBranchPr | null {
-  const result = spawnSync(
-    "gh",
-    ["pr", "view", "--json", "number,url"],
-    { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] },
-  );
+  const result = spawnSync("gh", ["pr", "view", "--json", "number,url"], {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"]
+  });
   if (result.status !== 0) {
     return null;
   }

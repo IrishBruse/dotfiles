@@ -6,7 +6,7 @@ import { findUndefinedVariables } from "./validate.ts";
 /** Replace `{{key}}` placeholders; later keys in `vars` win over earlier passes. */
 export function expandPlaceholders(
   template: string,
-  vars: Record<string, string>,
+  vars: Record<string, string>
 ): string {
   let out = template;
   for (const [key, value] of Object.entries(vars)) {
@@ -21,7 +21,7 @@ export type ExpandResult =
 
 export function expandTemplate(
   template: string,
-  cliVars: Record<string, string>,
+  cliVars: Record<string, string>
 ): ExpandResult {
   const merged = { ...builtinVars(), ...cliVars };
   const conditioned = expandLineConditions(template, merged);
@@ -31,7 +31,7 @@ export function expandTemplate(
   }
 
   const expanded = expandPatternBuiltins(
-    expandPlaceholders(conditioned, merged),
+    expandPlaceholders(conditioned, merged)
   );
   if (expanded.errors.length > 0) {
     return { ok: false as const, errors: expanded.errors };

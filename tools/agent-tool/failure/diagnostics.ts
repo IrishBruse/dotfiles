@@ -9,6 +9,6 @@ export type Diagnostics = {
 export function collectDiagnostics(): Diagnostics {
   return {
     timestamp: new Date().toISOString(),
-    cwd: process.cwd(),
+    cwd: process.cwd()
   };
 }

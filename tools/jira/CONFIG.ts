@@ -9,5 +9,5 @@ export const CONFIG = {
   /** JQL (put ORDER BY at the end; avoid `sprint in openSprints()` when boardId is set) */
   boardJql: "project = NOVACORE ORDER BY assignee, key",
   /** Clear existing *.md under me/, unassigned/, team/ before writing */
-  clean: true,
+  clean: true
 } as const;

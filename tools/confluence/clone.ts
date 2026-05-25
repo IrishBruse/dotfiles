@@ -103,7 +103,9 @@ function parseArgs(argv: string[]): {
       if (!v) usage(1);
       const n = Number(v);
       if (!Number.isFinite(n) || n < 1) {
-        console.error("confluence clone: --concurrency must be a positive number");
+        console.error(
+          "confluence clone: --concurrency must be a positive number"
+        );
         usage(1);
       }
       concurrency = n;
@@ -125,7 +127,7 @@ function parseArgs(argv: string[]): {
   const pageId = pageIdFromUrl(url);
   if (!pageId) {
     console.error(
-      "Could not parse page id from URL (expected .../pages/<digits>/...)",
+      "Could not parse page id from URL (expected .../pages/<digits>/...)"
     );
     process.exit(1);
   }
@@ -137,7 +139,7 @@ function parseArgs(argv: string[]): {
     outDir: outDir ?? rest[1] ?? defaultOut,
     acli,
     rawStorage,
-    concurrency: c,
+    concurrency: c
   };
 }
 
@@ -145,18 +147,18 @@ function usage(code: number): never {
   const prog = "confluence clone";
   console.error(`Usage: ${prog} <confluencePageUrl> [outputDir]`);
   console.error(
-    `       ${prog} --url <url> [--out|-o <dir>] [--acli <path>] [--raw-storage] [--concurrency|-j <n>]`,
+    `       ${prog} --url <url> [--out|-o <dir>] [--acli <path>] [--raw-storage] [--concurrency|-j <n>]`
   );
   console.error("");
   console.error(
-    "  Clones the page and all descendants via Atlassian CLI (acli).",
+    "  Clones the page and all descendants via Atlassian CLI (acli)."
   );
   console.error(`  Default output: ./confluence-<pageId>`);
   console.error(
-    "  Body is converted from Confluence storage HTML to Markdown unless --raw-storage.",
+    "  Body is converted from Confluence storage HTML to Markdown unless --raw-storage."
   );
   console.error(
-    `  Downloads run in parallel (default ${DEFAULT_CONCURRENCY} concurrent page fetches; env CONFLUENCE_CLONE_CONCURRENCY).`,
+    `  Downloads run in parallel (default ${DEFAULT_CONCURRENCY} concurrent page fetches; env CONFLUENCE_CLONE_CONCURRENCY).`
   );
   console.error("  Requires: acli authenticated (acli confluence auth).");
   process.exit(code);
@@ -173,16 +175,14 @@ function execFailureMessage(err: unknown): string {
     stderr?: string | Buffer;
     stdout?: string | Buffer;
   };
-  const stderr =
-    ex.stderr !== undefined ? String(ex.stderr).trim() : "";
-  const stdout =
-    ex.stdout !== undefined ? String(ex.stdout).trim() : "";
+  const stderr = ex.stderr !== undefined ? String(ex.stderr).trim() : "";
+  const stdout = ex.stdout !== undefined ? String(ex.stdout).trim() : "";
   return stderr || stdout || ex.message;
 }
 
 async function runAcliPageAsync(
   acli: string,
-  pageId: string,
+  pageId: string
 ): Promise<PageViewJson> {
   let stdout: string;
   try {
@@ -197,9 +197,9 @@ async function runAcliPageAsync(
         "--json",
         "--include-direct-children",
         "--body-format",
-        "storage",
+        "storage"
       ],
-      { maxBuffer: 64 * 1024 * 1024, encoding: "utf8" },
+      { maxBuffer: 64 * 1024 * 1024, encoding: "utf8" }
     );
     stdout = String(r.stdout ?? "").trim();
   } catch (e: unknown) {
@@ -238,7 +238,7 @@ function folderBase(page: { id: string; title?: string }): string {
 }
 
 function folderNamesForSiblings(
-  pages: { id: string; title?: string }[],
+  pages: { id: string; title?: string }[]
 ): string[] {
   if (pages.length === 0) return [];
   const bases = pages.map(folderBase);
@@ -270,7 +270,7 @@ function sortChildren(children: ChildRef[]): ChildRef[] {
 
 function buildFileContent(
   page: PageViewJson,
-  opts: { rawStorage: boolean },
+  opts: { rawStorage: boolean }
 ): string {
   const lines = ["---"];
   lines.push(`id: "${page.id}"`);
@@ -280,9 +280,7 @@ function buildFileContent(
     lines.push(`version: ${page.version.number}`);
   lines.push("---", "");
   const storage = page.body?.storage?.value ?? "";
-  const body = opts.rawStorage
-    ? storage
-    : storageToMarkdown(storage);
+  const body = opts.rawStorage ? storage : storageToMarkdown(storage);
   return `${lines.join("\n")}\n${body}\n`;
 }
 
@@ -290,7 +288,7 @@ function writePageFile(
   dir: string,
   baseName: string,
   data: PageViewJson,
-  opts: { rawStorage: boolean; stats: CloneStats },
+  opts: { rawStorage: boolean; stats: CloneStats }
 ): void {
   fs.mkdirSync(dir, { recursive: true });
   const filePath = path.join(dir, `${baseName}.md`);
@@ -311,7 +309,7 @@ async function walk(
     rawStorage: boolean;
     stats: CloneStats;
     fetchPage: (pageId: string) => Promise<PageViewJson>;
-  },
+  }
 ): Promise<void> {
   const { leafSlug, visited, prefetched, rawStorage, stats, fetchPage } = opts;
   if (visited.has(pageId)) {
@@ -323,7 +321,7 @@ async function walk(
   const data = prefetched ?? (await fetchPage(pageId));
   if (data.directChildren?.meta?.hasMore) {
     console.error(
-      `confluence clone: warning: page ${pageId} has more direct children than returned; clone may be incomplete.`,
+      `confluence clone: warning: page ${pageId} has more direct children than returned; clone may be incomplete.`
     );
   }
 
@@ -354,10 +352,10 @@ async function walk(
           prefetched: childData,
           rawStorage,
           stats,
-          fetchPage,
+          fetchPage
         });
       }
-    }),
+    })
   );
 }
 
@@ -380,7 +378,7 @@ export async function runClone(argv: string[]): Promise<void> {
     prefetched: titleProbe,
     rawStorage: parsed.rawStorage,
     stats,
-    fetchPage,
+    fetchPage
   });
   const rootTitle = titleProbe.title?.trim() || `(page ${pageId})`;
   const bodyMode = parsed.rawStorage
@@ -392,9 +390,10 @@ export async function runClone(argv: string[]): Promise<void> {
   console.error(`  root:     ${rootTitle} — id ${pageId}`);
   console.error(`  output:   ${relativeToCwd(rootDir)}/`);
   console.error(
-    `  wrote:    ${stats.filesWritten} page file(s), ${formatBytes(stats.totalBytes)} total`,
+    `  wrote:    ${stats.filesWritten} page file(s), ${formatBytes(stats.totalBytes)} total`
   );
-  console.error(`  fetch:    up to ${parsed.concurrency} concurrent acli requests`);
+  console.error(
+    `  fetch:    up to ${parsed.concurrency} concurrent acli requests`
+  );
   console.error(`  body:     ${bodyMode}`);
 }
-

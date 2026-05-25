@@ -8,11 +8,11 @@ import {
   logAgentOutputDirPreamble,
   prepareAgentOutputDir,
   resolvePrCliGitCwd,
-  resolvePrPromptDebugPath,
+  resolvePrPromptDebugPath
 } from "../../prAgentWorkspace.ts";
 import {
   confirmAndPostReviewComment,
-  failPrCli,
+  failPrCli
 } from "../../reviewPostUtils.ts";
 import { runAgentPrint } from "../../runAgentPrint.ts";
 import { takeModelFlags } from "../../modelFlags.ts";
@@ -21,7 +21,7 @@ import {
   takeDebugPromptFlag,
   takeNoAgentFlag,
   takePrintPromptFlag,
-  takePrintWorkspaceDirFlag,
+  takePrintWorkspaceDirFlag
 } from "../../printPromptFlag.ts";
 
 const PROMPT_ONLY_AGENT_DIR =
@@ -67,7 +67,7 @@ async function runReviewAsync(args: string[]): Promise<void> {
     failPrCli(
       e instanceof Error
         ? e.message
-        : `pr review: failed to read PR with gh: ${String(e)}`,
+        : `pr review: failed to read PR with gh: ${String(e)}`
     );
     return;
   }
@@ -87,13 +87,13 @@ async function runReviewAsync(args: string[]): Promise<void> {
       repoRoot,
       vars: { target, agentOutputDir, reviewModelLabel },
       jiraTitle,
-      jiraBody,
+      jiraBody
     });
   } catch (e) {
     failPrCli(
       e instanceof Error
         ? e.message
-        : `pr review: failed to build prompt: ${String(e)}`,
+        : `pr review: failed to build prompt: ${String(e)}`
     );
     return;
   }
@@ -117,9 +117,7 @@ async function runReviewAsync(args: string[]): Promise<void> {
       await runAgentPrint(prompt, { cwd: agentOutputDir, model });
     } catch (e) {
       failPrCli(
-        e instanceof Error
-          ? e.message
-          : `pr review: agent failed: ${String(e)}`,
+        e instanceof Error ? e.message : `pr review: agent failed: ${String(e)}`
       );
       return;
     }

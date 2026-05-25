@@ -25,11 +25,14 @@ function oneLine(s: string, max: number): string {
 const CD_PREFIX_RES = [
   /^cd\s+(\S+)\s*&&\s*(.*)$/s,
   /^cd\s+"([^"]+)"\s*&&\s*(.*)$/s,
-  /^cd\s+'([^']+)'\s*&&\s*(.*)$/s,
+  /^cd\s+'([^']+)'\s*&&\s*(.*)$/s
 ];
 
 /** If command is `cd <dir> && …` and <dir> is the project cwd, return the rest. */
-function stripImpliedCd(command: string, projectRoot: string | undefined): string {
+function stripImpliedCd(
+  command: string,
+  projectRoot: string | undefined
+): string {
   if (projectRoot === undefined) {
     return command;
   }
@@ -70,7 +73,7 @@ function shortPath(p: string, max = 64): string {
 function displayPath(
   p: string | undefined,
   projectCwd: string | undefined,
-  max = 72,
+  max = 72
 ): string {
   if (p == null || p === "") {
     return "?";
@@ -107,7 +110,7 @@ function toolArgsRecord(inner: unknown): Record<string, unknown> | null {
 
 function summarizeGlobDetail(
   args: Record<string, unknown>,
-  projectCwd: string | undefined,
+  projectCwd: string | undefined
 ): string {
   const rawDir =
     (typeof args.targetDirectory === "string" && args.targetDirectory) ||
@@ -132,7 +135,7 @@ function summarizeGlobDetail(
 
 function summarizeGrepDetail(
   args: Record<string, unknown>,
-  projectCwd: string | undefined,
+  projectCwd: string | undefined
 ): string {
   const pattern =
     (typeof args.pattern === "string" && args.pattern) ||
@@ -148,7 +151,7 @@ function summarizeGrepDetail(
 
 function summarizeListDirDetail(
   args: Record<string, unknown>,
-  projectCwd: string | undefined,
+  projectCwd: string | undefined
 ): string {
   const p =
     (typeof args.path === "string" && args.path) ||
@@ -158,7 +161,10 @@ function summarizeListDirDetail(
 }
 
 /** Prefer named fields over raw JSON for unknown tools. */
-function summarizeGenericToolArgs(args: unknown, projectCwd: string | undefined): string {
+function summarizeGenericToolArgs(
+  args: unknown,
+  projectCwd: string | undefined
+): string {
   if (args === null || typeof args !== "object" || Array.isArray(args)) {
     return oneLine(JSON.stringify(args), 96);
   }
@@ -255,7 +261,7 @@ function taskToolSummary(args: Record<string, unknown> | undefined): string {
     Object.entries(args)
       .map(([k, v]) => `${k}=${String(v).slice(0, 40)}`)
       .join(" "),
-    120,
+    120
   );
 }
 
@@ -277,7 +283,7 @@ function shellCommandRaw(toolCall: unknown): string {
       Object.entries(args)
         .map(([, v]) => String(v))
         .join(" "),
-      2_000,
+      2_000
     )
   );
 }
@@ -289,7 +295,7 @@ function toolLabelFromKey(key: string): string {
 function toolStartLine(
   toolCall: unknown,
   callId: string,
-  projectCwd: string | undefined,
+  projectCwd: string | undefined
 ): ToolLine {
   const id = callId.length > 12 ? `${callId.slice(0, 12)}…` : callId;
   if (toolCall === null || typeof toolCall !== "object") {
@@ -322,20 +328,34 @@ function toolStartLine(
     return { label: n, detail: oneLine(a, 100), color: YLW };
   }
 
-  const namedPairs: [keyof typeof tc, (args: Record<string, unknown>) => string][] = [
+  const namedPairs: [
+    keyof typeof tc,
+    (args: Record<string, unknown>) => string
+  ][] = [
     ["globToolCall", (args) => summarizeGlobDetail(args, projectCwd)],
     ["grepToolCall", (args) => summarizeGrepDetail(args, projectCwd)],
-    ["ripgrepRawSearchToolCall", (args) => summarizeGrepDetail(args, projectCwd)],
+    [
+      "ripgrepRawSearchToolCall",
+      (args) => summarizeGrepDetail(args, projectCwd)
+    ],
     ["listDirToolCall", (args) => summarizeListDirDetail(args, projectCwd)],
-    ["listDirectoryToolCall", (args) => summarizeListDirDetail(args, projectCwd)],
-    ["codebaseSearchToolCall", (args) =>
-      oneLine(
-        (typeof args.query === "string" ? args.query : JSON.stringify(args.query)) +
-          (typeof args.target_directories !== "undefined"
-            ? ` · ${oneLine(String(args.target_directories), 40)}`
-            : ""),
-        96,
-      )],
+    [
+      "listDirectoryToolCall",
+      (args) => summarizeListDirDetail(args, projectCwd)
+    ],
+    [
+      "codebaseSearchToolCall",
+      (args) =>
+        oneLine(
+          (typeof args.query === "string"
+            ? args.query
+            : JSON.stringify(args.query)) +
+            (typeof args.target_directories !== "undefined"
+              ? ` · ${oneLine(String(args.target_directories), 40)}`
+              : ""),
+          96
+        )
+    ]
   ];
   for (const [k, fmt] of namedPairs) {
     const inner = tc[k];
@@ -358,7 +378,7 @@ function toolStartLine(
           return {
             label,
             detail: summarizeGenericToolArgs(args, projectCwd),
-            color: YLW,
+            color: YLW
           };
         }
         const d = oneLine(JSON.stringify(v), 96);
@@ -385,7 +405,7 @@ function printToolStart(
   callId: string,
   projectCwd: string | undefined,
   separateFromPrevious: boolean,
-  registerShellForPair?: (id: string, command: string) => void,
+  registerShellForPair?: (id: string, command: string) => void
 ): void {
   if (typeof toolCall === "object" && toolCall !== null) {
     const tc = toolCall as Record<string, unknown>;
@@ -403,32 +423,33 @@ function printToolStart(
     if (typeof tc.taskToolCall === "object" && tc.taskToolCall) {
       const args = (tc.taskToolCall as { args?: Record<string, unknown> }).args;
       const s = taskToolSummary(args);
-      const line = s.length > 0
-        ? oneLine(s, 500)
-        : (callId.length > 0 ? oneLine(callId, 50) : "…");
+      const line =
+        s.length > 0
+          ? oneLine(s, 500)
+          : callId.length > 0
+            ? oneLine(callId, 50)
+            : "…";
       toolLeadNewline(separateFromPrevious);
       process.stderr.write(
-        `${MAG}${BOLD}subagent${RST}  ${DIM}${line}${RST}\n`,
+        `${MAG}${BOLD}subagent${RST}  ${DIM}${line}${RST}\n`
       );
       return;
     }
   }
-  const { label, detail, color } = toolStartLine(
-    toolCall,
-    callId,
-    projectCwd,
-  );
+  const { label, detail, color } = toolStartLine(toolCall, callId, projectCwd);
   toolLeadNewline(separateFromPrevious);
-  process.stderr.write(
-    `${color}${BOLD}${label}${RST} ${DIM}${detail}${RST}\n`,
-  );
+  process.stderr.write(`${color}${BOLD}${label}${RST} ${DIM}${detail}${RST}\n`);
 }
 
 type ToolDoneHooks = { onTaskEvent?: () => void };
 
 /** Hooks only — tool completion lines are omitted (starts already show what ran). */
 function printToolDone(toolCall: unknown, hooks?: ToolDoneHooks): void {
-  if (toolCall !== null && typeof toolCall === "object" && "taskToolCall" in toolCall) {
+  if (
+    toolCall !== null &&
+    typeof toolCall === "object" &&
+    "taskToolCall" in toolCall
+  ) {
     hooks?.onTaskEvent?.();
   }
 }
@@ -452,18 +473,14 @@ export class AgentStreamHandler {
   private startSubagentWaitVisual(): void {
     this.stopSubagentWaitVisual();
     if (process.stderr.isTTY !== true) {
-      process.stderr.write(
-        `${DIM}  … ${SUBAGENT_HANG_MSG}${RST}\n`,
-      );
+      process.stderr.write(`${DIM}  … ${SUBAGENT_HANG_MSG}${RST}\n`);
       return;
     }
     this.subagentWaitTimer = setInterval(() => {
       const c = SPINNER[this.subagentSpinnerFrame % SPINNER.length] ?? "·";
       this.subagentSpinnerFrame += 1;
       const t = `  ${DIM}${c}  ${SUBAGENT_HANG_MSG} …${RST}  `;
-      process.stderr.write(
-        "\r" + " ".repeat(Math.max(0, 88)) + "\r" + t,
-      );
+      process.stderr.write("\r" + " ".repeat(Math.max(0, 88)) + "\r" + t);
     }, 300);
   }
 
@@ -500,14 +517,12 @@ export class AgentStreamHandler {
     const typ = o.type;
     if (typ === "system" && o.subtype === "init") {
       this.projectCwd =
-        typeof o.cwd === "string" && o.cwd.length > 0
-          ? o.cwd
-          : this.projectCwd;
+        typeof o.cwd === "string" && o.cwd.length > 0 ? o.cwd : this.projectCwd;
       const model = o.model;
       const cwd = o.cwd;
       if (typeof cwd === "string" && cwd.length > 0) {
         process.stderr.write(
-          `${DIM}${String(model)}  ·  ${shortPath(cwd, 70)}${RST}\n`,
+          `${DIM}${String(model)}  ·  ${shortPath(cwd, 70)}${RST}\n`
         );
       } else {
         process.stderr.write(`${DIM}${String(model)}${RST}\n`);
@@ -535,7 +550,7 @@ export class AgentStreamHandler {
         (cid, command) => {
           deferredShell = true;
           this.shellByCallId.set(cid, command);
-        },
+        }
       );
       if (!deferredShell) {
         this.emittedToolLine = true;
@@ -553,16 +568,14 @@ export class AgentStreamHandler {
         (tc as Record<string, unknown>).shellToolCall != null
       ) {
         const cid =
-          typeof o.call_id === "string"
-            ? o.call_id
-            : String(o.call_id ?? "…");
+          typeof o.call_id === "string" ? o.call_id : String(o.call_id ?? "…");
         this.printShellPaired(cid, tc);
         return;
       }
       printToolDone(tc, {
         onTaskEvent: () => {
           this.stopSubagentWaitVisual();
-        },
+        }
       });
       return;
     }
@@ -574,7 +587,7 @@ export class AgentStreamHandler {
           ? o.error
           : JSON.stringify(o, null, 0).slice(0, 2_000);
       process.stderr.write(
-        `\n${YLW}error${RST} ${DIM}${this.resultError}${RST}\n\n`,
+        `\n${YLW}error${RST} ${DIM}${this.resultError}${RST}\n\n`
       );
       return;
     }
@@ -585,9 +598,7 @@ export class AgentStreamHandler {
       if (typeof r === "string") {
         this.lastResult = r;
         const ms = o.duration_ms;
-        process.stderr.write(
-          `\n${DIM}finished in ${String(ms)} ms${RST}\n`,
-        );
+        process.stderr.write(`\n${DIM}finished in ${String(ms)} ms${RST}\n`);
       }
     }
   }

@@ -30,7 +30,7 @@ export function loadPrAgentPrompt(options: LoadPrAgentPromptOptions): string {
   const jiraContext = buildJiraPromptSection(
     jiraTitle,
     jiraBody,
-    modeForPrompt(name),
+    modeForPrompt(name)
   );
   const file = promptPath(resolvePromptsDir(undefined), name);
   const result = expandNamedPrompt(name, {
@@ -38,8 +38,8 @@ export function loadPrAgentPrompt(options: LoadPrAgentPromptOptions): string {
     vars: {
       ...vars,
       jiraContext,
-      work: isPrCliWork() ? "1" : "",
-    },
+      work: isPrCliWork() ? "1" : ""
+    }
   });
   if (result.ok === false) {
     printInterpolationErrors(file, result.errors);

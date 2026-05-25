@@ -9,11 +9,11 @@ export type InterpolationError = {
 
 export function printInterpolationErrors(
   file: string,
-  errors: InterpolationError[],
+  errors: InterpolationError[]
 ): void {
   for (const e of errors) {
     console.error(
-      `${RED}interpolate: ${e.message} at ${file}:${e.line}:${e.column}${RESET}`,
+      `${RED}interpolate: ${e.message} at ${file}:${e.line}:${e.column}${RESET}`
     );
   }
 }

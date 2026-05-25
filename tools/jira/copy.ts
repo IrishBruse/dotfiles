@@ -13,7 +13,10 @@ function log(msg: string): void {
   process.stderr.write(`jira copy: ${msg}\n`);
 }
 
-export function run(input: string, parentDirOrUndefined: string | undefined): number {
+export function run(
+  input: string,
+  parentDirOrUndefined: string | undefined
+): number {
   try {
     return runImpl(input, parentDirOrUndefined);
   } catch (e) {
@@ -23,7 +26,10 @@ export function run(input: string, parentDirOrUndefined: string | undefined): nu
   }
 }
 
-function runImpl(input: string, parentDirOrUndefined: string | undefined): number {
+function runImpl(
+  input: string,
+  parentDirOrUndefined: string | undefined
+): number {
   const key = parseJiraKey(input);
   if (!key) {
     process.stderr.write(`jira copy: not a valid Jira key or URL: ${input}\n`);

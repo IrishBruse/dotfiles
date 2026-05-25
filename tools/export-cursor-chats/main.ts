@@ -88,7 +88,10 @@ function cleanAssistantText(text: string): string {
     .trim();
 }
 
-function summarizeToolInput(name: string, input: Record<string, unknown>): string {
+function summarizeToolInput(
+  name: string,
+  input: Record<string, unknown>
+): string {
   if (name === "Shell" && typeof input.command === "string") {
     return input.command.replace(/\s+/g, " ").trim();
   }
@@ -107,7 +110,14 @@ function summarizeToolInput(name: string, input: Record<string, unknown>): strin
       return input.path;
     }
   }
-  const keys = ["path", "pattern", "command", "glob_pattern", "url", "description"];
+  const keys = [
+    "path",
+    "pattern",
+    "command",
+    "glob_pattern",
+    "url",
+    "description"
+  ];
   for (const key of keys) {
     if (typeof input[key] === "string") {
       return input[key];
@@ -122,7 +132,9 @@ function formatToolUses(blocks: ContentBlock[]): string[] {
     if (block.type !== "tool_use") {
       continue;
     }
-    lines.push(`- **${block.name}**: \`${summarizeToolInput(block.name, block.input)}\``);
+    lines.push(
+      `- **${block.name}**: \`${summarizeToolInput(block.name, block.input)}\``
+    );
   }
   return lines;
 }
@@ -160,7 +172,7 @@ function chatToMarkdown(meta: ChatMeta, lines: TranscriptLine[]): string {
     "---",
     "",
     `# ${title}`,
-    "",
+    ""
   ];
 
   for (const line of lines) {
@@ -169,11 +181,18 @@ function chatToMarkdown(meta: ChatMeta, lines: TranscriptLine[]): string {
       continue;
     }
 
-    const roleLabel = line.role === "user" ? "User" : line.role === "assistant" ? "Assistant" : line.role;
+    const roleLabel =
+      line.role === "user"
+        ? "User"
+        : line.role === "assistant"
+          ? "Assistant"
+          : line.role;
 
     if (line.role === "user") {
       const texts = blocks
-        .filter((b): b is Extract<ContentBlock, { type: "text" }> => b.type === "text")
+        .filter(
+          (b): b is Extract<ContentBlock, { type: "text" }> => b.type === "text"
+        )
         .map((b) => stripUserQuery(b.text))
         .filter((t) => t.length > 0);
       if (texts.length === 0) {
@@ -185,7 +204,9 @@ function chatToMarkdown(meta: ChatMeta, lines: TranscriptLine[]): string {
 
     if (line.role === "assistant") {
       const texts = blocks
-        .filter((b): b is Extract<ContentBlock, { type: "text" }> => b.type === "text")
+        .filter(
+          (b): b is Extract<ContentBlock, { type: "text" }> => b.type === "text"
+        )
         .map((b) => cleanAssistantText(b.text))
         .filter((t) => t.length > 0);
 
@@ -206,7 +227,9 @@ function chatToMarkdown(meta: ChatMeta, lines: TranscriptLine[]): string {
     }
 
     const raw = blocks
-      .filter((b): b is Extract<ContentBlock, { type: "text" }> => b.type === "text")
+      .filter(
+        (b): b is Extract<ContentBlock, { type: "text" }> => b.type === "text"
+      )
       .map((b) => b.text)
       .join("\n\n");
     if (raw.length > 0) {
@@ -301,12 +324,12 @@ async function main(): Promise<void> {
       project,
       scope,
       sourcePath,
-      mtimeMs: fileStat.mtimeMs,
+      mtimeMs: fileStat.mtimeMs
     };
 
     await writeFile(outPath, chatToMarkdown(meta, lines), "utf8");
     indexRows.push(
-      `| ${exportedDate(fileStat.mtimeMs)} | ${project} | ${scope} | [${escapeMd(title)}](${filename}) | \`${id}\` |`,
+      `| ${exportedDate(fileStat.mtimeMs)} | ${project} | ${scope} | [${escapeMd(title)}](${filename}) | \`${id}\` |`
     );
     written += 1;
   }
@@ -320,7 +343,7 @@ async function main(): Promise<void> {
     "| Modified | Project | Scope | Title | ID |",
     "| --- | --- | --- | --- | --- |",
     ...indexRows,
-    "",
+    ""
   ].join("\n");
 
   await writeFile(join(outDir, "index.md"), index, "utf8");

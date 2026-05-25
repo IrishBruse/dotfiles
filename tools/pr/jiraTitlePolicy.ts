@@ -21,7 +21,7 @@ export function assertPrTitleMatchesJiraPolicy(title: string): void {
   const t = title.trim();
   if (!re.test(t)) {
     throw new Error(
-      `pr: PR title must start with ${PR_WORK_JIRA_KEY}-<digits> when PR_CLI_WORK=true (got: ${JSON.stringify(t)})`,
+      `pr: PR title must start with ${PR_WORK_JIRA_KEY}-<digits> when PR_CLI_WORK=true (got: ${JSON.stringify(t)})`
     );
   }
 }

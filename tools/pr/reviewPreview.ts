@@ -8,7 +8,7 @@ import {
   MERGED_PREVIEW_FILE,
   buildPreviewMarkdown,
   parsePreviewMarkdownFile,
-  readAgentPrMarkdown,
+  readAgentPrMarkdown
 } from "./agentOutputFiles.ts";
 
 const VSCODE_CLI = "code";
@@ -38,7 +38,7 @@ export async function waitForYesNo(question: string): Promise<boolean> {
   }
   const rl = readline.createInterface({
     input: process.stdin,
-    output: process.stdout,
+    output: process.stdout
   });
   try {
     const ans = (await rl.question(question)).trim().toLowerCase();
@@ -62,10 +62,12 @@ export type EditorConfirmOptions = {
  * Removes the merged preview file when done. Returns **`null`** if cancelled or invalid.
  */
 export async function confirmSubmitAfterEditorPreview(
-  opts: EditorConfirmOptions,
+  opts: EditorConfirmOptions
 ): Promise<SubmitPayload | null> {
   if (!process.stdout.isTTY || !process.stdin.isTTY) {
-    throw new Error("need an interactive terminal (stdin/stdout TTY) for preview and confirm");
+    throw new Error(
+      "need an interactive terminal (stdin/stdout TTY) for preview and confirm"
+    );
   }
 
   const cmdLabel = opts.logPrefix.replace(/:\s*$/, "").trim() || "pr";
@@ -76,7 +78,7 @@ export async function confirmSubmitAfterEditorPreview(
   fs.writeFileSync(mergedPath, md, "utf8");
 
   console.error(
-    `${opts.logPrefix} Opening ${mergedPath} in ${VSCODE_CLI} — edit if needed, save, then close the tab.`,
+    `${opts.logPrefix} Opening ${mergedPath} in ${VSCODE_CLI} — edit if needed, save, then close the tab.`
   );
 
   try {
@@ -86,7 +88,7 @@ export async function confirmSubmitAfterEditorPreview(
     if (parsed.title.trim() === "" || parsed.body.trim() === "") {
       console.error(
         `${opts.logPrefix} title and body must be non-empty after editing ` +
-          `(start with one \`# Title\` line, a blank line, then the description). Cancelled.`,
+          `(start with one \`# Title\` line, a blank line, then the description). Cancelled.`
       );
       return null;
     }
@@ -94,7 +96,7 @@ export async function confirmSubmitAfterEditorPreview(
       return parsed;
     }
     const ok = await waitForYesNo(
-      `${opts.logPrefix} Ready to ${opts.actionDescription}? [y/N]: `,
+      `${opts.logPrefix} Ready to ${opts.actionDescription}? [y/N]: `
     );
     return ok ? parsed : null;
   } finally {

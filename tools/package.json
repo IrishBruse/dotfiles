@@ -16,16 +16,19 @@
     "sprint": "./.bin/sprint.js"
   },
   "scripts": {
-    "validate": "tsc --noEmit"
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "validate": "tsc --noEmit",
+    "verify": "npm run validate && npm run format:check"
   },
   "dependencies": {
-    "jsdom": "29.0.2",
     "turndown": "7.2.4",
     "turndown-plugin-gfm": "1.0.2"
   },
   "devDependencies": {
-    "@types/jsdom": "28.0.1",
     "@types/node": "^24.0.0",
+    "@types/turndown": "5.0.6",
+    "prettier": "3.8.3",
     "typescript": "^6.0.3"
   }
 }

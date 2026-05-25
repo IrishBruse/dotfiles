@@ -4,17 +4,17 @@ import path from "node:path";
 
 import {
   collectJiraKeyMarkdownFiles,
-  readJiraSkillBoardText,
+  readJiraSkillBoardText
 } from "./jiraSkillContext.ts";
 import {
   formatBundledPrefetchForPrompt,
-  type PrPromptWorkspaceMode,
+  type PrPromptWorkspaceMode
 } from "./prPromptWorkspaceFiles.ts";
 
 const TEMPLATE_CANDIDATES = [
   ".github/PULL_REQUEST_TEMPLATE.md",
   ".github/pull_request_template.md",
-  "docs/pull_request_template.md",
+  "docs/pull_request_template.md"
 ] as const;
 
 export function readRepoPrTemplate(repoRoot: string): string {
@@ -31,7 +31,7 @@ export function readRepoPrTemplate(repoRoot: string): string {
 export function buildJiraPromptSection(
   prTitle: string,
   prBody: string,
-  mode: PrPromptWorkspaceMode,
+  mode: PrPromptWorkspaceMode
 ): string {
   const files: Record<string, string> = {};
   const board = readJiraSkillBoardText();
@@ -47,12 +47,12 @@ export function buildJiraPromptSection(
 
 export function ghPrTitleBody(
   target: string,
-  repoRoot: string,
+  repoRoot: string
 ): { title: string; body: string } {
   const r = spawnSync("gh", ["pr", "view", target, "--json", "title,body"], {
     encoding: "utf8",
     cwd: repoRoot,
-    stdio: ["ignore", "pipe", "pipe"],
+    stdio: ["ignore", "pipe", "pipe"]
   });
   if (r.status !== 0) {
     const msg = (r.stderr ?? r.stdout ?? "").trim() || `exit ${r.status}`;
@@ -70,10 +70,6 @@ export function ghPrTitleBody(
   const o = parsed as { title?: unknown; body?: unknown };
   const title = typeof o.title === "string" ? o.title : "";
   const body =
-    typeof o.body === "string"
-      ? o.body
-      : o.body == null
-        ? ""
-        : String(o.body);
+    typeof o.body === "string" ? o.body : o.body == null ? "" : String(o.body);
   return { title, body };
 }

@@ -26,7 +26,7 @@ function skillRootCandidates(): string[] {
     "home",
     ".agents",
     "skills",
-    "jira-tickets",
+    "jira-tickets"
   );
   const fromHome = path.join(os.homedir(), ".agents/skills/jira-tickets");
   return [fromRepo, fromHome];
@@ -101,7 +101,7 @@ function resolveTicketRefPath(skillRoot: string, key: string): string | null {
  */
 export function collectJiraKeyMarkdownFiles(
   prTitle: string,
-  prBody: string,
+  prBody: string
 ): Record<string, string> {
   const keys = jiraRefKeysForTitleAndBody(prTitle, prBody);
   if (keys.length === 0) {
@@ -157,10 +157,10 @@ export function readJiraSkillBoardText(): string | null {
 export function writeJiraSkillContext(
   dir: string,
   prTitle: string,
-  prBody: string,
+  prBody: string
 ): void {
   for (const [name, content] of Object.entries(
-    collectJiraKeyMarkdownFiles(prTitle, prBody),
+    collectJiraKeyMarkdownFiles(prTitle, prBody)
   )) {
     fs.writeFileSync(path.join(dir, name), content, "utf8");
   }

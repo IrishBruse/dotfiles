@@ -10,7 +10,7 @@ import {
   listPromptNames,
   loadPromptTemplate,
   promptPath,
-  resolvePromptsDir,
+  resolvePromptsDir
 } from "./promptsDir.ts";
 
 const PROMPTS_DIR_FLAG = "--prompts-dir";
@@ -56,7 +56,10 @@ function parseVarArg(raw: string): [string, string] {
   return [raw.slice(0, eq), raw.slice(eq + 1)];
 }
 
-function takeFlag(args: string[], flag: string): { rest: string[]; value?: string } {
+function takeFlag(
+  args: string[],
+  flag: string
+): { rest: string[]; value?: string } {
   const i = args.indexOf(flag);
   if (i === -1) {
     return { rest: args };
@@ -69,7 +72,10 @@ function takeFlag(args: string[], flag: string): { rest: string[]; value?: strin
   return { rest, value };
 }
 
-function collectVars(args: string[]): { rest: string[]; vars: Record<string, string> } {
+function collectVars(args: string[]): {
+  rest: string[];
+  vars: Record<string, string>;
+} {
   const vars: Record<string, string> = {};
   const rest: string[] = [];
   for (let i = 0; i < args.length; i++) {
@@ -92,7 +98,9 @@ function collectVars(args: string[]): { rest: string[]; vars: Record<string, str
 function runBuiltins(args: string[]): void {
   const { rest, vars } = collectVars(args);
   if (rest.length > 0) {
-    throw new Error(`interpolate builtins: unexpected arguments: ${rest.join(" ")}`);
+    throw new Error(
+      `interpolate builtins: unexpected arguments: ${rest.join(" ")}`
+    );
   }
 
   const template = loadBuiltinsDoc();
