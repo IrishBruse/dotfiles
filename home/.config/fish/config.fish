@@ -9,6 +9,7 @@ set -gx DOTNET_WATCH_RESTART_ON_RUDE_EDIT 1
 set -gx DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION true
 
 set -gx DISABLE_ESLINT_PLUGIN true
+set -gx AGENT "composer-2.5"
 
 source ~/dotfiles/local.fish
 
@@ -29,7 +30,7 @@ alias ll="eza -la --no-permissions --group-directories-first"
 alias reload="clear;exec fish"
 
 alias ac="agent --continue"
-alias ao="agent --model claude-4.6-opus-high-thinking"
+alias ao="agent --model claude-4.7-opus-high-thinking"
 alias t="v ~/TODO.md"
 
 alias showkey="fish_key_reader --verbose"

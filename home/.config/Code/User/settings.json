@@ -1128,7 +1128,6 @@
   },
   "explorer.fileNesting.patterns": {
     ".env": ".env.*",
-    // ".gitignore": ".*",
     "*": "${capture}.uid,${capture}.import",
     "*.db": "${capture}.${extname}-*",
     "*.db3": "${capture}.${extname}-*",
@@ -1624,6 +1623,5 @@
   "markdownInlineEditor.math.enabled": false,
   "editor.allowVariableFontsInAccessibilityMode": true,
   "markdownInlineEditor.tables.renderingMode": "custom",
-  "workbench.editor.wrapTabs": true,
-  "workbench.editor.tabSizing": "shrink"
+  "workbench.editor.wrapTabs": true
 }
