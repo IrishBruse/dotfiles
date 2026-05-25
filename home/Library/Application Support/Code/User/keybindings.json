@@ -6469,5 +6469,15 @@
         "key": "ctrl+u",
         "command": "workbench.action.terminal.stopVoice",
         "when": "terminalDictationInProgress"
+    },
+    {
+        "key": "ctrl+shift+f",
+        "command": "-workbench.action.terminal.searchWorkspace",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+shift+f",
+        "command": "workbench.action.findInFiles",
+        "when": "terminalFocus"
     }
 ]
