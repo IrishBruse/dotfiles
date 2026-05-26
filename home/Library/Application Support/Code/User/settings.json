@@ -280,7 +280,8 @@
           "entity.name.type.class",
           "meta.class",
           "keyword.register",
-          "support.constant"
+          "support.constant",
+          "variable.other.normal.fish"
         ],
         "settings": {
           "foreground": "#E5C07B"
