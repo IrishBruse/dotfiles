@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
 import process from "node:process";
 
-import type { InterpolationError } from "../errors.ts";
+import type { InterpolationError } from "../api.ts";
 import { locationAt } from "../location.ts";
 
 export const INLINE_COMMAND_MAX_LENGTH = 40;

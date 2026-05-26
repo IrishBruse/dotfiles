@@ -1,5 +1,6 @@
 import { body, bold, inlineCodeStyle, italic, reset } from "./colors.ts";
-import { terminalLink, type LinkRefs } from "./links.ts";
+import type { LinkRefs } from "./api.ts";
+import { terminalLink } from "./links.ts";
 
 export type { LinkRefs };
 

@@ -1,11 +1,7 @@
+import type { InterpolationError } from "./api.ts";
+
 const RED = "\x1b[31m";
 const RESET = "\x1b[0m";
-
-export type InterpolationError = {
-  line: number;
-  column: number;
-  message: string;
-};
 
 export function printInterpolationErrors(
   file: string,

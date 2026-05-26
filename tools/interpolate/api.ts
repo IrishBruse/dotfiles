@@ -1,26 +1,54 @@
+/**
+ * Public surface for `tools/interpolate`. Other tool folders import from here only.
+ */
+
+import os from "node:os";
+import path from "node:path";
 import process from "node:process";
 
-import { expandTemplate, type ExpandResult } from "./expand.ts";
-import {
-  printInterpolationErrors,
-  type InterpolationError
-} from "./errors.ts";
-import {
-  DEFAULT_PROMPTS_DIR,
-  loadPromptTemplate,
-  promptPath,
-  resolvePromptsDir
-} from "./promptsDir.ts";
+import { expandTemplate } from "./expand.ts";
+import { printInterpolationErrors as printInterpolationErrorsImpl } from "./errors.ts";
+import { loadPromptTemplate as loadPromptTemplateImpl } from "./promptsDir.ts";
 
-export {
-  DEFAULT_PROMPTS_DIR,
-  loadPromptTemplate,
-  printInterpolationErrors,
-  promptPath,
-  resolvePromptsDir
+export type InterpolationError = {
+  line: number;
+  column: number;
+  message: string;
 };
-export type { InterpolationError };
-export type { ExpandResult };
+
+export type ExpandResult =
+  | { ok: true; text: string }
+  | { ok: false; errors: InterpolationError[] };
+
+/** Default `~/.config/interpolate` prompts directory. */
+export const DEFAULT_PROMPTS_DIR: string = path.join(
+  os.homedir(),
+  ".config",
+  "interpolate"
+);
+
+/** Resolve prompts dir from CLI flag or {@link DEFAULT_PROMPTS_DIR}. */
+export function resolvePromptsDir(flagValue: string | undefined): string {
+  return flagValue ?? DEFAULT_PROMPTS_DIR;
+}
+
+/** Absolute path to `<promptsDir>/<name>.md`. */
+export function promptPath(promptsDir: string, name: string): string {
+  return path.join(promptsDir, `${name}.md`);
+}
+
+/** Read a named `.md` prompt; throws if missing. */
+export function loadPromptTemplate(promptsDir: string, name: string): string {
+  return loadPromptTemplateImpl(promptsDir, name);
+}
+
+/** Print interpolation errors to stderr (red, file:line:column). */
+export function printInterpolationErrors(
+  file: string,
+  errors: InterpolationError[]
+): void {
+  printInterpolationErrorsImpl(file, errors);
+}
 
 export type ExpandNamedPromptOptions = {
   promptsDir?: string;

@@ -1,7 +1,5 @@
+import type { LinkRefs } from "./api.ts";
 import { linkFg, reset } from "./colors.ts";
-
-/** Reference targets from `[id]: url` lines (GFM, case-insensitive keys). */
-export type LinkRefs = Map<string, string>;
 
 const refDefLine =
   /^\[([^\]]+)\]:\s+<?([^>\s]+)>?(?:\s+"[^"]*")?\s*$/;

@@ -6,30 +6,15 @@ import {
   headingFg,
   reset
 } from "./colors.ts";
-import {
-  collectLinkRefs,
-  isLinkRefDefLine,
-  type LinkRefs
-} from "./links.ts";
+import type { Block, LinkRefs, ListItem } from "./api.ts";
+import { collectLinkRefs, isLinkRefDefLine } from "./links.ts";
 import { plainInlineLength, renderInline } from "./inline.ts";
 
-export { collectLinkRefs, type LinkRefs };
+export { collectLinkRefs };
 
 type ColumnAlign = "left" | "center" | "right";
 
-export type ListItem = { text: string; children: ListItem[] };
-
 type BlockquoteLine = { depth: number; text: string };
-
-type Block =
-  | { kind: "heading"; level: number; text: string }
-  | { kind: "paragraph"; lines: string[] }
-  | { kind: "ul"; items: ListItem[] }
-  | { kind: "ol"; items: ListItem[] }
-  | { kind: "table"; rows: string[][]; align: ColumnAlign[] }
-  | { kind: "blockquote"; lines: BlockquoteLine[] }
-  | { kind: "code"; lines: string[]; command?: string }
-  | { kind: "hr" };
 
 /** ` ```!cmd ` or ` ```lang !cmd ` (matches interpolate command fences). */
 function parseCommandFenceOpener(opener: string): string | undefined {

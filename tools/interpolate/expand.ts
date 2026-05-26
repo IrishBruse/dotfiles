@@ -1,6 +1,6 @@
 import { builtinVars, expandPatternBuiltins } from "./builtins/index.ts";
 import { expandLineConditions } from "./conditions.ts";
-import type { InterpolationError } from "./errors.ts";
+import type { ExpandResult, InterpolationError } from "./api.ts";
 import { findUndefinedVariables } from "./validate.ts";
 
 /** Replace `{{key}}` placeholders; later keys in `vars` win over earlier passes. */
@@ -14,10 +14,6 @@ export function expandPlaceholders(
   }
   return out;
 }
-
-export type ExpandResult =
-  | { ok: true; text: string }
-  | { ok: false; errors: InterpolationError[] };
 
 export function expandTemplate(
   template: string,
