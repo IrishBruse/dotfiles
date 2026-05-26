@@ -6,16 +6,24 @@ import {
   headingFg,
   reset
 } from "./colors.ts";
-import { plainInlineLength, renderInline } from "./inline.ts";
+import { isLinkRefDefLine, type LinkRefs } from "./links.ts";
+import { collectLinkRefs, plainInlineLength, renderInline } from "./inline.ts";
+
+export { collectLinkRefs, type LinkRefs };
 
 type ColumnAlign = "left" | "center" | "right";
+
+export type ListItem = { text: string; children: ListItem[] };
+
+type BlockquoteLine = { depth: number; text: string };
 
 type Block =
   | { kind: "heading"; level: number; text: string }
   | { kind: "paragraph"; lines: string[] }
-  | { kind: "ul"; items: string[] }
-  | { kind: "ol"; items: string[] }
+  | { kind: "ul"; items: ListItem[] }
+  | { kind: "ol"; items: ListItem[] }
   | { kind: "table"; rows: string[][]; align: ColumnAlign[] }
+  | { kind: "blockquote"; lines: BlockquoteLine[] }
   | { kind: "code"; lines: string[]; command?: string }
   | { kind: "hr" };
 
@@ -84,7 +92,83 @@ function parseTableAlignments(separatorLine: string): ColumnAlign[] {
   return parseTableRow(separatorLine).map(parseTableAlignment);
 }
 
-export function* parseBlocks(source: string): Generator<Block> {
+function isUlLine(line: string): boolean {
+  return /^\s*[-*+]\s+/.test(line);
+}
+
+function isOlLine(line: string): boolean {
+  return /^\s*\d+\.\s+/.test(line);
+}
+
+function buildListTree(entries: { indent: number; text: string }[]): ListItem[] {
+  const root: ListItem[] = [];
+  const stack: { indent: number; item: ListItem }[] = [];
+
+  for (const { indent, text } of entries) {
+    const item: ListItem = { text, children: [] };
+    while (stack.length > 0 && (stack.at(-1)?.indent ?? 0) >= indent) {
+      stack.pop();
+    }
+    const parent = stack.at(-1);
+    if (parent === undefined) {
+      root.push(item);
+    } else {
+      parent.item.children.push(item);
+    }
+    stack.push({ indent, item });
+  }
+  return root;
+}
+
+function parseUlLines(lines: string[]): ListItem[] {
+  const entries: { indent: number; text: string }[] = [];
+  for (const line of lines) {
+    const m = /^(\s*)[-*+]\s+(.+)$/.exec(line);
+    if (m === null) break;
+    entries.push({ indent: m[1].length, text: m[2] });
+  }
+  return buildListTree(entries);
+}
+
+function parseOlLines(lines: string[]): ListItem[] {
+  const entries: { indent: number; text: string }[] = [];
+  for (const line of lines) {
+    const m = /^(\s*)(\d+)\.\s+(.+)$/.exec(line);
+    if (m === null) break;
+    entries.push({ indent: m[1].length, text: m[3] });
+  }
+  return buildListTree(entries);
+}
+
+function isBlockquoteLine(line: string): boolean {
+  return /^\s*>/.test(line);
+}
+
+function parseBlockquoteLine(line: string): BlockquoteLine {
+  let pos = 0;
+  let depth = 0;
+  while (pos < line.length) {
+    const m = /^>\s?/.exec(line.slice(pos));
+    if (m === null) break;
+    depth++;
+    pos += m[0].length;
+  }
+  return { depth: Math.max(0, depth - 1), text: line.slice(pos) };
+}
+
+function isIndentedCodeLine(line: string): boolean {
+  return /^(?: {4}|\t)/.test(line);
+}
+
+function stripCodeIndent(line: string): string {
+  if (line.startsWith("\t")) return line.slice(1);
+  return line.slice(4);
+}
+
+export function* parseBlocks(
+  source: string,
+  refs: LinkRefs = collectLinkRefs(source)
+): Generator<Block> {
   const lines = source.replace(/\r\n/g, "\n").split("\n");
   let i = 0;
 
@@ -93,6 +177,11 @@ export function* parseBlocks(source: string): Generator<Block> {
     const trimmed = line.trim();
 
     if (trimmed.length === 0) {
+      i++;
+      continue;
+    }
+
+    if (isLinkRefDefLine(line)) {
       i++;
       continue;
     }
@@ -132,6 +221,27 @@ export function* parseBlocks(source: string): Generator<Block> {
       continue;
     }
 
+    if (isIndentedCodeLine(line)) {
+      const codeLines: string[] = [];
+      while (i < lines.length && isIndentedCodeLine(lines[i] ?? "")) {
+        codeLines.push(stripCodeIndent(lines[i] ?? ""));
+        i++;
+      }
+      yield { kind: "code", lines: codeLines };
+      continue;
+    }
+
+    if (isBlockquoteLine(line)) {
+      const quoteLines: BlockquoteLine[] = [parseBlockquoteLine(line)];
+      i++;
+      while (i < lines.length && isBlockquoteLine(lines[i] ?? "")) {
+        quoteLines.push(parseBlockquoteLine(lines[i] ?? ""));
+        i++;
+      }
+      yield { kind: "blockquote", lines: quoteLines };
+      continue;
+    }
+
     if (isTableRow(line) && i + 1 < lines.length && isTableSeparator(lines[i + 1] ?? "")) {
       const rows: string[][] = [parseTableRow(line)];
       const align = parseTableAlignments(lines[i + 1] ?? "");
@@ -144,31 +254,25 @@ export function* parseBlocks(source: string): Generator<Block> {
       continue;
     }
 
-    const ulMatch = /^[-*+]\s+(.+)$/.exec(trimmed);
-    if (ulMatch !== null) {
-      const items: string[] = [ulMatch[1]];
+    if (isUlLine(line)) {
+      const listLines: string[] = [line];
       i++;
-      while (i < lines.length) {
-        const m = /^[-*+]\s+(.+)$/.exec((lines[i] ?? "").trim());
-        if (m === null) break;
-        items.push(m[1]);
+      while (i < lines.length && isUlLine(lines[i] ?? "")) {
+        listLines.push(lines[i] ?? "");
         i++;
       }
-      yield { kind: "ul", items };
+      yield { kind: "ul", items: parseUlLines(listLines) };
       continue;
     }
 
-    const olMatch = /^(\d+)\.\s+(.+)$/.exec(trimmed);
-    if (olMatch !== null) {
-      const items: string[] = [olMatch[2]];
+    if (isOlLine(line)) {
+      const listLines: string[] = [line];
       i++;
-      while (i < lines.length) {
-        const m = /^(\d+)\.\s+(.+)$/.exec((lines[i] ?? "").trim());
-        if (m === null) break;
-        items.push(m[2]);
+      while (i < lines.length && isOlLine(lines[i] ?? "")) {
+        listLines.push(lines[i] ?? "");
         i++;
       }
-      yield { kind: "ol", items };
+      yield { kind: "ol", items: parseOlLines(listLines) };
       continue;
     }
 
@@ -180,8 +284,10 @@ export function* parseBlocks(source: string): Generator<Block> {
       if (nextTrim.length === 0) break;
       if (/^#{1,6}\s/.test(nextTrim)) break;
       if (isTableRow(next)) break;
-      if (/^[-*+]\s+/.test(nextTrim)) break;
-      if (/^\d+\.\s+/.test(nextTrim)) break;
+      if (isUlLine(next)) break;
+      if (isOlLine(next)) break;
+      if (isBlockquoteLine(next)) break;
+      if (isIndentedCodeLine(next)) break;
       if (nextTrim.startsWith("```")) break;
       paraLines.push(next);
       i++;
@@ -190,13 +296,13 @@ export function* parseBlocks(source: string): Generator<Block> {
   }
 }
 
-function columnWidths(rows: string[][]): number[] {
+function columnWidths(rows: string[][], refs: LinkRefs): number[] {
   const cols = Math.max(0, ...rows.map((r) => r.length));
   const widths: number[] = [];
   for (let c = 0; c < cols; c++) {
     widths[c] = Math.max(
       1,
-      ...rows.map((r) => plainInlineLength(r[c] ?? ""))
+      ...rows.map((r) => plainInlineLength(r[c] ?? "", refs))
     );
   }
   return widths;
@@ -205,9 +311,10 @@ function columnWidths(rows: string[][]): number[] {
 function cellPadding(
   raw: string,
   width: number,
-  align: ColumnAlign
+  align: ColumnAlign,
+  refs: LinkRefs
 ): { left: string; right: string } {
-  const pad = Math.max(0, width - plainInlineLength(raw));
+  const pad = Math.max(0, width - plainInlineLength(raw, refs));
   if (align === "right") {
     return { left: " ".repeat(pad), right: "" };
   }
@@ -246,17 +353,21 @@ function tableBorderLine(
   return `${line}${border}${corners.right}${reset}`;
 }
 
-function renderTable(rows: string[][], align: ColumnAlign[]): string {
+function renderTable(
+  rows: string[][],
+  align: ColumnAlign[],
+  refs: LinkRefs
+): string {
   if (rows.length === 0) return "";
 
-  const widths = columnWidths(rows);
+  const widths = columnWidths(rows, refs);
   const vBar = `${border}│${reset}`;
 
   const rowLine = (cells: string[]) => {
     const parts = widths.map((w, c) => {
       const raw = cells[c] ?? "";
-      const { left, right } = cellPadding(raw, w, align[c] ?? "left");
-      return ` ${left}${body}${renderInline(raw)}${right}${reset} `;
+      const { left, right } = cellPadding(raw, w, align[c] ?? "left", refs);
+      return ` ${left}${body}${renderInline(raw, body, refs)}${right}${reset} `;
     });
     return `${vBar}${parts.join(vBar)}${vBar}`;
   };
@@ -272,26 +383,78 @@ function renderTable(rows: string[][], align: ColumnAlign[]): string {
   return out.join("\n");
 }
 
-export function renderBlock(block: Block): string {
+function renderParagraphLines(lines: string[], refs: LinkRefs): string {
+  const parts: string[] = [];
+  for (let n = 0; n < lines.length; n++) {
+    parts.push(`${body}${renderInline(lines[n] ?? "", body, refs)}${reset}`);
+    if (n < lines.length - 1) {
+      parts.push((lines[n] ?? "").endsWith("  ") ? "\n" : " ");
+    }
+  }
+  return parts.join("");
+}
+
+function renderBlockquoteLine(
+  line: BlockquoteLine,
+  refs: LinkRefs
+): string {
+  const prefix = `${border}${"  ".repeat(line.depth)}▌ ${reset}`;
+  const heading = /^(#{1,6})\s+(.+)$/.exec(line.text);
+  if (heading !== null) {
+    const hFg = headingFg(heading[1].length);
+    return `${prefix}${hFg}${renderInline(heading[2], hFg, refs)}${reset}`;
+  }
+  return `${prefix}${body}${renderInline(line.text, body, refs)}${reset}`;
+}
+
+export function renderUlItems(
+  items: ListItem[],
+  refs: LinkRefs,
+  depth = 0
+): string {
+  return items
+    .map((item) => {
+      const pad = "  ".repeat(depth + 1);
+      const head = `${body}${pad}• ${renderInline(item.text, body, refs)}${reset}`;
+      if (item.children.length === 0) return head;
+      return `${head}\n${renderUlItems(item.children, refs, depth + 1)}`;
+    })
+    .join("\n");
+}
+
+function renderOlItems(
+  items: ListItem[],
+  refs: LinkRefs,
+  depth = 0
+): string {
+  return items
+    .map((item, n) => {
+      const pad = "  ".repeat(depth + 1);
+      const head = `${body}${pad}${n + 1}. ${renderInline(item.text, body, refs)}${reset}`;
+      if (item.children.length === 0) return head;
+      return `${head}\n${renderOlItems(item.children, refs, depth + 1)}`;
+    })
+    .join("\n");
+}
+
+export function renderBlock(block: Block, refs: LinkRefs): string {
   switch (block.kind) {
     case "heading": {
       const hFg = headingFg(block.level);
-      return `${hFg}${renderInline(block.text, hFg)}${reset}`;
+      return `${hFg}${renderInline(block.text, hFg, refs)}${reset}`;
     }
     case "paragraph":
-      return block.lines
-        .map((l) => `${body}${renderInline(l)}${reset}`)
-        .join("\n");
+      return renderParagraphLines(block.lines, refs);
     case "ul":
-      return block.items
-        .map((item) => `${body}  • ${renderInline(item)}${reset}`)
-        .join("\n");
+      return renderUlItems(block.items, refs);
     case "ol":
-      return block.items
-        .map((item, n) => `${body}  ${n + 1}. ${renderInline(item)}${reset}`)
-        .join("\n");
+      return renderOlItems(block.items, refs);
     case "table":
-      return renderTable(block.rows, block.align);
+      return renderTable(block.rows, block.align, refs);
+    case "blockquote":
+      return block.lines
+        .map((l) => renderBlockquoteLine(l, refs))
+        .join("\n");
     case "code": {
       const out: string[] = [];
       if (block.command !== undefined) {
@@ -316,10 +479,11 @@ export function renderMarkdown(source: string): string {
 }
 
 export function* renderMarkdownChunks(source: string): Generator<string> {
+  const refs = collectLinkRefs(source);
   let prev: Block["kind"] | null = null;
-  for (const block of parseBlocks(source)) {
+  for (const block of parseBlocks(source, refs)) {
     if (prev !== null) yield "\n\n";
-    yield renderBlock(block);
+    yield renderBlock(block, refs);
     prev = block.kind;
   }
 }

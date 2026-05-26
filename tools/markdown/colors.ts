@@ -6,6 +6,7 @@ export const ghostFaintOpacity = 0.5;
 export const theme = {
   body: "#ABB2BF",
   border: "#3E4451",
+  link: "#61AFEF",
   inlineCode: "#C678DD",
   inlineCodeBackground: "#23282f",
   heading1: "#D19A66",
@@ -60,6 +61,7 @@ export const italic = "\x1b[3m";
 
 export const body = fg(theme.body);
 export const border = fg(theme.border);
+export const linkFg = fg(theme.link);
 export const inlineCode = fg(theme.inlineCode);
 export const inlineCodeStyle = `${inlineCode}${bg(theme.inlineCodeBackground)}`;
 export const codeBlockStyle = `${body}${bg(theme.inlineCodeBackground)}`;
