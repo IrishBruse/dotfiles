@@ -23,12 +23,40 @@ export function sprintForNumber(number: number): Sprint {
   return { number, start, end };
 }
 
-export function currentSprintNumber(today = new Date()): number {
+export function sprintNumberForDate(date: Date): number {
   const daysSinceAnchor = Math.floor(
-    (startOfDay(today).getTime() - startOfDay(ANCHOR_START).getTime()) /
+    (startOfDay(date).getTime() - startOfDay(ANCHOR_START).getTime()) /
       MS_PER_DAY
   );
   return ANCHOR_SPRINT + Math.floor(daysSinceAnchor / 14);
+}
+
+export function currentSprintNumber(): number {
+  return sprintNumberForDate(new Date());
+}
+
+const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+export function parseIsoDateLocal(arg: string): Date | undefined {
+  const match = ISO_DATE.exec(arg);
+  if (match === null) {
+    return undefined;
+  }
+
+  const year = Number(match[1]);
+  const month = Number(match[2]) - 1;
+  const day = Number(match[3]);
+  const date = new Date(year, month, day);
+
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() !== month ||
+    date.getDate() !== day
+  ) {
+    return undefined;
+  }
+
+  return date;
 }
 
 const WEEKDAY_WIDTH = 9;

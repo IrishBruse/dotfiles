@@ -28,4 +28,4 @@ Custom VS Code UI CSS.
 - `archscan` - Scan a codebase for architecture metrics (scan, enrich, or both)
 - `agent-tool` - Agent workflow helpers (e.g. log corrected mistakes to agent-failures.json)
 - `export-cursor-chats` - Export Cursor agent transcripts from ~/.cursor to markdown files
-- `sprint` - Print previous, current, and next sprint date blocks, or `sprint <n>` for one sprint
+- `sprint` - Print previous, current, and next sprint date blocks, `sprint <n>` for one sprint, or `sprint YYYY-MM-DD` for the sprint containing that date

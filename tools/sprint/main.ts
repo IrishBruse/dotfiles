@@ -1,15 +1,27 @@
 import {
   currentSprintNumber,
   formatSprintBlock,
-  sprintForNumber
+  parseIsoDateLocal,
+  sprintForNumber,
+  sprintNumberForDate
 } from "./sprint.ts";
 
 const arg = process.argv[2];
 
 if (arg !== undefined) {
+  const date = parseIsoDateLocal(arg);
+  if (date !== undefined) {
+    console.log(
+      formatSprintBlock(undefined, sprintForNumber(sprintNumberForDate(date)))
+    );
+    process.exit(0);
+  }
+
   const number = Number(arg);
   if (!Number.isInteger(number) || number < 1) {
-    console.error(`sprint: invalid sprint number: ${arg}`);
+    console.error(
+      `sprint: expected sprint number or YYYY-MM-DD, got: ${arg}`
+    );
     process.exit(1);
   }
   console.log(formatSprintBlock(undefined, sprintForNumber(number)));
