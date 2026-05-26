@@ -34,7 +34,7 @@ Built-ins:
 Simple placeholders: ${builtinKeys.map((k) => `{{${k}}}`).join(", ")}
 Environment: {{env:NAME}}
 Line conditions: ?varname: rest of line  (?env:NAME: ...) — omitted when false
-Commands: \`\`\`!<shell command> ... \`\`\` (body replaced with stdout)
+Commands: \`\`\`!<cmd> or \`\`\`lang !<cmd> ... \`\`\` (space before ! when lang is set)
 Inline: \`!<shell command>\` (stdout max 40 characters)
 
 Prompts directory: ${promptsDir}

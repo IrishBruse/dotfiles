@@ -62,18 +62,27 @@ Truthy: non-empty, not `0`, not `false`. Set `PR_CLI_WORK=true` for work policy 
 
 ### !command
 
-Write a fenced block with ! before the shell command on the opening line. The body is replaced with stdout (newlines preserved), and the opener becomes a plain fence.
+Fenced command block on the opener line (body between fences is ignored). Stdout replaces the block; `langid` is kept when set. Use ` ```!cmd ` or ` ```langid !cmd ` (space required before `!` when `langid` is present).
 
-Example (input):
+Examples (input):
 
 \`\`\`!echo test
 
 \`\`\`
 
+\`\`\`diff !git diff HEAD~1
+
+\`\`\`
+
 Example (output from `interpolate builtins`):
 
-```!echo test
+```
+echo test
 
+```
+
+```
+diff output here
 ```
 
 ### inline !command

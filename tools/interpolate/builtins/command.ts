@@ -6,8 +6,8 @@ import { locationAt } from "../location.ts";
 
 export const INLINE_COMMAND_MAX_LENGTH = 40;
 
-/** Fenced blocks opened with ```!cmd ... body ... ``` */
-const commandFencePattern = /```!([^\n]*)\n([\s\S]*?)```/g;
+/** Fenced blocks: ` ```!cmd ` or ` ```lang !cmd ` (space required before `!` when lang is set). */
+const commandFencePattern = /```([^\n]+)\n([\s\S]*?)```/g;
 
 /** Inline `!cmd` (backticks, single-line command; cmd must start with a letter). */
 const inlineCommandPattern = /`!([a-zA-Z][^`\n]*)`/g;
@@ -26,14 +26,39 @@ function escapeFenceMarkers(text: string): string {
   return text.replaceAll("```", "``\\`");
 }
 
+function parseCommandFenceOpener(opener: string): { lang: string; cmd: string } {
+  const bang = opener.indexOf("!");
+  if (bang === -1) {
+    throw new Error(
+      `interpolate: command fence opener must contain ! (got: ${JSON.stringify(opener)})`
+    );
+  }
+  const cmd = opener.slice(bang + 1).trim();
+  if (cmd === "") {
+    throw new Error("interpolate: empty command in fenced ``` block");
+  }
+  if (bang === 0) {
+    return { lang: "", cmd };
+  }
+  if (opener[bang - 1] !== " ") {
+    throw new Error(
+      "interpolate: language id and ! must be separated by a space (use ```lang !cmd)"
+    );
+  }
+  const lang = opener.slice(0, bang - 1).trim();
+  return { lang, cmd };
+}
+
 function expandFencedBlocks(text: string): string {
-  return text.replace(commandFencePattern, (_, cmd: string) => {
-    const trimmed = cmd.trim();
-    if (trimmed === "") {
-      throw new Error("interpolate: empty command in ```! block");
+  return text.replace(commandFencePattern, (full, opener: string, body: string) => {
+    if (!opener.includes("!")) {
+      return full;
     }
-    const output = escapeFenceMarkers(runCommand(trimmed));
-    return `\`\`\`\n${output}\`\`\``;
+    const { lang, cmd } = parseCommandFenceOpener(opener);
+    void body;
+    const output = escapeFenceMarkers(runCommand(cmd));
+    const openerFence = lang === "" ? "```" : `\`\`\`${lang}`;
+    return `${openerFence}\n${output}\`\`\``;
   });
 }
 

@@ -23,7 +23,7 @@ Unless the repo template says otherwise:
 
 ### Diff
 
-```!git diff origin/main
+```diff !git diff origin/main
 
 ```
 
