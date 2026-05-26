@@ -1,11 +1,11 @@
 ---
-name: walk
+name: walkthrough
 description: Walkthrough a response or code/feature. Use when "Walk me throught X" or "Breakdown your response"
 ---
 
 # Walkthrough
 
-Pick a mode from what follows `/walk`.
+Pick a mode from what follows `/walkthrough`.
 
 | Input                  | Mode                                                                     |
 | ---------------------- | ------------------------------------------------------------------------ |
