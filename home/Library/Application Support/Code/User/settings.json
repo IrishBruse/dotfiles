@@ -1179,7 +1179,6 @@
   "workbench.activityBar.location": "top",
   "workbench.colorTheme": "Empty Dark Theme",
   "workbench.editor.empty.hint": "hidden",
-  "workbench.editor.limit.enabled": true,
   "workbench.iconTheme": "material-icon-theme",
   "workbench.productIconTheme": "material-product-icons",
   "workbench.sideBar.location": "right",
@@ -1549,16 +1548,12 @@
   "diffEditor.codeLens": false,
   "diffEditor.maxComputationTime": 0,
   "diffEditor.renderSideBySide": true,
-  "diffEditor.useInlineViewWhenSpaceIsLimited": false,
   "diffEditor.wordWrap": "off",
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
   "explorer.confirmPasteNative": false,
   "explorer.copyRelativePathSeparator": "/",
   "explorer.incrementalNaming": "smart",
-  "explorer.openEditors.visible": 8,
-  "fish.path.fish": "/opt/homebrew/bin/fish",
-  "fish.path.fish_indent": "/opt/homebrew/bin/fish_indent",
   "errorLens.messageEnabled": true,
   "aws.cloudformation.telemetry.enabled": false,
   "workbench.secondarySideBar.defaultVisibility": "visible",
@@ -1625,5 +1620,7 @@
   "markdownInlineEditor.math.enabled": false,
   "editor.allowVariableFontsInAccessibilityMode": true,
   "markdownInlineEditor.tables.renderingMode": "custom",
-  "workbench.editor.wrapTabs": true
+  "workbench.editor.wrapTabs": true,
+  "fish.path.fish": "/opt/homebrew/bin/fish",
+  "fish.path.fish_indent": "/opt/homebrew/bin/fish_indent"
 }
