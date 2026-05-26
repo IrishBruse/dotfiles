@@ -6,16 +6,15 @@ Single Node package (`tools/package.json`) with one `tsconfig.json`. Entry stubs
 
 - Do not use ENV vars in tools unless explicitly requested.
 - Before finishing work that touches TypeScript here, run `npm run validate` from repo root (or `just validate`); it must pass.
-- Each tool folder that is imported across folders must have an `api.ts` that defines the public contract: every exported type (full shape), function (params and return type), and const (explicit type). Implementations live in other modules; `api.ts` delegates to them. Do not use bare `export { x } from "./other.ts"` re-exports in `api.ts`. Other files in the same folder may `import type` from `api.ts`.
 
-## Cross-folder imports
+## api.ts
 
-ESLint `cross-folder-api` requires imports from another tool folder to go through that folder's `api.ts` only.
+Folders imported from other tool folders expose an `api.ts` as their only cross-folder entry point (`cross-folder-api` ESLint rule). The file is the public contract: full exported type shapes, typed functions and consts, and delegating implementations (no bare `export { x } from "./other.ts"` re-exports). Same-folder code may `import type` from `api.ts`.
 
-## Install
+### Function JSDoc
 
-```bash
-cd tools && npm install && npm link
-```
+Summary, `@param` per argument, and `@return`.
 
-Or from repo root: `just install-all` then `just link`.
+### Type and const JSDoc
+
+Brief `/** ... */` on each exported type or const.
