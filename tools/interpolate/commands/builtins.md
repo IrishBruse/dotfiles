@@ -18,6 +18,18 @@ User home directory.
 
 Login user name.
 
+### branch
+
+`{{branch}}`
+
+Current git branch (`git branch --show-current` in `{{cwd}}`).
+
+### prTemplate
+
+`{{prTemplate}}`
+
+First repo PR template found (`.github/PULL_REQUEST_TEMPLATE.md`, `.github/pull_request_template.md`, or `docs/pull_request_template.md`), or `(none)`.
+
 # environment
 
 ### env:HOME
@@ -41,11 +53,10 @@ Prefix a line with `?varname:` (or `?env:NAME:`). When the variable or environme
 Example:
 
 ```
-?work: Title must start with NOVACORE-<digits>.
-?env:PR_CLI_WORK: Same, keyed off the environment.
+?env:PR_CLI_WORK: Title must start with NOVACORE-<digits>.
 ```
 
-Truthy: non-empty, not `0`, not `false`. Pass `--var work=1` or set `PR_CLI_WORK=true`.
+Truthy: non-empty, not `0`, not `false`. Set `PR_CLI_WORK=true` for work policy lines.
 
 # commands
 

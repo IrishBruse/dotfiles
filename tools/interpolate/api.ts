@@ -15,6 +15,8 @@ export type ExpandNamedPromptOptions = {
   /** Working directory for `{{cwd}}` and ```! shell blocks. */
   cwd?: string;
   vars?: Record<string, string>;
+  /** Extra placeholder values merged after built-in vars. */
+  builtinOverrides?: Record<string, string>;
 };
 
 /**
@@ -31,7 +33,11 @@ export function expandNamedPrompt(
     process.chdir(options.cwd);
   }
   try {
-    return expandTemplate(template, options?.vars ?? {});
+    return expandTemplate(
+      template,
+      options?.vars ?? {},
+      options?.builtinOverrides ?? {}
+    );
   } finally {
     if (options?.cwd !== undefined) {
       process.chdir(prevCwd);

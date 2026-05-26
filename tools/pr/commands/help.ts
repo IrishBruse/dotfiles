@@ -7,7 +7,7 @@ export function printHelp(): void {
       "  pr create",
       "",
       "Commands:",
-      "  create   Prepare or open a new pull request for this branch",
+      "  create   Expand pr-create via interpolate, run Cursor agent, gh pr create",
       "",
       "  -h, --help   Show this message"
     ].join("\n")

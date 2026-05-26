@@ -21,11 +21,15 @@ export type ExpandResult =
 
 export function expandTemplate(
   template: string,
-  cliVars: Record<string, string>
+  cliVars: Record<string, string>,
+  builtinOverrides: Record<string, string> = {}
 ): ExpandResult {
-  const merged = { ...builtinVars(), ...cliVars };
+  const merged = { ...builtinVars(), ...builtinOverrides, ...cliVars };
   const conditioned = expandLineConditions(template, merged);
-  const errors = findUndefinedVariables(conditioned, cliVars);
+  const errors = findUndefinedVariables(conditioned, {
+    ...builtinOverrides,
+    ...cliVars
+  });
   if (errors.length > 0) {
     return { ok: false as const, errors };
   }

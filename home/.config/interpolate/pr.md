@@ -31,8 +31,7 @@ Open or refresh a GitHub PR from the **current branch** (`pr create` / `pr updat
 
 ## Repo template
 
-```!sh -c 'for f in .github/PULL_REQUEST_TEMPLATE.md .github/pull_request_template.md docs/pull_request_template.md; do test -f "$f" && { echo "From $f:"; cat "$f"; exit 0; }; done; echo "(none)"'
-```
+{{prTemplate}}
 
 ## Default body
 
