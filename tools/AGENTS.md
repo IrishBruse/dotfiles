@@ -1,6 +1,6 @@
 # Dotfiles tools
 
-Single Node package (`tools/package.json`) with one `tsconfig.json`. Entry stubs live in `tools/bin/`; each CLI has a folder under `tools/<name>/`.
+Single Node package (`tools/package.json`) with one `tsconfig.json`. Entry stubs live in `tools/.bin/`; each CLI has a folder under `tools/<name>/`.
 
 ## Rules
 

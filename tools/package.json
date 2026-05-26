@@ -12,6 +12,7 @@
     "export-cursor-chats": "./.bin/export-cursor-chats.js",
     "interpolate": "./.bin/interpolate.js",
     "jira": "./.bin/jira.js",
+    "md": "./.bin/md.js",
     "pr": "./.bin/pr.js",
     "sprint": "./.bin/sprint.js"
   },

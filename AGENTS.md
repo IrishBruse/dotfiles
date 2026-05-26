@@ -25,6 +25,7 @@ Custom VS Code UI CSS.
 - `confluence` - Clone a Confluence page subtree to local markdown via acli
 - `pr` - GitHub pull request helper: create, update, and review with agent + gh
 - `interpolate` - Expand markdown prompt templates (vars, env, conditions, shell snippets)
+- `md` - Render piped or file markdown in the terminal (Cursor-style colors)
 - `archscan` - Scan a codebase for architecture metrics (scan, enrich, or both)
 - `agent-tool` - Agent workflow helpers (e.g. log corrected mistakes to agent-failures.json)
 - `export-cursor-chats` - Export Cursor agent transcripts from ~/.cursor to markdown files
