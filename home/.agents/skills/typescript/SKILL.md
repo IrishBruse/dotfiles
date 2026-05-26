@@ -1,12 +1,6 @@
 ---
 name: typescript
-description: "Strict typing and type-safe development. Trigger: When implementing TypeScript in .ts/.tsx files, adding types, or enforcing safety."
-license: "Apache 2.0"
-metadata:
-  version: "1.1"
-  type: language
-  dependencies:
-    typescript: ">=5.0.0 <6.0.0"
+description: "Always use this skill when writting/working with typescript code."
 ---
 
 # TypeScript
