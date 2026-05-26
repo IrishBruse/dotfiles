@@ -1622,6 +1622,5 @@
   "markdownInlineEditor.math.enabled": false,
   "editor.allowVariableFontsInAccessibilityMode": true,
   "markdownInlineEditor.tables.renderingMode": "custom",
-  "workbench.editor.wrapTabs": true,
   "terminal.integrated.gpuAcceleration": "on"
 }
