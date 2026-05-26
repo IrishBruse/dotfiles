@@ -1,4 +1,4 @@
-import type { LinkRefs } from "./api.ts";
+import type { LinkRefs } from "./types.ts";
 import { linkFg, reset } from "./colors.ts";
 
 const refDefLine =

@@ -6,7 +6,7 @@ import {
   headingFg,
   reset
 } from "./colors.ts";
-import type { Block, LinkRefs, ListItem } from "./api.ts";
+import type { Block, LinkRefs, ListItem } from "./types.ts";
 import { collectLinkRefs, isLinkRefDefLine } from "./links.ts";
 import { plainInlineLength, renderInline } from "./inline.ts";
 
@@ -474,14 +474,5 @@ export function* renderMarkdownChunks(source: string): Generator<string> {
     if (prev !== null) yield "\n\n";
     yield renderBlock(block, refs);
     prev = block.kind;
-  }
-}
-
-export function writeMarkdown(
-  source: string,
-  out: NodeJS.WriteStream = process.stdout
-): void {
-  for (const chunk of renderMarkdownChunks(source)) {
-    out.write(chunk);
   }
 }

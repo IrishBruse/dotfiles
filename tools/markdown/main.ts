@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { writeMarkdown } from "./api.ts";
+import { markdown } from "./api.ts";
 
 function readInput(): string {
   const path = process.argv[2];
@@ -16,4 +16,4 @@ Usage:
   process.exit(1);
 }
 
-writeMarkdown(readInput());
+process.stdout.write(markdown(readInput()));

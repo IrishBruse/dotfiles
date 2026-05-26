@@ -1,8 +1,6 @@
 import { body, bold, inlineCodeStyle, italic, reset } from "./colors.ts";
-import type { LinkRefs } from "./api.ts";
+import type { LinkRefs } from "./types.ts";
 import { terminalLink } from "./links.ts";
-
-export type { LinkRefs };
 
 type InlineSpan = {
   text: string;
