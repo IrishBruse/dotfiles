@@ -31,6 +31,9 @@ export function currentSprintNumber(today = new Date()): number {
   return ANCHOR_SPRINT + Math.floor(daysSinceAnchor / 14);
 }
 
+const WEEKDAY_WIDTH = 9;
+const DATE_LINE_PREFIX_WIDTH = 10;
+
 export function formatDate(date: Date): string {
   const weekday = date.toLocaleDateString("en-GB", { weekday: "long" });
   const rest = date.toLocaleDateString("en-GB", {
@@ -38,13 +41,22 @@ export function formatDate(date: Date): string {
     month: "long",
     year: "numeric"
   });
-  return `${weekday} ${rest}`;
+  return `${weekday.padEnd(WEEKDAY_WIDTH)} ${rest}`;
 }
 
-export function formatSprintBlock(label: string, sprint: Sprint): string {
+function formatDateLine(kind: "Start" | "End", date: Date): string {
+  return `• ${kind}: `.padEnd(DATE_LINE_PREFIX_WIDTH) + formatDate(date);
+}
+
+const BLOCK_LABEL_WIDTH = 10;
+
+export function formatSprintBlock(label: string | undefined, sprint: Sprint): string {
+  const header = label
+    ? `${label}: `.padEnd(BLOCK_LABEL_WIDTH) + `Sprint ${sprint.number}`
+    : `Sprint ${sprint.number}`;
   return [
-    `${label}: Sprint ${sprint.number}`,
-    `• Start: ${formatDate(sprint.start)}`,
-    `• End: ${formatDate(sprint.end)}`
+    header,
+    formatDateLine("Start", sprint.start),
+    formatDateLine("End", sprint.end)
   ].join("\n");
 }
