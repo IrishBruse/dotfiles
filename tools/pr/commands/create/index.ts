@@ -1,6 +1,7 @@
 import process from "node:process";
 
 import { runAgent } from "../../agent.ts";
+import { printDrySection } from "../../dryRun.ts";
 import { createPullRequest } from "../../ghCreate.ts";
 import { getRepoRoot, resolveGitCwd } from "../../git.ts";
 import { buildPrCreatePrompt } from "../../prompt.ts";
@@ -11,13 +12,10 @@ function fail(message: string): void {
   process.exitCode = 1;
 }
 
-function takePrintPromptFlag(args: string[]): {
-  rest: string[];
-  printPrompt: boolean;
-} {
-  const printPrompt = args.includes("--print-prompt");
-  const rest = printPrompt ? args.filter((a) => a !== "--print-prompt") : args;
-  return { rest, printPrompt };
+function takeFlag(args: string[], flag: string): { rest: string[]; on: boolean } {
+  const on = args.includes(flag);
+  const rest = on ? args.filter((a) => a !== flag) : args;
+  return { rest, on };
 }
 
 export function runCreate(args: string[]): void {
@@ -33,6 +31,7 @@ async function runCreateAsync(args: string[]): Promise<void> {
 
 Options:
   --print-prompt   Print expanded prompt to stdout and exit (no agent)
+  --dry            Print prompt and agent response (no gh pr create)
   -h, --help       This message
 
 Environment:
@@ -42,7 +41,8 @@ Environment:
     return;
   }
 
-  const { rest, printPrompt } = takePrintPromptFlag(args);
+  const { rest: a0, on: printPrompt } = takeFlag(args, "--print-prompt");
+  const { rest, on: dry } = takeFlag(a0, "--dry");
   if (rest.length > 0) {
     fail(`pr create: unexpected arguments: ${rest.join(" ")}`);
     return;
@@ -70,11 +70,20 @@ Environment:
     return;
   }
 
+  if (dry) {
+    printDrySection("prompt", prompt);
+  }
+
   let agentOutput: string;
   try {
     agentOutput = await runAgent(prompt, repoRoot);
   } catch (e) {
     fail(e instanceof Error ? e.message : `agent failed: ${String(e)}`);
+    return;
+  }
+
+  if (dry) {
+    printDrySection("agent response", agentOutput);
     return;
   }
 
