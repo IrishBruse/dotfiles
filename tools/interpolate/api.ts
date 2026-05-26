@@ -2,12 +2,24 @@ import process from "node:process";
 
 import { expandTemplate, type ExpandResult } from "./expand.ts";
 import {
+  printInterpolationErrors,
+  type InterpolationError
+} from "./errors.ts";
+import {
   DEFAULT_PROMPTS_DIR,
   loadPromptTemplate,
+  promptPath,
   resolvePromptsDir
 } from "./promptsDir.ts";
 
-export { DEFAULT_PROMPTS_DIR, resolvePromptsDir, loadPromptTemplate };
+export {
+  DEFAULT_PROMPTS_DIR,
+  loadPromptTemplate,
+  printInterpolationErrors,
+  promptPath,
+  resolvePromptsDir
+};
+export type { InterpolationError };
 export type { ExpandResult };
 
 export type ExpandNamedPromptOptions = {

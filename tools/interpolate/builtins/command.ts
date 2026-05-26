@@ -58,7 +58,8 @@ function expandFencedBlocks(text: string): string {
     void body;
     const output = escapeFenceMarkers(runCommand(cmd));
     const openerFence = lang === "" ? "```" : `\`\`\`${lang}`;
-    return `${openerFence}\n${output}\`\`\``;
+    const header = `! ${cmd}\n`;
+    return `${openerFence}\n${header}${output}\`\`\``;
   });
 }
 

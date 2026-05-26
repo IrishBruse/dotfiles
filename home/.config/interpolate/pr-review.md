@@ -29,32 +29,38 @@ Your **current working directory** is **`{{agentOutputDir}}`** - an **empty dire
 
 ### Files changed (`files.txt`)
 
-```!gh pr view {{target}} --json files --jq '.files[] | "\(.path)  +\(.additions) -\(.deletions)  [\(.changeType)]"' 2>/dev/null || echo "(could not list files)"
+```!gh pr view {{target}} --json files --jq '.files[] | "(.path)  +(.additions) -(.deletions)  [(.changeType)]"' 2>/dev/null || echo "(could not list files)"
+
 ```
 
 ### CI checks (`checks.txt`)
 
 ```!gh pr view {{target}} --json statusCheckRollup --jq '[.. | objects | select(has("name") or has("context")) | select(has("state") or has("status") or has("conclusion")) | (.name // .context) + ": " + (.state // .status // .conclusion // "?")] | unique | .[]' 2>/dev/null || echo "(could not read checks)"
+
 ```
 
 ### PR snapshot (`PR.md` from GitHub - replace entirely with your review)
 
 ```!gh pr view {{target}} --json title,body --jq '"# " + .title + "\n\n" + (.body // "")'
+
 ```
 
 ### Diff (`diff.patch`)
 
 ```!gh pr diff {{target}}
+
 ```
 
 ### Commits (`commits.txt`)
 
-```!gh pr view {{target}} --json commits --jq '.commits[] | "\(.oid[0:7]) \(.messageHeadline)\(if .messageBody != "" then " - " + (.messageBody | gsub("\\s+"; " ")) else "" end)"'
+```!gh pr view {{target}} --json commits --jq '.commits[] | "(.oid[0:7]) (.messageHeadline)(if .messageBody != "" then " - " + (.messageBody | gsub("\s+"; " ")) else "" end)"'
+
 ```
 
 ### Comments (`comments.md`)
 
 ```!gh pr view {{target}} --comments 2>/dev/null || echo "(no comments)"
+
 ```
 
 {{jiraContext}}

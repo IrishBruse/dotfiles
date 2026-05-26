@@ -1,6 +1,9 @@
-import { expandNamedPrompt } from "../interpolate/api.ts";
-import { printInterpolationErrors } from "../interpolate/errors.ts";
-import { promptPath, resolvePromptsDir } from "../interpolate/promptsDir.ts";
+import {
+  expandNamedPrompt,
+  printInterpolationErrors,
+  promptPath,
+  resolvePromptsDir
+} from "../interpolate/api.ts";
 
 export function buildPrCreatePrompt(repoRoot: string): string {
   const promptsDir = resolvePromptsDir(undefined);
