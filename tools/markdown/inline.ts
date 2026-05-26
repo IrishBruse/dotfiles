@@ -82,6 +82,46 @@ function tryParseLink(
   return { consumed: textEnd - i + 1, text, url };
 }
 
+function backtickRunLength(line: string, start: number): number {
+  let n = 0;
+  while (start + n < line.length && line[start + n] === "`") n++;
+  return n;
+}
+
+/** CommonMark code span: matching backtick runs, trim edge spaces when padded. */
+function tryParseCodeSpan(
+  line: string,
+  i: number
+): { content: string; end: number } | null {
+  const openLen = backtickRunLength(line, i);
+  if (openLen === 0) return null;
+
+  const contentStart = i + openLen;
+  let k = contentStart;
+  while (k < line.length) {
+    if (line[k] !== "`") {
+      k++;
+      continue;
+    }
+    const closeLen = backtickRunLength(line, k);
+    if (closeLen < openLen) {
+      k += closeLen;
+      continue;
+    }
+    let content = line.slice(contentStart, k);
+    if (
+      content.length >= 2 &&
+      content.startsWith(" ") &&
+      content.endsWith(" ") &&
+      content.trim().length > 0
+    ) {
+      content = content.slice(1, -1);
+    }
+    return { content, end: k + openLen };
+  }
+  return null;
+}
+
 /** Parse inline links, `code`, **bold**, *italic*, and plain text. */
 export function parseInline(line: string, refs: LinkRefs = new Map()): InlineSpan[] {
   const spans: InlineSpan[] = [];
@@ -122,13 +162,11 @@ export function parseInline(line: string, refs: LinkRefs = new Map()): InlineSpa
       }
     }
 
-    if (line[i] === "`") {
-      const end = line.indexOf("`", i + 1);
-      if (end !== -1) {
-        pushSpan(spans, line.slice(i + 1, end), "code");
-        i = end + 1;
-        continue;
-      }
+    const codeSpan = tryParseCodeSpan(line, i);
+    if (codeSpan !== null) {
+      pushSpan(spans, codeSpan.content, "code");
+      i = codeSpan.end;
+      continue;
     }
 
     let next = line.length;

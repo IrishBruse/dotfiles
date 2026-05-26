@@ -77,7 +77,8 @@
         "hands-free": "",
         "default": ["", "", ""]
       },
-      "on-click": "pavucontrol"
+      "on-click": "pavucontrol",
+      "on-click-right": "bash ~/.config/hypr/scripts/toggle-audio.sh"
     },
     "tray": {
       "cursor": 60,

@@ -14,7 +14,6 @@ alwaysApply: true
 
 - Dont run the dev server or any command that are would already be running as a watcher just assume it is, unless requested
 - Always verify your work with check/linting commands
-- Always use the `/questions` skill when asking the user questions
 
 # Output
 
@@ -22,5 +21,3 @@ alwaysApply: true
 - Instead of responding with a mermaid diagram inline write it to a `.mmd` as it wont display in the cli
 - Use ASCII over unicode: `—` -> `-`, `…` -> `...`, `“`/`”` -> `"`, `‘`/`’` -> `'`, `→`/`←` -> `->`/`<-` `≤` -> `<=`
 - Never use Emojis of any kind in responses
-
-**ALWAYS BE SUCCINCT**
