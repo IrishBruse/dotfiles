@@ -240,7 +240,7 @@ Here is an example of AppleScript:
 
 A code block continues until it reaches a line that is not indented
 (or the end of the article).
-
+markdown
 Within a code block, ampersands (`&`) and angle brackets (`<` and `>`)
 are automatically converted into HTML entities. This makes it very
 easy to include example HTML source code using Markdown -- just paste

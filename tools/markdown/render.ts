@@ -6,8 +6,12 @@ import {
   headingFg,
   reset
 } from "./colors.ts";
-import { isLinkRefDefLine, type LinkRefs } from "./links.ts";
-import { collectLinkRefs, plainInlineLength, renderInline } from "./inline.ts";
+import {
+  collectLinkRefs,
+  isLinkRefDefLine,
+  type LinkRefs
+} from "./links.ts";
+import { plainInlineLength, renderInline } from "./inline.ts";
 
 export { collectLinkRefs, type LinkRefs };
 

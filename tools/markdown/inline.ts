@@ -102,6 +102,11 @@ export function parseInline(line: string, refs: LinkRefs = new Map()): InlineSpa
       i += link.consumed;
       continue;
     }
+    if (line[i] === "[") {
+      pushSpan(spans, "[", "body");
+      i++;
+      continue;
+    }
 
     if (
       (line[i] === "*" || line[i] === "_") &&
