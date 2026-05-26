@@ -84,9 +84,8 @@ function parseTableAlignments(separatorLine: string): ColumnAlign[] {
   return parseTableRow(separatorLine).map(parseTableAlignment);
 }
 
-function parseBlocks(source: string): Block[] {
+export function* parseBlocks(source: string): Generator<Block> {
   const lines = source.replace(/\r\n/g, "\n").split("\n");
-  const blocks: Block[] = [];
   let i = 0;
 
   while (i < lines.length) {
@@ -99,18 +98,18 @@ function parseBlocks(source: string): Block[] {
     }
 
     if (/^(-{3,}|\*{3,}|_{3,})$/.test(trimmed)) {
-      blocks.push({ kind: "hr" });
+      yield { kind: "hr" };
       i++;
       continue;
     }
 
     const heading = /^(#{1,6})\s+(.+)$/.exec(trimmed);
     if (heading !== null) {
-      blocks.push({
+      yield {
         kind: "heading",
         level: heading[1].length,
         text: heading[2]
-      });
+      };
       i++;
       continue;
     }
@@ -125,11 +124,11 @@ function parseBlocks(source: string): Block[] {
       }
       if (i < lines.length) i++;
       const resolved = resolveCodeBlock(commandFromOpener, codeLines);
-      blocks.push({
+      yield {
         kind: "code",
         lines: resolved.lines,
         command: resolved.command
-      });
+      };
       continue;
     }
 
@@ -141,7 +140,7 @@ function parseBlocks(source: string): Block[] {
         rows.push(parseTableRow(lines[i] ?? ""));
         i++;
       }
-      blocks.push({ kind: "table", rows, align });
+      yield { kind: "table", rows, align };
       continue;
     }
 
@@ -155,7 +154,7 @@ function parseBlocks(source: string): Block[] {
         items.push(m[1]);
         i++;
       }
-      blocks.push({ kind: "ul", items });
+      yield { kind: "ul", items };
       continue;
     }
 
@@ -169,7 +168,7 @@ function parseBlocks(source: string): Block[] {
         items.push(m[2]);
         i++;
       }
-      blocks.push({ kind: "ol", items });
+      yield { kind: "ol", items };
       continue;
     }
 
@@ -187,10 +186,8 @@ function parseBlocks(source: string): Block[] {
       paraLines.push(next);
       i++;
     }
-    blocks.push({ kind: "paragraph", lines: paraLines });
+    yield { kind: "paragraph", lines: paraLines };
   }
-
-  return blocks;
 }
 
 function columnWidths(rows: string[][]): number[] {
@@ -234,12 +231,26 @@ function fillLine(text: string): string {
   return text + " ".repeat(width - text.length);
 }
 
+function tableBorderLine(
+  corners: { left: string; mid: string; right: string },
+  widths: number[]
+): string {
+  const segment = (w: number) => `${border}${"─".repeat(w + 2)}${reset}`;
+  let line = `${border}${corners.left}${reset}`;
+  for (let i = 0; i < widths.length; i++) {
+    line += segment(widths[i] ?? 0);
+    if (i < widths.length - 1) {
+      line += `${border}${corners.mid}${reset}`;
+    }
+  }
+  return `${line}${border}${corners.right}${reset}`;
+}
+
 function renderTable(rows: string[][], align: ColumnAlign[]): string {
   if (rows.length === 0) return "";
 
   const widths = columnWidths(rows);
-  const hLine = () =>
-    `${border}+${widths.map((w) => "-".repeat(w + 2)).join("+")}+${reset}`;
+  const vBar = `${border}│${reset}`;
 
   const rowLine = (cells: string[]) => {
     const parts = widths.map((w, c) => {
@@ -247,16 +258,21 @@ function renderTable(rows: string[][], align: ColumnAlign[]): string {
       const { left, right } = cellPadding(raw, w, align[c] ?? "left");
       return ` ${left}${body}${renderInline(raw)}${right}${reset} `;
     });
-    return `${border}|${reset}${parts.join(`${border}|${reset}`)}${border}|${reset}`;
+    return `${vBar}${parts.join(vBar)}${vBar}`;
   };
 
   const [head, ...bodyRows] = rows;
-  const out: string[] = [rowLine(head ?? []), hLine()];
+  const out: string[] = [
+    tableBorderLine({ left: "┌", mid: "┬", right: "┐" }, widths),
+    rowLine(head ?? []),
+    tableBorderLine({ left: "├", mid: "┼", right: "┤" }, widths)
+  ];
   for (const row of bodyRows) out.push(rowLine(row));
+  out.push(tableBorderLine({ left: "└", mid: "┴", right: "┘" }, widths));
   return out.join("\n");
 }
 
-function renderBlock(block: Block): string {
+export function renderBlock(block: Block): string {
   switch (block.kind) {
     case "heading": {
       const hFg = headingFg(block.level);
@@ -292,15 +308,27 @@ function renderBlock(block: Block): string {
 }
 
 export function renderMarkdown(source: string): string {
-  const blocks = parseBlocks(source);
   const parts: string[] = [];
-  let prev: Block["kind"] | null = null;
+  for (const chunk of renderMarkdownChunks(source)) {
+    parts.push(chunk);
+  }
+  return parts.join("");
+}
 
-  for (const block of blocks) {
-    if (parts.length > 0 && prev !== null) parts.push("");
-    parts.push(renderBlock(block));
+export function* renderMarkdownChunks(source: string): Generator<string> {
+  let prev: Block["kind"] | null = null;
+  for (const block of parseBlocks(source)) {
+    if (prev !== null) yield "\n\n";
+    yield renderBlock(block);
     prev = block.kind;
   }
+}
 
-  return parts.join("\n");
+export function writeMarkdown(
+  source: string,
+  out: NodeJS.WriteStream = process.stdout
+): void {
+  for (const chunk of renderMarkdownChunks(source)) {
+    out.write(chunk);
+  }
 }

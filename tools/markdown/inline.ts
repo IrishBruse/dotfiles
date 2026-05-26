@@ -1,4 +1,4 @@
-import { body, bold, inlineCodeStyle, italicStyle, reset } from "./colors.ts";
+import { body, bold, inlineCodeStyle, italic, reset } from "./colors.ts";
 
 type InlineSpan = { text: string; style: "body" | "code" | "bold" | "italic" };
 
@@ -64,7 +64,7 @@ export function parseInline(line: string): InlineSpan[] {
     }
 
     pushSpan(spans, line.slice(i, next), "body");
-    i = next;
+    i = next > i ? next : i + 1;
   }
 
   return spans;
@@ -80,15 +80,21 @@ function renderBold(inner: string, restoreFg: string): string {
     if (s.style === "bold") return renderBold(s.text, restoreFg);
     if (s.style === "code")
       return `${inlineCodeStyle}${s.text}${reset}${restoreFg}`;
-    if (s.style === "italic")
-      return `${italicStyle}${s.text}${reset}${restoreFg}`;
+    if (s.style === "italic") return renderItalic(s.text, restoreFg);
     return s.text;
   });
-  return `${bold}${parts.join("")}${restoreFg}`;
+  return `${bold}${restoreFg}${parts.join("")}${reset}${restoreFg}`;
 }
 
 function renderItalic(inner: string, restoreFg: string): string {
-  return `${italicStyle}${renderInline(inner, restoreFg)}${reset}${restoreFg}`;
+  const parts = parseInline(inner).map((s) => {
+    if (s.style === "italic") return renderItalic(s.text, restoreFg);
+    if (s.style === "bold") return renderBold(s.text, restoreFg);
+    if (s.style === "code")
+      return `${inlineCodeStyle}${s.text}${reset}${restoreFg}`;
+    return s.text;
+  });
+  return `${italic}${restoreFg}${parts.join("")}${reset}${restoreFg}`;
 }
 
 /** @param restoreFg foreground to resume after inline styles (default: body) */

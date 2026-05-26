@@ -1,3 +1,15 @@
-import { renderMarkdown } from "./render.ts";
+import {
+  parseBlocks,
+  renderBlock,
+  renderMarkdown,
+  renderMarkdownChunks,
+  writeMarkdown
+} from "./render.ts";
 
-export { renderMarkdown };
+export {
+  parseBlocks,
+  renderBlock,
+  renderMarkdown,
+  renderMarkdownChunks,
+  writeMarkdown
+};
