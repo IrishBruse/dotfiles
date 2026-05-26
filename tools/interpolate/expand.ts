@@ -1,6 +1,12 @@
+import process from "node:process";
+
 import { builtinVars, expandPatternBuiltins } from "./builtins/index.ts";
 import { expandLineConditions } from "./conditions.ts";
-import type { ExpandResult, InterpolationError } from "./api.ts";
+import { loadPromptTemplate, resolvePromptsDir } from "./promptsDir.ts";
+import type {
+  ExpandNamedPromptOptions,
+  ExpandResult
+} from "./types.ts";
 import { findUndefinedVariables } from "./validate.ts";
 
 /** Replace `{{key}}` placeholders; later keys in `vars` win over earlier passes. */
@@ -37,4 +43,28 @@ export function expandTemplate(
     return { ok: false as const, errors: expanded.errors };
   }
   return { ok: true as const, text: expanded.text };
+}
+
+/** Load `name.md` from the prompts directory and expand placeholders + builtins + commands. */
+export function expandNamedPrompt(
+  name: string,
+  options?: ExpandNamedPromptOptions
+): ExpandResult {
+  const promptsDir = resolvePromptsDir(options?.promptsDir);
+  const template = loadPromptTemplate(promptsDir, name);
+  const prevCwd = process.cwd();
+  if (options?.cwd !== undefined) {
+    process.chdir(options.cwd);
+  }
+  try {
+    return expandTemplate(
+      template,
+      options?.vars ?? {},
+      options?.builtinOverrides ?? {}
+    );
+  } finally {
+    if (options?.cwd !== undefined) {
+      process.chdir(prevCwd);
+    }
+  }
 }

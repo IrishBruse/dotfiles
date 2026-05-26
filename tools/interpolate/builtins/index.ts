@@ -1,4 +1,4 @@
-import type { InterpolationError } from "../api.ts";
+import type { InterpolationError } from "../types.ts";
 import * as branch from "./branch.ts";
 import * as cwd from "./cwd.ts";
 import * as prTemplate from "./prTemplate.ts";

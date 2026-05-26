@@ -1,4 +1,4 @@
-import type { InterpolationError } from "./api.ts";
+import type { InterpolationError } from "./types.ts";
 
 const RED = "\x1b[31m";
 const RESET = "\x1b[0m";

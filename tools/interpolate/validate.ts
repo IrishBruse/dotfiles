@@ -2,7 +2,7 @@ import process from "node:process";
 
 import { builtinVars } from "./builtins/index.ts";
 import { envNamePattern } from "./builtins/env.ts";
-import type { InterpolationError } from "./api.ts";
+import type { InterpolationError } from "./types.ts";
 import { locationAt } from "./location.ts";
 
 const PLACEHOLDER_RE = /\{\{([^}]+)\}\}/g;
