@@ -3,6 +3,7 @@
 local M = {}
 
 function M.on_start()
+	hl.exec_cmd("bash ~/.config/hypr/scripts/bluetooth-start.sh")
 	hl.exec_cmd("waybar")
 	hl.exec_cmd("swaync")
 	hl.exec_cmd("hyprctl setcursor CustomCursors 22")

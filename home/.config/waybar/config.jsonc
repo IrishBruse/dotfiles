@@ -78,7 +78,7 @@
         "default": ["", "", ""]
       },
       "on-click": "pavucontrol",
-      "on-click-right": "bash ~/.config/hypr/scripts/toggle-audio.sh"
+      "on-click-right": "bash ~/.config/hypr/scripts/toggle-audio-waybar.sh"
     },
     "tray": {
       "cursor": 60,
