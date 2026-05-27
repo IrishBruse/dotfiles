@@ -13,6 +13,7 @@ const INDENT = "  ";
 const TOOL_NAME_WIDTH = 10;
 const MAX_SUMMARY = 120;
 const MAX_STDOUT_PREVIEW = 3;
+const THINKING_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"] as const;
 
 type StreamEvent = {
   type?: string;
@@ -41,7 +42,8 @@ type ToolCallPayload = {
 };
 
 type ViewState = {
-  thinkingBuffer: string;
+  thinkingFrame: number;
+  thinkingOnScreen: boolean;
   assistantRendered: boolean;
 };
 
@@ -51,15 +53,25 @@ export type AgentStreamRenderer = {
 };
 
 export function createAgentStreamRenderer(): AgentStreamRenderer {
-  const color = process.stdout.isTTY === true;
-  const state: ViewState = { thinkingBuffer: "", assistantRendered: false };
+  const isTTY = process.stdout.isTTY === true;
+  const color = isTTY;
+  const state: ViewState = {
+    thinkingFrame: 0,
+    thinkingOnScreen: false,
+    assistantRendered: false
+  };
+
+  const writeln = (text: string): void => {
+    clearThinkingIndicator(state, isTTY);
+    process.stdout.write(`${text}\n`);
+  };
 
   return {
     onLine(line: string) {
-      renderStreamJsonLine(line, state, color);
+      renderStreamJsonLine(line, state, color, isTTY, writeln);
     },
     flush() {
-      flushThinking(state);
+      clearThinkingIndicator(state, isTTY);
     }
   };
 }
@@ -67,7 +79,9 @@ export function createAgentStreamRenderer(): AgentStreamRenderer {
 function renderStreamJsonLine(
   rawLine: string,
   state: ViewState,
-  color: boolean
+  color: boolean,
+  isTTY: boolean,
+  writeln: (text: string) => void
 ): void {
   const trimmed = rawLine.trim();
   if (trimmed === "") {
@@ -78,7 +92,7 @@ function renderStreamJsonLine(
   try {
     event = JSON.parse(trimmed) as StreamEvent;
   } catch {
-    writeLine(paint(color, DIM, `${INDENT}? ${trimmed.slice(0, MAX_SUMMARY)}`));
+    writeln(paint(color, DIM, `${INDENT}? ${trimmed.slice(0, MAX_SUMMARY)}`));
     return;
   }
 
@@ -86,27 +100,27 @@ function renderStreamJsonLine(
 
   switch (type) {
     case "system":
-      renderSystem(event, color);
+      renderSystem(event, color, writeln);
       return;
     case "user":
       return;
     case "thinking":
-      renderThinking(event, state);
+      renderThinking(event, state, color, isTTY);
       return;
     case "tool_call":
-      flushThinking(state);
-      renderToolCall(event, color);
+      clearThinkingIndicator(state, isTTY);
+      renderToolCall(event, color, writeln);
       return;
     case "assistant":
-      flushThinking(state);
-      renderAssistant(event, state);
+      clearThinkingIndicator(state, isTTY);
+      renderAssistant(event, state, writeln);
       return;
     case "result":
-      flushThinking(state);
-      renderResult(event, color);
+      clearThinkingIndicator(state, isTTY);
+      renderResult(event, color, writeln);
       return;
     default:
-      writeLine(
+      writeln(
         paint(
           color,
           DIM,
@@ -116,84 +130,83 @@ function renderStreamJsonLine(
   }
 }
 
-function renderSystem(event: StreamEvent, color: boolean): void {
+function renderSystem(
+  event: StreamEvent,
+  color: boolean,
+  writeln: (text: string) => void
+): void {
   if (event.subtype !== "init") {
     return;
   }
   const model = event.model ?? "agent";
   const cwd = shortenPath(event.cwd ?? "");
   const where = cwd === "" ? "" : paint(color, DIM, `  ${cwd}`);
-  writeLine(
+  writeln(
     `${INDENT}${paint(color, CYAN, "*")} ${paint(color, BOLD, model)}${where}`
   );
 }
 
-function renderThinking(event: StreamEvent, state: ViewState): void {
+function renderThinking(
+  event: StreamEvent,
+  state: ViewState,
+  color: boolean,
+  isTTY: boolean
+): void {
   if (event.subtype === "completed") {
-    flushThinking(state);
+    clearThinkingIndicator(state, isTTY);
     return;
   }
-  if (event.subtype !== "delta" || event.text === undefined) {
+  if (event.subtype !== "delta") {
     return;
   }
-  state.thinkingBuffer += event.text;
+  tickThinkingSpinner(state, color, isTTY);
 }
 
-function flushThinking(state: ViewState): void {
-  const text = state.thinkingBuffer.trim();
-  state.thinkingBuffer = "";
-  if (text === "") {
+function clearThinkingIndicator(state: ViewState, isTTY: boolean): void {
+  if (!state.thinkingOnScreen || !isTTY) {
+    state.thinkingOnScreen = false;
     return;
   }
-  writeLine(`${INDENT}~ thinking`);
-  writeMarkdownBlock(thinkingSourceForMarkdown(text));
-  writeLine("");
+  process.stdout.write("\r\x1b[2K");
+  state.thinkingOnScreen = false;
 }
 
-/** Thinking is plain text, not markdown: blockquote + code spans keep lines and literals. */
-function thinkingSourceForMarkdown(text: string): string {
-  const lines = text.replace(/\r\n/g, "\n").trimEnd().split("\n");
-  const paragraphs: string[] = [];
-  let current: string[] = [];
-
-  const flush = () => {
-    if (current.length === 0) {
-      return;
-    }
-    paragraphs.push(
-      current.map((line) => `> \`${escapeCodeSpan(line)}\``).join("\n")
-    );
-    current = [];
-  };
-
-  for (const line of lines) {
-    if (line.trim() === "") {
-      flush();
-      continue;
-    }
-    current.push(line.trimEnd());
+function tickThinkingSpinner(
+  state: ViewState,
+  color: boolean,
+  isTTY: boolean
+): void {
+  if (!isTTY) {
+    return;
   }
-  flush();
-  return paragraphs.join("\n\n");
+  const frame = THINKING_FRAMES[state.thinkingFrame] ?? THINKING_FRAMES[0];
+  state.thinkingFrame = (state.thinkingFrame + 1) % THINKING_FRAMES.length;
+  const line = `${INDENT}${paint(color, DIM, frame)} ${paint(color, DIM, "thinking")}`;
+  process.stdout.write(`\r\x1b[2K${line}`);
+  state.thinkingOnScreen = true;
 }
 
-function escapeCodeSpan(line: string): string {
-  return line.replace(/`/g, "'");
-}
-
-function renderAssistant(event: StreamEvent, state: ViewState): void {
+function renderAssistant(
+  event: StreamEvent,
+  state: ViewState,
+  writeln: (text: string) => void
+): void {
   const text = extractMessageText(event.message);
   if (text === "") {
     return;
   }
   if (!state.assistantRendered) {
-    writeLine("");
+    writeln("");
     state.assistantRendered = true;
   }
-  writeMarkdownBlock(text);
+  writeMarkdownBlock(text, writeln);
 }
 
-function renderToolCall(event: StreamEvent, color: boolean): void {
+function renderToolCall(
+  event: StreamEvent,
+  color: boolean,
+  writeln: (text: string) => void
+): void {
   const parsed = parseToolCall(event.tool_call);
   if (parsed === null) {
     return;
@@ -202,7 +215,7 @@ function renderToolCall(event: StreamEvent, color: boolean): void {
   const summary = summarizeToolArgs(parsed.name, parsed.payload.args);
 
   if (event.subtype === "started") {
-    writeLine(formatToolRow(">", parsed.name, summary, color, YELLOW));
+    writeln(formatToolRow(">", parsed.name, summary, color, YELLOW));
     return;
   }
 
@@ -214,22 +227,26 @@ function renderToolCall(event: StreamEvent, color: boolean): void {
   const mark = outcome.ok ? "+" : "x";
   const markColor = outcome.ok ? GREEN : RED;
   const detail = outcome.detail === "" ? "" : outcome.detail;
-  writeLine(formatToolRow(mark, parsed.name, detail, color, markColor));
+  writeln(formatToolRow(mark, parsed.name, detail, color, markColor));
 
   if (outcome.preview !== "") {
     const preview = markdown(
       ["```", outcome.preview, "```"].join("\n")
     );
     for (const line of preview.split("\n").slice(0, MAX_STDOUT_PREVIEW + 2)) {
-      writeLine(line === "" ? "" : `${INDENT}  ${line}`);
+      writeln(line === "" ? "" : `${INDENT}  ${line}`);
     }
     if (outcome.preview.split("\n").length > MAX_STDOUT_PREVIEW) {
-      writeLine(paint(color, DIM, `${INDENT}  ...`));
+      writeln(paint(color, DIM, `${INDENT}  ...`));
     }
   }
 }
 
-function renderResult(event: StreamEvent, color: boolean): void {
+function renderResult(
+  event: StreamEvent,
+  color: boolean,
+  writeln: (text: string) => void
+): void {
   const ok = event.is_error !== true && event.subtype === "success";
   const mark = ok ? "+" : "x";
   const markColor = ok ? GREEN : RED;
@@ -241,8 +258,8 @@ function renderResult(event: StreamEvent, color: boolean): void {
   if (usage !== "") {
     parts.push(usage);
   }
-  writeLine(formatToolRow(mark, "done", parts.join("  "), color, markColor));
-  writeLine("");
+  writeln(formatToolRow(mark, "done", parts.join("  "), color, markColor));
+  writeln("");
 }
 
 function formatToolRow(
@@ -259,10 +276,13 @@ function formatToolRow(
   return `${INDENT}${markPart} ${namePart}${detailPart}`;
 }
 
-function writeMarkdownBlock(source: string): void {
+function writeMarkdownBlock(
+  source: string,
+  writeln: (text: string) => void
+): void {
   const rendered = markdown(source.trimEnd());
   for (const line of rendered.split("\n")) {
-    writeLine(line === "" ? "" : `${INDENT}${line}`);
+    writeln(line === "" ? "" : `${INDENT}${line}`);
   }
 }
 
@@ -497,6 +517,3 @@ function paint(enabled: boolean, code: string, text: string): string {
   return `${code}${text}${RESET}`;
 }
 
-function writeLine(text: string): void {
-  process.stdout.write(`${text}\n`);
-}

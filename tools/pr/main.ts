@@ -3,6 +3,7 @@
 import process from "node:process";
 
 import { runCreate } from "./commands/create/index.ts";
+import { runUpdate } from "./commands/update/index.ts";
 import { printHelp } from "./commands/help.ts";
 
 function printUnknown(command: string): void {
@@ -25,6 +26,9 @@ export function main(argv: string[]): void {
   switch (first) {
     case "create":
       runCreate(rest);
+      return;
+    case "update":
+      runUpdate(rest);
       return;
     default:
       printUnknown(first);

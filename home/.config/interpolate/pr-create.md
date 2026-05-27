@@ -29,13 +29,16 @@ Unless the repo template says otherwise:
 
 ### Repo PR template
 
+```md
 {{prTemplate}}
+```
 
 ## Reply
 
 Respond with **only**:
 
 1. `# <title>` (from the diff and branch, not invented scope)
-2. Blank line, then the PR body (markdown)
+2. Blank line
+3. The PR body (markdown)
 
-Optional final line: `done`. No preamble, no fenced blocks, no JSON.
+No preamble, no fenced blocks, no JSON.

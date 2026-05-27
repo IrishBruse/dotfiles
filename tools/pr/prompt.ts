@@ -1,13 +1,12 @@
-import process from "node:process";
-
 import { interpolate } from "../interpolate/api.ts";
 
 export function buildPrCreatePrompt(repoRoot: string): string {
-  const prevCwd = process.cwd();
-  try {
-    process.chdir(repoRoot);
-    return interpolate("pr-create");
-  } finally {
-    process.chdir(prevCwd);
-  }
+  return interpolate("pr-create", { cwd: repoRoot });
+}
+
+export function buildPrUpdatePrompt(repoRoot: string, target: string): string {
+  return interpolate("pr-update", {
+    cwd: repoRoot,
+    vars: { target }
+  });
 }
