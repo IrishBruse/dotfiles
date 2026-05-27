@@ -5,7 +5,7 @@ Single Node package (`tools/package.json`) with one `tsconfig.json`. Entry stubs
 ## Rules
 
 - Do not use ENV vars in tools unless explicitly requested.
-- Before finishing work that touches TypeScript here, run `npm run validate` from repo root (or `just validate`); it must pass.
+- Before finishing work that touches TypeScript here, run `npm run validate` from repo root
 
 ## api.ts
 

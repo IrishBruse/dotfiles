@@ -1,8 +1,9 @@
 import { spawn } from "node:child_process";
+import process from "node:process";
 
 const AGENT_TIMEOUT_MS = 1_200_000;
 
-const AGENT_ARGS = ["--trust", "-p", "--output-format", "text"] as const;
+const AGENT_ARGS = ["--trust", "-p", "--output-format", "stream-json"] as const;
 
 export async function runAgent(prompt: string, repoRoot: string): Promise<string> {
   try {
@@ -35,7 +36,7 @@ function spawnAgent(
       { cwd: repoRoot, stdio: ["ignore", "pipe", "inherit"] }
     );
     const outChunks: string[] = [];
-    const errChunks: string[] = [];
+    let lineBuffer = "";
     let finished = false;
     const finish = (fn: () => void) => {
       if (finished) {
@@ -53,11 +54,13 @@ function spawnAgent(
     }, AGENT_TIMEOUT_MS);
     child.stdout?.setEncoding("utf8");
     child.stdout?.on("data", (c: string) => {
-      outChunks.push(c);
-    });
-    child.stderr?.setEncoding("utf8");
-    child.stderr?.on("data", (c: string) => {
-      errChunks.push(c);
+      lineBuffer += c;
+      const lines = lineBuffer.split("\n");
+      lineBuffer = lines.pop() ?? "";
+      for (const line of lines) {
+        printAgentJsonLine(line);
+        outChunks.push(line);
+      }
     });
     child.on("error", (e) => {
       finish(() => {
@@ -66,14 +69,13 @@ function spawnAgent(
     });
     child.on("close", (code) => {
       finish(() => {
-        const text = outChunks.join("").trim();
+        if (lineBuffer.trim() !== "") {
+          printAgentJsonLine(lineBuffer);
+          outChunks.push(lineBuffer);
+        }
+        const text = outChunks.join("\n").trim();
         if (code !== 0) {
-          const detail = errChunks.join("").trim() || "no stderr";
-          reject(
-            new Error(
-              `${command} exited ${String(code)}. stderr: ${detail.slice(0, 4000)}`
-            )
-          );
+          reject(new Error(`${command} exited ${String(code)}`));
           return;
         }
         if (text === "") {
@@ -84,4 +86,12 @@ function spawnAgent(
       });
     });
   });
+}
+
+function printAgentJsonLine(line: string): void {
+  const trimmed = line.trim();
+  if (trimmed === "") {
+    return;
+  }
+  process.stdout.write(`${trimmed}\n`);
 }

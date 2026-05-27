@@ -2,10 +2,8 @@ import process from "node:process";
 
 import { runAgent } from "../../agent.ts";
 import { printDrySection } from "../../dryRun.ts";
-import { createPullRequest } from "../../ghCreate.ts";
 import { getRepoRoot, resolveGitCwd } from "../../git.ts";
 import { buildPrCreatePrompt } from "../../prompt.ts";
-import { parsePrMarkdownFromAgentOutput } from "../../prMarkdown.ts";
 
 function fail(message: string): void {
   console.error(message);
@@ -31,7 +29,7 @@ async function runCreateAsync(args: string[]): Promise<void> {
 
 Options:
   --print-prompt   Print expanded prompt to stdout and exit (no agent)
-  --dry            Print prompt and agent response (no gh pr create)
+  --dry            Print prompt, then agent stream-json lines (no gh pr create)
   -h, --help       This message
 
 Environment:
@@ -74,30 +72,16 @@ Environment:
     printDrySection("prompt", prompt);
   }
 
-  let agentOutput: string;
   try {
-    agentOutput = await runAgent(prompt, repoRoot);
+    await runAgent(prompt, repoRoot);
   } catch (e) {
     fail(e instanceof Error ? e.message : `agent failed: ${String(e)}`);
     return;
   }
 
   if (dry) {
-    printDrySection("agent response", agentOutput);
     return;
   }
 
-  let parsed;
-  try {
-    parsed = parsePrMarkdownFromAgentOutput(agentOutput);
-  } catch (e) {
-    fail(e instanceof Error ? e.message : String(e));
-    return;
-  }
-
-  try {
-    createPullRequest(repoRoot, parsed.title, parsed.body);
-  } catch (e) {
-    fail(e instanceof Error ? e.message : String(e));
-  }
+  // TODO: parse final result JSON line and run gh pr create
 }

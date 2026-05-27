@@ -7,7 +7,7 @@ export function printHelp(): void {
       "  pr create",
       "",
       "Commands:",
-      "  create   Expand pr-create via interpolate, run Cursor agent, gh pr create",
+      "  create   Expand pr-create via interpolate, run Cursor agent (stream-json)",
       "",
       "  -h, --help   Show this message"
     ].join("\n")
