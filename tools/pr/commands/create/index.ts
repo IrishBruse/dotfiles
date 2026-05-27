@@ -1,7 +1,6 @@
 import process from "node:process";
 
 import { runAgent } from "../../agent.ts";
-import { printDrySection } from "../../dryRun.ts";
 import { getRepoRoot, resolveGitCwd } from "../../git.ts";
 import { buildPrCreatePrompt } from "../../prompt.ts";
 
@@ -28,8 +27,8 @@ async function runCreateAsync(args: string[]): Promise<void> {
     console.log(`pr create - expand pr-create prompt, run Cursor agent, open PR
 
 Options:
-  --print-prompt   Print expanded prompt to stdout and exit (no agent)
-  --dry            Print prompt, then agent stream-json lines (no gh pr create)
+  --prompt         Print expanded prompt to stdout and exit
+  --dry            Run agent only (no gh pr create)
   -h, --help       This message
 
 Environment:
@@ -39,7 +38,7 @@ Environment:
     return;
   }
 
-  const { rest: a0, on: printPrompt } = takeFlag(args, "--print-prompt");
+  const { rest: a0, on: promptOnly } = takeFlag(args, "--prompt");
   const { rest, on: dry } = takeFlag(a0, "--dry");
   if (rest.length > 0) {
     fail(`pr create: unexpected arguments: ${rest.join(" ")}`);
@@ -63,13 +62,9 @@ Environment:
     return;
   }
 
-  if (printPrompt) {
+  if (promptOnly) {
     process.stdout.write(prompt);
     return;
-  }
-
-  if (dry) {
-    printDrySection("prompt", prompt);
   }
 
   try {

@@ -9,8 +9,6 @@ const CYAN = "\x1b[36m";
 const GREEN = "\x1b[32m";
 const YELLOW = "\x1b[33m";
 const RED = "\x1b[31m";
-const MAGENTA = "\x1b[35m";
-
 const INDENT = "  ";
 const TOOL_NAME_WIDTH = 10;
 const MAX_SUMMARY = 120;
@@ -43,7 +41,7 @@ type ToolCallPayload = {
 };
 
 type ViewState = {
-  thinkingOpen: boolean;
+  thinkingBuffer: string;
   assistantRendered: boolean;
 };
 
@@ -54,14 +52,14 @@ export type AgentStreamRenderer = {
 
 export function createAgentStreamRenderer(): AgentStreamRenderer {
   const color = process.stdout.isTTY === true;
-  const state: ViewState = { thinkingOpen: false, assistantRendered: false };
+  const state: ViewState = { thinkingBuffer: "", assistantRendered: false };
 
   return {
     onLine(line: string) {
       renderStreamJsonLine(line, state, color);
     },
     flush() {
-      endThinking(state, color);
+      flushThinking(state);
     }
   };
 }
@@ -93,18 +91,18 @@ function renderStreamJsonLine(
     case "user":
       return;
     case "thinking":
-      renderThinking(event, state, color);
+      renderThinking(event, state);
       return;
     case "tool_call":
-      endThinking(state, color);
+      flushThinking(state);
       renderToolCall(event, color);
       return;
     case "assistant":
-      endThinking(state, color);
+      flushThinking(state);
       renderAssistant(event, state);
       return;
     case "result":
-      endThinking(state, color);
+      flushThinking(state);
       renderResult(event, color);
       return;
     default:
@@ -130,34 +128,26 @@ function renderSystem(event: StreamEvent, color: boolean): void {
   );
 }
 
-function renderThinking(
-  event: StreamEvent,
-  state: ViewState,
-  color: boolean
-): void {
+function renderThinking(event: StreamEvent, state: ViewState): void {
   if (event.subtype === "completed") {
-    endThinking(state, color);
+    flushThinking(state);
     return;
   }
   if (event.subtype !== "delta" || event.text === undefined) {
     return;
   }
-  if (!state.thinkingOpen) {
-    process.stdout.write(`${INDENT}${paint(color, MAGENTA, "~")} `);
-    state.thinkingOpen = true;
-  }
-  process.stdout.write(paint(color, DIM, event.text));
+  state.thinkingBuffer += event.text;
 }
 
-function endThinking(state: ViewState, color: boolean): void {
-  if (!state.thinkingOpen) {
+function flushThinking(state: ViewState): void {
+  const text = state.thinkingBuffer.trim();
+  state.thinkingBuffer = "";
+  if (text === "") {
     return;
   }
-  if (color) {
-    process.stdout.write(RESET);
-  }
-  process.stdout.write("\n");
-  state.thinkingOpen = false;
+  writeLine(`${INDENT}~ thinking`);
+  writeMarkdownBlock(text);
+  writeLine("");
 }
 
 function renderAssistant(event: StreamEvent, state: ViewState): void {
