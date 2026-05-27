@@ -69,4 +69,5 @@ export const italicStyle = `${italic}${body}`;
 const codeBlockGhostFg = fg(
   blend(theme.body, theme.inlineCodeBackground, ghostFaintOpacity)
 );
+export const codeBlockLangStyle = `${italic}${codeBlockGhostFg}${bg(theme.inlineCodeBackground)}`;
 export const codeBlockGhostStyle = `${italic}${codeBlockGhostFg}${bg(theme.inlineCodeBackground)}`;

@@ -1,6 +1,13 @@
 import { printInterpolationErrors } from "./errors.ts";
 import { expandNamedPrompt } from "./expand.ts";
 import { promptPath, resolvePromptsDir } from "./promptsDir.ts";
+import type { ExpandNamedPromptOptions } from "./types.ts";
+
+/** Options for {@link interpolate}: repo cwd and extra `{{placeholders}}`. */
+export type InterpolateOptions = {
+  cwd?: string;
+  vars?: Record<string, string>;
+};
 
 /**
  * Load and expand a named prompt template to markdown.
@@ -13,9 +20,13 @@ import { promptPath, resolvePromptsDir } from "./promptsDir.ts";
  * @param name Prompt name without `.md` (e.g. `pr-create` for `pr-create.md`).
  * @return Expanded markdown with all template features applied.
  */
-export function interpolate(name: string): string {
+export function interpolate(name: string, options?: InterpolateOptions): string {
   const promptsDir = resolvePromptsDir(undefined);
-  const result = expandNamedPrompt(name);
+  const expandOptions: ExpandNamedPromptOptions | undefined =
+    options === undefined
+      ? undefined
+      : { cwd: options.cwd, vars: options.vars };
+  const result = expandNamedPrompt(name, expandOptions);
   if (result.ok === false) {
     printInterpolationErrors(promptPath(promptsDir, name), result.errors);
     throw new Error(`interpolate: failed to expand prompt "${name}"`);

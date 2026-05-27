@@ -146,8 +146,39 @@ function flushThinking(state: ViewState): void {
     return;
   }
   writeLine(`${INDENT}~ thinking`);
-  writeMarkdownBlock(text);
+  writeMarkdownBlock(thinkingSourceForMarkdown(text));
   writeLine("");
+}
+
+/** Thinking is plain text, not markdown: blockquote + code spans keep lines and literals. */
+function thinkingSourceForMarkdown(text: string): string {
+  const lines = text.replace(/\r\n/g, "\n").trimEnd().split("\n");
+  const paragraphs: string[] = [];
+  let current: string[] = [];
+
+  const flush = () => {
+    if (current.length === 0) {
+      return;
+    }
+    paragraphs.push(
+      current.map((line) => `> \`${escapeCodeSpan(line)}\``).join("\n")
+    );
+    current = [];
+  };
+
+  for (const line of lines) {
+    if (line.trim() === "") {
+      flush();
+      continue;
+    }
+    current.push(line.trimEnd());
+  }
+  flush();
+  return paragraphs.join("\n\n");
+}
+
+function escapeCodeSpan(line: string): string {
+  return line.replace(/`/g, "'");
 }
 
 function renderAssistant(event: StreamEvent, state: ViewState): void {

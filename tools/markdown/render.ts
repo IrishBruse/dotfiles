@@ -2,6 +2,7 @@ import {
   body,
   border,
   codeBlockGhostStyle,
+  codeBlockLangStyle,
   codeBlockStyle,
   headingFg,
   reset
@@ -16,37 +17,53 @@ type ColumnAlign = "left" | "center" | "right";
 
 type BlockquoteLine = { depth: number; text: string };
 
-/** ` ```!cmd ` or ` ```lang !cmd ` (matches interpolate command fences). */
-function parseCommandFenceOpener(opener: string): string | undefined {
-  const bang = opener.indexOf("!");
-  if (bang === -1) return undefined;
-  const cmd = opener.slice(bang + 1).trim();
-  if (cmd === "") return undefined;
-  if (bang > 0 && opener[bang - 1] !== " ") return undefined;
-  return cmd;
+/** ` ```!cmd `, ` ```lang `, or ` ```lang !cmd ` (matches interpolate command fences). */
+function parseFenceOpener(opener: string): { lang: string; command?: string } {
+  const trimmed = opener.trim();
+  if (trimmed === "") return { lang: "" };
+
+  const bang = trimmed.indexOf("!");
+  if (bang === -1) return { lang: trimmed };
+
+  const cmd = trimmed.slice(bang + 1).trim();
+  if (cmd === "") {
+    return { lang: bang === 0 ? "" : trimmed.slice(0, bang).trim() };
+  }
+  if (bang > 0 && trimmed[bang - 1] !== " ") {
+    return { lang: trimmed };
+  }
+  const lang = bang === 0 ? "" : trimmed.slice(0, bang - 1).trim();
+  return { lang, command: cmd };
 }
 
 const embeddedCommandLine = /^! (.+)$/;
 
-function resolveCodeBlock(commandFromOpener: string | undefined, lines: string[]): {
-  command?: string;
-  lines: string[];
-} {
+function resolveCodeBlock(
+  opener: { lang: string; command?: string },
+  lines: string[]
+): { lang?: string; command?: string; lines: string[] } {
+  const lang = opener.lang === "" ? undefined : opener.lang;
+  let command = opener.command;
+  let contentLines = lines;
+
   const embedded = (lines[0] ?? "").match(embeddedCommandLine);
   if (embedded !== null) {
-    const cmd = embedded[1];
-    const rest = lines.slice(1);
-    if (commandFromOpener === undefined) {
-      return { command: cmd, lines: rest };
+    const embeddedCmd = embedded[1];
+    if (command === undefined) {
+      command = embeddedCmd;
     }
-    if (commandFromOpener === cmd) {
-      return { command: commandFromOpener, lines: rest };
+    if (command === embeddedCmd) {
+      contentLines = lines.slice(1);
     }
   }
-  if (commandFromOpener !== undefined) {
-    return { command: commandFromOpener, lines };
+
+  if (lang !== undefined) {
+    return { lang, lines: contentLines };
   }
-  return { lines };
+  if (command !== undefined) {
+    return { command, lines: contentLines };
+  }
+  return { lines: contentLines };
 }
 
 function isTableRow(line: string): boolean {
@@ -193,7 +210,7 @@ export function* parseBlocks(
     }
 
     if (trimmed.startsWith("```")) {
-      const commandFromOpener = parseCommandFenceOpener(trimmed.slice(3).trim());
+      const fenceOpener = parseFenceOpener(trimmed.slice(3));
       const codeLines: string[] = [];
       i++;
       while (i < lines.length && !(lines[i] ?? "").trim().startsWith("```")) {
@@ -201,10 +218,11 @@ export function* parseBlocks(
         i++;
       }
       if (i < lines.length) i++;
-      const resolved = resolveCodeBlock(commandFromOpener, codeLines);
+      const resolved = resolveCodeBlock(fenceOpener, codeLines);
       yield {
         kind: "code",
         lines: resolved.lines,
+        lang: resolved.lang,
         command: resolved.command
       };
       continue;
@@ -446,7 +464,9 @@ export function renderBlock(block: Block, refs: LinkRefs): string {
         .join("\n");
     case "code": {
       const out: string[] = [];
-      if (block.command !== undefined) {
+      if (block.lang !== undefined) {
+        out.push(`${codeBlockLangStyle}${fillLine(block.lang)}${reset}`);
+      } else if (block.command !== undefined) {
         out.push(`${codeBlockGhostStyle}${fillLine(block.command)}${reset}`);
       }
       for (const l of block.lines) {

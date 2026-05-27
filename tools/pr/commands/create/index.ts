@@ -1,5 +1,6 @@
 import process from "node:process";
 
+import { markdown } from "../../../markdown/api.ts";
 import { runAgent } from "../../agent.ts";
 import { getRepoRoot, resolveGitCwd } from "../../git.ts";
 import { buildPrCreatePrompt } from "../../prompt.ts";
@@ -63,7 +64,8 @@ Environment:
   }
 
   if (promptOnly) {
-    process.stdout.write(prompt);
+    process.stdout.write(markdown(prompt.trimEnd()));
+    process.stdout.write("\n");
     return;
   }
 

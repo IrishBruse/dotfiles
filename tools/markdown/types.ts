@@ -15,5 +15,5 @@ export type Block =
   | { kind: "ol"; items: ListItem[] }
   | { kind: "table"; rows: string[][]; align: ColumnAlign[] }
   | { kind: "blockquote"; lines: BlockquoteLine[] }
-  | { kind: "code"; lines: string[]; command?: string }
+  | { kind: "code"; lines: string[]; lang?: string; command?: string }
   | { kind: "hr" };
