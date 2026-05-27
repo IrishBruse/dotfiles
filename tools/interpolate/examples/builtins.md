@@ -64,7 +64,7 @@ Truthy: non-empty, not `0`, not `false`. Set `WORK=true` for work policy lines.
 
 ### !command
 
-Fenced command block on the opener line (body between fences is ignored). Stdout replaces the block; `langid` is kept when set. Use ` ```!cmd ` or ` ```langid !cmd ` (space required before `!` when `langid` is present).
+Fenced command block on the opener line (body between fences is ignored). Stdout replaces the block; `langid` is kept when set. Use \`\`\`!cmd or \`\`\`langid !cmd (space required before `!` when `langid` is present).
 
 Examples (input):
 
@@ -89,6 +89,6 @@ diff output here
 
 ### inline !command
 
-Wrap a one-line shell command in backticks with a leading exclamation mark (command must start with a letter, e.g. `!echo hi`). Output must be at most 40 characters or interpolation fails.
+Wrap a one-line shell command in backticks after a leading `!` (e.g. !`echo hi`). The `!` and backticks are replaced with stdout. Output must be at most 40 characters or interpolation fails.
 
-Live example: `!echo test`
+Live example: !`echo test`

@@ -1,4 +1,4 @@
-**Repo:** `{{cwd}}` | **Branch:** `{{branch}}` (head) | **PR:** `{{target}}`
+**Repo:** `{{cwd}}` | **Branch:** `{{branch}}` (head) | **PR:** !`gh pr view --json number -q .number || echo "(none)"`
 
 Refresh this pull request's **title** and **body** to match the branch as it is now. The host runs **`gh pr edit`** after you reply.
 
@@ -26,7 +26,7 @@ Unless the repo template or current body already defines structure:
 
 ### Current PR
 
-```!gh pr view {{target}} --json title,body --jq '"# " + .title + "\n\n" + (.body // "")"' 2>/dev/null || echo "(could not load current PR)"
+```md !gh pr view --json title,body --jq '"# " + .title + "\n\n" + (.body // "")"' 2>/dev/null || echo "(could not load current PR)"
 
 ```
 

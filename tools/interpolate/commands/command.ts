@@ -9,8 +9,10 @@ export const INLINE_COMMAND_MAX_LENGTH = 40;
 /** Fenced blocks: ` ```!cmd ` or ` ```lang !cmd ` (space required before `!` when lang is set). */
 const commandFencePattern = /```([^\n]+)\n([\s\S]*?)```/g;
 
-/** Inline `!cmd` (backticks, single-line command; cmd must start with a letter). */
-const inlineCommandPattern = /`!([a-zA-Z][^`\n]*)`/g;
+/** Inline !`cmd` (leading ! outside backticks; not `` `!` ``). */
+const inlineCommandPattern = /(?<!`)!`([^`\n]+)`/g;
+
+const INLINE_COMMAND_START = /^[a-zA-Z0-9_$./-]/;
 
 function runCommand(cmd: string): string {
   return execSync(cmd, {
@@ -84,6 +86,10 @@ function expandInlineInSegment(
     const trimmed = cmd.trim();
     const { line, column } = locationAt(segment, index);
 
+    if (!INLINE_COMMAND_START.test(trimmed)) {
+      continue;
+    }
+
     if (trimmed === "") {
       errors.push({ line, column, message: "empty inline command" });
       continue;
@@ -109,7 +115,7 @@ function expandInlineInSegment(
 
 const PLAIN_FENCE_RE = /(```[\s\S]*?```)/g;
 
-/** Run shell commands in ```! blocks and `!cmd` inline spans (inline skipped inside plain fences). */
+/** Run shell commands in ```! blocks and !`cmd` inline spans (inline skipped inside plain fences). */
 export function expand(text: string): CommandExpandResult {
   const fenced = expandFencedBlocks(text);
   const errors: InterpolationError[] = [];
