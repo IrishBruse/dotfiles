@@ -8,7 +8,7 @@ Refresh this pull request's **title** and **body** to match the branch as it is 
 - **Diff below is the source of truth** for what ships. Do not re-run git or gh to refetch. Use **Current PR** for what is on GitHub today; drop stale sections (testing checklists, TODOs) that no longer apply.
 - Align the body with the repo template when one is present.
 
-?env:PR_CLI_WORK: **Title:** must start with `NOVACORE-<digits> - ` (e.g. `NOVACORE-123 - `).
+?work: **Title:** must start with `NOVACORE-<digits> - ` (e.g. `NOVACORE-123 - `).
 
 ## Body layout
 

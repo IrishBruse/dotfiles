@@ -50,13 +50,15 @@ SHELL environment variable.
 
 Prefix a line with `?varname:` (or `?env:NAME:`). When the variable or environment value is truthy, the rest of the line is kept; otherwise the whole line is dropped. Empty remainder yields a blank line when kept.
 
+`?work:` is a shortcut for `?env:WORK:` (work policy / NOVACORE title rules).
+
 Example:
 
 ```
-?env:PR_CLI_WORK: Title must start with NOVACORE-<digits>.
+?work: Title must start with NOVACORE-<digits>.
 ```
 
-Truthy: non-empty, not `0`, not `false`. Set `PR_CLI_WORK=true` for work policy lines.
+Truthy: non-empty, not `0`, not `false`. Set `WORK=true` for work policy lines.
 
 # commands
 

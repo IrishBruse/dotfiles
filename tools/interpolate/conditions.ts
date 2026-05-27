@@ -1,6 +1,11 @@
-/** `?varname: text` or `?env:NAME: text` — line kept only when the condition is truthy. */
+/** `?varname: text`, `?env:NAME: text`, or `?work:` (shortcut for `?env:WORK:`). */
 const LINE_CONDITION_RE =
   /^\?((?:env:([A-Za-z_][A-Za-z0-9_]*)|([A-Za-z_][A-Za-z0-9_]*))):\s?(.*)$/;
+
+/** Line-condition names that read an environment variable instead of `vars`. */
+const ENV_SHORTCUTS: Record<string, string> = {
+  work: "WORK"
+};
 
 function isTruthyValue(value: string | undefined): boolean {
   if (value === undefined) {
@@ -25,6 +30,10 @@ function conditionMet(
     return isTruthyValue(process.env[envName]);
   }
   if (varName !== undefined) {
+    const envFromShortcut = ENV_SHORTCUTS[varName];
+    if (envFromShortcut !== undefined) {
+      return isTruthyValue(process.env[envFromShortcut]);
+    }
     return isTruthyValue(vars[varName]);
   }
   return false;

@@ -7,7 +7,7 @@ Open a new GitHub PR from this branch. The host runs **`gh pr create`** after yo
 - **Read-only:** you may read files under `{{cwd}}`. No creates, edits, or deletes. No **`git`** or **`gh`**.
 - **Diff below is the source of truth** for what ships. Do not re-run git to refetch. Align the body with the repo template when one is present.
 
-?env:PR_CLI_WORK: **Title:** must start with `NOVACORE-<digits> - ` (e.g. `NOVACORE-123 - `).
+?work: **Title:** must start with `NOVACORE-<digits> - ` (e.g. `NOVACORE-123 - `).
 
 ## Body layout
 

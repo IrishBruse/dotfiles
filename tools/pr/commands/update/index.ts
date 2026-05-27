@@ -43,7 +43,7 @@ Options:
 
 Environment:
   PR_GIT_CWD       Git repo directory (default: cwd)
-  PR_CLI_WORK=true Enable NOVACORE title rules in pr-update.md
+  WORK=true          Enable NOVACORE title rules in pr-update.md
 `);
     return;
   }
