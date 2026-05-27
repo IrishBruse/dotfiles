@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
-import process from "node:process";
+
+import { createAgentStreamRenderer } from "./streamJsonView.ts";
 
 const AGENT_TIMEOUT_MS = 1_200_000;
 
@@ -37,6 +38,7 @@ function spawnAgent(
     );
     const outChunks: string[] = [];
     let lineBuffer = "";
+    const view = createAgentStreamRenderer();
     let finished = false;
     const finish = (fn: () => void) => {
       if (finished) {
@@ -58,7 +60,7 @@ function spawnAgent(
       const lines = lineBuffer.split("\n");
       lineBuffer = lines.pop() ?? "";
       for (const line of lines) {
-        printAgentJsonLine(line);
+        view.onLine(line);
         outChunks.push(line);
       }
     });
@@ -70,9 +72,10 @@ function spawnAgent(
     child.on("close", (code) => {
       finish(() => {
         if (lineBuffer.trim() !== "") {
-          printAgentJsonLine(lineBuffer);
+          view.onLine(lineBuffer);
           outChunks.push(lineBuffer);
         }
+        view.flush();
         const text = outChunks.join("\n").trim();
         if (code !== 0) {
           reject(new Error(`${command} exited ${String(code)}`));
@@ -86,12 +89,4 @@ function spawnAgent(
       });
     });
   });
-}
-
-function printAgentJsonLine(line: string): void {
-  const trimmed = line.trim();
-  if (trimmed === "") {
-    return;
-  }
-  process.stdout.write(`${trimmed}\n`);
 }
