@@ -3,10 +3,10 @@ import { expandNamedPrompt } from "./expand.ts";
 import { promptPath, resolvePromptsDir } from "./promptsDir.ts";
 import type { ExpandNamedPromptOptions } from "./types.ts";
 
-/** Options for {@link interpolate}: repo cwd and extra `{{placeholders}}`. */
+/** Options for {@link interpolate}: repo cwd and optional placeholder overrides. */
 export type InterpolateOptions = {
   cwd?: string;
-  vars?: Record<string, string>;
+  builtinOverrides?: Record<string, string>;
 };
 
 /**
@@ -25,7 +25,7 @@ export function interpolate(name: string, options?: InterpolateOptions): string 
   const expandOptions: ExpandNamedPromptOptions | undefined =
     options === undefined
       ? undefined
-      : { cwd: options.cwd, vars: options.vars };
+      : { cwd: options.cwd, builtinOverrides: options.builtinOverrides };
   const result = expandNamedPrompt(name, expandOptions);
   if (result.ok === false) {
     printInterpolationErrors(promptPath(promptsDir, name), result.errors);

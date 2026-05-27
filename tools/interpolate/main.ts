@@ -20,12 +20,11 @@ function printUsage(promptsDir: string, names: string[]): void {
   console.error(`interpolate — expand markdown prompt templates
 
 Usage:
-  interpolate <name> [--var key=value ...]
-  interpolate builtins [--var key=value ...]
+  interpolate <name>
+  interpolate builtins
 
 Options:
   --prompts-dir <path>   Prompt library (default: ${DEFAULT_PROMPTS_DIR})
-  --var <key=value>      Template variable (repeatable)
   -h, --help             This help
 
 Built-ins:
@@ -48,14 +47,6 @@ Prompts directory: ${promptsDir}
   }
 }
 
-function parseVarArg(raw: string): [string, string] {
-  const eq = raw.indexOf("=");
-  if (eq === -1) {
-    throw new Error(`--var expects key=value, got: ${raw}`);
-  }
-  return [raw.slice(0, eq), raw.slice(eq + 1)];
-}
-
 function takeFlag(
   args: string[],
   flag: string
@@ -72,39 +63,15 @@ function takeFlag(
   return { rest, value };
 }
 
-function collectVars(args: string[]): {
-  rest: string[];
-  vars: Record<string, string>;
-} {
-  const vars: Record<string, string> = {};
-  const rest: string[] = [];
-  for (let i = 0; i < args.length; i++) {
-    const a = args[i];
-    if (a === "--var") {
-      const raw = args[i + 1];
-      if (raw === undefined) {
-        throw new Error("--var requires key=value");
-      }
-      const [key, value] = parseVarArg(raw);
-      vars[key] = value;
-      i += 1;
-      continue;
-    }
-    rest.push(a);
-  }
-  return { rest, vars };
-}
-
 function runBuiltins(args: string[]): void {
-  const { rest, vars } = collectVars(args);
-  if (rest.length > 0) {
+  if (args.length > 0) {
     throw new Error(
-      `interpolate builtins: unexpected arguments: ${rest.join(" ")}`
+      `interpolate builtins: unexpected arguments: ${args.join(" ")}`
     );
   }
 
   const template = loadBuiltinsDoc();
-  const result = expandTemplate(template, vars);
+  const result = expandTemplate(template);
   if (result.ok === false) {
     printInterpolationErrors(BUILTINS_DOC, result.errors);
     process.exitCode = 1;
@@ -140,9 +107,6 @@ function runMain(argv: string[]): void {
   args = a0;
   const promptsDir = resolvePromptsDir(promptsDirFlag);
 
-  const { rest: a1, vars } = collectVars(args);
-  args = a1;
-
   const name = args[0];
   if (name === undefined || name.startsWith("-")) {
     printUsage(promptsDir, listPromptNames(promptsDir));
@@ -155,7 +119,7 @@ function runMain(argv: string[]): void {
 
   const file = promptPath(promptsDir, name);
   const template = loadPromptTemplate(promptsDir, name);
-  const result = expandTemplate(template, vars);
+  const result = expandTemplate(template);
   if (result.ok === false) {
     printInterpolationErrors(file, result.errors);
     process.exitCode = 1;

@@ -7,6 +7,6 @@ export function buildPrCreatePrompt(repoRoot: string): string {
 export function buildPrUpdatePrompt(repoRoot: string, target: string): string {
   return interpolate("pr-update", {
     cwd: repoRoot,
-    vars: { target }
+    builtinOverrides: { target }
   });
 }

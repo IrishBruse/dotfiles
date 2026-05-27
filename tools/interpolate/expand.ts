@@ -23,15 +23,11 @@ export function expandPlaceholders(
 
 export function expandTemplate(
   template: string,
-  cliVars: Record<string, string>,
   builtinOverrides: Record<string, string> = {}
 ): ExpandResult {
-  const merged = { ...builtinVars(), ...builtinOverrides, ...cliVars };
+  const merged = { ...builtinVars(), ...builtinOverrides };
   const conditioned = expandLineConditions(template, merged);
-  const errors = findUndefinedVariables(conditioned, {
-    ...builtinOverrides,
-    ...cliVars
-  });
+  const errors = findUndefinedVariables(conditioned, builtinOverrides);
   if (errors.length > 0) {
     return { ok: false as const, errors };
   }
@@ -57,11 +53,7 @@ export function expandNamedPrompt(
     process.chdir(options.cwd);
   }
   try {
-    return expandTemplate(
-      template,
-      options?.vars ?? {},
-      options?.builtinOverrides ?? {}
-    );
+    return expandTemplate(template, options?.builtinOverrides ?? {});
   } finally {
     if (options?.cwd !== undefined) {
       process.chdir(prevCwd);

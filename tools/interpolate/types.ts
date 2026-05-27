@@ -12,7 +12,6 @@ export type ExpandNamedPromptOptions = {
   promptsDir?: string;
   /** Working directory for `{{cwd}}` and ```! shell blocks. */
   cwd?: string;
-  vars?: Record<string, string>;
   /** Extra placeholder values merged after built-in vars. */
   builtinOverrides?: Record<string, string>;
 };
