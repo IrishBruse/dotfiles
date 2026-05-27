@@ -8,16 +8,18 @@ Refresh this pull request's **title** and **body** to match the branch as it is 
 - **Diff below is the source of truth** for what ships. Do not re-run git or gh to refetch. Use **Current PR** for what is on GitHub today; drop stale sections (testing checklists, TODOs) that no longer apply.
 - Align the body with the repo template when one is present.
 
-?env:PR_CLI_WORK: **Title:** must start with `NOVACORE-<digits>` (e.g. `NOVACORE-123`).
-?env:PR_CLI_WORK:
+?env:PR_CLI_WORK: **Title:** must start with `NOVACORE-<digits> - ` (e.g. `NOVACORE-123 - `).
 
 ## Body layout
 
 Unless the repo template or current body already defines structure:
 
-- **`## Summary`** - 2-3 lines, what and why (no path inventories)
+- **`## Summary`** - 1-2 sentences on what and why, then high-level bullets only (no path inventories, file lists, or line-by-line churn). Omit a sub-list when nothing applies:
+  - **Added:** new capabilities or surface area
+  - **Removed:** dropped behavior or surface area
+  - **Changed:** behavior or design shifts; call out significant API or breaking changes here
 - **2-4 topical `##` sections** - short lead sentence, then 2-5 bullets
-- Optional **`## Contract changes`** when APIs/contracts change
+- Optional **`## Contract changes`** when consumers need migration detail beyond the Summary callouts
 - Skip: test checklists, TODOs, Jira meta
 
 ## Context
