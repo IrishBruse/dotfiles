@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const docPath = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
-  "commands",
+  "examples",
   "builtins.md"
 );
 

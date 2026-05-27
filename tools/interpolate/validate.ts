@@ -1,7 +1,7 @@
 import process from "node:process";
 
-import { builtinVars } from "./builtins/index.ts";
-import { envNamePattern } from "./builtins/env.ts";
+import { builtinVars } from "./commands/index.ts";
+import { envNamePattern } from "./commands/env.ts";
 import type { InterpolationError } from "./types.ts";
 import { locationAt } from "./location.ts";
 

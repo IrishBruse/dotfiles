@@ -1,7 +1,7 @@
 /// <reference types="node" />
 import process from "node:process";
 
-import { builtinKeys } from "./builtins/index.ts";
+import { builtinKeys } from "./commands/index.ts";
 import { loadBuiltinsDoc } from "./builtinsDoc.ts";
 import { expandTemplate } from "./expand.ts";
 import { printInterpolationErrors } from "./errors.ts";

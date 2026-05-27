@@ -1,6 +1,6 @@
 import process from "node:process";
 
-import { builtinVars, expandPatternBuiltins } from "./builtins/index.ts";
+import { builtinVars, expandPatternBuiltins } from "./commands/index.ts";
 import { expandLineConditions } from "./conditions.ts";
 import { loadPromptTemplate, resolvePromptsDir } from "./promptsDir.ts";
 import type {
