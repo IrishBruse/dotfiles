@@ -1,9 +1,0 @@
----
-description: CSharp Code Rules
-globs: **/*.cs
-alwaysApply: true
----
-
-# Code Style
-
-- Dont use `_` in variable names
