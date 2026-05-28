@@ -60,6 +60,7 @@ description: >-
 ## Rules
 
 - One PR-sized scope. No unrelated refactors.
+- Do not reference docs on other branches or that have been removed in git history.
 - Do not delete or narrow code unless the user explicitly asks.
 - Prefer minimal doc edits: patch sections, do not rewrite whole trees unless needed.
 - Match existing doc structure and heading style.
