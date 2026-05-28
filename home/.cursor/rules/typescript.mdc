@@ -1,6 +1,0 @@
----
-description: Typescript Code Rules
-globs: **/*.ts, **/*.mts, **/*.tsx
----
-
-Use the `typescript` skill.
