@@ -11,7 +11,7 @@ alwaysApply: true
 
 # Output
 
-- Use ASCII over unicode:
+- Never use unicode alternatives:
   - `—` -> `-`
   - `…` -> `...`
   - `“`/`”` -> `"`
