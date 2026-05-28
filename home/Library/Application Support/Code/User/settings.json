@@ -1363,6 +1363,7 @@
     "editor.wordWrap": "off",
     "files.trimFinalNewlines": false,
     "files.trimTrailingWhitespace": false,
+    "editor.formatOnSave": false,
     "editor.indentSize": 4
   },
   "[snippets]": {
@@ -1621,7 +1622,7 @@
   "markdownInlineEditor.math.enabled": false,
   "editor.allowVariableFontsInAccessibilityMode": true,
   "markdownInlineEditor.tables.renderingMode": "custom",
-  "workbench.editor.wrapTabs": true,
+  "terminal.integrated.gpuAcceleration": "on",
   "fish.path.fish": "/opt/homebrew/bin/fish",
   "fish.path.fish_indent": "/opt/homebrew/bin/fish_indent"
 }

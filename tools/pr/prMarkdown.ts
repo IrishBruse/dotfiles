@@ -1,3 +1,5 @@
+import { extractAgentReplyText } from "./agentOutput.ts";
+
 export type PrMarkdown = {
   title: string;
   body: string;
@@ -5,7 +7,7 @@ export type PrMarkdown = {
 
 /** Parse `# title` + body from agent stdout (strips trailing `done` line). */
 export function parsePrMarkdownFromAgentOutput(content: string): PrMarkdown {
-  let text = content.trim();
+  let text = extractAgentReplyText(content);
   const lines = text.split("\n");
   const last = lines.at(-1)?.trim() ?? "";
   if (last.toLowerCase() === "done") {

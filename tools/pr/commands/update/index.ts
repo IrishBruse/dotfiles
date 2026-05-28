@@ -2,8 +2,10 @@ import process from "node:process";
 
 import { markdown } from "../../../markdown/api.ts";
 import { runAgent } from "../../agent.ts";
+import { editPullRequest } from "../../ghEdit.ts";
 import { getRepoRoot, resolveGitCwd } from "../../git.ts";
 import { buildPrUpdatePrompt } from "../../prompt.ts";
+import { parsePrMarkdownFromAgentOutput } from "../../prMarkdown.ts";
 import { resolvePrTarget } from "../../target.ts";
 
 function fail(message: string): void {
@@ -86,8 +88,9 @@ Environment:
     return;
   }
 
+  let agentOutput: string;
   try {
-    await runAgent(prompt, repoRoot);
+    agentOutput = await runAgent(prompt, repoRoot);
   } catch (e) {
     fail(e instanceof Error ? e.message : `agent failed: ${String(e)}`);
     return;
@@ -97,5 +100,17 @@ Environment:
     return;
   }
 
-  // TODO: parse agent PR.md or stdout and run gh pr edit
+  let parsed;
+  try {
+    parsed = parsePrMarkdownFromAgentOutput(agentOutput);
+  } catch (e) {
+    fail(e instanceof Error ? e.message : String(e));
+    return;
+  }
+
+  try {
+    editPullRequest(repoRoot, target, parsed.title, parsed.body);
+  } catch (e) {
+    fail(e instanceof Error ? e.message : String(e));
+  }
 }
