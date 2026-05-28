@@ -1363,6 +1363,7 @@
     "editor.wordWrap": "off",
     "files.trimFinalNewlines": false,
     "files.trimTrailingWhitespace": false,
+    "editor.formatOnSave": false,
     "editor.indentSize": 4
   },
   "[snippets]": {
