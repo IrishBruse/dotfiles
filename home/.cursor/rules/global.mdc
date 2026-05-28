@@ -8,16 +8,15 @@ alwaysApply: true
 - Use early returns to reduce nesting and indentation
 - Prioritize code readability over clever or "dry" abstractions
 - Use existing utility functions where applicable
-- Always consult the user about bringing in new packages
-
-# Commands
-
-- Dont run the dev server or any command that are would already be running as a watcher just assume it is, unless requested
-- Always verify your work with check/linting commands
 
 # Output
 
-- Do not use `;` just use a `,` or `.`.
-- Instead of responding with a mermaid diagram inline write it to a `.mmd` as it wont display in the cli
-- Use ASCII over unicode: `—` -> `-`, `…` -> `...`, `“`/`”` -> `"`, `‘`/`’` -> `'`, `→`/`←` -> `->`/`<-` `≤` -> `<=`
+- Use ASCII over unicode:
+  - `—` -> `-`
+  - `…` -> `...`
+  - `“`/`”` -> `"`
+  - `‘`/`’` -> `'`
+  - `→`/`←` -> `->`/`<-`
+  - `≤` -> `<=`
+  - `;` -> `,`
 - Never use Emojis of any kind in responses
