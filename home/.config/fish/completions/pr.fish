@@ -1,1 +1,0 @@
-../../../tools/pr/pr.fish

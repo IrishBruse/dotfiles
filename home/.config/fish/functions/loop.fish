@@ -1,4 +1,4 @@
-function repeat -a command time
+function loop -a command time
     if not set -q time[1]
         set time 1
     end
