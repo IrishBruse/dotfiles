@@ -15,6 +15,7 @@ assigned: None
 type: Task/Story/Epic
 url: https://globalization-partners.atlassian.net/browse/NOVACORE-40565
 status: todo/readyForDevelopment/inProgress/codeReview/
+...more fields
 ---
 
 [Markdown Ticket body]
