@@ -27,6 +27,7 @@ alias bat="bat --theme OneHalfDark ---style grid,numbers"
 alias la="eza -l --no-permissions --no-user --time-style relative --group-directories-first"
 alias ll="eza -la --no-permissions --group-directories-first"
 alias reload="clear;exec fish"
+alias grep rg
 
 alias t="v ~/TODO.md"
 
