@@ -4,7 +4,6 @@ description: Use when asked to handover work to another agent or session.
 disable-model-invocation: false
 ---
 
-
 Write a handoff document summarising the current conversation so a fresh agent can continue the work.
 Save to `HANDOFF.md` at the root of the current workspace.
 Include a "suggested skills" section in the document, which suggests skills that the agent should invoke.

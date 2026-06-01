@@ -1079,6 +1079,10 @@
   "markdownInlineEditor.colors.heading6": "#C678DD",
   "markdownInlineEditor.colors.inlineCode": "#C678DD",
   "markdownInlineEditor.colors.inlineCodeBackground": "#23282f00",
+  "markdownInlineEditor.colors.tableBackground": "#000000",
+  "markdownInlineEditor.colors.tableBorder": "#ffffff",
+  "markdownInlineEditor.colors.tableHeaderBackground": "#444444",
+  "markdownInlineEditor.colors.tableText": "#ffffff",
   //
   // File Associations
   //
