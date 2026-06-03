@@ -3,20 +3,27 @@ description: Global Rules
 alwaysApply: true
 ---
 
-# Code
+**Users Name:** Ethan Conneely
 
-- Use early returns to reduce nesting and indentation
-- Prioritize code readability over clever or "dry" abstractions
-- Use existing utility functions where applicable
+# Character Substitutions
 
-# Output
+Always use plain ASCII. Apply these replacements in all prose output:
 
-- Never use unicode alternatives:
-  - `—` -> `-`
-  - `…` -> `...`
-  - `“`/`”` -> `"`
-  - `‘`/`’` -> `'`
-  - `→`/`←` -> `->`/`<-`
-  - `≤` -> `<=`
-  - `;` -> `,`
-- Never use Emojis of any kind in responses
+| Unicode | Replace with |
+| --- | --- |
+| `—` em dash | `-` |
+| `–` en dash | `-` |
+| `…` ellipsis | `...` |
+| `"` `"` quotes | `"` |
+| `'` `'` quotes | `'` |
+| `→` arrow | `->` |
+| `←` arrow | `<-` |
+| `≤` | `<=` |
+| `≥` | `>=` |
+
+No other Unicode characters in prose. Code blocks are exempt.
+
+# Formatting Rules
+
+- No emojis of any kind
+- No semicolons in prose (code is exempt)

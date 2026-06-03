@@ -1137,6 +1137,7 @@
     "*.db": "${capture}.${extname}-*",
     "*.db3": "${capture}.${extname}-*",
     "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
+    "*.mjs": "${capture}.test.mjs",
     "*.jsx": "${capture}.js",
     "*.ssa": "${capture}.s",
     "*.s3db": "${capture}.${extname}-*",
@@ -1618,13 +1619,13 @@
   "material-icon-theme.hidesExplorerArrows": false,
   "editor.scrollbar.horizontalScrollbarSize": 8,
   "markdownInlineEditor.links.singleClickOpen": true,
-  "terminal.integrated.enableImages": true,
   "prettier.trailingComma": "none",
   "markdownInlineEditor.emojis.enabled": false,
   "editor.accessibilitySupport": "off",
   "markdownInlineEditor.math.enabled": false,
   "editor.allowVariableFontsInAccessibilityMode": true,
   "markdownInlineEditor.tables.renderingMode": "custom",
-  "terminal.integrated.gpuAcceleration": "on",
-  "terminal.integrated.scrollback": 10000
+  "terminal.integrated.scrollback": 10000,
+  "workbench.browser.openLocalhostLinks": true,
+  "terminal.integrated.gpuAcceleration": "on"
 }
