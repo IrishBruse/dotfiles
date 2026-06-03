@@ -6,6 +6,8 @@ alwaysApply: false
 
 # Rules
 
+Try use a standard prefix in the tickets title `[...]` it usualy is some Abeviation eg [DTC], [DF], [UIP]
+
 Always include a frontmatter when creating jira ticket files.
 
 ```format
