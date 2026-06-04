@@ -36,5 +36,6 @@ Custom VS Code UI CSS.
 - `md` - Render piped or file markdown in the terminal
 - `archscan` - Scan a codebase for architecture metrics (scan, enrich, or both)
 - `agent-tool` - Agent workflow helpers (e.g. log corrected mistakes to agent-failures.json)
+- `endpoint` - Local HTTP catch-all that appends each request as one JSONL line; prints only the listen URL
 - `export-cursor-chats` - Export Cursor agent transcripts from ~/.cursor to markdown files
 - `sprint` - Print previous, current, and next sprint date blocks, `sprint <n>` for one sprint, or `sprint YYYY-MM-DD` for the sprint containing that date
