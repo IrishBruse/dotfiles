@@ -65,16 +65,9 @@ Keep it glanceable but technical:
 - Name the affected contract and the behavior change.
 - Call out compatibility, default values, or migration impact when relevant.
 - Avoid implementation walkthroughs.
-
-Example:
-
-## Contract Changes
-
-Metadata written to the deploy catalog now includes optional audit fields.
-
-- `metadata.json` may include `novaUserId`, `skillVersion`, and `prototypeVersion`.
-- Lookup failures publish `"Unknown"` instead of blocking the share.
-- No design-to-code schema changes are included.
+- Write the lead sentence as a plain statement of which external surface changed.
+- Write bullets as reviewer-facing facts about inputs, outputs, compatibility, defaults, migrations, or generated artifacts.
+- Omit speculative impact and avoid naming unrelated contracts just to say they did not change.
 
 ### Exclusions
 
