@@ -1596,7 +1596,6 @@
   },
   "workbench.settings.alwaysShowAdvancedSettings": true,
   "explorer.fileNesting.enabled": true,
-  "workbench.layoutControl.enabled": false,
   "workbench.navigationControl.enabled": false,
   "window.menuBarVisibility": "toggle",
   "window.commandCenter": false,
@@ -1618,15 +1617,16 @@
   "material-icon-theme.hidesExplorerArrows": false,
   "editor.scrollbar.horizontalScrollbarSize": 8,
   "markdownInlineEditor.links.singleClickOpen": true,
-  "terminal.integrated.enableImages": true,
   "prettier.trailingComma": "none",
   "markdownInlineEditor.emojis.enabled": false,
   "editor.accessibilitySupport": "off",
   "markdownInlineEditor.math.enabled": false,
   "editor.allowVariableFontsInAccessibilityMode": true,
   "markdownInlineEditor.tables.renderingMode": "custom",
-  "terminal.integrated.gpuAcceleration": "on",
+  "terminal.integrated.scrollback": 10000,
   "fish.path.fish": "/opt/homebrew/bin/fish",
   "fish.path.fish_indent": "/opt/homebrew/bin/fish_indent",
-  "terminal.integrated.scrollback": 10000
+  "workbench.browser.openLocalhostLinks": true,
+  "terminal.integrated.gpuAcceleration": "on",
+  "workbench.layoutControl.enabled": false
 }
