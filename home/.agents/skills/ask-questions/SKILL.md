@@ -16,17 +16,13 @@ Walk down each branch of the design tree, resolving dependencies between decisio
 **Explore before asking.** If a question can be answered by reading the
 codebase, docs, or context, do that first and skip the question entirely.
 
-**One question per turn.** Never batch multiple unrelated questions into one
-message. Ask the most important unknown first. Later questions may depend on
-the answer.
-
 **Provide a recommendation.** For every question, state what you would do
 by default and why. This lets the user accept your judgment with a single
 keypress rather than having to think from scratch.
 
 ## Response format
 
-Use this exact layout nothing after it when asking a question:
+Before calling the AskQuestion tool with the 3 questions print this:
 
 **Context:**
 
@@ -35,4 +31,3 @@ Use this exact layout nothing after it when asking a question:
 **Recommendation:** (Answer 1/2/3)
 [brief reason what makes it the safest default]
 
-[Run the AskQuestion tool with 3 questions]
