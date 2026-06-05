@@ -1597,7 +1597,6 @@
   "lldb-dap.executable-path": "/usr/bin/lldb-dap-18",
   "workbench.settings.alwaysShowAdvancedSettings": true,
   "explorer.fileNesting.enabled": true,
-  "workbench.layoutControl.enabled": false,
   "workbench.navigationControl.enabled": false,
   "window.menuBarVisibility": "toggle",
   "window.commandCenter": false,
@@ -1627,5 +1626,6 @@
   "markdownInlineEditor.tables.renderingMode": "custom",
   "terminal.integrated.scrollback": 10000,
   "workbench.browser.openLocalhostLinks": true,
-  "terminal.integrated.gpuAcceleration": "on"
+  "terminal.integrated.gpuAcceleration": "on",
+  "workbench.layoutControl.enabled": false
 }
