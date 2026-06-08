@@ -365,6 +365,12 @@ hl.window_rule({
 })
 
 hl.window_rule({
+	match = { class = "GRun" },
+	float = true,
+	center = true,
+})
+
+hl.window_rule({
 	match = { class = "discord" },
 	workspace = "2",
 })
