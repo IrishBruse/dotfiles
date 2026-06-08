@@ -16,8 +16,6 @@ Always use plain ASCII. Apply these replacements in all prose output:
 | `…` ellipsis | `...` |
 | `"` `"` quotes | `"` |
 | `'` `'` quotes | `'` |
-| `→` arrow | `->` |
-| `←` arrow | `<-` |
 | `≤` | `<=` |
 | `≥` | `>=` |
 
