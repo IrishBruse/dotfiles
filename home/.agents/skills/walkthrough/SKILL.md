@@ -1,6 +1,6 @@
 ---
 name: walkthrough
-description: Walkthrough a response or code/feature. Use when "Walk me throught X" or "Breakdown your response"
+description: Walks through a response, file, or feature section by section. Use when the user asks to walk through something, break down a response, or invokes /walkthrough.
 ---
 
 # Walkthrough

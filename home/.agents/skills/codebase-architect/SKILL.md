@@ -1,15 +1,6 @@
 ---
 name: codebase-architect
-description: >
-  Analyzes a codebase and generates an interactive treemap visualization of its architecture —
-  showing module depth, interface surfaces, and structural relationships at a glance.
-  Use this skill whenever the user asks to: visualize a codebase, map repo structure, show
-  module architecture, generate a bundle/dependency map, analyze code organization, create an
-  interactive diagram of a project, or understand what modules exist and how deep they are.
-  Also triggers on phrases like "show me the repo", "what does this codebase look like",
-  "architecture overview", or "module map". The output is a self-contained HTML file with
-  a zoomable treemap — clicking a module header shows its interface, clicking a child tile drills in,
-  Alt+click on a folder header zooms that folder, and breadcrumbs zoom out.
+description: Analyzes a codebase and generates an interactive treemap visualization of module depth, interfaces, and structure. Use when visualizing a codebase, mapping repo architecture, or when the user asks for an architecture overview or module map.
 ---
 
 # Codebase Architect Skill

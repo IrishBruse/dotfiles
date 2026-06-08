@@ -1,6 +1,6 @@
 ---
 name: pr-update
-description: Use when updating a github PRs description/title, "Update PR"
+description: Updates an existing GitHub pull request title and body to match the current branch. Use when refreshing a PR description, updating PR metadata, or when the user says Update PR.
 ---
 
 # PR Update

@@ -1,6 +1,6 @@
 ---
 name: cli-tool
-description: Use when creating or changing CLI commands, subcommands, or package bin entries.
+description: Conventions for authoring TypeScript CLI tools in this repo, including package layout, bin entries, and subcommands. Use when creating or changing CLI commands, subcommands, or package bin entries in tools/.
 ---
 
 # CLI Tool

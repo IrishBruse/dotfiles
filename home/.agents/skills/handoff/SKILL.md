@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: Use when asked to handover work to another agent or session.
+description: Writes a HANDOFF.md summary so a fresh agent can continue the work. Use when handing off to another agent or session, or when the user asks for a handoff document.
 disable-model-invocation: false
 ---
 

@@ -1,10 +1,6 @@
 ---
 name: ask-questions
-description: >
-  Structured Q&A elicitation loop. Use when you need to gather requirements,
-  preferences, or decisions from the user before proceeding with a task.
-  Asks one decision at a time, skips anything already answerable from context
-  or the codebase, and stops as soon as enough is known to proceed confidently.
+description: Structured Q&A elicitation loop that gathers requirements one decision at a time. Use when clarifying requirements, preferences, or design decisions before proceeding with a task.
 disable-model-invocation: true
 ---
 

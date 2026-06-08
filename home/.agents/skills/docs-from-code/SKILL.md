@@ -1,8 +1,6 @@
 ---
 name: docs-from-code
-description: >-
-  Audit and align user-facing docs to code (code is the contract). Doc gaps, drift, optional consumer rewrite.
-  Invoke explicitly (/docs-from-code). Use when docs should match current implementation.
+description: Audits and aligns user-facing docs to match code as the source of truth. Use when checking doc drift, filling doc gaps, or when the user invokes /docs-from-code.
 ---
 
 # Docs from code

@@ -1,6 +1,6 @@
 ---
 name: jest
-description: Comprehensive React component testing with Jest and React Testing Library covering configuration, mocking strategies, async testing patterns, hooks testing, and integration testing best practices
+description: Guides React component testing with Jest and React Testing Library, including mocking, async patterns, hooks, and integration tests. Use when writing or reviewing Jest tests for React components.
 disable-model-invocation: true
 ---
 
