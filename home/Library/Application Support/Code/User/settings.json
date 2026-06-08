@@ -1627,6 +1627,6 @@
   "fish.path.fish": "/opt/homebrew/bin/fish",
   "fish.path.fish_indent": "/opt/homebrew/bin/fish_indent",
   "workbench.browser.openLocalhostLinks": true,
-  "terminal.integrated.gpuAcceleration": "on",
-  "workbench.layoutControl.enabled": false
+  "workbench.layoutControl.enabled": false,
+  "terminal.integrated.gpuAcceleration": "off"
 }

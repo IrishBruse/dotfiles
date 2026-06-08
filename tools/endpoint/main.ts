@@ -11,7 +11,8 @@ async function readBody(req: IncomingMessage): Promise<string> {
 
 function parsePort(arg: string | undefined): number {
   if (arg === undefined) {
-    return 0;
+    console.error("endpoint: --port requires a value");
+    process.exit(1);
   }
   const port = Number(arg);
   if (!Number.isInteger(port) || port < 0 || port > 65535) {
@@ -21,11 +22,39 @@ function parsePort(arg: string | undefined): number {
   return port;
 }
 
-const port = parsePort(process.argv[2]);
-const outPath = process.argv[3] ?? "endpoint.jsonl";
+function parseArgs(argv: string[]): { port: number; outPath: string } {
+  let port: number | undefined;
+  const rest: string[] = [];
+
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i]!;
+    if (arg === "--port") {
+      port = parsePort(argv[++i]);
+      continue;
+    }
+    if (arg.startsWith("--port=")) {
+      port = parsePort(arg.slice("--port=".length));
+      continue;
+    }
+    rest.push(arg);
+  }
+
+  if (port === undefined && rest[0] !== undefined) {
+    port = parsePort(rest.shift());
+  }
+
+  return {
+    port: port ?? 0,
+    outPath: rest[0] ?? "endpoint.jsonl"
+  };
+}
+
+const { port, outPath } = parseArgs(process.argv.slice(2));
 
 const server = createServer((req, res) => {
   void (async () => {
+    const path = req.url?.split("?")[0] ?? "/";
+    console.log(`${req.method} ${path}`);
     const body = await readBody(req);
     const record = {
       time: new Date().toISOString(),
