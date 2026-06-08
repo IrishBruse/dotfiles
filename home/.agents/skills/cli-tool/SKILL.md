@@ -1,13 +1,6 @@
 ---
 name: cli-tool
-description: >
-  How Ethan builds CLI tools in his Node/TypeScript monorepo. Consult this before
-  creating any new command, subcommand, or bin stub - and whenever working on argv
-  parsing, flag handling, help text, stdin/pipe input, exit codes, error messaging,
-  or terminal colors. Also use when wiring package.json "bin" entries, structuring
-  a multi-action tool,
-  or running validate/verify. Mirror an existing command in the same package before
-  inventing structure.
+description: Use when creating or changing CLI commands, subcommands, or package bin entries.
 ---
 
 # CLI Tool
@@ -16,12 +9,12 @@ For code snippets and templates, see [reference.md](reference.md).
 
 ## Package layout
 
-All CLIs live under `tools/` as one Node package (`tools/package.json`, `tools/tsconfig.json`).
+CLIs live in one Node package (`package.json`, `tsconfig.json` at the package root).
 
-- One folder per CLI under `tools/<folder>/`
-- Bin stubs in `tools/.bin/` import that folder's main entry
-- Register each command in the package `bin` map (`tools/package.json`)
-- Bin name may differ from folder name (e.g. `md` -> `tools/markdown/`)
+- One folder per CLI under `<folder>/`
+- Bin stubs in `.bin/` import that folder's main entry
+- Register each command in the package `bin` map
+- Bin name may differ from folder name (e.g. `cmd` -> `command-folder/`)
 
 ## Runtime
 
@@ -108,11 +101,11 @@ See reference.md for paint helpers, error coloring, and true-color utilities.
 
 **Prompt-driven commands:** load named markdown templates from a config directory (e.g. `interpolate` + `~/.config/interpolate/*.md`). Never hardcode prompts in source.
 
-**Top-level scripts:** some CLIs run at module scope with no `main()` export (`endpoint`, `sprint`, `md`). Use that only when the entry is a single linear flow.
+**Top-level scripts:** some CLIs run at module scope with no `main()` export. Use that only when the entry is a single linear flow.
 
 ## Validation
 
-From `tools/`: `npm run validate` (typecheck). `npm run verify` adds lint and format checks. See reference.md for commands and common typecheck failures.
+From the package root: `npm run validate` (typecheck). `npm run verify` adds lint and format checks. See reference.md for commands and common typecheck failures.
 
 ## Avoid
 
@@ -144,11 +137,11 @@ Use before finishing any new CLI, subcommand, or meaningful change to an existin
 
 ### New command
 
-- [ ] Pick the closest archetype and mirror argv style, help format, and error tone from a sibling in `tools/`
-- [ ] `tools/<folder>/main.ts` - thin entry: parse argv, dispatch, print help
-- [ ] `tools/.bin/<name>.js` stub (`#!/usr/bin/env node`, imports `../<folder>/main.ts`)
-- [ ] `bin` entry in `tools/package.json` (note if bin name differs from folder, e.g. `md` -> `markdown`)
-- [ ] `npm link` from `tools/` when the command should be on PATH
+- [ ] Pick the closest archetype and mirror argv style, help format, and error tone from a sibling command in the same package
+- [ ] `<folder>/main.ts` - thin entry: parse argv, dispatch, print help
+- [ ] `.bin/<name>.js` stub (`#!/usr/bin/env node`, imports `../<folder>/main.ts`)
+- [ ] `bin` entry in `package.json` (note if bin name differs from folder)
+- [ ] `npm link` from the package root when the command should be on PATH
 
 ### Every change
 
@@ -163,5 +156,5 @@ Use before finishing any new CLI, subcommand, or meaningful change to an existin
 - [ ] No `process.exit` in library or domain modules - only main or top-level handlers
 - [ ] No new env vars unless the user explicitly asked
 - [ ] No hardcoded prompts - load from config dir or use `interpolate`
-- [ ] `npm run validate` from `tools/` passes
+- [ ] `npm run validate` from the package root passes
 - [ ] Run `npm run verify` when you touched lint/format-sensitive code

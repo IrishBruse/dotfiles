@@ -4,18 +4,18 @@ Implementation patterns referenced from the skill.
 
 ## Bin stub
 
-`tools/.bin/<name>.js`:
+`.bin/<name>.js` at the package root:
 
 ```javascript
 #!/usr/bin/env node
 import "../<folder>/main.ts";
 ```
 
-When the bin name differs from the folder, point at the folder (e.g. `md` imports `../markdown/main.ts`).
+When the bin name differs from the folder, point at the folder (e.g. `cmd` imports `../command-folder/main.ts`).
 
 ## package.json bin entry
 
-In `tools/package.json`:
+In the package `package.json`:
 
 ```json
 "<name>": "./.bin/<name>.js"
@@ -206,10 +206,9 @@ Required when padding columns or clipping text in interactive UIs.
 
 ## Validation
 
-From the `tools/` directory:
+From the package root:
 
 ```bash
-cd tools
 npm run validate    # tsc --noEmit
 npm run verify      # validate + lint + format:check
 ```
