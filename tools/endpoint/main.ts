@@ -9,6 +9,23 @@ async function readBody(req: IncomingMessage): Promise<string> {
   return Buffer.concat(chunks).toString("utf8");
 }
 
+function parseBody(raw: string, contentType: string | undefined): unknown {
+  const isJson =
+    contentType?.split(";")[0]?.trim().toLowerCase() === "application/json";
+  if (!isJson) {
+    return raw;
+  }
+  const trimmed = raw.trim();
+  if (!trimmed) {
+    return null;
+  }
+  try {
+    return JSON.parse(trimmed) as unknown;
+  } catch {
+    return raw;
+  }
+}
+
 function parsePort(arg: string | undefined): number {
   if (arg === undefined) {
     console.error("endpoint: --port requires a value");
@@ -55,13 +72,13 @@ const server = createServer((req, res) => {
   void (async () => {
     const path = req.url?.split("?")[0] ?? "/";
     console.log(`${req.method} ${path}`);
-    const body = await readBody(req);
+    const rawBody = await readBody(req);
     const record = {
       time: new Date().toISOString(),
       method: req.method,
       url: req.url,
       headers: req.headers,
-      body,
+      body: parseBody(rawBody, req.headers["content-type"]),
       remoteAddress: req.socket.remoteAddress
     };
     await appendFile(outPath, `${JSON.stringify(record)}\n`, "utf8");
