@@ -10,7 +10,7 @@ Create standalone HTML documentation pages that are readable, polished, and easy
 ## Quick Start
 
 1. Read the user's source material and identify the audience, purpose, and main sections.
-2. Use the shared stylesheet in `references/html-doc.css`.
+2. Use the shared stylesheet in `styles/html-doc.css`.
 3. Create semantic HTML with one clear `<header>`, a `<main>` containing focused `<section>` blocks, and an optional `<footer>`.
 4. Keep the page generic unless the user asks for a branded or domain-specific variant.
 
@@ -25,7 +25,7 @@ Use this structure as the default:
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Document Title</title>
-  <link rel="stylesheet" href="path/to/references/html-doc.css">
+  <link rel="stylesheet" href="path/to/styles/html-doc.css">
 </head>
 <body>
   <div class="doc-shell">
@@ -50,7 +50,7 @@ Use this structure as the default:
 </html>
 ```
 
-Set the `href` relative to the output file. For an example file in `examples/`, use `../references/html-doc.css`.
+Set the `href` relative to the output file. For an example file in `examples/`, use `../styles/html-doc.css`.
 
 ## Content Guidelines
 
@@ -109,5 +109,5 @@ Use simple labels, short node names, and semantic diagram types. Prefer `flowcha
 - Mermaid diagrams require JavaScript and network access when loaded from the CDN. If offline use is required, bundle Mermaid locally and update the import path.
 - The HTML must be accessible: meaningful headings, descriptive links, table headers, and no color-only meaning.
 - Each Mermaid diagram must have a nearby heading or paragraph explaining what it shows.
-- The CSS should stay in `references/html-doc.css`; do not inline page-specific CSS unless the user explicitly asks.
+- The CSS should stay in `styles/html-doc.css`; do not inline page-specific CSS unless the user explicitly asks.
 - Do not mention this skill's visual inspirations or any source examples in generated documents.
