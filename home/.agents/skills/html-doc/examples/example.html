@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Example HTML Documentation Page</title>
+    <link rel="stylesheet" href="../references/html-doc.css" />
+
+    <script defer type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: "dark",
+        themeVariables: {
+          background: "#182131",
+          primaryColor: "#202c40",
+          primaryTextColor: "#e8eef7",
+          primaryBorderColor: "#6aa7d8",
+          lineColor: "#6aa7d8",
+          secondaryColor: "#141c2a",
+          tertiaryColor: "#0d121a",
+          fontFamily:
+            "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <div class="doc-shell">
+      <header class="hero">
+        <p class="eyebrow">Example Documentation</p>
+        <h1>Project Handoff Guide</h1>
+        <p class="lead">
+          A concise single-page guide for transferring context, decisions, and
+          next actions from one team or session to another.
+        </p>
+        <div class="meta">
+          <span class="badge accent">Audience: Contributors</span>
+          <span class="badge">Format: Static HTML</span>
+          <span class="badge">Status: Draft</span>
+        </div>
+      </header>
+
+      <main>
+        <section class="card highlight">
+          <h2>Overview</h2>
+          <p>
+            This document captures the essential context needed to continue work
+            without re-discovery. It focuses on outcomes, constraints, important
+            decisions, and the next useful checkpoint.
+          </p>
+          <div class="callout">
+            <p>
+              <strong>Use this format when continuity matters.</strong> Keep the
+              page short enough to scan, but complete enough that the next
+              reader can act.
+            </p>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Workflow</h2>
+          <p>This diagram shows the same handoff path as a compact flow.</p>
+          <pre class="mermaid">
+        flowchart LR
+          Context[Collect Context] --> Decisions[Record Decisions]
+          Decisions --> Actions[Define Next Actions]
+          Actions --> Continue[Continue Work]
+        </pre
+          >
+          <div class="flow" aria-label="Handoff workflow">
+            <div class="flow-step">
+              <div class="flow-num">1</div>
+              <div class="flow-body">
+                <h3>Collect Context</h3>
+                <p>
+                  Summarize the goal, current state, known constraints, and any
+                  external dependencies.
+                </p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-num">2</div>
+              <div class="flow-body">
+                <h3>Record Decisions</h3>
+                <p>
+                  List the meaningful choices already made, including why each
+                  one was selected.
+                </p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-num">3</div>
+              <div class="flow-body">
+                <h3>Define Next Actions</h3>
+                <p>
+                  Write concrete next steps with enough detail for another
+                  person to continue immediately.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="grid two" aria-label="Inputs and outputs">
+          <article class="card">
+            <h2>Inputs</h2>
+            <ul>
+              <li>Current objective and scope boundaries</li>
+              <li>Links to source material or working files</li>
+              <li>Open questions and decision owners</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <h2>Outputs</h2>
+            <ul>
+              <li>Readable status summary</li>
+              <li>Decision log with rationale</li>
+              <li>Prioritized next action list</li>
+            </ul>
+          </article>
+        </section>
+
+        <section class="card">
+          <h2>Decision Matrix</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Area</th>
+                <th>Current Decision</th>
+                <th>Reason</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Structure</td>
+                <td>Single-page HTML</td>
+                <td>
+                  Easy to open locally, share as an artifact, and archive with
+                  project notes.
+                </td>
+              </tr>
+              <tr>
+                <td>Style</td>
+                <td>Shared stylesheet</td>
+                <td>
+                  Keeps visual consistency across documents without duplicating
+                  CSS.
+                </td>
+              </tr>
+              <tr>
+                <td>Content</td>
+                <td>Action-oriented sections</td>
+                <td>
+                  Supports fast scanning and reduces the chance of missing the
+                  next step.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="card">
+          <h2>Example Artifact Shape</h2>
+          <pre><code>docs/
+  handoff.html
+  references/
+    html-doc.css</code></pre>
+          <div class="callout warning">
+            <p>
+              <strong>Keep links relative.</strong> A static HTML document
+              should continue to render if the folder is moved as a unit.
+            </p>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        Generated with the html-doc skill. Replace this footer with
+        project-specific ownership or update details when needed.
+      </footer>
+    </div>
+  </body>
+</html>

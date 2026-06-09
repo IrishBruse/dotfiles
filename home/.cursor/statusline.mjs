@@ -48,16 +48,14 @@ const totalInputTokens = contextWindow.total_input_tokens;
 const model = payload.model ?? {};
 const effectiveLimit =
   contextWindow.context_window_size ?? guessedContextLimit(model);
-const usageDisplay =
-  totalInputTokens == null || totalInputTokens === 0
-    ? "0"
-    : fmtk(totalInputTokens);
 const limitDisplay = fmtk(effectiveLimit);
 const modelLabel = model.display_name ?? model.id ?? "?";
-
-const usageTone = usageColorAnsi(totalInputTokens);
+const hasContextUsage = totalInputTokens != null && totalInputTokens > 0;
 const cwdRaw = payload.cwd ?? payload.workspace?.current_dir ?? "";
 const cwdDisplay = cwdRaw === "" ? "?" : pwdWithHomeTilde(cwdRaw);
 
-const line = `${ANSI_FG_GRAY}${cwdDisplay}  ${modelLabel}  ${ANSI_RESET}${usageTone}${usageDisplay}/${limitDisplay}${ANSI_RESET}`;
+const contextSegment = hasContextUsage
+  ? `  ${ANSI_RESET}${usageColorAnsi(totalInputTokens)}${fmtk(totalInputTokens)}/${limitDisplay}${ANSI_RESET}`
+  : ANSI_RESET;
+const line = `${ANSI_FG_GRAY}${cwdDisplay}  ${modelLabel}${contextSegment}`;
 process.stdout.write(`${line}\n`);
