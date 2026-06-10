@@ -6,6 +6,8 @@ local v = assert(
 	"hyprland.lua must set _G.HYPR_VARS before require('keybinds')"
 )
 local mod = v.mod
+local drun = hl.dsp.exec_cmd("rofi -show drun -show-icons")
+local toggle_grun = hl.dsp.exec_cmd("grun")
 
 hl.bind(mod .. " + T", hl.dsp.exec_cmd(v.terminal))
 hl.bind(mod .. " + C", hl.dsp.exec_cmd("google-chrome"))
@@ -14,7 +16,8 @@ hl.bind(mod .. " + D", hl.dsp.exec_cmd("code ~/dotfiles/"))
 hl.bind(mod .. " + F", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mod .. " + N", hl.dsp.exec_cmd("swaync-client -t"))
 
-hl.bind(mod .. " + SPACE", hl.dsp.exec_cmd("rofi -show drun -show-icons"))
+hl.bind(mod .. " + SPACE", toggle_grun, { description = "toggle GRun" })
+hl.bind(mod .. " + G", drun, { description = "app launcher" })
 hl.bind(
 	mod .. " + SHIFT + S",
 	hl.dsp.exec_cmd("bash " .. v.hyprDir .. "/scripts/area-screenshot.sh")
@@ -58,7 +61,7 @@ end
 hl.bind(mod .. " + 0", hl.dsp.focus({ workspace = 10 }))
 hl.bind(mod .. " + SHIFT + 0", hl.dsp.window.move({ workspace = 10 }))
 
-hl.bind(mod .. " + G", hl.dsp.group.toggle(), { description = "toggle group" })
+hl.bind(mod .. " + SHIFT + G", hl.dsp.group.toggle(), { description = "toggle group" })
 
 hl.bind(
 	mod .. " + ALT + P",
