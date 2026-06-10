@@ -2,7 +2,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const toolsRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const toolsRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 
 /**
  * @param {string} filePath

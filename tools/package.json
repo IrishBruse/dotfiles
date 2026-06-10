@@ -20,7 +20,7 @@
   "scripts": {
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "eslint .",
+    "lint": "eslint -c .lib/eslint.config.js .",
     "validate": "tsc --noEmit",
     "verify": "npm run validate && npm run lint && npm run format:check"
   },
