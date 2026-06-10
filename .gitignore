@@ -12,6 +12,6 @@ home/.config/fish/fish_variables
 home/.cursor/cli-config.json
 home/.cursor/mcp.json
 home/dot-zshrc
-home/.agents/agent-failures.jsonl
+home/.agents/skills/failure/references/*.md
 home/.cursor/rules/gp-rules.mdc
 home/.config/fish/completions/sdd.fish

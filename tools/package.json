@@ -6,7 +6,7 @@
   "license": "ISC",
   "type": "module",
   "bin": {
-    "agent-tool": "./.bin/agent-tool.js",
+    "failure": "./.bin/failure.js",
     "archscan": "./.bin/archscan.js",
     "confluence": "./.bin/confluence.js",
     "endpoint": "./.bin/endpoint.js",
