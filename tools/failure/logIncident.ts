@@ -1,7 +1,8 @@
 import { appendFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 
-import { incidentFileName, incidentFilePath, REFERENCES_DIR } from "./paths.ts";
+import { gitBranchForPath } from "./gitBranch.ts";
+import { incidentFileName, incidentFilePath, LOGS_DIR } from "./paths.ts";
 import { repoNameForPath } from "./repoName.ts";
 
 export interface IncidentInput {
@@ -42,12 +43,14 @@ async function ensureFile(filePath: string, repo: string | null): Promise<void> 
 
 function formatIncident(input: IncidentInput, at: Date): string {
   const repo = repoNameForPath(input.cwd);
+  const branch = gitBranchForPath(input.cwd);
   const lines = [
     "",
     `## ${formatTimestamp(at)} - ${input.title}`,
     "",
     `- **cwd:** \`${input.cwd}\``,
     `- **repo:** ${repo ?? "misc"}`,
+    `- **branch:** ${branch}`,
     ""
   ];
 
@@ -69,7 +72,7 @@ function formatIncident(input: IncidentInput, at: Date): string {
  * @return absolute path of the log file written
  */
 export async function logIncident(input: IncidentInput): Promise<string> {
-  await mkdir(REFERENCES_DIR, { recursive: true });
+  await mkdir(LOGS_DIR, { recursive: true });
   const filePath = incidentFilePath(input.cwd);
   const repo = repoNameForPath(input.cwd);
   await ensureFile(filePath, repo);
@@ -77,4 +80,4 @@ export async function logIncident(input: IncidentInput): Promise<string> {
   return filePath;
 }
 
-export { incidentFileName, incidentFilePath, REFERENCES_DIR };
+export { incidentFileName, incidentFilePath, LOGS_DIR };

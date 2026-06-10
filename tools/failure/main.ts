@@ -18,8 +18,8 @@ Options:
   -h, --help             This help
 
 Routing:
-  cwd under ~/git/<name>/ -> ~/.agents/skills/failure/references/<name>.md
-  otherwise               -> ~/.agents/skills/failure/references/misc.md
+  cwd under ~/git/<name>/ -> ~/.agents/skills/failure/logs/<name>.md
+  otherwise               -> ~/.agents/skills/failure/logs/misc.md
 
 Examples:
   failure log "validate failed on missing types" --detail "tsc complained about archscan/api.ts"

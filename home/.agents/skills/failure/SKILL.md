@@ -24,8 +24,8 @@ The `failure` CLI routes by repo:
 
 | cwd | log file |
 | --- | --- |
-| under `~/git/<name>/` | `~/.agents/skills/failure/references/<name>.md` |
-| anywhere else | `~/.agents/skills/failure/references/misc.md` |
+| under `~/git/<name>/` | `~/.agents/skills/failure/logs/<name>.md` |
+| anywhere else | `~/.agents/skills/failure/logs/misc.md` |
 
 Entries are always appended to the end of the file.
 
@@ -42,7 +42,7 @@ Use `--cwd <path>` when the incident belongs to a repo other than the shell cwd.
 ## Before similar work
 
 1. Identify the repo (`~/git/<name>/` or misc).
-2. Read `~/.agents/skills/failure/references/<name>.md` or `misc.md` if it exists.
+2. Read `~/.agents/skills/failure/logs/<name>.md` or `misc.md` if it exists.
 3. Skim recent `##` headings for related failures.
 
 ## Entry format
@@ -54,6 +54,7 @@ Each append looks like:
 
 - **cwd:** `/path/at/time`
 - **repo:** GRun
+- **branch:** main
 
 What went wrong...
 
