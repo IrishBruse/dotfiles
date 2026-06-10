@@ -25,3 +25,7 @@ No other Unicode characters in prose. Mermaid diagrams and Code is exempt.
 
 - No emojis of any kind
 - No semicolons in prose (code is exempt)
+
+# Agent failures
+
+When you hit a repeatable mistake, wrong assumption, or non-obvious blocker, use the `failure` skill
