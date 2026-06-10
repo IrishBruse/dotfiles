@@ -19,7 +19,7 @@ Always use plain ASCII. Apply these replacements in all prose output:
 | `≤` | `<=` |
 | `≥` | `>=` |
 
-No other Unicode characters in prose. Code is exempt.
+No other Unicode characters in prose. Mermaid diagrams and Code is exempt.
 
 # Formatting Rules
 
