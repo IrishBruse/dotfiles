@@ -1,0 +1,31 @@
+#!/usr/bin/env fish
+
+# Rewrite commit messages from staged files (VS Code SCM, git commit -m, etc.).
+# Prefix the message with ! to keep your own text: "! ship it" -> "ship it"
+
+set -l msg_file $argv[1]
+set -l commit_source $argv[2]
+
+switch $commit_source
+    case merge squash
+        exit 0
+end
+
+if test -n "$GIT_KEEP_COMMIT_MSG"
+    exit 0
+end
+
+set -l current (string trim (cat $msg_file))
+if string match -q '!*' -- $current
+    string trim (string sub -s 2 -- $current) >$msg_file
+    exit 0
+end
+
+set -l staged (git diff --cached --name-only)
+if test (count $staged) -eq 0
+    exit 0
+end
+
+set -l repo (git rev-parse --show-toplevel)
+source $repo/commit-lib.fish
+commit_message $staged >$msg_file
