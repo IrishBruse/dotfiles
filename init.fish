@@ -11,3 +11,5 @@ ln -s $repo/home/.cursor/rules ~/.cursor/rules
 acli completion fish >$repo/home/.config/fish/completions/acli.fish; or true
 zoxide init fish --cmd cd >$repo/home/.config/fish/conf.d/zoxide.fish; or true
 fzf --fish >$repo/home/.config/fish/conf.d/fzf.fish; or true
+
+git -C $repo config --local core.hooksPath git/hooks
