@@ -53,6 +53,7 @@ export function runPrSplit(
     cwd: string;
     stagedFiles: StagedFile[];
     interactive: boolean;
+    commit: boolean;
   }
 ): SplitResult {
   if (slices.length === 0) {
@@ -61,7 +62,14 @@ export function runPrSplit(
 
   printSplitPlan(slices);
 
-  if (printOnly || slices.length === 1 || !options.interactive) {
+  if (printOnly) {
+    return { committed: false };
+  }
+
+  if (
+    !options.commit &&
+    (slices.length === 1 || !options.interactive)
+  ) {
     return { committed: false };
   }
 

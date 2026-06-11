@@ -9,8 +9,9 @@ Options:
   -h, --help       This message
 
 Behavior:
+  Uses staged changes when present; otherwise stages and commits unstaged and untracked changes.
   With staged changes, prints a commit subject to stdout (for prepare-commit-msg).
-  When run interactively with multiple slices, commits each slice in plan order.
+  When run interactively with multiple staged slices, commits each slice in plan order.
   Use --print to preview the split plan on stderr without committing.
 `);
 }

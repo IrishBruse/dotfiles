@@ -9,12 +9,38 @@ export function hasStagedChanges(cwd: string): boolean {
   return r.status === 1;
 }
 
+export function hasUnstagedChanges(cwd: string): boolean {
+  const diff = spawnSync("git", ["diff", "--quiet"], { cwd });
+  if (diff.status === 1) {
+    return true;
+  }
+  const untracked = spawnSync("git", ["ls-files", "--others", "--exclude-standard"], {
+    cwd,
+    encoding: "utf8"
+  });
+  return (untracked.stdout ?? "").trim().length > 0;
+}
+
 export function getStagedFileList(cwd: string): string {
   return gitOutput(cwd, ["diff", "--cached", "--name-status"]);
 }
 
+export function getUnstagedFileList(cwd: string): string {
+  const diff = gitOutput(cwd, ["diff", "--name-status"]);
+  const untracked = gitOutput(cwd, ["ls-files", "--others", "--exclude-standard"]);
+  const untrackedLines = untracked
+    .split("\n")
+    .filter((line) => line.trim() !== "")
+    .map((path) => `A\t${path}`);
+  return [diff, ...untrackedLines].filter((line) => line !== "").join("\n");
+}
+
 export function getStagedDiff(cwd: string): string {
   return gitOutput(cwd, ["diff", "--cached"]);
+}
+
+export function getUnstagedDiff(cwd: string): string {
+  return gitOutput(cwd, ["diff"]);
 }
 
 export function unstageAll(cwd: string): void {

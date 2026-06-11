@@ -7,7 +7,10 @@ import {
   getRepoRoot,
   getStagedDiff,
   getStagedFileList,
-  hasStagedChanges
+  getUnstagedDiff,
+  getUnstagedFileList,
+  hasStagedChanges,
+  hasUnstagedChanges
 } from "./git.ts";
 import { printHelp } from "./help.ts";
 import { generateCommitMessage } from "./message/generate.ts";
@@ -60,31 +63,35 @@ export function main(argv: string[]): void {
     process.exit(1);
   }
 
-  if (!hasStagedChanges(gitCwd)) {
+  const useStaged = hasStagedChanges(gitCwd);
+  if (!useStaged && !hasUnstagedChanges(gitCwd)) {
     if (opts.print) {
-      console.error("commit: no staged changes");
+      console.error("commit: no changes");
     }
     return;
   }
 
-  const nameStatus = getStagedFileList(gitCwd);
-  const diff = getStagedDiff(gitCwd);
+  const nameStatus = useStaged ? getStagedFileList(gitCwd) : getUnstagedFileList(gitCwd);
+  const diff = useStaged ? getStagedDiff(gitCwd) : getUnstagedDiff(gitCwd);
   const stagedFiles = parseNameStatus(nameStatus);
   const stagedPaths = stagedFiles.map((f) => f.path);
   const config = loadCommitConfig(repoRoot);
   const slices = planPrSplit(repoRoot, nameStatus, diff, stagedFiles, config);
   const interactive = process.stdout.isTTY === true;
 
+  const splitOptions = {
+    cwd: gitCwd,
+    stagedFiles,
+    interactive,
+    commit: !useStaged
+  };
+
   if (opts.print) {
-    runPrSplit(slices, true, { cwd: gitCwd, stagedFiles, interactive });
+    runPrSplit(slices, true, splitOptions);
     return;
   }
 
-  const splitResult = runPrSplit(slices, false, {
-    cwd: gitCwd,
-    stagedFiles,
-    interactive
-  });
+  const splitResult = runPrSplit(slices, false, splitOptions);
   if (splitResult.committed) {
     return;
   }
