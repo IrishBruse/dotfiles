@@ -58,6 +58,10 @@ export function createCommit(cwd: string, message: string): void {
   runGit(cwd, ["commit", "-m", message]);
 }
 
+export function pushBranch(cwd: string): void {
+  runGit(cwd, ["push"]);
+}
+
 function gitOutput(cwd: string, args: string[]): string {
   const r = spawnSync("git", args, { cwd, encoding: "utf8" });
   if (r.status !== 0) {

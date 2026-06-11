@@ -10,7 +10,8 @@ import {
   getUnstagedDiff,
   getUnstagedFileList,
   hasStagedChanges,
-  hasUnstagedChanges
+  hasUnstagedChanges,
+  pushBranch
 } from "./git.ts";
 import { printHelp } from "./help.ts";
 import { generateCommitMessage } from "./message/generate.ts";
@@ -19,12 +20,14 @@ import { planPrSplit, runPrSplit } from "./split/plan.ts";
 interface CommitOptions {
   help: boolean;
   print: boolean;
+  push: boolean;
 }
 
 function parseCommitArgv(argv: string[]): CommitOptions | "error" {
   const args = argv.slice(2);
   let help = false;
   let print = false;
+  let push = false;
 
   for (const arg of args) {
     if (arg === "-h" || arg === "--help") {
@@ -35,10 +38,14 @@ function parseCommitArgv(argv: string[]): CommitOptions | "error" {
       print = true;
       continue;
     }
+    if (arg === "-p" || arg === "--push") {
+      push = true;
+      continue;
+    }
     return "error";
   }
 
-  return { help, print };
+  return { help, print, push };
 }
 
 export function main(argv: string[]): void {
@@ -93,6 +100,9 @@ export function main(argv: string[]): void {
 
   const splitResult = runPrSplit(slices, false, splitOptions);
   if (splitResult.committed) {
+    if (opts.push) {
+      pushBranch(gitCwd);
+    }
     return;
   }
 
