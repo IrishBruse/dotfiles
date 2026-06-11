@@ -1,0 +1,38 @@
+{
+  "scopes": {
+    "home/.config/Code/User/**": {
+      "message": "config(code): {{summary}}",
+      "group": "config(code)"
+    },
+    "home/Library/Application Support/Code/User/**": {
+      "message": "config(code): {{summary}}",
+      "group": "config(code)"
+    },
+    "home/.cursor/rules/**": {
+      "message": "cursor(rules): {{summary}}"
+    },
+    "home/.agents/skills/*/**": {
+      "when": "any",
+      "message": "skill({{name}}): {{summary}}",
+      "name": 3
+    },
+    "home/.config/*/**": {
+      "when": "any",
+      "message": "config({{name}}): {{summary}}",
+      "name": 2
+    },
+    "tools/*/**": {
+      "when": "any",
+      "message": "tools({{name}}): {{summary}}",
+      "name": 1
+    },
+    "vscode/*/**": {
+      "when": "any",
+      "message": "vscode({{name}}): {{summary}}",
+      "name": 1
+    }
+  },
+  "fallback": {
+    "message": "{{type}}({{scope}}): {{summary}}"
+  }
+}
