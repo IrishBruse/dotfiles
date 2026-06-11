@@ -32,14 +32,14 @@ export function loadCommitConfig(repoRoot: string): CommitConfig | undefined {
   }
   let parsed: unknown;
   try {
-    parsed = JSON.parse(readFileSync(path, "utf8")) as unknown;
+    parsed = JSON.parse(readFileSync(path, "utf8"));
   } catch {
     return undefined;
   }
   if (!parsed || typeof parsed !== "object") {
     return undefined;
   }
-  const raw = parsed as CommitConfig;
+  const raw = parsed as { scopes?: unknown; fallback?: unknown };
   const scopes = parseScopes(raw.scopes);
   const fallback = parseFallback(raw.fallback);
   if (scopes === undefined && fallback === undefined) {

@@ -1,8 +1,4 @@
-export interface StagedFile {
-  status: "A" | "M" | "D" | "R" | "C";
-  path: string;
-  previousPath?: string;
-}
+import type { StagedFile } from "../types.ts";
 
 export function parseNameStatus(text: string): StagedFile[] {
   const files: StagedFile[] = [];

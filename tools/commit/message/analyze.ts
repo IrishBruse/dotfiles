@@ -2,28 +2,9 @@ import { hintsFromAddedLines } from "./codeHints.ts";
 import {
   countDiffLines,
   parseAddedLinesByFile,
-  parseNameStatus,
-  type StagedFile
-} from "./parseDiff.ts";
-
-export type CommitType =
-  | "feature"
-  | "fix"
-  | "refactor"
-  | "tests"
-  | "docs"
-  | "chore"
-  | "build"
-  | "ci";
-
-export interface StaticCommitAnalysis {
-  confidence: number;
-  type: CommitType;
-  scope: string;
-  summary: string;
-  subject: string;
-  reasons: string[];
-}
+  parseNameStatus
+} from "../diff/parse.ts";
+import type { CommitType, StagedFile, StaticCommitAnalysis } from "../types.ts";
 
 const CONFIDENCE_THRESHOLD = 0.68;
 
@@ -40,10 +21,6 @@ const SKIP_SCOPE_DIRS = new Set([
   "pkg"
 ]);
 
-export function confidenceThreshold(): number {
-  return CONFIDENCE_THRESHOLD;
-}
-
 export function analyzeStagedChanges(
   nameStatus: string,
   diff: string
@@ -57,7 +34,6 @@ export function analyzeStagedChanges(
     typeScores.set(type, (typeScores.get(type) ?? 0) + amount);
   };
 
-  const reasons: string[] = [];
   let confidence = 0.45;
   const newSymbols: string[] = [];
   let fixSignals = 0;
@@ -72,23 +48,20 @@ export function analyzeStagedChanges(
   const deleteCount = files.filter((f) => f.status === "D").length;
 
   if (files.length === 0) {
-    return emptyAnalysis("no staged files");
+    return emptyAnalysis();
   }
 
   if (testFiles.length === files.length) {
     bump("tests", 10);
-    reasons.push("test-only file set");
     confidence += 0.28;
   } else if (testFiles.length > 0) {
     bump("tests", testFiles.length * 2);
     bump("feature", codeFiles.length);
     confidence -= 0.12;
-    reasons.push("mixed tests and code");
   }
 
   if (docFiles.length === files.length) {
     bump("docs", 10);
-    reasons.push("docs-only file set");
     confidence += 0.3;
   } else if (docFiles.length > 0 && codeFiles.length === 0) {
     bump("docs", docFiles.length * 2);
@@ -98,13 +71,11 @@ export function analyzeStagedChanges(
 
   if (ciFiles.length > 0 && ciFiles.length === files.length) {
     bump("ci", 10);
-    reasons.push("ci-only file set");
     confidence += 0.28;
   }
 
   if (buildFiles.length > 0 && buildFiles.length === files.length) {
     bump("build", 10);
-    reasons.push("build-only file set");
     confidence += 0.25;
   } else if (buildFiles.length > 0) {
     bump("build", buildFiles.length);
@@ -114,13 +85,11 @@ export function analyzeStagedChanges(
 
   if (renameCount > 0 && renameCount >= Math.ceil(files.length / 2)) {
     bump("refactor", renameCount * 2);
-    reasons.push("mostly renames");
     confidence += 0.12;
   }
 
   if (deleteCount > 0 && deleteCount === files.length) {
     bump("chore", 6);
-    reasons.push("delete-only");
     confidence += 0.15;
   }
 
@@ -141,34 +110,28 @@ export function analyzeStagedChanges(
 
   if (fixSignals > 0) {
     bump("fix", fixSignals * 2);
-    reasons.push(`${String(fixSignals)} fix signal(s) in added lines`);
     confidence += Math.min(0.12, fixSignals * 0.04);
   }
 
   if (featureSignals > 0 && fixSignals === 0) {
     bump("feature", featureSignals);
-    reasons.push(`${String(featureSignals)} feature signal(s) from code`);
     confidence += Math.min(0.15, featureSignals * 0.03);
   }
 
   const addedFiles = files.filter((f) => f.status === "A").length;
   if (addedFiles > 0 && codeFiles.length > 0) {
     bump("feature", addedFiles * 2);
-    reasons.push(`${String(addedFiles)} new code file(s)`);
     confidence += Math.min(0.12, addedFiles * 0.04);
   }
 
   if (lineCounts.added + lineCounts.removed > 1200) {
     confidence -= 0.18;
-    reasons.push("large diff");
   } else if (lineCounts.added + lineCounts.removed < 80) {
     confidence += 0.08;
-    reasons.push("small diff");
   }
 
   if (files.length > 12) {
     confidence -= 0.15;
-    reasons.push("many files");
   } else if (files.length <= 3) {
     confidence += 0.08;
   }
@@ -182,7 +145,6 @@ export function analyzeStagedChanges(
   ].filter(Boolean).length;
   if (distinctKinds >= 3) {
     confidence -= 0.2;
-    reasons.push("mixed change kinds");
   }
 
   const type = pickType(typeScores, {
@@ -195,7 +157,6 @@ export function analyzeStagedChanges(
   const scope = inferScope(files);
   if (scope !== "repo") {
     confidence += 0.1;
-    reasons.push(`scope ${scope}`);
   } else {
     confidence -= 0.05;
   }
@@ -211,36 +172,25 @@ export function analyzeStagedChanges(
 
   if (summary.length < 8) {
     confidence -= 0.25;
-    reasons.push("weak summary");
   } else if (newSymbols.length > 0) {
     confidence += 0.1;
   }
 
   confidence = clamp(confidence, 0, 0.95);
-  const subject = `${type}(${scope}): ${summary}`;
 
-  return {
-    confidence,
-    type,
-    scope,
-    summary,
-    subject,
-    reasons
-  };
+  return { confidence, type, scope, summary };
 }
 
 export function isConfidentEnough(analysis: StaticCommitAnalysis): boolean {
   return analysis.confidence >= CONFIDENCE_THRESHOLD;
 }
 
-function emptyAnalysis(reason: string): StaticCommitAnalysis {
+function emptyAnalysis(): StaticCommitAnalysis {
   return {
     confidence: 0,
     type: "chore",
     scope: "repo",
-    summary: "update staged changes",
-    subject: "chore(repo): update staged changes",
-    reasons: [reason]
+    summary: "update staged changes"
   };
 }
 

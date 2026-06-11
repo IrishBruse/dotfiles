@@ -19,12 +19,11 @@ export function hintsFromAddedLines(
   filePath: string,
   addedLines: string[]
 ): CodeHints {
-  const joined = addedLines.join("\n");
   if (/\.(?:tsx?|mts|cts)$/i.test(filePath)) {
     return hintsFromTypeScript(addedLines);
   }
   if (/\.cs$/i.test(filePath)) {
-    return hintsFromCSharp(joined);
+    return hintsFromCSharp(addedLines);
   }
   return { newSymbols: [], fixSignals: 0, featureSignals: 0 };
 }
@@ -79,26 +78,25 @@ function hintsFromTypeScript(addedLines: string[]): CodeHints {
   return { newSymbols, fixSignals, featureSignals };
 }
 
-function hintsFromCSharp(joined: string): CodeHints {
+function hintsFromCSharp(addedLines: string[]): CodeHints {
   const newSymbols: string[] = [];
+  const seen = new Set<string>();
   let fixSignals = 0;
   let featureSignals = 0;
 
-  for (const line of joined.split("\n")) {
+  const prefixed = addedLines.map((line) => `+ ${line}`).join("\n");
+
+  for (const line of addedLines) {
     fixSignals += fixSignalsInLine(line);
   }
-
-  const prefixed = joined
-    .split("\n")
-    .map((line) => `+ ${line}`)
-    .join("\n");
 
   for (const re of [CS_NEW_SYMBOL, CS_NEW_METHOD]) {
     re.lastIndex = 0;
     let match: RegExpExecArray | null;
     while ((match = re.exec(prefixed)) !== null) {
       const name = match[1];
-      if (name && !newSymbols.includes(name)) {
+      if (name && !seen.has(name)) {
+        seen.add(name);
         newSymbols.push(name);
         featureSignals += 2;
       }

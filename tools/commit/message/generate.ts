@@ -1,10 +1,12 @@
 import { analyzeStagedChanges, isConfidentEnough } from "./analyze.ts";
-import { loadCommitConfig } from "./config.ts";
+import type { CommitConfig } from "../config/config.ts";
+import { loadCommitConfig } from "../config/config.ts";
 import {
   expandMessage,
   findConfigMatch,
   resolveFallbackMessage
-} from "./matchConfig.ts";
+} from "../config/match.ts";
+import type { MessageVars } from "../types.ts";
 
 export interface CommitMessageResult {
   message: string;
@@ -15,17 +17,16 @@ export function generateCommitMessage(
   repoRoot: string,
   nameStatus: string,
   diff: string,
-  stagedPaths: string[]
+  stagedPaths: string[],
+  config: CommitConfig | undefined = loadCommitConfig(repoRoot)
 ): CommitMessageResult {
   const analysis = analyzeStagedChanges(nameStatus, diff);
-  const vars = {
+  const vars: MessageVars = {
     summary: analysis.summary,
     type: analysis.type,
-    scope: analysis.scope,
-    name: undefined as string | undefined
+    scope: analysis.scope
   };
 
-  const config = loadCommitConfig(repoRoot);
   const match = config ? findConfigMatch(config, stagedPaths) : undefined;
   if (match) {
     vars.name = match.name;
@@ -42,16 +43,6 @@ export function generateCommitMessage(
 
   const message = config?.fallback
     ? resolveFallbackMessage(config, vars)
-    : analysis.subject;
+    : `${analysis.type}(${analysis.scope}): ${analysis.summary}`;
   return { message, confident: true };
-}
-
-/** Message for a subset of staged paths (same diff; paths filter scope matching). */
-export function generateCommitMessageForPaths(
-  repoRoot: string,
-  nameStatus: string,
-  diff: string,
-  paths: string[]
-): CommitMessageResult {
-  return generateCommitMessage(repoRoot, nameStatus, diff, paths);
 }

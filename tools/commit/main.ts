@@ -1,6 +1,8 @@
 import process from "node:process";
 
-import { parseCommitArgv } from "./argv.ts";
+import { loadCommitConfig } from "./config/config.ts";
+import { findConfigMatch } from "./config/match.ts";
+import { parseNameStatus } from "./diff/parse.ts";
 import {
   getRepoRoot,
   getStagedDiff,
@@ -8,9 +10,33 @@ import {
   hasStagedChanges
 } from "./git.ts";
 import { printHelp } from "./help.ts";
-import { generateCommitMessage } from "./message.ts";
-import { parseNameStatus } from "./parseDiff.ts";
-import { planPrSplit, runPrSplit } from "./split.ts";
+import { generateCommitMessage } from "./message/generate.ts";
+import { planPrSplit, runPrSplit } from "./split/plan.ts";
+
+interface CommitOptions {
+  help: boolean;
+  print: boolean;
+}
+
+function parseCommitArgv(argv: string[]): CommitOptions | "error" {
+  const args = argv.slice(2);
+  let help = false;
+  let print = false;
+
+  for (const arg of args) {
+    if (arg === "-h" || arg === "--help") {
+      help = true;
+      continue;
+    }
+    if (arg === "--print") {
+      print = true;
+      continue;
+    }
+    return "error";
+  }
+
+  return { help, print };
+}
 
 export function main(argv: string[]): void {
   const opts = parseCommitArgv(argv);
@@ -28,7 +54,9 @@ export function main(argv: string[]): void {
   let repoRoot: string;
   try {
     repoRoot = getRepoRoot(gitCwd);
-  } catch {
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`commit: ${message}`);
     process.exit(1);
   }
 
@@ -43,15 +71,16 @@ export function main(argv: string[]): void {
   const diff = getStagedDiff(gitCwd);
   const stagedFiles = parseNameStatus(nameStatus);
   const stagedPaths = stagedFiles.map((f) => f.path);
-  const plan = planPrSplit(repoRoot, nameStatus, diff);
+  const config = loadCommitConfig(repoRoot);
+  const slices = planPrSplit(repoRoot, nameStatus, diff, stagedFiles, config);
   const interactive = process.stdout.isTTY === true;
 
   if (opts.print) {
-    runPrSplit(plan, true, { cwd: gitCwd, stagedFiles, interactive });
+    runPrSplit(slices, true, { cwd: gitCwd, stagedFiles, interactive });
     return;
   }
 
-  const splitResult = runPrSplit(plan, false, {
+  const splitResult = runPrSplit(slices, false, {
     cwd: gitCwd,
     stagedFiles,
     interactive
@@ -60,11 +89,17 @@ export function main(argv: string[]): void {
     return;
   }
 
+  if (slices.length === 1 && config && findConfigMatch(config, stagedPaths)) {
+    process.stdout.write(`${slices[0]!.message}\n`);
+    return;
+  }
+
   const { message, confident } = generateCommitMessage(
     repoRoot,
     nameStatus,
     diff,
-    stagedPaths
+    stagedPaths,
+    config
   );
   if (!confident || message === "") {
     process.exit(1);

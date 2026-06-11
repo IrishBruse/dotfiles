@@ -1,31 +1,12 @@
 import { spawnSync } from "node:child_process";
 
 export function getRepoRoot(cwd: string): string {
-  const r = spawnSync("git", ["rev-parse", "--show-toplevel"], {
-    cwd,
-    encoding: "utf8"
-  });
-  if (r.status !== 0) {
-    const err = (r.stderr ?? r.stdout ?? "").trim();
-    throw new Error(
-      err ? `not a git repository: ${err}` : "not a git repository"
-    );
-  }
-  return (r.stdout ?? "").trim();
+  return gitOutput(cwd, ["rev-parse", "--show-toplevel"]);
 }
 
 export function hasStagedChanges(cwd: string): boolean {
   const r = spawnSync("git", ["diff", "--cached", "--quiet"], { cwd });
   return r.status === 1;
-}
-
-function gitOutput(cwd: string, args: string[]): string {
-  const r = spawnSync("git", args, { cwd, encoding: "utf8" });
-  if (r.status !== 0) {
-    const err = (r.stderr ?? r.stdout ?? "").trim();
-    throw new Error(err || `git ${args.join(" ")} failed`);
-  }
-  return (r.stdout ?? "").trimEnd();
 }
 
 export function getStagedFileList(cwd: string): string {
@@ -51,10 +32,22 @@ export function createCommit(cwd: string, message: string): void {
   runGit(cwd, ["commit", "-m", message]);
 }
 
+function gitOutput(cwd: string, args: string[]): string {
+  const r = spawnSync("git", args, { cwd, encoding: "utf8" });
+  if (r.status !== 0) {
+    throw gitError(args, r.stderr ?? r.stdout ?? "");
+  }
+  return (r.stdout ?? "").trimEnd();
+}
+
 function runGit(cwd: string, args: string[]): void {
   const r = spawnSync("git", args, { cwd, encoding: "utf8" });
   if (r.status !== 0) {
-    const err = (r.stderr ?? r.stdout ?? "").trim();
-    throw new Error(err || `git ${args.join(" ")} failed`);
+    throw gitError(args, r.stderr ?? r.stdout ?? "");
   }
+}
+
+function gitError(args: string[], output: string): Error {
+  const err = output.trim();
+  return new Error(err || `git ${args.join(" ")} failed`);
 }

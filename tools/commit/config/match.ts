@@ -3,19 +3,9 @@ import {
   type CommitConfig,
   type CommitScopeRule
 } from "./config.ts";
-import type { CommitType } from "./analyze.ts";
+import type { ConfigMatch, MessageVars } from "../types.ts";
 
-export interface ConfigMatch {
-  message: string;
-  name?: string;
-}
-
-export interface MessageVars {
-  summary: string;
-  type?: CommitType;
-  scope?: string;
-  name?: string;
-}
+const globCache = new Map<string, RegExp>();
 
 export function findConfigMatch(
   config: CommitConfig,
@@ -33,6 +23,29 @@ export function findConfigMatch(
   }
 
   return undefined;
+}
+
+export function resolveSliceGroup(
+  path: string,
+  config: CommitConfig | undefined
+): string {
+  if (config?.scopes) {
+    for (const [glob, rule] of Object.entries(config.scopes)) {
+      if (!pathMatchesGlob(path, glob)) {
+        continue;
+      }
+      const sliceBase = rule.group ?? glob;
+      if (typeof rule.name === "string") {
+        return `${sliceBase}\0${rule.name}`;
+      }
+      const name = resolveName(rule, [path]);
+      if (name !== undefined) {
+        return `${sliceBase}\0${name}`;
+      }
+      return sliceBase;
+    }
+  }
+  return path.includes("/") ? (path.split("/")[0] ?? path) : path;
 }
 
 export function resolveFallbackMessage(
@@ -54,10 +67,12 @@ export function expandMessage(message: string, vars: MessageVars): string {
   if (vars.scope !== undefined) {
     out = out.replaceAll("{{scope}}", vars.scope);
   }
-  if (out.includes("{{summary}}")) {
-    out = out.replaceAll("{{summary}}", vars.summary);
-  }
+  out = out.replaceAll("{{summary}}", vars.summary);
   return out;
+}
+
+export function pathMatchesGlob(path: string, glob: string): boolean {
+  return globToRegExp(glob).test(path);
 }
 
 function matchScope(
@@ -123,11 +138,11 @@ function resolveName(
   return best === "" ? undefined : best;
 }
 
-export function pathMatchesGlob(path: string, glob: string): boolean {
-  return globToRegExp(glob).test(path);
-}
-
 function globToRegExp(glob: string): RegExp {
+  let cached = globCache.get(glob);
+  if (cached) {
+    return cached;
+  }
   let re = "^";
   for (let i = 0; i < glob.length; ) {
     const c = glob[i]!;
@@ -150,7 +165,9 @@ function globToRegExp(glob: string): RegExp {
     i += 1;
   }
   re += "$";
-  return new RegExp(re);
+  cached = new RegExp(re);
+  globCache.set(glob, cached);
+  return cached;
 }
 
 function escapeRegExp(char: string): string {
