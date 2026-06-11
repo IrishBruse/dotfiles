@@ -1,7 +1,6 @@
 #!/usr/bin/env fish
 
 set -l repo (path dirname (status filename))
-git -C $repo config core.hooksPath git/hooks
 mkdir -p $repo/.cursor ~/.cursor
 ln -fs ~/.cursor/mcp.json ~/.cursor/cli-config.json $repo/.cursor/
 # rm first: re-run ln -fs with dest a symlink to the same dir creates nested duplicate dirs (GNU ln).

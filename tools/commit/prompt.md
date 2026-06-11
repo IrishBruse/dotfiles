@@ -10,7 +10,7 @@ Write a git commit message for the staged changes below.
 - Use ASCII text only. No emojis or stylized quotes. Use a comma or period instead of a semicolon.
 - **Subject format (required):** `type(scope): imperative summary`
   - `type` is lowercase. Prefer `feature` for product or behavior changes and `tests` for test-only changes.
-  - `scope` is a short lowercase area name in parentheses (e.g. `auth`, `api`, `commit-msg`).
+  - `scope` is a short lowercase area name in parentheses (e.g. `auth`, `api`, `commit`).
   - Examples: `feature(auth): add oauth callback handler`, `tests(api): cover 401 refresh path`
   - Other allowed types when they fit better: `fix`, `chore`, `docs`, `refactor`, `build`, `ci`.
   - Do not use a bare subject without `type(scope):`.

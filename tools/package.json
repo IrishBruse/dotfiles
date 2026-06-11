@@ -7,7 +7,7 @@
   "type": "module",
   "bin": {
     "failure": "./.bin/failure.js",
-    "commit-msg": "./.bin/commit-msg.js",
+    "commit": "./.bin/commit.js",
     "archscan": "./.bin/archscan.js",
     "confluence": "./.bin/confluence.js",
     "endpoint": "./.bin/endpoint.js",

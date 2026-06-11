@@ -15,7 +15,7 @@ function bundledPromptPath(): string {
 }
 
 function resolvePromptPath(): string {
-  const userPath = join(homedir(), ".config/commit-msg/prompt.md");
+  const userPath = join(homedir(), ".config/commit/prompt.md");
   if (existsSync(userPath)) {
     return userPath;
   }
@@ -46,7 +46,7 @@ export function buildCommitMsgPrompt(repoRoot: string): string {
 }
 
 export function promptPathForHelp(): string {
-  const userPath = join(homedir(), ".config/commit-msg/prompt.md");
+  const userPath = join(homedir(), ".config/commit/prompt.md");
   if (existsSync(userPath)) {
     return userPath;
   }

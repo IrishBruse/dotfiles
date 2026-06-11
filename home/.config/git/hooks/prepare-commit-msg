@@ -5,7 +5,7 @@ COMMIT_SOURCE=$2
 
 # Only auto-generate the message if the user didn't provide one via -m or -F
 if [ -z "$COMMIT_SOURCE" ]; then
-    GENERATED_MSG=$(commit-msg 2>/dev/null)
+    GENERATED_MSG=$(commit 2>/dev/null)
 
     if [ -n "$GENERATED_MSG" ]; then
         echo "$GENERATED_MSG" > "$COMMIT_MSG_FILE"

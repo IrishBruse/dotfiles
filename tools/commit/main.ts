@@ -6,10 +6,10 @@ import { parseCommitMessage } from "./message.ts";
 import { buildCommitMsgPrompt, promptPathForHelp } from "./prompt.ts";
 
 function printHelp(): void {
-  console.error(`commit-msg - generate a git commit message from staged changes
+  console.error(`commit - generate a git commit message from staged changes
 
 Usage:
-  commit-msg [options]
+  commit [options]
 
 Options:
   --cwd <path>     Git repo directory (default: process.cwd())
@@ -18,8 +18,8 @@ Options:
   -h, --help       This help
 
 Prompt:
-  Bundled template: tools/commit-msg/prompt.md (or prompt.md next to the installed command)
-  Override: ~/.config/commit-msg/prompt.md
+  Bundled template: tools/commit/prompt.md (or prompt.md next to the installed command)
+  Override: ~/.config/commit/prompt.md
 
 Placeholders:
   {{cwd}} {{branch}} {{user}} {{stagedFiles}} {{stagedDiff}}
@@ -27,9 +27,9 @@ Placeholders:
 Agent runs in read-only ask mode (--mode ask).
 
 Examples:
-  commit-msg
-  commit-msg --prompt
-  commit-msg --cwd ~/git/myapp
+  commit
+  commit --prompt
+  commit --cwd ~/git/myapp
 `);
 }
 
@@ -83,7 +83,7 @@ export async function main(argv: string[]): Promise<void> {
   const { rest: a0, on: promptOnly } = takeFlag(cwdFlag.rest, "--prompt");
   const { rest, on: dry } = takeFlag(a0, "--dry");
   if (rest.length > 0) {
-    fail(`commit-msg: unexpected arguments: ${rest.join(" ")}`);
+    fail(`commit: unexpected arguments: ${rest.join(" ")}`);
   }
   void dry;
 
@@ -104,7 +104,7 @@ export async function main(argv: string[]): Promise<void> {
 
   if (promptOnly) {
     process.stdout.write(`${prompt}\n`);
-    process.stderr.write(`commit-msg: prompt from ${promptPathForHelp()}\n`);
+    process.stderr.write(`commit: prompt from ${promptPathForHelp()}\n`);
     return;
   }
 
@@ -130,6 +130,6 @@ export async function main(argv: string[]): Promise<void> {
 }
 
 main(process.argv).catch((err) => {
-  console.error(`commit-msg: ${(err as Error).message}`);
+  console.error(`commit: ${(err as Error).message}`);
   process.exit(1);
 });
