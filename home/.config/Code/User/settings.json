@@ -1318,7 +1318,6 @@
   "scm.providerCountBadge": "auto",
   "editor.autoClosingComments": "always",
   "comments.openView": "never",
-  "git.allowNoVerifyCommit": true,
   "git.autofetch": true,
   "git.autoStash": true,
   "git.confirmNoVerifyCommit": false,
@@ -1631,5 +1630,6 @@
   "markdown-mermaid.darkModeTheme": "dark",
   "workbench.activityBar.location": "top",
   "chat.disableAIFeatures": true,
-  "git.showCommitInput": false
+  "git.showCommitInput": false,
+  "terminal.integrated.stickyScroll.enabled": false
 }
