@@ -5,7 +5,7 @@
     name = Ethan Conneely
 
 [core]
-	hooksPath = /dev/null
+	hooksPath = ~/.config/git/hooks
     editor = code --wait
 	excludesFile = ~/.gitignore
 
