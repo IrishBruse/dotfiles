@@ -1,0 +1,127 @@
+{
+  "permissions": {
+    "allow": [
+      "Mcp(atlassian:atlassianUserInfo)",
+      "Mcp(atlassian:getAccessibleAtlassianResources)",
+      "Mcp(atlassian:getConfluencePage)",
+      "Mcp(atlassian:getConfluencePageDescendants)",
+      "Mcp(atlassian:getJiraIssue)",
+      "Mcp(atlassian:getJiraIssueTypeMetaWithFields)",
+      "Mcp(atlassian:getJiraProjectIssueTypesMetadata)",
+      "Mcp(atlassian:getVisibleJiraProjects)",
+      "Mcp(atlassian:searchAtlassian)",
+      "Mcp(atlassian:searchConfluenceUsingCql)",
+      "Mcp(atlassian:searchJiraIssuesUsingJql)",
+      "Mcp(coralogix-mcp-server:get_datetime)",
+      "Mcp(frodo:frodo_list_skills)",
+      "Mcp(frodo:frodo_search_skill)",
+      "Mcp(lucidcharts:fetch)",
+      "Shell(acli jira workitem view)",
+      "Shell(bash .frodo/ux-designer/scripts/load-prototype-repo.sh)",
+      "Shell(cat)",
+      "Shell(cd)",
+      "Shell(date)",
+      "Shell(echo)",
+      "Shell(find)",
+      "Shell(gh auth status)",
+      "Shell(gh issue view)",
+      "Shell(gh pr diff)",
+      "Shell(gh pr list)",
+      "Shell(gh pr view)",
+      "Shell(git branch)",
+      "Shell(git diff)",
+      "Shell(git fetch origin main)",
+      "Shell(git log)",
+      "Shell(git remote -v)",
+      "Shell(git show)",
+      "Shell(git status)",
+      "Shell(grep)",
+      "Shell(head)",
+      "Shell(just)",
+      "Shell(ls)",
+      "Shell(mkdir)",
+      "Shell(node --check)",
+      "Shell(npm lint)",
+      "Shell(npm run lint)",
+      "Shell(npm run test)",
+      "Shell(npm run)",
+      "Shell(npm test)",
+      "Shell(npx eslint)",
+      "Shell(npx jest)",
+      "Shell(npx prettier)",
+      "Shell(npx react-scripts)",
+      "Shell(npx tsc)",
+      "Shell(rg)",
+      "Shell(snyk test)",
+      "Shell(sort)",
+      "Shell(tail)",
+      "Shell(test)",
+      "Shell(true)",
+      "Shell(wc)",
+      "Shell(which)",
+      "WebFetch(code.visualstudio.com)",
+      "WebFetch(wiki.hypr.land)"
+    ],
+    "deny": []
+  },
+  "version": 1,
+  "editor": {
+    "vimMode": false
+  },
+  "display": {
+    "showLineNumbers": true,
+    "showThinkingBlocks": true,
+    "showStatusIndicators": false,
+    "showStatusLineRunningTime": true
+  },
+  "notifications": true,
+  "hints": false,
+  "rewind": true,
+  "suggestNextPrompt": true,
+  "statusLine": {
+    "type": "command",
+    "command": "~/.cursor/statusline.mjs",
+    "padding": 2
+  },
+  "channel": "prod",
+  "model": {
+    "modelId": "composer-2.5",
+    "displayModelId": "composer-2.5",
+    "displayName": "Composer 2.5",
+    "displayNameShort": "Composer 2.5",
+    "aliases": [],
+    "maxMode": false
+  },
+  "hasChangedDefaultModel": true,
+  "maxMode": false,
+  "modelParameters": {
+    "composer-2.5": [
+      {
+        "id": "fast",
+        "value": "false"
+      }
+    ]
+  },
+  "selectedModel": {
+    "modelId": "composer-2.5",
+    "parameters": [
+      {
+        "id": "fast",
+        "value": "false"
+      }
+    ]
+  },
+  "network": {
+    "useHttp1ForAgent": false
+  },
+  "approvalMode": "unrestricted",
+  "sandbox": {
+    "mode": "disabled",
+    "networkAccess": "user_config_with_defaults"
+  },
+  "runEverythingSettingsPromptStreak": 0,
+  "attribution": {
+    "attributeCommitsToAgent": false,
+    "attributePRsToAgent": false
+  }
+}

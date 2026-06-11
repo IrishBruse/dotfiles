@@ -9,7 +9,6 @@ home/.config/karabiner/automatic_backups
 home/.config/ghostty/local
 home/.config/dconf/user
 home/.config/fish/fish_variables
-home/.cursor/cli-config.json
 home/.cursor/mcp.json
 home/dot-zshrc
 home/.agents/skills/failure/logs/*.md

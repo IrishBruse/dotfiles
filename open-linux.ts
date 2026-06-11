@@ -1,6 +1,8 @@
+/// <reference types="node" />
+
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { mergeCursorCliPermissions, repoDir } from "./open-shared.ts";
+import { exportAgentConfig, repoDir } from "./open-shared.ts";
 import { $, q } from "./shell.ts";
 
 const repo = repoDir(import.meta.url);
@@ -14,9 +16,10 @@ const filtered = dumped
   .split("\n")
   .filter(
     (line) =>
-      !line.startsWith("install-last-run=") && !line.startsWith("refresh-last-run="),
+      !line.startsWith("install-last-run=") &&
+      !line.startsWith("refresh-last-run=")
   )
   .join("\n");
 writeFileSync(dconfOut, filtered);
 
-mergeCursorCliPermissions(repo);
+exportAgentConfig(repo);

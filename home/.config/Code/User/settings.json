@@ -1182,7 +1182,6 @@
   "terminal.integrated.fontFamily": "Cascadia Mono, Symbols Nerd Font Mono",
   "terminal.integrated.fontSize": 12,
   "window.title": "${folderName}",
-  "workbench.activityBar.location": "top",
   "workbench.colorTheme": "Empty Dark Theme",
   "workbench.editor.empty.hint": "hidden",
   "workbench.iconTheme": "material-icon-theme",
@@ -1211,7 +1210,10 @@
   "update.mode": "none",
   "http.experimental.systemCertificatesV2": true,
   "breadcrumbs.enabled": false,
-  "settingsSync.ignoredSettings": ["editor.mouseWheelScrollSensitivity"],
+  "settingsSync.ignoredSettings": [
+    "editor.mouseWheelScrollSensitivity",
+    "terminal.integrated.gpuAcceleration"
+  ],
   "editor.bracketPairColorization.enabled": false,
   "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
   "editor.cursorBlinking": "phase",
@@ -1622,10 +1624,12 @@
   "editor.accessibilitySupport": "off",
   "markdownInlineEditor.math.enabled": false,
   "editor.allowVariableFontsInAccessibilityMode": true,
-  "markdownInlineEditor.tables.renderingMode": "custom",
   "terminal.integrated.scrollback": 10000,
   "workbench.browser.openLocalhostLinks": true,
   "workbench.layoutControl.enabled": false,
   "terminal.integrated.gpuAcceleration": "off",
-  "git.repositoryScanMaxDepth": 2
+  "git.repositoryScanMaxDepth": 2,
+  "markdown-mermaid.darkModeTheme": "dark",
+  "workbench.activityBar.location": "top",
+  "chat.disableAIFeatures": true
 }
