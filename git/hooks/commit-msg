@@ -1,0 +1,27 @@
+#!/bin/sh
+# Require type(scope): message on the commit subject line (this repo only).
+
+commit_msg_file=$1
+commit_source=$2
+
+case "$commit_source" in
+merge|squash)
+	exit 0
+	;;
+esac
+
+subject=$(sed -e '/^#/d' -e '/^$/d' -e 'q' "$commit_msg_file")
+
+scoped_pattern='^[a-z][a-z0-9-]*\([^)]+\): .+'
+misc_pattern='^misc: .+'
+
+if ! printf '%s\n' "$subject" | grep -qE "$scoped_pattern" &&
+   ! printf '%s\n' "$subject" | grep -qE "$misc_pattern"; then
+	echo "commit-msg: subject must match type(scope): message or misc: message" >&2
+	echo "  example: tools(commit): add message validation hook" >&2
+	echo "  example: misc: init.fish" >&2
+	if test -n "$subject"; then
+		echo "  got: $subject" >&2
+	fi
+	exit 1
+fi
