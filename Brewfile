@@ -8,61 +8,107 @@ tap "koekeishiya/formulae"
 tap "kreuzberg-dev/tap"
 tap "localstack/tap"
 tap "microsoft/dev-proxy"
+# Mozilla CA certificate store
 brew "ca-certificates"
+# CLI tool to build, test, debug, and deploy Serverless applications using AWS SAM
 brew "aws-sam-cli"
+# Official Amazon AWS command-line interface
 brew "awscli"
+# Clone of cat(1) with syntax highlighting and Git integration
 brew "bat"
+# Install RubyGems as Homebrew formulae
 brew "brew-gem"
+# Resource monitor. C++ version and continuation of bashtop and bpytop
 brew "btop"
+# Validate CloudFormation templates against the CloudFormation spec
 brew "cfn-lint"
+# Statistics utility to count lines of code
 brew "cloc"
+# Pack, ship and run any application as a lightweight container
 brew "docker", link: false
+# Select default apps for documents and URL schemes on macOS
 brew "duti"
+# Run arbitrary commands when files change
 brew "entr"
+# Modern, maintained replacement for ls
 brew "eza"
+# Like neofetch, but much faster because written mostly in C
 brew "fastfetch"
+# Play, record, convert, and stream select audio and video codecs
 brew "ffmpeg"
+# User-friendly command-line shell for UNIX-like operating systems
 brew "fish"
+# Fast and simple Node.js version manager
 brew "fnm"
+# Command-line fuzzy finder written in Go
 brew "fzf"
+# GitHub command-line tool
 brew "gh"
+# GNU implementation of the famous stream editor
 brew "gnu-sed"
+# Open source programming language to build simple/reliable/efficient software
 brew "go"
+# Open-source video transcoder available for Linux, Mac, and Windows
 brew "handbrake"
+# Lightweight and flexible command-line JSON processor
 brew "jq"
+# Handy way to save and run project-specific commands
 brew "just"
+# Project documentation with Markdown
 brew "mkdocs"
+# Swiss-army knife of markup format conversion
 brew "pandoc"
+# Paste PNG into files
 brew "pngpaste"
+# Interpreted, interactive, object-oriented programming language
 brew "python@3.10"
+# Search tool like grep and The Silver Searcher
 brew "ripgrep"
+# Powerful, clean, object-oriented scripting language
 brew "ruby", link: false
+# Display and control your Android device
 brew "scrcpy"
+# Organize software neatly under a single directory tree (e.g. /usr/local)
 brew "stow"
+# Shell extension to navigate your filesystem faster
 brew "zoxide"
-brew "atlassian/acli/acli"
-brew "brew-gem/gems/gem-cfn-nag"
+# Display management tool
 cask "betterdisplay"
+# 3D creation suite
 cask "blender"
+# Open source IDE for exploring and testing APIs
 cask "bruno"
+# App to build and share containerised applications and microservices
 cask "docker-desktop"
 cask "font-cascadia-code"
 cask "font-cascadia-mono"
 cask "font-poppins"
+# Terminal emulator that uses platform-native UI and GPU acceleration
 cask "ghostty@tip"
+# Free and open-source image editor
 cask "gimp"
+# Cross-platform Git credential storage for multiple hosting providers
 cask "git-credential-manager"
+# Open-source video transcoder
 cask "handbrake-app"
+# Keyboard customiser
 cask "karabiner-elements"
+# Customise mouse behavior
 cask "linearmouse"
+# Clipboard manager
 cask "maccy"
+# Extensible two-pane file manager
 cask "marta"
+# Create mock APIs in seconds
 cask "mockoon"
+# Open-source software for live streaming and screen recording
 cask "obs"
+# Collaboration platform for API development
 cask "postman"
+# Move and resize windows using keyboard shortcuts or snap areas
 cask "rectangle"
+# Keystroke launcher
 cask "ueli"
-cask "visual-studio-code"
 go "github.com/go-delve/delve/cmd/dlv"
 go "golang.org/x/lint/golint"
 go "github.com/fatih/gomodifytags"
