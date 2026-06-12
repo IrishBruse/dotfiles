@@ -61,7 +61,7 @@ export function runPrSplit(
     return { committed: false };
   }
 
-  printSplitPlan(slices);
+  printSplitPlan(slices, options.stagedFiles);
 
   if (printOnly) {
     return { committed: false };

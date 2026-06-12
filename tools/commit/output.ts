@@ -1,6 +1,6 @@
 import process from "node:process";
 
-import type { PrSplitSlice } from "./types.ts";
+import type { PrSplitSlice, StagedFile } from "./types.ts";
 
 const RESET = "\x1b[0m";
 const BOLD = "\x1b[1m";
@@ -8,6 +8,7 @@ const DIM = "\x1b[2m";
 const CYAN = "\x1b[36m";
 const GREEN = "\x1b[32m";
 const YELLOW = "\x1b[33m";
+const RED = "\x1b[31m";
 const MAGENTA = "\x1b[35m";
 
 export function stderrColorEnabled(): boolean {
@@ -42,8 +43,12 @@ export function formatCommitSubject(message: string, color: boolean): string {
   return message;
 }
 
-export function printSplitPlan(slices: PrSplitSlice[]): void {
+export function printSplitPlan(
+  slices: PrSplitSlice[],
+  stagedFiles: StagedFile[]
+): void {
   const color = stderrColorEnabled();
+  const byPath = new Map(stagedFiles.map((file) => [file.path, file]));
 
   if (slices.length > 1) {
     console.error(paint(color, DIM, `${String(slices.length)} commits`));
@@ -58,11 +63,32 @@ export function printSplitPlan(slices: PrSplitSlice[]): void {
     const subject = formatCommitSubject(slice.message, color);
     console.error(`${indexLabel} ${subject}`);
     for (const path of slice.paths) {
-      console.error(
-        `${paint(color, DIM, "  - ")}${paint(color, GREEN, path)}`
-      );
+      console.error(formatFileLine(path, byPath.get(path)?.status ?? "M", color));
     }
   }
+}
+
+function formatFileLine(
+  path: string,
+  status: StagedFile["status"],
+  color: boolean
+): string {
+  const marker = statusMarker(status);
+  const markerColor =
+    marker === "+" ? GREEN : marker === "-" ? RED : YELLOW;
+  const pathColor =
+    marker === "+" ? GREEN : marker === "-" ? RED : YELLOW;
+  return `  ${paint(color, markerColor, marker)} ${paint(color, pathColor, path)}`;
+}
+
+function statusMarker(status: StagedFile["status"]): "+" | "-" | "~" {
+  if (status === "A" || status === "C") {
+    return "+";
+  }
+  if (status === "D") {
+    return "-";
+  }
+  return "~";
 }
 
 export function writeCommitSubject(message: string): void {

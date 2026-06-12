@@ -21,35 +21,32 @@ import { planPrSplit, runPrSplit } from "./split/plan.ts";
 interface CommitOptions {
   help: boolean;
   print: boolean;
-  push: boolean;
 }
 
 function parseCommitArgv(argv: string[]): CommitOptions | "error" {
-  const args = argv.slice(2);
   let help = false;
   let print = false;
-  let push = false;
 
-  for (const arg of args) {
+  for (const arg of argv) {
     if (arg === "-h" || arg === "--help") {
       help = true;
       continue;
     }
-    if (arg === "--print") {
+    if (arg === "-p" || arg === "--print") {
       print = true;
-      continue;
-    }
-    if (arg === "-p" || arg === "--push") {
-      push = true;
       continue;
     }
     return "error";
   }
 
-  return { help, print, push };
+  return { help, print };
 }
 
-export function main(argv: string[]): void {
+function isFlag(arg: string): boolean {
+  return arg.startsWith("-");
+}
+
+export function runCommit(argv: string[], push: boolean): void {
   const opts = parseCommitArgv(argv);
   if (opts === "error") {
     console.error("commit: unexpected arguments (try commit -h)");
@@ -101,7 +98,7 @@ export function main(argv: string[]): void {
 
   const splitResult = runPrSplit(slices, false, splitOptions);
   if (splitResult.committed) {
-    if (opts.push) {
+    if (push) {
       pushBranch(gitCwd);
     }
     return;
@@ -124,6 +121,28 @@ export function main(argv: string[]): void {
   }
 
   writeCommitSubject(message);
+}
+
+export function main(argv: string[]): void {
+  const args = argv.slice(2);
+  const first = args[0];
+
+  if (first === "-h" || first === "--help") {
+    printHelp();
+    return;
+  }
+
+  if (first === "push") {
+    runCommit(args.slice(1), true);
+    return;
+  }
+
+  if (first !== undefined && !isFlag(first)) {
+    console.error(`commit: unknown command "${first}" (try commit -h)`);
+    process.exit(1);
+  }
+
+  runCommit(args, false);
 }
 
 main(process.argv);
