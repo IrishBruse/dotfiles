@@ -50,5 +50,7 @@ plans/
 skills-cursor/
 projects/
 
+plugins/
+
 !.gitignore
 !agent-config.json
