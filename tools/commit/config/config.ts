@@ -1,19 +1,17 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-/** Path segment index or fixed scope name for {{name}}. */
-export interface CommitNameSource {
-  segment?: number;
-  literal?: string;
-}
-
 /** One commit message rule in commit.config.json. */
 export interface CommitRule {
   paths: string | string[];
-  message: string;
+  /** Subject prefix, e.g. config in config(code): summary */
+  prefix: string;
+  /** Fixed scope when the path pattern does not use :scope */
+  scope?: string;
+  /** Optional subject override; {{summary}} and {{scope}} are expanded when present */
+  message?: string;
   /** all = every staged file matches; any = at least one file matches */
   when?: "all" | "any";
-  name?: CommitNameSource;
 }
 
 export interface CommitConfig {
@@ -115,16 +113,12 @@ function parseLegacyScopes(value: unknown): CommitRule[] | undefined {
     if (typeof legacy.message !== "string" || legacy.message.length === 0) {
       continue;
     }
-    const parsed: CommitRule = {
-      paths: path,
-      message: legacy.message
-    };
+    const parsed = migrateLegacyRule(path, legacy.message, legacy.name);
+    if (parsed === undefined) {
+      continue;
+    }
     if (legacy.when === "all" || legacy.when === "any") {
       parsed.when = legacy.when;
-    }
-    const name = parseNameSource(legacy.name);
-    if (name !== undefined) {
-      parsed.name = name;
     }
     rules.push(parsed);
   }
@@ -137,13 +131,11 @@ function parseRule(value: unknown): CommitRule | undefined {
   }
   const raw = value as {
     paths?: unknown;
+    prefix?: unknown;
+    scope?: unknown;
     message?: unknown;
     when?: unknown;
-    name?: unknown;
   };
-  if (typeof raw.message !== "string" || raw.message.length === 0) {
-    return undefined;
-  }
   const paths = parsePaths(raw.paths);
   if (paths === undefined) {
     return undefined;
@@ -151,17 +143,31 @@ function parseRule(value: unknown): CommitRule | undefined {
   if (raw.when !== undefined && raw.when !== "all" && raw.when !== "any") {
     return undefined;
   }
-  const name = parseNameSource(raw.name);
-  if (raw.name !== undefined && name === undefined) {
+  if (
+    raw.scope !== undefined &&
+    (typeof raw.scope !== "string" || raw.scope.length === 0)
+  ) {
+    return undefined;
+  }
+  if (
+    raw.message !== undefined &&
+    (typeof raw.message !== "string" || raw.message.length === 0)
+  ) {
+    return undefined;
+  }
+  if (typeof raw.prefix !== "string" || raw.prefix.length === 0) {
     return undefined;
   }
 
-  const rule: CommitRule = { paths, message: raw.message };
+  const rule: CommitRule = { paths, prefix: raw.prefix };
   if (raw.when !== undefined) {
     rule.when = raw.when;
   }
-  if (name !== undefined) {
-    rule.name = name;
+  if (typeof raw.scope === "string") {
+    rule.scope = raw.scope;
+  }
+  if (typeof raw.message === "string") {
+    rule.message = raw.message;
   }
   return rule;
 }
@@ -179,32 +185,61 @@ function parsePaths(value: unknown): string | string[] | undefined {
   return paths.length > 0 ? paths : undefined;
 }
 
-function parseNameSource(value: unknown): CommitNameSource | undefined {
-  if (typeof value === "number") {
-    return Number.isInteger(value) && value >= 0 ? { segment: value } : undefined;
+function migrateLegacyRule(
+  paths: string,
+  message: string,
+  name: unknown
+): CommitRule | undefined {
+  const withoutSummary = message.replace(/: \{\{summary\}\}$/, "");
+  const colonOnly = withoutSummary.match(/^([^:({]+)$/);
+  if (colonOnly) {
+    return { paths, prefix: colonOnly[1]!.trim() };
   }
-  if (typeof value === "string") {
-    return value.length > 0 ? { literal: value } : undefined;
+
+  const fixedScope = withoutSummary.match(/^([^(]+)\(([^)]+)\)$/);
+  if (fixedScope && !fixedScope[2]!.includes("{{")) {
+    return {
+      paths,
+      prefix: fixedScope[1]!.trim(),
+      scope: fixedScope[2]!.trim()
+    };
   }
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    return undefined;
-  }
-  const raw = value as { segment?: unknown; literal?: unknown };
-  const source: CommitNameSource = {};
-  if (raw.segment !== undefined) {
-    if (!Number.isInteger(raw.segment) || (raw.segment as number) < 0) {
+
+  const dynamicScope = withoutSummary.match(/^([^(]+)\(\{\{name\}\}\)$/);
+  if (dynamicScope) {
+    const prefix = dynamicScope[1]!.trim();
+    const segment = parseLegacyNameSegment(name);
+    if (segment === undefined) {
       return undefined;
     }
-    source.segment = raw.segment as number;
+    return {
+      paths: upgradePathForCapture(paths, segment),
+      prefix
+    };
   }
-  if (raw.literal !== undefined) {
-    if (typeof raw.literal !== "string" || raw.literal.length === 0) {
-      return undefined;
-    }
-    source.literal = raw.literal;
+
+  return undefined;
+}
+
+function parseLegacyNameSegment(name: unknown): number | undefined {
+  if (typeof name === "number") {
+    return Number.isInteger(name) && name >= 0 ? name : undefined;
   }
-  if (source.segment === undefined && source.literal === undefined) {
+  if (!name || typeof name !== "object" || Array.isArray(name)) {
     return undefined;
   }
-  return source;
+  const segment = (name as { segment?: unknown }).segment;
+  if (!Number.isInteger(segment) || (segment as number) < 0) {
+    return undefined;
+  }
+  return segment as number;
+}
+
+function upgradePathForCapture(path: string, segmentIndex: number): string {
+  const parts = path.split("/");
+  if (segmentIndex < parts.length && parts[segmentIndex] === "*") {
+    parts[segmentIndex] = ":scope";
+    return parts.join("/");
+  }
+  return path;
 }

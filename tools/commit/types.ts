@@ -1,3 +1,5 @@
+import type { CommitRule } from "./config/config.ts";
+
 export interface StagedFile {
   status: "A" | "M" | "D" | "R" | "C";
   path: string;
@@ -34,10 +36,9 @@ export interface MessageVars {
   summary: string;
   type?: CommitType;
   scope?: string;
-  name?: string;
 }
 
 export interface ConfigMatch {
-  message: string;
-  name?: string;
+  rule: CommitRule;
+  capturedScope?: string;
 }

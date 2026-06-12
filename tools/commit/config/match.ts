@@ -1,12 +1,16 @@
 import {
   type CommitConfig,
-  type CommitNameSource,
   type CommitRule,
   normalizeRulePaths
 } from "./config.ts";
 import type { ConfigMatch, MessageVars } from "../types.ts";
 
-const globCache = new Map<string, RegExp>();
+interface PathPattern {
+  regex: RegExp;
+  scopeGroup?: number;
+}
+
+const patternCache = new Map<string, PathPattern>();
 
 export function findConfigMatch(
   config: CommitConfig,
@@ -33,17 +37,14 @@ export function resolveSliceGroup(
   if (config?.rules) {
     for (const rule of config.rules) {
       const globs = normalizeRulePaths(rule.paths);
-      if (!globs.some((glob) => pathMatchesGlob(path, glob))) {
+      if (!globs.some((glob) => matchPathPattern(path, glob).matched)) {
         continue;
       }
       const sliceBase = globs[0]!;
-      const literal = rule.name?.literal;
-      if (literal !== undefined) {
-        return `${sliceBase}\0${literal}`;
-      }
-      const name = resolveName(rule.name, [path]);
-      if (name !== undefined) {
-        return `${sliceBase}\0${name}`;
+      const capturedScope = resolveCapturedScope(globs, [path]);
+      const scope = rule.scope ?? capturedScope;
+      if (scope !== undefined) {
+        return `${sliceBase}\0${scope}`;
       }
       return sliceBase;
     }
@@ -51,23 +52,35 @@ export function resolveSliceGroup(
   return path.includes("/") ? (path.split("/")[0] ?? path) : path;
 }
 
+export function formatCommitMessage(
+  rule: CommitRule,
+  capturedScope: string | undefined,
+  summary: string
+): string {
+  const scope = rule.scope ?? capturedScope;
+  if (rule.message !== undefined) {
+    return expandMessage(rule.message, { summary, scope });
+  }
+  if (scope !== undefined) {
+    return `${rule.prefix}(${scope}): ${summary}`;
+  }
+  return `${rule.prefix}: ${summary}`;
+}
+
 export function expandMessage(message: string, vars: MessageVars): string {
   let out = message;
-  if (vars.name !== undefined) {
-    out = out.replaceAll("{{name}}", vars.name);
+  if (vars.scope !== undefined) {
+    out = out.replaceAll("{{scope}}", vars.scope);
   }
   if (vars.type !== undefined) {
     out = out.replaceAll("{{type}}", vars.type);
-  }
-  if (vars.scope !== undefined) {
-    out = out.replaceAll("{{scope}}", vars.scope);
   }
   out = out.replaceAll("{{summary}}", vars.summary);
   return out;
 }
 
 export function pathMatchesGlob(path: string, glob: string): boolean {
-  return globToRegExp(glob).test(path);
+  return matchPathPattern(path, glob).matched;
 }
 
 function matchRule(
@@ -77,9 +90,9 @@ function matchRule(
 ): ConfigMatch | undefined {
   const when = rule.when ?? defaultWhen ?? "any";
   const globs = normalizeRulePaths(rule.paths);
-  const matchesPath = (path: string): boolean =>
-    globs.some((glob) => pathMatchesGlob(path, glob));
-  const matchingPaths = stagedPaths.filter(matchesPath);
+  const matchingPaths = stagedPaths.filter((path) =>
+    globs.some((glob) => matchPathPattern(path, glob).matched)
+  );
 
   if (when === "all") {
     if (matchingPaths.length !== stagedPaths.length) {
@@ -89,35 +102,33 @@ function matchRule(
     return undefined;
   }
 
-  const needsName = rule.message.includes("{{name}}");
-  const name = resolveName(rule.name, matchingPaths);
-  if (needsName && name === undefined) {
+  const capturedScope = resolveCapturedScope(globs, matchingPaths);
+  if (needsCapturedScope(rule, globs) && capturedScope === undefined) {
     return undefined;
   }
 
-  return { message: rule.message, name };
+  return { rule, capturedScope };
 }
 
-function resolveName(
-  name: CommitNameSource | undefined,
-  matchingPaths: string[]
+function needsCapturedScope(rule: CommitRule, globs: string[]): boolean {
+  return (
+    rule.scope === undefined && globs.some((glob) => glob.includes(":scope"))
+  );
+}
+
+function resolveCapturedScope(
+  globs: string[],
+  paths: string[]
 ): string | undefined {
-  if (name?.literal !== undefined) {
-    return name.literal;
-  }
-
-  if (name?.segment === undefined) {
-    return undefined;
-  }
-
   const counts = new Map<string, number>();
-  for (const path of matchingPaths) {
-    const segment = path.split("/")[name.segment];
-    if (segment === undefined || segment === "") {
-      continue;
+  for (const path of paths) {
+    for (const glob of globs) {
+      const { matched, scope } = matchPathPattern(path, glob);
+      if (!matched || scope === undefined) {
+        continue;
+      }
+      counts.set(scope, (counts.get(scope) ?? 0) + 1);
     }
-    const value = segment.toLowerCase();
-    counts.set(value, (counts.get(value) ?? 0) + 1);
   }
 
   if (counts.size === 0) {
@@ -126,26 +137,57 @@ function resolveName(
 
   let best = "";
   let bestCount = 0;
-  for (const [value, count] of counts) {
+  for (const [scope, count] of counts) {
     if (count > bestCount) {
-      best = value;
+      best = scope;
       bestCount = count;
     }
   }
   return best === "" ? undefined : best;
 }
 
-function globToRegExp(glob: string): RegExp {
-  let cached = globCache.get(glob);
+function matchPathPattern(
+  path: string,
+  pattern: string
+): { matched: boolean; scope?: string } {
+  const compiled = compilePathPattern(pattern);
+  const match = compiled.regex.exec(path);
+  if (!match) {
+    return { matched: false };
+  }
+  const scope =
+    compiled.scopeGroup === undefined
+      ? undefined
+      : match[compiled.scopeGroup]?.toLowerCase();
+  return scope === "" ? { matched: true } : { matched: true, scope };
+}
+
+function compilePathPattern(pattern: string): PathPattern {
+  let cached = patternCache.get(pattern);
   if (cached) {
     return cached;
   }
+
   let re = "^";
-  for (let i = 0; i < glob.length; ) {
-    const c = glob[i]!;
+  let scopeGroup: number | undefined;
+  let groupCount = 0;
+
+  for (let i = 0; i < pattern.length; ) {
+    if (pattern[i] === ":" && pattern.startsWith(":scope", i)) {
+      const end = i + 6;
+      if (end === pattern.length || pattern[end] === "/") {
+        groupCount += 1;
+        scopeGroup = groupCount;
+        re += "([^/]+)";
+        i = end;
+        continue;
+      }
+    }
+
+    const c = pattern[i]!;
     if (c === "*") {
-      if (glob[i + 1] === "*") {
-        if (glob[i + 2] === "/") {
+      if (pattern[i + 1] === "*") {
+        if (pattern[i + 2] === "/") {
           re += "(?:.*/)?";
           i += 3;
           continue;
@@ -161,9 +203,10 @@ function globToRegExp(glob: string): RegExp {
     re += escapeRegExp(c);
     i += 1;
   }
+
   re += "$";
-  cached = new RegExp(re);
-  globCache.set(glob, cached);
+  cached = { regex: new RegExp(re), scopeGroup };
+  patternCache.set(pattern, cached);
   return cached;
 }
 
