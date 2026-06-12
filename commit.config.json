@@ -9,49 +9,48 @@
         "home/.config/Code/User/**",
         "home/Library/Application Support/Code/User/**"
       ],
-      "message": "config(code): {{summary}}"
+      "prefix": "config",
+      "scope": "code"
     },
     {
       "paths": "home/.cursor/rules/**",
-      "message": "cursor(rules): {{summary}}"
+      "prefix": "cursor",
+      "scope": "rules"
     },
     {
-      "paths": "home/.agents/skills/*/**",
-      "message": "skill({{name}}): {{summary}}",
-      "name": { "segment": 3 }
+      "paths": "home/.agents/skills/:scope/**",
+      "prefix": "skill"
     },
     {
-      "paths": "home/.config/*/**",
-      "message": "config({{name}}): {{summary}}",
-      "name": { "segment": 2 }
+      "paths": "home/.config/:scope/**",
+      "prefix": "config"
     },
     {
-      "paths": "home/*",
-      "when": "all",
-      "message": "home({{name}}): {{summary}}",
-      "name": { "segment": 1 }
+      "paths": "home/:scope",
+      "prefix": "home",
+      "when": "all"
     },
     {
-      "paths": "tools/*/**",
-      "message": "tools({{name}}): {{summary}}",
-      "name": { "segment": 1 }
+      "paths": "tools/:scope/**",
+      "prefix": "tools"
     },
     {
-      "paths": "vscode/*/**",
-      "message": "vscode({{name}}): {{summary}}",
-      "name": { "segment": 1 }
+      "paths": "vscode/:scope/**",
+      "prefix": "vscode"
     },
     {
       "paths": "init.fish",
-      "message": "fish: {{summary}}"
+      "prefix": "fish"
     },
     {
       "paths": "**/prepare-commit-msg",
-      "message": "config(git): {{summary}}"
+      "prefix": "config",
+      "scope": "git"
     },
     {
       "paths": "commit.config.json",
-      "message": "config(commit): {{summary}}"
+      "prefix": "config",
+      "scope": "commit"
     }
   ]
 }
