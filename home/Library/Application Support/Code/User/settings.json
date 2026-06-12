@@ -1621,7 +1621,6 @@
   "editor.accessibilitySupport": "off",
   "markdownInlineEditor.math.enabled": false,
   "editor.allowVariableFontsInAccessibilityMode": true,
-  "terminal.integrated.scrollback": 10000,
   "fish.path.fish": "/opt/homebrew/bin/fish",
   "fish.path.fish_indent": "/opt/homebrew/bin/fish_indent",
   "workbench.browser.openLocalhostLinks": true,
@@ -1631,7 +1630,6 @@
   "markdown-mermaid.darkModeTheme": "dark",
   "workbench.activityBar.location": "top",
   "chat.disableAIFeatures": true,
-  "git.showCommitInput": false,
   "terminal.integrated.stickyScroll.enabled": false,
   "markdownInlineEditor.tables.renderingMode": "raw"
 }
