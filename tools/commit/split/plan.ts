@@ -5,6 +5,7 @@ import { loadCommitConfig } from "../config/config.ts";
 import { findConfigMatch, resolveSliceGroup } from "../config/match.ts";
 import { createCommit, stagePaths, unstageAll } from "../git.ts";
 import { generateCommitMessage } from "../message/generate.ts";
+import { printSplitPlan } from "../output.ts";
 import type { PrSplitSlice, SplitResult, StagedFile } from "../types.ts";
 
 export function planPrSplit(
@@ -74,18 +75,6 @@ export function runPrSplit(
   }
 
   return executeSplit(slices, options.cwd, options.stagedFiles);
-}
-
-function printSplitPlan(slices: PrSplitSlice[]): void {
-  for (const [index, slice] of slices.entries()) {
-    if (index > 0) {
-      console.error("");
-    }
-    console.error(`#${String(index + 1)} ${slice.message}`);
-    for (const path of slice.paths) {
-      console.error(`  - ${path}`);
-    }
-  }
 }
 
 function executeSplit(

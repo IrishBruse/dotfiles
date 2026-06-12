@@ -15,6 +15,7 @@ import {
 } from "./git.ts";
 import { printHelp } from "./help.ts";
 import { generateCommitMessage } from "./message/generate.ts";
+import { writeCommitSubject } from "./output.ts";
 import { planPrSplit, runPrSplit } from "./split/plan.ts";
 
 interface CommitOptions {
@@ -107,7 +108,7 @@ export function main(argv: string[]): void {
   }
 
   if (slices.length === 1 && config && findConfigMatch(config, stagedPaths)) {
-    process.stdout.write(`${slices[0]!.message}\n`);
+    writeCommitSubject(slices[0]!.message);
     return;
   }
 
@@ -122,7 +123,7 @@ export function main(argv: string[]): void {
     process.exit(1);
   }
 
-  process.stdout.write(`${message}\n`);
+  writeCommitSubject(message);
 }
 
 main(process.argv);
