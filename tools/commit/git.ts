@@ -58,6 +58,18 @@ export function createCommit(cwd: string, message: string): void {
   runGit(cwd, ["commit", "-m", message]);
 }
 
+export function hasUnpushedCommits(cwd: string): boolean {
+  const r = spawnSync("git", ["rev-list", "--count", "@{u}..HEAD"], {
+    cwd,
+    encoding: "utf8"
+  });
+  if (r.status !== 0) {
+    return false;
+  }
+  const count = Number.parseInt((r.stdout ?? "").trim(), 10);
+  return Number.isFinite(count) && count > 0;
+}
+
 export function pushBranch(cwd: string): void {
   runGit(cwd, ["push"]);
 }

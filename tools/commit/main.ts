@@ -10,6 +10,7 @@ import {
   getUnstagedDiff,
   getUnstagedFileList,
   hasStagedChanges,
+  hasUnpushedCommits,
   hasUnstagedChanges,
   pushBranch
 } from "./git.ts";
@@ -69,9 +70,14 @@ export function runCommit(argv: string[], push: boolean): void {
   }
 
   const useStaged = hasStagedChanges(gitCwd);
-  if (!useStaged && !hasUnstagedChanges(gitCwd)) {
+  const hasChanges = useStaged || hasUnstagedChanges(gitCwd);
+  if (!hasChanges) {
     if (opts.print) {
       console.error("commit: no changes");
+      return;
+    }
+    if (push && hasUnpushedCommits(gitCwd)) {
+      pushBranch(gitCwd);
     }
     return;
   }
