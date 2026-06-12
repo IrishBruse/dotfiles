@@ -76,9 +76,7 @@ function formatFileLine(
   const marker = statusMarker(status);
   const markerColor =
     marker === "+" ? GREEN : marker === "-" ? RED : YELLOW;
-  const pathColor =
-    marker === "+" ? GREEN : marker === "-" ? RED : YELLOW;
-  return `  ${paint(color, markerColor, marker)} ${paint(color, pathColor, path)}`;
+  return `  ${paint(color, markerColor, marker)} ${path}`;
 }
 
 function statusMarker(status: StagedFile["status"]): "+" | "-" | "~" {
