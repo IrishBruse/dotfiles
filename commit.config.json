@@ -1,38 +1,57 @@
 {
-  "scopes": {
-    "home/.config/Code/User/**": {
-      "message": "config(code): {{summary}}",
-      "group": "config(code)"
+  "version": 1,
+  "defaults": {
+    "when": "any"
+  },
+  "rules": [
+    {
+      "paths": [
+        "home/.config/Code/User/**",
+        "home/Library/Application Support/Code/User/**"
+      ],
+      "message": "config(code): {{summary}}"
     },
-    "home/Library/Application Support/Code/User/**": {
-      "message": "config(code): {{summary}}",
-      "group": "config(code)"
-    },
-    "home/.cursor/rules/**": {
+    {
+      "paths": "home/.cursor/rules/**",
       "message": "cursor(rules): {{summary}}"
     },
-    "home/.agents/skills/*/**": {
-      "when": "any",
+    {
+      "paths": "home/.agents/skills/*/**",
       "message": "skill({{name}}): {{summary}}",
-      "name": 3
+      "name": { "segment": 3 }
     },
-    "home/.config/*/**": {
-      "when": "any",
+    {
+      "paths": "home/.config/*/**",
       "message": "config({{name}}): {{summary}}",
-      "name": 2
+      "name": { "segment": 2 }
     },
-    "tools/*/**": {
-      "when": "any",
+    {
+      "paths": "home/*",
+      "when": "all",
+      "message": "home({{name}}): {{summary}}",
+      "name": { "segment": 1 }
+    },
+    {
+      "paths": "tools/*/**",
       "message": "tools({{name}}): {{summary}}",
-      "name": 1
+      "name": { "segment": 1 }
     },
-    "vscode/*/**": {
-      "when": "any",
+    {
+      "paths": "vscode/*/**",
       "message": "vscode({{name}}): {{summary}}",
-      "name": 1
+      "name": { "segment": 1 }
+    },
+    {
+      "paths": "init.fish",
+      "message": "fish: {{summary}}"
+    },
+    {
+      "paths": "**/prepare-commit-msg",
+      "message": "config(git): {{summary}}"
+    },
+    {
+      "paths": "commit.config.json",
+      "message": "config(commit): {{summary}}"
     }
-  },
-  "fallback": {
-    "message": "{{type}}({{scope}}): {{summary}}"
-  }
+  ]
 }
