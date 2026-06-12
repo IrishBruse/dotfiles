@@ -69,3 +69,60 @@ export function countDiffLines(diff: string): { added: number; removed: number }
   }
   return { added, removed };
 }
+
+export function filterNameStatus(nameStatus: string, paths: Set<string>): string {
+  const lines: string[] = [];
+  for (const line of nameStatus.split("\n")) {
+    const trimmed = line.trim();
+    if (trimmed === "") {
+      continue;
+    }
+    const parts = trimmed.split(/\t+/);
+    const status = parts[0]!;
+    if (status.startsWith("R") || status.startsWith("C")) {
+      const previousPath = parts[1];
+      const path = parts[2];
+      if (
+        path !== undefined &&
+        (paths.has(path) || (previousPath !== undefined && paths.has(previousPath)))
+      ) {
+        lines.push(line);
+      }
+      continue;
+    }
+    const path = parts[1];
+    if (path !== undefined && paths.has(path)) {
+      lines.push(line);
+    }
+  }
+  return lines.join("\n");
+}
+
+export function filterDiff(diff: string, paths: Set<string>): string {
+  if (diff === "") {
+    return "";
+  }
+
+  const chunks: string[] = [];
+  let current: string[] = [];
+  let currentPath: string | undefined;
+
+  for (const line of diff.split("\n")) {
+    if (line.startsWith("diff --git ")) {
+      if (current.length > 0 && currentPath !== undefined && paths.has(currentPath)) {
+        chunks.push(current.join("\n"));
+      }
+      current = [line];
+      const match = line.match(/^diff --git a\/(.+?) b\/(.+)$/);
+      currentPath = match?.[2];
+      continue;
+    }
+    current.push(line);
+  }
+
+  if (current.length > 0 && currentPath !== undefined && paths.has(currentPath)) {
+    chunks.push(current.join("\n"));
+  }
+
+  return chunks.join("\n");
+}

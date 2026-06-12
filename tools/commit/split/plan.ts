@@ -3,6 +3,7 @@ import { basename } from "node:path";
 import type { CommitConfig } from "../config/config.ts";
 import { loadCommitConfig } from "../config/config.ts";
 import { findConfigMatch, resolveSliceGroup } from "../config/match.ts";
+import { filterDiff, filterNameStatus } from "../diff/parse.ts";
 import { createCommit, stagePaths, unstageAll } from "../git.ts";
 import { generateCommitMessage } from "../message/generate.ts";
 import { printSplitPlan } from "../output.ts";
@@ -31,10 +32,11 @@ export function planPrSplit(
       slices.push({ paths, message: miscMessage(paths) });
       continue;
     }
+    const pathSet = new Set(paths);
     const { message } = generateCommitMessage(
       repoRoot,
-      nameStatus,
-      diff,
+      filterNameStatus(nameStatus, pathSet),
+      filterDiff(diff, pathSet),
       paths,
       config
     );
