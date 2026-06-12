@@ -1,11 +1,7 @@
 import { analyzeStagedChanges, isConfidentEnough } from "./analyze.ts";
 import type { CommitConfig } from "../config/config.ts";
 import { loadCommitConfig } from "../config/config.ts";
-import {
-  expandMessage,
-  findConfigMatch,
-  resolveFallbackMessage
-} from "../config/match.ts";
+import { expandMessage, findConfigMatch } from "../config/match.ts";
 import type { MessageVars } from "../types.ts";
 
 export interface CommitMessageResult {
@@ -41,8 +37,8 @@ export function generateCommitMessage(
     return { message: "", confident: false };
   }
 
-  const message = config?.fallback
-    ? resolveFallbackMessage(config, vars)
-    : `${analysis.type}(${analysis.scope}): ${analysis.summary}`;
-  return { message, confident: true };
+  return {
+    message: `${analysis.type}(${analysis.scope}): ${analysis.summary}`,
+    confident: true
+  };
 }

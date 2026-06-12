@@ -1,27 +1,26 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-/** Scope settings keyed by a single path glob in commit.config.json. */
-export interface CommitScopeRule {
-  message: string;
-  /** Path segment index or fixed scope name for {{name}} */
-  name?: number | string;
-  /** all = every staged file matches; any = at least one file matches */
-  when?: "all" | "any";
-  /** Shared slice key for PR split; scopes with the same group land in one commit */
-  group?: string;
+/** Path segment index or fixed scope name for {{name}}. */
+export interface CommitNameSource {
+  segment?: number;
+  literal?: string;
 }
 
-export interface CommitFallbackConfig {
+/** One commit message rule in commit.config.json. */
+export interface CommitRule {
+  paths: string | string[];
   message: string;
+  /** all = every staged file matches; any = at least one file matches */
+  when?: "all" | "any";
+  name?: CommitNameSource;
 }
 
 export interface CommitConfig {
-  scopes?: Record<string, CommitScopeRule>;
-  fallback?: CommitFallbackConfig;
+  version?: number;
+  defaults?: Pick<CommitRule, "when">;
+  rules?: CommitRule[];
 }
-
-export const DEFAULT_FALLBACK_MESSAGE = "{{type}}({{scope}}): {{summary}}";
 
 const CONFIG_FILE = "commit.config.json";
 
@@ -39,64 +38,173 @@ export function loadCommitConfig(repoRoot: string): CommitConfig | undefined {
   if (!parsed || typeof parsed !== "object") {
     return undefined;
   }
-  const raw = parsed as { scopes?: unknown; fallback?: unknown };
-  const scopes = parseScopes(raw.scopes);
-  const fallback = parseFallback(raw.fallback);
-  if (scopes === undefined && fallback === undefined) {
-    return undefined;
-  }
-  return {
-    ...(scopes !== undefined ? { scopes } : {}),
-    ...(fallback !== undefined ? { fallback } : {})
-  };
+  return parseCommitConfig(parsed as Record<string, unknown>);
 }
 
-function parseScopes(
+export function normalizeRulePaths(paths: string | string[]): string[] {
+  if (typeof paths === "string") {
+    return paths.length > 0 ? [paths] : [];
+  }
+  return paths.filter((path) => path.length > 0);
+}
+
+function parseCommitConfig(raw: Record<string, unknown>): CommitConfig | undefined {
+  const rules = parseRules(raw.rules) ?? parseLegacyScopes(raw.scopes);
+  if (rules === undefined) {
+    return undefined;
+  }
+
+  const config: CommitConfig = { rules };
+  const version = raw.version;
+  if (typeof version === "number" && Number.isInteger(version) && version > 0) {
+    config.version = version;
+  }
+
+  const defaults = parseDefaults(raw.defaults);
+  if (defaults !== undefined) {
+    config.defaults = defaults;
+  }
+
+  return config;
+}
+
+function parseDefaults(
   value: unknown
-): Record<string, CommitScopeRule> | undefined {
+): Pick<CommitRule, "when"> | undefined {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     return undefined;
   }
-  const scopes: Record<string, CommitScopeRule> = {};
+  const when = (value as { when?: unknown }).when;
+  if (when === undefined) {
+    return undefined;
+  }
+  if (when !== "all" && when !== "any") {
+    return undefined;
+  }
+  return { when };
+}
+
+function parseRules(value: unknown): CommitRule[] | undefined {
+  if (!Array.isArray(value)) {
+    return undefined;
+  }
+  const rules: CommitRule[] = [];
+  for (const entry of value) {
+    const rule = parseRule(entry);
+    if (rule !== undefined) {
+      rules.push(rule);
+    }
+  }
+  return rules.length > 0 ? rules : undefined;
+}
+
+function parseLegacyScopes(value: unknown): CommitRule[] | undefined {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return undefined;
+  }
+  const rules: CommitRule[] = [];
   for (const [path, rule] of Object.entries(value)) {
-    if (path.length === 0 || !isValidScope(rule)) {
+    if (path.length === 0 || !rule || typeof rule !== "object") {
       continue;
     }
-    scopes[path] = rule;
-  }
-  return Object.keys(scopes).length > 0 ? scopes : undefined;
-}
-
-function parseFallback(value: unknown): CommitFallbackConfig | undefined {
-  if (!value || typeof value !== "object") {
-    return undefined;
-  }
-  const fallback = value as CommitFallbackConfig;
-  if (typeof fallback.message !== "string" || fallback.message.length === 0) {
-    return undefined;
-  }
-  return fallback;
-}
-
-function isValidScope(value: unknown): value is CommitScopeRule {
-  if (!value || typeof value !== "object") {
-    return false;
-  }
-  const scope = value as CommitScopeRule;
-  if (typeof scope.message !== "string" || scope.message.length === 0) {
-    return false;
-  }
-  if (scope.when !== undefined && scope.when !== "all" && scope.when !== "any") {
-    return false;
-  }
-  if (scope.name !== undefined) {
-    if (typeof scope.name === "number") {
-      return Number.isInteger(scope.name) && scope.name >= 0;
+    const legacy = rule as {
+      message?: unknown;
+      when?: unknown;
+      name?: unknown;
+    };
+    if (typeof legacy.message !== "string" || legacy.message.length === 0) {
+      continue;
     }
-    return typeof scope.name === "string" && scope.name.length > 0;
+    const parsed: CommitRule = {
+      paths: path,
+      message: legacy.message
+    };
+    if (legacy.when === "all" || legacy.when === "any") {
+      parsed.when = legacy.when;
+    }
+    const name = parseNameSource(legacy.name);
+    if (name !== undefined) {
+      parsed.name = name;
+    }
+    rules.push(parsed);
   }
-  if (scope.group !== undefined) {
-    return typeof scope.group === "string" && scope.group.length > 0;
+  return rules.length > 0 ? rules : undefined;
+}
+
+function parseRule(value: unknown): CommitRule | undefined {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return undefined;
   }
-  return true;
+  const raw = value as {
+    paths?: unknown;
+    message?: unknown;
+    when?: unknown;
+    name?: unknown;
+  };
+  if (typeof raw.message !== "string" || raw.message.length === 0) {
+    return undefined;
+  }
+  const paths = parsePaths(raw.paths);
+  if (paths === undefined) {
+    return undefined;
+  }
+  if (raw.when !== undefined && raw.when !== "all" && raw.when !== "any") {
+    return undefined;
+  }
+  const name = parseNameSource(raw.name);
+  if (raw.name !== undefined && name === undefined) {
+    return undefined;
+  }
+
+  const rule: CommitRule = { paths, message: raw.message };
+  if (raw.when !== undefined) {
+    rule.when = raw.when;
+  }
+  if (name !== undefined) {
+    rule.name = name;
+  }
+  return rule;
+}
+
+function parsePaths(value: unknown): string | string[] | undefined {
+  if (typeof value === "string") {
+    return value.length > 0 ? value : undefined;
+  }
+  if (!Array.isArray(value)) {
+    return undefined;
+  }
+  const paths = value.filter(
+    (path): path is string => typeof path === "string" && path.length > 0
+  );
+  return paths.length > 0 ? paths : undefined;
+}
+
+function parseNameSource(value: unknown): CommitNameSource | undefined {
+  if (typeof value === "number") {
+    return Number.isInteger(value) && value >= 0 ? { segment: value } : undefined;
+  }
+  if (typeof value === "string") {
+    return value.length > 0 ? { literal: value } : undefined;
+  }
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return undefined;
+  }
+  const raw = value as { segment?: unknown; literal?: unknown };
+  const source: CommitNameSource = {};
+  if (raw.segment !== undefined) {
+    if (!Number.isInteger(raw.segment) || (raw.segment as number) < 0) {
+      return undefined;
+    }
+    source.segment = raw.segment as number;
+  }
+  if (raw.literal !== undefined) {
+    if (typeof raw.literal !== "string" || raw.literal.length === 0) {
+      return undefined;
+    }
+    source.literal = raw.literal;
+  }
+  if (source.segment === undefined && source.literal === undefined) {
+    return undefined;
+  }
+  return source;
 }

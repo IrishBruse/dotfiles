@@ -1,5 +1,12 @@
 import { hintsFromAddedLines } from "./codeHints.ts";
 import {
+  extractCliFlags,
+  formatCliFlagSummary,
+  humanizeSymbol,
+  isLowQualitySymbolSummary,
+  rankSummarySymbols
+} from "./summaryHints.ts";
+import {
   countDiffLines,
   parseAddedLinesByFile,
   parseNameStatus
@@ -36,6 +43,7 @@ export function analyzeStagedChanges(
 
   let confidence = 0.45;
   const newSymbols: string[] = [];
+  const cliFlags: string[] = [];
   let fixSignals = 0;
   let featureSignals = 0;
 
@@ -91,6 +99,11 @@ export function analyzeStagedChanges(
   if (deleteCount > 0 && deleteCount === files.length) {
     bump("chore", 6);
     confidence += 0.15;
+  }
+
+  for (const file of files) {
+    const added = addedByFile.get(file.path) ?? [];
+    cliFlags.push(...extractCliFlags(added));
   }
 
   for (const file of codeFiles) {
@@ -161,18 +174,23 @@ export function analyzeStagedChanges(
     confidence -= 0.05;
   }
 
+  const rankedSymbols = rankSummarySymbols(newSymbols);
+  const uniqueFlags = [...new Set(cliFlags)];
+
   const summary = buildSummary({
     type,
     scope,
     files,
-    newSymbols,
+    rankedSymbols,
+    cliFlags: uniqueFlags,
     deleteCount,
-    renameCount
+    renameCount,
+    lineCount: lineCounts.added + lineCounts.removed
   });
 
   if (summary.length < 8) {
     confidence -= 0.25;
-  } else if (newSymbols.length > 0) {
+  } else if (rankedSymbols.length > 0 || uniqueFlags.length > 0) {
     confidence += 0.1;
   }
 
@@ -269,11 +287,13 @@ function buildSummary(input: {
   type: CommitType;
   scope: string;
   files: StagedFile[];
-  newSymbols: string[];
+  rankedSymbols: string[];
+  cliFlags: string[];
   deleteCount: number;
   renameCount: number;
+  lineCount: number;
 }): string {
-  const uniqueSymbols = [...new Set(input.newSymbols.map(humanizeSymbol))].filter(
+  const uniqueSymbols = [...new Set(input.rankedSymbols.map(humanizeSymbol))].filter(
     (s) => s.length > 0
   );
 
@@ -304,12 +324,38 @@ function buildSummary(input: {
     return `remove ${input.scope} files`;
   }
 
-  if (uniqueSymbols.length > 0) {
+  if (input.cliFlags.length > 0) {
+    const flagSummary = formatCliFlagSummary(
+      input.cliFlags,
+      input.type === "fix" ? "fix" : "feature"
+    );
+    if (flagSummary !== "") {
+      return flagSummary;
+    }
+  }
+
+  if (uniqueSymbols.length > 0 && !isLowQualitySymbolSummary(uniqueSymbols)) {
     const lead = input.type === "fix" ? "fix" : "add";
     return `${lead} ${uniqueSymbols.slice(0, 2).join(" and ")}`;
   }
 
+  return scopeSummary(input);
+}
+
+function scopeSummary(input: {
+  type: CommitType;
+  scope: string;
+  files: StagedFile[];
+  lineCount: number;
+}): string {
   const added = input.files.filter((f) => f.status === "A").length;
+  const modifiedOnly = added === 0;
+  const smallChange = input.lineCount > 0 && input.lineCount < 120;
+
+  if (modifiedOnly && smallChange && input.type !== "fix" && input.type !== "refactor") {
+    return `improve ${input.scope}`;
+  }
+
   if (added > 0 && input.type === "feature") {
     return `add ${input.scope} support`;
   }
@@ -323,14 +369,6 @@ function buildSummary(input: {
   }
 
   return `update ${input.scope}`;
-}
-
-function humanizeSymbol(name: string): string {
-  return name
-    .replace(/([a-z])([A-Z])/g, "$1 $2")
-    .replace(/_/g, " ")
-    .trim()
-    .toLowerCase();
 }
 
 function isCodeFile(path: string): boolean {

@@ -67,10 +67,6 @@ function hintsFromTypeScript(addedLines: string[]): CodeHints {
         }
       }
     }
-    if (ts.isMethodDeclaration(node) && node.name && ts.isIdentifier(node.name)) {
-      featureSignals += 1;
-      newSymbols.push(node.name.text);
-    }
     ts.forEachChild(node, visit);
   };
   visit(sourceFile);
