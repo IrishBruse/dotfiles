@@ -1,0 +1,11 @@
+/// <reference types="node" />
+
+import { cursorAgentConfig } from "../shared/agent-config.ts";
+import { syncBrew } from "./shared/brew.ts";
+import { repoDir, repoRoot } from "../shared/repo.ts";
+
+const platform = repoDir(import.meta.url);
+const repo = repoRoot(import.meta.url);
+
+syncBrew(platform, repo);
+cursorAgentConfig(repo);
