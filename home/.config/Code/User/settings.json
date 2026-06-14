@@ -1331,7 +1331,7 @@
   "git.pruneOnFetch": true,
   "git.replaceTagsWhenPull": true,
   "git.blame.editorDecoration.enabled": false,
-  "git.blame.statusBarItem.enabled": true,
+  "git.blame.statusBarItem.enabled": false,
   "git.discardUntrackedChangesToTrash": false,
   "git.ignoreRebaseWarning": true,
   //
@@ -1622,7 +1622,6 @@
   "editor.accessibilitySupport": "off",
   "markdownInlineEditor.math.enabled": false,
   "editor.allowVariableFontsInAccessibilityMode": true,
-  "terminal.integrated.scrollback": 10000,
   "workbench.browser.openLocalhostLinks": true,
   "workbench.layoutControl.enabled": false,
   "terminal.integrated.gpuAcceleration": "off",
@@ -1630,6 +1629,6 @@
   "markdown-mermaid.darkModeTheme": "dark",
   "workbench.activityBar.location": "top",
   "chat.disableAIFeatures": true,
-  "git.showCommitInput": false,
-  "terminal.integrated.stickyScroll.enabled": false
+  "terminal.integrated.stickyScroll.enabled": false,
+  "markdownInlineEditor.tables.renderingMode": "inline"
 }
