@@ -100,7 +100,18 @@
         "id": "fast",
         "value": "false"
       }
-    ]
+    ],
+    "gpt-5.3-codex": [
+      {
+        "id": "reasoning",
+        "value": "low"
+      },
+      {
+        "id": "fast",
+        "value": "true"
+      }
+    ],
+    "default": []
   },
   "selectedModel": {
     "modelId": "composer-2.5",
