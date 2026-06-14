@@ -18,12 +18,38 @@
       "scope": "rules"
     },
     {
+      "paths": "home/.cursor/*",
+      "prefix": "cursor",
+      "scope": "config"
+    },
+    {
       "paths": "home/.agents/skills/:scope/**",
       "prefix": "skill"
     },
     {
       "paths": "home/.config/:scope/**",
       "prefix": "config"
+    },
+    {
+      "paths": "linux/**",
+      "prefix": "linux"
+    },
+    {
+      "paths": "macos/**",
+      "prefix": "macos"
+    },
+    {
+      "paths": "shared/**",
+      "prefix": "shared"
+    },
+    {
+      "paths": ["AGENTS.md", "README.md"],
+      "prefix": "docs"
+    },
+    {
+      "paths": ".vscode/**",
+      "prefix": "config",
+      "scope": "vscode"
     },
     {
       "paths": "home/:scope",
@@ -39,7 +65,7 @@
       "prefix": "vscode"
     },
     {
-      "paths": "init.fish",
+      "paths": ["init.fish", "stow.fish"],
       "prefix": "fish"
     },
     {
