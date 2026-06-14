@@ -16,8 +16,8 @@
     {
       "label": "Run on Open",
       "type": "shell",
-      "osx": { "command": "node open-mac.ts" },
-      "linux": { "command": "node open-linux.ts" },
+      "osx": { "command": "node macos/open.ts" },
+      "linux": { "command": "node linux/open.ts" },
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": [],
       "runOptions": {
