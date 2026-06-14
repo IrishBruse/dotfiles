@@ -1,20 +1,13 @@
 # dotfiles
 
-Personal config and TypeScript CLI tools.
+Personal machine config and small TypeScript CLIs.
 
-## Setup
+`home/` mirrors `~` - shell, Hyprland, Cursor, VS Code settings, and related dotfiles, stowed into the real home directory via `stow.fish`.
 
-```fish
-./init.fish     # git hooks, cursor symlinks, fish completions
-./stow.fish     # stow home/ into ~ (expects repo at ~/dotfiles)
-just install-all
-just link       # global npm link for tools/
-```
+`linux/` holds Linux Mint bootstrap: `apt.md` (generated on workspace open), `flatpaks.csv`, and workspace-open sync (`open.ts`).
 
-## Layout
+`macos/` holds Homebrew `Brewfile` and workspace-open sync (`open.ts`).
 
-- `home/` - mirrors `~` (`.config`, `.cursor`, fish, hypr, VS Code settings)
-- `tools/` - CLIs (`jira`, `pr`, `sprint`, `commit`, ...)
-- `vscode/` - keybindings and theme
+`tools/` is a shared Node package of command-line helpers for Jira, GitHub PRs, sprint dates, markdown, and agent workflows.
 
-Run `just` to typecheck TypeScript projects.
+`vscode/` holds generated keybindings and custom UI theme CSS.
