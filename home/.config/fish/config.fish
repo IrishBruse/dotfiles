@@ -41,4 +41,4 @@ alias ldtkgen="dotnet run --project /home/econn/git/LDtkMonogame/LDtk.Codegen/LD
 # Node alias
 abbr nvm fnm
 
-alias stow="echo 'use ./stow.fish'"
+alias stow="echo 'use ~/dotfiles/stow.fish'"
