@@ -8,28 +8,28 @@ function aptManualPackages(): string {
   ).trim();
 }
 
-function aptMarkdownTable(packages: string): string {
+function csvField(value: string): string {
+  if (/[",\n]/.test(value)) {
+    return `"${value.replaceAll('"', '""')}"`;
+  }
+  return value;
+}
+
+function aptCsv(packages: string): string {
   const rows = packages.split("\n").map((line) => {
     const tab = line.indexOf("\t");
     const pkg = line.slice(0, tab);
     const version = line.slice(tab + 1);
-    return `|${pkg}|${version}|`;
+    return `${csvField(pkg)},${csvField(version)}`;
   });
 
-  return [
-    "# apt",
-    "",
-    "|package|version|",
-    "| --- | --- |",
-    ...rows,
-    ""
-  ].join("\n");
+  return ["package,version", ...rows, ""].join("\n");
 }
 
-export function exportAptMd(platformDir: string): void {
+export function exportAptCsv(platformDir: string): void {
   const packages = aptManualPackages();
   if (!packages) {
     return;
   }
-  writeFileSync(join(platformDir, "apt.md"), aptMarkdownTable(packages), "utf8");
+  writeFileSync(join(platformDir, "apt.csv"), aptCsv(packages), "utf8");
 }

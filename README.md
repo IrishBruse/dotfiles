@@ -4,7 +4,7 @@ Personal machine config and small TypeScript CLIs.
 
 `home/` mirrors `~` - shell, Hyprland, Cursor, VS Code settings, and related dotfiles, stowed into the real home directory via `stow.fish`.
 
-`linux/` holds Linux Mint bootstrap: `apt.md` (generated on workspace open), `flatpaks.csv`, and workspace-open sync (`open.ts`).
+`linux/` holds Linux Mint bootstrap: `apt.csv` (generated on workspace open), `flatpaks.csv`, and workspace-open sync (`open.ts`).
 
 `macos/` holds Homebrew `Brewfile` and workspace-open sync (`open.ts`).
 
