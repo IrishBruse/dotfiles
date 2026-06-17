@@ -3,7 +3,7 @@ tap "anomalyco/tap"
 tap "atlassian/acli"
 tap "brew-gem/gems"
 tap "cloudflare/cloudflare"
-tap "gp-nova/devx-cli", "https://github.com/gp-nova/devx-cli.git"
+tap "gp-nova/devx-cli", "https://github.com/gp-nova/devx-cli.git", trusted: true
 tap "koekeishiya/formulae"
 tap "kreuzberg-dev/tap"
 tap "localstack/tap"
@@ -72,6 +72,8 @@ brew "scrcpy"
 brew "stow"
 # Shell extension to navigate your filesystem faster
 brew "zoxide"
+# CLI tool to support project setup and updating
+brew "gp-nova/devx-cli/devx-cli"
 # Display management tool
 cask "betterdisplay"
 # 3D creation suite
