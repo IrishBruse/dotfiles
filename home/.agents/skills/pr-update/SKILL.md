@@ -7,15 +7,13 @@ description: Updates an existing GitHub pull request title and body to match the
 
 Refresh the current pull request's **title** and **body** so they match the branch as it is now, then apply them with `gh pr edit`.
 
-## Gather context
+## Context
 
-Run these to understand the current state:
+When invoked from the `pr` command, the current PR on GitHub, git state, existing open PRs, and the repo PR template are inlined in the prompt. Use that output as the latest state. Do not re-run git or gh to gather it.
 
-- `gh pr view --json number,title,body` - the PR as it exists on GitHub today.
-- `git diff origin/main` - the source of truth for what ships.
-- The repo PR template if present (e.g. `.github/pull_request_template.md`).
+If those sections are absent, run `gh pr view --json number,title,body` and `git diff origin/main`.
 
-The diff is the source of truth for what ships. Use the current PR for what is on GitHub today, dropping stale sections that no longer apply. Align the body with the repo template when one is present.
+Use the current PR section for what is on GitHub today, dropping stale sections that no longer apply. The `git diff origin/main` section is the source of truth for what ships. When the repo PR template is not `none`, fill it in for the body.
 
 ## Readability standard
 

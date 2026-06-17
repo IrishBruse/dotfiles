@@ -80,10 +80,7 @@ function section(lines: string[], heading: string, body: string | undefined): vo
 }
 
 export function appendGitContext(lines: string[], repoRoot: string): void {
-  lines.push(
-    "",
-    "Git context (already collected at prompt time; do not re-run git fetch, git status, git branch, git log, git diff, or git show - this is the latest state):"
-  );
+  lines.push("", "Git context:");
 
   section(lines, "### git fetch origin main", fetchOriginMain(repoRoot));
   section(lines, "### sync with origin/main", syncWithMain(repoRoot));
@@ -138,9 +135,6 @@ export function appendGhPrView(
       : ["pr", "view", "--json", "number,title,body,url"];
 
   const out = runGh(repoRoot, args);
-  lines.push(
-    "",
-    "Current PR on GitHub (already collected at prompt time; do not re-run gh pr view - this is the latest state):"
-  );
+  lines.push("", "Current PR on GitHub:");
   section(lines, "### gh pr view --json number,title,body,url", out);
 }

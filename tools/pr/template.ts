@@ -22,7 +22,7 @@ export function appendPullRequestTemplate(
   repoRoot: string
 ): void {
   const template = readPullRequestTemplate(repoRoot);
-  lines.push("", "Repo PR template (fill this in for the PR body):");
+  lines.push("", "Repo PR template:");
   if (template === undefined) {
     lines.push("none");
     return;

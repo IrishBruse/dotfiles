@@ -7,14 +7,13 @@ description: Creates a new GitHub pull request with title and body from the curr
 
 Open a new GitHub PR from the current branch against `origin/main`, composing the **title** and **body**, then create it with `gh pr create`.
 
-## Gather context
+## Context
 
-Run these to understand the current state:
+When invoked from the `pr` command, git state, existing open PRs, and the repo PR template are inlined in the prompt. Use that output as the latest state. Do not re-run git or gh to gather it.
 
-- `git diff origin/main` - the source of truth for what ships.
-- The repo PR template if present (e.g. `.github/pull_request_template.md`).
+If those sections are absent, run `git diff origin/main` and check `.github/PULL_REQUEST_TEMPLATE.md`.
 
-The diff is the source of truth for what ships. Align the body with the repo template when one is present.
+The `git diff origin/main` section is the source of truth for what ships. When the repo PR template is not `none`, fill it in for the body. When existing open PRs is not `none`, edit that PR instead of creating a duplicate.
 
 ## Readability standard
 
