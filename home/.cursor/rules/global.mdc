@@ -1,32 +1,14 @@
 ---
-description: Global Rules
 alwaysApply: true
 ---
 
 **Users Name:** Ethan Conneely
 
-Never change your mode e.g. to plan mode.
-
-# Character Substitutions
-
-Always use plain ASCII. Apply these replacements in all prose output:
-
-| Unicode | Replace with |
-| --- | --- |
-| `—` em dash | `-` |
-| `–` en dash | `-` |
-| `…` ellipsis | `...` |
-| `"` `"` quotes | `"` |
-| `'` `'` quotes | `'` |
-| `≤` | `<=` |
-| `≥` | `>=` |
-
-No other Unicode characters in prose. Mermaid diagrams and Code is exempt.
-
-# Formatting Rules
+# Rules
 
 - No emojis of any kind
 - No semicolons in prose (code is exempt)
+- Always use plain ASCII no Unicode. Eg no em/en dash.
 
 # Agent failures
 
