@@ -8,10 +8,13 @@ export function printHelp(): void {
       "  pr update [number|url]",
       "",
       "Commands:",
-      "  create   Expand pr-create via interpolate, run Cursor agent (stream-json)",
-      "  update   Expand pr-update via interpolate, run Cursor agent, gh pr edit",
+      "  create   Run Cursor agent with the pr-create skill",
+      "  update   Run Cursor agent with the pr-update skill",
       "",
-      "  -h, --help   Show this message"
+      "  -h, --help   Show this message",
+      "",
+      "Environment:",
+      "  WORK=true    Require NOVACORE-<ticket> title prefix (valid recent Jira ticket)"
     ].join("\n")
   );
 }

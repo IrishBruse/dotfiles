@@ -6,15 +6,15 @@ const AGENT_TIMEOUT_MS = 1_200_000;
 
 const AGENT_ARGS = ["--trust", "-p", "--output-format", "stream-json"] as const;
 
-export async function runAgent(prompt: string, repoRoot: string): Promise<string> {
+export async function runAgent(prompt: string, repoRoot: string): Promise<void> {
   try {
-    return await spawnAgent("agent", prompt, repoRoot);
+    await spawnAgent("agent", prompt, repoRoot);
   } catch (e) {
     if (!isEnoent(e)) {
       throw e;
     }
+    await spawnAgent("cursor-agent", prompt, repoRoot);
   }
-  return await spawnAgent("cursor-agent", prompt, repoRoot);
 }
 
 function isEnoent(e: unknown): boolean {
@@ -29,14 +29,13 @@ function spawnAgent(
   command: string,
   prompt: string,
   repoRoot: string
-): Promise<string> {
+): Promise<void> {
   return new Promise((resolve, reject) => {
     const child = spawn(
       command,
       [...AGENT_ARGS, "--workspace", repoRoot, prompt],
       { cwd: repoRoot, stdio: ["ignore", "pipe", "inherit"] }
     );
-    const outChunks: string[] = [];
     let lineBuffer = "";
     const view = createAgentStreamRenderer();
     let finished = false;
@@ -61,7 +60,6 @@ function spawnAgent(
       lineBuffer = lines.pop() ?? "";
       for (const line of lines) {
         view.onLine(line);
-        outChunks.push(line);
       }
     });
     child.on("error", (e) => {
@@ -73,19 +71,13 @@ function spawnAgent(
       finish(() => {
         if (lineBuffer.trim() !== "") {
           view.onLine(lineBuffer);
-          outChunks.push(lineBuffer);
         }
         view.flush();
-        const text = outChunks.join("\n").trim();
         if (code !== 0) {
           reject(new Error(`${command} exited ${String(code)}`));
           return;
         }
-        if (text === "") {
-          reject(new Error(`${command} produced no stdout`));
-          return;
-        }
-        resolve(text);
+        resolve();
       });
     });
   });

@@ -1,21 +1,12 @@
 import process from "node:process";
 
-import { markdown } from "../../../markdown/api.ts";
 import { runAgent } from "../../agent.ts";
-import { createPullRequest } from "../../ghCreate.ts";
-import { getRepoRoot, resolveGitCwd } from "../../git.ts";
-import { buildPrCreatePrompt } from "../../prompt.ts";
-import { parsePrMarkdownFromAgentOutput } from "../../prMarkdown.ts";
+import { getCurrentBranch, getRepoRoot } from "../../git.ts";
+import { buildCreatePrompt } from "./prompt.ts";
 
 function fail(message: string): void {
   console.error(message);
   process.exitCode = 1;
-}
-
-function takeFlag(args: string[], flag: string): { rest: string[]; on: boolean } {
-  const on = args.includes(flag);
-  const rest = on ? args.filter((a) => a !== flag) : args;
-  return { rest, on };
 }
 
 export function runCreate(args: string[]): void {
@@ -27,73 +18,41 @@ export function runCreate(args: string[]): void {
 
 async function runCreateAsync(args: string[]): Promise<void> {
   if (args.includes("-h") || args.includes("--help")) {
-    console.log(`pr create - expand pr-create prompt, run Cursor agent, open PR
+    console.log(`pr create - run Cursor agent with the pr-create skill
+
+Usage:
+  pr create
 
 Options:
-  --prompt         Print expanded prompt to stdout and exit
-  --dry            Run agent only (no gh pr create)
-  -h, --help       This message
+  -h, --help   This message
 
 Environment:
-  PR_GIT_CWD       Git repo directory (default: cwd)
-  WORK=true          Enable NOVACORE title rules in pr-create.md
+  WORK=true    Require NOVACORE-<ticket> title prefix (valid recent Jira ticket)
 `);
     return;
   }
 
-  const { rest: a0, on: promptOnly } = takeFlag(args, "--prompt");
-  const { rest, on: dry } = takeFlag(a0, "--dry");
-  if (rest.length > 0) {
-    fail(`pr create: unexpected arguments: ${rest.join(" ")}`);
+  if (args.length > 0) {
+    fail(`pr create: unexpected arguments: ${args.join(" ")}`);
     return;
   }
 
-  const gitCwd = resolveGitCwd();
+  const cwd = process.cwd();
   let repoRoot: string;
+  let branch: string;
   try {
-    repoRoot = getRepoRoot(gitCwd);
+    repoRoot = getRepoRoot(cwd);
+    branch = getCurrentBranch(repoRoot);
   } catch (e) {
     fail(e instanceof Error ? e.message : String(e));
     return;
   }
 
-  let prompt: string;
-  try {
-    prompt = buildPrCreatePrompt(repoRoot);
-  } catch (e) {
-    fail(e instanceof Error ? e.message : String(e));
-    return;
-  }
+  const prompt = buildCreatePrompt(repoRoot, branch);
 
-  if (promptOnly) {
-    process.stdout.write(markdown(prompt.trimEnd()));
-    process.stdout.write("\n");
-    return;
-  }
-
-  let agentOutput: string;
   try {
-    agentOutput = await runAgent(prompt, repoRoot);
+    await runAgent(prompt, repoRoot);
   } catch (e) {
     fail(e instanceof Error ? e.message : `agent failed: ${String(e)}`);
-    return;
-  }
-
-  if (dry) {
-    return;
-  }
-
-  let parsed;
-  try {
-    parsed = parsePrMarkdownFromAgentOutput(agentOutput);
-  } catch (e) {
-    fail(e instanceof Error ? e.message : String(e));
-    return;
-  }
-
-  try {
-    createPullRequest(repoRoot, parsed.title, parsed.body);
-  } catch (e) {
-    fail(e instanceof Error ? e.message : String(e));
   }
 }

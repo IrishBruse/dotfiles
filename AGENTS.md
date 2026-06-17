@@ -39,7 +39,7 @@ Custom VS Code UI CSS.
 
 - `jira` - View, sync, and initialize local Jira board markdown (jira-tickets skill); pull or copy tickets
 - `confluence` - Clone a Confluence page subtree to local markdown via acli
-- `pr` - GitHub pull request helper: create, update, and review with agent + gh
+- `pr` - GitHub pull request helper: create and update via Cursor agent skills
 - `interpolate` - Expand markdown prompt templates (builtins, env, conditions, shell snippets)
 - `md` - Render piped or file markdown in the terminal
 - `endpoint` - Local HTTP catch-all that appends each request as one JSONL line; prints only the listen URL
