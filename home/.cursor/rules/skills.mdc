@@ -13,6 +13,10 @@ Keep each skill self-contained. Do not pull in or duplicate guidance from other 
 - the user asks to reference or align with another skill, or
 - the skill already references other skills and you are extending that linkage
 
+Do not add provenance or mirroring labels on skill content. Write the rules directly; do not prefix sections with where they came from.
+
+Bad: `Core rules (mirrored from ux-designer OWNER_INTENT)`
+
 ## User corrections
 
 When the user corrects skill text, update in place:
