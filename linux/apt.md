@@ -110,7 +110,7 @@
 |cmake|3.28.3-1build7|
 |cmake-extras|1.7-2|
 |cmatrix|2.0-6|
-|code|1.124.0-1781066808|
+|code|1.124.2-1781225536|
 |colord|1.4.7-1build2|
 |colord-data|1.4.7-1build2|
 |command-not-found|23.04.0|
@@ -189,7 +189,7 @@
 |dns-root-data|2024071801~ubuntu0.24.04.1|
 |docbook-xml|4.5-12|
 |dosfstools|4.2-1.1build1|
-|dotnet8|8.0.127-8.0.27-0ubuntu1~24.04.1|
+|dotnet8|8.0.128-8.0.28-0ubuntu1~24.04.1|
 |doxygen|1.9.8+ds-2build5|
 |dpkg|1.22.6ubuntu6.6|
 |dpkg-dev|1.22.6ubuntu6.6|
@@ -251,7 +251,7 @@
 |friendly-recovery|0.2.42|
 |ftp|20230507-2build3|
 |fuse3|3.14.0-5build1|
-|fwupd|1.9.34-0ubuntu1~24.04.1|
+|fwupd|2.0.20-1ubuntu2~24.04.1|
 |fwupd-signed|1.52+1.4-1|
 |g++-13-x86-64-linux-gnu|13.3.0-6ubuntu2~24.04.1|
 |g++-14|14.3.0-12ubuntu1~24~ppa1|
@@ -351,7 +351,7 @@
 |gir1.2-wnck-3.0|43.0-3build4|
 |gir1.2-xapp-1.0|3.2.2+zena|
 |gir1.2-xkl-1.0|5.4-5build2|
-|gir1.2-xmlb-2.0|0.3.18-1|
+|gir1.2-xmlb-2.0|0.3.24-1~ubuntu0.24.04.1|
 |gir1.2-xreader|4.6.5+wilma|
 |gir1.2-xviewer-3.0|3.4.16+zena|
 |git|1:2.43.0-1ubuntu7.3|
@@ -388,7 +388,7 @@
 |gnupg-utils|2.4.4-2ubuntu17.4|
 |golang|2:1.22~2build1|
 |google-android-cmdline-tools-13.0-installer|13.0+1710437545-3build2|
-|google-chrome-stable|149.0.7827.102-1|
+|google-chrome-stable|149.0.7827.114-1|
 |gpg|2.4.4-2ubuntu17.4|
 |gpg-agent|2.4.4-2ubuntu17.4|
 |gpgconf|2.4.4-2ubuntu17.4|
@@ -448,7 +448,7 @@
 |hyphen-en-us|2.8.8-7build3|
 |hypnotix|5.6|
 |hypridle|0.1.7-1ppa6|
-|hyprland|0.55.3-1ppa1|
+|hyprland|0.55.4-1ppa2|
 |hyprland-qt-support0|0.1.0-1ppa4|
 |hyprlock|0.9.5-1ppa2|
 |hyprpicker|0.4.7-1ppa1|
@@ -534,7 +534,7 @@
 |libapparmor1|4.0.1really4.0.1-0ubuntu0.24.04.7|
 |libappstream5|1.0.2-1build6|
 |libapt-pkg6.0t64|2.8.3|
-|libaquamarine11|0.12.0-1ppa1|
+|libaquamarine11|0.12.1-1ppa1|
 |libarchive13t64|3.7.2-2ubuntu0.7|
 |libarchive-tools|3.7.2-2ubuntu0.7|
 |libargon2-1|0~20190702+dfsg-4build1|
@@ -851,6 +851,7 @@
 |libfuse2t64|2.9.9-8.1build1|
 |libfuse3-3|3.14.0-5build1|
 |libfwupd2|1.9.34-0ubuntu1~24.04.1|
+|libfwupd3|2.0.20-1ubuntu2~24.04.1|
 |libgail18t64|2.24.33-4ubuntu1.1|
 |libgail-3-0t64|3.24.41-4ubuntu1.3|
 |libgail-common|2.24.33-4ubuntu1.1|
@@ -1754,7 +1755,7 @@
 |libxml2|2.9.14+dfsg-1.3ubuntu3.7|
 |libxml2|2.9.14+dfsg-1.3ubuntu3.7|
 |libxml2-dev|2.9.14+dfsg-1.3ubuntu3.7|
-|libxmlb2|0.3.18-1|
+|libxmlb2|0.3.24-1~ubuntu0.24.04.1|
 |libxml-namespacesupport-perl|1.12-2|
 |libxml-parser-perl|2.47-1ubuntu0.24.04.1|
 |libxml-sax-base-perl|1.09-3|
@@ -2349,7 +2350,7 @@
 |wamerican|2020.12.07-2|
 |warpinator|2.0.4+zena|
 |waybar|0.14.0-1ppa1|
-|wayland-protocols|1.47-1ppa1|
+|wayland-protocols|1.49-1ppa2|
 |wayland-utils|1.2.0-1build1|
 |wbritish|2020.12.07-2|
 |webapp-manager|1.4.6|
@@ -2419,14 +2420,14 @@
 |xreader|4.6.5+wilma|
 |xreader-common|4.6.5+wilma|
 |xreader-dbg|4.6.5+wilma|
-|xserver-common|2:21.1.12-1ubuntu1.5|
-|xserver-xephyr|2:21.1.12-1ubuntu1.5|
+|xserver-common|2:21.1.12-1ubuntu1.6|
+|xserver-xephyr|2:21.1.12-1ubuntu1.6|
 |xserver-xorg|1:7.7+23ubuntu3|
-|xserver-xorg-core|2:21.1.12-1ubuntu1.5|
+|xserver-xorg-core|2:21.1.12-1ubuntu1.6|
 |xserver-xorg-input-all|1:7.7+23ubuntu3|
 |xserver-xorg-input-libinput|1.4.0-1ubuntu24.04.1|
 |xserver-xorg-input-wacom|1:1.2.0-1ubuntu2|
-|xserver-xorg-legacy|2:21.1.12-1ubuntu1.5|
+|xserver-xorg-legacy|2:21.1.12-1ubuntu1.6|
 |xserver-xorg-video-amdgpu|23.0.0-1ubuntu0.24.04.1|
 |xserver-xorg-video-ati|1:22.0.0-1build1|
 |xserver-xorg-video-fbdev|1:0.5.0-2build2|
@@ -2436,7 +2437,7 @@
 |xserver-xorg-video-vesa|1:2.6.0-1ubuntu0.1|
 |xserver-xorg-video-vmware|1:13.4.0-1build1|
 |xterm|390-1ubuntu3|
-|xvfb|2:21.1.12-1ubuntu1.5|
+|xvfb|2:21.1.12-1ubuntu1.6|
 |xviewer|3.4.16+zena|
 |xviewer-dbg|3.4.16+zena|
 |xviewer-plugins|3.4.3+zena|

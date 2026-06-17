@@ -1212,7 +1212,8 @@
   "breadcrumbs.enabled": false,
   "settingsSync.ignoredSettings": [
     "editor.mouseWheelScrollSensitivity",
-    "terminal.integrated.gpuAcceleration"
+    "terminal.integrated.gpuAcceleration",
+    "update.mode"
   ],
   "editor.bracketPairColorization.enabled": false,
   "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
@@ -1614,7 +1615,6 @@
   "workbench.editor.useModal": "off",
   "markdown.extension.tableFormatter.enabled": false,
   "workbench.browser.showInTitleBar": true,
-  "network.meteredConnection": "off",
   "material-icon-theme.hidesExplorerArrows": false,
   "markdownInlineEditor.links.singleClickOpen": true,
   "prettier.trailingComma": "none",
@@ -1630,5 +1630,6 @@
   "workbench.activityBar.location": "top",
   "chat.disableAIFeatures": true,
   "terminal.integrated.stickyScroll.enabled": false,
-  "markdownInlineEditor.tables.renderingMode": "inline"
+  "markdownInlineEditor.tables.renderingMode": "inline",
+  "excalidraw.theme": "dark"
 }
