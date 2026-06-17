@@ -54,3 +54,5 @@ plugins/
 
 !.gitignore
 !agent-config.json
+
+rules/gp-rules.mdc
