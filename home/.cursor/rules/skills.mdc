@@ -1,0 +1,23 @@
+---
+description: Conventions when authoring or editing SKILL.md files
+globs: **/SKILL.md
+alwaysApply: false
+---
+
+# Skill authoring
+
+## Self-contained
+
+Keep each skill self-contained. Do not pull in or duplicate guidance from other skills unless:
+
+- the user asks to reference or align with another skill, or
+- the skill already references other skills and you are extending that linkage
+
+## User corrections
+
+When the user corrects skill text, update in place:
+
+- State the new guidance only. Remove the old wording.
+- Do not restate what was wrong, add "do not" negations for the prior rule, or keep both old and new versions.
+
+Example: if the skill said use format A and the user wants B, the skill should describe B only. Do not add "do not use A" or a note that it used to be A.
