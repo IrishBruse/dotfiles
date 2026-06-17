@@ -1,3 +1,4 @@
+import { appendGhPrView, appendGitContext } from "../../gitContext.ts";
 import { appendOpenPrsForBranch } from "../../openPrs.ts";
 import { appendPullRequestTemplate } from "../../template.ts";
 import { isWorkPolicy, WORK_TITLE_REQUIREMENT } from "../../workPolicy.ts";
@@ -16,6 +17,8 @@ export function buildUpdatePrompt(
   if (prTarget !== undefined && prTarget !== "") {
     lines.push(`PR: ${prTarget}`);
   }
+  appendGhPrView(lines, repoRoot, prTarget);
+  appendGitContext(lines, repoRoot);
   appendOpenPrsForBranch(lines, repoRoot, branch);
   if (isWorkPolicy()) {
     lines.push("", WORK_TITLE_REQUIREMENT);

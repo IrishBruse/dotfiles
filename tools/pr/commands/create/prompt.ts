@@ -1,3 +1,4 @@
+import { appendGitContext } from "../../gitContext.ts";
 import { appendOpenPrsForBranch } from "../../openPrs.ts";
 import { appendPullRequestTemplate } from "../../template.ts";
 import { isWorkPolicy, WORK_TITLE_REQUIREMENT } from "../../workPolicy.ts";
@@ -10,6 +11,7 @@ export function buildCreatePrompt(repoRoot: string, branch: string): string {
     `Branch: ${branch}`,
     "Base: origin/main"
   ];
+  appendGitContext(lines, repoRoot);
   appendOpenPrsForBranch(lines, repoRoot, branch);
   if (isWorkPolicy()) {
     lines.push("", WORK_TITLE_REQUIREMENT);
