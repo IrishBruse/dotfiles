@@ -1,7 +1,6 @@
 ---
-description: Conventions when authoring or editing SKILL.md files
+description: Conventions when authoring or editing skills
 globs: **/SKILL.md
-alwaysApply: false
 ---
 
 # Skill authoring
@@ -15,7 +14,9 @@ Keep each skill self-contained. Do not pull in or duplicate guidance from other 
 
 Do not add provenance or mirroring labels on skill content. Write the rules directly; do not prefix sections with where they came from.
 
-Bad: `Core rules (mirrored from ux-designer OWNER_INTENT)`
+Bad: `Core rules (mirrored from other-skill)`
+
+Reference other skills by name only, in backticks: `skill-name-here`. Do not use file paths (e.g. `.cursor/skills/other-skill/SKILL.md`, `reference.md`).
 
 ## User corrections
 
