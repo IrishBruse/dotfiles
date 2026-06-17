@@ -1,6 +1,7 @@
 ---
 name: questions
 description: Structured Q&A elicitation loop that gathers requirements one decision at a time. Use when clarifying requirements, preferences, or design decisions before proceeding with a task.
+disable-model-invocation: true
 ---
 
 ## Rules
@@ -11,29 +12,18 @@ Walk down each branch of the design tree, resolving dependencies between decisio
 **Explore before asking.** If a question can be answered by reading the
 codebase, docs, or context, do that first and skip the question entirely.
 
-**One question per turn.** Never batch multiple unrelated questions into one
-message. Ask the most important unknown first. Later questions may depend on
-the answer.
-
 **Provide a recommendation.** For every question, state what you would do
 by default and why. This lets the user accept your judgment with a single
 keypress rather than having to think from scratch.
 
 ## Response format
 
-Use this exact layout nothing after it when asking a question:
+Before calling the AskQuestion tool with the 3 questions print this:
 
 **Context:**
 
 [One or two sentences max. Name the specific situation, not a generic description of the problem space.]
 
-**Question:**
-
-[1 line question. Avoid jargon. End with a `?`]
-
-1. [Answer 1]
-2. [Answer 2]
-3. [Answer 3]
-
 **Recommendation:** (Answer 1/2/3)
 [brief reason what makes it the safest default]
+
