@@ -72,12 +72,12 @@
     "showLineNumbers": false,
     "showThinkingBlocks": true,
     "showStatusIndicators": false,
-    "showStatusLineRunningTime": false
+    "showStatusLineRunningTime": true
   },
   "notifications": true,
   "hints": false,
   "rewind": true,
-  "suggestNextPrompt": false,
+  "suggestNextPrompt": true,
   "statusLine": {
     "type": "command",
     "command": "~/.cursor/statusline.mjs",
@@ -85,10 +85,10 @@
   },
   "channel": "prod",
   "model": {
-    "modelId": "gpt-5.5",
-    "displayModelId": "gpt-5.5",
-    "displayName": "GPT-5.5 Medium",
-    "displayNameShort": "GPT-5.5 Medium",
+    "modelId": "composer-2.5",
+    "displayModelId": "composer-2.5",
+    "displayName": "Composer 2.5",
+    "displayNameShort": "Composer 2.5",
     "aliases": [],
     "maxMode": false
   },
@@ -157,19 +157,22 @@
         "id": "fast",
         "value": "false"
       }
-    ]
-  },
-  "selectedModel": {
-    "modelId": "gpt-5.5",
-    "parameters": [
-      {
-        "id": "context",
-        "value": "272k"
-      },
+    ],
+    "gpt-5.3-codex": [
       {
         "id": "reasoning",
-        "value": "medium"
+        "value": "low"
       },
+      {
+        "id": "fast",
+        "value": "true"
+      }
+    ],
+    "default": []
+  },
+  "selectedModel": {
+    "modelId": "composer-2.5",
+    "parameters": [
       {
         "id": "fast",
         "value": "false"
@@ -187,7 +190,7 @@
   "showSandboxIntro": false,
   "runEverythingSettingsPromptStreak": 0,
   "attribution": {
-    "attributeCommitsToAgent": true,
-    "attributePRsToAgent": true
+    "attributeCommitsToAgent": false,
+    "attributePRsToAgent": false
   }
 }
