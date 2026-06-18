@@ -62,20 +62,16 @@ Read only files that exist. Start with index/type files; read implementation fil
 
 Extract and categorize the following from the files:
 
-#### Exported types and interfaces
+#### Exported types
 
-Every `export interface`, `export type`, and `export enum`. Include the full body.
+Every public type in the source language. Examples: `interface`, `type`, `enum` (TypeScript); `class`, `struct`, `interface`, `record` (C#); `TypedDict`, dataclass, Protocol (Python); and equivalents elsewhere. Include component props types, options objects, request/response shapes, and error types. Include the full definition. Pull descriptions from doc comments (JSDoc, XML docs, etc.) where present.
 
 #### Exported functions, classes, and constants
 
-Every `export function`, `export const`, `export class`, `export default`. For each, capture:
+Every `export function`, `export const`, `export class`, `export default` (or language equivalent). For each, capture:
 
 - Full signature (params + return type)
-- Brief purpose (from JSDoc, name, or inferred usage - label inferred as `(inferred)`)
-
-#### Props (React / UI components only)
-
-If the target is a component, extract the props interface separately. Capture each prop's type, whether it is required, and its description.
+- Brief purpose (from docs, name, or inferred usage - label inferred as `(inferred)`)
 
 #### Dependencies (caller-relevant only)
 
@@ -100,11 +96,13 @@ Produce the breakdown as a clean Markdown document:
 
 ## Exported Types
 
+Document every public type in source-language syntax. Use the matching fence language (`ts`, `csharp`, `python`, etc.). No separate props table - props, options, and DTOs belong here as ordinary types.
+
 ### `TypeName`
-```ts
+```<lang>
 <full type definition>
 ```
-> <description or "(inferred)">
+> <description from docs, or "(inferred)">
 
 ---
 
@@ -120,14 +118,6 @@ Methods:
 
 ---
 
-## Props _(components only)_
-
-| Prop | Type | Required | Description |
-|------|------|:--------:|-------------|
-| `propName` | `type` | yes / - | description |
-
----
-
 ## Dependencies
 
 | Import | Source | Relevance to caller |
@@ -138,10 +128,8 @@ Methods:
 
 ## Usage Example
 
-```ts
+```<lang>
 // Minimal working usage
-import { Thing } from '<resolved-path>'
-
 <concise snippet>
 ```
 ````
@@ -155,6 +143,6 @@ import { Thing } from '<resolved-path>'
 | No files found | Say so clearly; suggest alternative search terms or ask the user to confirm the path |
 | Directory with no index | Summarise all exported symbols across top-level files in the directory |
 | Private / internal symbols | Omit anything prefixed `_`, marked `@internal`, or not exported |
-| Plain JS (no types) | Document parameters and return values as inferred from usage; note the absence of types |
-| Mixed TS + JSDoc | Treat JSDoc types as equivalent to TypeScript types |
+| Untyped source | Document parameters and return values as inferred from usage; note the absence of types |
+| Docs + types split across comments | Treat JSDoc, XML docs, and inline annotations as part of the type surface |
 | Very large files | Focus on the public surface only; do not read private implementation bodies unless needed to infer types |
