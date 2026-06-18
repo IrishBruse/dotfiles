@@ -1,5 +1,6 @@
 import { appendGhPrView, appendGitContext } from "../../gitContext.ts";
 import { appendOpenPrsForBranch } from "../../openPrs.ts";
+import { inlinedSkillLines } from "../../skillPrompt.ts";
 import { appendPullRequestTemplate } from "../../template.ts";
 import { isWorkPolicy, WORK_TITLE_REQUIREMENT } from "../../workPolicy.ts";
 
@@ -9,7 +10,7 @@ export function buildUpdatePrompt(
   prTarget?: string
 ): string {
   const lines = [
-    "Use the `pr-update` skill to refresh this pull request title and body.",
+    ...inlinedSkillLines("pr-update"),
     "Context below was collected at prompt time. Use it as the latest state; do not re-run git or gh to gather it.",
     "",
     `Repo: ${repoRoot}`,

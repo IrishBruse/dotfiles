@@ -100,7 +100,11 @@ async function runFix(
   prTarget: string | undefined,
   printOnly: boolean
 ): Promise<void> {
-  const { prompt, failures } = buildFixPrompt(repoRoot, branch, prTarget);
+  const { prompt, failures, unresolvedThreads } = buildFixPrompt(
+    repoRoot,
+    branch,
+    prTarget
+  );
 
   if (printOnly) {
     process.stdout.write(prompt);
@@ -108,8 +112,10 @@ async function runFix(
     return;
   }
 
-  if (failures.length === 0) {
-    console.error("pr fix: all checks passing");
+  if (failures.length === 0 && unresolvedThreads.length === 0) {
+    console.error(
+      "pr fix: all checks passing and no unresolved review comments"
+    );
     return;
   }
 
