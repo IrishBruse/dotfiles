@@ -29,8 +29,6 @@ alias ll="eza -la --no-permissions --group-directories-first"
 alias reload="clear;exec fish"
 alias grep rg
 
-alias t="v ~/TODO.md"
-
 alias showkey="fish_key_reader --verbose"
 
 abbr neofetch fastfetch
