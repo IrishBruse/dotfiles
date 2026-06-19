@@ -84,10 +84,10 @@
   },
   "channel": "prod",
   "model": {
-    "modelId": "gpt-5.5",
-    "displayModelId": "gpt-5.5",
-    "displayName": "GPT-5.5 Medium",
-    "displayNameShort": "GPT-5.5 Medium",
+    "modelId": "composer-2.5",
+    "displayModelId": "composer-2.5",
+    "displayName": "Composer 2.5",
+    "displayNameShort": "Composer 2.5",
     "aliases": [],
     "maxMode": false
   },
@@ -170,16 +170,8 @@
     "default": []
   },
   "selectedModel": {
-    "modelId": "gpt-5.5",
+    "modelId": "composer-2.5",
     "parameters": [
-      {
-        "id": "context",
-        "value": "272k"
-      },
-      {
-        "id": "reasoning",
-        "value": "medium"
-      },
       {
         "id": "fast",
         "value": "false"

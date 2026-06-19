@@ -1,4 +1,19 @@
+.device steelseries {
+  vendor:  0x1038,
+  product: 0x1634,
+}
+
+.remap caps_lock [device steelseries]: f19
+
+.define editor_apps ["Code", "Cursor"]
+
 ctrl - t : open -na /Applications/Ghostty.app
 ctrl - e : open -a /Applications/Marta.app
 ctrl - j : open https://globalization-partners.atlassian.net/jira/software/c/projects/NOVACORE/boards/691
+shift + ctrl - s : screencapture -i -c
 cmd + shift - escape : open -a "Activity Monitor"
+
+cmd - left[ @editor_apps ~; * | alt - left ]
+cmd - right[ @editor_apps ~; * | alt - right ]
+cmd - backspace[ @editor_apps ~; * | alt - backspace ]
+cmd - delete[ @editor_apps ~; * | alt - delete ]

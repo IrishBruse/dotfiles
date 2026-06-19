@@ -7,7 +7,7 @@
 
 ## Shortcuts
 
-- TODO: add here
+- macOS cmd+left/right/backspace word editing: `home/Library/KeyBindings/DefaultKeyBinding.dict` (Cocoa apps). Restart apps after changes. Terminals like Ghostty need their own config; Cursor/VS Code use `keybindings.json`.
 
 ## Repo layout
 

@@ -7,6 +7,7 @@ tap "cloudflare/cloudflare"
 tap "databricks/tap", trusted: true
 tap "dotnet/dev-proxy"
 tap "gp-nova/devx-cli", "https://github.com/gp-nova/devx-cli.git", trusted: true
+tap "jackielii/tap"
 tap "kreuzberg-dev/tap"
 tap "localstack/tap"
 # Mozilla CA certificate store
@@ -110,6 +111,8 @@ cask "obs"
 cask "postman"
 # Move and resize windows using keyboard shortcuts or snap areas
 cask "rectangle"
+# Simple hotkey daemon written in Zig
+cask "jackielii/tap/skhd-zig", trusted: true
 # Keystroke launcher
 cask "ueli"
 go "github.com/go-delve/delve/cmd/dlv"
