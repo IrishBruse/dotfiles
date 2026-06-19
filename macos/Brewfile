@@ -96,8 +96,6 @@ cask "gimp"
 cask "git-credential-manager"
 # Open-source video transcoder
 cask "handbrake-app"
-# Keyboard customiser
-cask "karabiner-elements"
 # Customise mouse behavior
 cask "linearmouse"
 # Clipboard manager

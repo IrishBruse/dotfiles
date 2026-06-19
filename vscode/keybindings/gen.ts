@@ -46,6 +46,38 @@ function orderKeybind(b: Keybind): Keybind {
   return o;
 }
 
+function swapControlCommandInKeyChord(key: string): string {
+  return key
+    .split(" ")
+    .map((part) =>
+      part
+        .split("+")
+        .map((token) => {
+          if (token === "ctrl") return "cmd";
+          if (token === "cmd") return "ctrl";
+          return token;
+        })
+        .join("+"),
+    )
+    .join(" ");
+}
+
+function resolveKeybindForOs(b: Keybind, os: OS): Keybind {
+  const keyOverride = os === "macos" ? b.mac : b.linux;
+  const key = keyOverride ?? b.key;
+  const resolved: Keybind = {
+    key: os === "macos" ? swapControlCommandInKeyChord(key) : key,
+  };
+  if (b.command !== undefined) resolved.command = b.command;
+  if (b.args !== undefined) resolved.args = b.args;
+  if (b.when !== undefined) resolved.when = b.when;
+  return resolved;
+}
+
+function resolveKeybindsForOs(bindings: Keybind[], os: OS): Keybind[] {
+  return bindings.map((binding) => resolveKeybindForOs(binding, os));
+}
+
 async function writeFormattedCustomJson(bindings: Keybind[]): Promise<void> {
   const doc = {
     $schema: "./keybindings.schema.json",
@@ -72,8 +104,8 @@ function argsMatch(a?: Keybind["args"], b?: Keybind["args"]): boolean {
  * chord (same key, when, args). Those entries cancel; omitting both restores VS Code
  * defaults for that chord.
  *
- * Used on macOS only: Linux negatives + linux defaults dedupe to nothing, so the Linux
- * build skips this path entirely and emits `custom` only.
+ * Used on macOS only: macOS negatives + swapped Linux defaults dedupe to
+ * native defaults where the command already matches.
  */
 function dedupeCancellingNegativePositivePairs(
   negatives: Keybind[],
@@ -122,9 +154,11 @@ async function buildMacosKeybinds(custom: Keybind[]): Promise<Keybind[]> {
   const rawNegatives = await loadJson(
     "defaultKeybinds/macos.negative.keybindings.json",
   );
-  const linuxDefaults = await loadJson(
-    "defaultKeybinds/linux.keybindings.json",
+  const linuxDefaults = resolveKeybindsForOs(
+    await loadJson("defaultKeybinds/linux.keybindings.json"),
+    "macos",
   );
+  const customForMacos = resolveKeybindsForOs(custom, "macos");
   const { negatives, positives } = dedupeCancellingNegativePositivePairs(
     rawNegatives,
     linuxDefaults,
@@ -136,7 +170,7 @@ async function buildMacosKeybinds(custom: Keybind[]): Promise<Keybind[]> {
     SEPARATOR,
     ...positives,
     SEPARATOR,
-    ...custom,
+    ...customForMacos,
   ];
 }
 
@@ -157,5 +191,5 @@ await writeKeybindingsFile(
 await writeKeybindingsFile("../../home/.config/Code/User/keybindings.json", [
   osMarker("linux"),
   SEPARATOR,
-  ...custom,
+  ...resolveKeybindsForOs(custom, "linux"),
 ]);
