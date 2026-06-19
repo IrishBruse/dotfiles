@@ -35,6 +35,7 @@ Macos vscode settings
 ### vscode/keybindings
 
 TypeScript and JSON used to generate VS Code keybindings.
+Run `gen.ts` from `vscode/keybindings`; it uses relative paths for `defaultKeybinds/`.
 
 ### vscode/theme
 
