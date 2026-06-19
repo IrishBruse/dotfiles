@@ -1291,7 +1291,7 @@
   "terminal.integrated.enablePersistentSessions": false,
   "terminal.integrated.enableVisualBell": true,
   "terminal.integrated.hideOnStartup": "always",
-  "terminal.integrated.ignoreBracketedPasteMode": true,
+  "terminal.integrated.ignoreBracketedPasteMode": false,
   "terminal.integrated.persistentSessionReviveProcess": "never",
   "terminal.integrated.shellIntegration.decorationsEnabled": "overviewRuler",
   "terminal.integrated.tabs.title": "${sequence}",
