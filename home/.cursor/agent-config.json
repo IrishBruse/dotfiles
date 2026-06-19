@@ -24,7 +24,6 @@
       "Shell(echo)",
       "Shell(find)",
       "Shell(gh auth status)",
-      "Shell(gh issue view)",
       "Shell(gh pr diff)",
       "Shell(gh pr list)",
       "Shell(gh pr view)",
@@ -72,12 +71,12 @@
     "showLineNumbers": false,
     "showThinkingBlocks": true,
     "showStatusIndicators": false,
-    "showStatusLineRunningTime": true
+    "showStatusLineRunningTime": false
   },
   "notifications": true,
   "hints": false,
   "rewind": true,
-  "suggestNextPrompt": true,
+  "suggestNextPrompt": false,
   "statusLine": {
     "type": "command",
     "command": "~/.cursor/statusline.mjs",
@@ -85,10 +84,10 @@
   },
   "channel": "prod",
   "model": {
-    "modelId": "composer-2.5",
-    "displayModelId": "composer-2.5",
-    "displayName": "Composer 2.5",
-    "displayNameShort": "Composer 2.5",
+    "modelId": "gpt-5.5",
+    "displayModelId": "gpt-5.5",
+    "displayName": "GPT-5.5 Medium",
+    "displayNameShort": "GPT-5.5 Medium",
     "aliases": [],
     "maxMode": false
   },
@@ -151,7 +150,7 @@
       },
       {
         "id": "effort",
-        "value": "medium"
+        "value": "low"
       },
       {
         "id": "fast",
@@ -171,8 +170,16 @@
     "default": []
   },
   "selectedModel": {
-    "modelId": "composer-2.5",
+    "modelId": "gpt-5.5",
     "parameters": [
+      {
+        "id": "context",
+        "value": "272k"
+      },
+      {
+        "id": "reasoning",
+        "value": "medium"
+      },
       {
         "id": "fast",
         "value": "false"
@@ -190,7 +197,7 @@
   "showSandboxIntro": false,
   "runEverythingSettingsPromptStreak": 0,
   "attribution": {
-    "attributeCommitsToAgent": false,
-    "attributePRsToAgent": false
+    "attributeCommitsToAgent": true,
+    "attributePRsToAgent": true
   }
 }
