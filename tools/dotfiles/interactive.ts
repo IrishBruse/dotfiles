@@ -5,8 +5,13 @@ import process from "node:process";
 import readline from "node:readline";
 import { fileURLToPath } from "node:url";
 
-import { findPromotableFolders, promotePartialFolder } from "./partial.ts";
-import { paint, printError, stderrColorEnabled, stdoutColorEnabled } from "./paint.ts";
+import {
+  findPartialFolders,
+  promotePartialFolder,
+  type DestinationEntry,
+  type PartialFolderAnalysis
+} from "./partial.ts";
+import { paint, printError, stdoutColorEnabled } from "./paint.ts";
 import { parseStowOutput } from "./parse.ts";
 import type { StowOptions } from "./types.ts";
 
@@ -15,7 +20,22 @@ const STOW_PACKAGE = "home";
 const STOW_TARGET = homedir();
 const PACKAGE_ROOT = path.join(REPO_ROOT, STOW_PACKAGE);
 
-const HELP_CONTROLS = "j/k up/down: move  Enter: promote  q/Esc: done";
+const ESC = "\u001B";
+/** Enter alternate screen buffer (preserves the user's terminal scrollback). */
+const ENTER_ALT = `${ESC}[?1049h`;
+/** Leave alternate screen buffer (restores prior terminal contents). */
+const LEAVE_ALT = `${ESC}[?1049l`;
+const HOME = `${ESC}[H`;
+const CLR_EOS = `${ESC}[J`;
+const CLR_EOL = `${ESC}[K`;
+const HIDE_CURSOR = `${ESC}[?25l`;
+const SHOW_CURSOR = `${ESC}[?25h`;
+
+const HELP_PROMOTABLE =
+  "j/k up/down: move  Enter: promote  q/Esc: done";
+const HELP_BLOCKED =
+  "j/k up/down: move  Enter: blocked  q/Esc: done";
+const MAX_PREVIEW_ENTRIES = 12;
 
 function stowUnchangedPaths(): string[] {
   const result = spawnSync(
@@ -36,34 +56,101 @@ function stowUnchangedPaths(): string[] {
   return parseStowOutput(lines).unchanged;
 }
 
-function drawList(
-  folders: string[],
+function entryLabel(entry: DestinationEntry, color: boolean): string {
+  const name = paint(color, "path", entry.name.padEnd(22));
+  switch (entry.kind) {
+    case "stowed-symlink":
+      return `${name}${paint(color, "dim", "symlink ")}${paint(color, "ok", entry.detail)}`;
+    case "other-symlink":
+      return `${name}${paint(color, "dim", "symlink ")}${paint(color, "warn", entry.detail)}`;
+    case "directory":
+      return `${name}${paint(color, "warn", entry.detail)}`;
+    case "file":
+      return `${name}${paint(color, "warn", entry.detail)}`;
+  }
+}
+
+function previewLines(
+  folder: PartialFolderAnalysis | undefined,
+  color: boolean
+): string[] {
+  if (!folder) {
+    return [];
+  }
+
+  const lines: string[] = [
+    "",
+    `  ${paint(color, "label", "why")} ${folder.summary}`,
+    `  ${paint(color, "label", "destination")}`
+  ];
+
+  const shown = folder.entries.slice(0, MAX_PREVIEW_ENTRIES);
+  for (const entry of shown) {
+    lines.push(`    ${entryLabel(entry, color)}`);
+  }
+  const hidden = folder.entries.length - shown.length;
+  if (hidden > 0) {
+    lines.push(`    ${paint(color, "dim", `... ${hidden} more`)}`);
+  }
+
+  if (folder.promotable) {
+    lines.push(
+      "",
+      `  ${paint(color, "dim", "Enter promotes to a single directory symlink")}`
+    );
+  } else if (folder.blockerCount > 0) {
+    lines.push(
+      "",
+      `  ${paint(color, "warn", "cannot promote until destination has only dotfiles symlinks")}`
+    );
+  } else {
+    lines.push(
+      "",
+      `  ${paint(color, "warn", "cannot promote: package is not fully stowed under this folder")}`
+    );
+  }
+
+  return lines;
+}
+
+function renderLines(
+  folders: PartialFolderAnalysis[],
   selected: number,
-  stdout: NodeJS.WriteStream
-): void {
+  flash: { role: "ok" | "bad"; message: string } | undefined
+): string[] {
   const color = stdoutColorEnabled();
-  stdout.write("\x1b[?25l");
-  stdout.write("\x1b[H\x1b[2J");
-  stdout.write(
-    `${paint(color, "label", "dotfiles")} ${paint(color, "dim", "promote partial folder to full directory symlink")}\n\n`
-  );
+  const selectedFolder = folders[selected];
+  const help =
+    selectedFolder?.promotable === true ? HELP_PROMOTABLE : HELP_BLOCKED;
+
+  const lines: string[] = [
+    `${paint(color, "label", "dotfiles")} ${paint(color, "dim", "partial folders (files stowed inside, not the directory)")}`,
+    ""
+  ];
 
   if (folders.length === 0) {
-    stdout.write(paint(color, "ok", "  no partial folders left\n"));
+    lines.push(paint(color, "ok", "  no partial folders"));
   } else {
     for (let i = 0; i < folders.length; i++) {
       const folder = folders[i]!;
       const marker = i === selected ? paint(color, "label", ">") : " ";
-      const name =
-        i === selected
-          ? paint(color, "ok", folder)
-          : paint(color, "path", folder);
-      stdout.write(`  ${marker} ${name}\n`);
+      const nameRole = i === selected ? "ok" : folder.promotable ? "path" : "warn";
+      const suffix = folder.promotable
+        ? ""
+        : paint(color, "dim", "  (blocked)");
+      const name = paint(color, nameRole, folder.folderPath);
+      lines.push(`  ${marker} ${name}${suffix}`);
     }
   }
 
-  stdout.write(`\n${paint(color, "dim", HELP_CONTROLS)}\n`);
-  stdout.write("\x1b[?25h");
+  lines.push(...previewLines(selectedFolder, color));
+
+  if (flash) {
+    lines.push("", `  ${paint(color, flash.role, flash.message)}`);
+  }
+
+  lines.push("", paint(color, "dim", help));
+  return lines;
 }
 
 /**
@@ -78,16 +165,31 @@ export async function runPartialPromoteInteractive(_options: StowOptions): Promi
 
   const stdin = process.stdin;
   const stdout = process.stdout;
-  let folders = findPromotableFolders(stowUnchangedPaths(), PACKAGE_ROOT, STOW_TARGET);
+  let folders = findPartialFolders(stowUnchangedPaths(), PACKAGE_ROOT, STOW_TARGET);
 
   if (folders.length === 0) {
     const color = stdoutColorEnabled();
-    console.log(paint(color, "dim", "  no partial folders to promote"));
+    console.log(paint(color, "dim", "  no partial folders"));
     return 0;
   }
 
   let selected = 0;
+  let flash: { role: "ok" | "bad"; message: string } | undefined;
+  let prevViewportLines = 0;
   let cleaned = false;
+
+  const draw = (): void => {
+    const lines = renderLines(folders, selected, flash);
+    let buf = HOME;
+    for (const line of lines) {
+      buf += line + CLR_EOL + "\r\n";
+    }
+    if (lines.length < prevViewportLines) {
+      buf += CLR_EOS;
+    }
+    stdout.write(buf);
+    prevViewportLines = lines.length;
+  };
 
   const cleanup = (): void => {
     if (cleaned) {
@@ -97,19 +199,34 @@ export async function runPartialPromoteInteractive(_options: StowOptions): Promi
     if (stdin.isTTY) {
       stdin.setRawMode(false);
     }
+    stdout.write(SHOW_CURSOR + LEAVE_ALT);
     stdin.pause();
-    stdout.write("\x1b[?25h");
   };
 
-  const finish = (): void => {
+  const finish = (code: number, resolve: (value: number) => void): void => {
     cleanup();
-    stdout.write("\n");
+    resolve(code);
   };
+
+  process.on("exit", cleanup);
+  process.on("SIGINT", () => {
+    cleanup();
+    process.exit(130);
+  });
+  process.on("SIGTERM", () => {
+    cleanup();
+    process.exit(143);
+  });
+  process.on("SIGHUP", () => {
+    cleanup();
+    process.exit(129);
+  });
 
   readline.emitKeypressEvents(stdin);
   stdin.setRawMode(true);
   stdin.resume();
-  drawList(folders, selected, stdout);
+  stdout.write(ENTER_ALT + HIDE_CURSOR + HOME + CLR_EOS);
+  draw();
 
   return await new Promise<number>((resolve) => {
     const onKeypress = (_str: string, key: readline.Key | undefined): void => {
@@ -117,10 +234,11 @@ export async function runPartialPromoteInteractive(_options: StowOptions): Promi
         return;
       }
 
+      flash = undefined;
+
       if (key.ctrl && key.name === "c") {
         stdin.off("keypress", onKeypress);
-        finish();
-        resolve(130);
+        finish(130, resolve);
         return;
       }
 
@@ -128,46 +246,49 @@ export async function runPartialPromoteInteractive(_options: StowOptions): Promi
         case "q":
         case "escape":
           stdin.off("keypress", onKeypress);
-          finish();
-          resolve(0);
+          finish(0, resolve);
           return;
         case "up":
         case "k":
           if (folders.length > 0) {
             selected = (selected - 1 + folders.length) % folders.length;
-            drawList(folders, selected, stdout);
+            draw();
           }
           return;
         case "down":
         case "j":
           if (folders.length > 0) {
             selected = (selected + 1) % folders.length;
-            drawList(folders, selected, stdout);
+            draw();
           }
           return;
         case "return": {
-          const folderPath = folders[selected];
-          if (!folderPath) {
+          const folder = folders[selected];
+          if (!folder) {
+            return;
+          }
+          if (!folder.promotable) {
+            draw();
             return;
           }
           const result = promotePartialFolder(
-            folderPath,
+            folder.folderPath,
             REPO_ROOT,
             STOW_PACKAGE,
             STOW_TARGET
           );
-          const color = stdoutColorEnabled();
-          const errColor = stderrColorEnabled();
           if (result.ok) {
-            stdout.write(
-              `\n${paint(color, "ok", `promoted ${folderPath}`)}\n`
-            );
+            flash = {
+              role: "ok",
+              message: `promoted ${folder.folderPath}`
+            };
           } else {
-            stdout.write(
-              `\n${paint(errColor, "bad", `failed ${folderPath}: ${result.error ?? "unknown error"}`)}\n`
-            );
+            flash = {
+              role: "bad",
+              message: `failed ${folder.folderPath}: ${result.error ?? "unknown error"}`
+            };
           }
-          folders = findPromotableFolders(
+          folders = findPartialFolders(
             stowUnchangedPaths(),
             PACKAGE_ROOT,
             STOW_TARGET
@@ -175,7 +296,7 @@ export async function runPartialPromoteInteractive(_options: StowOptions): Promi
           if (selected >= folders.length) {
             selected = Math.max(0, folders.length - 1);
           }
-          drawList(folders, selected, stdout);
+          draw();
           return;
         }
         default:

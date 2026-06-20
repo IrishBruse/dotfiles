@@ -31,8 +31,8 @@ Options:
   -R, --restow     Restow (unstow then stow)
   -v, --verbose    Show unchanged paths as a tree (dim nodes are grouping only)
   -i, --interactive
-                   After stow, pick partial folders to promote to full directory
-                   symlinks (requires a terminal; stow action only)
+                   After stow, browse partial folders with a destination preview;
+                   promote ready folders to full directory symlinks (TTY, stow only)
   --raw            Print raw GNU stow output (-v 3)
   -h, --help       This help
 `);
