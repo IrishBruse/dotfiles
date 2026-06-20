@@ -14,7 +14,7 @@
 ### home/
 
 Files here mirror `~` and are meant to be stowed into the real home directory (`.config`, `.cursor`, `.agents`, VS Code `Code/User`, fish, hypr, etc.). 
-Stow via `stow.fish` at the repo root (macOS and Linux).
+Stow via the `dotfiles` CLI (`tools/dotfiles`) or `dotfiles` on PATH after `npm link` in `tools/`.
 
 ### linux/
 
@@ -50,4 +50,5 @@ Custom VS Code UI CSS.
 - `md` - Render piped or file markdown in the terminal
 - `endpoint` - Local HTTP catch-all that appends each request as one JSONL line; prints only the listen URL
 - `memory` - Append one-line lessons to the memory skill; optional detail in references/
+- `dotfiles` - Stow `home/` into ~ with a colored summary (linked, removed, unchanged)
 - `sprint` - Print previous, current, and next sprint date blocks, `sprint <n>` for one sprint, or `sprint YYYY-MM-DD` for the sprint containing that date
