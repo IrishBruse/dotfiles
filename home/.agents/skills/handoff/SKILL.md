@@ -1,7 +1,7 @@
 ---
 name: handoff
 description: Writes a HANDOFF.md summary so a fresh agent can continue the work. Use when handing off to another agent or session, or when the user asks for a handoff document.
-disable-model-invocation: false
+disable-model-invocation: true
 ---
 
 Write a handoff document summarising the current conversation so a fresh agent can continue the work.
