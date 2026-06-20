@@ -24,7 +24,6 @@
       "Shell(echo)",
       "Shell(find)",
       "Shell(gh auth status)",
-      "Shell(gh issue view)",
       "Shell(gh pr diff)",
       "Shell(gh pr list)",
       "Shell(gh pr view)",
@@ -72,12 +71,12 @@
     "showLineNumbers": false,
     "showThinkingBlocks": true,
     "showStatusIndicators": false,
-    "showStatusLineRunningTime": true
+    "showStatusLineRunningTime": false
   },
   "notifications": true,
   "hints": false,
   "rewind": true,
-  "suggestNextPrompt": true,
+  "suggestNextPrompt": false,
   "statusLine": {
     "type": "command",
     "command": "~/.cursor/statusline.mjs",
@@ -151,7 +150,7 @@
       },
       {
         "id": "effort",
-        "value": "medium"
+        "value": "low"
       },
       {
         "id": "fast",
@@ -190,7 +189,7 @@
   "showSandboxIntro": false,
   "runEverythingSettingsPromptStreak": 0,
   "attribution": {
-    "attributeCommitsToAgent": false,
-    "attributePRsToAgent": false
+    "attributeCommitsToAgent": true,
+    "attributePRsToAgent": true
   }
 }

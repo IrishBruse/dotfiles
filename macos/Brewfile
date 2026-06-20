@@ -1,13 +1,15 @@
 tap "ankitpokhrel/jira-cli"
 tap "anomalyco/tap"
+tap "asmvik/formulae"
 tap "atlassian/acli"
 tap "brew-gem/gems"
 tap "cloudflare/cloudflare"
+tap "databricks/tap", trusted: true
+tap "dotnet/dev-proxy"
 tap "gp-nova/devx-cli", "https://github.com/gp-nova/devx-cli.git", trusted: true
-tap "koekeishiya/formulae"
+tap "jackielii/tap"
 tap "kreuzberg-dev/tap"
 tap "localstack/tap"
-tap "microsoft/dev-proxy"
 # Mozilla CA certificate store
 brew "ca-certificates"
 # CLI tool to build, test, debug, and deploy Serverless applications using AWS SAM
@@ -72,6 +74,8 @@ brew "scrcpy"
 brew "stow"
 # Shell extension to navigate your filesystem faster
 brew "zoxide"
+# Command-line interface for the Databricks platform
+brew "databricks/tap/databricks"
 # CLI tool to support project setup and updating
 brew "gp-nova/devx-cli/devx-cli"
 # Display management tool
@@ -93,8 +97,6 @@ cask "gimp"
 cask "git-credential-manager"
 # Open-source video transcoder
 cask "handbrake-app"
-# Keyboard customiser
-cask "karabiner-elements"
 # Customise mouse behavior
 cask "linearmouse"
 # Clipboard manager
@@ -109,6 +111,8 @@ cask "obs"
 cask "postman"
 # Move and resize windows using keyboard shortcuts or snap areas
 cask "rectangle"
+# Simple hotkey daemon written in Zig
+cask "jackielii/tap/skhd-zig", trusted: true
 # Keystroke launcher
 cask "ueli"
 go "github.com/go-delve/delve/cmd/dlv"

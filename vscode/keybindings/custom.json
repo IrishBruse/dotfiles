@@ -150,7 +150,7 @@
     {
       "key": "ctrl+v",
       "command": "workbench.action.terminal.paste",
-      "when": "terminalFocus && !ib-utilities.clipboardHasImage"
+      "when": "terminalFocus"
     },
     {
       "key": "ctrl+shift+i",

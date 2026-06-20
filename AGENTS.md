@@ -7,7 +7,7 @@
 
 ## Shortcuts
 
-- TODO: add here
+- macOS cmd+left/right/backspace word editing: `home/Library/KeyBindings/DefaultKeyBinding.dict` (Cocoa apps). Restart apps after changes. Terminals like Ghostty need their own config; Cursor/VS Code use `keybindings.json`.
 
 ## Repo layout
 
@@ -35,6 +35,7 @@ Macos vscode settings
 ### vscode/keybindings
 
 TypeScript and JSON used to generate VS Code keybindings.
+Run `gen.ts` from `vscode/keybindings`; it uses relative paths for `defaultKeybinds/`.
 
 ### vscode/theme
 
