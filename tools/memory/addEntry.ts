@@ -15,7 +15,7 @@ export async function runAdd(args: string[]): Promise<void> {
   }
 
   const [idRaw, ...sentenceParts] = args;
-  const ref = parseSlug(idRaw!);
+  const id = parseSlug(idRaw!);
   const text = sentenceParts.join(" ").trim();
 
   if (!text) {
@@ -30,11 +30,11 @@ export async function runAdd(args: string[]): Promise<void> {
     );
   }
 
-  const { entries, added } = await appendEntry({ text, ref });
+  const { entries, added } = await appendEntry({ text, id });
   await writeSkill(entries);
 
   if (!added) {
-    throw new Error(`An entry with id "${ref}" already exists.`);
+    throw new Error(`An entry with id "${id}" already exists.`);
   }
 
   printOk("Added entry.");

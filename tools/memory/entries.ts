@@ -5,7 +5,7 @@ import { ENTRIES_PATH, MEMORY_SKILL_DIR } from "./paths.ts";
 /** One inline lesson in the memory skill. */
 export interface MemoryEntry {
   text: string;
-  ref: string;
+  id: string;
 }
 
 async function readEntriesFile(): Promise<MemoryEntry[]> {
@@ -20,7 +20,7 @@ async function readEntriesFile(): Promise<MemoryEntry[]> {
         typeof item === "object" &&
         item !== null &&
         typeof (item as MemoryEntry).text === "string" &&
-        typeof (item as MemoryEntry).ref === "string"
+        typeof (item as MemoryEntry).id === "string"
     );
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === "ENOENT") {
@@ -54,7 +54,7 @@ export async function appendEntry(
   entry: MemoryEntry
 ): Promise<{ entries: MemoryEntry[]; added: boolean }> {
   const entries = await loadEntries();
-  if (entries.some((row) => row.ref === entry.ref)) {
+  if (entries.some((row) => row.id === entry.id)) {
     return { entries, added: false };
   }
   const next = [...entries, entry];

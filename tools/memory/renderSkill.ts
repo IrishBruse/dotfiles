@@ -5,7 +5,7 @@ import { MEMORY_SKILL_DIR, SKILL_PATH } from "./paths.ts";
 
 function formatBullet(entry: MemoryEntry): string {
   const text = entry.text.trim();
-  return `- [${entry.ref}]: ${text}`;
+  return `- [${entry.id}]: ${text}`;
 }
 
 /**

@@ -12,18 +12,22 @@ function paint(enabled: boolean, code: string, text: string): string {
   return `${code}${text}${RESET}`;
 }
 
-function stderrColor(): boolean {
-  return process.stderr.isTTY === true;
+function colorEnabled(): boolean {
+  return (
+    process.stdin.isTTY === true &&
+    process.stdout.isTTY === true &&
+    process.stderr.isTTY === true
+  );
 }
 
 export function printError(message: string): void {
-  console.error(paint(stderrColor(), RED, message));
+  console.error(paint(colorEnabled(), RED, message));
 }
 
 export function printOk(message: string): void {
-  console.error(paint(stderrColor(), GREEN, message));
+  console.error(paint(colorEnabled(), GREEN, message));
 }
 
 export function printHint(message: string): void {
-  console.error(paint(stderrColor(), DIM, message));
+  console.error(paint(colorEnabled(), DIM, message));
 }

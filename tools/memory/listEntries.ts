@@ -14,7 +14,7 @@ export async function runList(): Promise<void> {
     console.log(`Things learned recently (${entries.length})\n`);
     for (let i = 0; i < entries.length; i++) {
       const entry = entries[i]!;
-      console.log(`${i + 1}. [${entry.ref}] ${entry.text}`);
+      console.log(`${i + 1}. [${entry.id}] ${entry.text}`);
     }
   }
 
