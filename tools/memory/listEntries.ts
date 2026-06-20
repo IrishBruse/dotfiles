@@ -1,4 +1,5 @@
 import { loadEntries } from "./entries.ts";
+import { printHint } from "./output.ts";
 import { SKILL_PATH } from "./paths.ts";
 
 /**
@@ -18,5 +19,5 @@ export async function runList(): Promise<void> {
   }
 
   console.log(`\nSkill: ${SKILL_PATH}`);
-  console.error("memory: for agents, read the memory skill instead of this command");
+  printHint("Agents should read the memory skill instead of this command.");
 }

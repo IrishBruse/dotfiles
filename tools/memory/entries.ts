@@ -8,8 +8,6 @@ export interface MemoryEntry {
   ref: string;
 }
 
-const MAX_ENTRIES = 20;
-
 async function readEntriesFile(): Promise<MemoryEntry[]> {
   try {
     const raw = await readFile(ENTRIES_PATH, "utf8");
@@ -40,15 +38,11 @@ export async function loadEntries(): Promise<MemoryEntry[]> {
 }
 
 /**
- * Persist entries and enforce the inline cap.
+ * Persist entries to disk.
  */
 export async function saveEntries(entries: MemoryEntry[]): Promise<void> {
   await mkdir(MEMORY_SKILL_DIR, { recursive: true });
-  const trimmed =
-    entries.length > MAX_ENTRIES
-      ? entries.slice(entries.length - MAX_ENTRIES)
-      : entries;
-  await writeFile(ENTRIES_PATH, `${JSON.stringify(trimmed, null, 2)}\n`, "utf8");
+  await writeFile(ENTRIES_PATH, `${JSON.stringify(entries, null, 2)}\n`, "utf8");
 }
 
 /**

@@ -1,3 +1,4 @@
+import { printOk } from "./output.ts";
 import { appendEntry } from "./entries.ts";
 import { writeSkill } from "./renderSkill.ts";
 import { parseSlug } from "./slug.ts";
@@ -10,7 +11,7 @@ export const MAX_ENTRY_LENGTH = 120;
  */
 export async function runAdd(args: string[]): Promise<void> {
   if (args.length < 2) {
-    throw new Error("memory add: id and sentence are required");
+    throw new Error("Id and sentence are required.");
   }
 
   const [idRaw, ...sentenceParts] = args;
@@ -18,14 +19,14 @@ export async function runAdd(args: string[]): Promise<void> {
   const text = sentenceParts.join(" ").trim();
 
   if (!text) {
-    throw new Error("memory add: sentence is required");
+    throw new Error("Sentence is required.");
   }
   if (text.includes("\n")) {
-    throw new Error("memory add: sentence must be a single line");
+    throw new Error("Sentence must be a single line.");
   }
   if (text.length > MAX_ENTRY_LENGTH) {
     throw new Error(
-      `memory add: sentence too long (${text.length} chars, max ${MAX_ENTRY_LENGTH}); keep one line in the skill and use memory show for detail`
+      `Sentence is too long (${text.length} characters, max ${MAX_ENTRY_LENGTH}). Keep one line in the skill and use memory show for detail.`
     );
   }
 
@@ -33,8 +34,8 @@ export async function runAdd(args: string[]): Promise<void> {
   await writeSkill(entries);
 
   if (!added) {
-    throw new Error(`memory add: id already exists: ${ref}`);
+    throw new Error(`An entry with id "${ref}" already exists.`);
   }
 
-  console.error("memory: added entry");
+  printOk("Added entry.");
 }

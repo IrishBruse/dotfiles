@@ -2,6 +2,7 @@ import process from "node:process";
 
 import { runAdd } from "./addEntry.ts";
 import { runList } from "./listEntries.ts";
+import { printError } from "./output.ts";
 import { runShow } from "./show.ts";
 
 function printHelp(): void {
@@ -23,7 +24,6 @@ Options:
 Constraints:
   id must be kebab-case, at most 4 words separated by hyphens
   sentence must be a single line (max 120 chars)
-  at most 20 inline entries (oldest dropped)
   duplicate ids are rejected
 
 Examples:
@@ -55,12 +55,12 @@ export async function main(argv: string[]): Promise<void> {
     return;
   }
 
-  console.error(`memory: unknown command "${cmd}"`);
+  printError(`Unknown command "${cmd}".`);
   printHelp();
   process.exit(1);
 }
 
 main(process.argv).catch((err) => {
-  console.error(`memory: ${(err as Error).message}`);
+  printError((err as Error).message);
   process.exit(1);
 });

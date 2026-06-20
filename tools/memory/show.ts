@@ -2,6 +2,7 @@ import { appendFile, mkdir } from "node:fs/promises";
 
 import { readStdin } from "./args.ts";
 import { loadEntries } from "./entries.ts";
+import { printOk } from "./output.ts";
 import { referencePath, REFERENCES_DIR } from "./paths.ts";
 import { writeSkill } from "./renderSkill.ts";
 import { parseSlug } from "./slug.ts";
@@ -11,7 +12,7 @@ import { parseSlug } from "./slug.ts";
  */
 export async function runShow(args: string[]): Promise<void> {
   if (args.length === 0) {
-    throw new Error("memory show: slug is required");
+    throw new Error("Id is required.");
   }
 
   const [slugRaw, ...detailParts] = args;
@@ -20,7 +21,7 @@ export async function runShow(args: string[]): Promise<void> {
   const detail = [...detailParts, stdin].filter((part) => part.trim().length > 0);
 
   if (detail.length === 0) {
-    throw new Error("memory show: detail is required (argument or stdin)");
+    throw new Error("Detail is required as an argument or on stdin.");
   }
 
   const body = `${detail.join("\n\n").trim()}\n`;
@@ -41,5 +42,5 @@ export async function runShow(args: string[]): Promise<void> {
   await writeSkill(entries);
 
   console.log(filePath);
-  console.error(`memory: wrote reference ${slug}`);
+  printOk(`Wrote reference for ${slug}.`);
 }
