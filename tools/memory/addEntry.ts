@@ -2,7 +2,7 @@ import { appendEntry } from "./entries.ts";
 import { writeSkill } from "./renderSkill.ts";
 import { parseSlug } from "./slug.ts";
 
-/** Max inline sentence length; use `memory ref` for longer detail. */
+/** Max inline sentence length; use `memory show` for longer detail. */
 export const MAX_ENTRY_LENGTH = 120;
 
 /**
@@ -25,7 +25,7 @@ export async function runAdd(args: string[]): Promise<void> {
   }
   if (text.length > MAX_ENTRY_LENGTH) {
     throw new Error(
-      `memory add: sentence too long (${text.length} chars, max ${MAX_ENTRY_LENGTH}); keep one line in the skill and use memory ref for detail`
+      `memory add: sentence too long (${text.length} chars, max ${MAX_ENTRY_LENGTH}); keep one line in the skill and use memory show for detail`
     );
   }
 

@@ -7,11 +7,11 @@ import { writeSkill } from "./renderSkill.ts";
 import { parseSlug } from "./slug.ts";
 
 /**
- * Run `memory ref <slug> [detail...]`.
+ * Run `memory show <slug> [detail...]`.
  */
-export async function runRef(args: string[]): Promise<void> {
+export async function runShow(args: string[]): Promise<void> {
   if (args.length === 0) {
-    throw new Error("memory ref: slug is required");
+    throw new Error("memory show: slug is required");
   }
 
   const [slugRaw, ...detailParts] = args;
@@ -20,7 +20,7 @@ export async function runRef(args: string[]): Promise<void> {
   const detail = [...detailParts, stdin].filter((part) => part.trim().length > 0);
 
   if (detail.length === 0) {
-    throw new Error("memory ref: detail is required (argument or stdin)");
+    throw new Error("memory show: detail is required (argument or stdin)");
   }
 
   const body = `${detail.join("\n\n").trim()}\n`;

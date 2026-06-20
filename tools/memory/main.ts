@@ -2,19 +2,19 @@ import process from "node:process";
 
 import { runAdd } from "./addEntry.ts";
 import { runList } from "./listEntries.ts";
-import { runRef } from "./writeRef.ts";
+import { runShow } from "./show.ts";
 
 function printHelp(): void {
   console.error(`memory - persistent agent lessons as a minimal skill
 
 Usage:
   memory add <id> <sentence>
-  memory ref <id> [detail...]
+  memory show <id> [detail...]
   memory list
 
 Commands:
   add   Append one high-level sentence linked to <id>
-  ref   Append detail to references/<id>.md (stdin accepted)
+  show  Append detail to references/<id>.md (stdin accepted)
   list  Print entries for humans (alias: ls). Agents should read the skill.
 
 Options:
@@ -29,7 +29,7 @@ Constraints:
 Examples:
   memory add deployment-migrations "Most deployment failures come from migration ordering."
   memory add checkout-redis "Checkout bugs often involve stale Redis entries."
-  memory ref checkout-redis "Keys persist after session merge until TTL expires."
+  memory show checkout-redis "Keys persist after session merge until TTL expires."
   memory list
 `);
 }
@@ -46,8 +46,8 @@ export async function main(argv: string[]): Promise<void> {
     await runAdd(rest);
     return;
   }
-  if (cmd === "ref") {
-    await runRef(rest);
+  if (cmd === "show") {
+    await runShow(rest);
     return;
   }
   if (cmd === "list" || cmd === "ls") {
