@@ -27,15 +27,22 @@ function sortedChildren(node: TreeNode): [string, TreeNode][] {
   return [...node.children.entries()].sort(([a], [b]) => a.localeCompare(b));
 }
 
+export type PathTreeRole = "path" | "group";
+
+function pathRole(fullPath: string, stowPaths: Set<string>): PathTreeRole {
+  return stowPaths.has(fullPath) ? "path" : "group";
+}
+
 export function formatPathTree(
   paths: string[],
-  paintLine: (prefix: string, name: string) => string
+  paintLine: (prefix: string, name: string, role: PathTreeRole) => string
 ): string[] {
+  const stowPaths = new Set(paths);
   const root = buildTree(paths);
-  const lines: string[] = [paintLine("    ", ".")];
+  const lines: string[] = [paintLine("    ", ".", "group")];
 
   for (const [name, node] of sortedChildren(root)) {
-    formatBranch(node, "    ", false, name, paintLine, lines);
+    formatBranch(node, "    ", false, name, name, stowPaths, paintLine, lines);
   }
 
   return lines;
@@ -46,11 +53,13 @@ function formatBranch(
   prefix: string,
   isLast: boolean,
   name: string,
-  paintLine: (prefix: string, name: string) => string,
+  fullPath: string,
+  stowPaths: Set<string>,
+  paintLine: (prefix: string, name: string, role: PathTreeRole) => string,
   lines: string[]
 ): void {
   const branch = isLast ? "└── " : "├── ";
-  lines.push(paintLine(prefix + branch, name));
+  lines.push(paintLine(prefix + branch, name, pathRole(fullPath, stowPaths)));
 
   const childPrefix = prefix + (isLast ? "    " : "│   ");
   const children = sortedChildren(node);
@@ -60,6 +69,8 @@ function formatBranch(
       childPrefix,
       index === children.length - 1,
       childName,
+      `${fullPath}/${childName}`,
+      stowPaths,
       paintLine,
       lines
     );

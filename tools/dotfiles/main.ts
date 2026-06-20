@@ -20,13 +20,16 @@ function assertDotfilesCwd(): boolean {
 function printHelp(): void {
   console.error(`dotfiles - stow dotfiles/home into ~ with a colored summary
 
+Stow links individual paths from home/ (files or whole directories), not
+parent folders when the target directory already exists.
+
 Usage:
   dotfiles [options]
 
 Options:
   -D, --delete     Unstow (remove symlinks)
   -R, --restow     Restow (unstow then stow)
-  -v, --verbose    Show unchanged paths as a tree
+  -v, --verbose    Show unchanged paths as a tree (dim nodes are grouping only)
   --raw            Print raw GNU stow output (-v 3)
   -h, --help       This help
 `);

@@ -11,12 +11,15 @@ function printPaths(paths: string[], color: boolean): void {
 }
 
 function printPathTree(paths: string[], color: boolean): void {
-  const paintLine = (prefix: string, name: string): string =>
-    `${paint(color, "dim", prefix)}${paint(color, "path", name)}`;
+  const paintLine = (prefix: string, name: string, role: "path" | "group"): string =>
+    `${paint(color, "dim", prefix)}${paint(color, role === "path" ? "path" : "dim", name)}`;
 
   for (const line of formatPathTree(paths, paintLine)) {
     console.log(line);
   }
+  console.log(
+    paint(color, "dim", "    (dim: parent dirs only, not symlinked)")
+  );
 }
 
 function printSection(
