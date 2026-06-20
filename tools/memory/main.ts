@@ -3,6 +3,7 @@ import process from "node:process";
 import { runAdd } from "./addEntry.ts";
 import { runList } from "./listEntries.ts";
 import { printError } from "./output.ts";
+import { runRm } from "./rmEntry.ts";
 import { runShow } from "./show.ts";
 
 function printHelp(): void {
@@ -12,11 +13,13 @@ Usage:
   memory add <id> <sentence>
   memory show <id> [detail...]
   memory list
+  memory rm [id]
 
 Commands:
   add   Append one high-level sentence linked to <id>
   show  Append detail to references/<id>.md (stdin accepted)
   list  Print entries for humans (alias: ls). Agents should read the skill.
+  rm    Interactively delete an entry and its reference file (human-only)
 
 Options:
   -h, --help     This help
@@ -25,12 +28,15 @@ Constraints:
   id must be kebab-case, at most 4 words separated by hyphens
   sentence must be a single line (max 120 chars)
   duplicate ids are rejected
+  rm is blocked when CURSOR_AGENT is set (Cursor agent shell sessions)
 
 Examples:
   memory add deployment-migrations "Most deployment failures come from migration ordering."
   memory add checkout-redis "Checkout bugs often involve stale Redis entries."
   memory show checkout-redis "Keys persist after session merge until TTL expires."
   memory list
+  memory rm
+  memory rm checkout-redis
 `);
 }
 
@@ -52,6 +58,10 @@ export async function main(argv: string[]): Promise<void> {
   }
   if (cmd === "list" || cmd === "ls") {
     await runList();
+    return;
+  }
+  if (cmd === "rm") {
+    await runRm(rest);
     return;
   }
 

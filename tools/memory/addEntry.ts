@@ -30,7 +30,7 @@ export async function runAdd(args: string[]): Promise<void> {
     );
   }
 
-  const { entries, added } = await appendEntry({ text, id });
+  const { entries, added } = await appendEntry({ text, id, hasDetails: false });
   await writeSkill(entries);
 
   if (!added) {

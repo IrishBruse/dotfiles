@@ -1,14 +1,18 @@
+import { existsSync } from "node:fs";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 
-import { ENTRIES_PATH, MEMORY_SKILL_DIR } from "./paths.ts";
+import { ENTRIES_PATH, MEMORY_SKILL_DIR, referencePath } from "./paths.ts";
 
 /** One inline lesson in the memory skill. */
 export interface MemoryEntry {
   text: string;
   id: string;
+  hasDetails: boolean;
 }
 
-async function readEntriesFile(): Promise<MemoryEntry[]> {
+async function readEntriesFile(): Promise<
+  Array<{ text: string; id: string; hasDetails?: boolean }>
+> {
   try {
     const raw = await readFile(ENTRIES_PATH, "utf8");
     const parsed = JSON.parse(raw) as unknown;
@@ -16,7 +20,7 @@ async function readEntriesFile(): Promise<MemoryEntry[]> {
       return [];
     }
     return parsed.filter(
-      (item): item is MemoryEntry =>
+      (item): item is { text: string; id: string; hasDetails?: boolean } =>
         typeof item === "object" &&
         item !== null &&
         typeof (item as MemoryEntry).text === "string" &&
@@ -34,7 +38,23 @@ async function readEntriesFile(): Promise<MemoryEntry[]> {
  * Load all memory entries from disk.
  */
 export async function loadEntries(): Promise<MemoryEntry[]> {
-  return readEntriesFile();
+  const raw = await readEntriesFile();
+  let changed = false;
+  const entries = raw.map((entry) => {
+    if (typeof entry.hasDetails === "boolean") {
+      return entry as MemoryEntry;
+    }
+    changed = true;
+    return {
+      text: entry.text,
+      id: entry.id,
+      hasDetails: existsSync(referencePath(entry.id)),
+    };
+  });
+  if (changed) {
+    await saveEntries(entries);
+  }
+  return entries;
 }
 
 /**
@@ -60,4 +80,42 @@ export async function appendEntry(
   const next = [...entries, entry];
   await saveEntries(next);
   return { entries: next, added: true };
+}
+
+/**
+ * Mark an entry as having reference detail on disk.
+ *
+ * @return updated entries (unchanged when the id is missing or already marked)
+ */
+export async function markHasDetails(id: string): Promise<MemoryEntry[]> {
+  const entries = await loadEntries();
+  const index = entries.findIndex((row) => row.id === id);
+  if (index === -1) {
+    return entries;
+  }
+  const row = entries[index]!;
+  if (row.hasDetails) {
+    return entries;
+  }
+  const next = entries.with(index, { ...row, hasDetails: true });
+  await saveEntries(next);
+  return next;
+}
+
+/**
+ * Remove one entry by id.
+ *
+ * @return updated entries and whether a row was removed
+ */
+export async function removeEntry(
+  id: string
+): Promise<{ entries: MemoryEntry[]; removed: boolean }> {
+  const entries = await loadEntries();
+  const index = entries.findIndex((row) => row.id === id);
+  if (index === -1) {
+    return { entries, removed: false };
+  }
+  const next = entries.toSpliced(index, 1);
+  await saveEntries(next);
+  return { entries: next, removed: true };
 }

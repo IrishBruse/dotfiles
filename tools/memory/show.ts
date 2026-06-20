@@ -1,7 +1,7 @@
 import { appendFile, mkdir } from "node:fs/promises";
 
 import { readStdin } from "./args.ts";
-import { loadEntries } from "./entries.ts";
+import { markHasDetails } from "./entries.ts";
 import { printOk } from "./output.ts";
 import { referencePath, REFERENCES_DIR } from "./paths.ts";
 import { writeSkill } from "./renderSkill.ts";
@@ -38,7 +38,7 @@ export async function runShow(args: string[]): Promise<void> {
     }
   }
 
-  const entries = await loadEntries();
+  const entries = await markHasDetails(slug);
   await writeSkill(entries);
 
   console.log(filePath);
