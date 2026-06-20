@@ -9,7 +9,7 @@ Single Node package (`tools/package.json`) with one `tsconfig.json`. Entry stubs
 
 ## dotfiles
 
-`dotfiles -v` prints unchanged stow paths as a tree. Unicode box-drawing characters (`├──`, `└──`, `│`) are intentional here for readable tree lines. Plain ASCII is not required for this output.
+`dotfiles -v` prints unchanged stow paths as a tree. Dim nodes are parent folders for grouping only; stow links the normal-weight paths (individual files, or a whole directory when the target path does not already exist). Unicode box-drawing characters (`├──`, `└──`, `│`) are intentional here for readable tree lines. Plain ASCII is not required for this output.
 
 Folders imported from other tool folders expose an `api.ts` as their only cross-folder entry point (`cross-folder-api` ESLint rule). The file is the public contract: full exported type shapes, typed functions and consts, and delegating implementations (no bare `export { x } from "./other.ts"` re-exports). Same-folder code may `import type` from `api.ts`.
 
