@@ -31,11 +31,49 @@ const CLR_EOL = `${ESC}[K`;
 const HIDE_CURSOR = `${ESC}[?25l`;
 const SHOW_CURSOR = `${ESC}[?25h`;
 
-const HELP_PROMOTABLE =
-  "j/k up/down: move  Enter: promote  q/Esc: done";
-const HELP_BLOCKED =
-  "j/k up/down: move  Enter: blocked  q/Esc: done";
-const MAX_PREVIEW_ENTRIES = 12;
+const HELP_PROMOTABLE = "up/down: move  Enter: promote  q: quit";
+const HELP_BLOCKED = "up/down: move  q: quit";
+const NAME_COL = 28;
+const MAX_LOCAL_ENTRIES = 8;
+const MAX_LINKED_ENTRIES = 6;
+
+function padPlain(text: string, width: number): string {
+  if (text.length >= width) {
+    return truncatePlain(text, width);
+  }
+  return text.padEnd(width);
+}
+
+function truncatePlain(text: string, width: number): string {
+  if (text.length <= width) {
+    return text;
+  }
+  if (width <= 3) {
+    return text.slice(0, width);
+  }
+  return `${text.slice(0, width - 3)}...`;
+}
+
+function displayLinkTarget(detail: string): string {
+  const homeIdx = detail.indexOf("home/");
+  if (homeIdx >= 0) {
+    return detail.slice(homeIdx);
+  }
+  return truncatePlain(detail, 44);
+}
+
+function localKindLabel(entry: DestinationEntry): string {
+  switch (entry.kind) {
+    case "file":
+      return "file";
+    case "directory":
+      return "dir";
+    case "other-symlink":
+      return "symlink";
+    default:
+      return "";
+  }
+}
 
 function stowUnchangedPaths(): string[] {
   const result = spawnSync(
@@ -56,17 +94,43 @@ function stowUnchangedPaths(): string[] {
   return parseStowOutput(lines).unchanged;
 }
 
-function entryLabel(entry: DestinationEntry, color: boolean): string {
-  const name = paint(color, "path", entry.name.padEnd(22));
-  switch (entry.kind) {
-    case "stowed-symlink":
-      return `${name}${paint(color, "dim", "symlink ")}${paint(color, "ok", entry.detail)}`;
-    case "other-symlink":
-      return `${name}${paint(color, "dim", "symlink ")}${paint(color, "warn", entry.detail)}`;
-    case "directory":
-      return `${name}${paint(color, "warn", entry.detail)}`;
-    case "file":
-      return `${name}${paint(color, "warn", entry.detail)}`;
+function localEntryLine(entry: DestinationEntry, color: boolean): string {
+  const name = paint(color, "warn", padPlain(entry.name, NAME_COL));
+  const kind = paint(color, "dim", localKindLabel(entry));
+  return `      ${name}  ${kind}`;
+}
+
+function linkedEntryLine(entry: DestinationEntry, color: boolean): string {
+  const name = paint(color, "ok", padPlain(entry.name, NAME_COL));
+  const target = paint(color, "dim", displayLinkTarget(entry.detail));
+  return `      ${name}  ${target}`;
+}
+
+function appendEntrySection(
+  lines: string[],
+  label: string,
+  hint: string,
+  entries: DestinationEntry[],
+  maxShown: number,
+  formatLine: (entry: DestinationEntry) => string,
+  color: boolean
+): void {
+  if (entries.length === 0) {
+    return;
+  }
+
+  lines.push(
+    "",
+    `    ${paint(color, "label", label)} ${paint(color, "dim", hint)}`
+  );
+
+  const shown = entries.slice(0, maxShown);
+  for (const entry of shown) {
+    lines.push(formatLine(entry));
+  }
+  const hidden = entries.length - shown.length;
+  if (hidden > 0) {
+    lines.push(`      ${paint(color, "dim", `... ${hidden} more`)}`);
   }
 }
 
@@ -80,33 +144,58 @@ function previewLines(
 
   const lines: string[] = [
     "",
-    `  ${paint(color, "label", "why")} ${folder.summary}`,
-    `  ${paint(color, "label", "destination")}`
+    `  ${paint(color, "label", folder.targetDisplay)}`
   ];
 
-  const shown = folder.entries.slice(0, MAX_PREVIEW_ENTRIES);
-  for (const entry of shown) {
-    lines.push(`    ${entryLabel(entry, color)}`);
+  if (folder.promotable) {
+    lines.push(
+      `  ${paint(color, "ok", "Only dotfiles symlinks remain; ready to promote.")}`
+    );
+  } else if (folder.blockerCount > 0) {
+    lines.push(
+      `  ${paint(
+        color,
+        "warn",
+        `${folder.blockerCount} local item${folder.blockerCount === 1 ? "" : "s"} block promoting this folder.`
+      )}`
+    );
+  } else {
+    lines.push(
+      `  ${paint(color, "warn", "Package is not fully stowed under this folder.")}`
+    );
   }
-  const hidden = folder.entries.length - shown.length;
-  if (hidden > 0) {
-    lines.push(`    ${paint(color, "dim", `... ${hidden} more`)}`);
-  }
+
+  const blockers = folder.entries.filter((entry) => entry.kind !== "stowed-symlink");
+  const linked = folder.entries.filter((entry) => entry.kind === "stowed-symlink");
+
+  appendEntrySection(
+    lines,
+    "local",
+    "(not from dotfiles)",
+    blockers,
+    MAX_LOCAL_ENTRIES,
+    (entry) => localEntryLine(entry, color),
+    color
+  );
+  appendEntrySection(
+    lines,
+    "dotfiles",
+    "(symlinked)",
+    linked,
+    MAX_LINKED_ENTRIES,
+    (entry) => linkedEntryLine(entry, color),
+    color
+  );
 
   if (folder.promotable) {
     lines.push(
       "",
-      `  ${paint(color, "dim", "Enter promotes to a single directory symlink")}`
+      `  ${paint(color, "dim", "Enter replaces per-file links with one directory symlink.")}`
     );
   } else if (folder.blockerCount > 0) {
     lines.push(
       "",
-      `  ${paint(color, "warn", "cannot promote until destination has only dotfiles symlinks")}`
-    );
-  } else {
-    lines.push(
-      "",
-      `  ${paint(color, "warn", "cannot promote: package is not fully stowed under this folder")}`
+      `  ${paint(color, "warn", "Move or remove local items, then re-run dotfiles.")}`
     );
   }
 
@@ -124,7 +213,12 @@ function renderLines(
     selectedFolder?.promotable === true ? HELP_PROMOTABLE : HELP_BLOCKED;
 
   const lines: string[] = [
-    `${paint(color, "label", "dotfiles")} ${paint(color, "dim", "partial folders (files stowed inside, not the directory)")}`,
+    `${paint(color, "label", "dotfiles")} ${paint(color, "dim", "partial folders")}`,
+    paint(
+      color,
+      "dim",
+      "  per-file stow inside a real directory (not the folder symlink itself)"
+    ),
     ""
   ];
 
@@ -135,9 +229,18 @@ function renderLines(
       const folder = folders[i]!;
       const marker = i === selected ? paint(color, "label", ">") : " ";
       const nameRole = i === selected ? "ok" : folder.promotable ? "path" : "warn";
-      const suffix = folder.promotable
-        ? ""
-        : paint(color, "dim", "  (blocked)");
+      let suffix = "";
+      if (folder.promotable) {
+        suffix = paint(color, "dim", "  ready");
+      } else if (folder.blockerCount > 0) {
+        suffix = paint(
+          color,
+          "dim",
+          `  (${folder.blockerCount} blocking)`
+        );
+      } else {
+        suffix = paint(color, "dim", "  incomplete");
+      }
       const name = paint(color, nameRole, folder.folderPath);
       lines.push(`  ${marker} ${name}${suffix}`);
     }
@@ -249,14 +352,12 @@ export async function runPartialPromoteInteractive(_options: StowOptions): Promi
           finish(0, resolve);
           return;
         case "up":
-        case "k":
           if (folders.length > 0) {
             selected = (selected - 1 + folders.length) % folders.length;
             draw();
           }
           return;
         case "down":
-        case "j":
           if (folders.length > 0) {
             selected = (selected + 1) % folders.length;
             draw();
