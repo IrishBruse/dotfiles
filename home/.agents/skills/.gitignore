@@ -1,3 +1,4 @@
 jira-tickets
 gp-*
-failure/logs/*.md
+memory/entries.json
+memory/references/

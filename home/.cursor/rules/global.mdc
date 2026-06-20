@@ -10,6 +10,6 @@ alwaysApply: true
 - No semicolons in prose (code is exempt)
 - Always use plain ASCII no Unicode. Eg no em/en dash.
 
-# Agent failures
+# Agent memory
 
-When you hit a repeatable mistake, wrong assumption, or non-obvious blocker, use the `failure` skill
+When you learn something worth remembering across sessions, use the `memory` skill. Read it before similar work.

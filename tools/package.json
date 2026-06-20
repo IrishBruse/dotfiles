@@ -6,7 +6,7 @@
   "license": "ISC",
   "type": "module",
   "bin": {
-    "failure": "./.bin/failure.js",
+    "memory": "./.bin/memory.js",
     "commit": "./.bin/commit.js",
     "confluence": "./.bin/confluence.js",
     "endpoint": "./.bin/endpoint.js",

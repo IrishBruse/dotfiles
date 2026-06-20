@@ -49,5 +49,5 @@ Custom VS Code UI CSS.
 - `interpolate` - Expand markdown prompt templates (builtins, env, conditions, shell snippets)
 - `md` - Render piped or file markdown in the terminal
 - `endpoint` - Local HTTP catch-all that appends each request as one JSONL line; prints only the listen URL
-- `failure` - Append agent incidents to per-repo markdown logs (failure skill); routes by `~/git/<name>/` or `misc.md`
+- `memory` - Append one-line lessons to the memory skill; optional detail in references/
 - `sprint` - Print previous, current, and next sprint date blocks, `sprint <n>` for one sprint, or `sprint YYYY-MM-DD` for the sprint containing that date
