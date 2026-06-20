@@ -1207,7 +1207,6 @@
       "text": "TODO:"
     }
   ],
-  "update.mode": "none",
   "http.experimental.systemCertificatesV2": true,
   "breadcrumbs.enabled": false,
   "settingsSync.ignoredSettings": [
@@ -1291,7 +1290,7 @@
   "terminal.integrated.enablePersistentSessions": false,
   "terminal.integrated.enableVisualBell": true,
   "terminal.integrated.hideOnStartup": "always",
-  "terminal.integrated.ignoreBracketedPasteMode": true,
+  "terminal.integrated.ignoreBracketedPasteMode": false,
   "terminal.integrated.persistentSessionReviveProcess": "never",
   "terminal.integrated.shellIntegration.decorationsEnabled": "overviewRuler",
   "terminal.integrated.tabs.title": "${sequence}",
@@ -1607,7 +1606,6 @@
   "explorer.fileNesting.expand": false,
   "editor.experimental.preferTreeSitter.css": true,
   "accessibility.voice.speechLanguage": "en-IE",
-  "workbench.editor.enablePreview": false,
   "task.allowAutomaticTasks": "on",
   "scm.alwaysShowRepositories": true,
   "diffEditor.ignoreTrimWhitespace": false,
@@ -1631,5 +1629,7 @@
   "chat.disableAIFeatures": true,
   "terminal.integrated.stickyScroll.enabled": false,
   "markdownInlineEditor.tables.renderingMode": "inline",
-  "excalidraw.theme": "dark"
+  "excalidraw.theme": "dark",
+  "update.mode": "none",
+  "workbench.browser.searchEngine": "duckduckgo"
 }
