@@ -6,10 +6,29 @@ alwaysApply: true
 
 # Rules
 
-- No emojis of any kind
-- No semicolons in prose (code is exempt)
+- No emojis e.g. 😀 of any kind
+- No semicolons e.g. ; in prose (code is exempt)
 - Always use plain ASCII no Unicode. Eg no em/en dash.
 
 # Agent memory
 
-When you learn something worth remembering across sessions, use the `memory` skill. Read it before similar work.
+Lessons that should persist across sessions live in the `memory` skill. Read that skill before similar work; do not run `memory list` for context.
+
+## When to add
+
+Record cross-session lessons: recurring pitfalls, non-obvious conventions, or fixes that took real investigation. Do not use memory for one-off task notes or incident logs.
+
+## How to add
+
+Use the `memory` CLI:
+
+```
+memory add <id> <one-line lesson>
+memory show <id> <detail>
+```
+
+- `<id>`: kebab-case, at most 4 hyphen-separated words (e.g. `checkout-redis`)
+- Lesson: one line, max 120 characters; quote the sentence if the shell would split it
+- `memory show` appends longer detail for an id (arguments or stdin); use after `add` when the lesson needs more than one line
+
+Duplicate ids are rejected. The CLI regenerates the `memory` skill from `entries.json`.
