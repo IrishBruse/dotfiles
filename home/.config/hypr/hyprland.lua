@@ -91,7 +91,7 @@ hl.config({
 	},
 
 	scrolling = {
-		column_width = 0.75,
+		column_width = 1,
 		follow_focus = false,
 	},
 
@@ -366,6 +366,12 @@ hl.window_rule({
 
 hl.window_rule({
 	match = { class = "GRun" },
+	float = true,
+	center = true,
+})
+
+hl.window_rule({
+	match = { title = "Ueli" },
 	float = true,
 	center = true,
 })
