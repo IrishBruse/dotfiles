@@ -13,13 +13,13 @@ Usage:
   memory add <id> <sentence>
   memory show <id> [detail...]
   memory list
-  memory rm [id]
+  memory rm
 
 Commands:
   add   Append one high-level sentence linked to <id>
   show  Append detail to references/<id>.md (stdin accepted)
   list  Print entries for humans (alias: ls). Agents should read the skill.
-  rm    Interactively delete an entry and its reference file (human-only)
+  rm    Interactively pick and delete an entry (human-only)
 
 Options:
   -h, --help     This help
@@ -36,7 +36,6 @@ Examples:
   memory show checkout-redis "Keys persist after session merge until TTL expires."
   memory list
   memory rm
-  memory rm checkout-redis
 `);
 }
 
