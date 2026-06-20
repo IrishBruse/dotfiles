@@ -1211,7 +1211,6 @@
   "breadcrumbs.enabled": false,
   "settingsSync.ignoredSettings": [
     "editor.mouseWheelScrollSensitivity",
-    "terminal.integrated.gpuAcceleration",
     "update.mode"
   ],
   "editor.bracketPairColorization.enabled": false,
@@ -1622,7 +1621,6 @@
   "editor.allowVariableFontsInAccessibilityMode": true,
   "workbench.browser.openLocalhostLinks": true,
   "workbench.layoutControl.enabled": false,
-  "terminal.integrated.gpuAcceleration": "off",
   "git.repositoryScanMaxDepth": 2,
   "markdown-mermaid.darkModeTheme": "dark",
   "workbench.activityBar.location": "top",
