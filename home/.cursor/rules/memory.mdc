@@ -1,0 +1,10 @@
+---
+description: Persistent agent lessons via the memory skill
+alwaysApply: true
+---
+
+# Agent memory
+
+Read the `memory` skill before similar work. Do not run bare `memory` or `memory view`; read the skill and any `references/<id>.md` files directly.
+
+Add cross-session lessons with `memory add` when you hit recurring pitfalls, non-obvious conventions, or fixes that took real investigation.
