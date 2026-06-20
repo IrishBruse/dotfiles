@@ -30,5 +30,6 @@ memory show <id> <detail>
 - `<id>`: kebab-case, at most 4 hyphen-separated words (e.g. `checkout-redis`)
 - Lesson: one line, max 120 characters; quote the sentence if the shell would split it
 - `memory show` appends longer detail for an id (arguments or stdin); use after `add` when the lesson needs more than one line
+- Do not run `memory rm`; deletion is human-only and blocked in agent shell sessions
 
 Duplicate ids are rejected. The CLI regenerates the `memory` skill from `entries.json`.
