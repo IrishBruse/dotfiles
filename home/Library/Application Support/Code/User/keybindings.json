@@ -4231,7 +4231,7 @@
     {
         "key": "cmd+v",
         "command": "workbench.action.terminal.paste",
-        "when": "terminalFocus"
+        "when": "terminalFocus && !ib-utilities.clipboardHasImage"
     },
     {
         "key": "cmd+shift+i",
