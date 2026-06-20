@@ -41,6 +41,6 @@ Custom VS Code UI CSS.
 - `interpolate` - Expand markdown prompt templates (builtins, env, conditions, shell snippets)
 - `md` - Render piped or file markdown in the terminal
 - `endpoint` - Local HTTP catch-all that appends each request as one JSONL line; prints only the listen URL
-- `memory` - Append one-line lessons to the memory skill; optional detail in references/; `memory rm` is human-only (blocked when `CURSOR_AGENT` is set)
+- `memory` - Append one-line lessons to the memory skill; optional detail in references/; bare `memory` is interactive for humans (agents get CLI help when `CURSOR_AGENT` is set); `memory view` prints a hint for agents
 - `dotfiles` - Stow `home/` into ~ with a colored summary (linked, removed, unchanged)
 - `sprint` - Print previous, current, and next sprint date blocks, `sprint <n>` for one sprint, or `sprint YYYY-MM-DD` for the sprint containing that date
