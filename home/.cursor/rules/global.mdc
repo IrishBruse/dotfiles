@@ -12,7 +12,7 @@ alwaysApply: true
 
 # Agent memory
 
-Lessons that should persist across sessions live in the `memory` skill. Read that skill before similar work; do not run `memory list` for context.
+Lessons that should persist across sessions live in the `memory` skill. Read that skill before similar work; do not run bare `memory` or `memory view` for context.
 
 ## When to add
 
@@ -23,13 +23,27 @@ Record cross-session lessons: recurring pitfalls, non-obvious conventions, or fi
 Use the `memory` CLI:
 
 ```
-memory add <id> <one-line lesson>
-memory show <id> <detail>
+memory add <id> <one-line lesson> [--detail [content...]]
 ```
 
 - `<id>`: kebab-case, at most 4 hyphen-separated words (e.g. `checkout-redis`)
 - Lesson: one line, max 120 characters; quote the sentence if the shell would split it
-- `memory show` appends longer detail for an id (arguments or stdin); use after `add` when the lesson needs more than one line
-- Do not run `memory rm`; deletion is human-only and blocked in agent shell sessions
+- `--detail` writes reference markdown to `references/<id>.md` (arguments or stdin); use when the lesson needs more than one line
+- `hasDetails` in `entries.json` is set when reference content exists; the skill bullet gets a suffix pointing agents at the reference file
+
+Example:
+
+```
+memory add checkout-redis "Checkout bugs often involve stale Redis entries." --detail "Keys persist after session merge until TTL expires."
+```
 
 Duplicate ids are rejected. The CLI regenerates the `memory` skill from `entries.json`.
+
+## Human-only commands
+
+Do not run bare `memory`. It opens an interactive browser for humans in a TTY (Up/Down, Enter for rendered details, `x` to remove). When `CURSOR_AGENT` is set, bare `memory` prints CLI help instead.
+
+`memory view <id>` prints raw markdown for one entry. When `CURSOR_AGENT` is set, it prints only: "Agents should read the memory skill instead of this command."
+
+Agents should read the `memory` skill and `references/<id>.md` directly instead.
+
