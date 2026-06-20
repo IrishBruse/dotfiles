@@ -3,6 +3,7 @@ import { homedir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { runPartialPromoteInteractive } from "./interactive.ts";
 import { parseStowOutput } from "./parse.ts";
 import { printSummary } from "./summary.ts";
 import type { StowAction, StowOptions } from "./types.ts";
@@ -35,7 +36,7 @@ function stowArgs(options: StowOptions, verboseLevel: number): string[] {
   ];
 }
 
-export function runDotfilesStow(options: StowOptions): number {
+export async function runDotfilesStow(options: StowOptions): Promise<number> {
   if (options.raw) {
     const result = spawnSync("stow", stowArgs(options, 3), { stdio: "inherit" });
     return result.status ?? 1;
@@ -47,7 +48,7 @@ export function runDotfilesStow(options: StowOptions): number {
   const summary = parseStowOutput(lines);
   const elapsedMs = Date.now() - startMs;
 
-  return printSummary(
+  const exitCode = printSummary(
     options.action,
     STOW_TARGET,
     summary,
@@ -55,4 +56,13 @@ export function runDotfilesStow(options: StowOptions): number {
     elapsedMs,
     result.status ?? 1
   );
+
+  if (options.interactive && options.action === "stow") {
+    const interactiveCode = await runPartialPromoteInteractive(options);
+    if (interactiveCode !== 0) {
+      return interactiveCode;
+    }
+  }
+
+  return exitCode;
 }

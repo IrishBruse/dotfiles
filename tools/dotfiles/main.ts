@@ -30,6 +30,9 @@ Options:
   -D, --delete     Unstow (remove symlinks)
   -R, --restow     Restow (unstow then stow)
   -v, --verbose    Show unchanged paths as a tree (dim nodes are grouping only)
+  -i, --interactive
+                   After stow, pick partial folders to promote to full directory
+                   symlinks (requires a terminal; stow action only)
   --raw            Print raw GNU stow output (-v 3)
   -h, --help       This help
 `);
@@ -39,6 +42,7 @@ function parseOptions(argv: string[]): StowOptions | "help" | "error" {
   let action: StowAction = "stow";
   let listUnchanged = false;
   let raw = false;
+  let interactive = false;
 
   for (const arg of argv) {
     switch (arg) {
@@ -57,6 +61,10 @@ function parseOptions(argv: string[]): StowOptions | "help" | "error" {
       case "--verbose":
         listUnchanged = true;
         break;
+      case "-i":
+      case "--interactive":
+        interactive = true;
+        break;
       case "--raw":
         raw = true;
         break;
@@ -67,10 +75,10 @@ function parseOptions(argv: string[]): StowOptions | "help" | "error" {
     }
   }
 
-  return { action, listUnchanged, raw };
+  return { action, listUnchanged, raw, interactive };
 }
 
-export function main(argv: string[]): void {
+export async function main(argv: string[]): Promise<void> {
   const parsed = parseOptions(argv.slice(2));
 
   if (parsed === "help") {
@@ -82,11 +90,22 @@ export function main(argv: string[]): void {
     process.exit(1);
   }
 
+  if (parsed.interactive && parsed.action !== "stow") {
+    printError("dotfiles: --interactive works with stow only (not -D or -R)");
+    process.exit(1);
+  }
+
   if (!assertDotfilesCwd()) {
     process.exit(1);
   }
 
-  process.exit(runDotfilesStow(parsed));
+  const code = await runDotfilesStow(parsed);
+  process.exit(code);
 }
 
-main(process.argv);
+main(process.argv).catch((err: unknown) => {
+  const message = err instanceof Error ? err.message : String(err);
+  printError(`dotfiles: ${message}`);
+  process.exit(1);
+});
+

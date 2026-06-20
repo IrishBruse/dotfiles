@@ -13,4 +13,5 @@ export interface StowOptions {
   action: StowAction;
   listUnchanged: boolean;
   raw: boolean;
+  interactive: boolean;
 }
