@@ -6,6 +6,7 @@
   "license": "ISC",
   "type": "module",
   "bin": {
+    "dotfiles": "./.bin/dotfiles.js",
     "memory": "./.bin/memory.js",
     "commit": "./.bin/commit.js",
     "confluence": "./.bin/confluence.js",

@@ -7,7 +7,9 @@ Single Node package (`tools/package.json`) with one `tsconfig.json`. Entry stubs
 - Do not use ENV vars in tools unless explicitly requested.
 - Before finishing work that touches TypeScript here, run `npm run validate` from repo root
 
-## api.ts
+## dotfiles
+
+`dotfiles -v` prints unchanged stow paths as a tree. Unicode box-drawing characters (`├──`, `└──`, `│`) are intentional here for readable tree lines. Plain ASCII is not required for this output.
 
 Folders imported from other tool folders expose an `api.ts` as their only cross-folder entry point (`cross-folder-api` ESLint rule). The file is the public contract: full exported type shapes, typed functions and consts, and delegating implementations (no bare `export { x } from "./other.ts"` re-exports). Same-folder code may `import type` from `api.ts`.
 
