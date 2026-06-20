@@ -1,20 +1,42 @@
-import { printOk } from "./output.ts";
+import { readStdin } from "./args.ts";
 import { appendEntry } from "./entries.ts";
+import { printOk } from "./output.ts";
+import { writeReference } from "./reference.ts";
 import { writeSkill } from "./renderSkill.ts";
 import { parseSlug } from "./slug.ts";
 
-/** Max inline sentence length; use `memory show` for longer detail. */
+/** Max inline sentence length; use `--detail` for longer reference content. */
 export const MAX_ENTRY_LENGTH = 120;
 
+function parseDetailFlag(args: string[]): {
+  positional: string[];
+  detail?: string;
+} {
+  const detailIndex = args.indexOf("--detail");
+  if (detailIndex === -1) {
+    return { positional: args };
+  }
+
+  const positional = args.slice(0, detailIndex);
+  const afterDetail = args.slice(detailIndex + 1);
+  if (afterDetail.length > 0) {
+    return { positional, detail: afterDetail.join("\n\n").trim() };
+  }
+
+  return { positional, detail: undefined };
+}
+
 /**
- * Run `memory add <id> <sentence>`.
+ * Run `memory add <id> <sentence> [--detail [content...]]`.
  */
 export async function runAdd(args: string[]): Promise<void> {
-  if (args.length < 2) {
+  const { positional, detail: detailFromArgs } = parseDetailFlag(args);
+
+  if (positional.length < 2) {
     throw new Error("Id and sentence are required.");
   }
 
-  const [idRaw, ...sentenceParts] = args;
+  const [idRaw, ...sentenceParts] = positional;
   const id = parseSlug(idRaw!);
   const text = sentenceParts.join(" ").trim();
 
@@ -26,16 +48,33 @@ export async function runAdd(args: string[]): Promise<void> {
   }
   if (text.length > MAX_ENTRY_LENGTH) {
     throw new Error(
-      `Sentence is too long (${text.length} characters, max ${MAX_ENTRY_LENGTH}). Keep one line in the skill and use memory show for detail.`
+      `Sentence is too long (${text.length} characters, max ${MAX_ENTRY_LENGTH}). Keep one line in the skill and use --detail for reference content.`
     );
   }
 
-  const { entries, added } = await appendEntry({ text, id, hasDetails: false });
+  const hasDetailFlag = args.includes("--detail");
+  let detail = detailFromArgs;
+  if (hasDetailFlag && detail === undefined) {
+    detail = await readStdin();
+    if (!detail) {
+      throw new Error("--detail requires content as arguments or on stdin.");
+    }
+  }
+
+  const { entries, added } = await appendEntry({
+    text,
+    id,
+    hasDetails: Boolean(detail),
+  });
   await writeSkill(entries);
 
   if (!added) {
     throw new Error(`An entry with id "${id}" already exists.`);
   }
 
-  printOk("Added entry.");
+  if (detail) {
+    await writeReference(id, detail);
+  }
+
+  printOk(detail ? "Added entry with reference detail." : "Added entry.");
 }

@@ -81,27 +81,6 @@ export async function appendEntry(
   await saveEntries(next);
   return { entries: next, added: true };
 }
-
-/**
- * Mark an entry as having reference detail on disk.
- *
- * @return updated entries (unchanged when the id is missing or already marked)
- */
-export async function markHasDetails(id: string): Promise<MemoryEntry[]> {
-  const entries = await loadEntries();
-  const index = entries.findIndex((row) => row.id === id);
-  if (index === -1) {
-    return entries;
-  }
-  const row = entries[index]!;
-  if (row.hasDetails) {
-    return entries;
-  }
-  const next = entries.with(index, { ...row, hasDetails: true });
-  await saveEntries(next);
-  return next;
-}
-
 /**
  * Remove one entry by id.
  *

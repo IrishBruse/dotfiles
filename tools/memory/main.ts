@@ -1,48 +1,42 @@
 import process from "node:process";
 
 import { runAdd } from "./addEntry.ts";
-import { runList } from "./listEntries.ts";
+import { isCursorAgent } from "./agentGuard.ts";
+import { runInteractive } from "./browseEntries.ts";
+import { runView } from "./viewEntries.ts";
 import { printError } from "./output.ts";
-import { runRm } from "./rmEntry.ts";
-import { runShow } from "./show.ts";
 
 function printHelp(): void {
   console.error(`memory - persistent agent lessons as a minimal skill
 
 Usage:
-  memory add <id> <sentence>
-  memory show <id> [detail...]
-  memory list
-  memory rm
+  memory add <id> <sentence> [--detail [content...]]
+  memory view <id>
 
 Commands:
-  add   Append one high-level sentence linked to <id>
-  show  Append detail to references/<id>.md (stdin accepted)
-  list  Print entries for humans (alias: ls). Agents should read the skill.
-  rm    Interactively pick and delete an entry (human-only)
+  add     Append one high-level sentence linked to <id>
+  view    Print one entry as raw markdown
 
 Options:
   -h, --help     This help
-
-Constraints:
-  id must be kebab-case, at most 4 words separated by hyphens
-  sentence must be a single line (max 120 chars)
-  duplicate ids are rejected
-  rm is blocked when CURSOR_AGENT is set (Cursor agent shell sessions)
-
-Examples:
-  memory add deployment-migrations "Most deployment failures come from migration ordering."
-  memory add checkout-redis "Checkout bugs often involve stale Redis entries."
-  memory show checkout-redis "Keys persist after session merge until TTL expires."
-  memory list
-  memory rm
+  --detail       Reference markdown for <id> (arguments or stdin)
 `);
 }
 
 export async function main(argv: string[]): Promise<void> {
   const args = argv.slice(2);
-  if (args.length === 0 || args.includes("-h") || args.includes("--help")) {
+
+  if (args.includes("-h") || args.includes("--help")) {
     printHelp();
+    return;
+  }
+
+  if (args.length === 0) {
+    if (isCursorAgent()) {
+      printHelp();
+      return;
+    }
+    await runInteractive();
     return;
   }
 
@@ -51,21 +45,15 @@ export async function main(argv: string[]): Promise<void> {
     await runAdd(rest);
     return;
   }
-  if (cmd === "show") {
-    await runShow(rest);
-    return;
-  }
-  if (cmd === "list" || cmd === "ls") {
-    await runList();
-    return;
-  }
-  if (cmd === "rm") {
-    await runRm(rest);
+  if (cmd === "view") {
+    await runView(rest);
     return;
   }
 
   printError(`Unknown command "${cmd}".`);
-  printHelp();
+  if (isCursorAgent()) {
+    printHelp();
+  }
   process.exit(1);
 }
 
