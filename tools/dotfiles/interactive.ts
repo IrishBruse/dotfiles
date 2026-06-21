@@ -44,13 +44,14 @@ const TAB_SELECTED = `${ESC}[38;2;255;255;255m`;
 const ANSI_RE = /\u001b\[[0-9;]*m/g;
 
 const ALL_TAB = "all";
-const HELP_STOW = "S: stow";
+const HELP_STOW = "s: stow";
 const HELP_TABS = "<-/-> tabs";
 const HELP_ALL = `Up/Down: move  ${HELP_STOW}  o: open  ${HELP_TABS}  q: quit`;
 const HELP_NO_PARTIAL = `${HELP_STOW}  ${HELP_TABS}  q: quit`;
 const HELP_PROMOTABLE = `Up/Down: move  Enter: adopt  ${HELP_STOW}  o: open  ${HELP_TABS}  q: quit`;
 const HELP_WITH_LOCALS = `Up/Down: move  i: import  ${HELP_STOW}  o: open  ${HELP_TABS}  q: quit`;
 const HELP_STOW_REMAINDER = `Up/Down: move  i: stow  ${HELP_STOW}  o: open  ${HELP_TABS}  q: quit`;
+const TREE_SCROLL_PADDING = 2;
 
 function stripAnsi(text: string): string {
   return text.replace(ANSI_RE, "");
@@ -236,22 +237,42 @@ function pathDetailLines(treePath: string | undefined, color: boolean): string[]
   return [paint(color, "label", displayTreePath(treePath))];
 }
 
-function ensureTreeVisible(
+function treeIndexForPath(
+  entries: FormattedTreeLine[],
+  treePath: string | undefined
+): number {
+  if (!treePath) {
+    return 0;
+  }
+  const index = entries.findIndex((entry) => entry.fullPath === treePath);
+  return index >= 0 ? index : 0;
+}
+
+function scrollSelectionToTop(
   selectedIndex: number,
-  scroll: number,
   treeLength: number,
-  visibleRows: number
+  visibleRows: number,
+  padding: number = TREE_SCROLL_PADDING
 ): number {
   if (treeLength <= visibleRows) {
     return 0;
   }
-  if (selectedIndex < scroll) {
-    return selectedIndex;
-  }
-  if (selectedIndex >= scroll + visibleRows) {
-    return selectedIndex - visibleRows + 1;
-  }
-  return scroll;
+  const maxScroll = treeLength - visibleRows;
+  return Math.max(0, Math.min(selectedIndex - padding, maxScroll));
+}
+
+function syncLeftScrollToSelection(
+  unchangedPaths: string[],
+  selectedFolder: PartialFolderAnalysis | undefined,
+  color: boolean,
+  rows: number
+): number {
+  const treeEntries = formatPathTreeEntries(
+    unchangedPaths,
+    treePaintLine(color, selectedFolder?.folderPath, selectedFolder?.promotable === true)
+  );
+  const index = treeIndexForPath(treeEntries, selectedFolder?.folderPath);
+  return scrollSelectionToTop(index, treeEntries.length, rows);
 }
 
 function clampScroll(scroll: number, contentLines: number, visibleRows: number): number {
@@ -602,6 +623,12 @@ export async function runPartialPromoteInteractive(): Promise<number> {
   stdin.setRawMode(true);
   stdin.resume();
   stdout.write(ENTER_ALT + HIDE_CURSOR + HOME + CLR_EOS);
+  leftScroll = syncLeftScrollToSelection(
+    unchangedPaths,
+    folders[selected],
+    stdoutColorEnabled(),
+    termHeight()
+  );
   draw();
 
   return await new Promise<number>((resolve) => {
@@ -630,6 +657,12 @@ export async function runPartialPromoteInteractive(): Promise<number> {
           if (folders.length > 0) {
             selected = (selected - 1 + folders.length) % folders.length;
             rightScroll = 0;
+            leftScroll = syncLeftScrollToSelection(
+              unchangedPaths,
+              folders[selected],
+              stdoutColorEnabled(),
+              termHeight()
+            );
             draw();
           }
           return;
@@ -637,11 +670,16 @@ export async function runPartialPromoteInteractive(): Promise<number> {
           if (folders.length > 0) {
             selected = (selected + 1) % folders.length;
             rightScroll = 0;
+            leftScroll = syncLeftScrollToSelection(
+              unchangedPaths,
+              folders[selected],
+              stdoutColorEnabled(),
+              termHeight()
+            );
             draw();
           }
           return;
         case "pageup":
-        case "w":
           scrollView(-scrollStep());
           draw();
           return;
@@ -650,20 +688,20 @@ export async function runPartialPromoteInteractive(): Promise<number> {
           draw();
           return;
         case "s": {
-          if (key.shift) {
-            const stow = refreshStowState(false);
-            unchangedPaths = stow.unchangedPaths;
-            folders = reloadPartialFolders(unchangedPaths);
-            flash = stowFlashMessage(stow.summary, stow.status);
-            leftScroll = 0;
-            rightScroll = 0;
-            if (selected >= folders.length) {
-              selected = Math.max(0, folders.length - 1);
-            }
-            draw();
-            return;
+          const stow = refreshStowState(false);
+          unchangedPaths = stow.unchangedPaths;
+          folders = reloadPartialFolders(unchangedPaths);
+          flash = stowFlashMessage(stow.summary, stow.status);
+          rightScroll = 0;
+          if (selected >= folders.length) {
+            selected = Math.max(0, folders.length - 1);
           }
-          scrollView(scrollStep());
+          leftScroll = syncLeftScrollToSelection(
+            unchangedPaths,
+            folders[selected],
+            stdoutColorEnabled(),
+            termHeight()
+          );
           draw();
           return;
         }
@@ -695,11 +733,16 @@ export async function runPartialPromoteInteractive(): Promise<number> {
           }
           unchangedPaths = refreshStowState(false).unchangedPaths;
           folders = reloadPartialFolders(unchangedPaths);
-          leftScroll = 0;
           rightScroll = 0;
           if (selected >= folders.length) {
             selected = Math.max(0, folders.length - 1);
           }
+          leftScroll = syncLeftScrollToSelection(
+            unchangedPaths,
+            folders[selected],
+            stdoutColorEnabled(),
+            termHeight()
+          );
           draw();
           return;
         }
@@ -749,11 +792,16 @@ export async function runPartialPromoteInteractive(): Promise<number> {
           }
           unchangedPaths = refreshStowState(false).unchangedPaths;
           folders = reloadPartialFolders(unchangedPaths);
-          leftScroll = 0;
           rightScroll = 0;
           if (selected >= folders.length) {
             selected = Math.max(0, folders.length - 1);
           }
+          leftScroll = syncLeftScrollToSelection(
+            unchangedPaths,
+            folders[selected],
+            stdoutColorEnabled(),
+            termHeight()
+          );
           draw();
           return;
         }
