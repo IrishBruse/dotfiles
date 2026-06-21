@@ -7,6 +7,7 @@
 
 .define editor_apps ["Code", "Cursor"]
 
+ctrl - c : open -a "Google Chrome"
 ctrl - t : open -na /Applications/Ghostty.app
 ctrl - e : open -a /Applications/Marta.app
 ctrl - j : open https://globalization-partners.atlassian.net/jira/software/c/projects/NOVACORE/boards/691
