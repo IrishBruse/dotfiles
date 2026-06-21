@@ -5,6 +5,42 @@ alwaysApply: true
 
 # Agent memory
 
-Read the `memory` skill before similar work. Do not run bare `memory` or `memory view`; read the skill and any `references/<id>.md` files directly.
+Cross-session lessons live in the `memory` skill. Adding an entry updates `entries.json` and regenerates the skill.
 
-Add cross-session lessons with `memory add` when you hit recurring pitfalls, non-obvious conventions, or fixes that took real investigation.
+## When to read
+
+Read the `memory` skill before similar work, when you hit a recurring issue, or when the user asks what has been learned.
+
+## How to read
+
+- For entries whose id links to `references/<id>.md`, read `~/.agents/skills/memory/references/<id>.md` with the Read tool.
+
+## When to add
+
+Add only when the lesson would save time next session:
+
+- Recurring pitfall or non-obvious convention
+- Fix that took real investigation
+
+Skip one-off task notes, obvious facts, or topics already covered. Check the skill list first. Duplicate ids are rejected.
+
+## How to add
+
+```bash
+memory add <kebab-id> "<one sentance, max 120 chars>"
+memory add <kebab-id> "<one sentance>" --detail "<expanded markdown detail on one sentance>"
+```
+
+- `<kebab-id>`: lowercase letters, digits, hyphens only, at most 4 hyphen-separated words (e.g. `checkout-redis`)
+- Lesson: single line, 120 chars max. Quote the sentence if the shell would split it
+- Use `--detail` for anything that does not fit in the one-liner (e.g. examples)
+
+### Examples
+
+```bash
+# Good: non-obvious, reusable
+memory add stow-symlink "dotfiles stow skips targets that already exist as real files"
+
+# Skip: one-off, no cross-session value
+memory add fixed-typo "fixed a typo in README"
+```
