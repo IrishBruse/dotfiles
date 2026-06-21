@@ -2,6 +2,7 @@ import { homedir } from "node:os";
 import path from "node:path";
 import process from "node:process";
 
+import { runInteractiveCommand } from "./interactiveCommand.ts";
 import { printError } from "./paint.ts";
 import { runDotfilesStow } from "./stow.ts";
 import type { StowAction, StowOptions } from "./types.ts";
@@ -25,25 +26,27 @@ parent folders when the target directory already exists.
 
 Usage:
   dotfiles [options]
+  dotfiles stow [options]
+  dotfiles unstow [options]
+  dotfiles restow [options]
 
-Options:
-  -D, --delete     Unstow (remove symlinks)
-  -R, --restow     Restow (unstow then stow)
+Commands:
+  (default)        Browse partial folders (TTY, preview); S to stow, then import,
+                   stow remainders, or adopt ready folders
+  stow             Stow only (no interactive browser)
+  unstow           Remove stow symlinks
+  restow           Unstow then stow
+
+Options (stow, unstow, restow):
   -v, --verbose    Show unchanged paths as a tree (dim nodes are grouping only)
-  -i, --interactive
-                   After stow, browse partial folders with a destination preview;
-                   import local files into home/ or stow remainders; adopt ready
-                   folders to full directory symlinks (TTY, stow only)
   --raw            Print raw GNU stow output (-v 3)
   -h, --help       This help
 `);
 }
 
-function parseOptions(argv: string[]): StowOptions | "help" | "error" {
-  let action: StowAction = "stow";
+function parseDisplayOptions(argv: string[]): Omit<StowOptions, "action"> | "help" | "error" {
   let listUnchanged = false;
   let raw = false;
-  let interactive = false;
 
   for (const arg of argv) {
     switch (arg) {
@@ -52,19 +55,15 @@ function parseOptions(argv: string[]): StowOptions | "help" | "error" {
         return "help";
       case "-D":
       case "--delete":
-        action = "unstow";
-        break;
+        printError("dotfiles: use dotfiles unstow (not -D)");
+        return "error";
       case "-R":
       case "--restow":
-        action = "restow";
-        break;
+        printError("dotfiles: use dotfiles restow (not -R)");
+        return "error";
       case "-v":
       case "--verbose":
         listUnchanged = true;
-        break;
-      case "-i":
-      case "--interactive":
-        interactive = true;
         break;
       case "--raw":
         raw = true;
@@ -76,32 +75,80 @@ function parseOptions(argv: string[]): StowOptions | "help" | "error" {
     }
   }
 
-  return { action, listUnchanged, raw, interactive };
+  return { listUnchanged, raw };
 }
 
-export async function main(argv: string[]): Promise<void> {
-  const parsed = parseOptions(argv.slice(2));
-
+async function runInteractive(args: string[]): Promise<void> {
+  const parsed = parseDisplayOptions(args);
   if (parsed === "help") {
     printHelp();
     return;
   }
-
   if (parsed === "error") {
     process.exit(1);
   }
-
-  if (parsed.interactive && parsed.action !== "stow") {
-    printError("dotfiles: --interactive works with stow only (not -D or -R)");
+  if (parsed.listUnchanged || parsed.raw) {
+    printError("dotfiles: options other than -h require dotfiles stow, unstow, or restow");
     process.exit(1);
   }
-
   if (!assertDotfilesCwd()) {
     process.exit(1);
   }
-
-  const code = await runDotfilesStow(parsed);
+  const code = await runInteractiveCommand();
   process.exit(code);
+}
+
+async function runStowAction(action: StowAction, args: string[]): Promise<void> {
+  const parsed = parseDisplayOptions(args);
+  if (parsed === "help") {
+    printHelp();
+    return;
+  }
+  if (parsed === "error") {
+    process.exit(1);
+  }
+  if (!assertDotfilesCwd()) {
+    process.exit(1);
+  }
+  const code = await runDotfilesStow({ ...parsed, action });
+  process.exit(code);
+}
+
+const STOW_ACTION_COMMANDS: Record<string, StowAction> = {
+  stow: "stow",
+  unstow: "unstow",
+  restow: "restow"
+};
+
+export async function main(argv: string[]): Promise<void> {
+  const args = argv.slice(2);
+
+  if (args.length === 0) {
+    await runInteractive([]);
+    return;
+  }
+
+  const subcommand = args[0];
+
+  if (subcommand === "-h" || subcommand === "--help") {
+    printHelp();
+    return;
+  }
+
+  const action = STOW_ACTION_COMMANDS[subcommand];
+  if (action) {
+    await runStowAction(action, args.slice(1));
+    return;
+  }
+
+  if (subcommand.startsWith("-")) {
+    await runInteractive(args);
+    return;
+  }
+
+  printError(`dotfiles: unknown subcommand ${subcommand}`);
+  printError("Try dotfiles --help");
+  process.exit(1);
 }
 
 main(process.argv).catch((err: unknown) => {
@@ -109,4 +156,3 @@ main(process.argv).catch((err: unknown) => {
   printError(`dotfiles: ${message}`);
   process.exit(1);
 });
-
