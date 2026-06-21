@@ -1,5 +1,8 @@
 import { appendFile } from "node:fs/promises";
 import { createServer, type IncomingMessage } from "node:http";
+import process from "node:process";
+
+import { parseBody, parseEndpointArgs } from "./parse.ts";
 
 async function readBody(req: IncomingMessage): Promise<string> {
   const chunks: Buffer[] = [];
@@ -9,64 +12,14 @@ async function readBody(req: IncomingMessage): Promise<string> {
   return Buffer.concat(chunks).toString("utf8");
 }
 
-function parseBody(raw: string, contentType: string | undefined): unknown {
-  const isJson =
-    contentType?.split(";")[0]?.trim().toLowerCase() === "application/json";
-  if (!isJson) {
-    return raw;
-  }
-  const trimmed = raw.trim();
-  if (!trimmed) {
-    return null;
-  }
-  try {
-    return JSON.parse(trimmed) as unknown;
-  } catch {
-    return raw;
-  }
+let port: number;
+let outPath: string;
+try {
+  ({ port, outPath } = parseEndpointArgs(process.argv.slice(2)));
+} catch (err) {
+  console.error(err instanceof Error ? err.message : String(err));
+  process.exit(1);
 }
-
-function parsePort(arg: string | undefined): number {
-  if (arg === undefined) {
-    console.error("endpoint: --port requires a value");
-    process.exit(1);
-  }
-  const port = Number(arg);
-  if (!Number.isInteger(port) || port < 0 || port > 65535) {
-    console.error(`endpoint: invalid port: ${arg}`);
-    process.exit(1);
-  }
-  return port;
-}
-
-function parseArgs(argv: string[]): { port: number; outPath: string } {
-  let port: number | undefined;
-  const rest: string[] = [];
-
-  for (let i = 0; i < argv.length; i++) {
-    const arg = argv[i]!;
-    if (arg === "--port") {
-      port = parsePort(argv[++i]);
-      continue;
-    }
-    if (arg.startsWith("--port=")) {
-      port = parsePort(arg.slice("--port=".length));
-      continue;
-    }
-    rest.push(arg);
-  }
-
-  if (port === undefined && rest[0] !== undefined) {
-    port = parsePort(rest.shift());
-  }
-
-  return {
-    port: port ?? 0,
-    outPath: rest[0] ?? "endpoint.jsonl"
-  };
-}
-
-const { port, outPath } = parseArgs(process.argv.slice(2));
 
 const server = createServer((req, res) => {
   void (async () => {
