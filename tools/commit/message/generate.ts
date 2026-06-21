@@ -1,3 +1,5 @@
+import { basename } from "node:path";
+
 import { analyzeStagedChanges, isConfidentEnough } from "./analyze.ts";
 import type { CommitConfig } from "../config/config.ts";
 import { loadCommitConfig } from "../config/config.ts";
@@ -19,14 +21,17 @@ export function generateCommitMessage(
 
   const match = config ? findConfigMatch(config, stagedPaths) : undefined;
   if (match) {
+    const confident =
+      analysis.summary !== "" && isConfidentEnough(analysis);
+    const summary = confident
+      ? analysis.summary
+      : stagedPaths.map((path) => basename(path)).join(", ");
     const message = formatCommitMessage(
       match.rule,
       match.capturedScope,
-      analysis.summary
+      summary
     );
-    const confident =
-      analysis.summary !== "" && isConfidentEnough(analysis);
-    return { message: confident ? message : "", confident };
+    return { message, confident };
   }
 
   const confident = isConfidentEnough(analysis);

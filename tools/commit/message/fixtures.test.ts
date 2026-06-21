@@ -47,6 +47,21 @@ describe("generateCommitMessage fixtures", () => {
   });
 });
 
+describe("scoped prefix fallback", () => {
+  it("keeps config prefix when summary is not confident", () => {
+    const nameStatus = "M\tlinux/apt.csv\n";
+    const result = generateCommitMessage(
+      repoRoot,
+      nameStatus,
+      "",
+      ["linux/apt.csv"],
+      config
+    );
+    assert.equal(result.message, "linux: apt.csv");
+    assert.equal(result.confident, false);
+  });
+});
+
 describe("misc slice messages", () => {
   it("gitignore change uses misc update subject", () => {
     const nameStatus = "M\t.gitignore\n";
