@@ -1,11 +1,8 @@
 # Dotfiles
 
-## Repo layout
-
 ### home/
 
-Files here mirror `~` and are meant to be stowed into the real home directory (`.config`, `.cursor`, `.agents`, VS Code `Code/User`, fish, hypr, etc.). 
-Stow via the `dotfiles` CLI (`tools/dotfiles`) or `dotfiles` on PATH after `npm link` in `tools/`.
+Files here mirror `~` and are manually stowed by the user. You can assume that any path in this will be mirrored to its `~/` equivalent
 
 ### linux/
 
@@ -27,7 +24,7 @@ Macos vscode settings
 ### vscode/keybindings
 
 TypeScript and JSON used to generate VS Code keybindings.
-Run `gen.ts` from `vscode/keybindings`; it uses relative paths for `defaultKeybinds/`.
+`gen.ts` is running in a watcher skip running.
 
 ### vscode/theme
 
