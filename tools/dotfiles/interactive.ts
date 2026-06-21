@@ -1,4 +1,4 @@
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
@@ -41,9 +41,9 @@ const INVERT = `${ESC}[7m`;
 const RESET = `${ESC}[0m`;
 const ANSI_RE = /\u001b\[[0-9;]*m/g;
 
-const HELP_PROMOTABLE = "Up/Down: move  Enter: adopt  q: quit";
-const HELP_WITH_LOCALS = "Up/Down: move  i: import  q: quit";
-const HELP_STOW_REMAINDER = "Up/Down: move  i: stow  q: quit";
+const HELP_PROMOTABLE = "Up/Down: move  Enter: adopt  o: open  q: quit";
+const HELP_WITH_LOCALS = "Up/Down: move  i: import  o: open  q: quit";
+const HELP_STOW_REMAINDER = "Up/Down: move  i: stow  o: open  q: quit";
 const PANE_DIVIDER = " | ";
 
 function stripAnsi(text: string): string {
@@ -79,6 +79,16 @@ function termWidth(): number {
 
 function termHeight(): number {
   return process.stdout.rows ?? 24;
+}
+
+function openPath(targetPath: string): void {
+  const cmd =
+    process.platform === "darwin"
+      ? "open"
+      : process.platform === "win32"
+        ? "explorer"
+        : "xdg-open";
+  spawn(cmd, [targetPath], { stdio: "ignore", detached: true }).unref();
 }
 
 function paneWidths(cols: number): { left: number; right: number } {
@@ -495,6 +505,14 @@ export async function runPartialPromoteInteractive(_options: StowOptions): Promi
             selected = Math.max(0, folders.length - 1);
           }
           draw();
+          return;
+        }
+        case "o": {
+          const folder = folders[selected];
+          if (!folder) {
+            return;
+          }
+          openPath(path.join(STOW_TARGET, folder.folderPath));
           return;
         }
         case "i": {
