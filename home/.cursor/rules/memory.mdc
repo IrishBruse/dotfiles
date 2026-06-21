@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Agent memory
 
-Cross-session lessons live in the `memory` skill. Adding an entry updates `entries.json` and regenerates the skill.
+Cross-session lessons live in the `memory` skill. Adding an entry regenerates the skill.
 
 ## When to read
 
