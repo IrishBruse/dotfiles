@@ -1,21 +1,13 @@
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const MAX_SLUG_WORDS = 4;
 
 /**
- * Validate a memory id (kebab-case, at most four hyphen-separated words).
+ * Validate a memory id (kebab-case).
  */
 export function parseSlug(raw: string): string {
   const slug = raw.trim();
   if (!SLUG_RE.test(slug)) {
     throw new Error(
       `Id "${raw}" must use lowercase letters, digits, and hyphens only.`
-    );
-  }
-
-  const words = slug.split("-");
-  if (words.length > MAX_SLUG_WORDS) {
-    throw new Error(
-      `Id "${raw}" can have at most ${MAX_SLUG_WORDS} words separated by hyphens.`
     );
   }
 
