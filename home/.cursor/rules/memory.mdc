@@ -13,8 +13,8 @@ Read the `memory` skill before similar work, when you hit a recurring issue, or 
 
 ## How to read
 
-- Entries that link to a write-up — `[id](references/id.md): text` — have more context. Read it with the Read tool, resolved against the skill's own directory: `~/.agents/skills/memory/references/<id>.md` (not relative to the current working directory).
-- If the link doesn't resolve to anything, the one-line lesson is the whole story — a missing reference isn't an error.
+1. Read `~/.agents/skills/memory/SKILL.md`.
+2. For entries whose id is a link, also read `~/.agents/skills/memory/references/<id>.md`.
 
 ## When to add
 
@@ -23,18 +23,18 @@ Add only when the lesson would save time next session:
 - Recurring pitfall or non-obvious convention
 - Fix that took real investigation
 
-Skip one-off task notes, obvious facts, or topics already covered. Check the skill list first — duplicate ids are rejected.
+Skip one-off task notes, obvious facts, or topics already covered. Read the skill first - duplicate ids are rejected.
 
 ## How to add
 
 ```bash
 memory add <kebab-id> "<one sentence, max 120 chars>"
-memory add <kebab-id> "<one sentence>" --detail "<expanded markdown detail>"
+memory add <kebab-id> "<one sentence>" --detail "<root cause, fix, why it wasn't obvious>"
 ```
 
-- `<kebab-id>`: lowercase letters, digits, hyphens only, at most 4 hyphen-separated words (e.g. `checkout-redis`).
-- Lesson: single line, 120 chars max. Quote the sentence if the shell would split it.
-- Use `--detail` for anything that does not fit in the one-liner (e.g. examples).
+- `<kebab-id>`: lowercase letters, digits, hyphens only
+- Sentence: single line, 120 chars max. Quote it if the shell would split it
+- Use `--detail` for anything that does not fit in the one-liner
 
 ### Examples
 
