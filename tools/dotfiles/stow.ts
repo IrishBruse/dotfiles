@@ -42,18 +42,15 @@ export async function runDotfilesStow(options: StowOptions): Promise<number> {
     return result.status ?? 1;
   }
 
-  const startMs = Date.now();
   const result = spawnSync("stow", stowArgs(options, 2), { encoding: "utf8" });
   const lines = (result.stderr ?? "").split("\n").filter((line) => line.length > 0);
   const summary = parseStowOutput(lines);
-  const elapsedMs = Date.now() - startMs;
 
   const exitCode = printSummary(
     options.action,
     STOW_TARGET,
     summary,
     options.listUnchanged,
-    elapsedMs,
     result.status ?? 1
   );
 

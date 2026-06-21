@@ -11,14 +11,19 @@ function printPaths(paths: string[], color: boolean): void {
 }
 
 function printPathTree(paths: string[], color: boolean): void {
-  const paintLine = (prefix: string, name: string, role: "path" | "group"): string =>
+  const paintLine = (
+    prefix: string,
+    name: string,
+    role: "path" | "group",
+    _fullPath: string
+  ): string =>
     `${paint(color, "dim", prefix)}${paint(color, role === "path" ? "path" : "dim", name)}`;
 
   for (const line of formatPathTree(paths, paintLine)) {
     console.log(line);
   }
   console.log(
-    paint(color, "dim", "    (dim: parent dirs only, not symlinked)")
+    paint(color, "dim", "(dim: parent dirs only, not symlinked)")
   );
 }
 
@@ -41,7 +46,6 @@ export function printSummary(
   target: string,
   summary: StowSummary,
   listUnchanged: boolean,
-  elapsedMs: number,
   stowStatus: number
 ): number {
   const color = stdoutColorEnabled();
@@ -69,13 +73,11 @@ export function printSummary(
   }
 
   if (summary.unchanged.length > 0) {
-    process.stdout.write(`  ${paint(color, "label", "~")} `);
+    process.stdout.write(`${paint(color, "label", "~")} `);
     process.stdout.write(paint(color, "ok", "unchanged"));
     console.log(`  ${paint(color, "dim", String(summary.unchanged.length))}`);
     if (listUnchanged) {
       printPathTree(summary.unchanged, color);
-    } else {
-      console.log(paint(color, "dim", "    (use -v for tree)"));
     }
   }
 
@@ -101,30 +103,10 @@ export function printSummary(
     );
   }
 
-  const nothingToDo =
-    summary.linked.length === 0 &&
-    summary.removed.length === 0 &&
-    summary.warnings.length === 0 &&
-    summary.conflicts.length === 0 &&
-    summary.unchanged.length > 0;
-
-  if (nothingToDo) {
-    console.log(paint(color, "dim", "  nothing to do"));
-  }
-
-  console.log();
-
   let exitCode = stowStatus;
   if (exitCode === 0 && summary.conflicts.length > 0) {
     exitCode = 1;
   }
-
-  if (exitCode !== 0) {
-    process.stdout.write(paint(color, "bad", "failed"));
-  } else {
-    process.stdout.write(paint(color, "ok", "done"));
-  }
-  console.log(paint(color, "dim", `  (${elapsedMs}ms)`));
 
   return exitCode;
 }

@@ -1,4 +1,5 @@
 import { spawnSync } from "node:child_process";
+import fs from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 import process from "node:process";
@@ -13,6 +14,11 @@ import {
 } from "./partial.ts";
 import { paint, printError, stdoutColorEnabled } from "./paint.ts";
 import { parseStowOutput } from "./parse.ts";
+import {
+  formatPathTreeEntries,
+  type FormattedTreeLine,
+  type PathTreeRole
+} from "./tree.ts";
 import type { StowOptions } from "./types.ts";
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -30,49 +36,75 @@ const CLR_EOS = `${ESC}[J`;
 const CLR_EOL = `${ESC}[K`;
 const HIDE_CURSOR = `${ESC}[?25l`;
 const SHOW_CURSOR = `${ESC}[?25h`;
+const INVERT = `${ESC}[7m`;
+const RESET = `${ESC}[0m`;
+const ANSI_RE = /\u001b\[[0-9;]*m/g;
 
-const HELP_PROMOTABLE = "up/down: move  Enter: promote  q: quit";
-const HELP_BLOCKED = "up/down: move  q: quit";
-const NAME_COL = 28;
-const MAX_LOCAL_ENTRIES = 8;
-const MAX_LINKED_ENTRIES = 6;
+const HELP_PROMOTABLE = "Up/Down: move  Enter: adopt  q: quit";
+const HELP_BLOCKED = "Up/Down: move  q: quit";
+const PANE_DIVIDER = " | ";
 
-function padPlain(text: string, width: number): string {
-  if (text.length >= width) {
-    return truncatePlain(text, width);
-  }
-  return text.padEnd(width);
+function stripAnsi(text: string): string {
+  return text.replace(ANSI_RE, "");
 }
 
-function truncatePlain(text: string, width: number): string {
-  if (text.length <= width) {
+function vis(text: string): number {
+  return stripAnsi(text).length;
+}
+
+function clipVis(text: string, max: number): string {
+  const plain = stripAnsi(text);
+  if (plain.length <= max) {
     return text;
   }
-  if (width <= 3) {
-    return text.slice(0, width);
+  if (max <= 3) {
+    return plain.slice(0, max);
   }
-  return `${text.slice(0, width - 3)}...`;
+  return plain.slice(0, max - 3) + "...";
 }
 
-function displayLinkTarget(detail: string): string {
-  const homeIdx = detail.indexOf("home/");
-  if (homeIdx >= 0) {
-    return detail.slice(homeIdx);
+function padEndVis(text: string, width: number): string {
+  const used = vis(text);
+  if (used >= width) {
+    return clipVis(text, width);
   }
-  return truncatePlain(detail, 44);
+  return text + " ".repeat(width - used);
 }
 
-function localKindLabel(entry: DestinationEntry): string {
-  switch (entry.kind) {
-    case "file":
-      return "file";
-    case "directory":
-      return "dir";
-    case "other-symlink":
-      return "symlink";
-    default:
-      return "";
+function termWidth(): number {
+  return process.stdout.columns ?? 80;
+}
+
+function termHeight(): number {
+  return process.stdout.rows ?? 24;
+}
+
+function paneWidths(cols: number): { left: number; right: number } {
+  const left = Math.floor((cols - vis(PANE_DIVIDER)) / 2);
+  return { left, right: cols - left - vis(PANE_DIVIDER) };
+}
+
+function formatLocalEntryName(entry: DestinationEntry): string {
+  if (entry.kind === "directory") {
+    return `${entry.name}/`;
   }
+  return entry.name;
+}
+
+function formatMissingEntryName(name: string, folderPath: string): string {
+  const entryPath = path.join(PACKAGE_ROOT, folderPath, name);
+  try {
+    if (fs.statSync(entryPath).isDirectory()) {
+      return `${name}/`;
+    }
+  } catch {
+    // keep plain name
+  }
+  return name;
+}
+
+function entryLine(name: string, color: boolean, role: "path" | "dim"): string {
+  return `  ${paint(color, role, name)}`;
 }
 
 function stowUnchangedPaths(): string[] {
@@ -94,166 +126,229 @@ function stowUnchangedPaths(): string[] {
   return parseStowOutput(lines).unchanged;
 }
 
-function localEntryLine(entry: DestinationEntry, color: boolean): string {
-  const name = paint(color, "warn", padPlain(entry.name, NAME_COL));
-  const kind = paint(color, "dim", localKindLabel(entry));
-  return `      ${name}  ${kind}`;
+function treePaintLine(
+  color: boolean,
+  selectedPath: string | undefined,
+  promotable: boolean
+): (prefix: string, name: string, role: PathTreeRole, fullPath: string) => string {
+  return (prefix, name, role, fullPath) => {
+    const selected = fullPath === selectedPath;
+    const nameRole =
+      role === "path" ? "path" : selected ? (promotable ? "ok" : "warn") : "dim";
+    let paintedName = paint(color, nameRole, name);
+    if (selected) {
+      paintedName = color ? `${INVERT}${paintedName}${RESET}` : `>${name}<`;
+    }
+    return `${paint(color, "dim", prefix)}${paintedName}`;
+  };
 }
 
-function linkedEntryLine(entry: DestinationEntry, color: boolean): string {
-  const name = paint(color, "ok", padPlain(entry.name, NAME_COL));
-  const target = paint(color, "dim", displayLinkTarget(entry.detail));
-  return `      ${name}  ${target}`;
+function treeScrollOffset(
+  entries: FormattedTreeLine[],
+  selectedPath: string | undefined,
+  visibleHeight: number
+): number {
+  if (visibleHeight <= 0 || entries.length <= visibleHeight) {
+    return 0;
+  }
+
+  const selectedIndex = selectedPath
+    ? entries.findIndex((entry) => entry.fullPath === selectedPath)
+    : -1;
+  if (selectedIndex < 0) {
+    return 0;
+  }
+
+  let start = selectedIndex - Math.floor(visibleHeight / 2);
+  start = Math.max(0, Math.min(start, entries.length - visibleHeight));
+  return start;
 }
 
-function appendEntrySection(
-  lines: string[],
-  label: string,
-  hint: string,
-  entries: DestinationEntry[],
-  maxShown: number,
-  formatLine: (entry: DestinationEntry) => string,
-  color: boolean
-): void {
-  if (entries.length === 0) {
-    return;
+function hasStowedDescendant(unchanged: Set<string>, prefix: string): boolean {
+  const needle = `${prefix}/`;
+  for (const stowPath of unchanged) {
+    if (stowPath.startsWith(needle)) {
+      return true;
+    }
   }
+  return false;
+}
 
-  lines.push(
-    "",
-    `    ${paint(color, "label", label)} ${paint(color, "dim", hint)}`
-  );
+function packageMissingFromDestination(
+  folder: PartialFolderAnalysis,
+  unchangedPaths: string[]
+): string[] {
+  const unchanged = new Set(unchangedPaths);
+  const destNames = new Set(folder.entries.map((entry) => entry.name));
+  const packageDir = path.join(PACKAGE_ROOT, folder.folderPath);
 
-  const shown = entries.slice(0, maxShown);
-  for (const entry of shown) {
-    lines.push(formatLine(entry));
-  }
-  const hidden = entries.length - shown.length;
-  if (hidden > 0) {
-    lines.push(`      ${paint(color, "dim", `... ${hidden} more`)}`);
+  try {
+    return fs
+      .readdirSync(packageDir)
+      .filter((name) => {
+        const rel = `${folder.folderPath}/${name}`;
+        if (unchanged.has(rel) || hasStowedDescendant(unchanged, rel)) {
+          return false;
+        }
+        return !destNames.has(name);
+      })
+      .sort((a, b) => a.localeCompare(b));
+  } catch {
+    return [];
   }
 }
 
-function previewLines(
+function folderDetailLines(
   folder: PartialFolderAnalysis | undefined,
+  unchangedPaths: string[],
   color: boolean
 ): string[] {
   if (!folder) {
     return [];
   }
 
-  const lines: string[] = [
-    "",
-    `  ${paint(color, "label", folder.targetDisplay)}`
-  ];
+  const stowed = folder.entries.filter((entry) => entry.kind === "stowed-symlink");
+  const local = folder.entries.filter((entry) => entry.kind !== "stowed-symlink");
+  const missing = packageMissingFromDestination(folder, unchangedPaths);
 
-  if (folder.promotable) {
-    lines.push(
-      `  ${paint(color, "ok", "Only dotfiles symlinks remain; ready to promote.")}`
-    );
-  } else if (folder.blockerCount > 0) {
-    lines.push(
-      `  ${paint(
-        color,
-        "warn",
-        `${folder.blockerCount} local item${folder.blockerCount === 1 ? "" : "s"} block promoting this folder.`
-      )}`
-    );
+  const lines: string[] = [paint(color, "label", folder.targetDisplay), ""];
+
+  lines.push(paint(color, "ok", "stowed"));
+  if (stowed.length === 0) {
+    lines.push(paint(color, "dim", "  (none)"));
   } else {
-    lines.push(
-      `  ${paint(color, "warn", "Package is not fully stowed under this folder.")}`
-    );
+    for (const entry of stowed) {
+      lines.push(entryLine(entry.name, color, "path"));
+    }
   }
 
-  const blockers = folder.entries.filter((entry) => entry.kind !== "stowed-symlink");
-  const linked = folder.entries.filter((entry) => entry.kind === "stowed-symlink");
-
-  appendEntrySection(
-    lines,
-    "local",
-    "(not from dotfiles)",
-    blockers,
-    MAX_LOCAL_ENTRIES,
-    (entry) => localEntryLine(entry, color),
-    color
-  );
-  appendEntrySection(
-    lines,
-    "dotfiles",
-    "(symlinked)",
-    linked,
-    MAX_LINKED_ENTRIES,
-    (entry) => linkedEntryLine(entry, color),
-    color
-  );
-
-  if (folder.promotable) {
-    lines.push(
-      "",
-      `  ${paint(color, "dim", "Enter replaces per-file links with one directory symlink.")}`
-    );
-  } else if (folder.blockerCount > 0) {
-    lines.push(
-      "",
-      `  ${paint(color, "warn", "Move or remove local items, then re-run dotfiles.")}`
-    );
+  lines.push("");
+  lines.push(paint(color, "warn", "not stowed"));
+  if (local.length === 0 && missing.length === 0) {
+    lines.push(paint(color, "dim", "  (none)"));
+  } else {
+    for (const entry of local) {
+      lines.push(entryLine(formatLocalEntryName(entry), color, "path"));
+    }
+    for (const name of missing) {
+      lines.push(
+        entryLine(formatMissingEntryName(name, folder.folderPath), color, "dim")
+      );
+    }
   }
 
   return lines;
 }
 
-function renderLines(
+function fitLines(
+  lines: string[],
+  maxRows: number,
+  width: number,
+  color: boolean
+): string[] {
+  if (maxRows <= 0) {
+    return [];
+  }
+
+  if (lines.length <= maxRows) {
+    return lines.map((line) => clipVis(padEndVis(line, width), width));
+  }
+
+  const hidden = lines.length - maxRows + 1;
+  const fitted = lines
+    .slice(0, maxRows - 1)
+    .map((line) => clipVis(padEndVis(line, width), width));
+  fitted.push(
+    clipVis(padEndVis(paint(color, "dim", `  +${hidden} more`), width), width)
+  );
+  return fitted;
+}
+
+function buildRightPane(
+  folder: PartialFolderAnalysis | undefined,
+  unchangedPaths: string[],
+  flash: { role: "ok" | "bad"; message: string } | undefined,
+  help: string,
+  color: boolean,
+  rows: number,
+  width: number
+): string[] {
+  const lines = [...folderDetailLines(folder, unchangedPaths, color)];
+  if (flash) {
+    lines.push("", paint(color, flash.role, flash.message));
+  }
+
+  const contentRows = Math.max(0, rows - 1);
+  const pane = fitLines(lines, contentRows, width, color);
+  while (pane.length < contentRows) {
+    pane.push("");
+  }
+  pane.push(clipVis(padEndVis(paint(color, "dim", help), width), width));
+  return pane.slice(0, rows);
+}
+
+function buildLeftPane(
+  unchangedPaths: string[],
+  selectedFolder: PartialFolderAnalysis | undefined,
+  color: boolean,
+  rows: number,
+  width: number
+): string[] {
+  const treeEntries = formatPathTreeEntries(
+    unchangedPaths,
+    treePaintLine(color, selectedFolder?.folderPath, selectedFolder?.promotable === true)
+  );
+  const scroll = treeScrollOffset(treeEntries, selectedFolder?.folderPath, rows);
+  const treeLines = treeEntries
+    .slice(scroll, scroll + rows)
+    .map((entry) => entry.line);
+
+  const pane: string[] = [];
+  for (let i = 0; i < rows; i++) {
+    pane.push(clipVis(padEndVis(treeLines[i] ?? "", width), width));
+  }
+
+  return pane;
+}
+
+function mergeRow(left: string, right: string, leftWidth: number): string {
+  return padEndVis(left, leftWidth) + PANE_DIVIDER + right;
+}
+
+function renderFrame(
+  unchangedPaths: string[],
   folders: PartialFolderAnalysis[],
   selected: number,
   flash: { role: "ok" | "bad"; message: string } | undefined
-): string[] {
+): string {
   const color = stdoutColorEnabled();
+  const rows = termHeight();
+  const { left: leftWidth, right: rightWidth } = paneWidths(termWidth());
   const selectedFolder = folders[selected];
   const help =
     selectedFolder?.promotable === true ? HELP_PROMOTABLE : HELP_BLOCKED;
 
-  const lines: string[] = [
-    `${paint(color, "label", "dotfiles")} ${paint(color, "dim", "partial folders")}`,
-    paint(
-      color,
-      "dim",
-      "  per-file stow inside a real directory (not the folder symlink itself)"
-    ),
-    ""
-  ];
+  const leftPane = buildLeftPane(unchangedPaths, selectedFolder, color, rows, leftWidth);
+  const rightPane = buildRightPane(
+    selectedFolder,
+    unchangedPaths,
+    flash,
+    help,
+    color,
+    rows,
+    rightWidth
+  );
 
-  if (folders.length === 0) {
-    lines.push(paint(color, "ok", "  no partial folders"));
-  } else {
-    for (let i = 0; i < folders.length; i++) {
-      const folder = folders[i]!;
-      const marker = i === selected ? paint(color, "label", ">") : " ";
-      const nameRole = i === selected ? "ok" : folder.promotable ? "path" : "warn";
-      let suffix = "";
-      if (folder.promotable) {
-        suffix = paint(color, "dim", "  ready");
-      } else if (folder.blockerCount > 0) {
-        suffix = paint(
-          color,
-          "dim",
-          `  (${folder.blockerCount} blocking)`
-        );
-      } else {
-        suffix = paint(color, "dim", "  incomplete");
-      }
-      const name = paint(color, nameRole, folder.folderPath);
-      lines.push(`  ${marker} ${name}${suffix}`);
+  let buf = HOME;
+  for (let row = 0; row < rows; row++) {
+    buf += mergeRow(leftPane[row] ?? "", rightPane[row] ?? "", leftWidth);
+    buf += CLR_EOL;
+    if (row < rows - 1) {
+      buf += "\r\n";
     }
   }
-
-  lines.push(...previewLines(selectedFolder, color));
-
-  if (flash) {
-    lines.push("", `  ${paint(color, flash.role, flash.message)}`);
-  }
-
-  lines.push("", paint(color, "dim", help));
-  return lines;
+  buf += CLR_EOS;
+  return buf;
 }
 
 /**
@@ -268,7 +363,8 @@ export async function runPartialPromoteInteractive(_options: StowOptions): Promi
 
   const stdin = process.stdin;
   const stdout = process.stdout;
-  let folders = findPartialFolders(stowUnchangedPaths(), PACKAGE_ROOT, STOW_TARGET);
+  let unchangedPaths = stowUnchangedPaths();
+  let folders = findPartialFolders(unchangedPaths, PACKAGE_ROOT, STOW_TARGET);
 
   if (folders.length === 0) {
     const color = stdoutColorEnabled();
@@ -278,20 +374,10 @@ export async function runPartialPromoteInteractive(_options: StowOptions): Promi
 
   let selected = 0;
   let flash: { role: "ok" | "bad"; message: string } | undefined;
-  let prevViewportLines = 0;
   let cleaned = false;
 
   const draw = (): void => {
-    const lines = renderLines(folders, selected, flash);
-    let buf = HOME;
-    for (const line of lines) {
-      buf += line + CLR_EOL + "\r\n";
-    }
-    if (lines.length < prevViewportLines) {
-      buf += CLR_EOS;
-    }
-    stdout.write(buf);
-    prevViewportLines = lines.length;
+    stdout.write(renderFrame(unchangedPaths, folders, selected, flash));
   };
 
   const cleanup = (): void => {
@@ -320,6 +406,7 @@ export async function runPartialPromoteInteractive(_options: StowOptions): Promi
     cleanup();
     process.exit(143);
   });
+  process.on("SIGWINCH", draw);
   process.on("SIGHUP", () => {
     cleanup();
     process.exit(129);
@@ -341,6 +428,7 @@ export async function runPartialPromoteInteractive(_options: StowOptions): Promi
 
       if (key.ctrl && key.name === "c") {
         stdin.off("keypress", onKeypress);
+        process.off("SIGWINCH", draw);
         finish(130, resolve);
         return;
       }
@@ -349,6 +437,7 @@ export async function runPartialPromoteInteractive(_options: StowOptions): Promi
         case "q":
         case "escape":
           stdin.off("keypress", onKeypress);
+          process.off("SIGWINCH", draw);
           finish(0, resolve);
           return;
         case "up":
@@ -389,11 +478,8 @@ export async function runPartialPromoteInteractive(_options: StowOptions): Promi
               message: `failed ${folder.folderPath}: ${result.error ?? "unknown error"}`
             };
           }
-          folders = findPartialFolders(
-            stowUnchangedPaths(),
-            PACKAGE_ROOT,
-            STOW_TARGET
-          );
+          unchangedPaths = stowUnchangedPaths();
+          folders = findPartialFolders(unchangedPaths, PACKAGE_ROOT, STOW_TARGET);
           if (selected >= folders.length) {
             selected = Math.max(0, folders.length - 1);
           }
