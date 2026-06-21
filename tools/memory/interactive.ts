@@ -34,7 +34,7 @@ function paint(enabled: boolean, code: string, text: string): string {
 
 function formatRow(entry: MemoryEntry, selected: boolean, color: boolean): string {
   const prefix = selected ? paint(color, "\x1b[36m", "> ") : "  ";
-  const id = paint(color, "\x1b[1m", `[${entry.id}]`);
+  const id = paint(color, "\x1b[1m", `${entry.id}:`);
   const detail = entry.hasDetails
     ? paint(color, "\x1b[2m", " (has reference detail)")
     : "";
@@ -73,7 +73,7 @@ async function confirmRemove(entry: MemoryEntry): Promise<boolean> {
   const color = stdoutColor();
   const id = paint(color, "\x1b[1m", entry.id);
   const detail = entry.hasDetails ? " and its reference file" : "";
-  const prompt = `Remove [${id}]${detail}? [y/N] `;
+  const prompt = `Remove ${id}${detail}? [y/N] `;
 
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   try {

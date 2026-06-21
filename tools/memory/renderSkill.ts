@@ -5,8 +5,10 @@ import { MEMORY_SKILL_DIR, SKILL_PATH } from "./paths.ts";
 
 function formatBullet(entry: MemoryEntry): string {
   const text = entry.text.trim();
-  const suffix = entry.hasDetails ? " (Detailed reference available locally)" : "";
-  return `- [${entry.id}]: ${text}${suffix}`;
+  const label = entry.hasDetails
+    ? `[${entry.id}](references/${entry.id}.md)`
+    : entry.id;
+  return `- ${label}: ${text}`;
 }
 
 /**
