@@ -12,7 +12,20 @@ export const MEMORY_SKILL_DIR = path.resolve(
   "memory"
 );
 
-export const ENTRIES_PATH = path.join(MEMORY_SKILL_DIR, "entries.json");
+/** Memory data folder: `<dotfiles>/home/.agents/memory/` */
+export const MEMORY_DATA_DIR = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+  "home",
+  ".agents",
+  "memory"
+);
+
+export const ENTRIES_PATH = path.join(MEMORY_DATA_DIR, "entries.json");
+
+/** Legacy path before entries lived outside the skill. */
+export const LEGACY_ENTRIES_PATH = path.join(MEMORY_SKILL_DIR, "entries.json");
 
 export const SKILL_PATH = path.join(MEMORY_SKILL_DIR, "SKILL.md");
 

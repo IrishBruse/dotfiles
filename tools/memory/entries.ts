@@ -1,7 +1,12 @@
 import { existsSync } from "node:fs";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 
-import { ENTRIES_PATH, MEMORY_SKILL_DIR, referencePath } from "./paths.ts";
+import {
+  ENTRIES_PATH,
+  LEGACY_ENTRIES_PATH,
+  MEMORY_DATA_DIR,
+  referencePath,
+} from "./paths.ts";
 
 /** One inline lesson in the memory skill. */
 export interface MemoryEntry {
@@ -10,9 +15,19 @@ export interface MemoryEntry {
   hasDetails: boolean;
 }
 
+async function migrateLegacyEntries(): Promise<void> {
+  if (existsSync(ENTRIES_PATH) || !existsSync(LEGACY_ENTRIES_PATH)) {
+    return;
+  }
+  await mkdir(MEMORY_DATA_DIR, { recursive: true });
+  const raw = await readFile(LEGACY_ENTRIES_PATH, "utf8");
+  await writeFile(ENTRIES_PATH, raw, "utf8");
+}
+
 async function readEntriesFile(): Promise<
   Array<{ text: string; id: string; hasDetails?: boolean }>
 > {
+  await migrateLegacyEntries();
   try {
     const raw = await readFile(ENTRIES_PATH, "utf8");
     const parsed = JSON.parse(raw) as unknown;
@@ -61,7 +76,7 @@ export async function loadEntries(): Promise<MemoryEntry[]> {
  * Persist entries to disk.
  */
 export async function saveEntries(entries: MemoryEntry[]): Promise<void> {
-  await mkdir(MEMORY_SKILL_DIR, { recursive: true });
+  await mkdir(MEMORY_DATA_DIR, { recursive: true });
   await writeFile(ENTRIES_PATH, `${JSON.stringify(entries, null, 2)}\n`, "utf8");
 }
 
