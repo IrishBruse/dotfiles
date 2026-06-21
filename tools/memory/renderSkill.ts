@@ -16,16 +16,14 @@ function formatBullet(entry: MemoryEntry): string {
  */
 export async function writeSkill(entries: MemoryEntry[]): Promise<void> {
   const bullets =
-    entries.length > 0
-      ? entries.map(formatBullet).join("\n")
-      : "- (none yet)";
+    entries.length > 0 ? entries.map(formatBullet).join("\n") : "- (none yet)";
 
   const body = `---
 name: memory
 description: Persistent lessons learned across agent sessions. Use when starting similar work, hitting recurring issues, or when the user asks what has been learned recently.
 ---
 
-# Things learned recently
+# Memories
 
 ${bullets}
 `;

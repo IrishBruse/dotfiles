@@ -32,7 +32,11 @@ function paint(enabled: boolean, code: string, text: string): string {
   return `${code}${text}\x1b[0m`;
 }
 
-function formatRow(entry: MemoryEntry, selected: boolean, color: boolean): string {
+function formatRow(
+  entry: MemoryEntry,
+  selected: boolean,
+  color: boolean
+): string {
   const prefix = selected ? paint(color, "\x1b[36m", "> ") : "  ";
   const id = paint(color, "\x1b[1m", `${entry.id}:`);
   const detail = entry.hasDetails
@@ -61,7 +65,9 @@ async function showDetails(entry: MemoryEntry): Promise<void> {
   stdin.setRawMode(false);
   stdout.write(SHOW_CURSOR + LEAVE_ALT + HOME + CLR_EOS);
   stdout.write(markdown(await formatEntryMarkdown(entry)));
-  stdout.write(`\n\n${paint(stdoutColor(), "\x1b[2m", "Press any key to return...")}\n`);
+  stdout.write(
+    `\n\n${paint(stdoutColor(), "\x1b[2m", "Press any key to return...")}\n`
+  );
 
   await waitForKeypress();
 
@@ -114,7 +120,7 @@ export async function runMemoryInteractive(): Promise<void> {
 
   let entries = await loadEntries();
   if (entries.length === 0) {
-    console.log("Things learned recently (none)");
+    console.log("Memories (none)");
     return;
   }
 
@@ -128,11 +134,13 @@ export async function runMemoryInteractive(): Promise<void> {
 
   const draw = (): void => {
     const lines = [
-      "Things learned recently",
+      "Memories",
       "",
-      ...entries.map((entry, index) => formatRow(entry, index === selected, color)),
+      ...entries.map((entry, index) =>
+        formatRow(entry, index === selected, color)
+      ),
       "",
-      paint(color, "\x1b[2m", HELP),
+      paint(color, "\x1b[2m", HELP)
     ];
     let buf = HOME;
     for (const line of lines) {
@@ -175,10 +183,7 @@ export async function runMemoryInteractive(): Promise<void> {
   draw();
 
   await new Promise<void>((resolve) => {
-    const onKeypress = (
-      _str: string,
-      key: readline.Key | undefined
-    ): void => {
+    const onKeypress = (_str: string, key: readline.Key | undefined): void => {
       if (!key || busy) {
         return;
       }
