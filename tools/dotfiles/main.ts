@@ -32,7 +32,8 @@ Options:
   -v, --verbose    Show unchanged paths as a tree (dim nodes are grouping only)
   -i, --interactive
                    After stow, browse partial folders with a destination preview;
-                   promote ready folders to full directory symlinks (TTY, stow only)
+                   import local files into home/ or stow remainders; adopt ready
+                   folders to full directory symlinks (TTY, stow only)
   --raw            Print raw GNU stow output (-v 3)
   -h, --help       This help
 `);

@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 
 import {
   findPartialFolders,
+  importPartialFolderLocals,
   promotePartialFolder,
   type DestinationEntry,
   type PartialFolderAnalysis
@@ -41,7 +42,8 @@ const RESET = `${ESC}[0m`;
 const ANSI_RE = /\u001b\[[0-9;]*m/g;
 
 const HELP_PROMOTABLE = "Up/Down: move  Enter: adopt  q: quit";
-const HELP_BLOCKED = "Up/Down: move  q: quit";
+const HELP_WITH_LOCALS = "Up/Down: move  i: import  q: quit";
+const HELP_STOW_REMAINDER = "Up/Down: move  i: stow  q: quit";
 const PANE_DIVIDER = " | ";
 
 function stripAnsi(text: string): string {
@@ -311,6 +313,16 @@ function buildLeftPane(
   return pane;
 }
 
+function helpForFolder(folder: PartialFolderAnalysis | undefined): string {
+  if (!folder || folder.promotable) {
+    return HELP_PROMOTABLE;
+  }
+  if (folder.blockerCount > 0) {
+    return HELP_WITH_LOCALS;
+  }
+  return HELP_STOW_REMAINDER;
+}
+
 function mergeRow(left: string, right: string, leftWidth: number): string {
   return padEndVis(left, leftWidth) + PANE_DIVIDER + right;
 }
@@ -325,8 +337,7 @@ function renderFrame(
   const rows = termHeight();
   const { left: leftWidth, right: rightWidth } = paneWidths(termWidth());
   const selectedFolder = folders[selected];
-  const help =
-    selectedFolder?.promotable === true ? HELP_PROMOTABLE : HELP_BLOCKED;
+  const help = helpForFolder(selectedFolder);
 
   const leftPane = buildLeftPane(unchangedPaths, selectedFolder, color, rows, leftWidth);
   const rightPane = buildRightPane(
@@ -470,8 +481,52 @@ export async function runPartialPromoteInteractive(_options: StowOptions): Promi
           if (result.ok) {
             flash = {
               role: "ok",
-              message: `promoted ${folder.folderPath}`
+              message: `adopted ${folder.folderPath}`
             };
+          } else {
+            flash = {
+              role: "bad",
+              message: `failed ${folder.folderPath}: ${result.error ?? "unknown error"}`
+            };
+          }
+          unchangedPaths = stowUnchangedPaths();
+          folders = findPartialFolders(unchangedPaths, PACKAGE_ROOT, STOW_TARGET);
+          if (selected >= folders.length) {
+            selected = Math.max(0, folders.length - 1);
+          }
+          draw();
+          return;
+        }
+        case "i": {
+          const folder = folders[selected];
+          if (!folder || folder.promotable) {
+            draw();
+            return;
+          }
+          const result = importPartialFolderLocals(
+            folder.folderPath,
+            unchangedPaths,
+            REPO_ROOT,
+            STOW_PACKAGE,
+            STOW_TARGET
+          );
+          if (result.ok) {
+            if (result.imported.length > 0) {
+              flash = {
+                role: "ok",
+                message: `imported ${result.imported.length} into ${folder.folderPath}`
+              };
+            } else if (result.linked.length > 0) {
+              flash = {
+                role: "ok",
+                message: `stowed ${result.linked.length} under ${folder.folderPath}`
+              };
+            } else {
+              flash = {
+                role: "ok",
+                message: `no changes for ${folder.folderPath}`
+              };
+            }
           } else {
             flash = {
               role: "bad",

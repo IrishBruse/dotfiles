@@ -273,6 +273,79 @@ export interface PromoteResult {
   error?: string;
 }
 
+/** Result of copying local destination entries into the package and restowing. */
+export interface ImportLocalsResult {
+  ok: boolean;
+  folderPath: string;
+  imported: string[];
+  linked: string[];
+  error?: string;
+}
+
+function runStow(
+  repoRoot: string,
+  packageName: string,
+  targetRoot: string
+): { status: number; linked: string[]; detail?: string } {
+  const result = spawnSync(
+    "stow",
+    ["-v2", "-d", repoRoot, "-t", targetRoot, "--dotfiles", packageName, "-S"],
+    { encoding: "utf8" }
+  );
+  const lines = (result.stderr ?? "").split("\n").filter((line) => line.length > 0);
+  const summary = parseStowOutput(lines);
+  const detail =
+    (result.status ?? 1) !== 0
+      ? (summary.conflicts[0] ?? summary.warnings[0] ?? "stow failed")
+      : undefined;
+  return { status: result.status ?? 1, linked: summary.linked, detail };
+}
+
+function copyLocalEntryToPackage(
+  entry: DestinationEntry,
+  targetDir: string,
+  packageDir: string
+): { ok: true } | { ok: false; error: string } {
+  const srcPath = path.join(targetDir, entry.name);
+  const destPath = path.join(packageDir, entry.name);
+
+  if (fs.existsSync(destPath)) {
+    return { ok: false, error: `${entry.name} already exists in package` };
+  }
+
+  try {
+    fs.mkdirSync(packageDir, { recursive: true });
+    switch (entry.kind) {
+      case "file":
+        fs.copyFileSync(srcPath, destPath);
+        break;
+      case "directory":
+        fs.cpSync(srcPath, destPath, { recursive: true });
+        break;
+      case "other-symlink": {
+        const linkTarget = fs.readlinkSync(srcPath);
+        fs.symlinkSync(linkTarget, destPath);
+        break;
+      }
+      default:
+        return { ok: false, error: `${entry.name} is not a local entry` };
+    }
+    return { ok: true };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return { ok: false, error: `${entry.name}: ${message}` };
+  }
+}
+
+function removeLocalEntry(targetDir: string, entry: DestinationEntry): void {
+  const entryPath = path.join(targetDir, entry.name);
+  if (entry.kind === "directory") {
+    fs.rmSync(entryPath, { recursive: true, force: true });
+  } else {
+    fs.unlinkSync(entryPath);
+  }
+}
+
 /**
  * Unlink per-file stow symlinks under a partial folder, remove the real target
  * directory, then stow so the folder itself becomes a symlink.
@@ -327,30 +400,13 @@ export function promotePartialFolder(
     return { ok: false, folderPath, linked: [], error: message };
   }
 
-  const result = spawnSync(
-    "stow",
-    [
-      "-v2",
-      "-d",
-      repoRoot,
-      "-t",
-      targetRoot,
-      "--dotfiles",
-      packageName,
-      "-S"
-    ],
-    { encoding: "utf8" }
-  );
-
-  const lines = (result.stderr ?? "").split("\n").filter((line) => line.length > 0);
-  const summary = parseStowOutput(lines);
-  const linked = summary.linked.filter(
+  const stow = runStow(repoRoot, packageName, targetRoot);
+  const linked = stow.linked.filter(
     (linkedPath) => linkedPath === folderPath || linkedPath.startsWith(`${folderPath}/`)
   );
 
-  if ((result.status ?? 1) !== 0) {
-    const detail = summary.conflicts[0] ?? summary.warnings[0] ?? "stow failed";
-    return { ok: false, folderPath, linked, error: detail };
+  if (stow.status !== 0) {
+    return { ok: false, folderPath, linked, error: stow.detail };
   }
 
   if (!linked.includes(folderPath)) {
@@ -363,4 +419,94 @@ export function promotePartialFolder(
   }
 
   return { ok: true, folderPath, linked };
+}
+
+/**
+ * Copy local destination entries into the package, remove them from ~, then stow.
+ * When there are no local blockers, only restows paths under the folder.
+ * @param folderPath Stow-relative path (e.g. `.config/fish`).
+ * @param unchangedPaths Paths stow skipped as already linked.
+ * @param repoRoot Absolute path to the dotfiles repo.
+ * @param packageName Stow package name (usually `home`).
+ * @param targetRoot Absolute stow target (usually `~`).
+ * @return Imported entry names and paths linked by stow.
+ */
+export function importPartialFolderLocals(
+  folderPath: string,
+  unchangedPaths: string[],
+  repoRoot: string,
+  packageName: string,
+  targetRoot: string
+): ImportLocalsResult {
+  const packageRoot = path.join(repoRoot, packageName);
+  const analysis = analyzePartialFolder(
+    folderPath,
+    unchangedPaths,
+    packageRoot,
+    targetRoot
+  );
+  const blockers = analysis.entries.filter((entry) => entry.kind !== "stowed-symlink");
+
+  if (blockers.length === 0 && analysis.promotable) {
+    return { ok: true, folderPath, imported: [], linked: [] };
+  }
+
+  const targetDir = path.join(targetRoot, folderPath);
+  const packageDir = path.join(packageRoot, folderPath);
+
+  if (!fs.existsSync(targetDir) || fs.lstatSync(targetDir).isSymbolicLink()) {
+    return {
+      ok: false,
+      folderPath,
+      imported: [],
+      linked: [],
+      error: "target is not a plain directory"
+    };
+  }
+
+  const imported: string[] = [];
+  const staged: DestinationEntry[] = [];
+
+  for (const entry of blockers) {
+    const copy = copyLocalEntryToPackage(entry, targetDir, packageDir);
+    if (!copy.ok) {
+      for (const done of staged) {
+        const stagedPath = path.join(packageDir, done.name);
+        fs.rmSync(stagedPath, { recursive: true, force: true });
+      }
+      return {
+        ok: false,
+        folderPath,
+        imported,
+        linked: [],
+        error: copy.error
+      };
+    }
+    staged.push(entry);
+    imported.push(entry.name);
+  }
+
+  try {
+    for (const entry of staged) {
+      removeLocalEntry(targetDir, entry);
+    }
+  } catch (err) {
+    for (const entry of staged) {
+      const stagedPath = path.join(packageDir, entry.name);
+      fs.rmSync(stagedPath, { recursive: true, force: true });
+    }
+    const message = err instanceof Error ? err.message : String(err);
+    return { ok: false, folderPath, imported: [], linked: [], error: message };
+  }
+
+  const stow = runStow(repoRoot, packageName, targetRoot);
+  const linked = stow.linked.filter(
+    (linkedPath) => linkedPath === folderPath || linkedPath.startsWith(`${folderPath}/`)
+  );
+
+  if (stow.status !== 0) {
+    return { ok: false, folderPath, imported, linked, error: stow.detail };
+  }
+
+  return { ok: true, folderPath, imported, linked };
 }
