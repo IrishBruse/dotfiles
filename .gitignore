@@ -9,7 +9,7 @@ home/.config/dconf/user
 home/.config/fish/fish_variables
 home/.cursor/mcp.json
 home/dot-zshrc
-home/.agents/skills/memory/entries.json
+home/.agents/memory/entries.json
 home/.agents/skills/memory/references/
 home/.cursor/rules/gp-rules.mdc
 home/.config/fish/completions/sdd.fish
