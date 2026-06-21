@@ -24,6 +24,7 @@
       "Shell(echo)",
       "Shell(find)",
       "Shell(gh auth status)",
+      "Shell(gh issue view)",
       "Shell(gh pr diff)",
       "Shell(gh pr list)",
       "Shell(gh pr view)",
@@ -71,12 +72,12 @@
     "showLineNumbers": false,
     "showThinkingBlocks": true,
     "showStatusIndicators": false,
-    "showStatusLineRunningTime": false
+    "showStatusLineRunningTime": true
   },
   "notifications": true,
   "hints": false,
   "rewind": true,
-  "suggestNextPrompt": false,
+  "suggestNextPrompt": true,
   "statusLine": {
     "type": "command",
     "command": "~/.cursor/statusline.mjs",
@@ -167,7 +168,21 @@
         "value": "true"
       }
     ],
-    "default": []
+    "default": [],
+    "gpt-5.4-nano": [
+      {
+        "id": "reasoning",
+        "value": "none"
+      }
+    ],
+    "gpt-5-mini": [],
+    "grok-build-0.1": [
+      {
+        "id": "context",
+        "value": "200k"
+      }
+    ],
+    "gemini-3-flash": []
   },
   "selectedModel": {
     "modelId": "composer-2.5",
@@ -189,7 +204,7 @@
   "showSandboxIntro": false,
   "runEverythingSettingsPromptStreak": 0,
   "attribution": {
-    "attributeCommitsToAgent": true,
-    "attributePRsToAgent": true
+    "attributeCommitsToAgent": false,
+    "attributePRsToAgent": false
   }
 }
