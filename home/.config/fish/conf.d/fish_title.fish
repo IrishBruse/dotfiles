@@ -7,5 +7,5 @@ function fish_title
 
     set -l cmd (string sub -l 20 -- (string join ' ' -- $argv))
 
-    echo (fish_prompt_pwd_dir_length=15 prompt_pwd) $cmd
+    echo $cmd
 end
