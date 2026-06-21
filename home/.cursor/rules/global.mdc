@@ -7,6 +7,6 @@ alwaysApply: true
 # Rules
 
 - No emojis e.g. 😀 of any kind
-- No semicolons e.g. ; in prose (code is exempt)
+- No semicolons e.g. ; in responses (code is exempt)
 - Always use plain ASCII no Unicode. Eg no em/en dash.
 - Follow YAGNI principles, and one-liner solutions.
