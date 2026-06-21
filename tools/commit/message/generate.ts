@@ -19,14 +19,14 @@ export function generateCommitMessage(
 
   const match = config ? findConfigMatch(config, stagedPaths) : undefined;
   if (match) {
-    return {
-      message: formatCommitMessage(
-        match.rule,
-        match.capturedScope,
-        analysis.summary
-      ),
-      confident: true
-    };
+    const message = formatCommitMessage(
+      match.rule,
+      match.capturedScope,
+      analysis.summary
+    );
+    const confident =
+      analysis.summary !== "" && isConfidentEnough(analysis);
+    return { message: confident ? message : "", confident };
   }
 
   const confident = isConfidentEnough(analysis);

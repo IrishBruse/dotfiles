@@ -22,6 +22,7 @@
     "format:check": "prettier --check .",
     "lint": "eslint -c .lib/eslint.config.js .",
     "validate": "tsc --noEmit",
+    "test": "node --test commit/**/*.test.ts",
     "verify": "npm run validate && npm run lint && npm run format:check"
   },
   "dependencies": {

@@ -3,8 +3,10 @@ import { basename } from "node:path";
 import type { CommitConfig } from "../config/config.ts";
 import { loadCommitConfig } from "../config/config.ts";
 import { findConfigMatch, resolveSliceGroup } from "../config/match.ts";
-import { filterDiff, filterNameStatus } from "../diff/parse.ts";
+import { filterDiff, filterNameStatus, parseNameStatus } from "../diff/parse.ts";
 import { createCommit, stagePaths, unstageAll } from "../git.ts";
+import { analyzeStagedChanges } from "../message/analyze.ts";
+import { bestDiffHintSummary } from "../message/diffHints.ts";
 import { generateCommitMessage } from "../message/generate.ts";
 import { printSplitPlan } from "../output.ts";
 import type { PrSplitSlice, SplitResult, StagedFile } from "../types.ts";
@@ -17,9 +19,10 @@ export function planPrSplit(
   config: CommitConfig | undefined = loadCommitConfig(repoRoot)
 ): PrSplitSlice[] {
   const groups = new Map<string, string[]>();
+  const stagedPaths = stagedFiles.map((file) => file.path);
 
   for (const file of stagedFiles) {
-    const key = resolveSliceGroup(file.path, config);
+    const key = resolveSliceGroup(file.path, config, stagedPaths);
     const paths = groups.get(key) ?? [];
     paths.push(file.path);
     groups.set(key, paths);
@@ -29,7 +32,10 @@ export function planPrSplit(
   for (const paths of groups.values()) {
     const scoped = config ? findConfigMatch(config, paths) : undefined;
     if (!scoped) {
-      slices.push({ paths, message: miscMessage(paths) });
+      slices.push({
+        paths,
+        message: miscMessage(paths, nameStatus, diff)
+      });
       continue;
     }
     const pathSet = new Set(paths);
@@ -112,8 +118,30 @@ function pathsForStaging(
   return [...staged];
 }
 
-function miscMessage(paths: string[]): string {
-  return `misc: ${pathBasenames(paths)}`;
+function miscMessage(paths: string[], nameStatus: string, diff: string): string {
+  const pathSet = new Set(paths);
+  const filteredNameStatus = filterNameStatus(nameStatus, pathSet);
+  const filteredDiff = filterDiff(diff, pathSet);
+  const files = parseNameStatus(filteredNameStatus);
+
+  const analysis = analyzeStagedChanges(filteredNameStatus, filteredDiff);
+  if (analysis.summary !== "") {
+    return `misc: ${analysis.summary}`;
+  }
+
+  const hint = bestDiffHintSummary(filteredDiff, files, "repo");
+  if (hint !== "") {
+    return `misc: ${hint}`;
+  }
+
+  const names = pathBasenames(paths);
+  if (paths.some((p) => basename(p) === ".gitignore")) {
+    return "misc: update .gitignore";
+  }
+  if (paths.some((p) => basename(p) === "commit.config.json")) {
+    return "chore: update commit config";
+  }
+  return `misc: update ${names}`;
 }
 
 function pathBasenames(paths: string[]): string {

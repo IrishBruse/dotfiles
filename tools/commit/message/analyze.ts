@@ -1,7 +1,16 @@
 import { hintsFromAddedLines } from "./codeHints.ts";
 import {
+  bestDiffHintSummary,
+  fileBasenameSummary,
+  hintsFromDiff,
+  isGenericSummary,
+  isScopeEcho,
+  summarizeAddedFiles
+} from "./diffHints.ts";
+import {
   extractCliFlags,
   formatCliFlagSummary,
+  formatSymbolSummary,
   humanizeSymbol,
   isLowQualitySymbolSummary,
   rankSummarySymbols
@@ -35,6 +44,7 @@ export function analyzeStagedChanges(
   const files = parseNameStatus(nameStatus);
   const addedByFile = parseAddedLinesByFile(diff);
   const lineCounts = countDiffLines(diff);
+  const diffHints = hintsFromDiff(diff, files);
 
   const typeScores = new Map<CommitType, number>();
   const bump = (type: CommitType, amount: number): void => {
@@ -101,7 +111,14 @@ export function analyzeStagedChanges(
     confidence += 0.15;
   }
 
+  if (diffHints.typeHint !== undefined) {
+    bump(diffHints.typeHint, 3);
+  }
+
   for (const file of files) {
+    if (isFixtureOrTestFile(file.path)) {
+      continue;
+    }
     const added = addedByFile.get(file.path) ?? [];
     cliFlags.push(...extractCliFlags(added));
   }
@@ -181,6 +198,7 @@ export function analyzeStagedChanges(
     type,
     scope,
     files,
+    diff,
     rankedSymbols,
     cliFlags: uniqueFlags,
     deleteCount,
@@ -188,10 +206,23 @@ export function analyzeStagedChanges(
     lineCount: lineCounts.added + lineCounts.removed
   });
 
+  const addedSummary = summarizeAddedFiles(files);
+  if (addedSummary !== "" && summary === addedSummary) {
+    confidence += 0.35;
+  }
+
   if (summary.length < 8) {
     confidence -= 0.25;
-  } else if (rankedSymbols.length > 0 || uniqueFlags.length > 0) {
+  } else if (
+    rankedSymbols.length > 0 ||
+    uniqueFlags.length > 0 ||
+    diffHints.summaries.length > 0
+  ) {
     confidence += 0.1;
+  }
+
+  if (isGenericSummary(summary) || isScopeEcho(summary, scope)) {
+    confidence -= 0.35;
   }
 
   confidence = clamp(confidence, 0, 0.95);
@@ -200,6 +231,12 @@ export function analyzeStagedChanges(
 }
 
 export function isConfidentEnough(analysis: StaticCommitAnalysis): boolean {
+  if (analysis.summary === "") {
+    return false;
+  }
+  if (isGenericSummary(analysis.summary) || isScopeEcho(analysis.summary, analysis.scope)) {
+    return false;
+  }
   return analysis.confidence >= CONFIDENCE_THRESHOLD;
 }
 
@@ -208,7 +245,7 @@ function emptyAnalysis(): StaticCommitAnalysis {
     confidence: 0,
     type: "chore",
     scope: "repo",
-    summary: "update staged changes"
+    summary: ""
   };
 }
 
@@ -287,6 +324,7 @@ function buildSummary(input: {
   type: CommitType;
   scope: string;
   files: StagedFile[];
+  diff: string;
   rankedSymbols: string[];
   cliFlags: string[];
   deleteCount: number;
@@ -302,10 +340,6 @@ function buildSummary(input: {
       return `cover ${uniqueSymbols.slice(0, 2).join(" and ")}`;
     }
     return `add tests for ${input.scope}`;
-  }
-
-  if (input.type === "docs") {
-    return `update ${input.scope} docs`;
   }
 
   if (input.type === "ci") {
@@ -324,6 +358,11 @@ function buildSummary(input: {
     return `remove ${input.scope} files`;
   }
 
+  const addedSummary = summarizeAddedFiles(input.files);
+  if (addedSummary !== "") {
+    return addedSummary;
+  }
+
   if (input.cliFlags.length > 0) {
     const flagSummary = formatCliFlagSummary(
       input.cliFlags,
@@ -334,41 +373,34 @@ function buildSummary(input: {
     }
   }
 
-  if (uniqueSymbols.length > 0 && !isLowQualitySymbolSummary(uniqueSymbols)) {
-    const lead = input.type === "fix" ? "fix" : "add";
-    return `${lead} ${uniqueSymbols.slice(0, 2).join(" and ")}`;
+  const symbolSummary = formatSymbolSummary(
+    input.rankedSymbols,
+    input.type === "fix" ? "fix" : "feature",
+    input.scope
+  );
+  if (symbolSummary !== "") {
+    return symbolSummary;
   }
 
-  return scopeSummary(input);
-}
-
-function scopeSummary(input: {
-  type: CommitType;
-  scope: string;
-  files: StagedFile[];
-  lineCount: number;
-}): string {
-  const added = input.files.filter((f) => f.status === "A").length;
-  const modifiedOnly = added === 0;
-  const smallChange = input.lineCount > 0 && input.lineCount < 120;
-
-  if (modifiedOnly && smallChange && input.type !== "fix" && input.type !== "refactor") {
-    return `improve ${input.scope}`;
+  const diffHint = bestDiffHintSummary(input.diff, input.files, input.scope);
+  if (diffHint !== "" && !isScopeEcho(diffHint, input.scope)) {
+    return diffHint;
   }
 
-  if (added > 0 && input.type === "feature") {
-    return `add ${input.scope} support`;
+  if (input.type === "docs") {
+    const docHint = bestDiffHintSummary(input.diff, input.files, input.scope);
+    if (docHint !== "") {
+      return docHint;
+    }
+    return "";
   }
 
-  if (input.type === "fix") {
-    return `fix ${input.scope} behavior`;
+  const basenameSummary = fileBasenameSummary(input.files);
+  if (basenameSummary !== "" && !isScopeEcho(basenameSummary, input.scope)) {
+    return basenameSummary;
   }
 
-  if (input.type === "refactor") {
-    return `refactor ${input.scope}`;
-  }
-
-  return `update ${input.scope}`;
+  return "";
 }
 
 function isCodeFile(path: string): boolean {
@@ -384,8 +416,16 @@ function isTestFile(path: string): boolean {
   );
 }
 
+function isFixtureOrTestFile(path: string): boolean {
+  return (
+    isTestFile(path) ||
+    /(?:^|\/)fixtures(?:\/|$)/i.test(path) ||
+    /\.json$/i.test(path)
+  );
+}
+
 function isDocFile(path: string): boolean {
-  return /\.(?:md|mdx|rst|adoc)$/i.test(path) || /(?:^|\/)docs(?:\/|$)/i.test(path);
+  return /\.(?:md|mdx|mdc|rst|adoc)$/i.test(path) || /(?:^|\/)docs(?:\/|$)/i.test(path);
 }
 
 function isBuildFile(path: string): boolean {

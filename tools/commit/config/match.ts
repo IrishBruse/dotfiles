@@ -32,7 +32,8 @@ export function findConfigMatch(
 
 export function resolveSliceGroup(
   path: string,
-  config: CommitConfig | undefined
+  config: CommitConfig | undefined,
+  stagedPaths: string[] = []
 ): string {
   if (config?.rules) {
     for (const rule of config.rules) {
@@ -49,7 +50,37 @@ export function resolveSliceGroup(
       return sliceBase;
     }
   }
+
+  const soleToolsScope = soleToolsSubprojectScope(stagedPaths);
+  if (soleToolsScope !== undefined && isToolsRootFile(path)) {
+    for (const rule of config?.rules ?? []) {
+      const globs = normalizeRulePaths(rule.paths);
+      if (globs.some((glob) => glob.startsWith("tools/:scope"))) {
+        return `${globs[0]!}\0${soleToolsScope}`;
+      }
+    }
+  }
+
   return path.includes("/") ? (path.split("/")[0] ?? path) : path;
+}
+
+function isToolsRootFile(filePath: string): boolean {
+  const parts = filePath.split("/");
+  return parts[0] === "tools" && parts.length === 2;
+}
+
+function soleToolsSubprojectScope(stagedPaths: string[]): string | undefined {
+  const scopes = new Set<string>();
+  for (const stagedPath of stagedPaths) {
+    const match = stagedPath.match(/^tools\/([^/]+)\//);
+    if (match) {
+      scopes.add(match[1]!);
+    }
+  }
+  if (scopes.size !== 1) {
+    return undefined;
+  }
+  return [...scopes][0];
 }
 
 export function formatCommitMessage(

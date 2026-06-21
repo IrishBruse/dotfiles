@@ -40,7 +40,23 @@ export function getStagedDiff(cwd: string): string {
 }
 
 export function getUnstagedDiff(cwd: string): string {
-  return gitOutput(cwd, ["diff"]);
+  const diff = gitOutput(cwd, ["diff"]);
+  const untracked = gitOutput(cwd, ["ls-files", "--others", "--exclude-standard"]);
+  const untrackedDiffs: string[] = [];
+  for (const path of untracked.split("\n")) {
+    const trimmed = path.trim();
+    if (trimmed === "") {
+      continue;
+    }
+    const r = spawnSync("git", ["diff", "--no-index", "/dev/null", trimmed], {
+      cwd,
+      encoding: "utf8"
+    });
+    if ((r.stdout ?? "").trim() !== "") {
+      untrackedDiffs.push(r.stdout ?? "");
+    }
+  }
+  return [diff, ...untrackedDiffs].filter((part) => part !== "").join("\n");
 }
 
 export function unstageAll(cwd: string): void {

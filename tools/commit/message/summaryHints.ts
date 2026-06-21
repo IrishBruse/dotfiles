@@ -1,5 +1,5 @@
 const LOW_VALUE_SYMBOL =
-  /^(?:get|has|is|set|parse|load|run|print|create|resolve|expand|find|match|analyze|confidence|empty|pick|infer|strip|sanitize|clamp|humanize|paths|execute|misc|path|count|git|build)/i;
+  /^(?:get|has|is|set|parse|load|run|print|create|resolve|expand|find|match|analyze|confidence|empty|pick|infer|strip|sanitize|clamp|humanize|paths|execute|misc|path|count|git|build|interactive|memory|rules|dotfiles|entry|entries)$/i;
 
 const LOW_VALUE_TYPE_SUFFIX =
   /(?:Analysis|Config|Options|Result|Vars|Hints?|Slice|Match|Rule)$/i;
@@ -82,6 +82,35 @@ export function formatCliFlagSummary(flags: string[], type: "fix" | "feature"): 
   return `${verb} ${phrase} ${noun}`;
 }
 
+export function deduplicateHumanizedSymbols(symbols: string[]): string[] {
+  const unique = [...new Set(symbols)];
+  const drop = new Set<string>();
+  for (const shorter of unique) {
+    for (const longer of unique) {
+      if (shorter !== longer && longer.startsWith(`${shorter} `)) {
+        drop.add(shorter);
+      }
+    }
+  }
+  return unique.filter((s) => !drop.has(s));
+}
+
+export function formatSymbolSummary(
+  symbols: string[],
+  type: "fix" | "feature",
+  scope: string
+): string {
+  const humanized = deduplicateHumanizedSymbols(symbols.map(humanizeSymbol)).filter(
+    (s) => s.length > 0
+  );
+  const filtered = humanized.filter((s) => !isScopeEchoSymbol(s, scope));
+  if (filtered.length === 0 || isLowQualitySymbolSummary(filtered)) {
+    return "";
+  }
+  const lead = type === "fix" ? "fix" : "add";
+  return `${lead} ${filtered[0]!}`;
+}
+
 export function isLowQualitySymbolSummary(symbols: string[]): boolean {
   if (symbols.length === 0) {
     return true;
@@ -140,4 +169,14 @@ function orderCliFlags(flags: string[]): string[] {
   const shorts = flags.filter((f) => f.startsWith("-") && !f.startsWith("--")).sort();
   const longs = flags.filter((f) => f.startsWith("--")).sort();
   return [...shorts, ...longs];
+}
+
+function isScopeEchoSymbol(symbol: string, scope: string): boolean {
+  if (symbol === scope) {
+    return true;
+  }
+  if (symbol.replace(/\s+/g, "-") === scope) {
+    return true;
+  }
+  return false;
 }

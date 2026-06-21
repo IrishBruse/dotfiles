@@ -35,8 +35,20 @@ export function parseNameStatus(text: string): StagedFile[] {
 }
 
 export function parseAddedLinesByFile(diff: string): Map<string, string[]> {
+  return parseDiffLinesByFile(diff, "+");
+}
+
+export function parseRemovedLinesByFile(diff: string): Map<string, string[]> {
+  return parseDiffLinesByFile(diff, "-");
+}
+
+function parseDiffLinesByFile(
+  diff: string,
+  prefix: "+" | "-"
+): Map<string, string[]> {
   const byFile = new Map<string, string[]>();
   let currentFile: string | undefined;
+  const header = prefix === "+" ? "+++" : "---";
   for (const line of diff.split("\n")) {
     if (line.startsWith("diff --git ")) {
       const match = line.match(/^diff --git a\/(.+?) b\/(.+)$/);
@@ -46,12 +58,12 @@ export function parseAddedLinesByFile(diff: string): Map<string, string[]> {
     if (currentFile === undefined) {
       continue;
     }
-    if (!line.startsWith("+") || line.startsWith("+++")) {
+    if (!line.startsWith(prefix) || line.startsWith(header)) {
       continue;
     }
-    const added = line.slice(1);
+    const content = line.slice(1);
     const bucket = byFile.get(currentFile) ?? [];
-    bucket.push(added);
+    bucket.push(content);
     byFile.set(currentFile, bucket);
   }
   return byFile;
