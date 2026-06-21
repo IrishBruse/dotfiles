@@ -1,6 +1,5 @@
 import { unlink } from "node:fs/promises";
 import readline from "node:readline";
-import { createInterface } from "node:readline/promises";
 import process from "node:process";
 
 import { loadEntries, removeEntry, type MemoryEntry } from "./entries.ts";
@@ -75,19 +74,39 @@ async function showDetails(entry: MemoryEntry): Promise<void> {
   stdout.write(ENTER_ALT + HIDE_CURSOR + HOME + CLR_EOS);
 }
 
-async function confirmRemove(entry: MemoryEntry): Promise<boolean> {
+function confirmRemove(
+  entry: MemoryEntry,
+  stdout: NodeJS.WriteStream
+): Promise<boolean> {
   const color = stdoutColor();
   const id = paint(color, "\x1b[1m", entry.id);
   const detail = entry.hasDetails ? " and its reference file" : "";
-  const prompt = `Remove ${id}${detail}? [y/N] `;
+  const prompt = paint(
+    color,
+    "\x1b[2m",
+    `Remove ${id}${detail}? Enter to confirm, Esc to cancel`
+  );
 
-  const rl = createInterface({ input: process.stdin, output: process.stdout });
-  try {
-    const answer = await rl.question(prompt);
-    return /^y(es)?$/i.test(answer.trim());
-  } finally {
-    rl.close();
-  }
+  stdout.write(`\n${prompt}\n`);
+
+  return new Promise((resolve) => {
+    const stdin = process.stdin;
+    const onKeypress = (_str: string, key: readline.Key | undefined): void => {
+      if (!key) {
+        return;
+      }
+      if (key.name === "return") {
+        stdin.off("keypress", onKeypress);
+        resolve(true);
+        return;
+      }
+      if (key.name === "escape") {
+        stdin.off("keypress", onKeypress);
+        resolve(false);
+      }
+    };
+    stdin.on("keypress", onKeypress);
+  });
 }
 
 async function performRemove(id: string): Promise<MemoryEntry[]> {
@@ -227,10 +246,8 @@ export async function runMemoryInteractive(): Promise<void> {
               return;
             }
             busy = true;
-            stdin.setRawMode(false);
-            const confirmed = await confirmRemove(entry);
+            const confirmed = await confirmRemove(entry, stdout);
             if (!confirmed) {
-              stdin.setRawMode(true);
               busy = false;
               draw();
               return;
@@ -242,7 +259,6 @@ export async function runMemoryInteractive(): Promise<void> {
               return;
             }
             selected = Math.min(selected, entries.length - 1);
-            stdin.setRawMode(true);
             busy = false;
             draw();
           })();
