@@ -18,6 +18,7 @@ import { queryDotfilesStow } from "./stow.ts";
 import type { StowSummary } from "./types.ts";
 import {
   formatPathTreeEntries,
+  type FormattedTreeLine,
   type PathTreeRole
 } from "./tree.ts";
 
@@ -38,13 +39,18 @@ const HIDE_CURSOR = `${ESC}[?25l`;
 const SHOW_CURSOR = `${ESC}[?25h`;
 const INVERT = `${ESC}[7m`;
 const RESET = `${ESC}[0m`;
+const TAB_INACTIVE = `${ESC}[38;2;150;150;150m`;
+const TAB_SELECTED = `${ESC}[38;2;255;255;255m`;
 const ANSI_RE = /\u001b\[[0-9;]*m/g;
 
+const ALL_TAB = "all";
 const HELP_STOW = "S: stow";
-const HELP_NO_PARTIAL = `${HELP_STOW}  q: quit`;
-const HELP_PROMOTABLE = `Up/Down: move  Enter: adopt  ${HELP_STOW}  o: open  q: quit`;
-const HELP_WITH_LOCALS = `Up/Down: move  i: import  ${HELP_STOW}  o: open  q: quit`;
-const HELP_STOW_REMAINDER = `Up/Down: move  i: stow  ${HELP_STOW}  o: open  q: quit`;
+const HELP_TABS = "<-/-> tabs";
+const HELP_ALL = `Up/Down: move  ${HELP_STOW}  o: open  ${HELP_TABS}  q: quit`;
+const HELP_NO_PARTIAL = `${HELP_STOW}  ${HELP_TABS}  q: quit`;
+const HELP_PROMOTABLE = `Up/Down: move  Enter: adopt  ${HELP_STOW}  o: open  ${HELP_TABS}  q: quit`;
+const HELP_WITH_LOCALS = `Up/Down: move  i: import  ${HELP_STOW}  o: open  ${HELP_TABS}  q: quit`;
+const HELP_STOW_REMAINDER = `Up/Down: move  i: stow  ${HELP_STOW}  o: open  ${HELP_TABS}  q: quit`;
 
 function stripAnsi(text: string): string {
   return text.replace(ANSI_RE, "");
@@ -139,6 +145,113 @@ function stowFlashMessage(summary: StowSummary, status: number): { role: "ok" | 
 
 function reloadPartialFolders(unchangedPaths: string[]): PartialFolderAnalysis[] {
   return findPartialFolders(unchangedPaths, PACKAGE_ROOT, STOW_TARGET);
+}
+
+function topLevelTabNames(
+  unchangedPaths: string[],
+  folders: PartialFolderAnalysis[]
+): string[] {
+  const names = new Set<string>();
+  for (const stowPath of unchangedPaths) {
+    const first = stowPath.split("/")[0];
+    if (first) {
+      names.add(first);
+    }
+  }
+  for (const folder of folders) {
+    const first = folder.folderPath.split("/")[0];
+    if (first) {
+      names.add(first);
+    }
+  }
+  return [...names].sort((a, b) => a.localeCompare(b));
+}
+
+function buildTabNames(
+  unchangedPaths: string[],
+  folders: PartialFolderAnalysis[]
+): string[] {
+  return [ALL_TAB, ...topLevelTabNames(unchangedPaths, folders)];
+}
+
+function activeTabPrefix(tabNames: string[], tabIndex: number): string | undefined {
+  if (tabIndex <= 0 || tabIndex >= tabNames.length) {
+    return undefined;
+  }
+  return tabNames[tabIndex];
+}
+
+function filterPathsByTab(paths: string[], tabPrefix: string | undefined): string[] {
+  if (!tabPrefix) {
+    return paths;
+  }
+  return paths.filter(
+    (stowPath) => stowPath === tabPrefix || stowPath.startsWith(`${tabPrefix}/`)
+  );
+}
+
+function filterFoldersByTab(
+  folders: PartialFolderAnalysis[],
+  tabPrefix: string | undefined
+): PartialFolderAnalysis[] {
+  if (!tabPrefix) {
+    return folders;
+  }
+  return folders.filter(
+    (folder) =>
+      folder.folderPath === tabPrefix || folder.folderPath.startsWith(`${tabPrefix}/`)
+  );
+}
+
+function folderForTreePath(
+  folders: PartialFolderAnalysis[],
+  treePath: string | undefined
+): PartialFolderAnalysis | undefined {
+  if (!treePath) {
+    return undefined;
+  }
+  return folders.find((folder) => folder.folderPath === treePath);
+}
+
+function formatTabGraphic(tabIndex: number, tabNames: string[], width: number): string {
+  const sep = "  |  ";
+  const parts: string[] = [];
+  for (let i = 0; i < tabNames.length; i++) {
+    const name = tabNames[i]!;
+    parts.push(
+      i === tabIndex ? TAB_SELECTED + name + RESET : TAB_INACTIVE + name + RESET
+    );
+  }
+  return clipVis(parts.join(sep), width);
+}
+
+function displayTreePath(treePath: string): string {
+  return `~/${treePath}`;
+}
+
+function pathDetailLines(treePath: string | undefined, color: boolean): string[] {
+  if (!treePath) {
+    return [paint(color, "dim", "no stowed paths")];
+  }
+  return [paint(color, "label", displayTreePath(treePath))];
+}
+
+function ensureTreeVisible(
+  selectedIndex: number,
+  scroll: number,
+  treeLength: number,
+  visibleRows: number
+): number {
+  if (treeLength <= visibleRows) {
+    return 0;
+  }
+  if (selectedIndex < scroll) {
+    return selectedIndex;
+  }
+  if (selectedIndex >= scroll + visibleRows) {
+    return selectedIndex - visibleRows + 1;
+  }
+  return scroll;
 }
 
 function clampScroll(scroll: number, contentLines: number, visibleRows: number): number {
