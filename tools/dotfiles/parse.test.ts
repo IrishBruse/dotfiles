@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import { emptySummary, parseStowOutput } from "./parse.ts";
-import { buildTree, formatPathTree } from "./tree.ts";
+import { buildTree, formatPathTree, formatPathTreeEntries } from "./tree.ts";
 
 describe("parseStowOutput", () => {
   it("starts from an empty summary", () => {
@@ -50,5 +50,18 @@ describe("formatPathTree", () => {
       (prefix, name, role) => `${prefix}${name}${role === "group" ? "*" : ""}`
     );
     assert.deepEqual(lines, [".config*", "└── foo", "    └── bar"]);
+  });
+});
+
+describe("formatPathTreeEntries", () => {
+  it("includes full stow paths for each rendered line", () => {
+    const entries = formatPathTreeEntries(
+      [".config/foo", ".config/foo/bar"],
+      (_prefix, name) => name
+    );
+    assert.deepEqual(
+      entries.map((entry) => entry.fullPath),
+      [".config", ".config/foo", ".config/foo/bar"]
+    );
   });
 });
