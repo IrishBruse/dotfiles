@@ -19,6 +19,32 @@ const HIDE_CURSOR = `${ESC}[?25l`;
 const SHOW_CURSOR = `${ESC}[?25h`;
 
 const HELP = "Up/Down: move  Enter: view details  x: remove  q/Esc: quit";
+const ESCAPE_CODE_TIMEOUT_MS = 25;
+
+type ViewMode = "list" | "confirm-remove";
+
+function enableKeypress(stdin: NodeJS.ReadStream): readline.Interface {
+  const rl = readline.createInterface({
+    input: stdin,
+    escapeCodeTimeout: ESCAPE_CODE_TIMEOUT_MS
+  });
+  readline.emitKeypressEvents(stdin, rl);
+  return rl;
+}
+
+function isEscapeKey(str: string, key: readline.Key | undefined): boolean {
+  return key?.name === "escape" || str === ESC;
+}
+
+function formatRemovePrompt(entry: MemoryEntry, color: boolean): string {
+  const id = paint(color, "\x1b[1m", entry.id);
+  const detail = entry.hasDetails ? " and its reference file" : "";
+  return paint(
+    color,
+    "\x1b[2m",
+    `Remove ${id}${detail}? Enter to confirm, Esc to cancel`
+  );
+}
 
 function stdoutColor(): boolean {
   return process.stdout.isTTY === true;
@@ -52,7 +78,6 @@ function waitForKeypress(): Promise<void> {
       stdin.removeListener("keypress", onKeypress);
       resolve();
     };
-    readline.emitKeypressEvents(stdin);
     stdin.on("keypress", onKeypress);
   });
 }
@@ -72,41 +97,6 @@ async function showDetails(entry: MemoryEntry): Promise<void> {
 
   stdin.setRawMode(true);
   stdout.write(ENTER_ALT + HIDE_CURSOR + HOME + CLR_EOS);
-}
-
-function confirmRemove(
-  entry: MemoryEntry,
-  stdout: NodeJS.WriteStream
-): Promise<boolean> {
-  const color = stdoutColor();
-  const id = paint(color, "\x1b[1m", entry.id);
-  const detail = entry.hasDetails ? " and its reference file" : "";
-  const prompt = paint(
-    color,
-    "\x1b[2m",
-    `Remove ${id}${detail}? Enter to confirm, Esc to cancel`
-  );
-
-  stdout.write(`\n${prompt}\n`);
-
-  return new Promise((resolve) => {
-    const stdin = process.stdin;
-    const onKeypress = (_str: string, key: readline.Key | undefined): void => {
-      if (!key) {
-        return;
-      }
-      if (key.name === "return") {
-        stdin.off("keypress", onKeypress);
-        resolve(true);
-        return;
-      }
-      if (key.name === "escape") {
-        stdin.off("keypress", onKeypress);
-        resolve(false);
-      }
-    };
-    stdin.on("keypress", onKeypress);
-  });
 }
 
 async function performRemove(id: string): Promise<MemoryEntry[]> {
@@ -147,9 +137,9 @@ export async function runMemoryInteractive(): Promise<void> {
   const stdout = process.stdout;
   const color = stdoutColor();
   let selected = 0;
-  let prevViewportLines = 0;
   let cleaned = false;
   let busy = false;
+  let mode: ViewMode = "list";
 
   const draw = (): void => {
     const lines = [
@@ -161,22 +151,28 @@ export async function runMemoryInteractive(): Promise<void> {
       "",
       paint(color, "\x1b[2m", HELP)
     ];
+    if (mode === "confirm-remove") {
+      const entry = entries[selected];
+      if (entry) {
+        lines.push("", formatRemovePrompt(entry, color));
+      }
+    }
     let buf = HOME;
     for (const line of lines) {
       buf += line + CLR_EOL + "\r\n";
     }
-    if (lines.length < prevViewportLines) {
-      buf += CLR_EOS;
-    }
+    buf += CLR_EOS;
     stdout.write(buf);
-    prevViewportLines = lines.length;
   };
+
+  const rl = enableKeypress(stdin);
 
   const cleanup = (): void => {
     if (cleaned) {
       return;
     }
     cleaned = true;
+    rl.close();
     if (stdin.isTTY) {
       stdin.setRawMode(false);
     }
@@ -189,36 +185,73 @@ export async function runMemoryInteractive(): Promise<void> {
     resolve();
   };
 
-  process.on("exit", cleanup);
+  process.on("exit", () => {
+    if (!cleaned) {
+      rl.close();
+    }
+  });
   process.on("SIGINT", () => {
     cleanup();
     process.exit(130);
   });
 
-  readline.emitKeypressEvents(stdin);
   stdin.setRawMode(true);
   stdin.resume();
   stdout.write(ENTER_ALT + HIDE_CURSOR + HOME + CLR_EOS);
   draw();
 
   await new Promise<void>((resolve) => {
-    const onKeypress = (_str: string, key: readline.Key | undefined): void => {
-      if (!key || busy) {
+    const onKeypress = (str: string, key: readline.Key | undefined): void => {
+      if (busy) {
+        return;
+      }
+      if (!key && !isEscapeKey(str, key)) {
         return;
       }
 
-      if (key.ctrl && key.name === "c") {
+      if (key?.ctrl && key.name === "c") {
         stdin.off("keypress", onKeypress);
         finish(resolve);
         return;
       }
 
-      switch (key.name) {
-        case "q":
-        case "escape":
-          stdin.off("keypress", onKeypress);
-          finish(resolve);
+      if (mode === "confirm-remove") {
+        if (key?.name === "return") {
+          void (async () => {
+            const entry = entries[selected];
+            if (!entry) {
+              mode = "list";
+              draw();
+              return;
+            }
+            busy = true;
+            mode = "list";
+            entries = await performRemove(entry.id);
+            if (entries.length === 0) {
+              stdin.off("keypress", onKeypress);
+              finish(resolve);
+              return;
+            }
+            selected = Math.min(selected, entries.length - 1);
+            busy = false;
+            draw();
+          })();
           return;
+        }
+        if (isEscapeKey(str, key)) {
+          mode = "list";
+          draw();
+        }
+        return;
+      }
+
+      if (key?.name === "q" || isEscapeKey(str, key)) {
+        stdin.off("keypress", onKeypress);
+        finish(resolve);
+        return;
+      }
+
+      switch (key?.name) {
         case "up":
           selected = (selected - 1 + entries.length) % entries.length;
           draw();
@@ -240,28 +273,8 @@ export async function runMemoryInteractive(): Promise<void> {
           })();
           return;
         case "x":
-          void (async () => {
-            const entry = entries[selected];
-            if (!entry) {
-              return;
-            }
-            busy = true;
-            const confirmed = await confirmRemove(entry, stdout);
-            if (!confirmed) {
-              busy = false;
-              draw();
-              return;
-            }
-            entries = await performRemove(entry.id);
-            if (entries.length === 0) {
-              stdin.off("keypress", onKeypress);
-              finish(resolve);
-              return;
-            }
-            selected = Math.min(selected, entries.length - 1);
-            busy = false;
-            draw();
-          })();
+          mode = "confirm-remove";
+          draw();
           return;
       }
     };
