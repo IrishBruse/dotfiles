@@ -80,7 +80,7 @@
   "suggestNextPrompt": true,
   "statusLine": {
     "type": "command",
-    "command": "~/.cursor/statusline.mjs",
+    "command": "/home/econn/.cursor/statusline.mjs",
     "padding": 2
   },
   "channel": "prod",
