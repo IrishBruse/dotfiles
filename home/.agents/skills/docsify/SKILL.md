@@ -48,7 +48,8 @@ Keep paths relative to the docs root.
 - Per-page title for SEO: `- [Guide](guide.md 'The greatest guide')`.
 - A heading TOC is generated automatically per page (depth set by config).
   Suppress headings with `<!-- {docsify-ignore} -->` on one heading or `<!-- {docsify-ignore-all} -->` on the first.
-- Nested folders can each have their own `_sidebar.md`. See `references/sidebar.md`.
+- Nested folders can each have their own `_sidebar.md`.
+  See `references/sidebar.md`.
 
 ## Navbar (`_navbar.md`)
 
