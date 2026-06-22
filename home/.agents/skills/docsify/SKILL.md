@@ -1,119 +1,128 @@
 ---
 name: docsify
-description: Scaffolds and serves a docsify documentation site over a repo's markdown docs without a build step. Use when the user wants a docsify site, a docs site for a docs/ folder, to serve or preview markdown as a website, or mentions docsify, _sidebar.md, or _coverpage.md.
+description: Writes and structures markdown for a docsify documentation site, including page routes, _sidebar.md, _navbar.md, cover pages, and docsify markdown extensions. Use when authoring docsify content or when the user mentions docsify, _sidebar.md, _navbar.md, or _coverpage.md.
 ---
 
 # Docsify
 
-Docsify turns a folder of markdown into a documentation website at runtime. No build, no generated HTML. A single `index.html` loads docsify from a CDN, fetches the markdown over HTTP, and renders it client side.
+Docsify renders a folder of markdown as a website at runtime, with no build step. This skill is about writing the markdown: how files map to pages, how to author the sidebar and navbar, and the markdown extensions docsify adds.
 
-## When to use
+For setup, config, themes, plugins, and deploy, read the reference files listed at the end. Do not move or rewrite existing markdown to fit docsify, only add the docsify files (`index.html`, `_sidebar.md`, etc.) alongside it.
 
-- A repo has a `docs/` folder of markdown (ADRs, RFCs, primers, playbooks, runbooks) and the user wants it browsable as a site.
-- The user wants a zero-build alternative to mkdocs or a static site generator.
-- The user asks to preview or serve markdown locally.
+## Pages and routes
 
-## Conventions
+Each markdown file is a page. The route follows the path under the docs root:
 
-Serve docs from the repo's existing `docs/` directory. Keep the home page as `docs/README.md`. Organize by Diataxis (tutorials, how-to, reference, explanation) when the content fits. Do not move or rewrite existing markdown to fit docsify, only add the docsify files alongside it.
-
-## Scaffold
-
-Create these files inside `docs/`.
-
-1. `docs/index.html` (the entry point):
-
-```html
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Docs</title>
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@5/dist/themes/core.min.css" />
-  </head>
-  <body class="loading">
-    <div id="app"></div>
-    <script>
-      window.$docsify = {
-        name: "Docs",
-        loadSidebar: true,
-        loadNavbar: true,
-        subMaxLevel: 2,
-        auto2top: true,
-        relativePath: true,
-        search: "auto",
-      };
-    </script>
-    <script src="//cdn.jsdelivr.net/npm/docsify@5"></script>
-    <script src="//cdn.jsdelivr.net/npm/docsify@5/dist/plugins/search.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
-  </body>
-</html>
+```text
+README.md        => /
+guide.md         => /#/guide
+api/auth.md      => /#/api/auth
+api/README.md    => /#/api/
 ```
 
-2. `docs/.nojekyll` (empty file, stops GitHub Pages ignoring files that start with `_`).
+`README.md` is the home page. A `README.md` inside any folder is that folder's landing page. Links between pages are relative markdown links (`[Auth](api/auth.md)`), never pre-rendered HTML. Heading anchors are `#/page?id=heading-text`.
 
-3. `docs/_sidebar.md` (navigation, requires `loadSidebar: true`):
+## Sidebar (`_sidebar.md`)
 
-```markdown
-- [Home](README.md)
-- Reference
-  - [Some ADR](ADR-073-example.md)
-- Explanation
-  - [JWT primer](auth-session-jwt-primer.md)
-```
-
-4. `docs/_navbar.md` (top bar, optional, requires `loadNavbar: true`):
+The primary navigation. A nested markdown list. Keep paths relative to the docs root.
 
 ```markdown
 - [Home](/)
-- [GitHub](https://github.com/owner/repo)
+
+- Reference
+  - [Configuration](configuration.md)
+  - [API](api/README.md)
+
+- Explanation
+  - [Architecture](architecture.md)
 ```
 
-Build `_sidebar.md` from the actual markdown files in `docs/`. Use relative paths from `docs/`. With `relativePath: true`, nested folders can have their own `_sidebar.md`.
+- Top-level text without a link becomes a section header.
+- Per-page title for SEO: `- [Guide](guide.md 'The greatest guide')`.
+- A heading TOC is generated automatically per page (depth set by config). Suppress headings with `<!-- {docsify-ignore} -->` on one heading or `<!-- {docsify-ignore-all} -->` on the first.
+- Nested folders can each have their own `_sidebar.md`. See `references/sidebar.md`.
 
-## Serve and preview
+## Navbar (`_navbar.md`)
 
-Prefer running without a global install:
+Top bar links. Indent to create drop-down menus. Documentation links start with `#/`.
+
+```markdown
+- [Home](/)
+
+- Resources
+  - [Changelog](changelog.md)
+  - [GitHub](https://github.com/owner/repo)
+```
+
+See `references/navbar.md`.
+
+## Cover page (`_coverpage.md`)
+
+Optional full-screen landing page shown before the docs.
+
+```markdown
+![logo](_media/icon.svg)
+
+# Docs
+
+> A short tagline
+
+[Get Started](#/quickstart)
+```
+
+See `references/cover-page.md`.
+
+## Markdown extensions
+
+Docsify adds syntax on top of standard markdown.
+
+Callouts:
+
+```markdown
+> [!NOTE]
+> Information to note.
+
+> [!TIP]
+> Optional advice.
+
+> [!WARNING]
+> A risk to be aware of.
+```
+
+Link and image attributes:
+
+```markdown
+[link](/demo ':target=_blank')
+[link](/demo/ ':ignore')                <!-- load as-is, do not compile -->
+![logo](icon.svg ':size=50x100')        <!-- WIDTHxHEIGHT, number, or % -->
+```
+
+Heading IDs and embeds:
+
+```markdown
+### Custom anchor :id=custom-anchor
+
+[file](_media/example.md ':include')            <!-- embed markdown inline -->
+[file](_media/example.js ':include :type=code') <!-- embed as code block -->
+```
+
+To put markdown inside an HTML tag, leave a blank line between the tag and the content. See `references/markdown-helpers.md` for the full set, including task lists, embeds, and mermaid.
+
+## Serve
 
 ```bash
 npx docsify-cli serve docs
 ```
 
-Site is at `http://localhost:3000`. If `npx` is unavailable, any static server works since there is no build step:
+Opens at `http://localhost:3000`. Any static server works too since there is no build step.
 
-```bash
-python3 -m http.server 3000 --directory docs
-```
+## References
 
-To scaffold from scratch instead of by hand, `npx docsify-cli init ./docs` creates `index.html`, `README.md`, and `.nojekyll`.
-
-## Common config
-
-Set these in the `window.$docsify` object as needed:
-
-- `loadSidebar` / `loadNavbar` - load `_sidebar.md` / `_navbar.md`.
-- `subMaxLevel` - heading depth pulled into the sidebar (2 is a good default).
-- `coverpage: true` - render a `_coverpage.md` landing page.
-- `homepage: "intro.md"` - use a file other than `README.md` as home.
-- `alias` - map paths, e.g. reuse one sidebar everywhere: `alias: { "/.*/_sidebar.md": "/_sidebar.md" }`.
-- `relativePath: true` - resolve links relative to the current file.
-- `themeColor` or swap the theme CSS (`core`, `vue`, `dark`) for styling.
-
-## Plugins
-
-Add a `<script>` tag for each. Common ones:
-
-- Full text search - `dist/plugins/search.min.js` with `search: "auto"`.
-- Copy code button - `docsify-copy-code/dist/docsify-copy-code.min.js`.
-- Pagination - `docsify-pagination/dist/docsify-pagination.min.js`.
-- Tabs - `docsify-tabs`.
-
-For Mermaid, GitHub-style alerts, or other diagrams, pull the matching docsify plugin from jsDelivr and add its script tag.
-
-## Notes
-
-- Pin a major version (`@5`) in CDN URLs so the site gets fixes but not breaking changes. Use a full version (`@5.0.0`) only if reproducibility matters more.
-- Docsify renders client side, so links must be relative markdown paths, not pre-rendered HTML.
-- Anchor ids come from headings, e.g. `#/page?id=section-heading`.
+- `references/configuration.md` - `index.html` setup, `window.$docsify` options, `routerMode`, virtual routes.
+- `references/sidebar.md` - nested sidebars, TOC, ignoring headers, custom titles.
+- `references/navbar.md` - drop-downs and HTML navbar.
+- `references/cover-page.md` - backgrounds and multi-cover.
+- `references/themes.md` - core theme, add-ons, body classes, theme properties.
+- `references/markdown-helpers.md` - callouts, link/image attributes, embed files, mermaid.
+- `references/plugins.md` - search, copy-code, pagination, tabs, analytics, comments.
+- `references/deploy.md` - GitHub Pages, Netlify, Vercel, Nginx, Docker, history-mode rewrites.
