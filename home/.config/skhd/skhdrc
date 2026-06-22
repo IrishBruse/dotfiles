@@ -4,6 +4,8 @@
 }
 
 .remap caps_lock [device steelseries]: f19
+.remap non_us_backslash [device steelseries]: grave
+.remap grave [device steelseries]: non_us_backslash
 
 .define editor_apps ["Code", "Cursor"]
 
