@@ -18,7 +18,8 @@ CLIs live in one Node package (`package.json`, `tsconfig.json` at the package ro
 
 ## Runtime
 
-- TypeScript run directly with Node 24 via strip-types. Linked bins rely on this automatically
+- TypeScript run directly with Node 24 via strip-types.
+  Linked bins rely on this automatically
 - ESM only: module type set to ESM, nodenext resolution, TypeScript extensions on all relative imports
 - Use the node protocol prefix for builtins
 - No build step - typecheck only with no emit
@@ -26,31 +27,46 @@ CLIs live in one Node package (`package.json`, `tsconfig.json` at the package ro
 
 ## main.ts patterns
 
-Keep the main entry thin: parse argv, dispatch, print help. Put logic in sibling modules.
+Keep the main entry thin: parse argv, dispatch, print help.
+Put logic in sibling modules.
 
-**Simple single-purpose CLI** - parse argv inline, handle help flags, exit on bad input. Good for calculators, formatters, one-shot transforms.
+**Simple single-purpose CLI** - parse argv inline, handle help flags, exit on bad input.
+Good for calculators, formatters, one-shot transforms.
 
-**Subcommand CLI** - first arg is the command, dispatch into a commands directory. Unknown command prints help and sets a non-zero exit code. Good for multi-action tools.
+**Subcommand CLI** - first arg is the command, dispatch into a commands directory.
+Unknown command prints help and sets a non-zero exit code.
+Good for multi-action tools.
 
 Export a main function that accepts argv when the entry may be imported for tests or reuse, then invoke it with process argv at the bottom.
 
-**Async main** - use an async entry wrapped in a top-level catch. Never let async errors go unhandled.
+**Async main** - use an async entry wrapped in a top-level catch.
+Never let async errors go unhandled.
 
-**Flag parsing** - no library. Parse manually from an argv slice. Accept both spaced and equals forms for long flags. Treat a bare long flag as boolean true.
+**Flag parsing** - no library.
+Parse manually from an argv slice.
+Accept both spaced and equals forms for long flags.
+Treat a bare long flag as boolean true.
 
-**Stdin reading** - check whether stdin is a TTY. Accept a file path as an alternative to piped input.
+**Stdin reading** - check whether stdin is a TTY.
+Accept a file path as an alternative to piped input.
 
 ### Help format
 
-One-line description, Usage block, Commands or Options section, and help flags documented. Print help on help flags. When invoked with no args, print help rather than an error if that matches sibling commands. See reference.md for the template.
+One-line description, Usage block, Commands or Options section, and help flags documented.
+Print help on help flags.
+When invoked with no args, print help rather than an error if that matches sibling commands.
+See reference.md for the template.
 
 ## Terminal colors
 
-Color is opt-in per stream. Gate on TTY: check stdout TTY for rendered output, stderr TTY for errors and status.
+Color is opt-in per stream.
+Gate on TTY: check stdout TTY for rendered output, stderr TTY for errors and status.
 
 - Use a paint helper that takes an enabled flag and returns plain text when color is off or the string is empty
-- Always reset after a colored span. Never leave the terminal styled
-- Pipe-friendly tools keep primary stdout plain. Only color when the command is a renderer or interactive UI
+- Always reset after a colored span.
+  Never leave the terminal styled
+- Pipe-friendly tools keep primary stdout plain.
+  Only color when the command is a renderer or interactive UI
 
 **Semantic palette** (basic 8-color ANSI):
 
@@ -63,9 +79,12 @@ Color is opt-in per stream. Gate on TTY: check stdout TTY for rendered output, s
 | Secondary | dim | thinking state, summaries, help hints |
 | Emphasis | bold | names, headings in status rows |
 
-**Rich output** (markdown renderers, themed UIs): use 24-bit true color from hex values. Provide fg and bg helpers that emit 38;2 and 48;2 sequences. Align palette with the editor theme when the tool renders markdown or code.
+**Rich output** (markdown renderers, themed UIs): use 24-bit true color from hex values.
+Provide fg and bg helpers that emit 38;2 and 48;2 sequences.
+Align palette with the editor theme when the tool renders markdown or code.
 
-**Interactive UIs**: invert for selection, dim for keybinding hints, 24-bit grays for inactive vs active tabs. Strip ANSI when measuring visible string width.
+**Interactive UIs**: invert for selection, dim for keybinding hints, 24-bit grays for inactive vs active tabs.
+Strip ANSI when measuring visible string width.
 
 See reference.md for paint helpers, error coloring, and true-color utilities.
 
@@ -73,10 +92,12 @@ See reference.md for paint helpers, error coloring, and true-color utilities.
 
 - Prefix errors with the command name and subcommand when relevant
 - Color errors red on stderr when stderr is a TTY
-- User-facing messages go to stderr. Primary output goes to stdout
+- User-facing messages go to stderr.
+  Primary output goes to stdout
 - Hard failures at top level use immediate exit with code 1
 - Catch handlers and subcommand dispatchers set exit code 1 instead
-- Subcommand run functions may return a numeric exit code. Main exits with that code when non-zero
+- Subcommand run functions may return a numeric exit code.
+  Main exits with that code when non-zero
 - Unexpected args: error listing the leftover tokens, then exit 1
 
 ## File organization inside a command
@@ -99,13 +120,17 @@ See reference.md for paint helpers, error coloring, and true-color utilities.
 - Folder under commands - subcommand is complex enough to warrant sibling modules
 - No commands directory - when all files share a domain model and sit as direct siblings of main
 
-**Prompt-driven commands:** load named markdown templates from a config directory (e.g. `interpolate` + `~/.config/interpolate/*.md`). Never hardcode prompts in source.
+**Prompt-driven commands:** load named markdown templates from a config directory (e.g. `interpolate` + `~/.config/interpolate/*.md`).
+Never hardcode prompts in source.
 
-**Top-level scripts:** some CLIs run at module scope with no `main()` export. Use that only when the entry is a single linear flow.
+**Top-level scripts:** some CLIs run at module scope with no `main()` export.
+Use that only when the entry is a single linear flow.
 
 ## Validation
 
-From the package root: `npm run validate` (typecheck). `npm run verify` adds lint and format checks. See reference.md for commands and common typecheck failures.
+From the package root: `npm run validate` (typecheck).
+`npm run verify` adds lint and format checks.
+See reference.md for commands and common typecheck failures.
 
 ## Avoid
 

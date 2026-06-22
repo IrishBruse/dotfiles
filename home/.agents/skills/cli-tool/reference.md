@@ -97,7 +97,8 @@ function parseFlags(args: string[]): {
 }
 ```
 
-Accept both `--flag value` and `--flag=value`. Treat bare `--flag` as boolean true.
+Accept both `--flag value` and `--flag=value`.
+Treat bare `--flag` as boolean true.
 
 ## Stdin or file input
 
@@ -190,7 +191,9 @@ export const bold = "\x1b[1m";
 export const italic = "\x1b[3m";
 ```
 
-Use for markdown renderers and themed UIs. Pair fg with bg for code blocks. Reset after each styled span.
+Use for markdown renderers and themed UIs.
+Pair fg with bg for code blocks.
+Reset after each styled span.
 
 ## Strip ANSI for width
 
