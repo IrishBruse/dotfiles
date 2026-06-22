@@ -3,6 +3,7 @@ node_modules
 cursor-chats-export/
 
 local.fish
+secrets.fish
 
 home/.config/ghostty/local
 home/.config/dconf/user
