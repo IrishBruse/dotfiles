@@ -2,7 +2,8 @@
 
 ## Enable
 
-Set `loadSidebar: true` and create `docs/_sidebar.md`. Add an empty `docs/.nojekyll` so GitHub Pages does not ignore files starting with `_`.
+Set `loadSidebar: true` and create `docs/_sidebar.md`.
+Add an empty `docs/.nojekyll` so GitHub Pages does not ignore files starting with `_`.
 
 ```js
 window.$docsify = { loadSidebar: true };
@@ -41,7 +42,10 @@ docs/zh-cn/guide.md   => /#/zh-cn/guide
 
 ## Nested sidebars
 
-Docsify loads `_sidebar.md` from the current folder, falling back to the parent. Add a `_sidebar.md` per folder to make the sidebar reflect the current directory. Set `relativePath: true` so links resolve correctly. To force one shared sidebar everywhere, use `alias`:
+Docsify loads `_sidebar.md` from the current folder, falling back to the parent.
+Add a `_sidebar.md` per folder to make the sidebar reflect the current directory.
+Set `relativePath: true` so links resolve correctly.
+To force one shared sidebar everywhere, use `alias`:
 
 ```js
 window.$docsify = {
@@ -68,7 +72,9 @@ window.$docsify = { loadSidebar: true, subMaxLevel: 2 };
 # Page Title <!-- {docsify-ignore-all} -->
 ```
 
-`{docsify-ignore}` skips one header. `{docsify-ignore-all}` on the first header skips every header on the page. Neither marker renders on the page.
+`{docsify-ignore}` skips one header.
+`{docsify-ignore-all}` on the first header skips every header on the page.
+Neither marker renders on the page.
 
 ## Custom page title
 

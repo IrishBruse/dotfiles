@@ -4,7 +4,8 @@ Documentation links begin with `#/`.
 
 ## Markdown navbar
 
-Set `loadNavbar: true` and create `docs/_navbar.md`. Add an empty `docs/.nojekyll`.
+Set `loadNavbar: true` and create `docs/_navbar.md`.
+Add an empty `docs/.nojekyll`.
 
 ```js
 window.$docsify = { loadNavbar: true };

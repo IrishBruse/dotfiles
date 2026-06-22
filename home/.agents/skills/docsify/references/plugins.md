@@ -1,6 +1,7 @@
 # Plugins
 
-Add a `<script>` for each plugin after the docsify script. Some also need config on `window.$docsify`.
+Add a `<script>` for each plugin after the docsify script.
+Some also need config on `window.$docsify`.
 
 ## Full text search
 
@@ -14,7 +15,8 @@ Add a `<script>` for each plugin after the docsify script. Some also need config
 <script src="//cdn.jsdelivr.net/npm/docsify@5/dist/plugins/search.min.js"></script>
 ```
 
-Ignores diacritics ("cafe" matches "cafe"). Use `namespace` to avoid index collisions between sites on one domain.
+Ignores diacritics ("cafe" matches "cafe").
+Use `namespace` to avoid index collisions between sites on one domain.
 
 ## Copy to clipboard
 
@@ -66,4 +68,5 @@ Needed when a markdown page loads a script via `src`.
 
 ## More
 
-Browse community plugins and themes at awesome-docsify. To build your own, see docsify's "Write a Plugin" guide.
+Browse community plugins and themes at awesome-docsify.
+To build your own, see docsify's "Write a Plugin" guide.

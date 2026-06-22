@@ -2,7 +2,9 @@
 
 ## index.html setup
 
-The single entry point. It loads docsify and plugins from a CDN and holds all config. Place it next to the markdown (e.g. `docs/index.html`).
+The single entry point.
+It loads docsify and plugins from a CDN and holds all config.
+Place it next to the markdown (e.g. `docs/index.html`).
 
 ```html
 <!doctype html>
@@ -33,13 +35,16 @@ The single entry point. It loads docsify and plugins from a CDN and holds all co
 </html>
 ```
 
-Also add an empty `.nojekyll` next to it so GitHub Pages serves files starting with `_`. To scaffold the basics, run `npx docsify-cli init ./docs`.
+Also add an empty `.nojekyll` next to it so GitHub Pages serves files starting with `_`.
+To scaffold the basics, run `npx docsify-cli init ./docs`.
 
-Pin a major version (`@5`) in CDN URLs for fixes without breaking changes. Use a full version (`@5.0.0`) only when reproducibility matters more.
+Pin a major version (`@5`) in CDN URLs for fixes without breaking changes.
+Use a full version (`@5.0.0`) only when reproducibility matters more.
 
 ## Options
 
-Set options on `window.$docsify`. It can also be a function `(vm) => ({...})` when you need the docsify instance.
+Set options on `window.$docsify`.
+It can also be a function `(vm) => ({...})` when you need the docsify instance.
 
 ```js
 window.$docsify = {
@@ -86,8 +91,10 @@ window.$docsify = {
 
 ## routerMode
 
-- `hash` (default): URLs look like `https://site/#/path/to/page`. The server only ever loads `index.html`. Simplest for static hosts like GitHub Pages.
-- `history`: clean URLs like `https://site/path/to/page`. Better for SEO, but the host must rewrite all requests to `index.html`.
+- `hash` (default): URLs look like `https://site/#/path/to/page`.
+  The server only ever loads `index.html`, which is simplest for static hosts like GitHub Pages.
+- `history`: clean URLs like `https://site/path/to/page`.
+  Better for SEO, but the host must rewrite all requests to `index.html`.
 
 In `history` mode, add aliases so the nav files load on every path:
 
@@ -103,7 +110,9 @@ window.$docsify = {
 
 ## Virtual routes
 
-Map a path to a markdown string or a function returning markdown. Declare specific routes before broad ones. Return `false` to fall through to a real file, or a falsy value to ignore the request.
+Map a path to a markdown string or a function returning markdown.
+Declare specific routes before broad ones.
+Return `false` to fall through to a real file, or a falsy value to ignore the request.
 
 ```js
 window.$docsify = {

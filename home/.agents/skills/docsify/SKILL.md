@@ -5,13 +5,16 @@ description: Writes and structures markdown for a docsify documentation site, in
 
 # Docsify
 
-Docsify renders a folder of markdown as a website at runtime, with no build step. This skill is about writing the markdown: how files map to pages, how to author the sidebar and navbar, and the markdown extensions docsify adds.
+Docsify renders a folder of markdown as a website at runtime, with no build step.
+This skill is about writing the markdown: how files map to pages, how to author the sidebar and navbar, and the markdown extensions docsify adds.
 
-For setup, config, themes, plugins, and deploy, read the reference files listed at the end. Do not move or rewrite existing markdown to fit docsify, only add the docsify files (`index.html`, `_sidebar.md`, etc.) alongside it.
+For setup, config, themes, plugins, and deploy, read the reference files listed at the end.
+Do not move or rewrite existing markdown to fit docsify, only add the docsify files (`index.html`, `_sidebar.md`, etc.) alongside it.
 
 ## Pages and routes
 
-Each markdown file is a page. The route follows the path under the docs root:
+Each markdown file is a page.
+The route follows the path under the docs root:
 
 ```text
 README.md        => /
@@ -20,11 +23,15 @@ api/auth.md      => /#/api/auth
 api/README.md    => /#/api/
 ```
 
-`README.md` is the home page. A `README.md` inside any folder is that folder's landing page. Links between pages are relative markdown links (`[Auth](api/auth.md)`), never pre-rendered HTML. Heading anchors are `#/page?id=heading-text`.
+`README.md` is the home page.
+A `README.md` inside any folder is that folder's landing page.
+Links between pages are relative markdown links (`[Auth](api/auth.md)`), never pre-rendered HTML.
+Heading anchors are `#/page?id=heading-text`.
 
 ## Sidebar (`_sidebar.md`)
 
-The primary navigation. A nested markdown list. Keep paths relative to the docs root.
+The primary navigation, a nested markdown list.
+Keep paths relative to the docs root.
 
 ```markdown
 - [Home](/)
@@ -39,12 +46,15 @@ The primary navigation. A nested markdown list. Keep paths relative to the docs 
 
 - Top-level text without a link becomes a section header.
 - Per-page title for SEO: `- [Guide](guide.md 'The greatest guide')`.
-- A heading TOC is generated automatically per page (depth set by config). Suppress headings with `<!-- {docsify-ignore} -->` on one heading or `<!-- {docsify-ignore-all} -->` on the first.
+- A heading TOC is generated automatically per page (depth set by config).
+  Suppress headings with `<!-- {docsify-ignore} -->` on one heading or `<!-- {docsify-ignore-all} -->` on the first.
 - Nested folders can each have their own `_sidebar.md`. See `references/sidebar.md`.
 
 ## Navbar (`_navbar.md`)
 
-Top bar links. Indent to create drop-down menus. Documentation links start with `#/`.
+Top bar links.
+Indent to create drop-down menus.
+Documentation links start with `#/`.
 
 ```markdown
 - [Home](/)
@@ -106,7 +116,8 @@ Heading IDs and embeds:
 [file](_media/example.js ':include :type=code') <!-- embed as code block -->
 ```
 
-To put markdown inside an HTML tag, leave a blank line between the tag and the content. See `references/markdown-helpers.md` for the full set, including task lists, embeds, and mermaid.
+To put markdown inside an HTML tag, leave a blank line between the tag and the content.
+See `references/markdown-helpers.md` for the full set, including task lists, embeds, and mermaid.
 
 ## Serve
 
@@ -114,7 +125,8 @@ To put markdown inside an HTML tag, leave a blank line between the tag and the c
 npx docsify-cli serve docs
 ```
 
-Opens at `http://localhost:3000`. Any static server works too since there is no build step.
+Opens at `http://localhost:3000`.
+Any static server works too since there is no build step.
 
 ## References
 

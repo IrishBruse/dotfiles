@@ -72,7 +72,8 @@ Leave a blank line between the HTML tag and the markdown:
 
 ## Embed files
 
-Add `:include` to a link to embed instead of linking. Type is inferred from extension (`.md` markdown, `.html` iframe, `.mp4` video, `.mp3` audio, others as a code block).
+Add `:include` to a link to embed instead of linking.
+Type is inferred from extension (`.md` markdown, `.html` iframe, `.mp4` video, `.mp3` audio, others as a code block).
 
 ```markdown
 [file](_media/example.md ':include')
@@ -81,11 +82,14 @@ Add `:include` to a link to embed instead of linking. Type is inferred from exte
 [site](https://example.com ':include :type=iframe width=100% height=400px')
 ```
 
-Force a code block with `:type=code`. Embed a fragment by wrapping source between `/// [name]` markers and using `:fragment=name`. Raw gist URLs (`gist.githubusercontent.com/USER/ID/raw/FILE`) can be embedded the same way.
+Force a code block with `:type=code`.
+Embed a fragment by wrapping source between `/// [name]` markers and using `:fragment=name`.
+Raw gist URLs (`gist.githubusercontent.com/USER/ID/raw/FILE`) can be embedded the same way.
 
 ## Mermaid
 
-Docsify supports mermaid up to v9.3.0 (sync render only). Load mermaid, then route `mermaid` code blocks through a custom renderer:
+Docsify supports mermaid up to v9.3.0 (sync render only).
+Load mermaid, then route `mermaid` code blocks through a custom renderer:
 
 ```js
 let num = 0;

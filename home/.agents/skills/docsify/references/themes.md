@@ -2,7 +2,8 @@
 
 ## Core theme
 
-Load the core theme stylesheet. It is a minimalist base designed for customization via theme properties.
+Load the core theme stylesheet.
+It is a minimalist base designed for customization via theme properties.
 
 ```html
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@5/dist/themes/core.min.css" />
@@ -58,4 +59,6 @@ Light/dark overrides:
 }
 ```
 
-Prefer theme properties over raw CSS selectors. Custom selectors can break across docsify versions, so pin a full CDN version if you rely on them. Theme properties can also be set per page inside a markdown `<style>` block.
+Prefer theme properties over raw CSS selectors.
+Custom selectors can break across docsify versions, so pin a full CDN version if you rely on them.
+Theme properties can also be set per page inside a markdown `<style>` block.
