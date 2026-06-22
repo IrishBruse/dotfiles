@@ -1,8 +1,10 @@
+import process from "node:process";
+
 import { readStdin } from "./args.ts";
 import { appendEntry } from "./entries.ts";
 import { printOk } from "./output.ts";
 import { writeReference } from "./reference.ts";
-import { writeSkill } from "./renderSkill.ts";
+import { resolveStore } from "./scope.ts";
 import { parseSlug } from "./slug.ts";
 
 /** Max inline sentence length; use `--detail` for longer reference content. */
@@ -29,8 +31,12 @@ function parseDetailFlag(args: string[]): {
 /**
  * Run `memory add <id> <sentence> [--detail [content...]]`.
  */
-export async function runAdd(args: string[]): Promise<void> {
+export async function runAdd(
+  args: string[],
+  options: { global: boolean }
+): Promise<void> {
   const { positional, detail: detailFromArgs } = parseDetailFlag(args);
+  const store = resolveStore(options.global, process.cwd());
 
   if (positional.length < 2) {
     throw new Error("Id and sentence are required.");
@@ -48,7 +54,7 @@ export async function runAdd(args: string[]): Promise<void> {
   }
   if (text.length > MAX_ENTRY_LENGTH) {
     throw new Error(
-      `Sentence is too long (${text.length} characters, max ${MAX_ENTRY_LENGTH}). Keep one line in the skill and use --detail for reference content.`
+      `Sentence is too long (${text.length} characters, max ${MAX_ENTRY_LENGTH}). Keep one line in the entry and use --detail for reference content.`
     );
   }
 
@@ -61,19 +67,18 @@ export async function runAdd(args: string[]): Promise<void> {
     }
   }
 
-  const { entries, added } = await appendEntry({
+  const { added } = await appendEntry(store, {
     text,
     id,
     hasDetails: Boolean(detail),
   });
-  await writeSkill(entries);
 
   if (!added) {
     throw new Error(`An entry with id "${id}" already exists.`);
   }
 
   if (detail) {
-    await writeReference(id, detail);
+    await writeReference(store, id, detail);
   }
 
   printOk(detail ? "Added entry with reference detail." : "Added entry.");

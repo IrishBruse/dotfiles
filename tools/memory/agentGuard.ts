@@ -1,6 +1,4 @@
-import { printHint } from "./output.ts";
-
-const AGENT_VIEW_HINT = "Agents should read the memory skill instead of this command.";
+import process from "node:process";
 
 /** True when the shell was started by a Cursor agent session. */
 export function isCursorAgent(): boolean {
@@ -17,9 +15,4 @@ export function assertHumanShell(command: string): void {
       `memory ${command} is human-only and cannot run from a Cursor agent session.`
     );
   }
-}
-
-/** Tell agents to read the skill instead of using `memory view`. */
-export function printAgentViewHint(): void {
-  printHint(AGENT_VIEW_HINT);
 }

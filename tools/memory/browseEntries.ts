@@ -3,10 +3,12 @@ import { runMemoryInteractive } from "./interactive.ts";
 /**
  * Run bare `memory` (interactive TTY browser).
  */
-export async function runInteractive(): Promise<void> {
+export async function runInteractive(options: {
+  global: boolean;
+}): Promise<void> {
   if (!process.stdin.isTTY || !process.stdout.isTTY) {
     throw new Error("memory requires an interactive terminal.");
   }
 
-  await runMemoryInteractive();
+  await runMemoryInteractive(options);
 }

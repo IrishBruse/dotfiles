@@ -1,30 +1,43 @@
 import process from "node:process";
 
 import { runAdd } from "./addEntry.ts";
-import { isCursorAgent } from "./agentGuard.ts";
+import { parseGlobalFlag } from "./args.ts";
 import { runInteractive } from "./browseEntries.ts";
+import { runList } from "./listEntries.ts";
 import { runView } from "./viewEntries.ts";
 import { printError } from "./output.ts";
 
 function printHelp(): void {
-  console.error(`memory - persistent agent lessons as a minimal skill
+  console.error(`memory - persistent scoped agent lessons
 
 Usage:
-  memory add <id> <sentence> [--detail [content...]]
-  memory view <id>
+  memory [-g]
+  memory add [-g] <id> <sentence> [--detail [content...]]
+  memory view [-g] <id>
 
 Commands:
+  (none)  List memories (local + global; agents: run at session start)
   add     Append one high-level sentence linked to <id>
   view    Print one entry as raw markdown
 
+Scope:
+  ~/.agents/memory/repos/<repo>.json for ~/git/<repo>/...
+  ~/.agents/memory/misc/<path>.json for other cwd (home, dotfiles, ...)
+  -g, --global uses ~/.agents/memory/global.json
+
 Options:
+  -g, --global   Use global memory store only (list/view) or target (add)
   -h, --help     This help
   --detail       Reference markdown for <id> (arguments or stdin)
 `);
 }
 
+function isInteractiveTty(): boolean {
+  return process.stdin.isTTY === true && process.stdout.isTTY === true;
+}
+
 export async function main(argv: string[]): Promise<void> {
-  const args = argv.slice(2);
+  const { rest: args, global } = parseGlobalFlag(argv.slice(2));
 
   if (args.includes("-h") || args.includes("--help")) {
     printHelp();
@@ -32,28 +45,33 @@ export async function main(argv: string[]): Promise<void> {
   }
 
   if (args.length === 0) {
-    if (isCursorAgent()) {
-      printHelp();
+    if (global && isInteractiveTty()) {
+      await runInteractive({ global: true });
       return;
     }
-    await runInteractive();
+    if (!global && isInteractiveTty()) {
+      await runInteractive({ global: false });
+      return;
+    }
+    await runList({ cwd: process.cwd(), globalOnly: global });
     return;
   }
 
   const [cmd, ...rest] = args;
+  const { rest: cmdArgs, global: cmdGlobal } = parseGlobalFlag(rest);
+  const useGlobal = cmdGlobal || global;
+
   if (cmd === "add") {
-    await runAdd(rest);
+    await runAdd(cmdArgs, { global: useGlobal });
     return;
   }
   if (cmd === "view") {
-    await runView(rest);
+    await runView(cmdArgs, { global: useGlobal });
     return;
   }
 
   printError(`Unknown command "${cmd}".`);
-  if (isCursorAgent()) {
-    printHelp();
-  }
+  printHelp();
   process.exit(1);
 }
 

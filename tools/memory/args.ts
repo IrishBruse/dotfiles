@@ -37,6 +37,25 @@ function stdinIsPiped(): boolean {
   }
 }
 
+/**
+ * Strip `-g` / `--global` from argv.
+ */
+export function parseGlobalFlag(args: string[]): {
+  rest: string[];
+  global: boolean;
+} {
+  const rest: string[] = [];
+  let global = false;
+  for (const arg of args) {
+    if (arg === "-g" || arg === "--global") {
+      global = true;
+      continue;
+    }
+    rest.push(arg);
+  }
+  return { rest, global };
+}
+
 export async function readStdin(): Promise<string> {
   if (!stdinIsPiped()) {
     return "";

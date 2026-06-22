@@ -1,7 +1,27 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { takeOptionalFlag } from "./args.ts";
+import { parseGlobalFlag, takeOptionalFlag } from "./args.ts";
+
+describe("parseGlobalFlag", () => {
+  it("detects -g and --global anywhere", () => {
+    assert.deepEqual(parseGlobalFlag(["-g", "add", "id", "text"]), {
+      rest: ["add", "id", "text"],
+      global: true
+    });
+    assert.deepEqual(parseGlobalFlag(["add", "--global", "id", "text"]), {
+      rest: ["add", "id", "text"],
+      global: true
+    });
+  });
+
+  it("leaves args unchanged when no global flag", () => {
+    assert.deepEqual(parseGlobalFlag(["view", "my-id"]), {
+      rest: ["view", "my-id"],
+      global: false
+    });
+  });
+});
 
 describe("takeOptionalFlag", () => {
   it("reads spaced flag values", () => {

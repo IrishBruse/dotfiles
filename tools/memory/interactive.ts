@@ -5,9 +5,9 @@ import process from "node:process";
 import { loadEntries, removeEntry, type MemoryEntry } from "./entries.ts";
 import { formatEntryMarkdown } from "./entryMarkdown.ts";
 import { markdown } from "../markdown/api.ts";
+import { referencePath, type MemoryStore } from "./paths.ts";
 import { printOk } from "./output.ts";
-import { referencePath } from "./paths.ts";
-import { writeSkill } from "./renderSkill.ts";
+import { resolveScopeKey, resolveStore, scopeLabel } from "./scope.ts";
 
 const ESC = "\u001B";
 const ENTER_ALT = `${ESC}[?1049h`;
@@ -82,13 +82,16 @@ function waitForKeypress(): Promise<void> {
   });
 }
 
-async function showDetails(entry: MemoryEntry): Promise<void> {
+async function showDetails(
+  store: MemoryStore,
+  entry: MemoryEntry
+): Promise<void> {
   const stdin = process.stdin;
   const stdout = process.stdout;
 
   stdin.setRawMode(false);
   stdout.write(SHOW_CURSOR + LEAVE_ALT + HOME + CLR_EOS);
-  stdout.write(markdown(await formatEntryMarkdown(entry)));
+  stdout.write(markdown(await formatEntryMarkdown(store, entry)));
   stdout.write(
     `\n\n${paint(stdoutColor(), "\x1b[2m", "Press any key to return...")}\n`
   );
@@ -99,22 +102,24 @@ async function showDetails(entry: MemoryEntry): Promise<void> {
   stdout.write(ENTER_ALT + HIDE_CURSOR + HOME + CLR_EOS);
 }
 
-async function performRemove(id: string): Promise<MemoryEntry[]> {
-  const { entries, removed } = await removeEntry(id);
+async function performRemove(
+  store: MemoryStore,
+  id: string
+): Promise<MemoryEntry[]> {
+  const { entries, removed } = await removeEntry(store, id);
 
   if (!removed) {
     throw new Error(`No entry with id "${id}".`);
   }
 
   try {
-    await unlink(referencePath(id));
+    await unlink(referencePath(store, id));
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code !== "ENOENT") {
       throw err;
     }
   }
 
-  await writeSkill(entries);
   printOk(`Removed ${id}.`);
   return entries;
 }
@@ -122,12 +127,15 @@ async function performRemove(id: string): Promise<MemoryEntry[]> {
 /**
  * Interactive memory browser (human-only).
  */
-export async function runMemoryInteractive(): Promise<void> {
+export async function runMemoryInteractive(options: {
+  global: boolean;
+}): Promise<void> {
   if (!process.stdin.isTTY || !process.stdout.isTTY) {
     throw new Error("memory requires an interactive terminal.");
   }
 
-  let entries = await loadEntries();
+  const store = resolveStore(options.global, process.cwd());
+  let entries = await loadEntries(store);
   if (entries.length === 0) {
     console.log("Memories (none)");
     return;
@@ -142,8 +150,11 @@ export async function runMemoryInteractive(): Promise<void> {
   let mode: ViewMode = "list";
 
   const draw = (): void => {
+    const label = options.global
+      ? "Global"
+      : scopeLabel(resolveScopeKey(process.cwd()));
     const lines = [
-      "Memories",
+      `Memories (${label})`,
       "",
       ...entries.map((entry, index) =>
         formatRow(entry, index === selected, color)
@@ -226,7 +237,7 @@ export async function runMemoryInteractive(): Promise<void> {
             }
             busy = true;
             mode = "list";
-            entries = await performRemove(entry.id);
+            entries = await performRemove(store, entry.id);
             if (entries.length === 0) {
               stdin.off("keypress", onKeypress);
               finish(resolve);
@@ -267,7 +278,7 @@ export async function runMemoryInteractive(): Promise<void> {
               return;
             }
             busy = true;
-            await showDetails(entry);
+            await showDetails(store, entry);
             busy = false;
             draw();
           })();
