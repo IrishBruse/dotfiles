@@ -50,7 +50,8 @@ Use this structure as the default:
 </html>
 ```
 
-Set the `href` relative to the output file. For an example file in `examples/`, use `../styles/html-doc.css`.
+Set the `href` relative to the output file.
+For an example file in `examples/`, use `../styles/html-doc.css`.
 
 ## Content Guidelines
 
@@ -61,7 +62,8 @@ Set the `href` relative to the output file. For an example file in `examples/`, 
 - Use `.callout`, `.callout.warning`, `.callout.success`, or `.callout.danger` for important notes.
 - Use semantic tables for matrices and `pre` blocks for file trees or command snippets.
 - Use inline Mermaid diagrams when a workflow, dependency map, sequence, state machine, or architecture relationship is clearer as a diagram.
-- Keep copy concise. The page should explain the topic, not decorate it with filler.
+- Keep copy concise.
+  The page should explain the topic, not decorate it with filler.
 
 ## Mermaid Diagrams
 
@@ -101,12 +103,14 @@ Write inline diagrams like this:
 </section>
 ```
 
-Use simple labels, short node names, and semantic diagram types. Prefer `flowchart`, `sequenceDiagram`, `stateDiagram-v2`, and `classDiagram` unless another Mermaid type is a better fit.
+Use simple labels, short node names, and semantic diagram types.
+Prefer `flowchart`, `sequenceDiagram`, `stateDiagram-v2`, and `classDiagram` unless another Mermaid type is a better fit.
 
 ## Quality Bar
 
 - The document should work as a static file without JavaScript unless Mermaid diagrams are requested or clearly useful.
-- Mermaid diagrams require JavaScript and network access when loaded from the CDN. If offline use is required, bundle Mermaid locally and update the import path.
+- Mermaid diagrams require JavaScript and network access when loaded from the CDN.
+  If offline use is required, bundle Mermaid locally and update the import path.
 - The HTML must be accessible: meaningful headings, descriptive links, table headers, and no color-only meaning.
 - Each Mermaid diagram must have a nearby heading or paragraph explaining what it shows.
 - The CSS should stay in `styles/html-doc.css`; do not inline page-specific CSS unless the user explicitly asks.
