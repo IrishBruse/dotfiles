@@ -9,19 +9,26 @@ Open a new GitHub PR from the current branch against `origin/main`, composing th
 
 ## Context
 
-When invoked from the `pr` command, git state, existing open PRs, and the repo PR template are inlined in the prompt. Use that output as the latest state. Do not re-run git or gh to gather it.
+When invoked from the `pr` command, git state, existing open PRs, and the repo PR template are inlined in the prompt.
+Use that output as the latest state.
+Do not re-run git or gh to gather it.
 
 If those sections are absent, run `git diff origin/main` and check `.github/PULL_REQUEST_TEMPLATE.md`.
 
-The `git diff origin/main` section is the source of truth for what ships. When the repo PR template is not `none`, fill it in for the body. When existing open PRs is not `none`, edit that PR instead of creating a duplicate.
+The `git diff origin/main` section is the source of truth for what ships.
+When the repo PR template is not `none`, fill it in for the body.
+When existing open PRs is not `none`, edit that PR instead of creating a duplicate.
 
 ## Readability standard
 
 Write for an end user scanning the PR page, not for an implementation log.
 
-- Keep the whole body compact. Prefer 35-60 lines at most unless the repo template requires more.
-- Avoid walls of text. Use short paragraphs and short bullets.
-- Do not turn diff inventory into prose. Summarize the user-visible or reviewer-relevant outcome.
+- Keep the whole body compact.
+  Prefer 35-60 lines at most unless the repo template requires more.
+- Avoid walls of text.
+  Use short paragraphs and short bullets.
+- Do not turn diff inventory into prose.
+  Summarize the user-visible or reviewer-relevant outcome.
 - Prefer a few clear words over a sentence when a category label is enough.
 
 ## Body Layout
@@ -30,7 +37,8 @@ Unless the repo template says otherwise, use the following exact structure:
 
 ### Summary
 
-Provide a 1-2 sentence explanation of the business or technical intent (the "why" and "what"). Follow this with a compact categorized rollup.
+Provide a 1-2 sentence explanation of the business or technical intent (the "why" and "what").
+Follow this with a compact categorized rollup.
 
 Each `Added`, `Changed`, or `Removed` line must be short and scannable:
 
@@ -47,16 +55,19 @@ Examples:
 
 ### Topical ## Sections
 
-Create 0 to 3 custom sections based on the functional areas touched by the diff (e.g., `## Database`, `## Authentication`, `## Frontend UI`). Skip topical sections entirely when the summary already explains the change well.
+Create 0 to 3 custom sections based on the functional areas touched by the diff (e.g., `## Database`, `## Authentication`, `## Frontend UI`).
+Skip topical sections entirely when the summary already explains the change well.
 
 - Start each section with a short, single lead sentence explaining the goal of that area.
 - Follow with 1-3 bullets detailing the specific behavioral changes.
 - Keep bullets to one line when possible.
-- Do not list file paths, line numbers, or raw code churn. Focus on systemic changes.
+- Do not list file paths, line numbers, or raw code churn.
+  Focus on systemic changes.
 
 ### Contract changes (Optional)
 
-Include this section when the diff changes schemas, API behavior, generated files, environment variables, persisted data, deployment output, or externally consumed metadata. If none of those changed, omit it.
+Include this section when the diff changes schemas, API behavior, generated files, environment variables, persisted data, deployment output, or externally consumed metadata.
+If none of those changed, omit it.
 
 Keep it glanceable but technical:
 
