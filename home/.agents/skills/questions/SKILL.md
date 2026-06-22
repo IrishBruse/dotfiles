@@ -13,7 +13,8 @@ Walk down each branch of the design tree, resolving dependencies between decisio
 codebase, docs, or context, do that first and skip the question entirely.
 
 **Provide a recommendation.** For every question, state what you would do
-by default and why. This lets the user accept your judgment with a single
+by default and why.
+This lets the user accept your judgment with a single
 keypress rather than having to think from scratch.
 
 ## Response format
@@ -22,7 +23,8 @@ Before calling the AskQuestion tool with the 3 questions print this:
 
 **Context:**
 
-[One or two sentences max. Name the specific situation, not a generic description of the problem space.]
+[One or two sentences max.
+Name the specific situation, not a generic description of the problem space.]
 
 **Recommendation:** (Answer 1/2/3)
 [brief reason what makes it the safest default]
