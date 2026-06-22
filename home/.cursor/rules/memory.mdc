@@ -1,11 +1,11 @@
 ---
-description: Persistent agent lessons via the memory CLI
+description: Persistent agent memory
 alwaysApply: true
 ---
 
 # Agent memory
 
-Cross-session lessons live under `~/.agents/memory/`. Use the `memory` CLI only; do not read skill files for memory.
+Use the `memory` CLI only
 
 ## Session start
 

@@ -1,6 +1,6 @@
 ---
-description: Conventions when authoring or editing skills
-globs: **/SKILL.md
+globs: **/SKILL.md,**/*.mdc
+alwaysApply: false
 ---
 
 # Skill authoring
