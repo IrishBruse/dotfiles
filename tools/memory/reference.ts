@@ -1,4 +1,4 @@
-import { writeFile, mkdir } from "node:fs/promises";
+import { mkdir, unlink, writeFile } from "node:fs/promises";
 
 import { referencePath, type MemoryStore } from "./paths.ts";
 
@@ -14,4 +14,20 @@ export async function writeReference(
   await mkdir(store.referencesDir, { recursive: true });
   await writeFile(filePath, `${body.trim()}\n`, "utf8");
   return filePath;
+}
+
+/**
+ * Delete reference markdown for an entry id when present.
+ */
+export async function deleteReference(
+  store: MemoryStore,
+  id: string
+): Promise<void> {
+  try {
+    await unlink(referencePath(store, id));
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code !== "ENOENT") {
+      throw err;
+    }
+  }
 }

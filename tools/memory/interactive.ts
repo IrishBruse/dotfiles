@@ -1,4 +1,3 @@
-import { unlink } from "node:fs/promises";
 import readline from "node:readline";
 import process from "node:process";
 
@@ -6,8 +5,9 @@ import { loadEntries, removeEntry, type MemoryEntry } from "./entries.ts";
 import { formatEntryMarkdown } from "./entryMarkdown.ts";
 import { formatListMarkdown } from "./listEntries.ts";
 import { markdown } from "../markdown/api.ts";
-import { globalStore, referencePath, type MemoryStore } from "./paths.ts";
+import { globalStore, type MemoryStore } from "./paths.ts";
 import { printOk } from "./output.ts";
+import { deleteReference } from "./reference.ts";
 import { localStore, resolveScopeKey, scopeLabel } from "./scope.ts";
 
 const ESC = "\u001B";
@@ -154,14 +154,7 @@ async function performRemove(store: MemoryStore, id: string): Promise<void> {
     throw new Error(`No entry with id "${id}".`);
   }
 
-  try {
-    await unlink(referencePath(store, id));
-  } catch (err) {
-    if ((err as NodeJS.ErrnoException).code !== "ENOENT") {
-      throw err;
-    }
-  }
-
+  await deleteReference(store, id);
   printOk(`Removed ${id}.`);
 }
 

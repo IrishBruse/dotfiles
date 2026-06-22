@@ -5,6 +5,7 @@ import { isCursorAgent } from "./agentGuard.ts";
 import { parseGlobalFlag } from "./args.ts";
 import { runInteractive } from "./browseEntries.ts";
 import { runList } from "./listEntries.ts";
+import { runRm } from "./rmEntry.ts";
 import { runView } from "./viewEntries.ts";
 import { printError } from "./output.ts";
 
@@ -15,11 +16,13 @@ Usage:
   memory [-g]
   memory add [-g] <id> <sentence> [--detail [content...]]
   memory view [-g] <id>
+  memory rm [-g] <id>
 
 Commands:
   (none)  Browse local + global memories (raw markdown for agents)
   add     Append one high-level sentence linked to <id>
   view    Print one entry as raw markdown
+  rm      Remove one entry by <id>
 
 Scope:
   ~/.agents/memory/repos/<repo>.json for ~/git/<repo>/...
@@ -72,6 +75,10 @@ export async function main(argv: string[]): Promise<void> {
   }
   if (cmd === "view") {
     await runView(cmdArgs, { global: useGlobal });
+    return;
+  }
+  if (cmd === "rm") {
+    await runRm(cmdArgs, { global: useGlobal });
     return;
   }
 
