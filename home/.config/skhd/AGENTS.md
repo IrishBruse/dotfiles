@@ -2,6 +2,12 @@
 
 This document provides a comprehensive reference for the skhd configuration syntax. The skhd.zig implementation is fully compatible with the original skhd syntax, with additional features.
 
+## Local Paths
+
+- Runtime config: `/Users/econneely/.config/skhd/skhdrc`
+- Dotfiles source: `/Users/econneely/dotfiles/home/.config/skhd/skhdrc`
+- Service log: `/Users/econneely/Library/Logs/skhd.log`
+
 ## Grammar Overview
 
 The configuration syntax follows these formal rules:
