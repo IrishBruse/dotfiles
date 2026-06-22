@@ -199,10 +199,6 @@ export async function runMemoryInteractive(options: {
 
   let sections = await loadSections(options.globalOnly);
   let rows = flattenSections(sections);
-  if (rows.length === 0) {
-    console.log("Memories (none)");
-    return;
-  }
 
   const stdin = process.stdin;
   const stdout = process.stdout;
@@ -295,12 +291,7 @@ export async function runMemoryInteractive(options: {
             await performRemove(row.section.store, row.entry.id);
             sections = await loadSections(options.globalOnly);
             rows = flattenSections(sections);
-            if (rows.length === 0) {
-              stdin.off("keypress", onKeypress);
-              finish(resolve);
-              return;
-            }
-            selected = Math.min(selected, rows.length - 1);
+            selected = rows.length === 0 ? 0 : Math.min(selected, rows.length - 1);
             busy = false;
             draw();
           })();
@@ -321,14 +312,23 @@ export async function runMemoryInteractive(options: {
 
       switch (key?.name) {
         case "up":
+          if (rows.length === 0) {
+            return;
+          }
           selected = (selected - 1 + rows.length) % rows.length;
           draw();
           return;
         case "down":
+          if (rows.length === 0) {
+            return;
+          }
           selected = (selected + 1) % rows.length;
           draw();
           return;
         case "return":
+          if (rows.length === 0) {
+            return;
+          }
           void (async () => {
             const row = rows[selected];
             if (!row) {
@@ -341,6 +341,9 @@ export async function runMemoryInteractive(options: {
           })();
           return;
         case "x":
+          if (rows.length === 0) {
+            return;
+          }
           mode = "confirm-remove";
           draw();
           return;

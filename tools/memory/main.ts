@@ -47,7 +47,11 @@ export async function main(argv: string[]): Promise<void> {
 
   if (args.length === 0) {
     if (isCursorAgent()) {
-      await runList({ cwd: process.cwd(), globalOnly: false });
+      await runList({
+        cwd: process.cwd(),
+        globalOnly: false,
+        omitEmpty: true
+      });
       return;
     }
     if (isInteractiveTty()) {

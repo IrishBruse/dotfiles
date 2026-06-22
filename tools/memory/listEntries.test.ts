@@ -10,6 +10,21 @@ import { localStore } from "./scope.ts";
 describe("formatListMarkdown", () => {
   const home = os.homedir();
 
+  it("returns empty string for agent-style omitEmpty", async () => {
+    const out = await formatListMarkdown({
+      cwd: process.cwd(),
+      omitEmpty: true
+    });
+    assert.equal(out, "");
+  });
+
+  it("renders empty scopes as _(none)_ by default", async () => {
+    const out = await formatListMarkdown({ cwd: process.cwd() });
+    assert.match(out, /## Global/);
+    assert.match(out, /## Local/);
+    assert.match(out, /_\(none\)_/);
+  });
+
   it("renders local and global sections", async () => {
     const gitBase = path.join(home, "git");
     await mkdir(gitBase, { recursive: true });
