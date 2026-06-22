@@ -21,7 +21,8 @@ Produces a structured, caller-focused breakdown of the public code interface for
 
 ### 1. Extract the target
 
-Parse the feature path or name from the user's prompt. It may be:
+Parse the feature path or name from the user's prompt.
+It may be:
 
 - A directory path: `UI/Components/TextInput`
 - A bare name: `TextInput`, `AuthService`, `scaffold`
@@ -52,9 +53,11 @@ Within the resolved directory, check for these files in priority order:
 | `errors.ts` | Error/exception types |
 | `CONFIG.ts` | Configuration constants |
 
-Read only files that exist. Start with index/type files; read implementation files only if the public surface is not clear from those.
+Read only files that exist.
+Start with index/type files; read implementation files only if the public surface is not clear from those.
 
-**Ambiguity**: if the path resolves to multiple distinct modules, scope to the barrel/index and note sub-exports. Ask the user to narrow down if needed.
+**Ambiguity**: if the path resolves to multiple distinct modules, scope to the barrel/index and note sub-exports.
+Ask the user to narrow down if needed.
 
 ---
 
@@ -64,18 +67,24 @@ Extract and categorize the following from the files:
 
 #### Exported types
 
-Every public type in the source language. Examples: `interface`, `type`, `enum` (TypeScript); `class`, `struct`, `interface`, `record` (C#); `TypedDict`, dataclass, Protocol (Python); and equivalents elsewhere. Include component props types, options objects, request/response shapes, and error types. Include the full definition. Pull descriptions from doc comments (JSDoc, XML docs, etc.) where present.
+Every public type in the source language.
+Examples: `interface`, `type`, `enum` (TypeScript); `class`, `struct`, `interface`, `record` (C#); `TypedDict`, dataclass, Protocol (Python); and equivalents elsewhere.
+Include component props types, options objects, request/response shapes, and error types.
+Include the full definition.
+Pull descriptions from doc comments (JSDoc, XML docs, etc.) where present.
 
 #### Exported functions, classes, and constants
 
-Every `export function`, `export const`, `export class`, `export default` (or language equivalent). For each, capture:
+Every `export function`, `export const`, `export class`, `export default` (or language equivalent).
+For each, capture:
 
 - Full signature (params + return type)
 - Brief purpose (from docs, name, or inferred usage - label inferred as `(inferred)`)
 
 #### Dependencies (caller-relevant only)
 
-Top-level imports that a caller should be aware of - external packages and internal peer modules. Skip internal implementation details (utilities, helpers used only inside the module).
+Top-level imports that a caller should be aware of - external packages and internal peer modules.
+Skip internal implementation details (utilities, helpers used only inside the module).
 
 #### Configuration and constants
 
