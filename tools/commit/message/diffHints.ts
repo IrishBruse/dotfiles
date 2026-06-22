@@ -214,11 +214,11 @@ function summarizeMarkdownHeadings(added: string[], path: string): string {
 
 function inferDocTopic(headings: string[], path: string): string {
   if (/memory/i.test(path)) {
-    return "memory skill";
+    return "memory CLI";
   }
   const joined = headings.join(" ").toLowerCase();
   if (joined.includes("memory")) {
-    return "memory skill";
+    return "memory CLI";
   }
   if (joined.includes("agent")) {
     return "agent";
