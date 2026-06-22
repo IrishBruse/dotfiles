@@ -21,6 +21,8 @@ Add only when the lesson would save time in a future session:
 
 Skip one-off notes, obvious facts, or topics already in memory. Run `memory` first, duplicate ids are rejected.
 
+If a lesson would be better captured as a skill (a reusable workflow, procedure, or convention worth its own documentation), do not add it to memory. Instead, prompt the user about creating a skill for it.
+
 ```bash
 # skip: one-off task status
 memory add readme-typo "fixed a typo in README"
