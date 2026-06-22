@@ -107,7 +107,7 @@ cloc,1.98-1
 cmake,3.28.3-1build7
 cmake-extras,1.7-2
 cmatrix,2.0-6
-code,1.125.0-1781601565
+code,1.125.1-1781859603
 colord,1.4.7-1build2
 colord-data,1.4.7-1build2
 command-not-found,23.04.0
@@ -1916,7 +1916,7 @@ mint-backgrounds-wilma,1.1
 mintbackup,2.4.7
 mint-common,2.5.1
 mint-cursor-themes,1.0.2
-mint-dev-tools,1.5.3
+mint-dev-tools,1.5.4
 mintdrivers,1.8.8
 mint-info-cinnamon,2025.11.11
 mintinstall,8.4.0
@@ -2299,9 +2299,9 @@ tcpdump,4.99.4-3ubuntu4.24.04.1
 telnet,0.17+2.5-3ubuntu4.2
 thermald,2.5.6-2ubuntu0.24.04.5
 thingy,1.2.4
-thunderbird,1:140.11.1esr+linuxmint1+zena
-thunderbird-locale-en,1:140.11.1esr+linuxmint1+zena
-thunderbird-locale-en-us,1:140.11.1esr+linuxmint1+zena
+thunderbird,1:140.12.0esr+linuxmint1+zena
+thunderbird-locale-en,1:140.12.0esr+linuxmint1+zena
+thunderbird-locale-en-us,1:140.12.0esr+linuxmint1+zena
 time,1.9-0.2build1
 timeshift,25.12.4+zena
 tnftp,20230507-2build3
