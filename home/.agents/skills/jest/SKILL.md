@@ -6,7 +6,8 @@ disable-model-invocation: true
 
 # Jest React Testing
 
-A comprehensive skill for testing React applications using Jest and React Testing Library. This skill covers everything from basic component testing to advanced patterns including mocking, async testing, custom hooks testing, and integration testing strategies.
+A comprehensive skill for testing React applications using Jest and React Testing Library.
+This skill covers everything from basic component testing to advanced patterns including mocking, async testing, custom hooks testing, and integration testing strategies.
 
 ## Core Concepts
 
