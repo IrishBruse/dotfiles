@@ -14,4 +14,4 @@ home/.agents/memory/misc/
 home/.cursor/rules/gp-rules.mdc
 home/.config/fish/completions/sdd.fish
 
-commit.config.json
+home/.agents/memory
