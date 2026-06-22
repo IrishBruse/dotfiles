@@ -4,6 +4,7 @@ import process from "node:process";
 
 import { loadEntries, removeEntry, type MemoryEntry } from "./entries.ts";
 import { formatEntryMarkdown } from "./entryMarkdown.ts";
+import { formatListMarkdown } from "./listEntries.ts";
 import { markdown } from "../markdown/api.ts";
 import { globalStore, referencePath, type MemoryStore } from "./paths.ts";
 import { printOk } from "./output.ts";
@@ -18,7 +19,8 @@ const CLR_EOL = `${ESC}[K`;
 const HIDE_CURSOR = `${ESC}[?25l`;
 const SHOW_CURSOR = `${ESC}[?25h`;
 
-const HELP = "Up/Down: move  Enter: view details  x: remove  q/Esc: quit";
+const HELP =
+  "Up/Down: move  Enter: view details  p: print markdown  x: remove  q/Esc: quit";
 const ESCAPE_CODE_TIMEOUT_MS = 25;
 
 type ViewMode = "list" | "confirm-remove";
@@ -338,6 +340,21 @@ export async function runMemoryInteractive(options: {
             await showDetails(row.section.store, row.entry);
             busy = false;
             draw();
+          })();
+          return;
+        case "p":
+          void (async () => {
+            busy = true;
+            stdin.off("keypress", onKeypress);
+            const agentMarkdown = await formatListMarkdown({
+              cwd: process.cwd(),
+              globalOnly: options.globalOnly,
+              omitEmpty: true
+            });
+            finish(resolve);
+            if (agentMarkdown) {
+              stdout.write(`${agentMarkdown}\n`);
+            }
           })();
           return;
         case "x":
