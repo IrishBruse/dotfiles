@@ -2,6 +2,7 @@ import { homedir } from "node:os";
 import path from "node:path";
 import process from "node:process";
 
+import { runDotfilesCron } from "./cron.ts";
 import { runInteractiveCommand } from "./interactiveCommand.ts";
 import { printError } from "./paint.ts";
 import { runDotfilesStow } from "./stow.ts";
@@ -29,6 +30,7 @@ Usage:
   dotfiles stow [options]
   dotfiles unstow [options]
   dotfiles restow [options]
+  dotfiles cron
 
 Commands:
   (default)        Browse partial folders (TTY, preview); S to stow, then import,
@@ -36,6 +38,7 @@ Commands:
   stow             Stow only (no interactive browser)
   unstow           Remove stow symlinks
   restow           Unstow then stow
+  cron             Install managed cron jobs from home/.config/cron/jobs.cron
 
 Options (stow, unstow, restow):
   -v, --verbose    Show unchanged paths as a tree (dim nodes are grouping only)
@@ -44,7 +47,9 @@ Options (stow, unstow, restow):
 `);
 }
 
-function parseDisplayOptions(argv: string[]): Omit<StowOptions, "action"> | "help" | "error" {
+function parseDisplayOptions(
+  argv: string[]
+): Omit<StowOptions, "action"> | "help" | "error" {
   let listUnchanged = false;
   let raw = false;
 
@@ -88,7 +93,9 @@ async function runInteractive(args: string[]): Promise<void> {
     process.exit(1);
   }
   if (parsed.listUnchanged || parsed.raw) {
-    printError("dotfiles: options other than -h require dotfiles stow, unstow, or restow");
+    printError(
+      "dotfiles: options other than -h require dotfiles stow, unstow, or restow"
+    );
     process.exit(1);
   }
   if (!assertDotfilesCwd()) {
@@ -98,7 +105,10 @@ async function runInteractive(args: string[]): Promise<void> {
   process.exit(code);
 }
 
-async function runStowAction(action: StowAction, args: string[]): Promise<void> {
+async function runStowAction(
+  action: StowAction,
+  args: string[]
+): Promise<void> {
   const parsed = parseDisplayOptions(args);
   if (parsed === "help") {
     printHelp();
@@ -139,6 +149,18 @@ export async function main(argv: string[]): Promise<void> {
   if (action) {
     await runStowAction(action, args.slice(1));
     return;
+  }
+
+  if (subcommand === "cron") {
+    if (args.length > 1) {
+      printError(`dotfiles cron: unknown option ${args[1]}`);
+      printError("Try dotfiles --help");
+      process.exit(1);
+    }
+    if (!assertDotfilesCwd()) {
+      process.exit(1);
+    }
+    process.exit(runDotfilesCron());
   }
 
   if (subcommand.startsWith("-")) {
