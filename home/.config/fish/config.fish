@@ -9,6 +9,8 @@ set -gx DOTNET_WATCH_RESTART_ON_RUDE_EDIT 1
 set -gx DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION true
 
 set -gx DISABLE_ESLINT_PLUGIN true
+set -gx HOMEBREW_NO_ENV_HINTS 1
+set -gx I18NEXT_NO_SUPPORT_NOTICE true
 
 source ~/dotfiles/local.fish
 
@@ -28,6 +30,8 @@ alias la="eza -l --no-permissions --no-user --time-style relative --group-direct
 alias ll="eza -la --no-permissions --group-directories-first"
 alias reload="clear;exec fish"
 alias grep rg
+
+alias s="npm run start || npm run dev"
 
 alias showkey="fish_key_reader --verbose"
 
