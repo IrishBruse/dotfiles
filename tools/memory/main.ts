@@ -1,6 +1,7 @@
 import process from "node:process";
 
 import { runAdd } from "./addEntry.ts";
+import { isCursorAgent } from "./agentGuard.ts";
 import { parseGlobalFlag } from "./args.ts";
 import { runInteractive } from "./browseEntries.ts";
 import { runList } from "./listEntries.ts";
@@ -16,7 +17,7 @@ Usage:
   memory view [-g] <id>
 
 Commands:
-  (none)  List memories (local + global; agents: run at session start)
+  (none)  Browse local + global memories (raw markdown for agents)
   add     Append one high-level sentence linked to <id>
   view    Print one entry as raw markdown
 
@@ -45,12 +46,12 @@ export async function main(argv: string[]): Promise<void> {
   }
 
   if (args.length === 0) {
-    if (global && isInteractiveTty()) {
-      await runInteractive({ global: true });
+    if (isCursorAgent()) {
+      await runList({ cwd: process.cwd(), globalOnly: false });
       return;
     }
-    if (!global && isInteractiveTty()) {
-      await runInteractive({ global: false });
+    if (isInteractiveTty()) {
+      await runInteractive({ globalOnly: global });
       return;
     }
     await runList({ cwd: process.cwd(), globalOnly: global });

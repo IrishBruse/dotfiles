@@ -1,7 +1,7 @@
 import process from "node:process";
 
 import { loadEntries, type MemoryEntry } from "./entries.ts";
-import { formatEntryMarkdown } from "./entryMarkdown.ts";
+import { formatEntryListBlock } from "./entryMarkdown.ts";
 import { globalStore, type MemoryStore } from "./paths.ts";
 import { localStore, resolveScopeKey, scopeLabel } from "./scope.ts";
 
@@ -11,14 +11,12 @@ async function formatSection(
   entries: MemoryEntry[]
 ): Promise<string> {
   if (entries.length === 0) {
-    return `## ${title}\n\n_(none)_\n`;
+    return `## ${title}\n\n_(none)_`;
   }
-  const parts: string[] = [`## ${title}`, ""];
-  for (const entry of entries) {
-    parts.push(await formatEntryMarkdown(store, entry));
-    parts.push("");
-  }
-  return `${parts.join("\n")}\n`;
+  const blocks = await Promise.all(
+    entries.map((entry) => formatEntryListBlock(store, entry))
+  );
+  return `## ${title}\n\n${blocks.join("\n")}`;
 }
 
 function localSectionTitle(cwd: string): string {
@@ -46,12 +44,12 @@ export async function formatListMarkdown(options: {
     loadEntries(global),
   ]);
 
-  const sections = [
-    await formatSection(localSectionTitle(cwd), local, localEntries),
-    await formatSection("Global", global, globalEntries),
-  ];
+  const sections = await Promise.all([
+    formatSection("Global", global, globalEntries),
+    formatSection(localSectionTitle(cwd), local, localEntries),
+  ]);
 
-  return `# Memories\n\n${sections.join("\n")}`;
+  return `# Memories\n\n${sections.join("\n\n")}`;
 }
 
 /**
@@ -61,5 +59,5 @@ export async function runList(options: {
   cwd: string;
   globalOnly?: boolean;
 }): Promise<void> {
-  process.stdout.write(await formatListMarkdown(options));
+  process.stdout.write(`${await formatListMarkdown(options)}\n`);
 }

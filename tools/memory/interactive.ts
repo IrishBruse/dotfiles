@@ -5,9 +5,9 @@ import process from "node:process";
 import { loadEntries, removeEntry, type MemoryEntry } from "./entries.ts";
 import { formatEntryMarkdown } from "./entryMarkdown.ts";
 import { markdown } from "../markdown/api.ts";
-import { referencePath, type MemoryStore } from "./paths.ts";
+import { globalStore, referencePath, type MemoryStore } from "./paths.ts";
 import { printOk } from "./output.ts";
-import { resolveScopeKey, resolveStore, scopeLabel } from "./scope.ts";
+import { localStore, resolveScopeKey, scopeLabel } from "./scope.ts";
 
 const ESC = "\u001B";
 const ENTER_ALT = `${ESC}[?1049h`;
@@ -22,6 +22,49 @@ const HELP = "Up/Down: move  Enter: view details  x: remove  q/Esc: quit";
 const ESCAPE_CODE_TIMEOUT_MS = 25;
 
 type ViewMode = "list" | "confirm-remove";
+
+type InteractiveSection = {
+  title: string;
+  store: MemoryStore;
+  entries: MemoryEntry[];
+};
+
+type InteractiveRow = {
+  section: InteractiveSection;
+  entry: MemoryEntry;
+};
+
+async function loadSections(globalOnly: boolean): Promise<InteractiveSection[]> {
+  const global = globalStore();
+  if (globalOnly) {
+    return [{ title: "Global", store: global, entries: await loadEntries(global) }];
+  }
+
+  const local = localStore(process.cwd());
+  const [localEntries, globalEntries] = await Promise.all([
+    loadEntries(local),
+    loadEntries(global),
+  ]);
+
+  return [
+    { title: "Global", store: global, entries: globalEntries },
+    {
+      title: `Local (${scopeLabel(resolveScopeKey(process.cwd()))})`,
+      store: local,
+      entries: localEntries,
+    },
+  ];
+}
+
+function flattenSections(sections: InteractiveSection[]): InteractiveRow[] {
+  const rows: InteractiveRow[] = [];
+  for (const section of sections) {
+    for (const entry of section.entries) {
+      rows.push({ section, entry });
+    }
+  }
+  return rows;
+}
 
 function enableKeypress(stdin: NodeJS.ReadStream): readline.Interface {
   const rl = readline.createInterface({
@@ -102,11 +145,8 @@ async function showDetails(
   stdout.write(ENTER_ALT + HIDE_CURSOR + HOME + CLR_EOS);
 }
 
-async function performRemove(
-  store: MemoryStore,
-  id: string
-): Promise<MemoryEntry[]> {
-  const { entries, removed } = await removeEntry(store, id);
+async function performRemove(store: MemoryStore, id: string): Promise<void> {
+  const { removed } = await removeEntry(store, id);
 
   if (!removed) {
     throw new Error(`No entry with id "${id}".`);
@@ -121,22 +161,45 @@ async function performRemove(
   }
 
   printOk(`Removed ${id}.`);
-  return entries;
+}
+
+function buildListLines(
+  sections: InteractiveSection[],
+  selected: number,
+  color: boolean
+): string[] {
+  const lines = ["Memories", ""];
+  let rowIndex = 0;
+
+  for (const section of sections) {
+    lines.push(paint(color, "\x1b[1m", section.title));
+    if (section.entries.length === 0) {
+      lines.push(paint(color, "\x1b[2m", "  (none)"));
+    } else {
+      for (const entry of section.entries) {
+        lines.push(formatRow(entry, rowIndex === selected, color));
+        rowIndex++;
+      }
+    }
+    lines.push("");
+  }
+
+  return lines;
 }
 
 /**
  * Interactive memory browser (human-only).
  */
 export async function runMemoryInteractive(options: {
-  global: boolean;
+  globalOnly: boolean;
 }): Promise<void> {
   if (!process.stdin.isTTY || !process.stdout.isTTY) {
     throw new Error("memory requires an interactive terminal.");
   }
 
-  const store = resolveStore(options.global, process.cwd());
-  let entries = await loadEntries(store);
-  if (entries.length === 0) {
+  let sections = await loadSections(options.globalOnly);
+  let rows = flattenSections(sections);
+  if (rows.length === 0) {
     console.log("Memories (none)");
     return;
   }
@@ -150,22 +213,14 @@ export async function runMemoryInteractive(options: {
   let mode: ViewMode = "list";
 
   const draw = (): void => {
-    const label = options.global
-      ? "Global"
-      : scopeLabel(resolveScopeKey(process.cwd()));
     const lines = [
-      `Memories (${label})`,
-      "",
-      ...entries.map((entry, index) =>
-        formatRow(entry, index === selected, color)
-      ),
-      "",
+      ...buildListLines(sections, selected, color),
       paint(color, "\x1b[2m", HELP)
     ];
     if (mode === "confirm-remove") {
-      const entry = entries[selected];
-      if (entry) {
-        lines.push("", formatRemovePrompt(entry, color));
+      const row = rows[selected];
+      if (row) {
+        lines.push("", formatRemovePrompt(row.entry, color));
       }
     }
     let buf = HOME;
@@ -229,21 +284,23 @@ export async function runMemoryInteractive(options: {
       if (mode === "confirm-remove") {
         if (key?.name === "return") {
           void (async () => {
-            const entry = entries[selected];
-            if (!entry) {
+            const row = rows[selected];
+            if (!row) {
               mode = "list";
               draw();
               return;
             }
             busy = true;
             mode = "list";
-            entries = await performRemove(store, entry.id);
-            if (entries.length === 0) {
+            await performRemove(row.section.store, row.entry.id);
+            sections = await loadSections(options.globalOnly);
+            rows = flattenSections(sections);
+            if (rows.length === 0) {
               stdin.off("keypress", onKeypress);
               finish(resolve);
               return;
             }
-            selected = Math.min(selected, entries.length - 1);
+            selected = Math.min(selected, rows.length - 1);
             busy = false;
             draw();
           })();
@@ -264,21 +321,21 @@ export async function runMemoryInteractive(options: {
 
       switch (key?.name) {
         case "up":
-          selected = (selected - 1 + entries.length) % entries.length;
+          selected = (selected - 1 + rows.length) % rows.length;
           draw();
           return;
         case "down":
-          selected = (selected + 1) % entries.length;
+          selected = (selected + 1) % rows.length;
           draw();
           return;
         case "return":
           void (async () => {
-            const entry = entries[selected];
-            if (!entry) {
+            const row = rows[selected];
+            if (!row) {
               return;
             }
             busy = true;
-            await showDetails(store, entry);
+            await showDetails(row.section.store, row.entry);
             busy = false;
             draw();
           })();
