@@ -19,13 +19,18 @@ If the mode is unclear, ask once: pace the last reply, or walk through a file?
 
 ## Breakdown mode
 
-Re-send one prior assistant message in order. Do not summarize. Keep the original tone, structure, and wording.
+Re-send one prior assistant message in order.
+Do not summarize.
+Keep the original tone, structure, and wording.
 
 1. **Source** - Last full assistant message before this skill, unless the user named another.
-2. **Chunks** - Split on headings, lists, topic shifts, or code blocks. One idea per chunk (~3-6 sentences when it fits; prefer idea boundaries over a fixed sentence count).
-3. **First reply** - Output only chunk 1. On `next`, `continue`, `more`, or clear approval, output only the next chunk.
+2. **Chunks** - Split on headings, lists, topic shifts, or code blocks.
+  One idea per chunk (~3-6 sentences when it fits; prefer idea boundaries over a fixed sentence count).
+3. **First reply** - Output only chunk 1.
+  On `next`, `continue`, `more`, or clear approval, output only the next chunk.
 4. **Between chunks** - End with: `Ready for more? Say next or continue.`
-5. **After the last chunk** - End with: `That was the full reply. Revisit a part, or move on?`
+5. **After the last chunk** - End with: `That was the full reply.
+  Revisit a part, or move on?`
 6. **Questions mid-run** - Answer, then offer to resume pacing.
 
 **Edge cases**
@@ -35,15 +40,19 @@ Re-send one prior assistant message in order. Do not summarize. Keep the origina
 - User wants everything at once: output the full source and stop.
 - User names a section: jump there, then continue in order.
 
-**Do not** add preamble between chunks. Do not number chunks unless the source did.
+**Do not** add preamble between chunks.
+Do not number chunks unless the source did.
 
 ---
 
 ## Document review mode
 
-Read the path. For a directory, use `SKILL.md` in that folder. If it is missing, ask once which file to use.
+Read the path.
+For a directory, use `SKILL.md` in that folder.
+If it is missing, ask once which file to use.
 
-Present one section at a time. Do not advance until the user approves.
+Present one section at a time.
+Do not advance until the user approves.
 
 For each section:
 
