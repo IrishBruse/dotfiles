@@ -16,7 +16,19 @@ ctrl - j : open https://globalization-partners.atlassian.net/jira/software/c/pro
 shift + ctrl - s : screencapture -i -c
 cmd + shift - escape : open -a "Activity Monitor"
 
-cmd - left[ @editor_apps ~; * | alt - left ]
-cmd - right[ @editor_apps ~; * | alt - right ]
-cmd - backspace[ @editor_apps ~; * | alt - backspace ]
-cmd - delete[ @editor_apps ~; * | alt - delete ]
+cmd - left [
+  @editor_apps ~
+  * | alt - left
+]
+cmd - right [
+  @editor_apps ~
+  * | alt - right
+]
+cmd - backspace [
+  @editor_apps ~
+  * | alt - backspace
+]
+cmd - delete [
+  @editor_apps ~
+  * | alt - delete
+]
