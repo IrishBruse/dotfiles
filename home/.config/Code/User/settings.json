@@ -1622,6 +1622,7 @@
   "editor.allowVariableFontsInAccessibilityMode": true,
   "workbench.browser.openLocalhostLinks": true,
   "workbench.layoutControl.enabled": false,
+  "terminal.integrated.gpuAcceleration": "on",
   "git.repositoryScanMaxDepth": 2,
   "markdown-mermaid.darkModeTheme": "dark",
   "workbench.activityBar.location": "top",
