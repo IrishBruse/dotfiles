@@ -153,6 +153,11 @@
       "when": "terminalFocus && !ib-utilities.clipboardHasImage"
     },
     {
+      "key": "ctrl+v",
+      "command": "execPaste",
+      "when": "browserFocused && activeEditor == 'workbench.editor.browser'"
+    },
+    {
       "key": "ctrl+shift+i",
       "command": "toggle",
       "args": {
