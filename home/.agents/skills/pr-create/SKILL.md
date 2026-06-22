@@ -1,6 +1,8 @@
 ---
 name: pr-create
-description: Creates a new GitHub pull request with title and body from the current branch. Use when opening a PR or when the user asks to create a pull request.
+description: >
+  Creates a new GitHub pull request with title and body from the current branch.
+  Use when opening a PR or when the user asks to create a pull request.
 ---
 
 # PR Create

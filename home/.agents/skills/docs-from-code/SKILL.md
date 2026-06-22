@@ -1,6 +1,8 @@
 ---
 name: docs-from-code
-description: Audits and aligns user-facing docs to match code as the source of truth. Use when checking doc drift, filling doc gaps, or when the user invokes /docs-from-code.
+description: >
+  Audits and aligns user-facing docs to match code as the source of truth.
+  Use when checking doc drift, filling doc gaps, or when the user invokes /docs-from-code.
 ---
 
 # Docs from code
