@@ -1144,8 +1144,9 @@
     "*.sdb": "${capture}.${extname}-*",
     "*.sqlite": "${capture}.${extname}-*",
     "*.sqlite3": "${capture}.${extname}-*",
-    "*.ts": "${capture}.spec.ts,${capture}.test.ts,${capture}.*.test.ts,${capture}.stories.ts",
-    "*.tsx": "${capture}.spec.tsx,${capture}.test.tsx,${capture}.*.test.tsx,${capture}.stories.tsx,${capture}.module.css",
+    "*.ts": "${capture}.spec.ts,${capture}.test.ts,${capture}.*.test.ts",
+    "*.cs": "${capture}.spec.cs,${capture}.test.cs",
+    "*.tsx": "${capture}.spec.tsx,${capture}.test.tsx,${capture}.*.test.tsx,${capture}.module.css",
     "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb",
     "tsconfig.json": "tsconfig.*.json",
     "*.glsl": "${capture}.vert,${capture}.frag"
@@ -1211,7 +1212,6 @@
   "breadcrumbs.enabled": false,
   "settingsSync.ignoredSettings": [
     "editor.mouseWheelScrollSensitivity",
-    "terminal.integrated.gpuAcceleration",
     "update.mode"
   ],
   "editor.bracketPairColorization.enabled": false,
@@ -1605,7 +1605,6 @@
   "explorer.fileNesting.expand": false,
   "editor.experimental.preferTreeSitter.css": true,
   "accessibility.voice.speechLanguage": "en-IE",
-  "workbench.editor.enablePreview": false,
   "task.allowAutomaticTasks": "on",
   "scm.alwaysShowRepositories": true,
   "diffEditor.ignoreTrimWhitespace": false,
@@ -1631,5 +1630,6 @@
   "chat.disableAIFeatures": true,
   "terminal.integrated.stickyScroll.enabled": false,
   "markdownInlineEditor.tables.renderingMode": "inline",
-  "excalidraw.theme": "dark"
+  "excalidraw.theme": "dark",
+  "workbench.browser.searchEngine": "duckduckgo"
 }
