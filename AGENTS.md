@@ -45,5 +45,9 @@ Custom VS Code UI CSS.
 - `memory` - Scoped agent lessons under `~/.agents/memory/` (`global.json`, `repos/<repo>.json`, `misc/<path>.json`; `-g` for global). Run bare `memory` at session start; `add`, `view`, `rm`
 - `dotfiles` - Stow `home/` into ~ with a colored summary (linked, removed, unchanged)
 - `start` - Detect project type (npm, Go, .NET) and exec the dev server with color env preserved
-- `homepage` - Local start page Vite app; `homepage dev`, `build`, or `preview`
 - `sprint` - Print previous, current, and next sprint date blocks, `sprint <n>` for one sprint, or `sprint YYYY-MM-DD` for the sprint containing that date
+
+### homepage
+
+Local start page Vite app at `tools/homepage/` (React + TypeScript).
+Run `npm run dev`, `build`, or `preview` from that directory.
