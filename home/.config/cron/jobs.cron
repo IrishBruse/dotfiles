@@ -1,4 +1,4 @@
 # Managed by ~/dotfiles. Apply with: dotfiles cron
 
 # Sync local Jira board markdown hourly during weekday working hours.
-0 9-17 * * 1-5 /usr/bin/env fish -c "jira sync >/tmp/jira-sync.log 2>&1"
+0 9-17 * * 1-5 /opt/homebrew/bin/fish -c '"$HOME"/dotfiles/tools/.bin/jira.js sync >/tmp/jira-sync.log 2>&1'
