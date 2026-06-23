@@ -23,6 +23,29 @@
       "runOptions": {
         "runOn": "folderOpen"
       }
+    },
+    {
+      "label": "Homepage",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": {
+        "cwd": "${workspaceFolder}/tools/homepage"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "homepage",
+        "pattern": {
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".",
+          "endsPattern": "ready in|Local:"
+        }
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
     }
   ]
 }
