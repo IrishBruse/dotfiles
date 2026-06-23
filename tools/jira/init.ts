@@ -5,6 +5,12 @@
 import fs from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
+import {
+  buildJiraTicketsSkillContent,
+  formatJiraTicketsSkillJson,
+  formatJiraTicketsSkillMd,
+  type StatusBucket
+} from "./sync.ts";
 
 const defaultSkillDir = path.join(
   homedir(),
@@ -25,64 +31,13 @@ export function run(userPath: string | undefined): number {
     return 1;
   }
 
-  const skillMd = `---
-name: jira-tickets
-description: >
-  This skill contains in plaintext the current state of the board no need for MCP. 
-  Use when needing to get the current state of the Jira Board, when needing to get a ticket for a PR.
----
-
-# Board
-
-Here is the current Jira board status.
-For the full description of any ticket below, read \`references/{me,team,unassigned,misc}/<KEY>.md\`
-Example: \`references/me/JIRA-100.md\`
-
-## My tickets
-
-**Todo:**
-
-- JIRA-101: Set up CI pipeline — \`You\`
-
-**In progress:**
-
-- JIRA-102: Refactor auth middleware — \`You\`
-- JIRA-103: Add pagination to search — \`You\`
-
-**Code review:**
-
-- JIRA-104: Fix race condition in worker — \`You\`
-
-**Done:**
-
-- JIRA-100: Initialize project scaffold — \`You\`
-
-## Teammates
-
-**Todo:**
-
-- JIRA-201: Update API docs — \`Alice\`
-
-**In progress:**
-
-- JIRA-202: Migrate to new DB schema — \`Bob\`
-- JIRA-203: Add e2e test suite — \`Alice\`
-
-**Done:**
-
-- JIRA-200: Configure linting rules — \`Bob\`
-
-## Unassigned
-
-**Todo:**
-
-- JIRA-301: Implement dark mode — \`Unassigned\`
-- JIRA-302: Add rate limiting — \`Unassigned\`
-
-**In progress:**
-
-- JIRA-303: Optimize image uploads — \`Unassigned\`
-`;
+  const statusName: Record<StatusBucket, string> = {
+    todo: "To Do",
+    inProgress: "In Progress",
+    codeReview: "Code Review",
+    inTest: "In Test",
+    done: "Done"
+  };
 
   const fakeTicketTemplate = (key: string, title: string) => `---
 title: "${title}"
@@ -94,20 +49,116 @@ url: "https://placeholder/browse/${key}"
 Sample ticket description for **${key}**.
 `;
 
-  const tickets: { folder: string; key: string; title: string }[] = [
-    { folder: "me", key: "JIRA-100", title: "Initialize project scaffold" },
-    { folder: "me", key: "JIRA-101", title: "Set up CI pipeline" },
-    { folder: "me", key: "JIRA-102", title: "Refactor auth middleware" },
-    { folder: "me", key: "JIRA-103", title: "Add pagination to search" },
-    { folder: "me", key: "JIRA-104", title: "Fix race condition in worker" },
-    { folder: "team", key: "JIRA-200", title: "Configure linting rules" },
-    { folder: "team", key: "JIRA-201", title: "Update API docs" },
-    { folder: "team", key: "JIRA-202", title: "Migrate to new DB schema" },
-    { folder: "team", key: "JIRA-203", title: "Add e2e test suite" },
-    { folder: "unassigned", key: "JIRA-301", title: "Implement dark mode" },
-    { folder: "unassigned", key: "JIRA-302", title: "Add rate limiting" },
-    { folder: "unassigned", key: "JIRA-303", title: "Optimize image uploads" }
+  const tickets: {
+    folder: string;
+    key: string;
+    title: string;
+    assignee: string;
+    status: StatusBucket;
+  }[] = [
+    {
+      folder: "me",
+      key: "JIRA-100",
+      title: "Initialize project scaffold",
+      assignee: "You",
+      status: "done"
+    },
+    {
+      folder: "me",
+      key: "JIRA-101",
+      title: "Set up CI pipeline",
+      assignee: "You",
+      status: "todo"
+    },
+    {
+      folder: "me",
+      key: "JIRA-102",
+      title: "Refactor auth middleware",
+      assignee: "You",
+      status: "inProgress"
+    },
+    {
+      folder: "me",
+      key: "JIRA-103",
+      title: "Add pagination to search",
+      assignee: "You",
+      status: "inProgress"
+    },
+    {
+      folder: "me",
+      key: "JIRA-104",
+      title: "Fix race condition in worker",
+      assignee: "You",
+      status: "codeReview"
+    },
+    {
+      folder: "team",
+      key: "JIRA-200",
+      title: "Configure linting rules",
+      assignee: "Bob",
+      status: "done"
+    },
+    {
+      folder: "team",
+      key: "JIRA-201",
+      title: "Update API docs",
+      assignee: "Alice",
+      status: "todo"
+    },
+    {
+      folder: "team",
+      key: "JIRA-202",
+      title: "Migrate to new DB schema",
+      assignee: "Bob",
+      status: "inProgress"
+    },
+    {
+      folder: "team",
+      key: "JIRA-203",
+      title: "Add e2e test suite",
+      assignee: "Alice",
+      status: "inProgress"
+    },
+    {
+      folder: "unassigned",
+      key: "JIRA-301",
+      title: "Implement dark mode",
+      assignee: "Unassigned",
+      status: "todo"
+    },
+    {
+      folder: "unassigned",
+      key: "JIRA-302",
+      title: "Add rate limiting",
+      assignee: "Unassigned",
+      status: "todo"
+    },
+    {
+      folder: "unassigned",
+      key: "JIRA-303",
+      title: "Optimize image uploads",
+      assignee: "Unassigned",
+      status: "inProgress"
+    }
   ];
+
+  const sampleIssues = tickets.map(
+    ({ key, title, assignee, status }) => ({
+      key,
+      fields: {
+        summary: title,
+        assignee:
+          assignee === "Unassigned"
+            ? null
+            : {
+                accountId: assignee === "You" ? "me" : "other",
+                displayName: assignee
+              },
+        status: { name: statusName[status] }
+      }
+    })
+  );
+  const skillContent = buildJiraTicketsSkillContent(sampleIssues, "me");
 
   fs.mkdirSync(path.join(refsDir, "me"), { recursive: true });
   fs.mkdirSync(path.join(refsDir, "team"), { recursive: true });
@@ -122,7 +173,12 @@ Sample ticket description for **${key}**.
     );
   }
 
-  fs.writeFileSync(skillMdPath, skillMd, "utf-8");
+  fs.writeFileSync(skillMdPath, formatJiraTicketsSkillMd(skillContent), "utf-8");
+  fs.writeFileSync(
+    path.join(skillDir, "sprint.json"),
+    formatJiraTicketsSkillJson(skillContent),
+    "utf-8"
+  );
 
   console.log(`Created jira-tickets skill at ${skillDir}`);
   return 0;

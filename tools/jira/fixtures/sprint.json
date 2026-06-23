@@ -1,0 +1,117 @@
+{
+  "name": "jira-tickets",
+  "description": "This skill contains in plaintext the current state of the board no need for MCP. Use when needing to get the current state of the Jira Board, when needing to get a ticket for a PR.",
+  "sections": {
+    "myTickets": {
+      "heading": "My tickets",
+      "statuses": {
+        "todo": [
+          {
+            "key": "NOVACORE-4521",
+            "summary": "Add sprint filter to jira sync",
+            "assignee": "Ethan Conneely"
+          }
+        ],
+        "inProgress": [
+          {
+            "key": "NOVACORE-4488",
+            "summary": "Fix misc archive retention when sprint ends on weekend",
+            "assignee": "Ethan Conneely"
+          },
+          {
+            "key": "NOVACORE-4510",
+            "summary": "Wire jira board TTY navigation",
+            "assignee": "Ethan Conneely"
+          }
+        ],
+        "codeReview": [
+          {
+            "key": "NOVACORE-4495",
+            "summary": "Document jira sync CONFIG options",
+            "assignee": "Ethan Conneely"
+          }
+        ],
+        "inTest": [
+          {
+            "key": "NOVACORE-4502",
+            "summary": "jira pull copies ticket markdown to cwd",
+            "assignee": "Ethan Conneely"
+          }
+        ],
+        "done": [
+          {
+            "key": "NOVACORE-4472",
+            "summary": "jira init creates sample skill tree",
+            "assignee": "Ethan Conneely"
+          }
+        ]
+      }
+    },
+    "teammates": {
+      "heading": "Teammates",
+      "statuses": {
+        "todo": [
+          {
+            "key": "NOVACORE-4490",
+            "summary": "NovaCore API pagination for search endpoint",
+            "assignee": "Alice Chen"
+          }
+        ],
+        "inProgress": [
+          {
+            "key": "NOVACORE-4501",
+            "summary": "Upgrade acli auth token refresh",
+            "assignee": "Bob Martinez"
+          }
+        ],
+        "codeReview": [],
+        "inTest": [],
+        "done": [
+          {
+            "key": "NOVACORE-4485",
+            "summary": "E2E coverage for checkout flow",
+            "assignee": "Alice Chen"
+          }
+        ]
+      }
+    },
+    "unassigned": {
+      "heading": "Unassigned",
+      "statuses": {
+        "todo": [
+          {
+            "key": "NOVACORE-4520",
+            "summary": "Investigate flaky CI on main branch",
+            "assignee": "Unassigned"
+          }
+        ],
+        "inProgress": [
+          {
+            "key": "NOVACORE-4515",
+            "summary": "Refactor shared date utilities",
+            "assignee": "Unassigned"
+          }
+        ],
+        "codeReview": [],
+        "inTest": [],
+        "done": []
+      }
+    },
+    "misc": {
+      "heading": "Misc (outside current sprint fetch)",
+      "statuses": {
+        "todo": [
+          {
+            "key": "NOVACORE-4400",
+            "summary": "Spike GraphQL subscriptions for live board",
+            "assignee": "Ethan Conneely"
+          }
+        ],
+        "inProgress": [],
+        "codeReview": [],
+        "inTest": [],
+        "done": []
+      }
+    }
+  }
+}

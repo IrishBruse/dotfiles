@@ -6,7 +6,10 @@ import { parseJiraKey } from "./jiraInput.ts";
 import {
   adfToMarkdown,
   assigneeLabel,
+  buildJiraTicketsSkillContent,
   classifyFolder,
+  formatJiraTicketsSkillJson,
+  formatJiraTicketsSkillMd,
   isSprintInRetentionWindow,
   miscDeleteCutoffMs,
   shouldDeleteMiscTicket,
@@ -87,6 +90,68 @@ describe("statusBucketFromFields", () => {
 describe("ticketsSkillOneLine", () => {
   it("flattens multiline summaries for skill tables", () => {
     assert.equal(ticketsSkillOneLine("line one\nline two"), "line one line two");
+  });
+});
+
+describe("buildJiraTicketsSkillContent", () => {
+  it("groups tickets into sections and statuses", () => {
+    const content = buildJiraTicketsSkillContent(
+      [
+        {
+          key: "PROJ-1",
+          fields: {
+            summary: "Mine",
+            assignee: { accountId: "me", displayName: "Ada" },
+            status: { name: "To Do" }
+          }
+        },
+        {
+          key: "PROJ-2",
+          fields: {
+            summary: "Theirs",
+            assignee: { accountId: "other", displayName: "Bob" },
+            status: { name: "In Progress" }
+          }
+        }
+      ],
+      "me"
+    );
+
+    assert.equal(content.sections.myTickets.statuses.todo.length, 1);
+    assert.deepEqual(content.sections.myTickets.statuses.todo[0], {
+      key: "PROJ-1",
+      summary: "Mine",
+      assignee: "Ada"
+    });
+    assert.equal(content.sections.teammates.statuses.inProgress.length, 1);
+    assert.equal(
+      content.sections.teammates.statuses.inProgress[0]!.key,
+      "PROJ-2"
+    );
+  });
+});
+
+describe("formatJiraTicketsSkillJson", () => {
+  it("serializes the same board content as structured JSON", () => {
+    const content = buildJiraTicketsSkillContent(
+      [
+        {
+          key: "PROJ-9",
+          fields: {
+            summary: "Ship it",
+            assignee: { accountId: "me", displayName: "Ada" },
+            status: { name: "Done" }
+          }
+        }
+      ],
+      "me"
+    );
+    const json = formatJiraTicketsSkillJson(content);
+    const parsed = JSON.parse(json) as ReturnType<
+      typeof buildJiraTicketsSkillContent
+    >;
+    assert.deepEqual(parsed, content);
+    assert.match(formatJiraTicketsSkillMd(content), /PROJ-9: Ship it/);
   });
 });
 

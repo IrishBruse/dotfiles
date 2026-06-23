@@ -1,7 +1,7 @@
 /**
  * Sync Jira issues into the jira-tickets skill via `acli jira workitem search` (Atlassian CLI).
  * Writes per-ticket markdown into `~/.agents/skills/jira-tickets/references/{me,team,unassigned}/`
- * and regenerates the skill summary at `~/.agents/skills/jira-tickets/SKILL.md`.
+ * and regenerates `~/.agents/skills/jira-tickets/SKILL.md` and `sprint.json`.
  *
  * When CONFIG.boardId is set, only sprints whose window overlaps today are fetched
  * (from 2 days before sprint start through 2 days after sprint end). Tickets that drop
@@ -427,7 +427,36 @@ const STATUS_ORDER: StatusBucket[] = [
   "done"
 ];
 
-function emptyStatusBuckets(): Record<StatusBucket, string[]> {
+const JIRA_TICKETS_SKILL_NAME = "jira-tickets";
+const JIRA_TICKETS_SKILL_DESCRIPTION =
+  "This skill contains in plaintext the current state of the board no need for MCP. Use when needing to get the current state of the Jira Board, when needing to get a ticket for a PR.";
+
+/** One ticket row in the skill board summary. */
+export type JiraSkillTicket = {
+  key: string;
+  summary: string;
+  assignee: string;
+};
+
+/** Tickets grouped by status within one board section. */
+export type JiraSkillSection = {
+  heading: string;
+  statuses: Record<StatusBucket, JiraSkillTicket[]>;
+};
+
+/** Structured board summary shared by SKILL.md and sprint.json. */
+export type JiraTicketsSkillContent = {
+  name: string;
+  description: string;
+  sections: {
+    myTickets: JiraSkillSection;
+    teammates: JiraSkillSection;
+    unassigned: JiraSkillSection;
+    misc: JiraSkillSection;
+  };
+};
+
+function emptyTicketBuckets(): Record<StatusBucket, JiraSkillTicket[]> {
   return {
     todo: [],
     inProgress: [],
@@ -435,6 +464,14 @@ function emptyStatusBuckets(): Record<StatusBucket, string[]> {
     inTest: [],
     done: []
   };
+}
+
+function sortTicketsInSection(section: JiraSkillSection): void {
+  for (const bucket of STATUS_ORDER) {
+    section.statuses[bucket].sort((a, b) =>
+      a.key.localeCompare(b.key, undefined, { sensitivity: "base" })
+    );
+  }
 }
 
 /**
@@ -494,31 +531,42 @@ export function statusBucketFromFields(
   return "inProgress";
 }
 
-function formatStatusSubsections(
-  byStatus: Record<StatusBucket, string[]>
-): string {
-  const sortLines = (lines: string[]) =>
-    lines.sort((a, b) =>
-      a.localeCompare(b, undefined, { sensitivity: "base" })
-    );
+function formatStatusSubsections(section: JiraSkillSection): string {
   const parts: string[] = [];
   for (const bucket of STATUS_ORDER) {
-    const lines = byStatus[bucket];
-    if (lines.length === 0) continue;
-    sortLines(lines);
+    const tickets = section.statuses[bucket];
+    if (tickets.length === 0) continue;
+    const lines = tickets.map(
+      (t) => `- ${t.key}: ${t.summary} — \`${t.assignee}\``
+    );
     parts.push(`**${STATUS_HEADINGS[bucket]}:**\n\n${lines.join("\n")}`);
   }
   return parts.join("\n\n");
 }
 
-export function formatJiraTicketsSkillMd(
+const SECTION_BY_FOLDER: Record<
+  Folder,
+  keyof JiraTicketsSkillContent["sections"]
+> = {
+  me: "myTickets",
+  team: "teammates",
+  unassigned: "unassigned",
+  misc: "misc"
+};
+
+export function buildJiraTicketsSkillContent(
   issues: Array<{ key?: string; fields?: Record<string, unknown> }>,
   meAccountId: string
-): string {
-  const me = emptyStatusBuckets();
-  const team = emptyStatusBuckets();
-  const unassigned = emptyStatusBuckets();
-  const misc = emptyStatusBuckets();
+): JiraTicketsSkillContent {
+  const sections: JiraTicketsSkillContent["sections"] = {
+    myTickets: { heading: "My tickets", statuses: emptyTicketBuckets() },
+    teammates: { heading: "Teammates", statuses: emptyTicketBuckets() },
+    unassigned: { heading: "Unassigned", statuses: emptyTicketBuckets() },
+    misc: {
+      heading: "Misc (outside current sprint fetch)",
+      statuses: emptyTicketBuckets()
+    }
+  };
 
   for (const { key, fields } of issuesWithKeys(issues)) {
     const summary = ticketsSkillOneLine(
@@ -526,36 +574,45 @@ export function formatJiraTicketsSkillMd(
     );
     const assignee = assigneeRecord(fields.assignee);
     const label = assigneeLabel(assignee);
-    const line = `- ${key}: ${summary} — \`${label}\``;
     const bucket = statusBucketFromFields(fields);
     const folder = classifyFolder(assignee, meAccountId);
-    if (folder === "me") me[bucket].push(line);
-    else if (folder === "unassigned") unassigned[bucket].push(line);
-    else if (folder === "team") team[bucket].push(line);
-    else misc[bucket].push(line);
+    sections[SECTION_BY_FOLDER[folder]].statuses[bucket].push({
+      key,
+      summary,
+      assignee: label
+    });
   }
 
-  const section = (
-    heading: string,
-    byStatus: Record<StatusBucket, string[]>
-  ) => {
-    const body = formatStatusSubsections(byStatus);
-    if (body) return `## ${heading}\n\n${body}`;
-    return `## ${heading}`;
-  };
+  for (const section of Object.values(sections)) {
+    sortTicketsInSection(section);
+  }
 
+  return {
+    name: JIRA_TICKETS_SKILL_NAME,
+    description: JIRA_TICKETS_SKILL_DESCRIPTION,
+    sections
+  };
+}
+
+function formatSkillSectionMarkdown(section: JiraSkillSection): string {
+  const body = formatStatusSubsections(section);
+  if (body) return `## ${section.heading}\n\n${body}`;
+  return `## ${section.heading}`;
+}
+
+export function formatJiraTicketsSkillMd(content: JiraTicketsSkillContent): string {
+  const { sections } = content;
   const boardSections = [
-    section("My tickets", me),
-    section("Teammates", team),
-    section("Unassigned", unassigned),
-    section("Misc (outside current sprint fetch)", misc)
+    formatSkillSectionMarkdown(sections.myTickets),
+    formatSkillSectionMarkdown(sections.teammates),
+    formatSkillSectionMarkdown(sections.unassigned),
+    formatSkillSectionMarkdown(sections.misc)
   ];
 
   return `---
-name: jira-tickets
+name: ${content.name}
 description: >
-  This skill contains in plaintext the current state of the board no need for MCP. 
-  Use when needing to get the current state of the Jira Board, when needing to get a ticket for a PR.
+  ${content.description}
 ---
 
 # Board
@@ -566,6 +623,12 @@ Example: \`references/me/NOVACORE-12345.md\`
 
 ${boardSections.join("\n\n")}
 `;
+}
+
+export function formatJiraTicketsSkillJson(
+  content: JiraTicketsSkillContent
+): string {
+  return `${JSON.stringify(content, null, 2)}\n`;
 }
 
 function readTicketMarkdown(filePath: string): {
@@ -623,9 +686,15 @@ export function writeJiraTicketsSkill(
   }
 
   const allIssues = [...issues, ...miscIssues];
-  const body = formatJiraTicketsSkillMd(allIssues, meAccountId);
-  fs.mkdirSync(path.dirname(skillPath), { recursive: true });
-  fs.writeFileSync(skillPath, body, "utf-8");
+  const content = buildJiraTicketsSkillContent(allIssues, meAccountId);
+  const skillDir = path.dirname(skillPath);
+  fs.mkdirSync(skillDir, { recursive: true });
+  fs.writeFileSync(skillPath, formatJiraTicketsSkillMd(content), "utf-8");
+  fs.writeFileSync(
+    path.join(skillDir, "sprint.json"),
+    formatJiraTicketsSkillJson(content),
+    "utf-8"
+  );
 }
 
 /** Skill folder: `~/.agents/skills/jira-tickets/` */
@@ -640,6 +709,10 @@ const JIRA_TICKETS_SKILL_DIR = path.resolve(
 const BOARD_OUTPUT_ROOT = path.join(JIRA_TICKETS_SKILL_DIR, "references");
 
 const JIRA_TICKETS_SKILL_PATH = path.join(JIRA_TICKETS_SKILL_DIR, "SKILL.md");
+const JIRA_TICKETS_SPRINT_JSON_PATH = path.join(
+  JIRA_TICKETS_SKILL_DIR,
+  "sprint.json"
+);
 
 /** Atlassian CLI binary (must be on `PATH` or change this string). */
 const ACLI = "acli";
@@ -664,8 +737,9 @@ function printSyncSummary(options: {
   result: WriteBoardResult;
   outRoot: string;
   skillPath: string;
+  sprintJsonPath: string;
 }): void {
-  const { boardId, sprintIds, issueCount, result, outRoot, skillPath } =
+  const { boardId, sprintIds, issueCount, result, outRoot, skillPath, sprintJsonPath } =
     options;
   const { counts, added, updated, moved, archived, deleted } = result;
   const sprint =
@@ -712,6 +786,7 @@ function printSyncSummary(options: {
 
   lines.push(`Output: ${outRoot}`);
   lines.push(`Skill: ${skillPath}`);
+  lines.push(`Sprint: ${sprintJsonPath}`);
   process.stdout.write(`${lines.join("\n")}\n`);
 }
 
@@ -993,7 +1068,9 @@ function runImpl(): number {
     boardSprints
   });
 
-  log(`writing jira-tickets skill → ${JIRA_TICKETS_SKILL_PATH}`);
+  log(
+    `writing jira-tickets skill → ${JIRA_TICKETS_SKILL_PATH}, ${JIRA_TICKETS_SPRINT_JSON_PATH}`
+  );
   writeJiraTicketsSkill(issues, JIRA_TICKETS_SKILL_PATH, meAccountId);
 
   log("done.");
@@ -1003,7 +1080,8 @@ function runImpl(): number {
     issueCount: issues.length,
     result,
     outRoot,
-    skillPath: JIRA_TICKETS_SKILL_PATH
+    skillPath: JIRA_TICKETS_SKILL_PATH,
+    sprintJsonPath: JIRA_TICKETS_SPRINT_JSON_PATH
   });
   return 0;
 }
