@@ -1,4 +1,7 @@
+import react from "@vitejs/plugin-react";
 import { defineConfig, type Connect, type Plugin } from "vite";
+
+import { vscodeTheme } from "./vscode-theme.ts";
 
 function duckDuckGoRedirect(): Plugin {
   const middleware: Connect.NextHandleFunction = (req, res, next) => {
@@ -37,7 +40,7 @@ function duckDuckGoRedirect(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [duckDuckGoRedirect()],
+  plugins: [react(), vscodeTheme(), duckDuckGoRedirect()],
   server: {
     port: 54321
   },

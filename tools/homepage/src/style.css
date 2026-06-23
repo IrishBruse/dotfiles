@@ -1,12 +1,13 @@
 :root {
-  color-scheme: light dark;
-  font-family: system-ui, sans-serif;
+  font-family: "Cascadia Code", system-ui, sans-serif;
   line-height: 1.5;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  background: var(--vscode-editor-background);
+  color: var(--vscode-editor-foreground);
 }
 
 main {
@@ -21,5 +22,13 @@ h1 {
 
 p {
   margin: 0;
-  opacity: 0.8;
+  color: var(--vscode-statusBar-foreground);
+}
+
+a {
+  color: var(--vscode-textLink-foreground);
+}
+
+a:hover {
+  color: var(--vscode-textLink-activeForeground);
 }
