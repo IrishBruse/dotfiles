@@ -24,9 +24,6 @@ export default function TicketDetail({ ticket }: Props) {
   return (
     <div className="jira-detail">
       <header className="jira-detail-header">
-        <h1 className="jira-detail-title">
-          {ticket.key}: {ticket.summary}
-        </h1>
         <dl className="jira-detail-meta">
           <div>
             <dt>Status</dt>

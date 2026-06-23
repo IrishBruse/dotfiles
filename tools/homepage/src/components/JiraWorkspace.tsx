@@ -21,6 +21,7 @@ export default function JiraWorkspace() {
     initialTickets[0]?.key ?? null
   );
   const searchRef = useRef<HTMLInputElement>(null);
+  const selectedRowRef = useRef<HTMLButtonElement>(null);
 
   const filtered = useMemo(
     () => filterTickets(initialTickets, query),
@@ -56,6 +57,7 @@ export default function JiraWorkspace() {
     selectedKey,
     onMove: moveSelection,
     searchRef,
+    selectedRowRef,
     searchQuery: query,
     onClearSearch: () => setQuery("")
   });
@@ -74,6 +76,7 @@ export default function JiraWorkspace() {
         <TicketList
           groups={groups}
           selectedKey={selectedKey}
+          selectedRowRef={selectedRowRef}
           onSelect={setSelectedKey}
         />
         <TicketDetail ticket={selected} />

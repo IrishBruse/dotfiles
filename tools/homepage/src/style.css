@@ -170,6 +170,10 @@ main.jira-page {
   border-left-color: var(--vscode-focusBorder, #007fd4);
 }
 
+.jira-list-row:focus {
+  outline: none;
+}
+
 .jira-status-dot {
   width: 0.55rem;
   height: 0.55rem;
@@ -224,12 +228,6 @@ main.jira-page {
 .jira-detail-header {
   padding: 1rem 1.25rem 0.75rem;
   border-bottom: 1px solid var(--vscode-panel-border, #3c3c3c);
-}
-
-.jira-detail-title {
-  margin: 0 0 0.75rem;
-  font-size: 1rem;
-  font-weight: 600;
 }
 
 .jira-detail-meta {

@@ -1,8 +1,11 @@
+import type { RefObject } from "react";
+
 import type { StatusGroup } from "../jira/types.ts";
 
 type Props = {
   groups: StatusGroup[];
   selectedKey: string | null;
+  selectedRowRef?: RefObject<HTMLButtonElement | null>;
   onSelect: (key: string) => void;
 };
 
@@ -21,7 +24,12 @@ function statusDot(bucket: string): string {
   }
 }
 
-export default function TicketList({ groups, selectedKey, onSelect }: Props) {
+export default function TicketList({
+  groups,
+  selectedKey,
+  selectedRowRef,
+  onSelect
+}: Props) {
   return (
     <div className="jira-list">
       {groups.map((group) => (
@@ -33,6 +41,7 @@ export default function TicketList({ groups, selectedKey, onSelect }: Props) {
               return (
                 <li key={ticket.key}>
                   <button
+                    ref={active ? selectedRowRef : undefined}
                     type="button"
                     className={`jira-list-row${active ? " is-active" : ""}`}
                     onClick={() => onSelect(ticket.key)}

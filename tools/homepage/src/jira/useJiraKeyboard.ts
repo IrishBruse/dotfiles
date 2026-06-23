@@ -14,6 +14,7 @@ type Options = {
   selectedKey: string | null;
   onMove: (delta: number) => void;
   searchRef: RefObject<HTMLInputElement | null>;
+  selectedRowRef: RefObject<HTMLButtonElement | null>;
   searchQuery: string;
   onClearSearch: () => void;
 };
@@ -23,6 +24,7 @@ export function useJiraKeyboard({
   selectedKey,
   onMove,
   searchRef,
+  selectedRowRef,
   searchQuery,
   onClearSearch
 }: Options): void {
@@ -53,6 +55,11 @@ export function useJiraKeyboard({
       }
 
       if (inSearch) {
+        if (event.key === "ArrowDown") {
+          event.preventDefault();
+          searchRef.current?.blur();
+          selectedRowRef.current?.focus();
+        }
         return;
       }
 
@@ -99,5 +106,14 @@ export function useJiraKeyboard({
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [navigate, onClearSearch, onMove, searchQuery, searchRef, selectedKey, tickets]);
+  }, [
+    navigate,
+    onClearSearch,
+    onMove,
+    searchQuery,
+    searchRef,
+    selectedRowRef,
+    selectedKey,
+    tickets
+  ]);
 }
