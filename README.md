@@ -11,3 +11,4 @@ Personal machine config and small TypeScript CLIs.
 `tools/` is a shared Node package of command-line helpers for Jira, GitHub PRs, sprint dates, markdown, and agent workflows.
 
 `vscode/` holds generated keybindings and custom UI theme CSS.
+
