@@ -4236,7 +4236,12 @@
     {
         "key": "cmd+v",
         "command": "execPaste",
-        "when": "browserFocused && activeEditor == 'workbench.editor.browser'"
+        "when": "activeEditor == 'workbench.editor.browser'"
+    },
+    {
+        "key": "ctrl+v",
+        "command": "execPaste",
+        "when": "activeEditor == 'workbench.editor.browser'"
     },
     {
         "key": "cmd+shift+i",
