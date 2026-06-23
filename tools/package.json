@@ -11,6 +11,7 @@
     "commit": "./.bin/commit.js",
     "confluence": "./.bin/confluence.js",
     "endpoint": "./.bin/endpoint.js",
+    "homepage": "./.bin/homepage.js",
     "interpolate": "./.bin/interpolate.js",
     "jira": "./.bin/jira.js",
     "md": "./.bin/md.js",
