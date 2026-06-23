@@ -31,7 +31,7 @@ alias ll="eza -la --no-permissions --group-directories-first"
 alias reload="clear;exec fish"
 alias grep rg
 
-alias s="npm run start || npm run dev"
+alias s="start"
 
 alias showkey="fish_key_reader --verbose"
 

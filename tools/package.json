@@ -15,6 +15,7 @@
     "jira": "./.bin/jira.js",
     "md": "./.bin/md.js",
     "pr": "./.bin/pr.js",
+    "start": "./.bin/start.js",
     "sprint": "./.bin/sprint.js"
   },
   "scripts": {
