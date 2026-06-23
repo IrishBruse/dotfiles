@@ -5,8 +5,8 @@
 
 _G.HYPR_VARS = {
 	terminal = "ghostty",
+	modifier = "SUPER",
 	fileManager = "nemo",
-	mod = "SUPER",
 	hyprDir = "~/dotfiles/home/.config/hypr",
 }
 
@@ -207,10 +207,6 @@ hl.workspace_rule({
 	gaps_out = 20,
 	border_size = 20,
 })
-
-local mod = _G.HYPR_VARS.mod
-hl.bind(mod .. " + period", hl.dsp.layout("move +col"))
-hl.bind(mod .. " + comma", hl.dsp.layout("move -col"))
 
 hl.gesture({
 	fingers = 3,
