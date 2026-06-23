@@ -3,32 +3,454 @@
   line-height: 1.5;
 }
 
+html,
+body,
+#app {
+  height: 100%;
+}
+
 body {
   margin: 0;
-  min-height: 100vh;
   background: var(--vscode-editor-background);
   color: var(--vscode-editor-foreground);
 }
 
-main {
-  margin: 0 auto;
-  max-width: 40rem;
-  padding: 3rem 1.5rem;
+body:has(.jira-page) {
+  overflow: hidden;
 }
 
-h1 {
-  margin: 0 0 0.5rem;
+main.home-landing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 1.5rem;
+  overflow: hidden;
 }
 
-p {
+.home-landing-inner {
+  width: 100%;
+  max-width: 28rem;
+}
+
+.home-landing h1 {
+  margin: 0 0 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.home-search input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--vscode-input-border, #3c3c3c);
+  border-radius: 4px;
+  background: var(--vscode-input-background, #252931);
+  color: var(--vscode-input-foreground, #abb2bf);
+  font: inherit;
+}
+
+.home-search input:focus {
+  outline: 1px solid var(--vscode-focusBorder, #35a854);
+}
+
+.home-nav {
+  margin-top: 1.25rem;
+  text-align: center;
+}
+
+.home-nav a {
+  color: var(--vscode-textLink-foreground, #35a854);
+  text-decoration: none;
+}
+
+.home-nav a:hover {
+  color: var(--vscode-textLink-activeForeground, #d7dae0);
+}
+
+main.jira-page {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
   margin: 0;
-  color: var(--vscode-statusBar-foreground);
+  max-width: none;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
 }
 
-a {
-  color: var(--vscode-textLink-foreground);
+.jira-workspace {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  box-sizing: border-box;
+  background: var(--vscode-editor-background);
 }
 
-a:hover {
+.jira-search {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--vscode-panel-border, #3c3c3c);
+}
+
+.jira-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--vscode-input-border, #3c3c3c);
+  border-radius: 4px;
+  background: var(--vscode-input-background, #1e1e1e);
+  color: var(--vscode-input-foreground, #cccccc);
+  font: inherit;
+}
+
+.jira-search-input:focus {
+  outline: 1px solid var(--vscode-focusBorder, #007fd4);
+}
+
+.jira-panes {
+  display: grid;
+  grid-template-columns: minmax(16rem, 1fr) minmax(20rem, 1.2fr);
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.jira-list {
+  overflow: auto;
+  min-height: 0;
+  border-right: 1px solid var(--vscode-panel-border, #3c3c3c);
+  padding: 0.5rem 0;
+}
+
+.jira-list-group + .jira-list-group {
+  margin-top: 0.75rem;
+}
+
+.jira-list-heading {
+  margin: 0;
+  padding: 0.25rem 1rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--vscode-descriptionForeground, #9d9d9d);
+}
+
+.jira-list-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.jira-list-row {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  width: 100%;
+  padding: 0.4rem 1rem;
+  border: 0;
+  border-left: 3px solid transparent;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.jira-list-row:hover {
+  background: var(--vscode-list-hoverBackground, #2a2d2e);
+}
+
+.jira-list-row.is-active {
+  background: var(--vscode-list-activeSelectionBackground, #094771);
+  border-left-color: var(--vscode-focusBorder, #007fd4);
+}
+
+.jira-status-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-todo {
+  background: #9d9d9d;
+}
+
+.dot-in-progress {
+  background: #cca700;
+}
+
+.dot-code-review {
+  background: #3794ff;
+}
+
+.dot-in-test {
+  background: #b180d7;
+}
+
+.dot-done {
+  background: #89d185;
+}
+
+.jira-list-key {
+  color: var(--vscode-textLink-foreground, #3794ff);
+  white-space: nowrap;
+}
+
+.jira-list-summary {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jira-detail {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.jira-detail-empty {
+  align-items: center;
+  justify-content: center;
+  color: var(--vscode-descriptionForeground, #9d9d9d);
+}
+
+.jira-detail-header {
+  padding: 1rem 1.25rem 0.75rem;
+  border-bottom: 1px solid var(--vscode-panel-border, #3c3c3c);
+}
+
+.jira-detail-title {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.jira-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  margin: 0;
+}
+
+.jira-detail-meta div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.jira-detail-meta dt {
+  margin: 0;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--vscode-descriptionForeground, #9d9d9d);
+}
+
+.jira-detail-meta dd {
+  margin: 0;
+}
+
+.jira-detail-body {
+  flex: 1;
+  overflow: auto;
+  padding: 1rem 1.25rem;
+}
+
+.jira-detail-section + .jira-detail-section {
+  margin-top: 1.25rem;
+}
+
+.jira-detail-section h2 {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--vscode-descriptionForeground, #9d9d9d);
+}
+
+.jira-markdown {
+  font-size: 0.92rem;
+  color: var(--vscode-editor-foreground);
+}
+
+.jira-markdown > :first-child {
+  margin-top: 0;
+}
+
+.jira-markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.jira-markdown h1 {
+  margin: 1rem 0 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--markdown-heading1, var(--vscode-editor-foreground));
+}
+
+.jira-markdown h2 {
+  margin: 1rem 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--markdown-heading2, var(--vscode-editor-foreground));
+}
+
+.jira-markdown h3 {
+  margin: 1rem 0 0.5rem;
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--markdown-heading3, var(--vscode-editor-foreground));
+}
+
+.jira-markdown h4,
+.jira-markdown h5,
+.jira-markdown h6 {
+  margin: 1rem 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--markdown-heading4, var(--vscode-editor-foreground));
+}
+
+.jira-markdown h5 {
+  color: var(--markdown-heading5, var(--markdown-heading4, var(--vscode-editor-foreground)));
+}
+
+.jira-markdown h6 {
+  color: var(--markdown-heading6, var(--markdown-heading4, var(--vscode-editor-foreground)));
+}
+
+.jira-markdown p {
+  margin: 0.5rem 0;
+  color: var(--vscode-editor-foreground);
+}
+
+.jira-markdown ul,
+.jira-markdown ol {
+  margin: 0.5rem 0;
+  padding-left: 0;
+  margin-left: 1.75rem;
+  list-style-position: outside;
+}
+
+.jira-markdown ol {
+  margin-left: 2rem;
+}
+
+.jira-markdown li {
+  margin: 0.2rem 0;
+  padding-left: 0.35rem;
+}
+
+.jira-markdown ul li::marker {
+  color: var(--markdown-list-marker, var(--vscode-editor-foreground));
+}
+
+.jira-markdown ol li::marker {
+  color: var(--vscode-editor-foreground);
+}
+
+.jira-markdown :not(pre) > code {
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  border: 1px solid var(--markdown-code-span-border, transparent);
+  background: var(--markdown-inlineCodeBackground, var(--vscode-textCodeBlock-background));
+  color: var(--markdown-inlineCode, var(--markdown-inline-code-source, var(--vscode-editor-foreground)));
+  font-size: 0.88em;
+}
+
+.jira-markdown pre {
+  margin: 0.5rem 0;
+  padding: 0.75rem;
+  overflow: auto;
+  border-radius: 4px;
+  background: var(--vscode-textCodeBlock-background);
+  color: var(--markdown-code-block-text, var(--vscode-editor-foreground));
+}
+
+.jira-markdown pre code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+}
+
+.jira-markdown a {
+  color: var(--markdown-link, var(--vscode-textLink-foreground));
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--markdown-link, var(--vscode-textLink-foreground)) 55%, transparent);
+}
+
+.jira-markdown a:hover {
   color: var(--vscode-textLink-activeForeground);
+}
+
+.jira-markdown strong {
+  font-weight: 600;
+  color: var(--vscode-editor-foreground);
+}
+
+.jira-markdown blockquote {
+  margin: 0.5rem 0;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--vscode-panel-border, #3c3c3c);
+  color: var(--markdown-blockquote, var(--vscode-descriptionForeground));
+}
+
+.jira-subtasks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.jira-subtasks li {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  padding: 0.2rem 0;
+}
+
+.jira-subtasks li.is-done {
+  color: var(--vscode-descriptionForeground, #9d9d9d);
+  text-decoration: line-through;
+}
+
+.jira-subtask-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.9rem;
+  height: 0.9rem;
+  margin-top: 0.15rem;
+  border: 1px solid var(--vscode-checkbox-border, #6b6b6b);
+  font-size: 0.65rem;
+}
+
+.jira-detail-dock {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  padding: 0.65rem 1.25rem;
+  border-top: 1px solid var(--vscode-panel-border, #3c3c3c);
+  background: var(--vscode-editorGroupHeader-tabsBackground, #252526);
+  font-size: 0.8rem;
+  color: var(--vscode-descriptionForeground, #9d9d9d);
+}
+
+@media (max-width: 768px) {
+  .jira-panes {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .jira-list {
+    border-right: 0;
+    border-bottom: 1px solid var(--vscode-panel-border, #3c3c3c);
+  }
 }

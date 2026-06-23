@@ -1,6 +1,7 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Connect, type Plugin } from "vite";
 
+import { jiraBoard } from "./jira-board.ts";
 import { vscodeTheme } from "./vscode-theme.ts";
 
 function duckDuckGoRedirect(): Plugin {
@@ -40,7 +41,7 @@ function duckDuckGoRedirect(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), vscodeTheme(), duckDuckGoRedirect()],
+  plugins: [react(), vscodeTheme(), jiraBoard(), duckDuckGoRedirect()],
   server: {
     port: 54321
   },
