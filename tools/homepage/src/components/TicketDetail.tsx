@@ -30,6 +30,10 @@ export default function TicketDetail({ ticket }: Props) {
             <dd>{ticket.status}</dd>
           </div>
           <div>
+            <dt>Assignee</dt>
+            <dd>{ticket.assignee}</dd>
+          </div>
+          <div>
             <dt>Priority</dt>
             <dd>{ticket.priority}</dd>
           </div>
