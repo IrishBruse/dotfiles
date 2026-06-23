@@ -1,5 +1,6 @@
 .DS_STORE
 node_modules
+tools/.bin/start
 cursor-chats-export/
 
 local.fish
