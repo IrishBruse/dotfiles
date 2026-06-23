@@ -3,17 +3,11 @@
  * Usage: jira init [path]
  */
 import fs from "node:fs";
+import { homedir } from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const TOOL_DIR = path.dirname(fileURLToPath(import.meta.url));
 
 const defaultSkillDir = path.join(
-  TOOL_DIR,
-  "..",
-  "..",
-  "..",
-  "home",
+  homedir(),
   ".agents",
   "skills",
   "jira-tickets"

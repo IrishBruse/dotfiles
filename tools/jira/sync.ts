@@ -1,7 +1,7 @@
 /**
  * Sync Jira issues into the jira-tickets skill via `acli jira workitem search` (Atlassian CLI).
- * Writes per-ticket markdown into `home/.agents/skills/jira-tickets/references/{me,team,unassigned}/`
- * and regenerates the skill summary at `home/.agents/skills/jira-tickets/SKILL.md`.
+ * Writes per-ticket markdown into `~/.agents/skills/jira-tickets/references/{me,team,unassigned}/`
+ * and regenerates the skill summary at `~/.agents/skills/jira-tickets/SKILL.md`.
  *
  * When CONFIG.boardId is set, only sprints whose window overlaps today are fetched
  * (from 2 days before sprint start through 2 days after sprint end). Tickets that drop
@@ -12,9 +12,9 @@
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
+import { homedir } from "node:os";
 import path from "node:path";
 import process from "node:process";
-import { fileURLToPath } from "node:url";
 import { CONFIG } from "./CONFIG.ts";
 
 export type Folder = "me" | "unassigned" | "team" | "misc";
@@ -628,13 +628,9 @@ export function writeJiraTicketsSkill(
   fs.writeFileSync(skillPath, body, "utf-8");
 }
 
-/** Skill folder: `<dotfiles>/home/.agents/skills/jira-tickets/` (dotfiles root = three levels up from this tool). */
+/** Skill folder: `~/.agents/skills/jira-tickets/` */
 const JIRA_TICKETS_SKILL_DIR = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "..",
-  "..",
-  "..",
-  "home",
+  homedir(),
   ".agents",
   "skills",
   "jira-tickets"

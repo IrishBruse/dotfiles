@@ -1,17 +1,13 @@
 /**
- * Paths under the dotfiles `jira-tickets` skill and lookup of on-disk ticket markdown.
+ * Paths under the `~/.agents/skills/jira-tickets/` skill and lookup of on-disk ticket markdown.
  */
 import fs from "node:fs";
+import { homedir } from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 
-/** Skill folder: `<dotfiles>/home/.agents/skills/jira-tickets/` */
+/** Skill folder: `~/.agents/skills/jira-tickets/` */
 export const JIRA_TICKETS_SKILL_DIR = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "..",
-  "..",
-  "..",
-  "home",
+  homedir(),
   ".agents",
   "skills",
   "jira-tickets"
