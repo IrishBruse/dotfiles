@@ -7,7 +7,6 @@ local v = assert(
 )
 local mod = v.mod
 local drun = hl.dsp.exec_cmd("rofi -show drun -show-icons")
-local toggle_grun = hl.dsp.exec_cmd("grun")
 
 hl.bind(mod .. " + T", hl.dsp.exec_cmd(v.terminal))
 hl.bind(mod .. " + C", hl.dsp.exec_cmd("google-chrome"))
@@ -16,7 +15,11 @@ hl.bind(mod .. " + D", hl.dsp.exec_cmd("code ~/dotfiles/"))
 hl.bind(mod .. " + F", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mod .. " + N", hl.dsp.exec_cmd("swaync-client -t"))
 
--- hl.bind(mod .. " + SPACE", toggle_grun, { description = "toggle GRun" })
+hl.bind(
+	mod .. " + SPACE",
+	hl.dsp.global("code:grun_toggle"),
+	{ description = "toggle GRun" }
+)
 hl.bind(mod .. " + G", drun, { description = "app launcher" })
 hl.bind(
 	mod .. " + SHIFT + S",
