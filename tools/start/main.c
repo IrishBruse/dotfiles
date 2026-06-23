@@ -119,6 +119,7 @@ int main(void) {
         return 0;
     }
 
+    setenv("BROWSER", "none", 1);
     setenv("FORCE_COLOR", "1", 1);
     setenv("COLORTERM", "truecolor", 1);
     setenv("DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION", "1", 1);
