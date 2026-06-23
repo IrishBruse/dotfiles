@@ -24,6 +24,7 @@
       "Shell(echo)",
       "Shell(find)",
       "Shell(gh auth status)",
+      "Shell(gh issue view)",
       "Shell(gh pr diff)",
       "Shell(gh pr list)",
       "Shell(gh pr view)",
@@ -61,17 +62,14 @@
       "WebFetch(code.visualstudio.com)",
       "WebFetch(wiki.hypr.land)"
     ],
-    "deny": [
-      "Shell(security unlock-keychain)",
-      "Shell(security)"
-    ]
+    "deny": []
   },
   "version": 1,
   "editor": {
     "vimMode": false
   },
   "display": {
-    "showLineNumbers": true,
+    "showLineNumbers": false,
     "showThinkingBlocks": true,
     "showStatusIndicators": false,
     "showStatusLineRunningTime": true
@@ -79,10 +77,10 @@
   "notifications": true,
   "hints": false,
   "rewind": true,
-  "suggestNextPrompt": false,
+  "suggestNextPrompt": true,
   "statusLine": {
     "type": "command",
-    "command": "~/.cursor/statusline.mjs",
+    "command": "/home/econn/.cursor/statusline.mjs",
     "padding": 2
   },
   "channel": "prod",
@@ -184,7 +182,25 @@
         "value": "200k"
       }
     ],
-    "gemini-3-flash": []
+    "gemini-3-flash": [],
+    "claude-opus-4-6": [
+      {
+        "id": "thinking",
+        "value": "true"
+      },
+      {
+        "id": "context",
+        "value": "200k"
+      },
+      {
+        "id": "effort",
+        "value": "high"
+      },
+      {
+        "id": "fast",
+        "value": "false"
+      }
+    ]
   },
   "selectedModel": {
     "modelId": "composer-2.5",
@@ -206,7 +222,7 @@
   "showSandboxIntro": false,
   "runEverythingSettingsPromptStreak": 0,
   "attribution": {
-    "attributeCommitsToAgent": true,
-    "attributePRsToAgent": true
+    "attributeCommitsToAgent": false,
+    "attributePRsToAgent": false
   }
 }
