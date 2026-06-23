@@ -2,7 +2,8 @@
 
 ## Skills
 
-Skills live in `skills/<name>/SKILL.md`. Each skill has YAML frontmatter with at least `name` and `description`.
+Skills live at `~/.agents/skills/<name>/SKILL.md` (repo source: `home/.agents/skills/<name>/SKILL.md` after stow).
+Each skill has YAML frontmatter with at least `name` and `description`.
 
 ### Description field
 
