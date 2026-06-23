@@ -12,4 +12,5 @@ install-all: install
 
 [working-directory: "tools"]
 link:
+    npm run build
     npm link
