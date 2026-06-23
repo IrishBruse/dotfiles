@@ -59,7 +59,7 @@ export function runPrSplit(
   slices: PrSplitSlice[],
   printOnly: boolean,
   options: {
-    cwd: string;
+    repoRoot: string;
     stagedFiles: StagedFile[];
     interactive: boolean;
     commit: boolean;
@@ -82,22 +82,22 @@ export function runPrSplit(
     return { committed: false };
   }
 
-  return executeSplit(slices, options.cwd, options.stagedFiles);
+  return executeSplit(slices, options.repoRoot, options.stagedFiles);
 }
 
 function executeSplit(
   slices: PrSplitSlice[],
-  cwd: string,
+  repoRoot: string,
   stagedFiles: StagedFile[]
 ): SplitResult {
-  unstageAll(cwd);
+  unstageAll(repoRoot);
 
   const byPath = new Map(stagedFiles.map((file) => [file.path, file]));
 
   for (const slice of slices) {
     const paths = pathsForStaging(slice.paths, byPath);
-    stagePaths(cwd, paths);
-    createCommit(cwd, slice.message);
+    stagePaths(repoRoot, paths);
+    createCommit(repoRoot, slice.message);
   }
 
   return { committed: true };

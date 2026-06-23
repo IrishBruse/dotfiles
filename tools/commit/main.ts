@@ -59,31 +59,30 @@ export function runCommit(argv: string[], push: boolean): void {
     return;
   }
 
-  const gitCwd = process.cwd();
   let repoRoot: string;
   try {
-    repoRoot = getRepoRoot(gitCwd);
+    repoRoot = getRepoRoot(process.cwd());
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error(`commit: ${message}`);
     process.exit(1);
   }
 
-  const useStaged = hasStagedChanges(gitCwd);
-  const hasChanges = useStaged || hasUnstagedChanges(gitCwd);
+  const useStaged = hasStagedChanges(repoRoot);
+  const hasChanges = useStaged || hasUnstagedChanges(repoRoot);
   if (!hasChanges) {
     if (opts.print) {
       console.error("commit: no changes");
       return;
     }
-    if (push && hasUnpushedCommits(gitCwd)) {
-      pushBranch(gitCwd);
+    if (push && hasUnpushedCommits(repoRoot)) {
+      pushBranch(repoRoot);
     }
     return;
   }
 
-  const nameStatus = useStaged ? getStagedFileList(gitCwd) : getUnstagedFileList(gitCwd);
-  const diff = useStaged ? getStagedDiff(gitCwd) : getUnstagedDiff(gitCwd);
+  const nameStatus = useStaged ? getStagedFileList(repoRoot) : getUnstagedFileList(repoRoot);
+  const diff = useStaged ? getStagedDiff(repoRoot) : getUnstagedDiff(repoRoot);
   const stagedFiles = parseNameStatus(nameStatus);
   const stagedPaths = stagedFiles.map((f) => f.path);
   const config = loadCommitConfig(repoRoot);
@@ -91,7 +90,7 @@ export function runCommit(argv: string[], push: boolean): void {
   const interactive = process.stdout.isTTY === true;
 
   const splitOptions = {
-    cwd: gitCwd,
+    repoRoot,
     stagedFiles,
     interactive,
     commit: !useStaged
@@ -105,7 +104,7 @@ export function runCommit(argv: string[], push: boolean): void {
   const splitResult = runPrSplit(slices, false, splitOptions);
   if (splitResult.committed) {
     if (push) {
-      pushBranch(gitCwd);
+      pushBranch(repoRoot);
     }
     return;
   }
