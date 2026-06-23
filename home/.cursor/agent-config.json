@@ -24,7 +24,6 @@
       "Shell(echo)",
       "Shell(find)",
       "Shell(gh auth status)",
-      "Shell(gh issue view)",
       "Shell(gh pr diff)",
       "Shell(gh pr list)",
       "Shell(gh pr view)",
@@ -62,14 +61,17 @@
       "WebFetch(code.visualstudio.com)",
       "WebFetch(wiki.hypr.land)"
     ],
-    "deny": []
+    "deny": [
+      "Shell(security unlock-keychain)",
+      "Shell(security)"
+    ]
   },
   "version": 1,
   "editor": {
     "vimMode": false
   },
   "display": {
-    "showLineNumbers": false,
+    "showLineNumbers": true,
     "showThinkingBlocks": true,
     "showStatusIndicators": false,
     "showStatusLineRunningTime": true
@@ -77,10 +79,10 @@
   "notifications": true,
   "hints": false,
   "rewind": true,
-  "suggestNextPrompt": true,
+  "suggestNextPrompt": false,
   "statusLine": {
     "type": "command",
-    "command": "/home/econn/.cursor/statusline.mjs",
+    "command": "~/.cursor/statusline.mjs",
     "padding": 2
   },
   "channel": "prod",
@@ -151,7 +153,7 @@
       },
       {
         "id": "effort",
-        "value": "low"
+        "value": "medium"
       },
       {
         "id": "fast",
@@ -204,7 +206,7 @@
   "showSandboxIntro": false,
   "runEverythingSettingsPromptStreak": 0,
   "attribution": {
-    "attributeCommitsToAgent": false,
-    "attributePRsToAgent": false
+    "attributeCommitsToAgent": true,
+    "attributePRsToAgent": true
   }
 }
