@@ -1,11 +1,11 @@
 tap "ankitpokhrel/jira-cli"
 tap "anomalyco/tap"
-tap "asmvik/formulae"
+tap "asmvik/formulae", "https://github.com/asmvik/homebrew-formulae.git"
 tap "atlassian/acli"
 tap "brew-gem/gems"
 tap "cloudflare/cloudflare"
 tap "databricks/tap", trusted: true
-tap "dotnet/dev-proxy"
+tap "dotnet/dev-proxy", "https://github.com/dotnet/homebrew-dev-proxy.git"
 tap "gp-nova/devx-cli", "https://github.com/gp-nova/devx-cli.git", trusted: true
 tap "jackielii/tap"
 tap "kreuzberg-dev/tap"
