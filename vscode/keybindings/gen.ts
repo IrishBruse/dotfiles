@@ -14,6 +14,9 @@ export type Keybind = {
 
 type OS = "linux" | "macos";
 
+/** VS Code registers these only on macOS (document.execCommand). */
+const MACOS_ONLY_COMMANDS = new Set(["execCopy", "execCut", "execPaste"]);
+
 const SEPARATOR = {
   key: "-".repeat(200),
 } as Keybind;
@@ -75,7 +78,15 @@ function resolveKeybindForOs(b: Keybind, os: OS): Keybind {
 }
 
 function resolveKeybindsForOs(bindings: Keybind[], os: OS): Keybind[] {
-  return bindings.map((binding) => resolveKeybindForOs(binding, os));
+  return bindings
+    .map((binding) => resolveKeybindForOs(binding, os))
+    .filter((binding) => {
+      if (os !== "linux" || !binding.command) return true;
+      const cmd = binding.command.startsWith("-")
+        ? binding.command.slice(1)
+        : binding.command;
+      return !MACOS_ONLY_COMMANDS.has(cmd);
+    });
 }
 
 async function writeFormattedCustomJson(bindings: Keybind[]): Promise<void> {

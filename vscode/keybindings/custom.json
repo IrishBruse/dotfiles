@@ -155,12 +155,12 @@
     {
       "key": "ctrl+v",
       "command": "execPaste",
-      "when": "activeEditor == 'workbench.editor.browser'"
+      "when": "isMac && activeEditor == 'workbench.editor.browser'"
     },
     {
       "key": "cmd+v",
       "command": "execPaste",
-      "when": "activeEditor == 'workbench.editor.browser'"
+      "when": "isMac && activeEditor == 'workbench.editor.browser'"
     },
     {
       "key": "ctrl+shift+i",
