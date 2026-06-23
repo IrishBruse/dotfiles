@@ -682,9 +682,6 @@ function printSyncSummary(options: {
       (counts.misc > 0 ? `, ${counts.misc} in misc` : "")
   );
 
-  if (added.length > 0) {
-    lines.push(`Added (${added.length}): ${formatKeyList(added)}`);
-  }
   if (updated.length > 0) {
     lines.push(`Updated (${updated.length}): ${formatKeyList(updated)}`);
   }
