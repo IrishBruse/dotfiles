@@ -15,10 +15,12 @@
     "jira": "./.bin/jira.js",
     "md": "./.bin/md.js",
     "pr": "./.bin/pr.js",
-    "start": "./.bin/start.js",
+    "start": "./.bin/start",
     "sprint": "./.bin/sprint.js"
   },
   "scripts": {
+    "build": "make -C start",
+    "prepare": "npm run build",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint -c .lib/eslint.config.js .",
