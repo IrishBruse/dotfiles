@@ -79,7 +79,7 @@ Fixed semantic colors (not theme tokens):
 
 ## Component classes
 
-- `dashboard-*` - landing page only (Jira widget).
+- `dashboard-*` - landing page only (Jira widget, local ports widget).
 - `command-palette-*` - global command palette and top bar.
 - `jira-*` - shared Jira UI (list rows, detail, markdown, workspace).
 - Reuse `jira-list-row`, `jira-list-key`, `jira-list-summary`, and `jira-status-dot` in the widget instead of duplicating row styles.
@@ -93,6 +93,16 @@ Floating card at bottom-left on the landing page.
 - Rows: same list row classes as the full board; summaries use `editor-foreground`, keys use `textLink-foreground`.
 - Sync: `POST /api/jira/sync` (dev server only) via a primary button (`button-background` / `button-foreground`).
 
+## Local ports widget
+
+Floating card at bottom-right on the landing page.
+
+- Container: same panel tokens as the Jira widget (`editor-background` + `editorWidget-border`).
+- Header: `sideBarSectionHeader` background and border; title "Local ports".
+- Rows: port (link to `http://127.0.0.1:<port>`), project folder name (cwd basename), kill button (bin icon).
+- Polls `GET /api/ports` every 3s (dev and preview servers) via the `local-ports` Vite plugin (`lsof`).
+- Kill: `POST /api/ports/kill` with `{ pid }` sends SIGTERM to listed dev listeners owned by the current user.
+
 ## Command palette
 
 Single search bar fixed at the top of every page.
@@ -105,3 +115,4 @@ No backdrop dimming.
 
 - `vscode-theme` - CSS variables from VS Code settings.
 - `jira-board` - virtual `jira-board` module from local sprint.json + ticket markdown; HMR on file changes; sync endpoint in dev.
+- `local-ports` - `GET /api/ports` lists user-owned dev TCP listeners via `lsof` (dev and preview).

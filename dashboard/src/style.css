@@ -330,6 +330,146 @@ main.dashboard-landing {
   color: var(--vscode-editor-foreground, #abb2bf);
 }
 
+.dashboard-ports-widget {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 1;
+  width: min(20rem, calc(100vw - 2rem));
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--vscode-editorWidget-border, #3a3f4b);
+  background: var(--vscode-editor-background, #282c34);
+  font-size: 0.8125rem;
+}
+
+.dashboard-ports-widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  background: var(--vscode-sideBarSectionHeader-background, #21252b);
+  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border, #3a3f4b);
+}
+
+.dashboard-ports-widget-title {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--vscode-textLink-foreground, #35a854);
+}
+
+.dashboard-ports-widget-action {
+  padding: 0.2rem 0.55rem;
+  border: 0;
+  border-radius: 2px;
+  background: var(--vscode-button-secondaryBackground, #3a3f4b);
+  color: var(--vscode-button-secondaryForeground, #d7dae0);
+  font: inherit;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dashboard-ports-widget-action:hover:not(:disabled) {
+  background: var(--vscode-button-secondaryHoverBackground, #454b57);
+}
+
+.dashboard-ports-widget-error,
+.dashboard-ports-widget-empty {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--vscode-descriptionForeground, #7f848e);
+}
+
+.dashboard-ports-widget-error {
+  color: var(--vscode-errorForeground, #f48771);
+}
+
+.dashboard-ports-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-ports-list > li {
+  min-width: 0;
+}
+
+.dashboard-ports-row {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 0.15rem 0.35rem 0.15rem 0.75rem;
+  color: inherit;
+}
+
+.dashboard-ports-row:hover {
+  background: var(--vscode-list-hoverBackground, #2a2d2e);
+}
+
+.dashboard-ports-link {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.5rem;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  padding: 0.2rem 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.dashboard-ports-port {
+  font-weight: 600;
+  color: var(--vscode-textLink-foreground, #35a854);
+  white-space: nowrap;
+}
+
+.dashboard-ports-folder {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--vscode-editor-foreground, #abb2bf);
+}
+
+.dashboard-ports-kill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--vscode-icon-foreground, #c5c5c5);
+  cursor: pointer;
+}
+
+.dashboard-ports-kill:hover:not(:disabled) {
+  background: var(--vscode-toolbar-hoverBackground, #2a2d2e);
+  color: var(--vscode-errorForeground, #f48771);
+}
+
+.dashboard-ports-kill:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.dashboard-ports-kill-icon {
+  display: block;
+}
+
 main.jira-page {
   display: flex;
   flex-direction: column;
