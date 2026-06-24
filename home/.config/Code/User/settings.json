@@ -1278,6 +1278,7 @@
   "terminal.external.osxExec": "Ghostty.app",
   "terminal.explorerKind": "both",
   "terminal.integrated.commandsToSkipShell": [
+    "workbench.action.browser.open",
     "workbench.action.createTerminalEditor",
     "workbench.action.findInFiles",
     "workbench.action.terminal.paste",

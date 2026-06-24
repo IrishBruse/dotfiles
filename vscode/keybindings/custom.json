@@ -318,6 +318,31 @@
       "command": "ib-utilities.openPR"
     },
     {
+      "key": "ctrl+y",
+      "command": "-redo"
+    },
+    {
+      "key": "ctrl+y",
+      "command": "-chatEditor.action.acceptHunk"
+    },
+    {
+      "key": "ctrl+y",
+      "command": "workbench.action.browser.open",
+      "args": {
+        "url": "http://localhost:54321/",
+        "reuseUrlFilter": "http://localhost:54321/*"
+      }
+    },
+    {
+      "key": "ctrl+y",
+      "command": "workbench.action.browser.open",
+      "args": {
+        "url": "http://localhost:54321/",
+        "reuseUrlFilter": "http://localhost:54321/*"
+      },
+      "when": "terminalFocus"
+    },
+    {
       "key": "ctrl+u",
       "command": "workbench.action.editorDictation.start",
       "when": "editorTextFocus && !editorDictation.inProgress"
