@@ -52,6 +52,10 @@
       "scope": "vscode"
     },
     {
+      "paths": "dashboard/**",
+      "prefix": "dashboard"
+    },
+    {
       "paths": "home/:scope",
       "prefix": "home",
       "when": "all"
