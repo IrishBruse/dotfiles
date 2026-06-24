@@ -1621,7 +1621,6 @@
   "editor.accessibilitySupport": "off",
   "markdownInlineEditor.math.enabled": false,
   "editor.allowVariableFontsInAccessibilityMode": true,
-  "workbench.browser.openLocalhostLinks": true,
   "workbench.layoutControl.enabled": false,
   "terminal.integrated.gpuAcceleration": "on",
   "git.repositoryScanMaxDepth": 2,
@@ -1631,6 +1630,5 @@
   "terminal.integrated.stickyScroll.enabled": false,
   "markdownInlineEditor.tables.renderingMode": "inline",
   "excalidraw.theme": "dark",
-  "update.mode": "none",
-  "workbench.browser.searchEngine": "duckduckgo"
+  "update.mode": "none"
 }
