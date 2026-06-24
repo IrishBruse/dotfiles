@@ -66,10 +66,20 @@ body:has(.jira-page) {
   margin: 0;
 }
 
+.command-palette-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.6rem;
+  width: 1rem;
+  height: 1rem;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
 .command-palette-form input {
   width: 100%;
   box-sizing: border-box;
-  padding: 0.45rem 4.25rem 0.45rem 0.75rem;
+  padding: 0.45rem 4.25rem 0.45rem 2rem;
   border: 1px solid var(--vscode-input-border, #3c3c3c);
   border-radius: 4px;
   background: var(--vscode-input-background, #252931);

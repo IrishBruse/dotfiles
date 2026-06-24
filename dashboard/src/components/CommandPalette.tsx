@@ -144,6 +144,12 @@ export default function CommandPalette() {
         className={`command-palette-shell${showDropdown ? " is-open" : ""}`}
       >
         <form className="command-palette-form" onSubmit={runActiveOrSubmit}>
+          <img
+            src="/search.svg"
+            alt=""
+            className="command-palette-search-icon"
+            aria-hidden="true"
+          />
           <input
             ref={inputRef}
             type="search"
