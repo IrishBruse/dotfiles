@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import boardData from "virtual:jira-board";
 
@@ -16,10 +17,9 @@ import TicketList from "./TicketList.tsx";
 const initialTickets = (boardData as { tickets: BoardTicket[] }).tickets;
 
 export default function JiraWorkspace() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const ticketParam = searchParams.get("ticket");
   const [query, setQuery] = useState("");
-  const [selectedKey, setSelectedKey] = useState<string | null>(
-    initialTickets[0]?.key ?? null
-  );
   const searchRef = useRef<HTMLInputElement>(null);
   const selectedRowRef = useRef<HTMLButtonElement>(null);
 
@@ -30,15 +30,31 @@ export default function JiraWorkspace() {
   const groups = useMemo(() => groupFilteredTickets(filtered), [filtered]);
   const flat = useMemo(() => flattenTickets(groups), [groups]);
 
-  useEffect(() => {
+  const selectedKey = useMemo(() => {
     if (flat.length === 0) {
-      setSelectedKey(null);
+      return null;
+    }
+    if (ticketParam && flat.some((ticket) => ticket.key === ticketParam)) {
+      return ticketParam;
+    }
+    return flat[0]!.key;
+  }, [flat, ticketParam]);
+
+  useEffect(() => {
+    if (!selectedKey) {
+      if (ticketParam) {
+        setSearchParams({}, { replace: true });
+      }
       return;
     }
-    if (!selectedKey || !flat.some((ticket) => ticket.key === selectedKey)) {
-      setSelectedKey(flat[0]!.key);
+    if (selectedKey !== ticketParam) {
+      setSearchParams({ ticket: selectedKey }, { replace: true });
     }
-  }, [flat, selectedKey]);
+  }, [selectedKey, setSearchParams, ticketParam]);
+
+  function selectKey(key: string): void {
+    setSearchParams({ ticket: key }, { replace: true });
+  }
 
   function moveSelection(delta: number): void {
     if (flat.length === 0) {
@@ -49,7 +65,7 @@ export default function JiraWorkspace() {
       index < 0
         ? 0
         : Math.min(flat.length - 1, Math.max(0, index + delta));
-    setSelectedKey(flat[next]!.key);
+    selectKey(flat[next]!.key);
   }
 
   useJiraKeyboard({
@@ -77,7 +93,7 @@ export default function JiraWorkspace() {
           groups={groups}
           selectedKey={selectedKey}
           selectedRowRef={selectedRowRef}
-          onSelect={setSelectedKey}
+          onSelect={selectKey}
         />
         <TicketDetail ticket={selected} />
       </div>

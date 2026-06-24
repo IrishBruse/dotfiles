@@ -26,10 +26,6 @@ export default function TicketDetail({ ticket }: Props) {
       <header className="jira-detail-header">
         <dl className="jira-detail-meta">
           <div>
-            <dt>Status</dt>
-            <dd>{ticket.status}</dd>
-          </div>
-          <div>
             <dt>Assignee</dt>
             <dd>{ticket.assignee}</dd>
           </div>

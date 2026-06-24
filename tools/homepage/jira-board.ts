@@ -2,7 +2,10 @@ import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { Plugin } from "vite";
+import type { Connect } from "vite";
+import type { Plugin, ViteDevServer } from "vite";
+
+import { runWithResult as runJiraSync } from "../jira/sync.ts";
 
 const VIRTUAL_ID = "virtual:jira-board";
 const RESOLVED_ID = `\0${VIRTUAL_ID}`;
@@ -229,6 +232,49 @@ function watchPaths(): string[] {
   return paths;
 }
 
+function reloadBoardModule(server: ViteDevServer): void {
+  const mod = server.moduleGraph.getModuleById(RESOLVED_ID);
+  if (mod) {
+    server.reloadModule(mod);
+  }
+}
+
+let syncing = false;
+
+function jiraSyncMiddleware(server: ViteDevServer): Connect.NextHandleFunction {
+  return (req, res, next) => {
+    const url = new URL(req.url ?? "/", "http://localhost");
+    if (url.pathname !== "/api/jira/sync" || req.method !== "POST") {
+      next();
+      return;
+    }
+
+    res.setHeader("Content-Type", "application/json");
+
+    if (syncing) {
+      res.statusCode = 409;
+      res.end(JSON.stringify({ ok: false, error: "Sync already in progress" }));
+      return;
+    }
+
+    syncing = true;
+    try {
+      const result = runJiraSync();
+      if (result.code !== 0) {
+        res.statusCode = 500;
+        res.end(
+          JSON.stringify({ ok: false, error: result.error ?? "Sync failed" })
+        );
+        return;
+      }
+      reloadBoardModule(server);
+      res.end(JSON.stringify({ ok: true, ...loadBoardData() }));
+    } finally {
+      syncing = false;
+    }
+  };
+}
+
 /** Load sprint.json and local ticket markdown for the homepage board. */
 export function jiraBoard(): Plugin {
   return {
@@ -247,6 +293,7 @@ export function jiraBoard(): Plugin {
       for (const target of watchPaths()) {
         server.watcher.add(target);
       }
+      server.middlewares.use(jiraSyncMiddleware(server));
     },
     handleHotUpdate({ file, server }) {
       const normalized = path.normalize(file);

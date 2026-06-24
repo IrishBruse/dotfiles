@@ -56,18 +56,84 @@ main.home-landing {
   outline: 1px solid var(--vscode-focusBorder, #35a854);
 }
 
-.home-nav {
-  margin-top: 1.25rem;
-  text-align: center;
+.home-jira-widget {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 1;
+  width: min(20rem, calc(100vw - 2rem));
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--vscode-editorWidget-border, #3a3f4b);
+  background: var(--vscode-editor-background, #282c34);
+  font-size: 0.8125rem;
 }
 
-.home-nav a {
-  color: var(--vscode-textLink-foreground, #35a854);
+.home-jira-widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  background: var(--vscode-sideBarSectionHeader-background, #21252b);
+  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border, #3a3f4b);
+}
+
+.home-jira-widget-title {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   text-decoration: none;
+  color: var(--vscode-textLink-foreground, #35a854);
 }
 
-.home-nav a:hover {
+.home-jira-widget-title:hover {
   color: var(--vscode-textLink-activeForeground, #d7dae0);
+}
+
+.home-jira-widget-action {
+  padding: 0.2rem 0.55rem;
+  border: 0;
+  border-radius: 2px;
+  background: var(--vscode-button-background, #35a854);
+  color: var(--vscode-button-foreground, #ffffff);
+  font: inherit;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.home-jira-widget-action:hover:not(:disabled) {
+  background: var(--vscode-button-hoverBackground, #35974f);
+}
+
+.home-jira-widget-action:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.home-jira-widget-error {
+  margin: 0;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border, #3a3f4b);
+  color: var(--vscode-errorForeground, #f48771);
+}
+
+.home-jira-widget .jira-list-row {
+  grid-template-columns: auto auto minmax(0, 1fr);
+  padding: 0.2rem 0.75rem;
+  border-left: 0;
+  min-width: 0;
+}
+
+.home-jira-widget .jira-list-summary {
+  color: var(--vscode-editor-foreground, #abb2bf);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 main.jira-page {
@@ -145,12 +211,17 @@ main.jira-page {
   padding: 0;
 }
 
+.jira-list-rows > li {
+  min-width: 0;
+}
+
 .jira-list-row {
   display: grid;
-  grid-template-columns: auto auto 1fr;
+  grid-template-columns: auto auto minmax(0, 1fr);
   gap: 0.5rem;
   align-items: center;
   width: 100%;
+  min-width: 0;
   padding: 0.4rem 1rem;
   border: 0;
   border-left: 3px solid transparent;
@@ -158,6 +229,7 @@ main.jira-page {
   color: inherit;
   font: inherit;
   text-align: left;
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -202,11 +274,12 @@ main.jira-page {
 }
 
 .jira-list-key {
-  color: var(--vscode-textLink-foreground, #3794ff);
+  color: var(--vscode-textLink-foreground, #35a854);
   white-space: nowrap;
 }
 
 .jira-list-summary {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -346,7 +419,7 @@ main.jira-page {
 }
 
 .jira-markdown ul li::marker {
-  color: var(--markdown-list-marker, var(--vscode-editor-foreground));
+  color: var(--vscode-editor-foreground);
 }
 
 .jira-markdown ol li::marker {
@@ -356,8 +429,8 @@ main.jira-page {
 .jira-markdown :not(pre) > code {
   padding: 0.1rem 0.35rem;
   border-radius: 3px;
-  border: 1px solid var(--markdown-code-span-border, transparent);
-  background: var(--markdown-inlineCodeBackground, var(--vscode-textCodeBlock-background));
+  border: 1px solid var(--vscode-markdown-extension-editor-codeSpan-border, var(--markdown-code-span-border, transparent));
+  background: var(--vscode-textCodeBlock-background);
   color: var(--markdown-inlineCode, var(--markdown-inline-code-source, var(--vscode-editor-foreground)));
   font-size: 0.88em;
 }
