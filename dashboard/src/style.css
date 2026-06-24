@@ -121,19 +121,37 @@ main.home-landing {
   color: var(--vscode-errorForeground, #f48771);
 }
 
+.home-jira-widget .jira-list-rows,
+.home-jira-widget .jira-list-rows > li {
+  min-width: 0;
+  max-width: 100%;
+}
+
 .home-jira-widget .jira-list-row {
-  grid-template-columns: auto auto minmax(0, 1fr);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   padding: 0.2rem 0.75rem;
   border-left: 0;
-  min-width: 0;
+  overflow: hidden;
+}
+
+.home-jira-widget .jira-status-dot,
+.home-jira-widget .jira-list-key {
+  flex-shrink: 0;
 }
 
 .home-jira-widget .jira-list-summary {
-  color: var(--vscode-editor-foreground, #abb2bf);
+  flex: 1 1 0;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: var(--vscode-editor-foreground, #abb2bf);
 }
 
 main.jira-page {

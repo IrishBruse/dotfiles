@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import type { Connect } from "vite";
 import type { Plugin, ViteDevServer } from "vite";
 
-import { runWithResult as runJiraSync } from "../jira/sync.ts";
+import { runWithResult as runJiraSync } from "../tools/jira/sync.ts";
 
 const VIRTUAL_ID = "virtual:jira-board";
 const RESOLVED_ID = `\0${VIRTUAL_ID}`;
@@ -275,7 +275,7 @@ function jiraSyncMiddleware(server: ViteDevServer): Connect.NextHandleFunction {
   };
 }
 
-/** Load sprint.json and local ticket markdown for the homepage board. */
+/** Load sprint.json and local ticket markdown for the dashboard board. */
 export function jiraBoard(): Plugin {
   return {
     name: "jira-board",

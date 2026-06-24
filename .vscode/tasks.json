@@ -25,15 +25,15 @@
       }
     },
     {
-      "label": "Homepage",
+      "label": "Dashboard",
       "type": "shell",
       "command": "npm run dev",
       "options": {
-        "cwd": "${workspaceFolder}/tools/homepage"
+        "cwd": "${workspaceFolder}/dashboard"
       },
       "isBackground": true,
       "problemMatcher": {
-        "owner": "homepage",
+        "owner": "dashboard",
         "pattern": {
           "regexp": "^$"
         },

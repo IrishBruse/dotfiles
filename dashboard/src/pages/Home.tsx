@@ -5,7 +5,7 @@ export default function Home() {
     <main className="home-landing">
       <JiraWidget />
       <div className="home-landing-inner">
-        <h1>homepage</h1>
+        <h1>dashboard</h1>
         <form className="home-search" action="/" method="get">
           <input
             name="q"

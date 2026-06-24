@@ -1,4 +1,4 @@
-# Homepage
+# Dashboard
 
 Local start page Vite app (React + TypeScript).
 Run `npm run dev`, `build`, or `preview` from this directory.

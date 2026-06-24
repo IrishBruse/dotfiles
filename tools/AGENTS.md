@@ -1,7 +1,6 @@
 # Dotfiles tools
 
-Single Node package (`tools/package.json`) with one `tsconfig.json`. Entry stubs live in `tools/.bin/`; each CLI has a folder under `tools/<name>/`. `start` is a native C binary built with `make -C start` into `.bin/start`. `tools/homepage/` is a nested Vite app with its own `package.json` (not a CLI).
-See `homepage/AGENTS.md` for UI style guide.
+Single Node package (`tools/package.json`) with one `tsconfig.json`. Entry stubs live in `tools/.bin/`; each CLI has a folder under `tools/<name>/`. `start` is a native C binary built with `make -C start` into `.bin/start`.
 
 ## Rules
 
