@@ -10,5 +10,8 @@ Personal machine config and small TypeScript CLIs.
 
 `tools/` is a shared Node package of command-line helpers for Jira, GitHub PRs, sprint dates, markdown, and agent workflows.
 
+`dashboard/` is a local browser start page (React + Vite) with dashboard search and a Jira board widget.
+Run `npm run dev`, `build`, or `preview` from that directory.
+
 `vscode/` holds generated keybindings and custom UI theme CSS.
 

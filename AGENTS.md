@@ -50,5 +50,7 @@ Custom VS Code UI CSS.
 ### dashboard
 
 Local start page Vite app at `dashboard/` (React + TypeScript).
+Dev and preview listen on port `54321`.
 Run `npm run dev`, `build`, or `preview` from that directory.
+The VS Code **Dashboard** task starts the dev server on folder open.
 See `dashboard/AGENTS.md` for UI style guide.
