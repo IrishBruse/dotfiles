@@ -3,12 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useCommandPalette } from "../command-palette/CommandPaletteContext.tsx";
 import type { BoardTicket } from "../jira/types.ts";
-import {
-  branchName,
-  commitPrefix,
-  copyText,
-  markdownLink
-} from "../jira/format.ts";
+import { copyText } from "../jira/format.ts";
 
 type Options = {
   tickets: BoardTicket[];
@@ -76,27 +71,15 @@ export function useJiraKeyboard({
         return;
       }
 
-      if (event.key === "Enter") {
+      if (event.key === "o" || event.key === "O") {
         event.preventDefault();
         window.open(ticket.url, "_blank", "noopener,noreferrer");
         return;
       }
 
-      if (event.key === "b" || event.key === "B") {
-        event.preventDefault();
-        void copyText(branchName(ticket));
-        return;
-      }
-
       if (event.key === "c" || event.key === "C") {
         event.preventDefault();
-        void copyText(commitPrefix(ticket));
-        return;
-      }
-
-      if (event.key === "m" || event.key === "M") {
-        event.preventDefault();
-        void copyText(markdownLink(ticket));
+        void copyText(ticket.url);
       }
     }
 

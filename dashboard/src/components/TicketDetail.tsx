@@ -64,10 +64,8 @@ export default function TicketDetail({ ticket }: Props) {
       </div>
 
       <footer className="jira-detail-dock">
-        <span>[Enter] Open</span>
-        <span>[B] Branch</span>
-        <span>[C] Msg</span>
-        <span>[M] Link</span>
+        <span>[O] Open</span>
+        <span>[C] Copy link</span>
       </footer>
     </div>
   );

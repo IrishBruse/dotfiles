@@ -6,15 +6,17 @@ import boardData from "virtual:jira-board";
 import { useCommandPalette } from "../command-palette/CommandPaletteContext.tsx";
 import {
   filterTickets,
+  flattenAssigneeGroups,
   flattenTickets,
+  groupByAssignee,
   groupFilteredTickets
 } from "../jira/board.ts";
 import { useJiraKeyboard } from "../jira/useJiraKeyboard.ts";
-import type { BoardTicket } from "../jira/types.ts";
+import type { BoardData } from "../jira/types.ts";
 import TicketDetail from "./TicketDetail.tsx";
 import TicketList from "./TicketList.tsx";
 
-const initialTickets = (boardData as { tickets: BoardTicket[] }).tickets;
+const board = boardData as BoardData;
 
 export default function JiraWorkspace() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -36,12 +38,29 @@ export default function JiraWorkspace() {
     );
   }, [searchParams, setSearchParams]);
 
-  const filtered = useMemo(
-    () => filterTickets(initialTickets, query),
+  const filteredMy = useMemo(
+    () => filterTickets(board.myTickets, query),
     [query]
   );
-  const groups = useMemo(() => groupFilteredTickets(filtered), [filtered]);
-  const flat = useMemo(() => flattenTickets(groups), [groups]);
+  const filteredOther = useMemo(
+    () => filterTickets(board.otherTickets, query),
+    [query]
+  );
+  const statusGroups = useMemo(
+    () => groupFilteredTickets(filteredMy),
+    [filteredMy]
+  );
+  const assigneeGroups = useMemo(
+    () => groupByAssignee(filteredOther),
+    [filteredOther]
+  );
+  const flat = useMemo(
+    () => [
+      ...flattenTickets(statusGroups),
+      ...flattenAssigneeGroups(assigneeGroups)
+    ],
+    [statusGroups, assigneeGroups]
+  );
 
   const selectedKey = useMemo(() => {
     if (flat.length === 0) {
@@ -116,7 +135,8 @@ export default function JiraWorkspace() {
     <section className="jira-workspace" aria-label="Jira workspace">
       <div className="jira-panes">
         <TicketList
-          groups={groups}
+          statusGroups={statusGroups}
+          assigneeGroups={assigneeGroups}
           selectedKey={selectedKey}
           selectedRowRef={selectedRowRef}
           onSelect={selectKey}

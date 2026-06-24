@@ -17,11 +17,17 @@ export type BoardTicket = {
 };
 
 export type BoardData = {
-  tickets: BoardTicket[];
+  myTickets: BoardTicket[];
+  otherTickets: BoardTicket[];
 };
 
 export type StatusGroup = {
   status: string;
   statusBucket: string;
+  tickets: BoardTicket[];
+};
+
+export type AssigneeGroup = {
+  assignee: string;
   tickets: BoardTicket[];
 };

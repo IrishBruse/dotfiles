@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 import boardData from "virtual:jira-board";
 
 import { flattenTickets, groupTickets } from "../jira/board.ts";
-import type { BoardTicket } from "../jira/types.ts";
+import type { BoardData } from "../jira/types.ts";
 
 const PREVIEW_LIMIT = 5;
-const seedTickets = (boardData as { tickets: BoardTicket[] }).tickets;
+const seedBoard = boardData as BoardData;
 
 function statusDot(bucket: string): string {
   switch (bucket) {
@@ -25,13 +25,13 @@ function statusDot(bucket: string): string {
 }
 
 export default function JiraWidget() {
-  const [tickets, setTickets] = useState(seedTickets);
+  const [myTickets, setMyTickets] = useState(seedBoard.myTickets);
   const [syncing, setSyncing] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
 
   const preview = useMemo(
-    () => flattenTickets(groupTickets(tickets)).slice(0, PREVIEW_LIMIT),
-    [tickets]
+    () => flattenTickets(groupTickets(myTickets)).slice(0, PREVIEW_LIMIT),
+    [myTickets]
   );
 
   const handleSync = useCallback(async () => {
@@ -42,13 +42,13 @@ export default function JiraWidget() {
       const data = (await res.json()) as {
         ok: boolean;
         error?: string;
-        tickets?: BoardTicket[];
+        myTickets?: BoardData["myTickets"];
       };
-      if (!res.ok || !data.ok || !data.tickets) {
+      if (!res.ok || !data.ok || !data.myTickets) {
         setSyncError(data.error ?? "Sync failed");
         return;
       }
-      setTickets(data.tickets);
+      setMyTickets(data.myTickets);
     } catch {
       setSyncError("Sync failed");
     } finally {

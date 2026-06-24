@@ -113,12 +113,35 @@ function vscodeThemeCss(): string {
   return `:root {\n  color-scheme: dark;\n${lines.join("\n")}\n}`;
 }
 
+function criticalThemeStyle(): string {
+  return `${vscodeThemeCss()}
+html,
+body {
+  margin: 0;
+  background: var(--vscode-editor-background, #282c34);
+  color: var(--vscode-editor-foreground, #abb2bf);
+}`;
+}
+
 /** Inject VS Code workbench and markdown colors as CSS custom properties. */
 export function vscodeTheme(): Plugin {
   const settingsFile = settingsPath();
 
   return {
     name: "vscode-theme",
+    transformIndexHtml: {
+      order: "pre",
+      handler() {
+        return [
+          {
+            tag: "style",
+            attrs: { id: "vscode-theme-critical" },
+            children: criticalThemeStyle(),
+            injectTo: "head"
+          }
+        ];
+      }
+    },
     resolveId(id) {
       if (id === VIRTUAL_ID) {
         return RESOLVED_ID;

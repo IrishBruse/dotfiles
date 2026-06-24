@@ -11,8 +11,8 @@ body,
 
 body {
   margin: 0;
-  background: var(--vscode-editor-background);
-  color: var(--vscode-editor-foreground);
+  background: var(--vscode-editor-background, #282c34);
+  color: var(--vscode-editor-foreground, #abb2bf);
 }
 
 body:has(.jira-page) {
@@ -517,6 +517,31 @@ main.jira-page {
   font-weight: 600;
   letter-spacing: 0.06em;
   color: var(--vscode-descriptionForeground, #9d9d9d);
+}
+
+.jira-list-other {
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--vscode-panel-border, #3c3c3c);
+}
+
+.jira-list-assignee-heading {
+  margin: 0;
+  padding: 0.35rem 1rem 0.1rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--vscode-descriptionForeground, #9d9d9d);
+  list-style: none;
+}
+
+.jira-list-assignee-heading:first-child {
+  padding-top: 0.1rem;
+}
+
+.jira-list-rows-dense .jira-list-row {
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
 }
 
 .jira-list-rows {

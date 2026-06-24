@@ -37,6 +37,15 @@ type SprintJson = {
     myTickets: {
       statuses: Record<(typeof STATUS_ORDER)[number], SprintTicket[]>;
     };
+    teammates?: {
+      statuses: Record<(typeof STATUS_ORDER)[number], SprintTicket[]>;
+    };
+    unassigned?: {
+      statuses: Record<(typeof STATUS_ORDER)[number], SprintTicket[]>;
+    };
+    misc?: {
+      statuses: Record<(typeof STATUS_ORDER)[number], SprintTicket[]>;
+    };
   };
 };
 
@@ -59,7 +68,8 @@ export type BoardTicket = {
 };
 
 export type BoardData = {
-  tickets: BoardTicket[];
+  myTickets: BoardTicket[];
+  otherTickets: BoardTicket[];
 };
 
 function skillDir(): string {
@@ -199,18 +209,33 @@ function enrichTicket(
   };
 }
 
-function loadBoardData(): BoardData {
-  const sprint = JSON.parse(readFileSync(sprintPath(), "utf8")) as SprintJson;
-  const statuses = sprint.sections.myTickets.statuses;
+function loadSectionTickets(
+  statuses: Record<(typeof STATUS_ORDER)[number], SprintTicket[]>
+): BoardTicket[] {
   const tickets: BoardTicket[] = [];
-
   for (const bucket of STATUS_ORDER) {
     for (const row of statuses[bucket] ?? []) {
       tickets.push(enrichTicket(row, bucket));
     }
   }
+  return tickets;
+}
 
-  return { tickets };
+function loadBoardData(): BoardData {
+  const sprint = JSON.parse(readFileSync(sprintPath(), "utf8")) as SprintJson;
+  const { sections } = sprint;
+  const myTickets = loadSectionTickets(sections.myTickets.statuses);
+  const otherTickets = [
+    ...(sections.teammates
+      ? loadSectionTickets(sections.teammates.statuses)
+      : []),
+    ...(sections.unassigned
+      ? loadSectionTickets(sections.unassigned.statuses)
+      : []),
+    ...(sections.misc ? loadSectionTickets(sections.misc.statuses) : [])
+  ];
+
+  return { myTickets, otherTickets };
 }
 
 function boardModuleSource(): string {

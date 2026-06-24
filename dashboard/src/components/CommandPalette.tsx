@@ -12,9 +12,10 @@ import boardData from "virtual:jira-board";
 
 import { useCommandPalette } from "../command-palette/CommandPaletteContext.tsx";
 import { filterTickets } from "../jira/board.ts";
-import type { BoardTicket } from "../jira/types.ts";
+import type { BoardData, BoardTicket } from "../jira/types.ts";
 
-const tickets = (boardData as { tickets: BoardTicket[] }).tickets;
+const board = boardData as BoardData;
+const tickets = [...board.myTickets, ...board.otherTickets];
 const RESULT_LIMIT = 8;
 
 const NAV_ITEMS = [
