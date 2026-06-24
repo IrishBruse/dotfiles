@@ -977,12 +977,35 @@ function fetchBoardSprints(acli: string, boardId: string): BoardSprint[] {
 
 /** Sync Jira → skill markdown; returns 0 on success. */
 export function run(): number {
+  return runWithResult().code;
+}
+
+export type SyncResult = {
+  code: number;
+  error?: string;
+};
+
+let lastSyncError: string | undefined;
+
+function syncFail(msg: string): number {
+  process.stderr.write(`jira sync: ${msg}\n`);
+  lastSyncError = msg;
+  return 1;
+}
+
+/** Like `run()`, but includes the user-facing error message when `code !== 0`. */
+export function runWithResult(): SyncResult {
+  lastSyncError = undefined;
   try {
-    return runImpl();
+    const code = runImpl();
+    if (code !== 0) {
+      return { code, error: lastSyncError ?? "Sync failed" };
+    }
+    return { code };
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     process.stderr.write(`jira sync: ${msg}\n`);
-    return 1;
+    return { code: 1, error: msg };
   }
 }
 
@@ -994,16 +1017,13 @@ function runImpl(): number {
   const boardId = nonEmpty(CONFIG.boardId);
 
   if (!jql) {
-    process.stderr.write("jira sync: set CONFIG.boardJql.\n");
-    return 1;
+    return syncFail("set CONFIG.boardJql.");
   }
   if (!meAccountId) {
-    process.stderr.write("jira sync: set CONFIG.meAccountId.\n");
-    return 1;
+    return syncFail("set CONFIG.meAccountId.");
   }
   if (!siteHost) {
-    process.stderr.write("jira sync: set CONFIG.site.\n");
-    return 1;
+    return syncFail("set CONFIG.site.");
   }
   siteHost = normalizeSiteHost(siteHost);
 
@@ -1018,10 +1038,9 @@ function runImpl(): number {
     const retained = sprintsInRetentionWindow(boardSprints);
     sprintIds = retained.map((s) => s.id);
     if (sprintIds.length === 0) {
-      process.stderr.write(
-        `jira sync: no sprints in retention window (±2 days of start/end) on board ${boardId}.\n`
+      return syncFail(
+        `no sprints in retention window (±2 days of start/end) on board ${boardId}.`
       );
-      return 1;
     }
     log(`retained sprint id(s) on board: ${sprintIds.join(", ")}`);
     effectiveJql = scopeJqlToBoardSprints(effectiveJql, sprintIds);
@@ -1048,8 +1067,7 @@ function runImpl(): number {
   ]);
 
   if (!Array.isArray(data)) {
-    process.stderr.write("jira sync: expected JSON array from acli.\n");
-    return 1;
+    return syncFail("expected JSON array from acli.");
   }
 
   log(`received ${data.length} issue(s).`);
