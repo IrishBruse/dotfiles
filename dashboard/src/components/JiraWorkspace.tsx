@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import boardData from "virtual:jira-board";
 
+import { useCommandPalette } from "../command-palette/CommandPaletteContext.tsx";
 import {
   filterTickets,
   flattenTickets,
@@ -10,7 +11,6 @@ import {
 } from "../jira/board.ts";
 import { useJiraKeyboard } from "../jira/useJiraKeyboard.ts";
 import type { BoardTicket } from "../jira/types.ts";
-import SearchBar from "./SearchBar.tsx";
 import TicketDetail from "./TicketDetail.tsx";
 import TicketList from "./TicketList.tsx";
 
@@ -19,9 +19,22 @@ const initialTickets = (boardData as { tickets: BoardTicket[] }).tickets;
 export default function JiraWorkspace() {
   const [searchParams, setSearchParams] = useSearchParams();
   const ticketParam = searchParams.get("ticket");
-  const [query, setQuery] = useState("");
-  const searchRef = useRef<HTMLInputElement>(null);
+  const { query } = useCommandPalette();
   const selectedRowRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!searchParams.has("q")) {
+      return;
+    }
+    setSearchParams(
+      (params) => {
+        const next = new URLSearchParams(params);
+        next.delete("q");
+        return next;
+      },
+      { replace: true }
+    );
+  }, [searchParams, setSearchParams]);
 
   const filtered = useMemo(
     () => filterTickets(initialTickets, query),
@@ -43,17 +56,38 @@ export default function JiraWorkspace() {
   useEffect(() => {
     if (!selectedKey) {
       if (ticketParam) {
-        setSearchParams({}, { replace: true });
+        setSearchParams(
+          (params) => {
+            const next = new URLSearchParams(params);
+            next.delete("ticket");
+            return next;
+          },
+          { replace: true }
+        );
       }
       return;
     }
     if (selectedKey !== ticketParam) {
-      setSearchParams({ ticket: selectedKey }, { replace: true });
+      setSearchParams(
+        (params) => {
+          const next = new URLSearchParams(params);
+          next.set("ticket", selectedKey);
+          return next;
+        },
+        { replace: true }
+      );
     }
   }, [selectedKey, setSearchParams, ticketParam]);
 
   function selectKey(key: string): void {
-    setSearchParams({ ticket: key }, { replace: true });
+    setSearchParams(
+      (params) => {
+        const next = new URLSearchParams(params);
+        next.set("ticket", key);
+        return next;
+      },
+      { replace: true }
+    );
   }
 
   function moveSelection(delta: number): void {
@@ -72,10 +106,7 @@ export default function JiraWorkspace() {
     tickets: flat,
     selectedKey,
     onMove: moveSelection,
-    searchRef,
-    selectedRowRef,
-    searchQuery: query,
-    onClearSearch: () => setQuery("")
+    selectedRowRef
   });
 
   const selected =
@@ -83,11 +114,6 @@ export default function JiraWorkspace() {
 
   return (
     <section className="jira-workspace" aria-label="Jira workspace">
-      <SearchBar
-        ref={searchRef}
-        value={query}
-        onChange={setQuery}
-      />
       <div className="jira-panes">
         <TicketList
           groups={groups}

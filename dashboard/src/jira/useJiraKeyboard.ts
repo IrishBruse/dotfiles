@@ -1,6 +1,7 @@
 import { useEffect, type RefObject } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useCommandPalette } from "../command-palette/CommandPaletteContext.tsx";
 import type { BoardTicket } from "../jira/types.ts";
 import {
   branchName,
@@ -13,22 +14,17 @@ type Options = {
   tickets: BoardTicket[];
   selectedKey: string | null;
   onMove: (delta: number) => void;
-  searchRef: RefObject<HTMLInputElement | null>;
   selectedRowRef: RefObject<HTMLButtonElement | null>;
-  searchQuery: string;
-  onClearSearch: () => void;
 };
 
 export function useJiraKeyboard({
   tickets,
   selectedKey,
   onMove,
-  searchRef,
-  selectedRowRef,
-  searchQuery,
-  onClearSearch
+  selectedRowRef
 }: Options): void {
   const navigate = useNavigate();
+  const { inputRef, query, setQuery, focusSearch } = useCommandPalette();
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -38,16 +34,16 @@ export function useJiraKeyboard({
 
       if (event.key === "/" && !inSearch) {
         event.preventDefault();
-        onClearSearch();
-        searchRef.current?.focus();
+        setQuery("");
+        focusSearch();
         return;
       }
 
       if (event.key === "Escape") {
         event.preventDefault();
-        if (inSearch && searchQuery) {
-          onClearSearch();
-          searchRef.current?.blur();
+        if (inSearch && query) {
+          setQuery("");
+          inputRef.current?.blur();
           return;
         }
         navigate("/");
@@ -57,7 +53,7 @@ export function useJiraKeyboard({
       if (inSearch) {
         if (event.key === "ArrowDown") {
           event.preventDefault();
-          searchRef.current?.blur();
+          inputRef.current?.blur();
           selectedRowRef.current?.focus();
         }
         return;
@@ -107,13 +103,14 @@ export function useJiraKeyboard({
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [
+    focusSearch,
+    inputRef,
     navigate,
-    onClearSearch,
     onMove,
-    searchQuery,
-    searchRef,
+    query,
     selectedRowRef,
     selectedKey,
+    setQuery,
     tickets
   ]);
 }

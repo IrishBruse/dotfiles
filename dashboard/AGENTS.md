@@ -1,7 +1,9 @@
 # Dashboard
 
 Local start page Vite app (React + TypeScript).
+Dev and preview listen on port `54321`.
 Run `npm run dev`, `build`, or `preview` from this directory.
+Jira sync in dev calls `tools/jira/sync.ts` via the `jira-board` Vite plugin.
 
 ## Theme
 
@@ -77,21 +79,29 @@ Fixed semantic colors (not theme tokens):
 
 ## Component classes
 
-- `home-*` - landing page only (search, Jira widget).
+- `dashboard-*` - landing page only (Jira widget).
+- `command-palette-*` - global command palette and top bar.
 - `jira-*` - shared Jira UI (list rows, detail, markdown, workspace).
 - Reuse `jira-list-row`, `jira-list-key`, `jira-list-summary`, and `jira-status-dot` in the widget instead of duplicating row styles.
 
 ## Jira widget
 
-Floating card at bottom-left on the home page.
+Floating card at bottom-left on the landing page.
 
 - Container: `editor-background` + `editorWidget-border`.
 - Header: `sideBarSectionHeader` background and border; title links to `/jira`.
 - Rows: same list row classes as the full board; summaries use `editor-foreground`, keys use `textLink-foreground`.
 - Sync: `POST /api/jira/sync` (dev server only) via a primary button (`button-background` / `button-foreground`).
 
+## Command palette
+
+Single search bar fixed at the top of every page.
+`Ctrl+K` (`Cmd+K` on macOS) or `/` on the Jira board focuses it.
+On `/jira` it filters the board live.
+Elsewhere, focus shows a dropdown for navigation and Jira ticket matches.
+No backdrop dimming.
+
 ## Dev plugins
 
 - `vscode-theme` - CSS variables from VS Code settings.
 - `jira-board` - virtual `jira-board` module from local sprint.json + ticket markdown; HMR on file changes; sync endpoint in dev.
-- `duckduckgo-redirect` - `/?q=` redirects to DuckDuckGo.

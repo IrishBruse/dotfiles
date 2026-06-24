@@ -57,14 +57,14 @@ export default function JiraWidget() {
   }, []);
 
   return (
-    <aside className="home-jira-widget" aria-label="Jira preview">
-      <header className="home-jira-widget-header">
-        <Link className="home-jira-widget-title" to="/jira">
+    <aside className="dashboard-jira-widget" aria-label="Jira preview">
+      <header className="dashboard-jira-widget-header">
+        <Link className="dashboard-jira-widget-title" to="/jira">
           Jira
         </Link>
         <button
           type="button"
-          className="home-jira-widget-action"
+          className="dashboard-jira-widget-action"
           onClick={handleSync}
           disabled={syncing}
           aria-label="Sync Jira"
@@ -74,7 +74,7 @@ export default function JiraWidget() {
         </button>
       </header>
       {syncError && (
-        <p className="home-jira-widget-error" role="status">
+        <p className="dashboard-jira-widget-error" role="status">
           {syncError}
         </p>
       )}

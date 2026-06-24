@@ -19,32 +19,57 @@ body:has(.jira-page) {
   overflow: hidden;
 }
 
-main.home-landing {
+.dashboard-app {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
+  flex-direction: column;
   height: 100%;
-  padding: 1.5rem;
-  overflow: hidden;
 }
 
-.home-landing-inner {
+.dashboard-app-content {
+  flex: 1;
+  min-height: 0;
+  box-sizing: border-box;
+  padding-top: 2.75rem;
+}
+
+.command-palette-topbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  background: var(--vscode-editor-background, #282c34);
+}
+
+.command-palette-shell {
+  position: relative;
   width: 100%;
-  max-width: 28rem;
+  max-width: 32rem;
 }
 
-.home-landing h1 {
-  margin: 0 0 1.5rem;
-  font-size: 1.5rem;
-  font-weight: 600;
-  text-align: center;
+.command-palette-shell.is-open {
+  overflow: hidden;
+  border: 1px solid var(--vscode-input-border, #3c3c3c);
+  border-radius: 4px;
+  box-shadow: 0 6px 16px rgb(0 0 0 / 32%);
 }
 
-.home-search input {
+.command-palette-shell.is-open:focus-within {
+  border-color: var(--vscode-focusBorder, #35a854);
+}
+
+.command-palette-form {
+  position: relative;
+  margin: 0;
+}
+
+.command-palette-form input {
   width: 100%;
   box-sizing: border-box;
-  padding: 0.65rem 0.85rem;
+  padding: 0.45rem 4.25rem 0.45rem 0.75rem;
   border: 1px solid var(--vscode-input-border, #3c3c3c);
   border-radius: 4px;
   background: var(--vscode-input-background, #252931);
@@ -52,11 +77,162 @@ main.home-landing {
   font: inherit;
 }
 
-.home-search input:focus {
-  outline: 1px solid var(--vscode-focusBorder, #35a854);
+.command-palette-form input:focus {
+  outline: none;
+  border-color: var(--vscode-focusBorder, #35a854);
 }
 
-.home-jira-widget {
+.command-palette-shell.is-open .command-palette-form input {
+  border: 0;
+  border-radius: 0;
+}
+
+.command-palette-shell.is-open .command-palette-form input:focus {
+  border-color: transparent;
+}
+
+.command-palette-kbd {
+  position: absolute;
+  top: 50%;
+  right: 0.6rem;
+  padding: 0.1rem 0.35rem;
+  border: 1px solid var(--vscode-panel-border, #3c3c3c);
+  border-radius: 3px;
+  background: var(--vscode-editor-background, #282c34);
+  color: var(--vscode-descriptionForeground, #7f848e);
+  font-family: inherit;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.command-palette-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  box-sizing: border-box;
+  max-height: min(18rem, 45vh);
+  overflow: hidden;
+  background: var(--vscode-input-background, #252931);
+}
+
+.command-palette-shell.is-open .command-palette-dropdown {
+  position: static;
+  max-height: min(18rem, 45vh);
+}
+
+.command-palette-results-list {
+  margin: 0;
+  padding: 0.25rem 0 0.35rem;
+  overflow-y: auto;
+  max-height: min(18rem, 45vh);
+  list-style: none;
+}
+
+.command-palette-results-list > li {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.command-palette-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 0.35rem 0.75rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.command-palette-row:hover,
+.command-palette-row.is-active {
+  background: var(--vscode-list-hoverBackground, #2c313a);
+}
+
+.command-palette-row.is-active {
+  background: var(--vscode-list-activeSelectionBackground, #2c313a);
+}
+
+.command-palette-row-kind {
+  flex-shrink: 0;
+  min-width: 2rem;
+  color: var(--vscode-descriptionForeground, #7f848e);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.command-palette-row-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--vscode-textLink-foreground, #35a854);
+}
+
+.command-palette-shell .jira-list-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.command-palette-shell .jira-status-dot,
+.command-palette-shell .jira-list-key {
+  flex-shrink: 0;
+}
+
+.command-palette-shell .jira-list-summary {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--vscode-editor-foreground, #abb2bf);
+}
+
+.command-palette-empty {
+  margin: 0;
+  padding: 0.5rem 0.75rem 0.65rem;
+  color: var(--vscode-descriptionForeground, #7f848e);
+  font-size: 0.8125rem;
+}
+
+main.dashboard-landing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 1.5rem;
+  overflow: visible;
+}
+
+.dashboard-landing-inner {
+  position: relative;
+  width: 100%;
+  max-width: 28rem;
+}
+
+.dashboard-landing h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.dashboard-jira-widget {
   position: fixed;
   bottom: 1rem;
   left: 1rem;
@@ -69,7 +245,7 @@ main.home-landing {
   font-size: 0.8125rem;
 }
 
-.home-jira-widget-header {
+.dashboard-jira-widget-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -79,7 +255,7 @@ main.home-landing {
   border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border, #3a3f4b);
 }
 
-.home-jira-widget-title {
+.dashboard-jira-widget-title {
   font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -88,11 +264,11 @@ main.home-landing {
   color: var(--vscode-textLink-foreground, #35a854);
 }
 
-.home-jira-widget-title:hover {
+.dashboard-jira-widget-title:hover {
   color: var(--vscode-textLink-activeForeground, #d7dae0);
 }
 
-.home-jira-widget-action {
+.dashboard-jira-widget-action {
   padding: 0.2rem 0.55rem;
   border: 0;
   border-radius: 2px;
@@ -104,16 +280,16 @@ main.home-landing {
   cursor: pointer;
 }
 
-.home-jira-widget-action:hover:not(:disabled) {
+.dashboard-jira-widget-action:hover:not(:disabled) {
   background: var(--vscode-button-hoverBackground, #35974f);
 }
 
-.home-jira-widget-action:disabled {
+.dashboard-jira-widget-action:disabled {
   opacity: 0.6;
   cursor: default;
 }
 
-.home-jira-widget-error {
+.dashboard-jira-widget-error {
   margin: 0;
   padding: 0.35rem 0.75rem;
   font-size: 0.75rem;
@@ -121,13 +297,13 @@ main.home-landing {
   color: var(--vscode-errorForeground, #f48771);
 }
 
-.home-jira-widget .jira-list-rows,
-.home-jira-widget .jira-list-rows > li {
+.dashboard-jira-widget .jira-list-rows,
+.dashboard-jira-widget .jira-list-rows > li {
   min-width: 0;
   max-width: 100%;
 }
 
-.home-jira-widget .jira-list-row {
+.dashboard-jira-widget .jira-list-row {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -140,12 +316,12 @@ main.home-landing {
   overflow: hidden;
 }
 
-.home-jira-widget .jira-status-dot,
-.home-jira-widget .jira-list-key {
+.dashboard-jira-widget .jira-status-dot,
+.dashboard-jira-widget .jira-list-key {
   flex-shrink: 0;
 }
 
-.home-jira-widget .jira-list-summary {
+.dashboard-jira-widget .jira-list-summary {
   flex: 1 1 0;
   min-width: 0;
   overflow: hidden;
@@ -173,26 +349,6 @@ main.jira-page {
   height: 100%;
   box-sizing: border-box;
   background: var(--vscode-editor-background);
-}
-
-.jira-search {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--vscode-panel-border, #3c3c3c);
-}
-
-.jira-search-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--vscode-input-border, #3c3c3c);
-  border-radius: 4px;
-  background: var(--vscode-input-background, #1e1e1e);
-  color: var(--vscode-input-foreground, #cccccc);
-  font: inherit;
-}
-
-.jira-search-input:focus {
-  outline: 1px solid var(--vscode-focusBorder, #007fd4);
 }
 
 .jira-panes {
