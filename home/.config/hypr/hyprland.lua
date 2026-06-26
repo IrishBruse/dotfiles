@@ -14,20 +14,35 @@ _G.HYPR_VARS = {
 ---- MONITORS ---
 -----------------
 
-hl.monitor({
-	output = "DP-1",
-	mode = "2560x1440@165",
-	position = "0x0",
-	scale = 1.25,
-	vrr = 3,
-})
+local monitors = {
+	main = {
+		desc = "AOC Q24G2",
+		mode = "2560x1440@165",
+		scale = 1.25,
+		vrr = 3,
+	},
+	-- side is relative to main: left or right (port name can change, desc is stable)
+	external = {
+		{ desc = "BNQ BenQ GL2250H", mode = "1920x1080@60", scale = 1, side = "left" },
+	},
+}
 
 hl.monitor({
-	output = "HDMI-A-3",
-	mode = "1920x1080@60",
-	position = "2048x0",
-	scale = 1,
+	output = "desc:" .. monitors.main.desc,
+	mode = monitors.main.mode,
+	position = "0x0",
+	scale = monitors.main.scale,
+	vrr = monitors.main.vrr,
 })
+
+for _, mon in ipairs(monitors.external) do
+	hl.monitor({
+		output = "desc:" .. mon.desc,
+		mode = mon.mode,
+		position = mon.side == "left" and "auto-left" or "auto-right",
+		scale = mon.scale,
+	})
+end
 
 hl.config({
 	xwayland = {
