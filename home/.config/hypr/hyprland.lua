@@ -107,7 +107,7 @@ hl.config({
 
 	scrolling = {
 		column_width = 1,
-		follow_focus = false,
+		follow_focus = true,
 	},
 
 	misc = {
@@ -393,6 +393,6 @@ hl.window_rule({
 })
 
 hl.window_rule({
-	match = { title = "^(Client \\(.*)" },
+	match = { class = "project-proximity", initial_title = "^(Client|Host) " },
 	monitor = "1",
 })
