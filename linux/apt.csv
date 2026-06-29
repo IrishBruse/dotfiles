@@ -259,6 +259,7 @@ gcc-13-x86-64-linux-gnu,13.3.0-6ubuntu2~24.04.1
 gcc-14,14.3.0-12ubuntu1~24~ppa1
 gcc-14-base,14.3.0-12ubuntu1~24~ppa1
 gcc-14-x86-64-linux-gnu,14.3.0-12ubuntu1~24~ppa1
+gcc-15,15.2.0-14ubuntu1~24~ppa1
 gcc-15-base,15.2.0-14ubuntu1~24~ppa1
 gcc-16-base,16-20260315-1ubuntu1~24~ppa1
 gcc-16-base,16-20260315-1ubuntu1~24~ppa1
@@ -2015,7 +2016,7 @@ packagekit-tools,1.2.8+mint3+wilma
 packages-microsoft-prod,1.1-debian12
 pamixer,1.6-1
 pandoc,3.1.3+ds-2
-pandora-launcher,5.0.1
+pandora-launcher,5.2.2
 papirus-icon-theme,20240201-1
 parted,3.6-4build1
 passwd,1:4.13+dfsg1-4ubuntu3.2
