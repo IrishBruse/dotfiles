@@ -393,6 +393,7 @@ hl.window_rule({
 })
 
 hl.window_rule({
-	match = { class = "project-proximity", initial_title = "^(Client|Host) " },
+	match = { class = "project-proximity" },
 	monitor = "1",
+	scrolling_width = 0.5,
 })

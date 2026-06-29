@@ -7,7 +7,7 @@ function M.on_start()
 	hl.exec_cmd("bash ~/.config/hypr/scripts/bluetooth-start.sh")
 	hl.exec_cmd("waybar")
 	hl.exec_cmd("swaync")
-	hl.exec_cmd("grun")
+	hl.exec_cmd("grun --minimized")
 	hl.exec_cmd("hyprctl setcursor CustomCursors 22")
 
 	hl.exec_cmd(
