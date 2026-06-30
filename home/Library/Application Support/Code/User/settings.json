@@ -1622,7 +1622,6 @@
   "editor.allowVariableFontsInAccessibilityMode": true,
   "fish.path.fish": "/opt/homebrew/bin/fish",
   "fish.path.fish_indent": "/opt/homebrew/bin/fish_indent",
-  "workbench.browser.openLocalhostLinks": true,
   "workbench.layoutControl.enabled": false,
   "terminal.integrated.gpuAcceleration": "on",
   "git.repositoryScanMaxDepth": 2,
@@ -1632,5 +1631,5 @@
   "terminal.integrated.stickyScroll.enabled": false,
   "markdownInlineEditor.tables.renderingMode": "inline",
   "excalidraw.theme": "dark",
-  "workbench.browser.searchEngine": "duckduckgo"
+  "mediaPreview.video.autoPlay": true
 }
