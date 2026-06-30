@@ -1,4 +1,4 @@
-fnm env --use-on-cd --shell fish | source
+fnm env --use-on-cd --log-level quiet --shell fish | source
 
 set -gx ANDROID_HOME /usr/lib/android-sdk
 

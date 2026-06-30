@@ -1,8 +1,7 @@
 ---
 name: pr-fix
-description: >
-  Fixes CI, GitHub Actions workflow failures, and unresolved review comments on the current pull request.
-  Use when PR checks fail, workflows are red, review feedback needs addressing, or the user asks to fix PR CI or review comments.
+description: Fix red CI checks and unresolved review comments on the current pull request.
+disable-model-invocation: true
 ---
 
 # PR Fix
