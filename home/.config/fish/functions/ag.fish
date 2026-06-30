@@ -1,3 +1,3 @@
 function ag
-    agent --model "gpt-5.5-medium" $argv
+    agent --model "glm-5.2-high" $argv
 end
