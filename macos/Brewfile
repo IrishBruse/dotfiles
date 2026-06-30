@@ -8,8 +8,8 @@ tap "databricks/tap", trusted: true
 tap "dotnet/dev-proxy", "https://github.com/dotnet/homebrew-dev-proxy.git"
 tap "gp-nova/devx-cli", "https://github.com/gp-nova/devx-cli.git", trusted: true
 tap "jackielii/tap"
-tap "kreuzberg-dev/tap"
 tap "localstack/tap"
+tap "xberg-io/tap", "https://github.com/xberg-io/homebrew-tap.git"
 # Mozilla CA certificate store
 brew "ca-certificates"
 # CLI tool to build, test, debug, and deploy Serverless applications using AWS SAM
@@ -76,8 +76,6 @@ brew "stow"
 brew "zoxide"
 # Command-line interface for the Databricks platform
 brew "databricks/tap/databricks"
-# CLI tool to support project setup and updating
-brew "gp-nova/devx-cli/devx-cli"
 # Display management tool
 cask "betterdisplay"
 # 3D creation suite
