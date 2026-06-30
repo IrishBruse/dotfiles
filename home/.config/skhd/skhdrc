@@ -24,6 +24,15 @@ cmd - right [
   @editor_apps ~
   * | alt - right
 ]
+cmd + shift - left [
+  @editor_apps ~
+  * | alt + shift - left
+]
+cmd + shift - right [
+  @editor_apps ~
+  * | alt + shift - right
+]
+
 cmd - backspace [
   @editor_apps ~
   * | alt - backspace
