@@ -17,3 +17,4 @@ home/.cursor/rules/gp-rules.mdc
 home/.config/fish/completions/sdd.fish
 
 home/.agents/memory
+home/.local/bin/chrome
