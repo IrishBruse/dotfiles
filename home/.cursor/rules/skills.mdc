@@ -23,6 +23,6 @@ Reference other skills by name only, in backticks: `skill-name-here`. Do not use
 When the user corrects skill text, update in place:
 
 - State the new guidance only. Remove the old wording.
-- Do not restate what was wrong, add "do not" negations for the prior rule, or keep both old and new versions.
+- Do not restate what was wrong, do not add negations for the prior rule, or keep both old and new versions.
 
 Example: if the skill said use format A and the user wants B, the skill should describe B only. Do not add "do not use A" or a note that it used to be A.
