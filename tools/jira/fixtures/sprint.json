@@ -1,5 +1,5 @@
 {
-  "name": "jira-tickets",
+  "name": "jira-board",
   "description": "This skill contains in plaintext the current state of the board no need for MCP. Use when needing to get the current state of the Jira Board, when needing to get a ticket for a PR.",
   "sections": {
     "myTickets": {

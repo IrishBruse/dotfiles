@@ -1,20 +1,20 @@
 /**
- * Paths under the `~/.agents/skills/jira-tickets/` skill and lookup of on-disk ticket markdown.
+ * Paths under the `~/.agents/skills/jira-board/` skill and lookup of on-disk ticket markdown.
  */
 import fs from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 
-/** Skill folder: `~/.agents/skills/jira-tickets/` */
-export const JIRA_TICKETS_SKILL_DIR = path.resolve(
+/** Skill folder: `~/.agents/skills/jira-board/` */
+export const JIRA_BOARD_SKILL_DIR = path.resolve(
   homedir(),
   ".agents",
   "skills",
-  "jira-tickets"
+  "jira-board"
 );
 
 export const JIRA_REFERENCES_DIR = path.join(
-  JIRA_TICKETS_SKILL_DIR,
+  JIRA_BOARD_SKILL_DIR,
   "references"
 );
 

@@ -73,7 +73,7 @@ export type BoardData = {
 };
 
 function skillDir(): string {
-  return path.join(homedir(), ".agents", "skills", "jira-tickets");
+  return path.join(homedir(), ".agents", "skills", "jira-board");
 }
 
 function sprintPath(): string {

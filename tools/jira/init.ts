@@ -1,5 +1,5 @@
 /**
- * Create empty jira-tickets skill directory structure with sample tickets.
+ * Create empty jira-board skill directory structure with sample tickets.
  * Usage: jira init [path]
  */
 import fs from "node:fs";
@@ -16,7 +16,7 @@ const defaultSkillDir = path.join(
   homedir(),
   ".agents",
   "skills",
-  "jira-tickets"
+  "jira-board"
 );
 
 /** Run the init subcommand; returns exit code. */
@@ -180,6 +180,6 @@ Sample ticket description for **${key}**.
     "utf-8"
   );
 
-  console.log(`Created jira-tickets skill at ${skillDir}`);
+  console.log(`Created jira-board skill at ${skillDir}`);
   return 0;
 }

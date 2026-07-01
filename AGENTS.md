@@ -5,7 +5,7 @@
 Files here mirror `~` and are manually stowed by the user. You can assume that any path in this will be mirrored to its `~/` equivalent.
 
 In docs and tool code, use the **runtime** path under `~/`, not the repo path under `home/`.
-Example: `~/.agents/skills/jira-tickets/`, not `home/.agents/skills/jira-tickets/` or `dotfiles/home/.agents/...`.
+Example: `~/.agents/skills/jira-board/`, not `home/.agents/skills/jira-board/` or `dotfiles/home/.agents/...`.
 Tools should resolve these with `homedir()` from `node:os`, not relative paths from `tools/` into the dotfiles tree.
 
 ### linux/
@@ -36,7 +36,7 @@ Custom VS Code UI CSS.
 
 ### tools/
 
-- `jira` - View, sync, and initialize local Jira board markdown at `~/.agents/skills/jira-tickets/` (`SKILL.md` plus `references/{me,team,unassigned,misc}/`); pull or copy tickets
+- `jira` - View, sync, and initialize local Jira board markdown at `~/.agents/skills/jira-board/` (`SKILL.md` plus `references/{me,team,unassigned,misc}/`); pull or copy tickets
 - `confluence` - Clone a Confluence page subtree to local markdown via acli
 - `pr` - GitHub pull request helper: auto create or update via Cursor agent skills; `pr fix` for failed CI
 - `interpolate` - Expand markdown prompt templates (builtins, env, conditions, shell snippets)

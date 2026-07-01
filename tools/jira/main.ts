@@ -3,7 +3,7 @@
  * Jira CLI — view, sync, and initialize local Jira board.
  * Usage:
  *   jira                       print help
- *   jira board                 view board (jira-tickets skill)
+ *   jira board                 view board (jira-board skill)
  *   jira sync                  fetch Jira → skill markdown (needs CONFIG + acli)
  *   jira init [path]           create empty skill directory structure
  *   jira pull <KEY|URL>        fetch a single ticket into references/misc
@@ -21,7 +21,7 @@ import { parseJiraKey } from "./jiraInput.ts";
 function printHelp(): void {
   process.stdout.write(`Usage:
   jira                       print help
-  jira board                 view board (jira-tickets skill)
+  jira board                 view board (jira-board skill)
   jira sync                  fetch Jira → skill markdown (needs CONFIG + acli)
   jira init [path]           create empty skill directory structure
   jira pull <KEY|URL>        fetch a single ticket into references/misc

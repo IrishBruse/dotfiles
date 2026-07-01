@@ -1,7 +1,7 @@
 /**
- * Sync Jira issues into the jira-tickets skill via `acli jira workitem search` (Atlassian CLI).
- * Writes per-ticket markdown into `~/.agents/skills/jira-tickets/references/{me,team,unassigned}/`
- * and regenerates `~/.agents/skills/jira-tickets/SKILL.md` and `sprint.json`.
+ * Sync Jira issues into the jira-board skill via `acli jira workitem search` (Atlassian CLI).
+ * Writes per-ticket markdown into `~/.agents/skills/jira-board/references/{me,team,unassigned}/`
+ * and regenerates `~/.agents/skills/jira-board/SKILL.md` and `sprint.json`.
  *
  * When CONFIG.boardId is set, only sprints whose window overlaps today are fetched
  * (from 2 days before sprint start through 2 days after sprint end). Tickets that drop
@@ -427,8 +427,8 @@ const STATUS_ORDER: StatusBucket[] = [
   "done"
 ];
 
-const JIRA_TICKETS_SKILL_NAME = "jira-tickets";
-const JIRA_TICKETS_SKILL_DESCRIPTION =
+const JIRA_BOARD_SKILL_NAME = "jira-board";
+const JIRA_BOARD_SKILL_DESCRIPTION =
   "This skill contains in plaintext the current state of the board no need for MCP. Use when needing to get the current state of the Jira Board, when needing to get a ticket for a PR.";
 
 /** One ticket row in the skill board summary. */
@@ -588,8 +588,8 @@ export function buildJiraTicketsSkillContent(
   }
 
   return {
-    name: JIRA_TICKETS_SKILL_NAME,
-    description: JIRA_TICKETS_SKILL_DESCRIPTION,
+    name: JIRA_BOARD_SKILL_NAME,
+    description: JIRA_BOARD_SKILL_DESCRIPTION,
     sections
   };
 }
@@ -697,20 +697,20 @@ export function writeJiraTicketsSkill(
   );
 }
 
-/** Skill folder: `~/.agents/skills/jira-tickets/` */
-const JIRA_TICKETS_SKILL_DIR = path.resolve(
+/** Skill folder: `~/.agents/skills/jira-board/` */
+const JIRA_BOARD_SKILL_DIR = path.resolve(
   homedir(),
   ".agents",
   "skills",
-  "jira-tickets"
+  "jira-board"
 );
 
 /** Per-ticket markdown lives under `<skill>/references/{me,team,unassigned}/` so the skill self-references its own detail. */
-const BOARD_OUTPUT_ROOT = path.join(JIRA_TICKETS_SKILL_DIR, "references");
+const BOARD_OUTPUT_ROOT = path.join(JIRA_BOARD_SKILL_DIR, "references");
 
-const JIRA_TICKETS_SKILL_PATH = path.join(JIRA_TICKETS_SKILL_DIR, "SKILL.md");
-const JIRA_TICKETS_SPRINT_JSON_PATH = path.join(
-  JIRA_TICKETS_SKILL_DIR,
+const JIRA_BOARD_SKILL_PATH = path.join(JIRA_BOARD_SKILL_DIR, "SKILL.md");
+const JIRA_BOARD_SPRINT_JSON_PATH = path.join(
+  JIRA_BOARD_SKILL_DIR,
   "sprint.json"
 );
 
@@ -1087,9 +1087,9 @@ function runImpl(): number {
   });
 
   log(
-    `writing jira-tickets skill → ${JIRA_TICKETS_SKILL_PATH}, ${JIRA_TICKETS_SPRINT_JSON_PATH}`
+    `writing jira-board skill → ${JIRA_BOARD_SKILL_PATH}, ${JIRA_BOARD_SPRINT_JSON_PATH}`
   );
-  writeJiraTicketsSkill(issues, JIRA_TICKETS_SKILL_PATH, meAccountId);
+  writeJiraTicketsSkill(issues, JIRA_BOARD_SKILL_PATH, meAccountId);
 
   log("done.");
   printSyncSummary({
@@ -1098,8 +1098,8 @@ function runImpl(): number {
     issueCount: issues.length,
     result,
     outRoot,
-    skillPath: JIRA_TICKETS_SKILL_PATH,
-    sprintJsonPath: JIRA_TICKETS_SPRINT_JSON_PATH
+    skillPath: JIRA_BOARD_SKILL_PATH,
+    sprintJsonPath: JIRA_BOARD_SPRINT_JSON_PATH
   });
   return 0;
 }

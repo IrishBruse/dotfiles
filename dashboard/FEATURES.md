@@ -108,7 +108,7 @@ Full-height split-pane workspace for browsing local Jira tickets.
 
 ### Data source
 
-Tickets load from `~/.agents/skills/jira-tickets/`:
+Tickets load from `~/.agents/skills/jira-board/`:
 
 - `sprint.json` defines sprint sections and ticket keys per status bucket.
 - Per-ticket markdown under `references/{me,team,unassigned,misc}/<KEY>.md` enriches description, URL, priority, subtasks, and updated time.

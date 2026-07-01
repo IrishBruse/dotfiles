@@ -29,7 +29,7 @@ It is weak on **operational health**, **PR/CI state**, and **agent workflow glue
 Jira sync / cron issues show up repeatedly in agent logs.
 Extend the existing Jira widget header (or add a thin strip above it) with:
 
-- **Last sync time** (max mtime of `~/.agents/skills/jira-tickets/references/**/*.md` or a small `sync-state.json` written by `jira sync`)
+- **Last sync time** (max mtime of `~/.agents/skills/jira-board/references/**/*.md` or a small `sync-state.json` written by `jira sync`)
 - **Stale warning** if older than cron interval (e.g. >6h)
 - **Last error** from cron log or last failed sync
 - **Auth hint** when error matches `unauthorized` / `acli ... auth login`

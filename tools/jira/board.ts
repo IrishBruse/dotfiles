@@ -1,5 +1,5 @@
 /**
- * Print the local Jira board from `~/.agents/skills/jira-tickets/SKILL.md`.
+ * Print the local Jira board from `~/.agents/skills/jira-board/SKILL.md`.
  * In a TTY it is interactive: ↑/↓ (or j/k) between tickets, ←/→ to switch
  * tabs (row above the table), Enter to open the local md,
  * `o` for Jira in browser, `u` to run sync and reload, q / Esc / Ctrl-C to quit.
@@ -574,7 +574,7 @@ const defaultSkillPath = path.join(
   "home",
   ".agents",
   "skills",
-  "jira-tickets",
+  "jira-board",
   "SKILL.md"
 );
 

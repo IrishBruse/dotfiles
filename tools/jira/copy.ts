@@ -5,7 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
-import { findLocalTicketMarkdown, JIRA_MISC_DIR } from "./jiraTicketsPaths.ts";
+import { findLocalTicketMarkdown, JIRA_MISC_DIR } from "./jiraBoardPaths.ts";
 import { parseJiraKey } from "./jiraInput.ts";
 import { run as runPull } from "./pull.ts";
 

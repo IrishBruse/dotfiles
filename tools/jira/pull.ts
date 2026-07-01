@@ -7,7 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { CONFIG } from "./CONFIG.ts";
-import { JIRA_MISC_DIR } from "./jiraTicketsPaths.ts";
+import { JIRA_MISC_DIR } from "./jiraBoardPaths.ts";
 import {
   formatTicketMarkdown,
   classifyFolder,
