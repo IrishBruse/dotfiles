@@ -2,10 +2,7 @@
 import { readFileSync } from "node:fs";
 
 const ESC = "\x1b";
-const ANSI_RESET = `${ESC}[0m`;
 const ANSI_FG_GRAY = `${ESC}[90m`;
-const ANSI_FG_BRIGHT_RED = `${ESC}[91m`;
-const ANSI_FG_BRIGHT_YELLOW = `${ESC}[93m`;
 /** @param {number | null | undefined} tokenCount */
 function fmtk(tokenCount) {
   if (tokenCount == null) return "?";
@@ -13,14 +10,6 @@ function fmtk(tokenCount) {
   const whole = Math.floor(roundedK);
   const tenths = Math.round(roundedK * 10) % 10;
   return `${whole}.${tenths}k`;
-}
-
-/** @param {number | null | undefined} usedTokens */
-function usageColorAnsi(usedTokens) {
-  const n = usedTokens ?? 0;
-  if (n > 100_000) return ANSI_FG_BRIGHT_RED;
-  if (n > 80_000) return ANSI_FG_BRIGHT_YELLOW;
-  return ANSI_FG_GRAY;
 }
 
 /** @param {{ id?: string, display_name?: string }} model */
@@ -55,7 +44,7 @@ const cwdRaw = payload.cwd ?? payload.workspace?.current_dir ?? "";
 const cwdDisplay = cwdRaw === "" ? "?" : pwdWithHomeTilde(cwdRaw);
 
 const contextSegment = hasContextUsage
-  ? `  ${ANSI_RESET}${usageColorAnsi(totalInputTokens)}${fmtk(totalInputTokens)}/${limitDisplay}${ANSI_RESET}`
-  : ANSI_RESET;
+  ? `  ${fmtk(totalInputTokens)}/${limitDisplay}`
+  : "";
 const line = `${ANSI_FG_GRAY}${cwdDisplay}  ${modelLabel}${contextSegment}`;
 process.stdout.write(`${line}\n`);

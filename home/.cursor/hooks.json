@@ -1,21 +1,10 @@
 {
   "version": 1,
   "hooks": {
-    "preToolUse": [
+    "postToolUse": [
       {
         "command": "./hooks/style-lint.js",
         "matcher": "^(Write|StrReplace)$"
-      }
-    ],
-    "afterAgentResponse": [
-      {
-        "command": "./hooks/style-lint.js"
-      }
-    ],
-    "stop": [
-      {
-        "command": "./hooks/style-lint.js",
-        "loop_limit": 1
       }
     ]
   }

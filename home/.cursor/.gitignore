@@ -54,10 +54,9 @@ plugins/
 
 !.gitignore
 
-# User-level cursor hooks (enforce global.mdc Response style)
+# User-level cursor hooks (lint markdown and cursor rule files)
 !hooks.json
 !hooks/
 !hooks/**
-!hooks/.state/
 
 rules/gp-rules.mdc
