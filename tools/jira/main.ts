@@ -6,7 +6,6 @@ import process from "node:process";
 import { runJiraInteractive } from "./interactive.ts";
 import { run as runPull, pullAll } from "./pull.ts";
 import { pushAll, pushTicket } from "./push.ts";
-import { run as runCopy } from "./copy.ts";
 import { parseJiraKey } from "./jiraInput.ts";
 import { printError } from "./output.ts";
 
@@ -18,7 +17,6 @@ function printHelp(): void {
   jira pull --all            re-pull every local ticket from Jira
   jira push <KEY>            push local ticket edits to Jira
   jira push --all            push every local ticket to Jira
-  jira copy <KEY|URL> [dir]  copy ticket folder here or under dir
   jira -h|--help             this message
 
 Interactive keys:
@@ -71,14 +69,6 @@ async function main(): Promise<void> {
       process.exit(1);
     }
     process.exit(pushTicket(key));
-  }
-  if (arg === "copy") {
-    const input = process.argv[3];
-    if (!input) {
-      printError("copy: missing ticket key or URL");
-      process.exit(1);
-    }
-    process.exit(runCopy(input, process.argv[4]));
   }
   const key = parseJiraKey(arg);
   if (key) {

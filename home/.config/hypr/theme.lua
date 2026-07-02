@@ -1,6 +1,6 @@
 -- Mirrors theme.conf (environment variables + GTK/gsettings on start).
+-- GDK_BACKEND unset: let GTK pick (Cinnamon does not force wayland; helps Nemo/file-roller DnD).
 
-hl.env("GDK_BACKEND", "wayland,x11,*")
 hl.env("SDL_VIDEODRIVER", "wayland")
 hl.env("CLUTTER_BACKEND", "wayland")
 hl.env("XDG_CURRENT_DESKTOP", "Hyprland")

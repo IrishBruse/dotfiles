@@ -1,0 +1,128 @@
+{
+  "disable_ai": true,
+  "agent": {
+    "enabled": false,
+    "button": false,
+    "dock": "right",
+    "favorite_models": [],
+    "model_parameters": []
+  },
+  "outline_panel": {
+    "dock": "right",
+    "button": false
+  },
+  "collaboration_panel": {
+    "dock": "right",
+    "button": false
+  },
+  "git_panel": {
+    "dock": "right"
+  },
+  "theme": {
+    "mode": "dark",
+    "dark": "Empty Dark",
+    "light": "Empty Dark",
+  },
+  "icon_theme": "Material Icon Theme",
+  "ui_font_family": "Cascadia Code",
+  "ui_font_weight": 400.0,
+  "ui_font_size": 12.0,
+  "mouse_wheel_zoom": true,
+  "buffer_font_family": "Cascadia Code",
+  "buffer_font_size": 12,
+  "agent_ui_font_size": 12.0,
+  "agent_buffer_font_size": 12,
+  "buffer_line_height": "standard",
+  "cursor_blink": true,
+  "current_line_highlight": "line",
+  "selection_highlight": false,
+  "show_whitespaces": "trailing",
+  "soft_wrap": "bounded",
+  "preferred_line_length": 1000,
+  "show_wrap_guides": false,
+  "colorize_brackets": false,
+  "format_on_save": "on",
+  "remove_trailing_whitespace_on_save": true,
+  "scroll_sensitivity": 3.0,
+  "minimap": {
+    "show": "never",
+  },
+  "scrollbar": {
+    "show": "auto",
+    "axes": {
+      "horizontal": true,
+      "vertical": true,
+    },
+  },
+  "gutter": {
+    "line_numbers": true,
+    "folds": true,
+  },
+  "indent_guides": {
+    "enabled": true,
+    "line_width": 1,
+    "active_line_width": 1,
+    "coloring": "fixed",
+    "background_coloring": "disabled",
+  },
+  "sticky_scroll": {
+    "enabled": false,
+  },
+  "inlay_hints": {
+    "enabled": false,
+    "show_background": false,
+    "toggle_on_modifiers_press": {
+      "alt": true,
+    },
+  },
+  "show_edit_predictions": false,
+  "toolbar": {
+    "breadcrumbs": false,
+  },
+  "project_panel": {
+    "dock": "right",
+    "folder_icons": true,
+    "file_icons": true,
+    "sticky_scroll": true
+  },
+  "debugger": {
+    "dock": "right",
+    "button": false
+  },
+  "title_bar": {
+    "show_menus": false,
+    "show_sign_in": false,
+    "show_onboarding_banner": false
+  },
+  "tabs": {
+    "git_status": false,
+    "close_position": "right",
+    "show_close_button": "hover",
+    "file_icons": true,
+  },
+  "terminal": {
+    "font_family": "Cascadia Mono",
+    "font_size": 12,
+    "line_height": "standard",
+    "cursor_shape": "bar",
+    "cursor_blink": true,
+  },
+  "git": {
+    "inline_blame": {
+      "enabled": false,
+    },
+  },
+  "languages": {
+    "Markdown": {
+      "soft_wrap": "none",
+      "format_on_save": "off",
+      "remove_trailing_whitespace_on_save": false,
+      "tab_size": 4,
+    },
+    "Shell Script": {
+      "format_on_save": "on",
+      "remove_trailing_whitespace_on_save": false,
+      "ensure_final_newline_on_save": false,
+    },
+  },
+}

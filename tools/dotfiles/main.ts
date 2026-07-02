@@ -3,6 +3,7 @@ import path from "node:path";
 import process from "node:process";
 
 import { runDotfilesCron } from "./cron.ts";
+import { runDotfilesImport } from "./importCommand.ts";
 import { runInteractiveCommand } from "./interactiveCommand.ts";
 import { printError } from "./paint.ts";
 import { runDotfilesStow } from "./stow.ts";
@@ -30,6 +31,7 @@ Usage:
   dotfiles stow [options]
   dotfiles unstow [options]
   dotfiles restow [options]
+  dotfiles import <path>...
   dotfiles cron
 
 Commands:
@@ -38,6 +40,7 @@ Commands:
   stow             Stow only (no interactive browser)
   unstow           Remove stow symlinks
   restow           Unstow then stow
+  import           Move paths from ~ into home/ (then run stow)
   cron             Install managed cron jobs from home/.config/cron/jobs.cron
 
 Options (stow, unstow, restow):
@@ -149,6 +152,13 @@ export async function main(argv: string[]): Promise<void> {
   if (action) {
     await runStowAction(action, args.slice(1));
     return;
+  }
+
+  if (subcommand === "import") {
+    if (!assertDotfilesCwd()) {
+      process.exit(1);
+    }
+    process.exit(runDotfilesImport(args.slice(1)));
   }
 
   if (subcommand === "cron") {
