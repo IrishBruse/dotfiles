@@ -54,9 +54,10 @@ plugins/
 
 !.gitignore
 
-# User-level cursor hooks (enforce ASCII + line-wrap on markdown)
+# User-level cursor hooks (enforce global.mdc Response style)
 !hooks.json
 !hooks/
 !hooks/**
+!hooks/.state/
 
 rules/gp-rules.mdc
