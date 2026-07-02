@@ -1,13 +1,14 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
+import { childIssuesJql } from "./children.ts";
 import { parseJiraKey } from "./jiraInput.ts";
 import {
   issueTypeSlug,
-  jiraTicketKeyInMarkdown,
   pulledTicketPath,
   ticketMarkdownFilename
 } from "./pull.ts";
+import { jiraTicketKeyInMarkdown, parseTicketMarkdown } from "./local.ts";
 import {
   adfToMarkdown,
   assigneeLabel,
@@ -16,6 +17,15 @@ import {
   statusBucketFromFields,
   yamlScalar
 } from "./format.ts";
+
+describe("childIssuesJql", () => {
+  it("matches sub-tasks and epic-linked stories", () => {
+    assert.equal(
+      childIssuesJql("NOVACORE-1"),
+      'parent = NOVACORE-1 OR "Epic Link" = NOVACORE-1'
+    );
+  });
+});
 
 describe("parseJiraKey", () => {
   it("accepts bare issue keys", () => {
@@ -82,6 +92,27 @@ url: https://example.atlassian.net/browse/NOVACORE-9
 ---`;
     assert.equal(jiraTicketKeyInMarkdown(md, "NOVACORE-9"), true);
     assert.equal(jiraTicketKeyInMarkdown(md, "NOVACORE-10"), false);
+  });
+});
+
+describe("parseTicketMarkdown", () => {
+  it("reads frontmatter from pulled ticket files", () => {
+    const content = `---
+title: "Ship it"
+assigned: "Ada"
+type: "Epic"
+url: https://example.atlassian.net/browse/NOVACORE-9
+status: todo
+created: ""
+updated: ""
+---
+
+Body here`;
+    const ticket = parseTicketMarkdown(content, "/repo/jira/epic/Ship it.md", "/repo");
+    assert.ok(ticket);
+    assert.equal(ticket!.key, "NOVACORE-9");
+    assert.equal(ticket!.title, "Ship it");
+    assert.equal(ticket!.description, "Body here");
   });
 });
 

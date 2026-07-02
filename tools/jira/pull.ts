@@ -1,19 +1,26 @@
 /**
- * Fetch a single Jira ticket by key and save to `jira/<type>/<title>.md` in cwd.
- * Usage: jira pull <KEY|URL>
+ * Fetch Jira tickets and save to `jira/<type>/<title>.md` in cwd.
  */
-import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { CONFIG } from "./CONFIG.ts";
+import { runAcliJson } from "./acli.ts";
+import { fetchChildIssues } from "./children.ts";
 import {
   assigneeLabel,
   formatTicketMarkdown,
   issueTypeName
 } from "./format.ts";
+import { listLocalTickets, localTicketPath } from "./local.ts";
+import {
+  printChildIssues,
+  printError,
+  printPulled,
+  printPullSummary
+} from "./output.ts";
+import { confirm } from "./prompt.ts";
 
-const ACLI = "acli";
 const SEARCH_FIELDS =
   "key,summary,assignee,issuetype,description,status,created,updated";
 
@@ -61,80 +68,43 @@ export function pulledTicketPath(
   );
 }
 
-/** True when markdown frontmatter links to a Jira issue key. */
-export function jiraTicketKeyInMarkdown(content: string, key: string): boolean {
-  return content.includes(`/browse/${key}`);
-}
+export type PullOptions = {
+  cwd?: string;
+  quiet?: boolean;
+  /** When true, skip the child-issue prompt and never pull children. */
+  noChildren?: boolean;
+  /** When true, pull children without prompting. */
+  withChildren?: boolean;
+};
 
-function log(msg: string): void {
-  process.stderr.write(`jira pull: ${msg}\n`);
-}
+type PullWriteResult = {
+  key: string;
+  title: string;
+  relPath: string;
+};
 
-function runAcliJson(acli: string, args: string[]): unknown {
-  const r = spawnSync(acli, args, {
-    encoding: "utf-8",
-    maxBuffer: 64 * 1024 * 1024
-  });
-  if (r.error) {
-    const msg = r.error instanceof Error ? r.error.message : String(r.error);
-    throw new Error(`Failed to run ${acli}: ${msg}`);
-  }
-  if (r.status !== 0) {
-    const err = r.stderr?.trim() || r.stdout?.trim() || `exit ${r.status}`;
-    throw new Error(err);
-  }
-  const raw = r.stdout?.trim() ?? "";
-  if (!raw) {
-    return null;
-  }
+/** Fetch one ticket from Jira and write or refresh its local markdown file. */
+export function pullTicket(ticketKey: string, options: PullOptions = {}): number {
   try {
-    return JSON.parse(raw) as unknown;
-  } catch (e) {
-    const hint = e instanceof Error ? e.message : String(e);
-    throw new Error(
-      `Expected JSON from acli (${hint}); got: ${raw.slice(0, 200)}…`
-    );
-  }
-}
-
-/** First `jira/<type>/*.md` under cwd whose frontmatter matches `key`, if any. */
-export function findCwdJiraTicketMarkdown(
-  key: string,
-  cwd = process.cwd()
-): string | null {
-  const jiraDir = path.join(cwd, "jira");
-  if (!fs.existsSync(jiraDir)) return null;
-  for (const ent of fs.readdirSync(jiraDir, { withFileTypes: true })) {
-    if (!ent.isDirectory()) continue;
-    const typeDir = path.join(jiraDir, ent.name);
-    for (const file of fs.readdirSync(typeDir)) {
-      if (!file.endsWith(".md")) continue;
-      const p = path.join(typeDir, file);
-      const head = fs.readFileSync(p, "utf-8").slice(0, 2048);
-      if (jiraTicketKeyInMarkdown(head, key)) return p;
-    }
-  }
-  return null;
-}
-
-/** Run the pull subcommand; returns exit code. */
-export function run(ticketKey: string): number {
-  try {
-    return runImpl(ticketKey);
+    pullTicketWrite(ticketKey, options);
+    return 0;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    process.stderr.write(`jira pull: ${msg}\n`);
+    printError(`pull ${ticketKey}: ${msg}`);
     return 1;
   }
 }
 
-function runImpl(ticketKey: string): number {
+function pullTicketWrite(
+  ticketKey: string,
+  options: PullOptions
+): PullWriteResult {
+  const cwd = options.cwd ?? process.cwd();
+  const quiet = options.quiet ?? false;
   const meAccountId = CONFIG.meAccountId;
-  let siteHost = CONFIG.site.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const siteHost = CONFIG.site.replace(/^https?:\/\//, "").replace(/\/$/, "");
 
-  log(`fetching ${ticketKey} via acli…`);
-
-  const data = runAcliJson(ACLI, [
+  const data = runAcliJson([
     "jira",
     "workitem",
     "view",
@@ -145,21 +115,18 @@ function runImpl(ticketKey: string): number {
   ]);
 
   if (!data || typeof data !== "object") {
-    process.stderr.write(`jira pull: no data returned for ${ticketKey}\n`);
-    return 1;
+    throw new Error(`no data returned for ${ticketKey}`);
   }
 
   const issue = data as { key?: string; fields?: Record<string, unknown> };
   const key = issue.key;
   if (!key) {
-    process.stderr.write(`jira pull: no key in response for ${ticketKey}\n`);
-    return 1;
+    throw new Error(`no key in response for ${ticketKey}`);
   }
 
   const fields = issue.fields ?? {};
   const body = formatTicketMarkdown(key, fields, siteHost, meAccountId).body;
-  const cwd = process.cwd();
-  const prior = findCwdJiraTicketMarkdown(key, cwd);
+  const prior = localTicketPath(key, cwd);
   const outPath = pulledTicketPath(cwd, fields, key);
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
@@ -169,12 +136,119 @@ function runImpl(ticketKey: string): number {
   }
 
   const summary =
-    typeof fields.summary === "string" ? fields.summary : "(no summary)";
-  const assignee = assigneeLabel(
-    fields.assignee as Record<string, unknown> | null | undefined
-  );
+    typeof fields.summary === "string" ? fields.summary.trim() : key;
   const rel = path.relative(cwd, outPath) || outPath;
-  log(`saved ${key}: ${summary} → ${outPath}`);
-  process.stdout.write(`Pulled ${key} (${assignee}) → ${rel}\n`);
-  return 0;
+
+  if (!quiet) {
+    printPulled(key, summary, rel);
+  }
+
+  return { key, title: summary, relPath: rel };
+}
+
+/** Pull a ticket and optionally its children (prompts on a TTY). */
+export async function run(
+  ticketKey: string,
+  options: PullOptions = {}
+): Promise<number> {
+  try {
+    return await runPullFlow(ticketKey, options);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    printError(msg);
+    return 1;
+  }
+}
+
+async function runPullFlow(
+  ticketKey: string,
+  options: PullOptions
+): Promise<number> {
+  const cwd = options.cwd ?? process.cwd();
+  let pulled = 0;
+
+  pullTicketWrite(ticketKey, { ...options, cwd });
+  pulled += 1;
+
+  if (options.noChildren) {
+    if (!options.quiet) printPullSummary(pulled);
+    return 0;
+  }
+
+  const children = fetchChildIssues(ticketKey);
+  if (children.length === 0) {
+    if (!options.quiet) printPullSummary(pulled);
+    return 0;
+  }
+
+  let pullChildren = options.withChildren === true;
+  const canPrompt =
+    !pullChildren &&
+    !options.noChildren &&
+    process.stdin.isTTY &&
+    process.stdout.isTTY;
+
+  if (canPrompt) {
+    if (!options.quiet) printChildIssues(children);
+    pullChildren = await confirm(
+      `Pull ${children.length} child issue(s) too?`,
+      true
+    );
+  }
+
+  if (!pullChildren) {
+    if (!options.quiet) printPullSummary(pulled);
+    return 0;
+  }
+
+  if (!options.quiet) process.stdout.write("\n");
+  let code = 0;
+  for (const child of children) {
+    try {
+      pullTicketWrite(child.key, { ...options, cwd, quiet: false });
+      pulled += 1;
+    } catch (e) {
+      code = 1;
+      const msg = e instanceof Error ? e.message : String(e);
+      printError(`pull ${child.key}: ${msg}`);
+    }
+  }
+
+  if (!options.quiet) printPullSummary(pulled);
+  return code;
+}
+
+/** Re-pull every ticket already present under `jira/`. */
+export function pullAll(
+  cwd = process.cwd(),
+  options: Omit<PullOptions, "cwd"> = {}
+): number {
+  const tickets = listLocalTickets(cwd);
+  if (tickets.length === 0) {
+    printError("no tickets under jira/");
+    return 1;
+  }
+  let code = 0;
+  let pulled = 0;
+  for (const ticket of tickets) {
+    const result = pullTicket(ticket.key, { ...options, cwd, quiet: true });
+    if (result !== 0) {
+      code = result;
+      continue;
+    }
+    pulled += 1;
+    if (!options.quiet) {
+      printPulled(ticket.key, ticket.title, ticket.relPath);
+    }
+  }
+  if (!options.quiet) printPullSummary(pulled);
+  return code;
+}
+
+/** @deprecated Use {@link localTicketPath}. */
+export function findCwdJiraTicketMarkdown(
+  key: string,
+  cwd = process.cwd()
+): string | null {
+  return localTicketPath(key, cwd);
 }

@@ -6,7 +6,8 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { parseJiraKey } from "./jiraInput.ts";
-import { findCwdJiraTicketMarkdown, run as runPull } from "./pull.ts";
+import { localTicketPath } from "./local.ts";
+import { pullTicket } from "./pull.ts";
 
 function log(msg: string): void {
   process.stderr.write(`jira copy: ${msg}\n`);
@@ -39,14 +40,14 @@ function runImpl(
     ? path.resolve(parentDirOrUndefined)
     : process.cwd();
 
-  let src = findCwdJiraTicketMarkdown(key);
+  let src = localTicketPath(key);
   if (src) {
     log(`using local ${src}`);
   } else {
     log(`no local ${key}.md; fetching…`);
-    const code = runPull(key);
+    const code = pullTicket(key, { noChildren: true });
     if (code !== 0) return code;
-    src = findCwdJiraTicketMarkdown(key);
+    src = localTicketPath(key);
     if (!src) {
       process.stderr.write(`jira copy: expected file after pull: jira/*/<title>.md\n`);
       return 1;
