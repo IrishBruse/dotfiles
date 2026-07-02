@@ -36,7 +36,7 @@ Custom VS Code UI CSS.
 
 ### tools/
 
-- `jira` - View, sync, and initialize local Jira board markdown at `~/.agents/skills/jira-board/` (`SKILL.md` plus `references/{me,team,unassigned,misc}/`); pull or copy tickets
+- `jira` - Pull or copy Jira tickets to local markdown (`jira pull`, `jira copy`); dashboard sync lives in `dashboard/jira-sync.ts`
 - `confluence` - Clone a Confluence page subtree to local markdown via acli
 - `pr` - GitHub pull request helper: auto create or update via Cursor agent skills; `pr fix` for failed CI
 - `interpolate` - Expand markdown prompt templates (builtins, env, conditions, shell snippets)

@@ -3,7 +3,7 @@
 Local start page Vite app (React + TypeScript).
 Dev and preview listen on port `54321`.
 Run `npm run dev`, `build`, or `preview` from this directory.
-Jira sync in dev calls `tools/jira/sync.ts` via the `jira-board` Vite plugin.
+Jira sync in dev calls `dashboard/jira-sync.ts` via the `jira-board` Vite plugin.
 
 ## Theme
 

@@ -228,7 +228,7 @@ Empty filter shows all tickets.
 
 ## Jira sync (dev only)
 
-`POST /api/jira/sync` runs `tools/jira/sync.ts` via the `jira-board` plugin middleware.
+`POST /api/jira/sync` runs `dashboard/jira-sync.ts` via the `jira-board` plugin middleware.
 
 - Returns `{ ok: true, tickets: [...] }` on success.
 - Returns 409 if a sync is already in progress.

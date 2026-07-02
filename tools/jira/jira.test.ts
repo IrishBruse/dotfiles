@@ -1,27 +1,29 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { parseBoardMarkdown, sortRows } from "./board.ts";
 import { parseJiraKey } from "./jiraInput.ts";
+import {
+  issueTypeSlug,
+  jiraTicketKeyInMarkdown,
+  pulledTicketPath,
+  ticketMarkdownFilename
+} from "./pull.ts";
 import {
   adfToMarkdown,
   assigneeLabel,
-  buildJiraTicketsSkillContent,
   classifyFolder,
-  formatJiraTicketsSkillJson,
-  formatJiraTicketsSkillMd,
-  isSprintInRetentionWindow,
-  miscDeleteCutoffMs,
-  shouldDeleteMiscTicket,
-  sprintsInRetentionWindow,
+  formatTicketMarkdown,
   statusBucketFromFields,
-  ticketsSkillOneLine,
   yamlScalar
-} from "./sync.ts";
+} from "./format.ts";
 
 describe("parseJiraKey", () => {
   it("accepts bare issue keys", () => {
     assert.equal(parseJiraKey("PROJ-123"), "PROJ-123");
+  });
+
+  it("accepts lowercase issue keys", () => {
+    assert.equal(parseJiraKey("proj-123"), "PROJ-123");
   });
 
   it("extracts keys from browse URLs", () => {
@@ -41,6 +43,59 @@ describe("classifyFolder", () => {
     assert.equal(classifyFolder(null, "me"), "unassigned");
     assert.equal(classifyFolder({ accountId: "me" }, "me"), "me");
     assert.equal(classifyFolder({ accountId: "other" }, "me"), "team");
+  });
+});
+
+describe("issueTypeSlug", () => {
+  it("lowercases issue type names for jira pull paths", () => {
+    assert.equal(issueTypeSlug("Epic"), "epic");
+    assert.equal(issueTypeSlug("Sub-task"), "sub-task");
+  });
+});
+
+describe("ticketMarkdownFilename", () => {
+  it("uses the ticket title for the filename", () => {
+    const name = ticketMarkdownFilename(
+      { summary: "[DTC] Make repeatable operations deterministic" },
+      "NOVACORE-1"
+    );
+    assert.equal(name, "[DTC] Make repeatable operations deterministic.md");
+  });
+
+  it("replaces characters invalid on common filesystems", () => {
+    const name = ticketMarkdownFilename(
+      { summary: 'fix: a/b\\c*d?e"f' },
+      "NOVACORE-2"
+    );
+    assert.equal(name, "fix- a-b-c-d-e-f.md");
+  });
+
+  it("falls back to the issue key when summary is empty", () => {
+    assert.equal(ticketMarkdownFilename({}, "NOVACORE-3"), "NOVACORE-3.md");
+  });
+});
+
+describe("jiraTicketKeyInMarkdown", () => {
+  it("matches browse URLs in frontmatter", () => {
+    const md = `---
+url: https://example.atlassian.net/browse/NOVACORE-9
+---`;
+    assert.equal(jiraTicketKeyInMarkdown(md, "NOVACORE-9"), true);
+    assert.equal(jiraTicketKeyInMarkdown(md, "NOVACORE-10"), false);
+  });
+});
+
+describe("pulledTicketPath", () => {
+  it("places tickets under jira/<type>/ in cwd", () => {
+    const p = pulledTicketPath(
+      "/repo",
+      {
+        issuetype: { name: "Epic" },
+        summary: "Ship it"
+      },
+      "NOVACORE-1"
+    );
+    assert.equal(p, "/repo/jira/epic/Ship it.md");
   });
 });
 
@@ -87,86 +142,6 @@ describe("statusBucketFromFields", () => {
   });
 });
 
-describe("ticketsSkillOneLine", () => {
-  it("flattens multiline summaries for skill tables", () => {
-    assert.equal(ticketsSkillOneLine("line one\nline two"), "line one line two");
-  });
-});
-
-describe("buildJiraTicketsSkillContent", () => {
-  it("groups tickets into sections and statuses", () => {
-    const content = buildJiraTicketsSkillContent(
-      [
-        {
-          key: "PROJ-1",
-          fields: {
-            summary: "Mine",
-            assignee: { accountId: "me", displayName: "Ada" },
-            status: { name: "To Do" }
-          }
-        },
-        {
-          key: "PROJ-2",
-          fields: {
-            summary: "Theirs",
-            assignee: { accountId: "other", displayName: "Bob" },
-            status: { name: "In Progress" }
-          }
-        }
-      ],
-      "me"
-    );
-
-    assert.equal(content.sections.myTickets.statuses.todo.length, 1);
-    assert.deepEqual(content.sections.myTickets.statuses.todo[0], {
-      key: "PROJ-1",
-      summary: "Mine",
-      assignee: "Ada"
-    });
-    assert.equal(content.sections.teammates.statuses.inProgress.length, 1);
-    assert.equal(
-      content.sections.teammates.statuses.inProgress[0]!.key,
-      "PROJ-2"
-    );
-  });
-});
-
-describe("formatJiraTicketsSkillJson", () => {
-  it("serializes the same board content as structured JSON", () => {
-    const content = buildJiraTicketsSkillContent(
-      [
-        {
-          key: "PROJ-9",
-          fields: {
-            summary: "Ship it",
-            assignee: { accountId: "me", displayName: "Ada" },
-            status: { name: "Done" }
-          }
-        }
-      ],
-      "me"
-    );
-    const json = formatJiraTicketsSkillJson(content);
-    const parsed = JSON.parse(json) as ReturnType<
-      typeof buildJiraTicketsSkillContent
-    >;
-    assert.deepEqual(parsed, content);
-    assert.match(formatJiraTicketsSkillMd(content), /PROJ-9: Ship it/);
-  });
-});
-
-describe("isSprintInRetentionWindow", () => {
-  it("includes dates within the buffered sprint window", () => {
-    const sprint = {
-      id: 1,
-      startDate: "2026-01-08T00:00:00.000Z",
-      endDate: "2026-01-21T23:59:59.000Z"
-    };
-    const midSprint = Date.parse("2026-01-15T12:00:00.000Z");
-    assert.equal(isSprintInRetentionWindow(sprint, midSprint), true);
-  });
-});
-
 describe("assigneeLabel", () => {
   it("formats display names and fallbacks", () => {
     assert.equal(assigneeLabel(null), "Unassigned");
@@ -175,104 +150,22 @@ describe("assigneeLabel", () => {
   });
 });
 
-describe("sprintsInRetentionWindow", () => {
-  it("filters sprints outside the buffered window", () => {
-    const sprints = [
+describe("formatTicketMarkdown", () => {
+  it("writes Jira created and updated timestamps into frontmatter", () => {
+    const { body } = formatTicketMarkdown(
+      "PROJ-1",
       {
-        id: 1,
-        startDate: "2026-01-08T00:00:00.000Z",
-        endDate: "2026-01-21T23:59:59.000Z"
+        summary: "Dependabot",
+        issuetype: { name: "Task" },
+        assignee: null,
+        status: { name: "To Do" },
+        created: "2025-01-10T08:00:00.000+0000",
+        updated: "2025-06-30T14:30:00.000+0000"
       },
-      {
-        id: 2,
-        startDate: "2025-01-08T00:00:00.000Z",
-        endDate: "2025-01-21T23:59:59.000Z"
-      }
-    ];
-    const now = Date.parse("2026-01-15T12:00:00.000Z");
-    const kept = sprintsInRetentionWindow(sprints, now);
-    assert.equal(kept.length, 1);
-    assert.equal(kept[0]!.id, 1);
-  });
-});
-
-describe("miscDeleteCutoffMs", () => {
-  it("returns zero while every sprint is still inside retention", () => {
-    const sprint = {
-      id: 1,
-      startDate: "2026-01-08T00:00:00.000Z",
-      endDate: "2026-01-21T23:59:59.000Z"
-    };
-    const now = Date.parse("2026-01-15T12:00:00.000Z");
-    assert.equal(miscDeleteCutoffMs([sprint], now), 0);
-  });
-
-  it("records the latest cutoff for ended sprints", () => {
-    const sprint = {
-      id: 1,
-      startDate: "2025-01-08T00:00:00.000Z",
-      endDate: "2025-01-21T23:59:59.000Z"
-    };
-    const now = Date.parse("2026-02-01T00:00:00.000Z");
-    assert.ok(miscDeleteCutoffMs([sprint], now) > 0);
-  });
-});
-
-describe("shouldDeleteMiscTicket", () => {
-  it("never deletes tickets still in the current fetch", () => {
-    assert.equal(shouldDeleteMiscTicket(true, [], Date.now()), false);
-  });
-
-  it("deletes stale misc tickets after all sprints pass retention", () => {
-    const sprint = {
-      id: 1,
-      startDate: "2025-01-08T00:00:00.000Z",
-      endDate: "2025-01-21T23:59:59.000Z"
-    };
-    const now = Date.parse("2026-02-01T00:00:00.000Z");
-    assert.equal(shouldDeleteMiscTicket(false, [sprint], now), true);
-  });
-});
-
-describe("parseBoardMarkdown", () => {
-  it("parses grouped ticket rows from skill markdown", () => {
-    const md = `# My tickets
-
-**Todo:**
-
-- PROJ-1: First ticket — \`Ada\`
-`;
-    const rows = parseBoardMarkdown(md);
-    assert.equal(rows.length, 1);
-    assert.deepEqual(rows[0], {
-      group: "My tickets",
-      status: "Todo",
-      key: "PROJ-1",
-      title: "First ticket",
-      assignee: "Ada"
-    });
-  });
-});
-
-describe("sortRows", () => {
-  it("orders rows by group, status, then key", () => {
-    const sorted = sortRows([
-      {
-        group: "Teammates",
-        status: "Todo",
-        key: "B-2",
-        title: "b",
-        assignee: "Bob"
-      },
-      {
-        group: "My tickets",
-        status: "Done",
-        key: "A-1",
-        title: "a",
-        assignee: "Ada"
-      }
-    ]);
-    assert.equal(sorted[0]!.group, "My tickets");
-    assert.equal(sorted[1]!.group, "Teammates");
+      "example.atlassian.net",
+      "me"
+    );
+    assert.match(body, /^created: "2025-01-10T08:00:00\.000\+0000"/m);
+    assert.match(body, /^updated: "2025-06-30T14:30:00\.000\+0000"/m);
   });
 });

@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import type { Connect } from "vite";
 import type { Plugin, ViteDevServer } from "vite";
 
-import { runWithResult as runJiraSync } from "../tools/jira/sync.ts";
+import { runWithResult as runJiraSync } from "./jira-sync.ts";
 
 const VIRTUAL_ID = "virtual:jira-board";
 const RESOLVED_ID = `\0${VIRTUAL_ID}`;

@@ -1,19 +1,14 @@
 #!/usr/bin/env node
 /**
- * Jira CLI — view, sync, and initialize local Jira board.
+ * Jira CLI — pull tickets to local markdown.
  * Usage:
  *   jira                       print help
- *   jira board                 view board (jira-board skill)
- *   jira sync                  fetch Jira → skill markdown (needs CONFIG + acli)
- *   jira init [path]           create empty skill directory structure
- *   jira pull <KEY|URL>        fetch a single ticket into references/misc
+ *   jira <KEY|URL>             fetch a single ticket into jira/<type>/ in cwd
+ *   jira pull <KEY|URL>        same as above
  *   jira copy <KEY|URL> [dir]  copy ticket folder here or under dir (pull if missing locally)
  *   jira -h|--help             this message
  */
 import process from "node:process";
-import { run as runBoard } from "./board.ts";
-import { run as runSync } from "./sync.ts";
-import { run as runInit } from "./init.ts";
 import { run as runPull } from "./pull.ts";
 import { run as runCopy } from "./copy.ts";
 import { parseJiraKey } from "./jiraInput.ts";
@@ -21,10 +16,8 @@ import { parseJiraKey } from "./jiraInput.ts";
 function printHelp(): void {
   process.stdout.write(`Usage:
   jira                       print help
-  jira board                 view board (jira-board skill)
-  jira sync                  fetch Jira → skill markdown (needs CONFIG + acli)
-  jira init [path]           create empty skill directory structure
-  jira pull <KEY|URL>        fetch a single ticket into references/misc
+  jira <KEY|URL>             fetch a single ticket into jira/<type>/ in cwd
+  jira pull <KEY|URL>        same as above
   jira copy <KEY|URL> [dir]  copy ticket folder here or under dir (pull if missing locally)
   jira -h|--help             this message
 `);
@@ -36,12 +29,6 @@ function main() {
     printHelp();
     process.exit(0);
     return;
-  }
-  if (arg === "sync") {
-    process.exit(runSync());
-  }
-  if (arg === "init") {
-    process.exit(runInit(process.argv[3]));
   }
   if (arg === "pull") {
     const input = process.argv[3];
@@ -64,17 +51,13 @@ function main() {
     }
     process.exit(runCopy(input, process.argv[4]));
   }
-  if (arg === "board") {
-    const code = runBoard();
-    if (code !== -1) process.exit(code);
-    return;
-  }
   const key = parseJiraKey(arg);
   if (key) {
     process.exit(runPull(key));
   }
-  const code = runBoard();
-  if (code !== -1) process.exit(code);
+  console.error(`jira: unknown command or invalid ticket: ${arg}`);
+  printHelp();
+  process.exit(1);
 }
 
 main();

@@ -1,183 +1,25 @@
 /**
- * Sync Jira issues into the jira-board skill via `acli jira workitem search` (Atlassian CLI).
- * Writes per-ticket markdown into `~/.agents/skills/jira-board/references/{me,team,unassigned}/`
- * and regenerates `~/.agents/skills/jira-board/SKILL.md` and `sprint.json`.
- *
- * When CONFIG.boardId is set, only sprints whose window overlaps today are fetched
- * (from 2 days before sprint start through 2 days after sprint end). Tickets that drop
- * out of the fetch are archived to `references/misc/` and removed once every sprint on
- * the board is past end + 2 days.
- *
- * Edit CONFIG.ts, then run: jira sync
+ * Sync Jira issues into the jira-board skill via `acli jira workitem search`.
+ * Used by the dashboard `jira-board` Vite plugin (`POST /api/jira/sync`).
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 import process from "node:process";
-import { CONFIG } from "./CONFIG.ts";
+import { CONFIG } from "../tools/jira/CONFIG.ts";
+import {
+  assigneeLabel,
+  assigneeRecord,
+  classifyFolder,
+  formatTicketMarkdown,
+  statusBucketFromFields,
+  type Folder,
+  type StatusBucket
+} from "../tools/jira/format.ts";
 
-export type Folder = "me" | "unassigned" | "team" | "misc";
-
-export function classifyFolder(
-  assignee: Record<string, unknown> | null | undefined,
-  meAccountId: string
-): Folder {
-  if (assignee == null) return "unassigned";
-  if (assignee.accountId === meAccountId) return "me";
-  return "team";
-}
-
-export function assigneeLabel(
-  assignee: Record<string, unknown> | null | undefined
-): string {
-  if (assignee == null) return "Unassigned";
-  const name = assignee.displayName;
-  return typeof name === "string" ? name : "Unknown";
-}
-
-/** Best-effort ADF (Jira description) to readable markdown/plain text. */
-export function adfToMarkdown(adf: unknown): string {
-  if (adf == null) return "";
-  if (typeof adf === "string") return adf;
-  if (typeof adf !== "object") return "";
-
-  const lines: string[] = [];
-
-  /** Depth-first text fragments; appends to `out` to avoid per-node array allocation. */
-  function appendCollectText(out: string[], n: unknown): void {
-    if (n == null) return;
-    if (typeof n === "object" && n !== null && "type" in n) {
-      const o = n as Record<string, unknown>;
-      if (o.type === "text" && typeof o.text === "string") {
-        out.push(o.text);
-      }
-      const content = o.content;
-      if (Array.isArray(content)) {
-        for (const c of content) {
-          appendCollectText(out, c);
-        }
-      }
-    } else if (Array.isArray(n)) {
-      for (const x of n) {
-        appendCollectText(out, x);
-      }
-    }
-  }
-
-  function walk(node: unknown): void {
-    if (node == null) return;
-    if (Array.isArray(node)) {
-      for (const x of node) walk(x);
-      return;
-    }
-    if (typeof node !== "object") return;
-    const o = node as Record<string, unknown>;
-    const t = o.type;
-
-    if (t === "paragraph") {
-      const inner: string[] = [];
-      for (const c of (o.content as unknown[]) ?? []) {
-        appendCollectText(inner, c);
-      }
-      lines.push(inner.join(""));
-    } else if (t === "heading") {
-      const level = Number(
-        (o.attrs as { level?: number } | undefined)?.level ?? 1
-      );
-      const inner: string[] = [];
-      for (const c of (o.content as unknown[]) ?? []) {
-        appendCollectText(inner, c);
-      }
-      const prefix = "#".repeat(Math.max(1, Math.min(level, 6)));
-      lines.push(`${prefix} ${inner.join("").trimEnd()}`);
-    } else if (t === "bulletList" || t === "orderedList") {
-      for (const item of (o.content as unknown[]) ?? []) {
-        walk(item);
-      }
-    } else if (t === "listItem") {
-      const inner: string[] = [];
-      for (const c of (o.content as unknown[]) ?? []) {
-        appendCollectText(inner, c);
-      }
-      lines.push(`- ${inner.join("")}`);
-    } else if (t === "codeBlock") {
-      const parts: string[] = [];
-      for (const c of (o.content as unknown[]) ?? []) {
-        appendCollectText(parts, c);
-      }
-      const body = parts.join("");
-      const lang = String(
-        (o.attrs as { language?: string } | undefined)?.language ?? ""
-      );
-      lines.push(`\`\`\`${lang}\n${body}\n\`\`\``);
-    } else {
-      for (const c of (o.content as unknown[]) ?? []) {
-        walk(c);
-      }
-    }
-  }
-
-  walk(adf);
-  return lines.filter((line) => line.trim().length > 0).join("\n\n");
-}
-
-export function issueDescriptionMarkdown(
-  fields: Record<string, unknown>
-): string {
-  const desc = fields.description;
-  if (desc == null) return "";
-  if (typeof desc === "string") return desc;
-  if (typeof desc === "object") return adfToMarkdown(desc);
-  return String(desc);
-}
-
-export function yamlScalar(s: string): string {
-  return JSON.stringify(s);
-}
-
-function assigneeRecord(value: unknown): Record<string, unknown> | null {
-  return value != null && typeof value === "object"
-    ? (value as Record<string, unknown>)
-    : null;
-}
-
-/** Strip scheme and trailing slash (idempotent). */
 function normalizeSiteHost(host: string): string {
   return host.replace(/^https?:\/\//, "").replace(/\/$/, "");
-}
-
-export function formatTicketMarkdown(
-  key: string,
-  fields: Record<string, unknown>,
-  siteHost: string,
-  meAccountId: string
-): { folder: Folder; body: string } {
-  const summary = typeof fields.summary === "string" ? fields.summary : "";
-  const itypeObj = fields.issuetype;
-  const itype =
-    itypeObj && typeof itypeObj === "object" && "name" in itypeObj
-      ? String((itypeObj as { name?: string }).name ?? "Issue")
-      : "Issue";
-  const assignee = assigneeRecord(fields.assignee);
-  const folder = classifyFolder(assignee, meAccountId);
-  const assigned = assigneeLabel(assignee);
-  const descriptionMd = issueDescriptionMarkdown(fields);
-  const site = normalizeSiteHost(siteHost);
-  const url = `https://${site}/browse/${key}`;
-  const statusBucket = statusBucketFromFields(fields);
-
-  const md = `---
-title: ${yamlScalar(summary)}
-assigned: ${yamlScalar(assigned)}
-type: ${yamlScalar(itype)}
-url: ${url}
-status: ${statusBucket}
----
-
-${descriptionMd}
-`;
-  return { folder, body: md };
 }
 
 function* issuesWithKeys(
@@ -404,13 +246,6 @@ export function ticketsSkillOneLine(summary: string): string {
     .trim();
 }
 
-export type StatusBucket =
-  | "todo"
-  | "inProgress"
-  | "codeReview"
-  | "inTest"
-  | "done";
-
 const STATUS_HEADINGS: Record<StatusBucket, string> = {
   todo: "Todo",
   inProgress: "In progress",
@@ -472,63 +307,6 @@ function sortTicketsInSection(section: JiraSkillSection): void {
       a.key.localeCompare(b.key, undefined, { sensitivity: "base" })
     );
   }
-}
-
-/**
- * Map Jira status (name + category) into skill subsections. Tuned for typical Scrum boards;
- * anything unclear defaults to In progress.
- */
-export function statusBucketFromFields(
-  fields: Record<string, unknown>
-): StatusBucket {
-  const raw = fields.status;
-  const name =
-    raw &&
-    typeof raw === "object" &&
-    typeof (raw as { name?: unknown }).name === "string"
-      ? (raw as { name: string }).name.trim()
-      : "";
-  const lower = name.toLowerCase();
-  const catKey =
-    (raw &&
-      typeof raw === "object" &&
-      (raw as { statusCategory?: { key?: string } }).statusCategory?.key) ??
-    "";
-  const category = String(catKey).toLowerCase();
-
-  if (
-    category === "done" ||
-    /^(done|closed|resolved|complete)$/i.test(name.trim())
-  ) {
-    return "done";
-  }
-
-  if (
-    /\b(uat|qa|in test|system test|sit|staging)\b/.test(lower) ||
-    (/\btest(ing)?\b/.test(lower) && !/retest/.test(lower))
-  ) {
-    return "inTest";
-  }
-  if (
-    /\b(review|revising)\b/.test(lower) ||
-    /code review|peer review|pull request/i.test(name)
-  ) {
-    return "codeReview";
-  }
-  if (
-    category === "new" ||
-    /^(to do|open)$/i.test(name.trim()) ||
-    /backlog|ready for (dev|development|sprint)/i.test(name)
-  ) {
-    return "todo";
-  }
-  if (
-    category === "indeterminate" ||
-    /progress|develop|active|wip|build|implementation/i.test(lower)
-  ) {
-    return "inProgress";
-  }
-  return "inProgress";
 }
 
 function formatStatusSubsections(section: JiraSkillSection): string {
@@ -717,7 +495,8 @@ const JIRA_BOARD_SPRINT_JSON_PATH = path.join(
 /** Atlassian CLI binary (must be on `PATH` or change this string). */
 const ACLI = "acli";
 
-const SEARCH_FIELDS = "key,summary,assignee,issuetype,description,status";
+const SEARCH_FIELDS =
+  "key,summary,assignee,issuetype,description,status,created,updated";
 
 const VERBOSE = process.env.JIRA_SYNC_VERBOSE === "1";
 
