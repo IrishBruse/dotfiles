@@ -16,6 +16,7 @@ Tools should resolve these with `homedir()` from `node:os`, not relative paths f
 ### macos/
 
 - `Brewfile` brew package backup
+- `open.ts` syncs Brewfile and mirrors `ui-platform-workspace/.cursor/skills/jira` into `home/.agents/jira` (gitignored, stowed to `~/.agents/jira`)
 
 ### home/.config/Code/User/settings.json
 
@@ -36,7 +37,7 @@ Custom VS Code UI CSS.
 
 ### tools/
 
-- `jira` - Pull or copy Jira tickets to local markdown (`jira pull`, `jira copy`); dashboard sync lives in `dashboard/jira-sync.ts`
+- `jira` - Pull, push, and browse local ticket markdown under `./jira/` (`jira pull`, `jira push`, interactive `jira` in a TTY); dashboard board sync in `dashboard/jira-sync.ts`
 - `confluence` - Clone a Confluence page subtree to local markdown via acli
 - `pr` - GitHub pull request helper: auto create or update via Cursor agent skills; `pr fix` for failed CI
 - `interpolate` - Expand markdown prompt templates (builtins, env, conditions, shell snippets)

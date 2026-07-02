@@ -44,15 +44,19 @@ The Jira description uses three sections: Context, Expectations, and High-level 
 
 ## High-level Scenarios
 
+```gherkin
 Given <precondition>
 And <precondition>
 When <event>
 Then <outcome>
 And <outcome>
+```
 
+```gherkin
 Given <precondition>
 When <event>
 Then <outcome>
+```
 ```
 
 Summary line:
@@ -71,7 +75,7 @@ Summary line:
 | Summary style | Imperative verb first, outcome-oriented, no issue key prefix, no trailing period |
 | Context length | 1-3 short paragraphs. No bulleted lists. No technical implementation detail |
 | Expectations | Single observable outcomes. Avoid "works correctly" and "as expected" |
-| High-level Scenarios | At least one Gherkin scenario. No Jira keys inside Gherkin blocks. One event per scenario |
+| High-level Scenarios | At least one Gherkin scenario. Wrap each scenario in its own fenced ```gherkin code block, one scenario per block. No Jira keys inside Gherkin blocks. One event per scenario |
 | Initiative tie-in | Context must explicitly link the Epic outcome to the parent Initiative goal |
 | No story-level detail | Do not list individual stories, tasks, or technical steps |
 | Clarity | Enough context for a stakeholder unfamiliar with the conversation |
@@ -149,9 +153,11 @@ Save the draft using the workspace artifact conventions. Include this content sh
 
 ## High-level Scenarios
 
+```gherkin
 Given ...
 When ...
 Then ...
+```
 ```
 
 Persist rules:

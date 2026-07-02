@@ -24,16 +24,18 @@ Do not use when:
 ## Workflow
 
 1. Collect the ticket key or URL and the cleanup request.
-2. Fetch the ticket from Jira, including issue type, status, parent, children, linked issues, labels, Feature Team, summary, and description.
-3. Search local workspace context and artifacts for the key and nearby terms.
-4. Identify the ticket's real issue type and compare it to the matching reference:
+2. Ensure a local copy first per **Pull The Ticket Locally First** in `SKILL.md`.
+3. Fetch the ticket from Jira, including issue type, status, parent, children, linked issues, labels, Feature Team, summary, and description.
+4. Search local workspace context and artifacts for the key and nearby terms.
+5. Identify the ticket's real issue type and compare it to the matching reference:
    - Task: `task.md`.
    - Story: `story.md`.
    - Epic: `epic.md`.
-5. Return a short recommendation and a precise proposed Jira change that preserves the current issue type.
-6. Stop for Jira-write stop gate approval before editing Jira.
-7. On approval, call `editJiraIssue`, `createIssueLink`, `transitionJiraIssue`, or a comment tool only for the approved change.
-8. Reply with the issue key, browse URL, fields changed, and any follow-up hygiene still recommended.
+6. Return a short recommendation and a precise proposed Jira change that preserves the current issue type.
+7. Stop for Jira-write stop gate approval before editing Jira.
+8. On approval, call `editJiraIssue`, `createIssueLink`, `transitionJiraIssue`, or a comment tool only for the approved change.
+9. Refresh the local file per the same rule.
+10. Reply with the issue key, browse URL, fields changed, and any follow-up hygiene still recommended.
 
 ## Update Recommendation Template
 

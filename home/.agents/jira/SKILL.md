@@ -13,6 +13,13 @@ Use this as the safe front door for Jira work. `/jira` is a **router**: **legwor
 
 It recommends a path, asks the user to choose a route with `AskQuestion`, then reads and follows the matching reference workflow only after the user confirms.
 
+## Pull The Ticket Locally First
+
+Whenever the input includes a Jira key or URL and you will inspect, work on, or update that ticket, your **first step** is to ensure it exists locally under `jira/<type>/`.
+If it is not already there, fetch it from Jira and save it as a local markdown file, then work from that file.
+This applies to every route, including subcommands and `/jira update`.
+After a Jira write, refresh the local file so it matches the live ticket.
+
 ## Reference Workflows
 
 Read the matching reference file before continuing from a selected route:
@@ -97,7 +104,7 @@ Read and follow [`references/deep-research.md`](references/deep-research.md) for
 
 Use `/jira update <ticket key or URL> <cleanup request>` when an existing issue needs cleanup, reformatting, splitting, or other hygiene work that preserves the current issue type.
 
-Read and follow [`references/update.md`](references/update.md). Fetch the ticket, identify its current issue type, and compare it to the matching reference workflow from the Reference Workflows table. Return a short recommendation plus the exact proposed Jira change. The update route must never change the issue type; if the type appears wrong, report it as hygiene and route to a separate decision instead of including it in the Jira write.
+Read and follow [`references/update.md`](references/update.md). Ensure the ticket is pulled locally first (see **Pull The Ticket Locally First**), then identify its current issue type, and compare it to the matching reference workflow from the Reference Workflows table. Return a short recommendation plus the exact proposed Jira change. The update route must never change the issue type; if the type appears wrong, report it as hygiene and route to a separate decision instead of including it in the Jira write.
 
 ## Workflow
 
