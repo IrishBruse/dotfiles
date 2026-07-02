@@ -2,7 +2,7 @@
 
 Use this route after `/jira use-cases` or `/jira` has confirmed an existing Epic needs agreed actor/action use cases before child Stories, Specs, or implementation planning.
 
-This route is for Jira-first Epic discovery. Persist agreed use cases using workspace artifact conventions when keeping them local. Posting to Jira is optional and requires Jira-write stop gate approval.
+This route is for Jira-first Epic discovery. Persist agreed use cases using workspace artifact conventions when keeping them local. Posting to Jira is optional and requires an `Approve` answer from the **Jira Write Approval Gate** in `SKILL.md`.
 
 Pipeline position: Epic -> Use Cases -> Stories -> Spec -> Plan -> Implement.
 
@@ -219,13 +219,12 @@ Format the Jira comment with header:
 ## AI-DLC: Agreed Use Cases
 ```
 
-Post using `addCommentToJiraIssue` only after Jira-write stop gate approval.
+Post using `addCommentToJiraIssue` only after an `Approve` answer from the **Jira Write Approval Gate** in `SKILL.md`.
 
 ## Important Notes
 
 - This workflow produces use cases, not stories.
 - Use cases describe what scenarios the Epic covers, not how they will be implemented.
 - Order matters: human actors and one-line actions first, agent supplement second, Spine / Outcomes / Constraints only after roster agreement.
-- If the Epic is too vague, say so. Do not guess.
 - The Spine feeds Example Mapping.
 - The Jira comment is the traceable record of human-agent agreement.

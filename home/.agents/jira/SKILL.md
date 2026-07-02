@@ -181,7 +181,7 @@ Route prompt rules:
 - When the recommendation depends on missing information, include an option to provide or search for that missing information instead of offering a Jira write as the primary path.
 - When a route needs a new Jira ticket title, use `AskQuestion` before finalizing the title. Offer 3-5 recommended title options from the investigation context, put the strongest recommendation first, and include a custom-title option when the wording is not obvious. Do not silently invent the final ticket title.
 - If the user selects a route and that route reveals another decision, use `AskQuestion` again with the new, narrower fork.
-- Omit empty report sections. Keep the report concise unless the user asks for deeper analysis.
+- Omit empty report sections.
 
 ## Handoff Rules
 
@@ -192,9 +192,46 @@ After route confirmation, read the matching Reference Workflow file before conti
 - If the user selects `Search More`, resume **Workflow** from step 2 for the missing lanes, then step 7.
 - If the user selects `Do Nothing`, stop cleanly.
 
+## Jira Write Approval Gate
+
+This gate is the **only** way to perform any remote Jira write in this skill.
+A remote Jira write is any create, edit, reparent, transition, close, link, comment, or publish action against Jira (for example `createJiraIssue`, `editJiraIssue`, `transitionJiraIssue`, `createIssueLink`, `addCommentToJiraIssue`, `addWorklogToJiraIssue`).
+No route, subcommand, prior message, selected option, or silence may substitute for it.
+If this gate has not been answered with its approve option for the exact change shown, do not call any Jira write tool.
+
+Steps, in order:
+
+1. Show the exact proposed change first: the issue key or the new ticket shape, and every field with its before and after value for edits.
+2. Call `AskQuestion` immediately before the write, using the fixed shape below and no other options.
+3. Perform the write **only** when the user selects `Approve`.
+4. If the user selects `Edit first`, revise the proposal and run this gate again.
+5. If the user selects `Cancel`, stop and make no Jira write.
+
+Rules:
+
+- One approval covers one described change set. To write several tickets, either list the full set in a single gate or run the gate per write. Never reuse an approval for a different change.
+- If the change shown differs in any way from what you are about to write, stop and run the gate again with the corrected proposal.
+- Never infer approval from an earlier route choice, a title selection, a prior gate, or the absence of objection. Only the `Approve` option in this gate counts.
+
+Fixed `AskQuestion` shape:
+
+```text
+Title: <KEY or new ticket> - Approve Jira write
+
+Prompt:
+I will <create | update | reparent | transition | close | link | comment>: <what>.
+<exact change summary, before -> after for edits>.
+Apply this exact change?
+
+Options:
+- Approve - apply this exact change
+- Edit first - change something before applying
+- Cancel - do not write to Jira
+```
+
 ## Stop Gates
 
-**Invariant:** No create, update, reparent, close, or publish without explicit `AskQuestion` approval. Downstream reference workflows inherit this rule.
+**Invariant:** Every remote Jira write goes through the **Jira Write Approval Gate** above. Downstream reference workflows inherit this rule.
 
 | Gate | When | Action |
 |------|------|--------|
@@ -203,12 +240,9 @@ After route confirmation, read the matching Reference Workflow file before conti
 | Missing Feature Team | A passed Jira ticket has no Feature Team | Surface as Ticket Hygiene and recommend setting the appropriate team convention before delivery |
 | Metrics unclear | Initiative or Epic has no measurable outcome | Ask for success metrics or propose placeholders clearly marked as questions |
 | Duplicate risk | Similar tickets exist | Present candidates and ask whether to update/link instead of create |
-| Jira write | Any create, update, reparent, close, or publish action | Stop until explicit `AskQuestion` confirmation |
+| Jira write | Any remote Jira write | Stop and run the **Jira Write Approval Gate**; write only on `Approve` |
 | Broad scope | Idea appears larger than one epic | Recommend initiative breakdown and wait for approval |
 
 ## Do Not
 
-- Do not create, update, reparent, close, or publish Jira issues during investigation.
-- Do not invent Jira custom field option ids. See [`references/jira-fields.md`](references/jira-fields.md).
-- Do not force every idea into a new ticket when related work already exists.
 - Do not hide uncertainty in generic acceptance criteria.

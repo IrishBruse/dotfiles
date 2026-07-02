@@ -2,13 +2,15 @@
 
 Shared field conventions and Atlassian MCP create parameters for Task, Story, and Epic routes.
 
+Resolve every custom field option id from `getJiraIssue` or a reference issue, never from memory. Do not invent option ids.
+
 ## Assignee
 
 Set Feature Team when known. Do not set an individual assignee.
 
 ## Feature Team
 
-For NOVACORE, Feature Team is `customfield_10354` and expects option ids. Resolve ids from `getJiraIssue` or a reference issue. Do not invent option ids.
+For NOVACORE, Feature Team is `customfield_10354` and expects option ids.
 
 Known NOVACORE example:
 
@@ -16,7 +18,7 @@ Known NOVACORE example:
 "customfield_10354": [{ "id": "16409" }]
 ```
 
-`16409` is `dynaFormRaptors` on this site. Still resolve ids from Jira instead of memory.
+`16409` is `dynaFormRaptors` on this site.
 
 Resolve order when copying Feature Team:
 
@@ -30,11 +32,8 @@ NOVACORE rejects Epic creates without Capitalizable set.
 - Field id: `customfield_10998`.
 - Resolve in order: parent Initiative, sibling Epic, default to `Yes` id `15465`.
 - Always include this in `additional_fields` for NOVACORE Epic creates.
-- Match ids from `getJiraIssue`. Do not invent option ids.
 
 ## Atlassian MCP
-
-Read tool schemas before calling MCP tools.
 
 Create with:
 

@@ -15,7 +15,6 @@ Each specialist subagent must:
 - Return concise findings only for its lane.
 - Include source references with keys, titles, URLs, file paths, or commands used where available.
 - Report confidence, duplicate or parentage risks, ticket hygiene findings, and open questions relevant to its lane.
-- Avoid creating, updating, publishing, reparenting, closing, commenting on, or otherwise mutating Jira, Confluence, GitHub, or local files.
 
 Use the specialist findings as evidence for the investigation report. If a lane is blocked by credentials or access, continue with available context and surface the gap in the report.
 

@@ -3,6 +3,11 @@
  */
 export type Folder = "me" | "unassigned" | "team" | "misc";
 
+/** NOVACORE Feature Team custom field id. */
+export const FEATURE_TEAM_FIELD = "customfield_10354";
+
+export const JIRA_PULL_FIELDS = `key,summary,assignee,issuetype,description,status,created,updated,${FEATURE_TEAM_FIELD}`;
+
 export type StatusBucket =
   | "todo"
   | "inProgress"
@@ -25,6 +30,28 @@ export function assigneeLabel(
   if (assignee == null) return "Unassigned";
   const name = assignee.displayName;
   return typeof name === "string" ? name : "Unknown";
+}
+
+/** Human-readable Feature Team label from Jira fields, or `"None"`. */
+export function featureTeamLabel(
+  fields: Record<string, unknown>,
+  fieldId = FEATURE_TEAM_FIELD
+): string {
+  const raw = fields[fieldId];
+  if (!Array.isArray(raw) || raw.length === 0) return "None";
+  const names: string[] = [];
+  for (const item of raw) {
+    if (item == null || typeof item !== "object") continue;
+    const o = item as Record<string, unknown>;
+    const label =
+      typeof o.value === "string"
+        ? o.value
+        : typeof o.name === "string"
+          ? o.name
+          : "";
+    if (label) names.push(label);
+  }
+  return names.length > 0 ? names.join(", ") : "None";
 }
 
 /** Best-effort ADF (Jira description) to readable markdown/plain text. */
@@ -212,6 +239,7 @@ export function formatTicketMarkdown(
   const assignee = assigneeRecord(fields.assignee);
   const folder = classifyFolder(assignee, meAccountId);
   const assigned = assigneeLabel(assignee);
+  const featureTeam = featureTeamLabel(fields);
   const descriptionMd = issueDescriptionMarkdown(fields);
   const site = normalizeSiteHost(siteHost);
   const url = `https://${site}/browse/${key}`;
@@ -224,6 +252,7 @@ export function formatTicketMarkdown(
   const md = `---
 title: ${yamlScalar(summary)}
 assigned: ${yamlScalar(assigned)}
+feature_team: ${yamlScalar(featureTeam)}
 type: ${yamlScalar(itype)}
 url: ${url}
 status: ${statusBucket}

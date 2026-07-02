@@ -16,6 +16,7 @@ export type LocalTicket = {
   typeDir: string;
   title: string;
   assigned: string;
+  featureTeam: string;
   issueType: string;
   url: string;
   status: string;
@@ -63,6 +64,7 @@ export function parseTicketMarkdown(
     typeDir: path.basename(path.dirname(filePath)),
     title,
     assigned: parseFrontmatterScalar(fm, "assigned"),
+    featureTeam: parseFrontmatterScalar(fm, "feature_team") || "None",
     issueType: parseFrontmatterScalar(fm, "type"),
     url,
     status: parseFrontmatterLine(fm, "status"),

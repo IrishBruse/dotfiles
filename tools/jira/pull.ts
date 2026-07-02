@@ -10,7 +10,8 @@ import { fetchChildIssues } from "./children.ts";
 import {
   assigneeLabel,
   formatTicketMarkdown,
-  issueTypeName
+  issueTypeName,
+  JIRA_PULL_FIELDS
 } from "./format.ts";
 import { listLocalTickets, localTicketPath } from "./local.ts";
 import {
@@ -20,9 +21,6 @@ import {
   printPullSummary
 } from "./output.ts";
 import { confirm } from "./prompt.ts";
-
-const SEARCH_FIELDS =
-  "key,summary,assignee,issuetype,description,status,created,updated";
 
 /** Lowercase slug for `jira/<type>/` paths (e.g. `Epic` -> `epic`). */
 export function issueTypeSlug(name: string): string {
@@ -110,7 +108,7 @@ function pullTicketWrite(
     "view",
     ticketKey,
     "--fields",
-    SEARCH_FIELDS,
+    JIRA_PULL_FIELDS,
     "--json"
   ]);
 

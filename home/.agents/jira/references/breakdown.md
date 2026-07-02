@@ -93,7 +93,7 @@ Choose the shape from the source issue type and scope:
 8. Stop gate 1. Confirm reconcile results, increments, classifications, and open-question placement. Do not continue to local drafts until explicit confirmation.
 9. Optional local drafts. Convert user-selected `Not created` rows into local draft files via `story.md` or `task.md`. Sub-tasks use `task.md` and the same Goal / Acceptance Criteria / Notes format as Tasks. Set `Jira: _(pending)_` and flip the breakdown row to `Local draft`. Stop.
 10. Stop gate 2. Ask which `Not created` or `Local draft` items to file in Jira.
-11. Optional Jira create. Create only stop gate 2 approved rows. Prefer Tasks and Sub-tasks through `task.md`; create Stories only when the user explicitly requests Story creation. For broader new parent work, route through `epic.md` instead of creating it inside this route. Flip rows to `Created` and record keys. Stop.
+11. Optional Jira create. Run the **Jira Write Approval Gate** in `SKILL.md` for the stop gate 2 selected rows. Create only rows answered `Approve`. Prefer Tasks and Sub-tasks through `task.md`; create Stories only when the user explicitly requests Story creation. For broader new parent work, route through `epic.md` instead of creating it inside this route. Flip rows to `Created` and record keys. Stop.
 12. Post-create. Refresh the breakdown from MCP workflow status. Update local hierarchy context only after Jira creation or confirmed hygiene corrections.
 
 ## Reconcile Rules
@@ -101,7 +101,7 @@ Choose the shape from the source issue type and scope:
 - Do not list a proposed row if a matching Jira child already exists.
 - Refresh `Created` status from MCP, not stale task context alone.
 - If a child exists under the wrong or missing parent, mark it `Orphan` and record the hygiene action.
-- Do not reparent, close, or replace Jira issues without stop gate approval.
+- Do not reparent, close, or replace Jira issues without an `Approve` answer from the **Jira Write Approval Gate** in `SKILL.md`.
 
 ## Plan Mode
 
@@ -147,7 +147,7 @@ Created: N | Not created: N | Orphan: N | Recommendation only: N
 - Save drafts using workspace artifact conventions unless the user explicitly asks for another location.
 - Every draft records `Jira: _(pending)_` until creation.
 - Parent should follow the recommended breakdown shape and Jira hierarchy rules unless the row is intentionally orphaned or the user chooses another parent.
-- Do not create Jira issues during breakdown. Creation happens only after stop gate 2.
+- Do not create Jira issues during breakdown. Creation happens only after stop gate 2 selection and an `Approve` answer from the **Jira Write Approval Gate**.
 
 ## Anti-Patterns
 
@@ -157,5 +157,3 @@ Created: N | Not created: N | Orphan: N | Recommendation only: N
 - Keeping a detached discovery section instead of attaching TBDs to owning rows.
 - Creating one story per milestone or scenario when the same delivery slice owns the flow.
 - Filing work before the user approves the reconcile and backlog design.
-- Creating Jira issues without stop gate 2 approval.
-- Running multiple gated workflow steps in one turn.

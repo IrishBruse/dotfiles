@@ -13,8 +13,8 @@ Tasks and Sub-tasks are for discrete project work that is not user-facing Story 
 5. Resolve `cloudId` from a Jira URL, prior context, or `getAccessibleAtlassianResources`.
 6. Optional epic lookup. If the user gives an epic title instead of a key, use JQL and confirm the key before drafting.
 7. Draft locally before any Jira create. Use the ticket template and workspace artifact conventions.
-8. Stop gate. Show the draft file path and summary. Ask whether to keep it local or promote it.
-9. Promote only after draft confirmation stop gate by calling `createJiraIssue`.
+8. Show the draft file path and summary, then run the **Jira Write Approval Gate** in `SKILL.md`.
+9. Promote only when the gate is answered `Approve` by calling `createJiraIssue`.
 10. Reply with issue key, browse URL, epic, Feature Team, and summary. Update the local draft with the Jira key and link.
 
 ## Ticket Template
@@ -83,7 +83,7 @@ Save the draft using the workspace artifact conventions. Include this content sh
 
 Persist rules:
 
-- Write before the draft confirmation stop gate.
+- Write the local draft before the **Jira Write Approval Gate**.
 - Re-read the file at the start of the create step. The file wins over chat if they differ.
 - If the user edits the file during review, use the file content for `createJiraIssue`.
 
@@ -130,11 +130,10 @@ Read [`jira-fields.md`](jira-fields.md) for Feature Team, assignee, and `createJ
 | Clarification | Intent too vague for Goal and AC | Ask targeted questions and stop until answered or user says draft anyway |
 | Epic prompt | Epic missing at start | Ask once and proceed on skip |
 | Sub-task parent | Sub-task parent missing | Ask for the parent issue key and stop until known |
-| Draft confirmation | Before `createJiraIssue` | Save local draft and wait for explicit publish approval |
+| Jira write | Before `createJiraIssue` | Save local draft, then run the **Jira Write Approval Gate** in `SKILL.md`; create only on `Approve` |
 
 ## Do Not
 
-- Do not create without a local draft and draft confirmation stop gate.
 - Do not put draft-only content only in Jira.
 - Do not invent Goal, AC, or scope when the request is too vague.
 - Do not use Story, Bug, or Sub-task unless the user explicitly overrides or confirms issue type.

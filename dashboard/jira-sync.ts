@@ -13,6 +13,7 @@ import {
   assigneeRecord,
   classifyFolder,
   formatTicketMarkdown,
+  JIRA_PULL_FIELDS,
   statusBucketFromFields,
   type Folder,
   type StatusBucket
@@ -495,9 +496,6 @@ const JIRA_BOARD_SPRINT_JSON_PATH = path.join(
 /** Atlassian CLI binary (must be on `PATH` or change this string). */
 const ACLI = "acli";
 
-const SEARCH_FIELDS =
-  "key,summary,assignee,issuetype,description,status,created,updated";
-
 const VERBOSE = process.env.JIRA_SYNC_VERBOSE === "1";
 
 function log(msg: string): void {
@@ -842,7 +840,7 @@ function runImpl(): number {
     "--json",
     "--paginate",
     "--fields",
-    SEARCH_FIELDS
+    JIRA_PULL_FIELDS
   ]);
 
   if (!Array.isArray(data)) {

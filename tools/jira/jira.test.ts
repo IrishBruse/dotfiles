@@ -13,6 +13,7 @@ import {
   adfToMarkdown,
   assigneeLabel,
   classifyFolder,
+  featureTeamLabel,
   formatTicketMarkdown,
   statusBucketFromFields,
   yamlScalar
@@ -100,6 +101,7 @@ describe("parseTicketMarkdown", () => {
     const content = `---
 title: "Ship it"
 assigned: "Ada"
+feature_team: "dynaFormRaptors"
 type: "Epic"
 url: https://example.atlassian.net/browse/NOVACORE-9
 status: todo
@@ -112,6 +114,7 @@ Body here`;
     assert.ok(ticket);
     assert.equal(ticket!.key, "NOVACORE-9");
     assert.equal(ticket!.title, "Ship it");
+    assert.equal(ticket!.featureTeam, "dynaFormRaptors");
     assert.equal(ticket!.description, "Body here");
   });
 });
@@ -181,6 +184,22 @@ describe("assigneeLabel", () => {
   });
 });
 
+describe("featureTeamLabel", () => {
+  it("reads value labels from the Feature Team custom field", () => {
+    assert.equal(
+      featureTeamLabel({
+        customfield_10354: [{ id: "16409", value: "dynaFormRaptors" }]
+      }),
+      "dynaFormRaptors"
+    );
+  });
+
+  it("returns None when Feature Team is unset", () => {
+    assert.equal(featureTeamLabel({}), "None");
+    assert.equal(featureTeamLabel({ customfield_10354: [] }), "None");
+  });
+});
+
 describe("formatTicketMarkdown", () => {
   it("writes Jira created and updated timestamps into frontmatter", () => {
     const { body } = formatTicketMarkdown(
@@ -198,5 +217,23 @@ describe("formatTicketMarkdown", () => {
     );
     assert.match(body, /^created: "2025-01-10T08:00:00\.000\+0000"/m);
     assert.match(body, /^updated: "2025-06-30T14:30:00\.000\+0000"/m);
+  });
+
+  it("writes feature_team into frontmatter", () => {
+    const { body } = formatTicketMarkdown(
+      "PROJ-1",
+      {
+        summary: "Team ticket",
+        issuetype: { name: "Story" },
+        assignee: null,
+        status: { name: "To Do" },
+        created: "",
+        updated: "",
+        customfield_10354: [{ id: "16409", value: "dynaFormRaptors" }]
+      },
+      "example.atlassian.net",
+      "me"
+    );
+    assert.match(body, /^feature_team: "dynaFormRaptors"/m);
   });
 });

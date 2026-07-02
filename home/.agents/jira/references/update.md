@@ -2,7 +2,7 @@
 
 Use this route after `/jira update` or `/jira` has confirmed an existing issue needs cleanup, reformatting, splitting, parentage cleanup, or other hygiene edits that preserve the current issue type.
 
-This route updates existing Jira issues only after investigation, an exact proposed change, and Jira-write stop gate approval.
+This route updates existing Jira issues only after investigation, an exact proposed change, and an `Approve` answer from the **Jira Write Approval Gate** in `SKILL.md`.
 
 Issue type changes are out of scope for this route. The update route may report an issue type mismatch as hygiene, but it must never propose or perform a Jira write that changes `issuetype`.
 
@@ -32,8 +32,8 @@ Do not use when:
    - Story: `story.md`.
    - Epic: `epic.md`.
 6. Return a short recommendation and a precise proposed Jira change that preserves the current issue type.
-7. Stop for Jira-write stop gate approval before editing Jira.
-8. On approval, call `editJiraIssue`, `createIssueLink`, `transitionJiraIssue`, or a comment tool only for the approved change.
+7. Run the **Jira Write Approval Gate** in `SKILL.md` before editing Jira.
+8. Only when the gate is answered `Approve`, call `editJiraIssue`, `createIssueLink`, `transitionJiraIssue`, or a comment tool for that exact approved change.
 9. Refresh the local file per the same rule.
 10. Reply with the issue key, browse URL, fields changed, and any follow-up hygiene still recommended.
 
@@ -102,13 +102,11 @@ Do not change issue type in this route, even with approval. Do not change parent
 | Missing context | Cleanup request is too vague | Fetch ticket first, then ask targeted questions |
 | Split risk | Ticket appears to need multiple issues | Present split proposal and wait |
 | Type mismatch | Issue type appears wrong | Surface the mismatch and route to a separate decision; do not change type in this route |
-| Jira write | Any edit, link, transition, comment, or reparent | Stop until Jira-write stop gate approval |
+| Jira write | Any edit, link, transition, comment, or reparent | Stop and run the **Jira Write Approval Gate** in `SKILL.md`; write only on `Approve` |
 
 ## Do Not
 
 - Do not edit Jira during the investigation step.
 - Do not change issue type from the update route.
-- Do not invent Jira custom field option ids.
 - Do not remove useful context to force a template.
-- Do not reparent, transition, close, or split without Jira-write stop gate approval.
 - Do not create replacement tickets from this route unless the user confirms a downstream create route.

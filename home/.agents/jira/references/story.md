@@ -11,8 +11,8 @@ Stories are for actor-facing delivery slices that can be specified with a user s
 3. Fetch parent when known. Confirm the parent, read summary/context, and copy Feature Team when available.
 4. Clarify if vague. If actor, outcome, scope, or testable acceptance criteria are unclear, ask targeted questions before drafting.
 5. Draft locally before Jira create using workspace artifact conventions.
-6. Stop gate. Show the draft file path and summary. Ask whether to keep it local or publish to Jira.
-7. Promote only after draft confirmation stop gate by creating the Jira Story with `contentFormat: "markdown"` and the parent epic when known.
+6. Show the draft file path and summary, then run the **Jira Write Approval Gate** in `SKILL.md`.
+7. Promote only when the gate is answered `Approve` by creating the Jira Story with `contentFormat: "markdown"` and the parent epic when known.
 8. Update the local record with Jira key, URL, and status. Update local hierarchy context when the parent epic is known.
 
 ## Ticket Template
@@ -121,11 +121,11 @@ Read [`jira-fields.md`](jira-fields.md) for Feature Team, assignee, and `createJ
 |------|------|--------|
 | Parent epic | Missing parent | Ask once. Proceed only if user provides a key or says skip |
 | Clarification | Intent too vague | Ask targeted questions and stop until answered or user says draft anyway |
-| Draft confirmation | Before Jira create | Save local draft and wait for explicit publish approval |
+| Jira write | Before Jira create | Save local draft, then run the **Jira Write Approval Gate** in `SKILL.md`; create only on `Approve` |
 
 ## Do Not
 
-- Do not create Jira without a local draft and draft confirmation stop gate.
+- Do not create Jira without a local draft.
 - Do not use Story for non-behavioral internal chores. Use `task.md`.
 - Do not copy implementation plans into the story body.
 - Do not put large scenario sets in Jira when a separate artifact is the source of truth.

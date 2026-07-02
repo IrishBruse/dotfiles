@@ -24,8 +24,8 @@ Which Jira initiative does this epic belong to? (issue key e.g. NOVACORE-12345, 
 6. Clarify if vague. Ask targeted questions if expectations or scenarios cannot be written specifically.
 7. Feature Team. Resolve in order: copy from the Initiative, copy from a sibling Epic, ask once.
 8. Draft locally before Jira create using workspace artifact conventions.
-9. Stop gate. Show the draft file path and summary. Ask whether to keep it local or promote it.
-10. Promote only after draft confirmation stop gate by calling `createJiraIssue`.
+9. Show the draft file path and summary, then run the **Jira Write Approval Gate** in `SKILL.md`.
+10. Promote only when the gate is answered `Approve` by calling `createJiraIssue`.
 11. Reply with issue key, browse URL, parent Initiative, Feature Team, and summary. Update the local draft and hierarchy context.
 
 ## Ticket Template
@@ -162,7 +162,7 @@ Then ...
 
 Persist rules:
 
-- Write before the draft confirmation stop gate.
+- Write the local draft before the **Jira Write Approval Gate**.
 - Re-read the file at the start of the create step. The file wins over chat if they differ.
 - If the user edits the file during review, use the file content for `createJiraIssue`.
 
@@ -197,7 +197,7 @@ Read [`jira-fields.md`](jira-fields.md) for Feature Team, Capitalizable, assigne
 | Fit check | Initiative and intent known | Stop and propose alternative if no fit |
 | Clarification | Intent too vague | Ask targeted questions and stop until answered or user says draft anyway |
 | Implementation-leak check | Before draft confirmation | Rewrite any Expectation or Scenario that names tech, payload, service, or protocol |
-| Draft confirmation | Before `createJiraIssue` | Save local draft and wait for explicit approval or file edits |
+| Jira write | Before `createJiraIssue` | Save local draft, then run the **Jira Write Approval Gate** in `SKILL.md`; create only on `Approve` |
 
 ## Do Not
 
