@@ -39,9 +39,30 @@ body:has(.jira-page) {
   left: 0;
   z-index: 50;
   display: flex;
+  align-items: center;
   justify-content: center;
   padding: 0.5rem 1rem;
   background: var(--vscode-editor-background, #282c34);
+}
+
+.command-palette-home {
+  position: absolute;
+  left: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  text-decoration: none;
+}
+
+.command-palette-home-icon {
+  display: block;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .command-palette-shell {
@@ -242,12 +263,18 @@ main.dashboard-landing {
   text-align: center;
 }
 
-.dashboard-jira-widget {
+.dashboard-left-widgets {
   position: fixed;
   bottom: 1rem;
   left: 1rem;
   z-index: 1;
-  width: min(20rem, calc(100vw - 2rem));
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: min(22rem, calc(100vw - 2rem));
+}
+
+.dashboard-jira-widget {
   box-sizing: border-box;
   overflow: hidden;
   border: 1px solid var(--vscode-editorWidget-border, #3a3f4b);
@@ -338,6 +365,324 @@ main.dashboard-landing {
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--vscode-editor-foreground, #abb2bf);
+}
+
+.dashboard-versions-widget {
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--vscode-editorWidget-border, #3a3f4b);
+  background: var(--vscode-editor-background, #282c34);
+  font-size: 0.8125rem;
+}
+
+.dashboard-versions-widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  background: var(--vscode-sideBarSectionHeader-background, #21252b);
+  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border, #3a3f4b);
+}
+
+.dashboard-versions-widget-title {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--vscode-textLink-foreground, #35a854);
+}
+
+.dashboard-versions-widget-title:hover {
+  color: var(--vscode-textLink-activeForeground, #d7dae0);
+}
+
+.dashboard-versions-widget-action {
+  padding: 0.2rem 0.55rem;
+  border: 0;
+  border-radius: 2px;
+  background: var(--vscode-button-background, #35a854);
+  color: var(--vscode-button-foreground, #ffffff);
+  font: inherit;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dashboard-versions-widget-action:hover:not(:disabled) {
+  background: var(--vscode-button-hoverBackground, #35974f);
+}
+
+.dashboard-versions-widget-action:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.dashboard-versions-widget-error,
+.dashboard-versions-widget-empty {
+  margin: 0;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--vscode-descriptionForeground, #7f848e);
+}
+
+.dashboard-versions-widget-error {
+  color: var(--vscode-errorForeground, #f48771);
+}
+
+.versions-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border, #3a3f4b);
+  background: var(--vscode-sideBarSectionHeader-background, #21252b);
+}
+
+.versions-tab {
+  flex: 1;
+  min-width: 0;
+  padding: 0.3rem 0.5rem;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--vscode-descriptionForeground, #7f848e);
+  font: inherit;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.versions-tab:hover {
+  color: var(--vscode-editor-foreground, #abb2bf);
+  background: var(--vscode-list-hoverBackground, #2c313a);
+}
+
+.versions-tab.is-active {
+  color: var(--vscode-textLink-foreground, #35a854);
+  border-bottom-color: var(--vscode-focusBorder, #35a854);
+}
+
+.versions-list-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.versions-list-rows > li {
+  min-width: 0;
+}
+
+.versions-list-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  gap: 0.5rem;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.2rem 0.75rem;
+  color: inherit;
+}
+
+.versions-list-row:hover {
+  background: var(--vscode-list-hoverBackground, #2c313a);
+}
+
+.versions-list-repo {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--vscode-textLink-foreground, #35a854);
+}
+
+.versions-list-repo:hover {
+  color: var(--vscode-textLink-activeForeground, #d7dae0);
+}
+
+.versions-list-version {
+  font-variant-numeric: tabular-nums;
+  color: var(--vscode-editor-foreground, #abb2bf);
+}
+
+.versions-list-time {
+  color: var(--vscode-descriptionForeground, #7f848e);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.versions-version-text {
+  color: inherit;
+}
+
+.versions-env-version {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.versions-compare-link {
+  color: var(--vscode-descriptionForeground, #7f848e);
+  font-size: 0.75rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.versions-compare-link:hover {
+  color: var(--vscode-textLink-foreground, #35a854);
+  text-decoration: underline;
+}
+
+.versions-compare-text {
+  color: var(--vscode-descriptionForeground, #7f848e);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+main.versions-page {
+  box-sizing: border-box;
+  height: 100%;
+  overflow: auto;
+}
+
+.versions-workspace {
+  box-sizing: border-box;
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 1rem 1.25rem 2rem;
+}
+
+.versions-workspace-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--vscode-panel-border, #3c3c3c);
+}
+
+.versions-workspace-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--vscode-textLink-foreground, #35a854);
+}
+
+.versions-workspace-action {
+  padding: 0.35rem 0.75rem;
+  border: 0;
+  border-radius: 2px;
+  background: var(--vscode-button-background, #35a854);
+  color: var(--vscode-button-foreground, #ffffff);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.versions-workspace-action:hover:not(:disabled) {
+  background: var(--vscode-button-hoverBackground, #35974f);
+}
+
+.versions-workspace-action:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.versions-workspace-error,
+.versions-workspace-empty {
+  margin: 0;
+  color: var(--vscode-descriptionForeground, #7f848e);
+}
+
+.versions-workspace-error {
+  color: var(--vscode-errorForeground, #f48771);
+}
+
+.versions-workspace-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-top: 0.75rem;
+}
+
+.versions-repo-block + .versions-repo-block {
+  padding-top: 0.25rem;
+}
+
+.versions-repo-name {
+  margin: 0 0 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.versions-repo-name a {
+  color: var(--vscode-textLink-foreground, #35a854);
+  text-decoration: none;
+}
+
+.versions-repo-name a:hover {
+  color: var(--vscode-textLink-activeForeground, #d7dae0);
+}
+
+.versions-env-line {
+  display: grid;
+  grid-template-columns: 5.5rem 2.5rem minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: baseline;
+  padding: 0.1rem 0;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.versions-env-label {
+  font-weight: 600;
+}
+
+.versions-env-dev {
+  color: #f48771;
+}
+
+.versions-env-test {
+  color: #89d185;
+}
+
+.versions-env-prod {
+  color: #b180d7;
+}
+
+.versions-env-demo {
+  color: #3794ff;
+}
+
+.versions-pr-link {
+  color: var(--vscode-textLink-foreground, #35a854);
+  text-decoration: none;
+}
+
+.versions-pr-link:hover {
+  color: var(--vscode-textLink-activeForeground, #d7dae0);
+}
+
+.versions-pr-empty {
+  color: var(--vscode-descriptionForeground, #7f848e);
+}
+
+.versions-env-time {
+  color: var(--vscode-descriptionForeground, #7f848e);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.versions-workspace-meta {
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  color: var(--vscode-descriptionForeground, #7f848e);
 }
 
 .dashboard-ports-widget {

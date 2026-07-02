@@ -1,5 +1,5 @@
 import type { BoardTicket } from "../jira/types.ts";
-import { relativeUpdated } from "../jira/format.ts";
+import { relativeCreated, relativeUpdated } from "../jira/format.ts";
 import TicketMarkdown from "./TicketMarkdown.tsx";
 
 type Props = {
@@ -33,10 +33,18 @@ export default function TicketDetail({ ticket }: Props) {
             <dt>Priority</dt>
             <dd>{ticket.priority}</dd>
           </div>
-          <div>
-            <dt>Updated</dt>
-            <dd>{relativeUpdated(ticket.updatedAt)}</dd>
-          </div>
+          {ticket.createdAt ? (
+            <div>
+              <dt>Created</dt>
+              <dd>{relativeCreated(ticket.createdAt)}</dd>
+            </div>
+          ) : null}
+          {ticket.updatedAt ? (
+            <div>
+              <dt>Updated</dt>
+              <dd>{relativeUpdated(ticket.updatedAt)}</dd>
+            </div>
+          ) : null}
         </dl>
       </header>
 

@@ -6,7 +6,7 @@ import {
   type FormEvent,
   type KeyboardEvent
 } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 
 import boardData from "virtual:jira-board";
 
@@ -20,7 +20,8 @@ const RESULT_LIMIT = 8;
 
 const NAV_ITEMS = [
   { label: "Home", path: "/" },
-  { label: "Jira board", path: "/jira" }
+  { label: "Jira board", path: "/jira" },
+  { label: "GitHub versions", path: "/versions" }
 ] as const;
 
 type PaletteRow =
@@ -140,6 +141,14 @@ export default function CommandPalette() {
 
   return (
     <header className="command-palette-topbar">
+      <Link
+        to="/"
+        className="command-palette-home"
+        aria-label="Home"
+        title="Home"
+      >
+        <img src="/favicon.svg" alt="" className="command-palette-home-icon" />
+      </Link>
       <div
         className={`command-palette-shell${showDropdown ? " is-open" : ""}`}
       >

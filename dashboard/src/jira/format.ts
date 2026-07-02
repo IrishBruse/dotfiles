@@ -19,21 +19,29 @@ export function markdownLink(ticket: BoardTicket): string {
   return `[${ticket.key}: ${ticket.summary}](${ticket.url})`;
 }
 
-export function relativeUpdated(iso: string): string {
+function relativeTime(label: "Created" | "Updated", iso: string): string {
   const delta = Date.now() - new Date(iso).getTime();
   const minutes = Math.floor(delta / 60_000);
   if (minutes < 1) {
-    return "Updated just now";
+    return `${label} just now`;
   }
   if (minutes < 60) {
-    return `Updated ${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+    return `${label} ${minutes} minute${minutes === 1 ? "" : "s"} ago`;
   }
   const hours = Math.floor(minutes / 60);
   if (hours < 24) {
-    return `Updated ${hours} hour${hours === 1 ? "" : "s"} ago`;
+    return `${label} ${hours} hour${hours === 1 ? "" : "s"} ago`;
   }
   const days = Math.floor(hours / 24);
-  return `Updated ${days} day${days === 1 ? "" : "s"} ago`;
+  return `${label} ${days} day${days === 1 ? "" : "s"} ago`;
+}
+
+export function relativeCreated(iso: string): string {
+  return relativeTime("Created", iso);
+}
+
+export function relativeUpdated(iso: string): string {
+  return relativeTime("Updated", iso);
 }
 
 export async function copyText(text: string): Promise<void> {

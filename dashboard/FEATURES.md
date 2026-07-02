@@ -4,9 +4,9 @@ Local start page built with React, TypeScript, and Vite.
 Dev and preview listen on port `54321`.
 Run `npm run dev`, `build`, or `preview` from this directory.
 
-The app has two routes: `/` (landing) and `/jira` (full board).
-A command palette spans both pages.
-Three Vite plugins supply theme colors, Jira data, and local port scanning.
+The app has three routes: `/` (landing), `/jira` (full board), and `/versions` (GitHub env versions).
+A command palette spans all pages.
+Four Vite plugins supply theme colors, Jira data, GitHub version fetching, and local port scanning.
 
 ---
 
@@ -47,7 +47,7 @@ The placeholder reads "Search or Filter...".
 **Elsewhere**
 
 Focus opens a dropdown below the bar.
-With an empty query, navigation items appear (Home, Jira board).
+With an empty query, navigation items appear (Home, Jira board, GitHub versions).
 With text, up to eight Jira ticket matches are shown.
 Each match shows a status dot, key, and summary.
 
@@ -67,12 +67,25 @@ State is shared via `CommandPaletteProvider`.
 
 ## Landing page (`/`)
 
-The landing page is a minimal shell with two floating widgets.
+The landing page is a minimal shell with three floating widgets.
 No other content occupies the main area.
+
+### Versions widget
+
+Bottom-left stack (above Jira), labeled "Versions".
+
+- Header title links to `/versions`.
+- **Refresh** button calls `POST /api/github-versions` (dev and preview).
+- Tabs switch between repo groups when multiple groups are configured.
+- Shows one row per repo in the active group (prod env when configured).
+- Rows link to `/versions?group=<id>`.
+- Fetches on mount via the same API.
+
+Repo groups are defined in `dashboard/github-versions.json`.
 
 ### Jira widget
 
-Bottom-left floating card labeled "Jira".
+Bottom-left stack (below versions), labeled "Jira".
 
 - Header title links to `/jira`.
 - **Sync** button calls `POST /api/jira/sync` (dev server only).
@@ -99,6 +112,38 @@ Bottom-right floating card labeled "Local ports".
 - Errors (scan or kill failure) show inline.
 
 The `local-ports` plugin uses `lsof` to find TCP listeners and filters to common dev runtimes (node, vite, python, go, etc.).
+
+---
+
+## GitHub versions (`/versions`)
+
+Full-page view of deployed GitHub Environment versions for configured repo groups.
+
+### Configuration
+
+`dashboard/github-versions.json` defines one or more groups.
+Each group has:
+
+- `id` and `label` (tab name)
+- `org` (GitHub org)
+- `environments` (deployment env names, in display order)
+- `repos` (deployment repos)
+- Optional `devVersionFromRelease` (use latest release tag for dev)
+- Optional `compare` map (env name to another env or `"main"` for compare links)
+- Optional `infoRepos` (non-deployment repos with `latestRelease` or `workflowBranch` rows)
+
+Example: the default `dynamic-forms` group matches the `dfv` CLI in `dynaform-raptor-utilities`.
+
+The `github-versions` plugin exposes `virtual:github-versions-config` and `GET` / `POST /api/github-versions`.
+Requires authenticated `gh` for the configured orgs.
+
+### Layout
+
+- Tab bar switches between groups (`?group=<id>` in the URL).
+- Scrollable workspace with one block per deployment repo plus any `infoRepos`.
+- Each environment line shows PR link, version, compare link, and relative deploy time.
+- Env labels use fixed semantic colors for common names (dev, test, prod, demo).
+- **Refresh** button re-fetches all groups.
 
 ---
 
@@ -217,6 +262,7 @@ Used in the Jira widget, command palette results, ticket list, and anywhere else
 |--------|---------------------|---------|
 | `vscode-theme` | `virtual:vscode-theme.css` | CSS variables from VS Code settings |
 | `jira-board` | `virtual:jira-board` | Sprint + ticket markdown; `POST /api/jira/sync` in dev |
+| `github-versions` | `virtual:github-versions-config`, `GET /api/github-versions`, `POST /api/github-versions` | Config-driven GitHub env versions via `gh` |
 | `local-ports` | `GET /api/ports`, `POST /api/ports/kill` | List and kill user-owned dev TCP listeners |
 
 ---

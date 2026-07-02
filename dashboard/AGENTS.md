@@ -79,14 +79,25 @@ Fixed semantic colors (not theme tokens):
 
 ## Component classes
 
-- `dashboard-*` - landing page only (Jira widget, local ports widget).
+- `dashboard-*` - landing page only (versions widget, Jira widget, local ports widget).
 - `command-palette-*` - global command palette and top bar.
 - `jira-*` - shared Jira UI (list rows, detail, markdown, workspace).
+- `versions-*` - GitHub versions UI (tabs, widget rows, full workspace).
 - Reuse `jira-list-row`, `jira-list-key`, `jira-list-summary`, and `jira-status-dot` in the widget instead of duplicating row styles.
+
+## Versions widget
+
+Stacked above the Jira widget in the bottom-left `dashboard-left-widgets` column.
+
+- Container: `editor-background` + `editorWidget-border`.
+- Header: `sideBarSectionHeader` background and border; title links to `/versions`.
+- Tabs switch between configured groups when `github-versions.json` has more than one.
+- Rows: repo short name, preview env version (prod when present), relative time.
+- Refresh: `POST /api/github-versions` (dev and preview) via a primary button.
 
 ## Jira widget
 
-Floating card at bottom-left on the landing page.
+Stacked below the versions widget in the bottom-left column.
 
 - Container: `editor-background` + `editorWidget-border`.
 - Header: `sideBarSectionHeader` background and border; title links to `/jira`.
@@ -115,4 +126,5 @@ No backdrop dimming.
 
 - `vscode-theme` - CSS variables from VS Code settings.
 - `jira-board` - virtual `jira-board` module from local sprint.json + ticket markdown; HMR on file changes; sync endpoint in dev.
+- `github-versions` - `virtual:github-versions-config` from `github-versions.json`; `GET` and `POST /api/github-versions` fetches GitHub env versions via `gh` (dev and preview).
 - `local-ports` - `GET /api/ports` lists user-owned dev TCP listeners via `lsof` (dev and preview).

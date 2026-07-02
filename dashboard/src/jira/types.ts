@@ -10,6 +10,7 @@ export type BoardTicket = {
   status: string;
   statusBucket: string;
   priority: string;
+  createdAt: string;
   updatedAt: string;
   url: string;
   description: string;

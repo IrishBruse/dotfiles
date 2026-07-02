@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -61,6 +61,7 @@ export type BoardTicket = {
   status: string;
   statusBucket: (typeof STATUS_ORDER)[number];
   priority: string;
+  createdAt: string;
   updatedAt: string;
   url: string;
   description: string;
@@ -170,7 +171,8 @@ function enrichTicket(
   let description = row.summary;
   let url = `https://globalization-partners.atlassian.net/browse/${row.key}`;
   let priority = "Medium";
-  let updatedAt = new Date().toISOString();
+  let createdAt = "";
+  let updatedAt = "";
 
   if (mdPath) {
     const raw = readFileSync(mdPath, "utf8");
@@ -180,7 +182,8 @@ function enrichTicket(
     }
     priority = meta.priority ?? defaultPriority(meta.type);
     description = stripSubtaskLines(body) || row.summary;
-    updatedAt = statSync(mdPath).mtime.toISOString();
+    createdAt = meta.created ?? "";
+    updatedAt = meta.updated ?? "";
     return {
       key: row.key,
       summary: row.summary,
@@ -188,6 +191,7 @@ function enrichTicket(
       status: STATUS_LABELS[bucket],
       statusBucket: bucket,
       priority,
+      createdAt,
       updatedAt,
       url,
       description,
@@ -202,6 +206,7 @@ function enrichTicket(
     status: STATUS_LABELS[bucket],
     statusBucket: bucket,
     priority,
+    createdAt,
     updatedAt,
     url,
     description,
