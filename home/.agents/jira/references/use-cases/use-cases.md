@@ -37,7 +37,7 @@ Use when:
 Do not use when:
 
 - The Epic is too vague to extract use cases from. Escalate to product refinement.
-- The work is a single tiny change. Route to `story.md` or `task.md`.
+- The work is a single tiny change. Route to [`../story/story.md`](../story/story.md) or [`../task/task.md`](../task/task.md).
 
 ## Use Case Rules
 
@@ -142,20 +142,7 @@ For each agreed actor/action line, draft:
 - Extensions: alternates or errors from decision diamonds.
 - Outcomes, Preconditions, and Key Rules.
 
-Use this template:
-
-```markdown
-### UC-{N}: {Use Case Title}
-
-**Metric trace:** Epic metric(s) this use case advances, or "Red Card waived: ..."
-**Actor:** One or more human GP roles who initiate or benefit
-**Action:** Single high-level user/business intent
-**Spine:** 3-7 numbered steps, main success only
-**Outcomes:** Observable, testable results
-**Extensions:** Optional alternates for refinement or Example Mapping
-**Preconditions:** What must already exist, or N/A
-**Key Rules / Constraints:** Non-negotiable rules
-```
+Use the Use Case Template in [`template.md`](template.md).
 
 Introduce with:
 
@@ -213,11 +200,7 @@ If found, ask whether to:
 
 If replacement is not possible, post a superseding comment that states it replaces the prior agreed-use-cases comment.
 
-Format the Jira comment with header:
-
-```markdown
-## AI-DLC: Agreed Use Cases
-```
+Format the Jira comment with the header shown in [`template.md`](template.md).
 
 Post using `addCommentToJiraIssue` only after an `Approve` answer from the **Jira Write Approval Gate** in `SKILL.md`.
 

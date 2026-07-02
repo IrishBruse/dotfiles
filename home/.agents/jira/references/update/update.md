@@ -28,32 +28,18 @@ Do not use when:
 3. Fetch the ticket from Jira, including issue type, status, parent, children, linked issues, labels, Feature Team, summary, and description.
 4. Search local workspace context and artifacts for the key and nearby terms.
 5. Identify the ticket's real issue type and compare it to the matching reference:
-   - Task: `task.md`.
-   - Story: `story.md`.
-   - Epic: `epic.md`.
-6. Return a short recommendation and a precise proposed Jira change that preserves the current issue type.
-7. Run the **Jira Write Approval Gate** in `SKILL.md` before editing Jira.
+   - Task: [`../task/task.md`](../task/task.md).
+   - Story: [`../story/story.md`](../story/story.md).
+   - Epic: [`../epic/epic.md`](../epic/epic.md).
+6. Return a short recommendation and a precise proposed Jira change that preserves the current issue type. Steps 1-6 are investigation only. Do not call Jira MCP write tools during investigation.
+7. Run the **Jira Write Approval Gate** in `SKILL.md` with the exact proposed change.
 8. Only when the gate is answered `Approve`, call `editJiraIssue`, `createIssueLink`, `transitionJiraIssue`, or a comment tool for that exact approved change.
 9. Refresh the local file per the same rule.
 10. Reply with the issue key, browse URL, fields changed, and any follow-up hygiene still recommended.
 
 ## Update Recommendation Template
 
-```markdown
-## Recommendation
-<One sentence describing whether to update, split, link, route type mismatch separately, or leave unchanged.>
-
-## Ticket Hygiene
-- <Finding or `No hygiene issues found.`>
-
-## Proposed Jira Change
-- Summary: <new summary or `unchanged`>
-- Issue type: `unchanged` (required; do not change issue type in the update route)
-- Parent: <new parent or `unchanged`>
-- Feature Team: <new team or `unchanged`>
-- Description: <exact replacement sections or focused patch summary>
-- Links/comments/status: <exact change or `none`>
-```
+Use the Update Recommendation Template in [`template.md`](template.md).
 
 ## Hygiene Checks
 
@@ -102,11 +88,3 @@ Do not change issue type in this route, even with approval. Do not change parent
 | Missing context | Cleanup request is too vague | Fetch ticket first, then ask targeted questions |
 | Split risk | Ticket appears to need multiple issues | Present split proposal and wait |
 | Type mismatch | Issue type appears wrong | Surface the mismatch and route to a separate decision; do not change type in this route |
-| Jira write | Any edit, link, transition, comment, or reparent | Stop and run the **Jira Write Approval Gate** in `SKILL.md`; write only on `Approve` |
-
-## Do Not
-
-- Do not edit Jira during the investigation step.
-- Do not change issue type from the update route.
-- Do not remove useful context to force a template.
-- Do not create replacement tickets from this route unless the user confirms a downstream create route.

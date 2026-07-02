@@ -1,0 +1,63 @@
+# Jira Task
+
+Use this route after `/jira task`, `/jira subtask`, or `/jira` has confirmed the work should become a new internal Task or Sub-task.
+
+Tasks and Sub-tasks are for discrete project work that is not user-facing Story work: enablement, setup, migration, documentation, security remediation, or platform plumbing.
+Sub-tasks use the same Goal / Acceptance Criteria / Notes format as Tasks, the only difference is Jira issue type and parent handling.
+
+## Workflow
+
+1. Collect inputs: `projectKey`, task intent, optional epic key, optional parent issue key for Sub-tasks, optional Feature Team, optional labels, priority, components, and references.
+2. Clarify if vague. Read [`../clarify-vague.md`](../clarify-vague.md). If intent is too thin to write a clear Goal and testable AC, ask targeted questions before drafting.
+3. Parentage gate.
+   **Tasks:** If no epic key is in context, ask once: "Which epic should this task belong to? (e.g. NOVACORE-12345, or say skip)." Proceed without a parent if the user skips. When known, set `parent` on `createJiraIssue` to the epic key.
+   **Sub-tasks:** Require a parent Story, Task, or Bug key before drafting or creating. Use `issueTypeName: "Sub-task"` and `parent` on create. Do not create an unparented Sub-task. Record the parent in draft frontmatter or metadata. If the parent is unknown, ask for it or route back to investigation.
+4. Feature Team. When an epic key or parent issue is known, fetch it and copy Feature Team if set. If absent, ask once for the team or accept a reference issue key to copy from.
+5. Resolve `cloudId` from a Jira URL, prior context, or `getAccessibleAtlassianResources`.
+6. Optional epic lookup. If the user gives an epic title instead of a key, use JQL and confirm the key before drafting.
+7. Draft locally before any Jira create. Read [`../local-draft.md`](../local-draft.md) and use the ticket template in [`template.md`](template.md).
+8. Show the draft file path and summary, then run the **Jira Write Approval Gate** in `SKILL.md`.
+9. Promote only when the gate is answered `Approve` by calling `createJiraIssue`.
+10. Reply with issue key, browse URL, epic, Feature Team, and summary. Update the local draft with the Jira key and link.
+
+## Templates
+
+Use the Ticket Template, summary line, and local draft shape in [`template.md`](template.md).
+
+## Writing Rules
+
+| Rule | Requirement |
+|------|-------------|
+| Issue type | Always Task unless the user explicitly requests or confirms Sub-task |
+| Summary length | <= 80 characters |
+| Summary style | Imperative verb first, no issue key prefix, no trailing period |
+| No repetition | Goal must add context beyond the summary and AC must not restate Goal |
+| Acceptance criteria | Bullet list with observable and testable criteria |
+| Notes | Omit when empty |
+| Clarity | Enough context for any assignee to understand at a glance |
+
+## Local Draft
+
+Read [`../local-draft.md`](../local-draft.md). Use [`template.md`](template.md) for this route.
+
+## Clarify Vague Requests
+
+Read [`../clarify-vague.md`](../clarify-vague.md).
+
+## Feature Team And MCP
+
+Read [`../jira-fields.md`](../jira-fields.md) for Feature Team, assignee, and `createJiraIssue` parameters. Use `issueTypeName: "Task"` or `"Sub-task"` when the user confirmed a Sub-task.
+
+## Stop Gates
+
+| Gate | When | Action |
+|------|------|--------|
+| Clarification | Intent too vague for Goal and AC | Ask targeted questions and stop until answered or user says draft anyway |
+| Epic prompt | Epic missing at start | Ask once and proceed on skip |
+| Sub-task parent | Sub-task parent missing | Ask for the parent issue key and stop until known |
+
+## Do Not
+
+- Do not pad the description with process notes, checklists, or duplicate summary text.
+- Do not use Story or Bug issue type unless the user explicitly overrides or confirms issue type.
+- Do not block indefinitely waiting for an epic after one prompt.
