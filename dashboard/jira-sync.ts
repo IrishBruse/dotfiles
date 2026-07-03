@@ -7,13 +7,15 @@ import fs from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 import process from "node:process";
+import { enrichIssuesWithViewFields } from "../tools/jira/acli.ts";
 import { CONFIG } from "../tools/jira/CONFIG.ts";
 import {
   assigneeLabel,
   assigneeRecord,
   classifyFolder,
   formatTicketMarkdown,
-  JIRA_PULL_FIELDS,
+  JIRA_SEARCH_FIELDS,
+  JIRA_VIEW_EXTRA_FIELDS,
   statusBucketFromFields,
   type Folder,
   type StatusBucket
@@ -498,9 +500,11 @@ const ACLI = "acli";
 
 const VERBOSE = process.env.JIRA_SYNC_VERBOSE === "1";
 
+const LOG_PREFIX = "jira board sync:";
+
 function log(msg: string): void {
   if (!VERBOSE) return;
-  process.stderr.write(`jira sync: ${msg}\n`);
+  process.stderr.write(`${LOG_PREFIX} ${msg}\n`);
 }
 
 function formatKeyList(keys: string[]): string {
@@ -765,7 +769,7 @@ export type SyncResult = {
 let lastSyncError: string | undefined;
 
 function syncFail(msg: string): number {
-  process.stderr.write(`jira sync: ${msg}\n`);
+  process.stderr.write(`${LOG_PREFIX} ${msg}\n`);
   lastSyncError = msg;
   return 1;
 }
@@ -781,7 +785,7 @@ export function runWithResult(): SyncResult {
     return { code };
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    process.stderr.write(`jira sync: ${msg}\n`);
+    process.stderr.write(`${LOG_PREFIX} ${msg}\n`);
     return { code: 1, error: msg };
   }
 }
@@ -828,7 +832,7 @@ function runImpl(): number {
   log(`JQL ${truncate(effectiveJql, 120)}`);
   log("fetching issues from Jira via acli…");
   if (!VERBOSE) {
-    process.stderr.write("jira sync: fetching from Jira...\n");
+    process.stderr.write(`${LOG_PREFIX} fetching from Jira...\n`);
   }
 
   const data = runAcliJson(ACLI, [
@@ -840,7 +844,7 @@ function runImpl(): number {
     "--json",
     "--paginate",
     "--fields",
-    JIRA_PULL_FIELDS
+    JIRA_SEARCH_FIELDS
   ]);
 
   if (!Array.isArray(data)) {
@@ -848,12 +852,23 @@ function runImpl(): number {
   }
 
   log(`received ${data.length} issue(s).`);
-  log("writing ticket markdown…");
 
   const issues = data as Array<{
     key?: string;
     fields?: Record<string, unknown>;
   }>;
+
+  if (issues.length > 0) {
+    log(`enriching ${issues.length} issue(s) with view-only fields…`);
+    if (!VERBOSE) {
+      process.stderr.write(
+        `${LOG_PREFIX} enriching ${issues.length} issue(s)...\n`
+      );
+    }
+    enrichIssuesWithViewFields(issues, JIRA_VIEW_EXTRA_FIELDS, ACLI);
+  }
+
+  log("writing ticket markdown…");
 
   const result = writeBoard(issues, {
     outputRoot: outRoot,

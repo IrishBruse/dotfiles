@@ -68,7 +68,7 @@ export default function JiraWidget() {
           onClick={handleSync}
           disabled={syncing}
           aria-label="Sync Jira"
-          title="jira sync"
+          title="jira board sync"
         >
           {syncing ? "..." : "Sync"}
         </button>

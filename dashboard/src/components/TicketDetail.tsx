@@ -1,5 +1,5 @@
 import type { BoardTicket } from "../jira/types.ts";
-import { relativeCreated, relativeUpdated } from "../jira/format.ts";
+import { copyText, relativeCreated, relativeUpdated } from "../jira/format.ts";
 import TicketMarkdown from "./TicketMarkdown.tsx";
 
 type Props = {
@@ -72,8 +72,22 @@ export default function TicketDetail({ ticket }: Props) {
       </div>
 
       <footer className="jira-detail-dock">
-        <span>[O] Open</span>
-        <span>[C] Copy link</span>
+        <button
+          type="button"
+          className="jira-detail-dock-action"
+          onClick={() =>
+            window.open(ticket.url, "_blank", "noopener,noreferrer")
+          }
+        >
+          [O] Open
+        </button>
+        <button
+          type="button"
+          className="jira-detail-dock-action"
+          onClick={() => void copyText(ticket.url)}
+        >
+          [C] Copy link
+        </button>
       </footer>
     </div>
   );
