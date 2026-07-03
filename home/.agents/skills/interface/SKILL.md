@@ -1,9 +1,6 @@
 ---
 name: interface
-description: >
-  Produce a structured code interface breakdown for a specific feature, module, component, or service.
-  Trigger when the user says things like "interface breakdown for X", "break down the interface of Y", "explain the API of Z", "on the UI/Components/TextInput", "what does Services/Auth export?", or references any file path or feature name alongside words like interface, API, contract, props, exports, or types.
-  Always use this skill when the user wants to understand how a specific piece of code is consumed from the outside - regardless of whether it is a React component, Node service, CLI command, or utility module.
+description: Produce a structured code interface breakdown for a feature, module, component, or service. Use when the user asks for an interface breakdown, API explanation, exports, props, or types for a specific path.
 ---
 
 # Interface Breakdown
