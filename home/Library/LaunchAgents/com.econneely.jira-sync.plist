@@ -9,7 +9,7 @@
     <array>
       <string>/opt/homebrew/bin/fish</string>
       <string>-lc</string>
-      <string>"$HOME"/dotfiles/tools/.bin/jira.js sync</string>
+      <string>"$HOME"/dotfiles/tools/.bin/jira.js board sync</string>
     </array>
 
     <key>StartCalendarInterval</key>
