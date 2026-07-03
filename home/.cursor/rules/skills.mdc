@@ -5,6 +5,31 @@ alwaysApply: false
 
 # Skill authoring
 
+## Frontmatter description
+
+In `SKILL.md` frontmatter, write `description` as a plain single-line string.
+
+- Never use YAML block scalars (`>`, `|`, `>-`, `|-`, or variants).
+- Keep descriptions short.
+  They load on every turn for model-invoked skills, so every word costs context.
+- One line, one sentence when possible.
+  State what the skill does and when to use it.
+  Put detail in the body, not the description.
+
+Good:
+
+```yaml
+description: Routes GitHub pull request work to the right PR skill. Use when opening or updating a pull request.
+```
+
+Bad:
+
+```yaml
+description: >
+  Routes GitHub pull request work to the right PR skill.
+  Use when opening or updating a pull request.
+```
+
 ## Self-contained
 
 Keep each skill self-contained. Do not pull in or duplicate guidance from other skills unless:
