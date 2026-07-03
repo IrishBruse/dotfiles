@@ -37,7 +37,8 @@ Custom VS Code UI CSS.
 
 ### tools/
 
-- `jira` - Pull, push, and browse local ticket markdown under `./jira/` (`jira pull`, `jira push`, interactive `jira` in a TTY); dashboard board sync in `dashboard/jira-sync.ts`
+- `ansii` - Print terminal ANSI colors, styles, and CSI sequences with escape codes beside each sample (`ansii 256`, `ansii 24-bit`, `ansii gradient` for extended palettes)
+- `jira` - Pull, push, and browse local ticket markdown under `./jira/` (`jira pull`, `jira push`, `jira sync`, interactive `jira` in a TTY); `jira board sync` updates `~/.agents/skills/jira-board/` (also used by the dashboard)
 - `confluence` - Clone a Confluence page subtree to local markdown via acli
 - `pr` - GitHub pull request helper: auto create or update via Cursor agent skills; `pr fix` for failed CI
 - `interpolate` - Expand markdown prompt templates (builtins, env, conditions, shell snippets)
