@@ -44,6 +44,10 @@ Bad: `Core rules (mirrored from other-skill)`
 
 Reference other skills by name only, in backticks: `skill-name-here`. Do not use file paths (e.g. `.cursor/skills/other-skill/SKILL.md`, `reference.md`).
 
+When the skill lives in a repo, do not reference personal global skills.
+The repo and other team members may not have the same global skills you do.
+Only reference skills that ship with that repo.
+
 ## User corrections
 
 When the user corrects skill text, update in place:
