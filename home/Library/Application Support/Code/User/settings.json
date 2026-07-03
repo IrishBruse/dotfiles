@@ -1631,5 +1631,6 @@
   "terminal.integrated.stickyScroll.enabled": false,
   "markdownInlineEditor.tables.renderingMode": "inline",
   "excalidraw.theme": "dark",
-  "mediaPreview.video.autoPlay": true
+  "mediaPreview.video.autoPlay": true,
+  "update.mode": "none"
 }
