@@ -6,6 +6,7 @@
   "license": "ISC",
   "type": "module",
   "bin": {
+    "ansii": "./.bin/ansii.js",
     "dotfiles": "./.bin/dotfiles.js",
     "memory": "./.bin/memory.js",
     "commit": "./.bin/commit.js",
