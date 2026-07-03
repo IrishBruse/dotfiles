@@ -1,7 +1,7 @@
 ---
 name: pr
 description: Routes GitHub pull request work to the right PR skill. Use when opening or updating a pull request, or when the user says create PR or update PR.
-
+disable-model-invocation: true
 ---
 
 # PR
