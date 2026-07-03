@@ -15,9 +15,31 @@ import {
   classifyFolder,
   featureTeamLabel,
   formatTicketMarkdown,
+  JIRA_PULL_FIELDS,
+  JIRA_SEARCH_FIELDS,
+  JIRA_VIEW_EXTRA_FIELDS,
   statusBucketFromFields,
   yamlScalar
 } from "./format.ts";
+
+describe("JIRA field lists", () => {
+  it("keeps search fields separate from view-only extras", () => {
+    assert.equal(
+      JIRA_PULL_FIELDS,
+      `${JIRA_SEARCH_FIELDS},${JIRA_VIEW_EXTRA_FIELDS}`
+    );
+    for (const blocked of ["created", "updated", "customfield_10354"]) {
+      assert.ok(
+        !JIRA_SEARCH_FIELDS.split(",").includes(blocked),
+        `search fields must not include ${blocked}`
+      );
+      assert.ok(
+        JIRA_VIEW_EXTRA_FIELDS.split(",").includes(blocked),
+        `view extras must include ${blocked}`
+      );
+    }
+  });
+});
 
 describe("childIssuesJql", () => {
   it("matches sub-tasks and epic-linked stories", () => {
@@ -70,7 +92,10 @@ describe("ticketMarkdownFilename", () => {
       { summary: "[DTC] Make repeatable operations deterministic" },
       "NOVACORE-1"
     );
-    assert.equal(name, "[DTC] Make repeatable operations deterministic.md");
+    assert.equal(
+      name,
+      "[DTC] Make repeatable operations deterministic - NOVACORE-1.md"
+    );
   });
 
   it("replaces characters invalid on common filesystems", () => {
@@ -78,7 +103,7 @@ describe("ticketMarkdownFilename", () => {
       { summary: 'fix: a/b\\c*d?e"f' },
       "NOVACORE-2"
     );
-    assert.equal(name, "fix- a-b-c-d-e-f.md");
+    assert.equal(name, "fix- a-b-c-d-e-f - NOVACORE-2.md");
   });
 
   it("falls back to the issue key when summary is empty", () => {
@@ -129,7 +154,7 @@ describe("pulledTicketPath", () => {
       },
       "NOVACORE-1"
     );
-    assert.equal(p, "/repo/jira/epic/Ship it.md");
+    assert.equal(p, "/repo/jira/epic/Ship it - NOVACORE-1.md");
   });
 });
 

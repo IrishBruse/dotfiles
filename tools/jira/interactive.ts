@@ -17,7 +17,7 @@ const SHOW_CURSOR = `${ESC}[?25h`;
 const ESCAPE_CODE_TIMEOUT_MS = 25;
 
 const HELP =
-  "Up/Down: move  Enter: view  u: pull  a: pull all  s: push  g: push all  o: open  q: quit";
+  "Up/Down: move  Enter: view  u: pull  a: sync all  s: push  g: push all  o: open  q: quit";
 
 type TicketSection = {
   title: string;
@@ -207,11 +207,15 @@ export async function runJiraInteractive(): Promise<number> {
   const rl = enableKeypress(stdin);
 
   return await new Promise<number>((resolve) => {
-    const cleanup = (code: number): void => {
+    const leaveTui = (): void => {
       stdin.removeListener("keypress", onKeypress);
       rl.close();
       stdin.setRawMode(false);
       stdout.write(SHOW_CURSOR + LEAVE_ALT + HOME + CLR_EOS);
+    };
+
+    const cleanup = (code: number): void => {
+      leaveTui();
       resolve(code);
     };
 
@@ -267,7 +271,8 @@ export async function runJiraInteractive(): Promise<number> {
         return;
       }
       if (str === "a") {
-        await runAction("Pulled all", () => pullAll(cwd, { quiet: true }));
+        leaveTui();
+        resolve(await pullAll(cwd));
         return;
       }
       if (str === "s") {

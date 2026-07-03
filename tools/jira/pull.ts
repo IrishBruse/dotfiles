@@ -1,11 +1,11 @@
 /**
- * Fetch Jira tickets and save to `jira/<type>/<title>.md` in cwd.
+ * Fetch Jira tickets and save to `jira/<type>/<title> - <KEY>.md` in cwd.
  */
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { CONFIG } from "./CONFIG.ts";
-import { runAcliJson } from "./acli.ts";
+import { runAcliJson, runAcliJsonAsync } from "./acli.ts";
 import { fetchChildIssues } from "./children.ts";
 import {
   assigneeLabel,
@@ -22,6 +22,30 @@ import {
 } from "./output.ts";
 import { confirm } from "./prompt.ts";
 
+/** Max concurrent `acli` fetches during `jira sync` / `jira pull --all`. */
+const PULL_ALL_CONCURRENCY = 4;
+
+function createPullLimiter(concurrency: number) {
+  const queue: (() => void)[] = [];
+  let active = 0;
+  return function limit<T>(fn: () => Promise<T>): Promise<T> {
+    return new Promise((resolve, reject) => {
+      const run = () => {
+        active++;
+        fn()
+          .then(resolve, reject)
+          .finally(() => {
+            active--;
+            const next = queue.shift();
+            if (next) next();
+          });
+      };
+      if (active < concurrency) run();
+      else queue.push(run);
+    });
+  };
+}
+
 /** Lowercase slug for `jira/<type>/` paths (e.g. `Epic` -> `epic`). */
 export function issueTypeSlug(name: string): string {
   return name.trim().toLowerCase().replace(/\s+/g, "-");
@@ -36,20 +60,24 @@ export function ticketTitleFromFields(
   return summary || key;
 }
 
-/** Safe markdown filename from the ticket title (e.g. `[DTC] Make foo.md`). */
+/** Safe markdown filename from the ticket title (e.g. `[DTC] Make foo - NOVACORE-1.md`). */
 export function ticketMarkdownFilename(
   fields: Record<string, unknown>,
   key: string
 ): string {
+  const keySuffix = ` - ${key}`;
   const title = ticketTitleFromFields(fields, key)
     .replace(/[\r\n]+/g, " ")
     .replace(/[\\/:*?"<>|]/g, "-")
     .replace(/\s+/g, " ")
     .trim()
     .replace(/^\.+/, "")
-    .slice(0, 200)
+    .slice(0, Math.max(1, 200 - keySuffix.length))
     .trim();
-  return `${title || key}.md`;
+  if (!title || title === key) {
+    return `${key}.md`;
+  }
+  return `${title}${keySuffix}.md`;
 }
 
 /** On-disk path for `jira pull` under a working directory. */
@@ -93,7 +121,8 @@ export function pullTicket(ticketKey: string, options: PullOptions = {}): number
   }
 }
 
-function pullTicketWrite(
+function writePulledIssue(
+  data: unknown,
   ticketKey: string,
   options: PullOptions
 ): PullWriteResult {
@@ -101,16 +130,6 @@ function pullTicketWrite(
   const quiet = options.quiet ?? false;
   const meAccountId = CONFIG.meAccountId;
   const siteHost = CONFIG.site.replace(/^https?:\/\//, "").replace(/\/$/, "");
-
-  const data = runAcliJson([
-    "jira",
-    "workitem",
-    "view",
-    ticketKey,
-    "--fields",
-    JIRA_PULL_FIELDS,
-    "--json"
-  ]);
 
   if (!data || typeof data !== "object") {
     throw new Error(`no data returned for ${ticketKey}`);
@@ -142,6 +161,38 @@ function pullTicketWrite(
   }
 
   return { key, title: summary, relPath: rel };
+}
+
+function pullTicketWrite(
+  ticketKey: string,
+  options: PullOptions
+): PullWriteResult {
+  const data = runAcliJson([
+    "jira",
+    "workitem",
+    "view",
+    ticketKey,
+    "--fields",
+    JIRA_PULL_FIELDS,
+    "--json"
+  ]);
+  return writePulledIssue(data, ticketKey, options);
+}
+
+async function pullTicketWriteAsync(
+  ticketKey: string,
+  options: PullOptions
+): Promise<PullWriteResult> {
+  const data = await runAcliJsonAsync([
+    "jira",
+    "workitem",
+    "view",
+    ticketKey,
+    "--fields",
+    JIRA_PULL_FIELDS,
+    "--json"
+  ]);
+  return writePulledIssue(data, ticketKey, options);
 }
 
 /** Pull a ticket and optionally its children (prompts on a TTY). */
@@ -217,26 +268,46 @@ async function runPullFlow(
 }
 
 /** Re-pull every ticket already present under `jira/`. */
-export function pullAll(
+export async function pullAll(
   cwd = process.cwd(),
   options: Omit<PullOptions, "cwd"> = {}
-): number {
+): Promise<number> {
   const tickets = listLocalTickets(cwd);
   if (tickets.length === 0) {
     printError("no tickets under jira/");
     return 1;
   }
+
+  const limit = createPullLimiter(PULL_ALL_CONCURRENCY);
+  const results = await Promise.all(
+    tickets.map((ticket) =>
+      limit(async () => {
+        try {
+          await pullTicketWriteAsync(ticket.key, {
+            ...options,
+            cwd,
+            quiet: true
+          });
+          return { ok: true as const, ticket };
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : String(e);
+          printError(`pull ${ticket.key}: ${msg}`);
+          return { ok: false as const, ticket };
+        }
+      })
+    )
+  );
+
   let code = 0;
   let pulled = 0;
-  for (const ticket of tickets) {
-    const result = pullTicket(ticket.key, { ...options, cwd, quiet: true });
-    if (result !== 0) {
-      code = result;
+  for (const result of results) {
+    if (!result.ok) {
+      code = 1;
       continue;
     }
     pulled += 1;
     if (!options.quiet) {
-      printPulled(ticket.key, ticket.title, ticket.relPath);
+      printPulled(result.ticket.key, result.ticket.title, result.ticket.relPath);
     }
   }
   if (!options.quiet) printPullSummary(pulled);

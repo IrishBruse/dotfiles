@@ -6,7 +6,14 @@ export type Folder = "me" | "unassigned" | "team" | "misc";
 /** NOVACORE Feature Team custom field id. */
 export const FEATURE_TEAM_FIELD = "customfield_10354";
 
-export const JIRA_PULL_FIELDS = `key,summary,assignee,issuetype,description,status,created,updated,${FEATURE_TEAM_FIELD}`;
+/** Fields allowed by `acli jira workitem search --fields`. */
+export const JIRA_SEARCH_FIELDS =
+  "key,summary,assignee,issuetype,description,status";
+
+/** Fields rejected by search but still returned by `acli jira workitem view`. */
+export const JIRA_VIEW_EXTRA_FIELDS = `created,updated,${FEATURE_TEAM_FIELD}`;
+
+export const JIRA_PULL_FIELDS = `${JIRA_SEARCH_FIELDS},${JIRA_VIEW_EXTRA_FIELDS}`;
 
 export type StatusBucket =
   | "todo"
