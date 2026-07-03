@@ -30,6 +30,10 @@ Interactive keys:
 }
 
 async function main(): Promise<void> {
+  if (process.env.CURSOR_AGENT === "1") {
+    printError("this tool is not to be used by an agent");
+    process.exit(1);
+  }
   const arg = process.argv[2];
   if (arg === "-h" || arg === "--help") {
     printHelp();

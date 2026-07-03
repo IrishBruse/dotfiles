@@ -6,7 +6,6 @@ alwaysApply: true
 
 - Always run a full quality gate before finishing.
 - If you run into an auth issue dont try and get around it stop and ask.
-- If Jira MCP is not working stop and ask.
 
 # Response
 

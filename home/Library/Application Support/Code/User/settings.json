@@ -1123,7 +1123,9 @@
     "*.gbasm": "retroasm_gameboy",
     "SKILL.md": "skill",
     "CODEOWNERS": "plaintext",
-    "*.mdc": "markdown"
+    "*.mdc": "markdown",
+    ".cursorignore": "ignore",
+    ".rgignore": "ignore"
   },
   "files.exclude": {
     "**/.git": false,
