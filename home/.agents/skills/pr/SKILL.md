@@ -18,8 +18,7 @@ When existing open PRs is not `none`, edit that PR instead of creating a duplica
 
 ## Context
 
-When invoked from the `pr` command, git state, existing open PRs, and the repo PR template are inlined in the prompt.
-Use that output as the latest state.
+When git state, existing open PRs, and the repo PR template are inlined in the prompt, use that output as the latest state.
 Do not re-run git or gh to gather it.
 
 If those sections are absent, run `git diff origin/main` and check `.github/PULL_REQUEST_TEMPLATE.md`.
@@ -48,6 +47,3 @@ Update:
 ```bash
 gh pr edit --title "<title>" --body "<body>"
 ```
-
-`pr-fix` (red CI or unresolved review comments) is not part of `/pr`.
-Reach for it only when the user asks to fix a PR.
