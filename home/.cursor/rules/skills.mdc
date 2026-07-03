@@ -1,5 +1,6 @@
 ---
-globs: **/SKILL.md,**/*.mdc,**/references/**/*.md
+description: Skill authoring standards for .cursor/skills and .agents/skills
+globs: **/.cursor/skills/**,**/.agents/skills/**
 alwaysApply: false
 ---
 
