@@ -1123,7 +1123,9 @@
     "*.gbasm": "retroasm_gameboy",
     "SKILL.md": "skill",
     "CODEOWNERS": "plaintext",
-    "*.mdc": "markdown"
+    "*.mdc": "markdown",
+    ".cursorignore": "ignore",
+    ".rgignore": "ignore"
   },
   "files.exclude": {
     "**/.git": false,
@@ -1595,7 +1597,6 @@
     "https://models.dev": true,
     "https://biomejs.dev": true
   },
-  "lldb-dap.executable-path": "/usr/bin/lldb-dap-18",
   "workbench.settings.alwaysShowAdvancedSettings": true,
   "explorer.fileNesting.enabled": true,
   "workbench.navigationControl.enabled": false,
