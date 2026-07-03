@@ -1,8 +1,6 @@
 ---
 name: html-doc
-description: >
-  Create polished standalone HTML documentation pages with a shared dark-mode stylesheet.
-  Use when the user asks for an HTML doc or other readable single-page HTML artifact.
+description: Create polished standalone HTML documentation pages with a shared dark-mode stylesheet. Use when the user asks for an HTML doc or readable single-page HTML artifact.
 ---
 
 # HTML Doc
