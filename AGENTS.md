@@ -49,6 +49,23 @@ Custom VS Code UI CSS.
 - `start` - Detect project type (npm, Go, .NET) and exec the dev server with color env preserved
 - `sprint` - Print previous, current, and next sprint date blocks, `sprint <n>` for one sprint, or `sprint YYYY-MM-DD` for the sprint containing that date
 
+### Skills
+
+Agent skills live in two stowed locations under `home/`, mirrored to `~/`.
+
+- `home/.agents/skills/` -> `~/.agents/skills/` - general-purpose, cross-project skills
+  (`cli-tool`, `jest`, `docs-from-code`, `pr`, `jira-board`, etc.).
+  Reusable on any repo, no G-P specifics.
+
+- `home/.cursor/skills/` -> `~/.cursor/skills/` - **G-P-only work skills**
+  (`module-federation`, `npm-registry`).
+  Put skills here only when they encode G-P / gp-nova / NOVACORE specific
+  knowledge that does not apply outside G-P repos.
+  New G-P skills go here, not in `~/.agents/skills/`.
+
+Never author skills in `home/.cursor/skills-cursor/` (repo) / `~/.cursor/skills-cursor/`
+(runtime). That directory holds Cursor's built-in skills and is system-managed.
+
 ### dashboard
 
 Local start page Vite app at `dashboard/` (React + TypeScript).
