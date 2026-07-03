@@ -20,7 +20,7 @@ In `SKILL.md` frontmatter, write `description` as a plain single-line string.
 Good:
 
 ```yaml
-description: Routes GitHub pull request work to the right PR skill. Use when opening or updating a pull request.
+description: Create or update a GitHub pull request title and body from the current branch. Use when opening or updating a pull request.
 ```
 
 Bad:
@@ -47,6 +47,36 @@ Reference other skills by name only, in backticks: `skill-name-here`. Do not use
 When the skill lives in a repo, do not reference personal global skills.
 The repo and other team members may not have the same global skills you do.
 Only reference skills that ship with that repo.
+
+## Numbered steps
+
+Use `1.`, `2.`, ... only for short sequences where each item fits on one line.
+
+When there are too many points, or a single numbered item wraps onto multiple lines, break the sequence into headings instead: `### Step 1`, `### Step 2`, and so on.
+Put detail in paragraphs or bullets under each heading.
+
+Good:
+
+```markdown
+### Step 1
+
+Confirm scope with the user.
+Stop and wait for a reply before continuing.
+
+### Step 2
+
+Write `plan.md` from the confirmed scope.
+```
+
+Bad:
+
+```markdown
+1. Confirm scope with the user. Stop and wait for a reply before continuing.
+2. Write `plan.md` from the confirmed scope.
+3. Implement only after the user approves the plan.
+4. Run the quality gate before finishing.
+5. Update `plan.md` if decisions change during implementation.
+```
 
 ## User corrections
 

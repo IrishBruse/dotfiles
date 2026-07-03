@@ -1,6 +1,6 @@
 # PR body layout
 
-Body layout shared by the `pr-create` and `pr-update` skills.
+Body layout for the `pr` skill.
 
 ## Readability standard
 

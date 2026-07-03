@@ -3,14 +3,14 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-export type PrSkillName = "pr-create" | "pr-update" | "pr-fix";
+export type PrSkillName = "pr" | "pr-fix";
 
 const INLINED_SKILL_NOTE =
-  "Do not read any PR-related skills (pr, pr-create, pr-update, pr-fix) or their reference files. Their instructions are inlined below.";
+  "Do not read any PR-related skills (pr, pr-fix) or their reference files. Their instructions are inlined below.";
 
 const BODY_FORMAT_REF = path.join("pr", "body-format.md");
 
-const COMPOSE_SKILLS: PrSkillName[] = ["pr-create", "pr-update"];
+const COMPOSE_SKILLS: PrSkillName[] = ["pr"];
 
 function stripFrontMatter(text: string): string {
   const lines = text.split("\n");

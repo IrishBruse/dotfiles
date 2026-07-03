@@ -1,19 +1,53 @@
 ---
 name: pr
-description: Routes GitHub pull request work to the right PR skill. Use when opening or updating a pull request, or when the user says create PR or update PR.
+description: Create or update a GitHub pull request title and body from the current branch. Use when opening or updating a pull request.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # PR
 
-Run `gh pr view` first. Its result picks exactly one sub-skill to read - read that one only.
+Compose the **title** and **body** from the current branch, then apply with `gh pr create` or `gh pr edit`.
 
-1. Run `gh pr view` on the current branch.
-2. No PR exists - read `pr-create` and follow it.
-3. A PR exists - read `pr-update` and follow it.
+## Create or update
 
-The branch you did not take is irrelevant to this run, do not read it.
+Use **update** when the prompt includes a current PR section or `gh pr view` output for this branch.
+Use **create** when no PR exists for this branch.
 
-`pr-create` and `pr-update` share the body layout in `~/.agents/skills/pr/body-format.md`.
+When existing open PRs is not `none`, edit that PR instead of creating a duplicate.
 
-`pr-fix` (red CI or unresolved review comments) is not part of `/pr`. Reach for it only when the user asks to fix a PR.
+## Context
+
+When invoked from the `pr` command, git state, existing open PRs, and the repo PR template are inlined in the prompt.
+Use that output as the latest state.
+Do not re-run git or gh to gather it.
+
+If those sections are absent, run `git diff origin/main` and check `.github/PULL_REQUEST_TEMPLATE.md`.
+For update, also run `gh pr view --json number,title,body`.
+
+The `git diff origin/main` section is the source of truth for what ships.
+When the repo PR template is not `none`, fill it in for the body.
+
+For update, use the current PR section for what is on GitHub today, dropping stale sections that no longer apply.
+
+## Body
+
+Compose the title from the diff and branch, not invented scope.
+Compose the body using the layout in `~/.agents/skills/pr/body-format.md`.
+
+## Apply
+
+Create:
+
+```bash
+gh pr create --base main --title "<title>" --body "<body>"
+```
+
+Update:
+
+```bash
+gh pr edit --title "<title>" --body "<body>"
+```
+
+`pr-fix` (red CI or unresolved review comments) is not part of `/pr`.
+Reach for it only when the user asks to fix a PR.
