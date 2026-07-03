@@ -1,5 +1,5 @@
 ---
-globs: **/SKILL.md,**/*.mdc
+globs: **/SKILL.md,**/*.mdc,**/references/**/*.md
 alwaysApply: false
 ---
 
