@@ -77,15 +77,23 @@ function skillDir(): string {
   return path.join(homedir(), ".agents", "skills", "jira-board");
 }
 
-function sprintPath(): string {
-  const live = path.join(skillDir(), "sprint.json");
-  if (existsSync(live)) {
-    return live;
-  }
+function fixtureSprintPath(): string {
   return path.resolve(
     path.dirname(fileURLToPath(import.meta.url)),
     "../jira/fixtures/sprint.json"
   );
+}
+
+function sprintPath(): string | null {
+  const live = path.join(skillDir(), "sprint.json");
+  if (existsSync(live)) {
+    return live;
+  }
+  const fixture = fixtureSprintPath();
+  if (existsSync(fixture)) {
+    return fixture;
+  }
+  return null;
 }
 
 function parseFrontmatter(text: string): {
@@ -226,8 +234,16 @@ function loadSectionTickets(
   return tickets;
 }
 
+function emptyBoardData(): BoardData {
+  return { myTickets: [], otherTickets: [] };
+}
+
 function loadBoardData(): BoardData {
-  const sprint = JSON.parse(readFileSync(sprintPath(), "utf8")) as SprintJson;
+  const file = sprintPath();
+  if (!file) {
+    return emptyBoardData();
+  }
+  const sprint = JSON.parse(readFileSync(file, "utf8")) as SprintJson;
   const { sections } = sprint;
   const myTickets = loadSectionTickets(sections.myTickets.statuses);
   const otherTickets = [
@@ -250,7 +266,8 @@ function boardModuleSource(): string {
 function watchPaths(): string[] {
   const dir = skillDir();
   if (!existsSync(dir)) {
-    return [sprintPath()];
+    const fallback = sprintPath();
+    return fallback ? [fallback] : [];
   }
   const refs = path.join(dir, "references");
   const paths = [path.join(dir, "sprint.json")];
