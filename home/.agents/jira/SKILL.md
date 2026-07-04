@@ -220,7 +220,7 @@ Rules:
 
 Fixed `AskQuestion` shape:
 
-```text
+```template
 Title: <KEY or new ticket> - Approve Jira write
 
 Prompt:
