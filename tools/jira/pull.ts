@@ -22,7 +22,7 @@ import {
 } from "./output.ts";
 import { confirm } from "./prompt.ts";
 
-/** Max concurrent `acli` fetches during `jira sync` / `jira pull --all`. */
+/** Max concurrent `acli` fetches during `jira sync` / `jira pull` with no key. */
 const PULL_ALL_CONCURRENCY = 4;
 
 function createPullLimiter(concurrency: number) {

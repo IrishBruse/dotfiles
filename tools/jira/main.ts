@@ -15,12 +15,10 @@ function printHelp(): void {
   process.stdout.write(`Usage:
   jira                       interactive browser for ./jira/ (TTY)
   jira <KEY|URL>             fetch a ticket (and optionally children) into jira/
-  jira pull <KEY|URL>        same as above
-  jira pull --all            re-pull every local ticket from Jira
-  jira sync                  same as jira pull --all
+  jira pull [KEY|URL]        fetch one ticket, or all local tickets when omitted
+  jira sync                  same as jira pull
   jira board sync            sync Jira board into ~/.agents/skills/jira-board/
-  jira push <KEY>            push local ticket edits to Jira
-  jira push --all            push every local ticket to Jira
+  jira push [KEY]            push one ticket, or all local tickets when omitted
   jira copy <KEY|URL> [dir]  copy ticket folder here or under dir
   jira -h|--help             this message
 
@@ -60,11 +58,7 @@ async function main(): Promise<void> {
   }
   if (arg === "pull") {
     const input = process.argv[3];
-    if (!input) {
-      printError("pull: missing ticket key or URL");
-      process.exit(1);
-    }
-    if (input === "--all") {
+    if (!input || input === "--all") {
       process.exit(await pullAll());
     }
     const key = parseJiraKey(input);
@@ -76,11 +70,7 @@ async function main(): Promise<void> {
   }
   if (arg === "push") {
     const input = process.argv[3];
-    if (!input) {
-      printError("push: missing ticket key");
-      process.exit(1);
-    }
-    if (input === "--all") {
+    if (!input || input === "--all") {
       process.exit(pushAll());
     }
     const key = parseJiraKey(input);
