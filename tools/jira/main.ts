@@ -58,7 +58,7 @@ async function main(): Promise<void> {
   }
   if (arg === "pull") {
     const input = process.argv[3];
-    if (!input || input === "--all") {
+    if (!input) {
       process.exit(await pullAll());
     }
     const key = parseJiraKey(input);
@@ -70,7 +70,7 @@ async function main(): Promise<void> {
   }
   if (arg === "push") {
     const input = process.argv[3];
-    if (!input || input === "--all") {
+    if (!input) {
       process.exit(pushAll());
     }
     const key = parseJiraKey(input);
