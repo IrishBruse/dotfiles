@@ -13,3 +13,6 @@ home/.config/ghostty/local
 home/.cursor/rules/gp-rules.mdc
 home/.local/bin/chrome
 home/dot-zshrc
+
+# Unignroe global ignore
+!tools/confluence
