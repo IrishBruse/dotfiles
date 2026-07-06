@@ -1633,6 +1633,8 @@
   "terminal.integrated.stickyScroll.enabled": false,
   "markdownInlineEditor.tables.renderingMode": "inline",
   "excalidraw.theme": "dark",
+  "update.mode": "none",
   "mediaPreview.video.autoPlay": true,
-  "update.mode": "none"
+  "ib-acp-ui.toolCallVerbosity": "compact",
+  "ib-acp-ui.contentWidthPercent": 75
 }
