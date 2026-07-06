@@ -48,7 +48,7 @@ Only reference skills that ship with that repo.
 Use `1.`, `2.`, ... only for short sequences where each item fits on one line.
 
 When there are too many points, or a single numbered item wraps onto multiple lines, break the sequence into headings instead.
-Use `### Step 1`, `### Step 2`, and so on.
+Use `### Step 1 - Short summary` and so on.
 Put detail in paragraphs or bullets under each heading.
 
 Good:
