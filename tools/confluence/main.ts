@@ -1,46 +1,88 @@
 #!/usr/bin/env node
+/**
+ * Confluence CLI -- pull pages to local markdown and push edits back.
+ */
 import process from "node:process";
-import { runClone } from "./clone.ts";
+
+import { parsePageId } from "./page-input.ts";
+import { pullAll, pullPage } from "./pull.ts";
+import { pushAll, pushPage } from "./push.ts";
+import { printError } from "./output.ts";
+import { runStatus, runVerify } from "./status.ts";
 
 function printHelp(): void {
-  process.stdout.write(`confluence — Confluence CLI (via acli)
+  process.stdout.write(`Usage:
+  confluence <pageUrl|pageId>        same as confluence pull <pageUrl|pageId>
+  confluence pull [pageUrl|pageId]   fetch one page tree, or all local pages when omitted
+  confluence push [pageId]           push one page, or all local pages when omitted
+  confluence status                  show clean / modified / behind / links state
+  confluence verify                  fail if any relative .md links remain
+  confluence -h|--help               this message
 
-Usage:
-  confluence clone <confluencePageUrl> [outputDir]
-  confluence clone --url <url> [--out|-o <dir>] [--acli <path>] [--raw-storage] [--concurrency|-j <n>]
-
-Subcommands:
-  clone   Clone a page subtree to local markdown (requires acli confluence auth)
-
-Run \`confluence clone -h\` for clone options.
+Local pages live under ./confluence/ as markdown with YAML frontmatter.
+Links must use full Confluence wiki URLs or Jira /browse/KEY URLs, not relative .md paths.
+Requires: acli confluence auth login
 `);
 }
 
 async function main(): Promise<void> {
-  const argv = process.argv.slice(2);
-  const cmd = argv[0];
-
-  if (cmd === "-h" || cmd === "--help" || cmd === undefined) {
+  const arg = process.argv[2];
+  if (arg === "-h" || arg === "--help") {
     printHelp();
-    process.exit(cmd === undefined ? 1 : 0);
+    return;
+  }
+  if (!arg) {
+    printHelp();
     return;
   }
 
-  if (cmd === "clone") {
-    if (argv[1] === "-h" || argv[1] === "--help") {
-      await runClone(["-h"]);
+  if (arg === "pull") {
+    const input = process.argv[3];
+    if (!input) {
+      process.exit(await pullAll());
       return;
     }
-    await runClone(argv.slice(1));
+    process.exit(await pullPage(input));
     return;
   }
 
-  console.error(`confluence: unknown subcommand: ${cmd}`);
+  if (arg === "push") {
+    const input = process.argv[3];
+    if (!input) {
+      process.exit(await pushAll());
+      return;
+    }
+    const pageId = parsePageId(input);
+    if (!pageId) {
+      printError(`push: not a valid page id or URL: ${input}`);
+      process.exit(1);
+    }
+    process.exit(await pushPage(pageId));
+    return;
+  }
+
+  if (arg === "status") {
+    process.exit(await runStatus());
+    return;
+  }
+
+  if (arg === "verify") {
+    process.exit(runVerify());
+    return;
+  }
+
+  const pageId = parsePageId(arg);
+  if (pageId) {
+    process.exit(await pullPage(arg));
+    return;
+  }
+
+  printError(`unknown command or invalid page: ${arg}`);
   printHelp();
   process.exit(1);
 }
 
-main().catch((err) => {
-  console.error(err instanceof Error ? err.message : err);
+main().catch((e) => {
+  printError(e instanceof Error ? e.message : String(e));
   process.exit(1);
 });

@@ -1,4 +1,4 @@
-/** File / folder segment derived from a Confluence title (matches clone + link targets). */
+/** File / folder segment derived from a Confluence title (matches pull paths + link targets). */
 export function slugifyConfluenceTitle(title: string): string {
   return title
     .replace(/[/\\:*?"<>|]/g, "-")

@@ -3,7 +3,8 @@
  */
 import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";
-import { slugifyConfluenceTitle } from "./confluence-slug.ts";
+import { CONFIG } from "./CONFIG.ts";
+import { jiraBrowseUrl, pageUrl } from "./local.ts";
 
 function escapeHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -112,7 +113,11 @@ function replaceIframeMacros(html: string): string {
   );
 }
 
-function replacePageLinks(html: string): string {
+function defaultSiteHost(): string {
+  return CONFIG.site.replace(/^https?:\/\//, "").replace(/\/$/, "");
+}
+
+function replacePageLinks(html: string, siteHost = defaultSiteHost()): string {
   return html.replace(
     /<ac:link\b[^>]*>([\s\S]*?)<\/ac:link>/gi,
     (full, inner: string) => {
@@ -120,16 +125,30 @@ function replacePageLinks(html: string): string {
       const textRaw = bodyM?.[1] ?? "";
       const text = linkBodyPlain(textRaw) || "link";
       const anchorM = full.match(/\bac:anchor="([^"]+)"/i);
-      const pageM = inner.match(/<ri:page[^>]*\bri:content-title="([^"]*)"/i);
+      const pageM = inner.match(/<ri:page[^>]*>/i);
       const urlM = inner.match(/<ri:url[^>]*\bri:value="([^"]*)"/i);
+      const issueM = inner.match(/<ri:issue[^>]*\bri:issue-key="([^"]*)"/i);
       if (urlM) {
         const url = decodeHtmlEntities(urlM[1]!);
         return `<a href="${escapeAttr(url)}">${escapeHtml(text)}</a>`;
       }
+      if (issueM) {
+        const key = issueM[1]!.toUpperCase();
+        const url = jiraBrowseUrl(siteHost, key);
+        return `<a href="${escapeAttr(url)}">${escapeHtml(text)}</a>`;
+      }
       if (pageM) {
-        const title = pageM[1]!;
-        const path = `${slugifyConfluenceTitle(title)}.md`;
-        return `<a href="./${escapeAttr(path)}">${escapeHtml(text)}</a>`;
+        const pageTag = pageM[0]!;
+        const titleM = pageTag.match(/\bri:content-title="([^"]*)"/i);
+        const spaceM = pageTag.match(/\bri:space-key="([^"]*)"/i);
+        const idM = pageTag.match(/\bri:content-id="(\d+)"/i);
+        const title = titleM?.[1] ?? text;
+        const spaceKey = spaceM?.[1] ?? "";
+        const pageId = idM?.[1] ?? "";
+        const url = pageId
+          ? pageUrl(siteHost, spaceKey, pageId, title)
+          : `https://${siteHost}/wiki/display/${encodeURIComponent(spaceKey)}/${encodeURIComponent(title)}`;
+        return `<a href="${escapeAttr(url)}">${escapeHtml(text)}</a>`;
       }
       if (anchorM) {
         const id = anchorM[1]!;
@@ -276,15 +295,21 @@ function buildTurndown(): TurndownService {
 
 const turndown = buildTurndown();
 
-export function storageToMarkdown(storage: string): string {
+export function storageToMarkdown(
+  storage: string,
+  opts: { siteHost?: string } = {}
+): string {
   let html = storage.trim();
   if (!html) return "";
+  const siteHost =
+    opts.siteHost?.replace(/^https?:\/\//, "").replace(/\/$/, "") ??
+    defaultSiteHost();
 
   html = replaceAdfFallbacks(html);
   html = dropNavMacros(html);
   html = replaceCodeMacros(html);
   html = replaceIframeMacros(html);
-  html = replacePageLinks(html);
+  html = replacePageLinks(html, siteHost);
   html = replaceImages(html);
   html = unwrapInlineCommentMarkers(html);
   html = unwrapRemainingStructuredMacros(html);

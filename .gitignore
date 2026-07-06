@@ -1,20 +1,15 @@
 .DS_STORE
 node_modules
 tools/.bin/start
-cursor-chats-export/
 
 local.fish
 secrets.fish
 
-home/.config/ghostty/local
-home/.config/dconf/user
-home/.config/fish/fish_variables
-home/.cursor/mcp.json
-home/dot-zshrc
-home/.agents/memory/global.json
-home/.agents/memory/misc/
-home/.cursor/rules/gp-rules.mdc
-home/.config/fish/completions/sdd.fish
-
 home/.agents/memory
+home/.config/dconf/user
+home/.config/fish/completions/sdd.fish
+home/.config/fish/fish_variables
+home/.config/ghostty/local
+home/.cursor/rules/gp-rules.mdc
 home/.local/bin/chrome
+home/dot-zshrc
