@@ -1636,5 +1636,12 @@
   "update.mode": "none",
   "mediaPreview.video.autoPlay": true,
   "ib-acp-ui.toolCallVerbosity": "compact",
-  "ib-acp-ui.contentWidthPercent": 75
+  "ib-acp-ui.contentWidthPercent": 75,
+  "ib-acp-ui.agents": [
+    {
+      "name": "Cursor",
+      "command": "/Users/econneely/.local/bin/agent",
+      "args": ["acp"]
+    }
+  ]
 }
