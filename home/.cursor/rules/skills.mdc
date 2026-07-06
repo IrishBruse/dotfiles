@@ -8,14 +8,8 @@ alwaysApply: false
 
 ## Frontmatter description
 
-In `SKILL.md` frontmatter, write `description` as a plain single-line string.
-
-- Never use YAML block scalars (`>`, `|`, `>-`, `|-`, or variants).
-- Keep descriptions short.
-  They load on every turn for model-invoked skills, so every word costs context.
-- One line, one sentence when possible.
-  State what the skill does and when to use it.
-  Put detail in the body, not the description.
+In `SKILL.md` frontmatter, write `description` as a plain 1-2 lines string include minimal usage example.
+Never use YAML block scalars (`>`, `|`, `>-`, `|-`, or variants).
 
 Good:
 
@@ -38,7 +32,8 @@ Keep each skill self-contained. Do not pull in or duplicate guidance from other 
 - the user asks to reference or align with another skill, or
 - the skill already references other skills and you are extending that linkage
 
-Do not add provenance or mirroring labels on skill content. Write the rules directly; do not prefix sections with where they came from.
+Do not add provenance or mirroring labels on skill content.
+Write the rules directly, do not prefix sections with where they came from.
 
 Bad: `Core rules (mirrored from other-skill)`
 
@@ -52,7 +47,8 @@ Only reference skills that ship with that repo.
 
 Use `1.`, `2.`, ... only for short sequences where each item fits on one line.
 
-When there are too many points, or a single numbered item wraps onto multiple lines, break the sequence into headings instead: `### Step 1`, `### Step 2`, and so on.
+When there are too many points, or a single numbered item wraps onto multiple lines, break the sequence into headings instead.
+Use `### Step 1`, `### Step 2`, and so on.
 Put detail in paragraphs or bullets under each heading.
 
 Good:
@@ -77,12 +73,3 @@ Bad:
 4. Run the quality gate before finishing.
 5. Update `plan.md` if decisions change during implementation.
 ```
-
-## User corrections
-
-When the user corrects skill text, update in place:
-
-- State the new guidance only. Remove the old wording.
-- Do not restate what was wrong, do not add negations for the prior rule, or keep both old and new versions.
-
-Example: if the skill said use format A and the user wants B, the skill should describe B only. Do not add "do not use A" or a note that it used to be A.
