@@ -14,8 +14,6 @@ hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
 
 hl.env("XCURSOR_THEME", "CustomCursors")
 hl.env("XCURSOR_SIZE", "22")
-hl.env("HYPRCURSOR_THEME", "CustomCursors")
-hl.env("HYPRCURSOR_SIZE", "22")
 
 local M = {}
 
