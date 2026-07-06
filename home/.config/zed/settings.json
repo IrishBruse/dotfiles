@@ -1,22 +1,26 @@
 {
-  "disable_ai": true,
+  "agent_servers": {
+    "cursor": {
+      "default_config_options": {
+        "mode": "agent",
+        "model": "claude-opus-4-8",
+      },
+      "type": "registry",
+    },
+  },
   "agent": {
-    "enabled": false,
-    "button": false,
-    "dock": "right",
-    "favorite_models": [],
-    "model_parameters": []
+    "dock": "left",
   },
   "outline_panel": {
     "dock": "right",
-    "button": false
+    "button": false,
   },
   "collaboration_panel": {
     "dock": "right",
-    "button": false
+    "button": false,
   },
   "git_panel": {
-    "dock": "right"
+    "dock": "right",
   },
   "theme": {
     "mode": "dark",
@@ -26,11 +30,11 @@
   "icon_theme": "Material Icon Theme",
   "ui_font_family": "Cascadia Code",
   "ui_font_weight": 400.0,
-  "ui_font_size": 12.0,
+  "ui_font_size": 15.0,
   "mouse_wheel_zoom": true,
   "buffer_font_family": "Cascadia Code",
   "buffer_font_size": 12,
-  "agent_ui_font_size": 12.0,
+  "agent_ui_font_size": 15.0,
   "agent_buffer_font_size": 12,
   "buffer_line_height": "standard",
   "cursor_blink": true,
@@ -83,16 +87,16 @@
     "dock": "right",
     "folder_icons": true,
     "file_icons": true,
-    "sticky_scroll": true
+    "sticky_scroll": true,
   },
   "debugger": {
     "dock": "right",
-    "button": false
+    "button": false,
   },
   "title_bar": {
     "show_menus": false,
     "show_sign_in": false,
-    "show_onboarding_banner": false
+    "show_onboarding_banner": false,
   },
   "tabs": {
     "git_status": false,
@@ -102,10 +106,9 @@
   },
   "terminal": {
     "font_family": "Cascadia Mono",
-    "font_size": 12,
+    "font_size": 15,
     "line_height": "standard",
     "cursor_shape": "bar",
-    "cursor_blink": true,
   },
   "git": {
     "inline_blame": {
