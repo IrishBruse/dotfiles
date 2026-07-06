@@ -167,14 +167,11 @@ For `update`, read [`references/update/update.md`](references/update/update.md),
 
 After every investigation report, use the `AskQuestion` tool to guide where to go next. This is the main interaction model for the skill. The prompt must reflect the recommendation and only include options that are valid for the current situation.
 
-Use this shape unless the ticket needs a narrower prompt:
+Populate the `AskQuestion` tool with these fields. This describes tool input, so never print the fields, labels, or any fence as chat text:
 
-```text
-Title: <KEY or short idea> - Next step
-
-Prompt:
-I found <short status and recommendation>. What would you like to do?
-```
+- `title`: `<KEY or short idea> - Next step`
+- `prompt`: `I found <short status and recommendation>. What would you like to do?`
+- `options`: the route labels chosen per the rules below.
 
 Route prompt rules:
 
@@ -218,21 +215,14 @@ Rules:
 - If the change shown differs in any way from what you are about to write, stop and run the gate again with the corrected proposal.
 - Never infer approval from an earlier route choice, a title selection, a prior gate, or the absence of objection. Only the `Approve` option in this gate counts.
 
-Fixed `AskQuestion` shape:
+Populate the `AskQuestion` tool with these exact fields and no other options. This describes tool input, so never print the fields, labels, or any fence as chat text:
 
-```template
-Title: <KEY or new ticket> - Approve Jira write
-
-Prompt:
-I will <create | update | reparent | transition | close | link | comment>: <what>.
-<exact change summary, before -> after for edits>.
-Apply this exact change?
-
-Options:
-- Approve - apply this exact change
-- Edit first - change something before applying
-- Cancel - do not write to Jira
-```
+- `title`: `<KEY or new ticket> - Approve Jira write`
+- `prompt`: `I will <create | update | reparent | transition | close | link | comment>: <what>. <exact change summary, before -> after for edits>. Apply this exact change?`
+- `options` (exactly these three, in order):
+  - `Approve - apply this exact change`
+  - `Edit first - change something before applying`
+  - `Cancel - do not write to Jira`
 
 ## Stop Gates
 

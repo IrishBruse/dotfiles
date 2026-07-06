@@ -8,11 +8,8 @@ Epics must be parented to a verified Jira Initiative. They group related stories
 
 A Jira Initiative is mandatory. Do not draft or create an Epic without an Initiative issue key or URL.
 
-If no Initiative key or URL is provided, stop and ask:
-
-```text
-Which Jira initiative does this epic belong to? (issue key e.g. NOVACORE-12345, or full Jira URL).
-```
+If no Initiative key or URL is provided, stop and ask the user in plain chat (no code fence) which Jira initiative this epic belongs to.
+Accept an issue key (e.g. NOVACORE-12345) or a full Jira URL.
 
 ## Workflow
 

@@ -101,17 +101,10 @@ Gate: stop until the human confirms or edits supporting context.
 
 ### 3. Human Actors And Actions
 
-Ask explicitly:
+Ask the user in plain chat (no code fence) who the main human actors for this epic are, using GP role names as their org uses them.
 
-```text
-Who do you consider the main human actors for this epic, using GP role names as your org uses them?
-```
-
-Ask explicitly:
-
-```text
-For each actor, what is the main action they need, one line each, at business / user intent and not APIs, services, or components?
-```
+Then ask, again in plain chat, what the main action each actor needs is.
+One line each, at business / user intent and not APIs, services, or components.
 
 Hard stop until the human provides this roster or explicitly asks the agent to propose actor and one-line action candidates only.
 
@@ -144,43 +137,32 @@ For each agreed actor/action line, draft:
 
 Use the Use Case Template in [`template.md`](template.md).
 
-Introduce with:
-
-```text
-Here are the use cases expanded from our agreed actor/action roster. Let's review them together.
-```
+Introduce the review in plain chat (no code fence): tell the user these are the use cases expanded from the agreed actor/action roster, and invite them to review together.
 
 ### 6. Collaborative Refinement
 
-Walk through each use case with the human:
+Walk through each use case with the human via the `AskQuestion` tool. This describes tool input, so never print the labels or any fence as chat text. Use these `options`:
 
-```text
-1. Accept as-is
-2. Modify - tell me what to change
-3. Remove - this does not belong
-4. Split - this is actually multiple use cases
-```
+- `Accept as-is`
+- `Modify - tell me what to change`
+- `Remove - this does not belong`
+- `Split - this is actually multiple use cases`
 
-After reviewing all, ask: "Are there any use cases I missed?"
+After reviewing all, ask the user in plain chat whether any use cases were missed.
 
-Final confirmation gate:
+Final confirmation gate: use the `AskQuestion` tool (`title`: `Use Case Agreement`) with these `options`, and never print the labels or any fence as chat text:
 
-```text
-Use Case Agreement:
-1. Yes - persist
-2. No - I want to make more changes
-3. Stop - I need to think about this more
-```
+- `Yes - persist`
+- `No - I want to make more changes`
+- `Stop - I need to think about this more`
 
 ### 7. Persist
 
-Ask where to persist:
+Ask where to persist via the `AskQuestion` tool. This describes tool input, so never print the labels or any fence as chat text. Use these `options`:
 
-```text
-1. Local artifacts only
-2. Jira comment only
-3. Local artifacts + Jira comment
-```
+- `Local artifacts only`
+- `Jira comment only`
+- `Local artifacts + Jira comment`
 
 For local persistence, write agreed use cases using workspace artifact conventions.
 
