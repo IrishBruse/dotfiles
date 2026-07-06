@@ -14,5 +14,5 @@ home/.cursor/rules/gp-rules.mdc
 home/.local/bin/chrome
 home/dot-zshrc
 
-# Unignroe global ignore
+# Unignore global ignore
 !tools/confluence
