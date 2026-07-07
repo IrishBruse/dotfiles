@@ -21,3 +21,11 @@ description: Creates a new GitHub pull request with title and body from the curr
 Avoid descriptions that only say when to use the skill, only say what it does, or use second person ("you can use this to...").
 
 Optional frontmatter: `paths` (glob patterns to scope the skill to matching files), `disable-model-invocation: true` (only load when explicitly invoked via `/skill-name`), and `metadata`.
+
+## Atlassian access
+
+Agents use **Atlassian MCP** for live Jira and Confluence data and writes.
+
+- Never run `acli`, `jira`, or `confluence` from an agent turn.
+- The `jira-cli` and `confluence-cli` skills document what the human CLIs do and how MCP maps to each need.
+- Jira ticket workflow gates live in the `jira` skill under `~/.agents/jira/`.

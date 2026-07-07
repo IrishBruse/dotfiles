@@ -15,9 +15,14 @@ It recommends a path, asks the user to choose a route with `AskQuestion`, then r
 
 Whenever the input includes a Jira key or URL that you will inspect, work on, or update, ensure it exists locally under `jira/<type>/`.
 This is your **first step**.
-If it is not already there, fetch it from Jira and save it as a local markdown file, then work from that file.
+
+- Read the local markdown file when it is already present.
+- When it is missing, use Atlassian MCP to inspect the live ticket, then ask the user to run `jira pull <KEY>` so the repo has a local copy.
+  See the `jira-cli` skill.
+- Never run `jira`, `confluence`, or `acli` from an agent turn.
+
 This applies to every route, including subcommands and `/jira update`.
-After a Jira write, refresh the local file so it matches the live ticket.
+After a Jira write, ask the user to run `jira pull <KEY>` (or `jira sync`) so the local file matches the live ticket.
 
 ## Reference Workflows
 
