@@ -1,6 +1,6 @@
 ---
 name: pr
-description: Create or update a GitHub pull request title and body from the current branch. Use when opening or updating a pull request.
+description: Create or update a GitHub pull request title and body from the current branch. New PRs are always created as drafts. Use when opening or updating a pull request.
 disable-model-invocation: true
 user-invocable: false
 ---
@@ -36,10 +36,13 @@ Compose the body using the layout in `~/.agents/skills/pr/body-format.md`.
 
 ## Apply
 
+Always create new PRs as **drafts**.
+Do not pass `--draft` on update, and do not change draft status when editing an existing PR unless the user asks.
+
 Create:
 
 ```bash
-gh pr create --base main --title "<title>" --body "<body>"
+gh pr create --draft --base main --title "<title>" --body "<body>"
 ```
 
 Update:
