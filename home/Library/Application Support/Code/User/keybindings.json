@@ -4226,7 +4226,11 @@
     },
     {
         "key": "cmd+t",
-        "command": "workbench.action.createTerminalEditor"
+        "command": "workbench.action.terminal.newWithProfile",
+        "args": {
+            "profileName": "agent",
+            "location": "editor"
+        }
     },
     {
         "key": "cmd+v",
