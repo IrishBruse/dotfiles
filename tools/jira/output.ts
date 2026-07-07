@@ -34,3 +34,9 @@ export function printPullSummary(total: number): void {
   const noun = total === 1 ? "issue" : "issues";
   process.stdout.write(`\n${paint(c, "ok", `Pulled ${total} ${noun}.`)}\n`);
 }
+
+/** Progress and status on stderr so stdout stays pipe-friendly. */
+export function pullLog(msg: string): void {
+  const c = stderrColorEnabled();
+  process.stderr.write(`${paint(c, "dim", "jira:")} ${msg}\n`);
+}

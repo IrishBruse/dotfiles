@@ -49,6 +49,12 @@ export function childIssuesJql(parentKey: string): string {
   return `parent = ${parentKey} OR "Epic Link" = ${parentKey}`;
 }
 
+/** JQL for children of multiple parents in one search. */
+export function bulkChildIssuesJql(parentKeys: readonly string[]): string {
+  const keys = parentKeys.join(", ");
+  return `parent IN (${keys}) OR "Epic Link" IN (${keys})`;
+}
+
 function mergeChildren(lists: ChildIssue[][]): ChildIssue[] {
   const byKey = new Map<string, ChildIssue>();
   for (const list of lists) {
@@ -61,28 +67,42 @@ function mergeChildren(lists: ChildIssue[][]): ChildIssue[] {
   );
 }
 
-/** List direct child issues for a ticket (epic stories, sub-tasks, etc.). */
-export function fetchChildIssues(parentKey: string): ChildIssue[] {
+function childrenFromSearch(data: unknown): ChildIssue[] {
+  const out: ChildIssue[] = [];
+  if (!Array.isArray(data)) return out;
+  for (const issue of data) {
+    const child = childFromIssue(
+      issue as { key?: string; fields?: Record<string, unknown> }
+    );
+    if (child) out.push(child);
+  }
+  return out;
+}
+
+function searchChildIssues(jql: string): ChildIssue[] {
   const fromSearch = runAcliJson([
     "jira",
     "workitem",
     "search",
     "--jql",
-    childIssuesJql(parentKey),
+    jql,
     "--fields",
     "key,summary,issuetype",
     "--json"
   ]);
+  return childrenFromSearch(fromSearch);
+}
 
-  const searchChildren: ChildIssue[] = [];
-  if (Array.isArray(fromSearch)) {
-    for (const issue of fromSearch) {
-      const child = childFromIssue(
-        issue as { key?: string; fields?: Record<string, unknown> }
-      );
-      if (child) searchChildren.push(child);
-    }
-  }
+function fetchChildIssuesBulk(parentKeys: readonly string[]): ChildIssue[] {
+  if (parentKeys.length === 0) return [];
+  if (parentKeys.length === 1) return fetchChildIssues(parentKeys[0]!);
+  const searchChildren = searchChildIssues(bulkChildIssuesJql(parentKeys));
+  return mergeChildren([searchChildren]);
+}
+
+/** List direct child issues for a ticket (epic stories, sub-tasks, etc.). */
+export function fetchChildIssues(parentKey: string): ChildIssue[] {
+  const searchChildren = searchChildIssues(childIssuesJql(parentKey));
 
   const parentView = runAcliJson([
     "jira",
@@ -103,6 +123,42 @@ export function fetchChildIssues(parentKey: string): ChildIssue[] {
       : [];
 
   return mergeChildren([searchChildren, subtasks]);
+}
+
+/** Breadth-first descendant listing (Initiative -> Epics -> Stories, etc.). */
+export function fetchDescendantIssues(
+  rootKey: string,
+  options: { onProgress?: (message: string) => void } = {}
+): ChildIssue[] {
+  const log = options.onProgress;
+  const byKey = new Map<string, ChildIssue>();
+  let frontier: string[] = [rootKey];
+  const scannedParents = new Set<string>();
+
+  while (frontier.length > 0) {
+    const parents = frontier.filter((key) => !scannedParents.has(key));
+    if (parents.length === 0) break;
+    for (const key of parents) scannedParents.add(key);
+
+    log?.(
+      parents.length === 1
+        ? `listing children of ${parents[0]}...`
+        : `listing children of ${parents.length} issues...`
+    );
+
+    const children = fetchChildIssuesBulk(parents);
+    frontier = [];
+    for (const child of children) {
+      if (!byKey.has(child.key)) {
+        byKey.set(child.key, child);
+        frontier.push(child.key);
+      }
+    }
+  }
+
+  return [...byKey.values()].sort((a, b) =>
+    a.key.localeCompare(b.key, undefined, { sensitivity: "base" })
+  );
 }
 
 /** Depth-first issue keys: root first, then descendants (cycle-safe). */

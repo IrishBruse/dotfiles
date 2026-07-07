@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { childIssuesJql, issueTreeKeys } from "./children.ts";
+import { bulkChildIssuesJql, childIssuesJql, issueTreeKeys } from "./children.ts";
 import { parseJiraKey } from "./jiraInput.ts";
 import {
   issueTypeSlug,
@@ -78,6 +78,15 @@ describe("childIssuesJql", () => {
     assert.equal(
       childIssuesJql("NOVACORE-1"),
       'parent = NOVACORE-1 OR "Epic Link" = NOVACORE-1'
+    );
+  });
+});
+
+describe("bulkChildIssuesJql", () => {
+  it("matches children of multiple parents", () => {
+    assert.equal(
+      bulkChildIssuesJql(["NOVACORE-1", "NOVACORE-2"]),
+      'parent IN (NOVACORE-1, NOVACORE-2) OR "Epic Link" IN (NOVACORE-1, NOVACORE-2)'
     );
   });
 });

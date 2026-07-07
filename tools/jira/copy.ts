@@ -6,7 +6,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
-import { fetchChildIssues, issueTreeKeys } from "./children.ts";
+import { fetchDescendantIssues } from "./children.ts";
 import { parseJiraKey } from "./jiraInput.ts";
 import { localTicketPath } from "./local.ts";
 import { pullTicket } from "./pull.ts";
@@ -71,7 +71,10 @@ function runImpl(
     ? path.resolve(parentDirOrUndefined)
     : process.cwd();
 
-  const keys = issueTreeKeys(key, fetchChildIssues);
+  const descendants = fetchDescendantIssues(key, {
+    onProgress: (message) => log(message)
+  });
+  const keys = [key, ...descendants.map((issue) => issue.key)];
   let code = 0;
   for (const ticketKey of keys) {
     if (copyTicketToDir(ticketKey, parent) !== 0) code = 1;

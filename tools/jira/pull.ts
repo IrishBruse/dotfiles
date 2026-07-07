@@ -6,7 +6,7 @@ import path from "node:path";
 import process from "node:process";
 import { CONFIG } from "./CONFIG.ts";
 import { runAcliJson, runAcliJsonAsync } from "./acli.ts";
-import { fetchChildIssues, issueTreeKeys } from "./children.ts";
+import { fetchChildIssues, fetchDescendantIssues } from "./children.ts";
 import {
   assigneeLabel,
   formatTicketMarkdown,
@@ -19,7 +19,8 @@ import {
   printChildIssues,
   printError,
   printPulled,
-  printPullSummary
+  printPullSummary,
+  pullLog
 } from "./output.ts";
 import { confirm } from "./prompt.ts";
 
@@ -226,7 +227,13 @@ async function runPullFlow(
     return 0;
   }
 
-  const descendants = issueTreeKeys(ticketKey, fetchChildIssues).slice(1);
+  if (!options.quiet && isHierarchyRoot(root.issueType)) {
+    pullLog(`scanning descendants of ${ticketKey}...`);
+  }
+
+  const descendants = fetchDescendantIssues(ticketKey, {
+    onProgress: options.quiet ? undefined : pullLog
+  }).map((issue) => issue.key);
   if (descendants.length === 0) {
     if (!options.quiet) printPullSummary(pulled);
     return 0;
@@ -253,10 +260,14 @@ async function runPullFlow(
     return 0;
   }
 
-  if (!options.quiet) process.stdout.write("\n");
+  if (!options.quiet) {
+    pullLog(`pulling ${descendants.length} descendant issue(s)...`);
+    process.stdout.write("\n");
+  }
   let code = 0;
   for (const key of descendants) {
     try {
+      if (!options.quiet) pullLog(`fetching ${key}...`);
       pullTicketWrite(key, { ...options, cwd, quiet: false });
       pulled += 1;
     } catch (e) {
