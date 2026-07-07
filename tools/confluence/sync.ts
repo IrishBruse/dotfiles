@@ -86,13 +86,20 @@ export async function runSync(
   }
 
   if (decision === "pull") {
-    const code = pullSingle(page.id, { cwd, quiet: options.quiet });
+    const code = pullSingle(page.id, {
+      cwd,
+      quiet: options.quiet,
+      filePath
+    });
     if (code === 0 && !options.quiet) {
       process.stdout.write(`Pulled ${page.id} from Confluence\n`);
     }
     return code;
   }
 
-  const code = await pushPage(page.id, cwd, { quiet: options.quiet });
+  const code = await pushPage(page.id, cwd, {
+    quiet: options.quiet,
+    filePath
+  });
   return code;
 }

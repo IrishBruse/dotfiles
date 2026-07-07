@@ -100,19 +100,29 @@ export type UpdatePageInput = {
   title: string;
   version: number;
   storageBody: string;
+  /** Confluence space id; fetched from the remote page when omitted. */
+  spaceId?: string;
 };
 
 /** Push page body to Confluence via REST API v2. */
 export async function updatePageStorage(
-  input: UpdatePageInput
+  input: UpdatePageInput,
+  acli = "acli"
 ): Promise<PageViewJson> {
   const token = readAcliAccessToken();
   const { cloudId } = confluenceApiContext();
+  const spaceId =
+    input.spaceId ?? (await fetchPageAcliAsync(input.id, acli)).spaceId;
+  if (!spaceId) {
+    throw new Error(`could not resolve spaceId for page ${input.id}`);
+  }
+
   const url = `https://api.atlassian.com/ex/confluence/${cloudId}/wiki/api/v2/pages/${input.id}`;
   const payload = {
     id: input.id,
     status: "current",
     title: input.title,
+    spaceId: String(spaceId),
     body: {
       representation: "storage",
       value: input.storageBody

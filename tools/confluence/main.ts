@@ -21,7 +21,8 @@ function printHelp(): void {
   confluence verify                  fail if any relative .md links remain
   confluence -h|--help               this message
 
-Local pages live under ./confluence/ as markdown with YAML frontmatter.
+Markdown pages use YAML frontmatter (id, title, version, url, syncedHash, ...).
+Default pull/push roots are under ./confluence/, but sync works on any frontmatter file.
 Links must use full Confluence wiki URLs or Jira /browse/KEY URLs, not relative .md paths.
 Requires: acli confluence auth login
 `);

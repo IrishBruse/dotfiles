@@ -85,7 +85,37 @@ export type PullOptions = {
   rawStorage?: boolean;
   concurrency?: number;
   acli?: string;
+  /** Write to this markdown file instead of resolving under `confluence/`. */
+  filePath?: string;
 };
+
+function resolvePullOutputPath(
+  pageId: string,
+  page: PageViewJson,
+  opts: PullOptions,
+  cwd: string
+): { outPath: string; prior: string | null } {
+  if (opts.filePath) {
+    return {
+      outPath: path.resolve(cwd, opts.filePath),
+      prior: null
+    };
+  }
+
+  const prior = localPagePath(pageId, cwd);
+  if (prior) {
+    return { outPath: prior, prior };
+  }
+
+  const root = confluenceRootDir(cwd);
+  const baseName = markdownBasename(page.title, pageId);
+  const outPath = path.join(
+    root,
+    folderBase({ id: pageId, title: page.title }),
+    `${baseName}.md`
+  );
+  return { outPath, prior: null };
+}
 
 function pageLinks(page: PageViewJson): {
   url: string;
@@ -203,12 +233,7 @@ function pullOnePageWrite(
 ): { pageId: string; title: string; relPath: string } {
   const cwd = opts.cwd ?? process.cwd();
   const page = fetchPageAcli(pageId, opts.acli);
-  const prior = localPagePath(pageId, cwd);
-  const root = confluenceRootDir(cwd);
-  const baseName = markdownBasename(page.title, pageId);
-  const outPath =
-    prior ??
-    path.join(root, folderBase({ id: pageId, title: page.title }), `${baseName}.md`);
+  const { outPath, prior } = resolvePullOutputPath(pageId, page, opts, cwd);
   const relPath = writePulledPage(outPath, page, opts);
   if (prior && path.resolve(prior) !== path.resolve(outPath)) {
     fs.unlinkSync(prior);
@@ -226,12 +251,7 @@ async function pullOnePageWriteAsync(
 ): Promise<{ pageId: string; title: string; relPath: string }> {
   const cwd = opts.cwd ?? process.cwd();
   const page = await fetchPageAcliAsync(pageId, opts.acli);
-  const prior = localPagePath(pageId, cwd);
-  const root = confluenceRootDir(cwd);
-  const baseName = markdownBasename(page.title, pageId);
-  const outPath =
-    prior ??
-    path.join(root, folderBase({ id: pageId, title: page.title }), `${baseName}.md`);
+  const { outPath, prior } = resolvePullOutputPath(pageId, page, opts, cwd);
   const relPath = writePulledPage(outPath, page, opts);
   if (prior && path.resolve(prior) !== path.resolve(outPath)) {
     fs.unlinkSync(prior);

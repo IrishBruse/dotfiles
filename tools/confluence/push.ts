@@ -3,40 +3,70 @@ import process from "node:process";
 
 import { updatePageStorage } from "./api.ts";
 import { assertNoRelativeMdLinks } from "./links.ts";
-import { listLocalPages, localPagePath, parsePageMarkdown } from "./local.ts";
+import {
+  listLocalPages,
+  parsePageMarkdown,
+  resolvePageFilePath
+} from "./local.ts";
 import { markdownToStorage } from "./markdown-to-storage.ts";
 import { printError } from "./output.ts";
 import { pullSingle } from "./pull.ts";
+
+export type PushOptions = {
+  cwd?: string;
+  quiet?: boolean;
+  /** Push this markdown file instead of resolving under `confluence/`. */
+  filePath?: string;
+};
+
+/** Push one markdown file to Confluence, then refresh frontmatter in place. */
+export async function pushPageFile(
+  filePath: string,
+  cwd = process.cwd(),
+  options: Pick<PushOptions, "quiet"> = {}
+): Promise<void> {
+  const content = fs.readFileSync(filePath, "utf-8");
+  const page = parsePageMarkdown(content, filePath, cwd);
+  if (!page) {
+    throw new Error(`could not parse page markdown: ${filePath}`);
+  }
+
+  assertNoRelativeMdLinks(page.body, page.relPath);
+  await updatePageStorage({
+    id: page.id,
+    title: page.title,
+    version: page.version,
+    storageBody: markdownToStorage(page.body)
+  });
+
+  const code = pullSingle(page.id, {
+    cwd,
+    quiet: true,
+    filePath
+  });
+  if (code !== 0) {
+    throw new Error(`refresh failed after push for page ${page.id}`);
+  }
+
+  if (!options.quiet) {
+    process.stdout.write(`Pushed ${page.id} to Confluence\n`);
+  }
+}
 
 /** Push one local page to Confluence, then refresh the file from Confluence. */
 export async function pushPage(
   pageId: string,
   cwd = process.cwd(),
-  options: { quiet?: boolean } = {}
+  options: PushOptions = {}
 ): Promise<number> {
   try {
-    const filePath = localPagePath(pageId, cwd);
+    const filePath = resolvePageFilePath(pageId, cwd, options.filePath);
     if (!filePath) {
       printError(`no local file for page ${pageId}`);
       return 1;
     }
-    const content = fs.readFileSync(filePath, "utf-8");
-    const page = parsePageMarkdown(content, filePath, cwd);
-    if (!page) {
-      printError(`could not parse page markdown: ${filePath}`);
-      return 1;
-    }
-    assertNoRelativeMdLinks(page.body, page.relPath);
-    await updatePageStorage({
-      id: page.id,
-      title: page.title,
-      version: page.version,
-      storageBody: markdownToStorage(page.body)
-    });
-    pullSingle(page.id, { cwd, quiet: true });
-    if (!options.quiet) {
-      process.stdout.write(`Pushed ${page.id} to Confluence\n`);
-    }
+
+    await pushPageFile(filePath, cwd, options);
     return 0;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
@@ -59,14 +89,7 @@ export async function pushAll(
   let code = 0;
   for (const page of pages) {
     try {
-      assertNoRelativeMdLinks(page.body, page.relPath);
-      await updatePageStorage({
-        id: page.id,
-        title: page.title,
-        version: page.version,
-        storageBody: markdownToStorage(page.body)
-      });
-      pullSingle(page.id, { cwd, quiet: true });
+      await pushPageFile(page.path, cwd, options);
       if (!options.quiet) {
         process.stdout.write(`Pushed ${page.id}\n`);
       }

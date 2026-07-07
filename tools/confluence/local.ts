@@ -107,6 +107,24 @@ export function localPagePath(
   return null;
 }
 
+/**
+ * Resolve the markdown file for push/pull/sync.
+ * Explicit `filePath` wins, then a registered file under `confluence/`.
+ *
+ * @param pageId Confluence page id from frontmatter.
+ * @param cwd Working directory for relative paths.
+ * @param filePath Optional caller-provided markdown path.
+ * @return Absolute path, or null when no file is known.
+ */
+export function resolvePageFilePath(
+  pageId: string,
+  cwd = process.cwd(),
+  filePath?: string
+): string | null {
+  if (filePath) return path.resolve(cwd, filePath);
+  return localPagePath(pageId, cwd);
+}
+
 /** Build canonical wiki URL for a page. */
 export function pageUrl(
   siteHost: string,

@@ -4,7 +4,7 @@ import { describe, it } from "node:test";
 import { storageToMarkdown } from "./confluence-storage-to-markdown.ts";
 import { slugifyConfluenceTitle } from "./confluence-slug.ts";
 import { findRelativeMdLinks } from "./links.ts";
-import { hashBody, pageUrl } from "./local.ts";
+import { hashBody, pageUrl, resolvePageFilePath } from "./local.ts";
 import { markdownToStorage } from "./markdown-to-storage.ts";
 import { parsePageId, parseJiraKey } from "./page-input.ts";
 import { decideSync, pageChangeState } from "./page-state.ts";
@@ -86,6 +86,16 @@ describe("page-input", () => {
 });
 
 describe("local helpers", () => {
+  it("prefers an explicit sync file path over confluence registry", () => {
+    const cwd = "/tmp/workspace";
+    const resolved = resolvePageFilePath(
+      "1",
+      cwd,
+      "docs/guide.md"
+    );
+    assert.equal(resolved, "/tmp/workspace/docs/guide.md");
+  });
+
   it("builds canonical page URLs", () => {
     const url = pageUrl("example.atlassian.net", "GCE1", "1", "Hello World");
     assert.equal(
