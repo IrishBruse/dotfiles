@@ -38,8 +38,14 @@ Custom VS Code UI CSS.
 ### tools/
 
 - `ansii` - Print terminal ANSI colors, styles, and CSI sequences with escape codes beside each sample (`ansii 256`, `ansii 24-bit`, `ansii gradient` for extended palettes)
-- `jira` - Pull, push, and browse local ticket markdown under `./jira/` (`jira pull`, `jira push`, `jira sync`, interactive `jira` in a TTY); `jira board sync` updates `~/.agents/skills/jira-board/` (also used by the dashboard)
-- `confluence` - Pull, push, and verify local Confluence markdown under `./confluence/` (`confluence pull`, `confluence push`, `confluence sync <path.md>`, `confluence status`, `confluence verify`)
+- `jira` - Human CLI for local ticket markdown under `./jira/` (`jira pull`, `jira push`, `jira sync`, interactive `jira` in a TTY).
+  `jira board sync` updates `~/.agents/skills/jira-board/` (also used by the dashboard).
+  Agents use Atlassian MCP, not `jira` or `acli`.
+  See `~/.agents/skills/jira-cli/`.
+- `confluence` - Human CLI for local Confluence markdown under `./confluence/`.
+  Commands: `confluence pull`, `confluence push`, `confluence sync <path.md>`, `confluence status`, `confluence verify`.
+  Agents use Atlassian MCP, not `confluence` or `acli`.
+  See `~/.agents/skills/confluence-cli/`.
 - `pr` - GitHub pull request helper: auto create or update via Cursor agent skills; `pr fix` for failed CI
 - `interpolate` - Expand markdown prompt templates (builtins, env, conditions, shell snippets)
 - `md` - Render piped or file markdown in the terminal
@@ -54,7 +60,7 @@ Custom VS Code UI CSS.
 Agent skills live in two stowed locations under `home/`, mirrored to `~/`.
 
 - `home/.agents/skills/` -> `~/.agents/skills/` - general-purpose, cross-project skills
-  (`cli-tool`, `jest`, `docs-from-code`, `pr`, `jira-board`, etc.).
+  (`cli-tool`, `jest`, `docs-from-code`, `pr`, `jira-cli`, `confluence-cli`, `jira-board`, etc.).
   Reusable on any repo, no G-P specifics.
 
 - `home/.cursor/skills/` -> `~/.cursor/skills/` - **G-P-only work skills**
