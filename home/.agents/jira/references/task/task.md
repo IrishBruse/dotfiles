@@ -12,17 +12,13 @@ Sub-tasks use the same Goal / Acceptance Criteria / Notes format as Tasks, the o
 3. Parentage gate.
    **Tasks:** If no epic key is in context, ask once: "Which epic should this task belong to? (e.g. NOVACORE-12345, or say skip)." Proceed without a parent if the user skips. When known, set `parent` on `createJiraIssue` to the epic key.
    **Sub-tasks:** Require a parent Story, Task, or Bug key before drafting or creating. Use `issueTypeName: "Sub-task"` and `parent` on create. Do not create an unparented Sub-task. Record the parent in draft frontmatter or metadata. If the parent is unknown, ask for it or route back to investigation.
-4. Feature Team. When an epic key or parent issue is known, fetch it and copy Feature Team if set. If absent, ask once for the team or accept a reference issue key to copy from.
+4. Feature Team. When an epic key or parent issue is known, fetch it and copy Feature Team if set. If absent, ask once for the team or accept a reference issue key to copy from. See [`../jira-fields.md`](../jira-fields.md) for Feature Team, assignee, and `createJiraIssue` parameters.
 5. Resolve `cloudId` from a Jira URL, prior context, or `getAccessibleAtlassianResources`.
 6. Optional epic lookup. If the user gives an epic title instead of a key, use JQL and confirm the key before drafting.
 7. Draft locally before any Jira create. Read [`../local-draft.md`](../local-draft.md) and use the ticket template in [`template.md`](template.md).
 8. Show the draft file path and summary, then run the **Jira Write Approval Gate** in `SKILL.md`.
-9. Promote only when the gate is answered `Approve` by calling `createJiraIssue`.
+9. Promote only when the gate is answered `Approve` by calling `createJiraIssue` with `issueTypeName: "Task"`, or `"Sub-task"` when the user confirmed a Sub-task.
 10. Reply with issue key, browse URL, epic, Feature Team, and summary. Update the local draft with the Jira key and link.
-
-## Templates
-
-Use the Ticket Template, summary line, and local draft shape in [`template.md`](template.md).
 
 ## Writing Rules
 
@@ -35,26 +31,6 @@ Use the Ticket Template, summary line, and local draft shape in [`template.md`](
 | Acceptance criteria | Bullet list with observable and testable criteria |
 | Notes | Omit when empty |
 | Clarity | Enough context for any assignee to understand at a glance |
-
-## Local Draft
-
-Read [`../local-draft.md`](../local-draft.md). Use [`template.md`](template.md) for this route.
-
-## Clarify Vague Requests
-
-Read [`../clarify-vague.md`](../clarify-vague.md).
-
-## Feature Team And MCP
-
-Read [`../jira-fields.md`](../jira-fields.md) for Feature Team, assignee, and `createJiraIssue` parameters. Use `issueTypeName: "Task"` or `"Sub-task"` when the user confirmed a Sub-task.
-
-## Stop Gates
-
-| Gate | When | Action |
-|------|------|--------|
-| Clarification | Intent too vague for Goal and AC | Ask targeted questions and stop until answered or user says draft anyway |
-| Epic prompt | Epic missing at start | Ask once and proceed on skip |
-| Sub-task parent | Sub-task parent missing | Ask for the parent issue key and stop until known |
 
 ## Do Not
 

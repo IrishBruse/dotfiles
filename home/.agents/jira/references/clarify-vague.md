@@ -2,6 +2,8 @@
 
 Ask targeted questions before drafting when the request lacks enough detail for the route's writing rules.
 
+Never invent acceptance criteria, goals, expectations, or scenarios to fill gaps. Wait for answers, or accept "draft with what we have" and note the gaps.
+
 ## Route focus
 
 | Route | Clarify before drafting when |
@@ -26,12 +28,8 @@ When clarifying an Epic, ask only what is missing:
 - How will we know this Epic delivered value for the parent Initiative?
 - Anything explicitly out of scope?
 
-Do not invent filler expectations or scenarios. Wait for answers, or accept "draft with what we have" and note gaps.
-
 ## Task and Story questions
 
 For Tasks, ask what should change, what done looks like, and which repo or area anchors the work.
 
 For Stories, ask who the actor is, what outcome they get, which epic this rolls up to, and what is explicitly out of scope.
-
-Do not invent acceptance criteria or goals to fill gaps.

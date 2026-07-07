@@ -19,15 +19,11 @@ Accept an issue key (e.g. NOVACORE-12345) or a full Jira URL.
 4. Optional workspace anchor. If the Initiative maps to local context artifacts, read the relevant context when present.
 5. Fit check. Decide whether the proposed Epic belongs to this Initiative. If it does not fit, stop and propose a better route.
 6. Clarify if vague. See [`../clarify-vague.md`](../clarify-vague.md) (Epic row: expectations, scenarios, Initiative tie-in).
-7. Feature Team. Resolve in order: copy from the Initiative, copy from a sibling Epic, ask once.
-8. Draft locally before Jira create. See [`../local-draft.md`](../local-draft.md).
+7. Feature Team. Resolve in order: copy from the Initiative, copy from a sibling Epic, ask once. See [`../jira-fields.md`](../jira-fields.md) for Feature Team, Capitalizable, assignee, and `createJiraIssue` parameters.
+8. Draft locally before Jira create. See [`../local-draft.md`](../local-draft.md) and use the ticket template in [`template.md`](template.md).
 9. Show the draft file path and summary, then run the **Jira Write Approval Gate** in `SKILL.md`.
-10. Promote only when the gate is answered `Approve` by calling `createJiraIssue`.
+10. Promote only when the gate is answered `Approve` by calling `createJiraIssue` with `issueTypeName: "Epic"`.
 11. Reply with issue key, browse URL, parent Initiative, Feature Team, and summary. Update the local draft and hierarchy context.
-
-## Templates
-
-Use the Ticket Template, summary line, and local draft shape in [`template.md`](template.md).
 
 ## Writing Rules
 
@@ -115,28 +111,6 @@ Does not fit when:
 - The work is small enough to be a single Story or Task.
 
 On no-fit, stop. Explain why and propose another Initiative or smaller ticket route. Do not draft until the user redirects.
-
-## Local Draft
-
-See [`../local-draft.md`](../local-draft.md).
-
-## Clarify Vague Requests
-
-See [`../clarify-vague.md`](../clarify-vague.md). Epic route: clarify when expectations, scenarios, or Initiative tie-in cannot be written specifically.
-
-## Feature Team, Capitalizable, And MCP
-
-Read [`../jira-fields.md`](../jira-fields.md) for Feature Team, Capitalizable, assignee, and `createJiraIssue` parameters. Use `issueTypeName: "Epic"`.
-
-## Stop Gates
-
-| Gate | When | Action |
-|------|------|--------|
-| Initiative | Not provided at start | Ask once for issue key or URL and stop until answered |
-| Initiative type | After fetch | Reject if `issuetype.name != "Initiative"` and ask for corrected key |
-| Fit check | Initiative and intent known | Stop and propose alternative if no fit |
-| Clarification | Intent too vague | Ask targeted questions and stop until answered or user says draft anyway |
-| Implementation-leak check | Before draft confirmation | Rewrite any Expectation or Scenario that names tech, payload, service, or protocol |
 
 ## Do Not
 
