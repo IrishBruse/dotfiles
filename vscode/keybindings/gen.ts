@@ -204,3 +204,9 @@ await writeKeybindingsFile("../../home/.config/Code/User/keybindings.json", [
   SEPARATOR,
   ...resolveKeybindsForOs(custom, "linux"),
 ]);
+
+await writeKeybindingsFile("../../home/.config/Cursor/User/keybindings.json", [
+  osMarker("linux"),
+  SEPARATOR,
+  ...resolveKeybindsForOs(custom, "linux"),
+]);
