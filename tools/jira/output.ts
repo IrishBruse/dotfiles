@@ -12,11 +12,9 @@ export function printError(msg: string): void {
   process.stderr.write(`${paint(c, "bad", "error")}: ${msg}\n`);
 }
 
-export function printPulled(key: string, title: string, relPath: string): void {
+export function printPulled(key: string, title: string, _relPath: string): void {
   const c = stdoutColorEnabled();
-  process.stdout.write(
-    `${paint(c, "label", key)}  ${title}\n${paint(c, "dim", "  → ")}${relPath}\n`
-  );
+  process.stdout.write(`${paint(c, "label", key)}  ${title}\n`);
 }
 
 export function printChildIssues(children: ChildIssue[]): void {
