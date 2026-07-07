@@ -39,10 +39,6 @@
       "prefix": "macos"
     },
     {
-      "paths": "shared/**",
-      "prefix": "shared"
-    },
-    {
       "paths": ["AGENTS.md", "README.md"],
       "prefix": "docs"
     },
