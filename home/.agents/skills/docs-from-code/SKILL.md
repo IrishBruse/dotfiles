@@ -1,6 +1,6 @@
 ---
 name: docs-from-code
-description: Audits and aligns user-facing docs to match code as the source of truth. Use when checking doc drift, filling doc gaps, or when the user invokes /docs-from-code.
+description: Audits and aligns user-facing docs to match code as the source of truth. Use when checking doc drift, filling doc gaps.
 ---
 
 # Docs from code
@@ -75,9 +75,3 @@ Public behavior in the repo defines what user docs should say.
 - Match existing doc structure and heading style.
 - If docs describe future work the user still wants documented, add or update limitations or status sections instead of changing code.
 - **Generated docs:** update source or hand-written docs the user names, not stale generated output, unless they say generated docs are published.
-- Use `questions` when scope or which docs to edit is unclear.
-
-## Related skills
-
-- `code-from-docs` - opposite direction (docs are contract).
-- `spec-repo-shape` - optional path map for spec-shaped repos.
