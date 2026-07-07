@@ -9,12 +9,14 @@ import { pullAll, pullPage } from "./pull.ts";
 import { pushAll, pushPage } from "./push.ts";
 import { printError } from "./output.ts";
 import { runStatus, runVerify } from "./status.ts";
+import { runSync } from "./sync.ts";
 
 function printHelp(): void {
   process.stdout.write(`Usage:
   confluence <pageUrl|pageId>        same as confluence pull <pageUrl|pageId>
   confluence pull [pageUrl|pageId]   fetch one page tree, or all local pages when omitted
   confluence push [pageId]           push one page, or all local pages when omitted
+  confluence sync <path.md>          pull or push one file from frontmatter state
   confluence status                  show clean / modified / behind / links state
   confluence verify                  fail if any relative .md links remain
   confluence -h|--help               this message
@@ -58,6 +60,16 @@ async function main(): Promise<void> {
       process.exit(1);
     }
     process.exit(await pushPage(pageId));
+    return;
+  }
+
+  if (arg === "sync") {
+    const input = process.argv[3];
+    if (!input) {
+      printError("sync: path to a .md file is required");
+      process.exit(1);
+    }
+    process.exit(await runSync(input));
     return;
   }
 

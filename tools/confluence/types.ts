@@ -15,7 +15,7 @@ export type PageViewJson = {
     meta?: { hasMore?: boolean };
     results?: ChildRef[];
   };
-  version?: { number?: number };
+  version?: { number?: number; createdAt?: string };
   _links?: {
     base?: string;
     webui?: string;

@@ -7,6 +7,7 @@ import { findRelativeMdLinks } from "./links.ts";
 import { hashBody, pageUrl } from "./local.ts";
 import { markdownToStorage } from "./markdown-to-storage.ts";
 import { parsePageId, parseJiraKey } from "./page-input.ts";
+import { decideSync, pageChangeState } from "./page-state.ts";
 
 describe("slugifyConfluenceTitle", () => {
   it("replaces unsafe characters and collapses whitespace", () => {
@@ -96,6 +97,44 @@ describe("local helpers", () => {
   it("hashes body content", () => {
     assert.equal(hashBody("alpha"), hashBody("alpha"));
     assert.notEqual(hashBody("alpha"), hashBody("beta"));
+  });
+});
+
+describe("page-state", () => {
+  it("detects behind and modified independently", () => {
+    const hash = hashBody("body");
+    assert.deepEqual(
+      pageChangeState(1, 2, hash, "body"),
+      { behind: true, modified: false, hasBadLinks: false }
+    );
+    assert.deepEqual(
+      pageChangeState(2, 2, hash, "edited"),
+      { behind: false, modified: true, hasBadLinks: false }
+    );
+    assert.deepEqual(
+      pageChangeState(1, 2, hash, "edited"),
+      { behind: true, modified: true, hasBadLinks: false }
+    );
+  });
+
+  it("chooses pull or push from change flags", () => {
+    const clean = { behind: false, modified: false, hasBadLinks: false };
+    const behind = { behind: true, modified: false, hasBadLinks: false };
+    const modified = { behind: false, modified: true, hasBadLinks: false };
+    const both = { behind: true, modified: true, hasBadLinks: false };
+
+    assert.equal(decideSync(clean, 0), "noop");
+    assert.equal(decideSync(behind, 0), "pull");
+    assert.equal(decideSync(modified, 0), "push");
+    assert.equal(
+      decideSync(both, 100, "1970-01-01T00:00:01.000Z"),
+      "pull"
+    );
+    assert.equal(
+      decideSync(both, 200, "1970-01-01T00:00:00.000Z"),
+      "push"
+    );
+    assert.equal(decideSync(both, 100), "conflict");
   });
 });
 

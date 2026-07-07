@@ -2,22 +2,11 @@ import process from "node:process";
 
 import { fetchPageVersion } from "./api.ts";
 import { findRelativeMdLinks } from "./links.ts";
-import { hashBody, listLocalPages } from "./local.ts";
+import { listLocalPages } from "./local.ts";
 import { printError, printStatusLine } from "./output.ts";
+import { classifyPage } from "./page-state.ts";
 
-export type PageStatus = "clean" | "modified" | "behind" | "links";
-
-function classifyPage(
-  localVersion: number,
-  remoteVersion: number,
-  syncedHash: string,
-  body: string
-): PageStatus {
-  if (findRelativeMdLinks(body).length > 0) return "links";
-  if (remoteVersion > localVersion) return "behind";
-  if (syncedHash && hashBody(body) !== syncedHash) return "modified";
-  return "clean";
-}
+export type { PageStatus } from "./page-state.ts";
 
 /** Show local vs remote state for pages under `confluence/`. */
 export async function runStatus(cwd = process.cwd()): Promise<number> {

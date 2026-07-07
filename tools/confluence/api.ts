@@ -49,6 +49,20 @@ export async function fetchPageAcliAsync(
   return data as PageViewJson;
 }
 
+/** Remote version and last-updated time for sync decisions. */
+export type PageSyncMeta = {
+  version: number;
+  updatedAt?: string;
+};
+
+function readPageSyncMeta(data: unknown): PageSyncMeta {
+  const page = data as PageViewJson | null;
+  return {
+    version: page?.version?.number ?? 0,
+    updatedAt: page?.version?.createdAt
+  };
+}
+
 /** Fetch remote page version only (no body). */
 export async function fetchPageVersion(
   pageId: string,
@@ -62,8 +76,23 @@ export async function fetchPageVersion(
     pageId,
     "--json"
   ], acli);
-  const page = data as PageViewJson | null;
-  return page?.version?.number ?? 0;
+  return readPageSyncMeta(data).version;
+}
+
+/** Fetch remote page version and last-updated timestamp (no body). */
+export async function fetchPageSyncMeta(
+  pageId: string,
+  acli = "acli"
+): Promise<PageSyncMeta> {
+  const data = await runAcliJsonAsync([
+    "confluence",
+    "page",
+    "view",
+    "--id",
+    pageId,
+    "--json"
+  ], acli);
+  return readPageSyncMeta(data);
 }
 
 export type UpdatePageInput = {
