@@ -1091,7 +1091,8 @@
     "*.bin": "hexEditor.hexedit",
     "*.gb": "hexEditor.hexedit",
     "*.gbm": "hexEditor.hexedit",
-    "*.gbr": "hexEditor.hexedit"
+    "*.gbr": "hexEditor.hexedit",
+    "*.db": "db-viewer.dbViewer"
   },
   "files.associations": {
     ".air.toml": "ini",
@@ -1214,7 +1215,8 @@
   "breadcrumbs.enabled": false,
   "settingsSync.ignoredSettings": [
     "editor.mouseWheelScrollSensitivity",
-    "update.mode"
+    "update.mode",
+    "ib-acp-ui.agents"
   ],
   "editor.bracketPairColorization.enabled": false,
   "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
@@ -1635,13 +1637,16 @@
   "excalidraw.theme": "dark",
   "update.mode": "none",
   "mediaPreview.video.autoPlay": true,
-  "ib-acp-ui.toolCallVerbosity": "compact",
+  "ib-acp-ui.sessionFilePrettyRpc": true,
   "ib-acp-ui.contentWidthPercent": 75,
   "ib-acp-ui.agents": [
     {
       "name": "Cursor",
       "command": "/Users/econneely/.local/bin/agent",
-      "args": ["acp"]
+      "args": [
+        "acp"
+      ]
     }
-  ]
+  ],
+  "ib-acp-ui.toolCallVerbosity": "compact"
 }
