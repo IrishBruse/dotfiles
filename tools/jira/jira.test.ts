@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { childIssuesJql } from "./children.ts";
+import { childIssuesJql, issueTreeKeys } from "./children.ts";
 import { parseJiraKey } from "./jiraInput.ts";
 import {
   issueTypeSlug,
@@ -15,6 +15,7 @@ import {
   classifyFolder,
   featureTeamLabel,
   formatTicketMarkdown,
+  isHierarchyRoot,
   JIRA_PULL_FIELDS,
   JIRA_SEARCH_FIELDS,
   JIRA_VIEW_EXTRA_FIELDS,
@@ -38,6 +39,37 @@ describe("JIRA field lists", () => {
         `view extras must include ${blocked}`
       );
     }
+  });
+});
+
+describe("isHierarchyRoot", () => {
+  it("matches Initiative and Epic", () => {
+    assert.equal(isHierarchyRoot("Initiative"), true);
+    assert.equal(isHierarchyRoot("Epic"), true);
+    assert.equal(isHierarchyRoot("Story"), false);
+  });
+});
+
+describe("issueTreeKeys", () => {
+  it("returns root then descendants depth-first", () => {
+    const tree: Record<string, string[]> = {
+      INIT: ["EPIC1", "EPIC2"],
+      EPIC1: ["STORY1", "STORY2"],
+      EPIC2: [],
+      STORY1: [],
+      STORY2: []
+    };
+    const keys = issueTreeKeys("INIT", (k) =>
+      (tree[k] ?? []).map((childKey) => ({ key: childKey }))
+    );
+    assert.deepEqual(keys, ["INIT", "EPIC1", "STORY1", "STORY2", "EPIC2"]);
+  });
+
+  it("skips cycles", () => {
+    const keys = issueTreeKeys("A", (k) =>
+      k === "A" ? [{ key: "B" }] : k === "B" ? [{ key: "A" }] : []
+    );
+    assert.deepEqual(keys, ["A", "B"]);
   });
 });
 

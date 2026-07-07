@@ -14,12 +14,12 @@ import { printError } from "./output.ts";
 function printHelp(): void {
   process.stdout.write(`Usage:
   jira                       interactive browser for ./jira/ (TTY)
-  jira <KEY|URL>             fetch a ticket (and optionally children) into jira/
+  jira <KEY|URL>             fetch a ticket into jira/ (Initiative/Epic: full tree)
   jira pull [KEY|URL]        fetch one ticket, or all local tickets when omitted
   jira sync                  same as jira pull
   jira board sync            sync Jira board into ~/.agents/skills/jira-board/
   jira push [KEY]            push one ticket, or all local tickets when omitted
-  jira copy <KEY|URL> [dir]  copy ticket folder here or under dir
+  jira copy <KEY|URL> [dir]  copy ticket folder (and descendants) here or under dir
   jira -h|--help             this message
 
 Interactive keys:

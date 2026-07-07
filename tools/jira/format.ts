@@ -174,6 +174,12 @@ export function issueTypeName(fields: Record<string, unknown>): string {
     : "Issue";
 }
 
+/** Initiative and Epic roots sync their full descendant tree by default. */
+export function isHierarchyRoot(issueType: string): boolean {
+  const t = issueType.trim().toLowerCase();
+  return t === "initiative" || t === "epic";
+}
+
 function normalizeSiteHost(host: string): string {
   return host.replace(/^https?:\/\//, "").replace(/\/$/, "");
 }

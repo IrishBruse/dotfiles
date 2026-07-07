@@ -6,10 +6,11 @@ import path from "node:path";
 import process from "node:process";
 import { CONFIG } from "./CONFIG.ts";
 import { runAcliJson, runAcliJsonAsync } from "./acli.ts";
-import { fetchChildIssues } from "./children.ts";
+import { fetchChildIssues, issueTreeKeys } from "./children.ts";
 import {
   assigneeLabel,
   formatTicketMarkdown,
+  isHierarchyRoot,
   issueTypeName,
   JIRA_PULL_FIELDS
 } from "./format.ts";
@@ -107,6 +108,7 @@ type PullWriteResult = {
   key: string;
   title: string;
   relPath: string;
+  issueType: string;
 };
 
 /** Fetch one ticket from Jira and write or refresh its local markdown file. */
@@ -160,7 +162,7 @@ function writePulledIssue(
     printPulled(key, summary, rel);
   }
 
-  return { key, title: summary, relPath: rel };
+  return { key, title: summary, relPath: rel, issueType: issueTypeName(fields) };
 }
 
 function pullTicketWrite(
@@ -216,7 +218,7 @@ async function runPullFlow(
   const cwd = options.cwd ?? process.cwd();
   let pulled = 0;
 
-  pullTicketWrite(ticketKey, { ...options, cwd });
+  const root = pullTicketWrite(ticketKey, { ...options, cwd });
   pulled += 1;
 
   if (options.noChildren) {
@@ -224,13 +226,14 @@ async function runPullFlow(
     return 0;
   }
 
-  const children = fetchChildIssues(ticketKey);
-  if (children.length === 0) {
+  const descendants = issueTreeKeys(ticketKey, fetchChildIssues).slice(1);
+  if (descendants.length === 0) {
     if (!options.quiet) printPullSummary(pulled);
     return 0;
   }
 
-  let pullChildren = options.withChildren === true;
+  let pullChildren =
+    options.withChildren === true || isHierarchyRoot(root.issueType);
   const canPrompt =
     !pullChildren &&
     !options.noChildren &&
@@ -238,9 +241,9 @@ async function runPullFlow(
     process.stdout.isTTY;
 
   if (canPrompt) {
-    if (!options.quiet) printChildIssues(children);
+    printChildIssues(fetchChildIssues(ticketKey));
     pullChildren = await confirm(
-      `Pull ${children.length} child issue(s) too?`,
+      `Pull ${descendants.length} descendant issue(s) too?`,
       true
     );
   }
@@ -252,14 +255,14 @@ async function runPullFlow(
 
   if (!options.quiet) process.stdout.write("\n");
   let code = 0;
-  for (const child of children) {
+  for (const key of descendants) {
     try {
-      pullTicketWrite(child.key, { ...options, cwd, quiet: false });
+      pullTicketWrite(key, { ...options, cwd, quiet: false });
       pulled += 1;
     } catch (e) {
       code = 1;
       const msg = e instanceof Error ? e.message : String(e);
-      printError(`pull ${child.key}: ${msg}`);
+      printError(`pull ${key}: ${msg}`);
     }
   }
 

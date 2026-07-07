@@ -105,6 +105,27 @@ export function fetchChildIssues(parentKey: string): ChildIssue[] {
   return mergeChildren([searchChildren, subtasks]);
 }
 
+/** Depth-first issue keys: root first, then descendants (cycle-safe). */
+export function issueTreeKeys(
+  rootKey: string,
+  fetchChildren: (parentKey: string) => readonly { key: string }[]
+): string[] {
+  const visited = new Set<string>();
+  const keys: string[] = [];
+
+  function visit(key: string): void {
+    if (visited.has(key)) return;
+    visited.add(key);
+    keys.push(key);
+    for (const child of fetchChildren(key)) {
+      visit(child.key);
+    }
+  }
+
+  visit(rootKey);
+  return keys;
+}
+
 /** Extract a parent issue key from view fields, if any. */
 export function parentKeyFromFields(fields: Record<string, unknown>): string | null {
   return issueKey(fields.parent);
