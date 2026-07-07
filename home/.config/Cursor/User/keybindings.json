@@ -1,0 +1,373 @@
+[
+    {
+        "key": "linux"
+    },
+    {
+        "key": "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
+    },
+    {
+        "key": "f1",
+        "command": "editor.action.goToTypeDefinition"
+    },
+    {
+        "key": "f2",
+        "command": "editor.action.rename",
+        "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "f3",
+        "command": "references-view.findImplementations"
+    },
+    {
+        "key": "f4",
+        "command": "references-view.findReferences"
+    },
+    {
+        "key": "f5",
+        "command": "workbench.action.debug.restart",
+        "when": "inDebugMode && debugState == 'running'"
+    },
+    {
+        "key": "ctrl+shift+s",
+        "command": "saveAll"
+    },
+    {
+        "key": "ctrl+a",
+        "command": "editor.action.smartSelect.grow",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+a",
+        "command": "editor.action.selectAll",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+i",
+        "command": "editor.action.insertSnippet"
+    },
+    {
+        "key": "alt+left",
+        "command": "workbench.action.previousEditorInGroup"
+    },
+    {
+        "key": "alt+right",
+        "command": "workbench.action.nextEditorInGroup"
+    },
+    {
+        "key": "ctrl+oem_8",
+        "command": "workbench.action.toggleSidebarVisibility"
+    },
+    {
+        "key": "alt+s",
+        "command": "workbench.action.files.saveWithoutFormatting"
+    },
+    {
+        "key": "f11",
+        "command": "workbench.action.toggleZenMode"
+    },
+    {
+        "key": "ctrl+shift+e",
+        "command": "workbench.action.openSettingsJson"
+    },
+    {
+        "key": "ctrl+f5",
+        "command": "testing.debugCurrentFile",
+        "when": "testing.activeEditorHasTests"
+    },
+    {
+        "key": "ctrl+shift+w",
+        "command": "workbench.action.closeOtherEditors"
+    },
+    {
+        "key": "ctrl+b",
+        "command": "editor.action.jumpToBracket",
+        "when": "editorTextFocus && editorLangId!=markdown"
+    },
+    {
+        "key": "ctrl+tab",
+        "command": "workbench.action.quickOpenNavigateNextInViewPicker",
+        "when": "inQuickOpen && inViewsPicker"
+    },
+    {
+        "key": "ctrl+tab",
+        "command": "workbench.action.quickOpenView",
+        "when": "!inQuickOpen"
+    },
+    {
+        "key": "ctrl+e",
+        "command": "workbench.view.explorer"
+    },
+    {
+        "key": "ctrl+shift+tab",
+        "command": "workbench.action.quickOpenNavigatePreviousInViewPicker",
+        "when": "inQuickOpen && inViewsPicker"
+    },
+    {
+        "key": "ctrl+shift+e",
+        "command": "editor.action.marker.prevInFiles",
+        "when": "editorFocus"
+    },
+    {
+        "key": "alt+enter",
+        "command": "editor.action.goToImplementation",
+        "when": "editorHasImplementationProvider && editorTextFocus && !isInEmbeddedEditor"
+    },
+    {
+        "key": "ctrl+shift+oem_period",
+        "command": "editor.action.autoFix",
+        "when": "textInputFocus && !editorReadonly && supportedCodeAction =~ /(\\s|^)quickfix\\b/"
+    },
+    {
+        "key": "ctrl+w",
+        "command": "workbench.action.terminal.kill",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "shift+space",
+        "command": "editor.action.showHover",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "f19",
+        "command": "workbench.action.terminal.toggleTerminal",
+        "when": "isMac"
+    },
+    {
+        "key": "capslock",
+        "command": "workbench.action.terminal.toggleTerminal",
+        "when": "isLinux"
+    },
+    {
+        "key": "shift+alt+up",
+        "command": "editor.action.insertCursorAbove",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+alt+down",
+        "command": "editor.action.insertCursorBelow",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+t",
+        "command": "workbench.action.terminal.newWithProfile",
+        "args": {
+            "profileName": "agent",
+            "location": "editor"
+        }
+    },
+    {
+        "key": "ctrl+v",
+        "command": "workbench.action.terminal.paste",
+        "when": "terminalFocus && !ib-utilities.clipboardHasImage"
+    },
+    {
+        "key": "ctrl+shift+i",
+        "command": "toggle",
+        "args": {
+            "id": "minimap",
+            "value": [
+                {
+                    "editor.inlayHints.enabled": "onUnlessPressed"
+                },
+                {
+                    "editor.inlayHints.enabled": "offUnlessPressed"
+                }
+            ]
+        },
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+l",
+        "command": "toggle",
+        "args": {
+            "id": "minimap",
+            "value": [
+                {
+                    "editor.lineNumbers": "off"
+                },
+                {
+                    "editor.lineNumbers": "on"
+                }
+            ]
+        },
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+left",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": {
+            "text": "\u001b[1;5D"
+        },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+alt+left",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": {
+            "text": "\u001b[1;5D"
+        },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+r",
+        "command": "workbench.files.action.showActiveFileInExplorer",
+        "when": "!terminalFocus"
+    },
+    {
+        "key": "ctrl+shift+r",
+        "command": "workbench.action.restartExtensionHost",
+        "when": "!terminalFocus"
+    },
+    {
+        "key": "ctrl+q",
+        "command": "git.openChange",
+        "when": "editorFocus && !isInDiffEditor"
+    },
+    {
+        "key": "ctrl+q",
+        "command": "git.openFile",
+        "when": "editorFocus && isInDiffEditor"
+    },
+    {
+        "key": "ctrl+d",
+        "command": "editor.action.addSelectionToNextFindMatch",
+        "when": "editorFocus"
+    },
+    {
+        "key": "ctrl+shift+d",
+        "command": "editor.action.selectHighlights",
+        "when": "editorFocus"
+    },
+    {
+        "key": "ctrl+1",
+        "command": "workbench.view.explorer"
+    },
+    {
+        "key": "ctrl+1",
+        "command": "workbench.action.closeSidebar",
+        "when": "view.workbench.explorer.fileView.visible"
+    },
+    {
+        "key": "ctrl+2",
+        "command": "workbench.view.scm"
+    },
+    {
+        "key": "ctrl+2",
+        "command": "workbench.action.closeSidebar",
+        "when": "view.workbench.scm.visible"
+    },
+    {
+        "key": "ctrl+3",
+        "command": "workbench.view.debug"
+    },
+    {
+        "key": "ctrl+3",
+        "command": "workbench.action.closeSidebar",
+        "when": "view.workbench.debug.visible"
+    },
+    {
+        "key": "ctrl+n",
+        "command": "workbench.action.terminal.new",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+\\",
+        "command": "workbench.action.terminal.split",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+c",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": {
+            "text": "\u0003"
+        },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+c",
+        "command": "workbench.action.terminal.copySelection",
+        "when": "terminalTextSelectedInFocused"
+    },
+    {
+        "key": "ctrl+o",
+        "command": "editor.action.organizeImports",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "enter",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": {
+            "text": "\r"
+        },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+shift+u",
+        "command": "editor.action.transformToPascalcase",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "alt+u",
+        "command": "editor.action.transformToLowercase",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+g",
+        "command": "ib-utilities.openPR"
+    },
+    {
+        "key": "ctrl+y",
+        "command": "-redo"
+    },
+    {
+        "key": "ctrl+y",
+        "command": "-chatEditor.action.acceptHunk"
+    },
+    {
+        "key": "ctrl+y",
+        "command": "workbench.action.browser.open",
+        "args": {
+            "url": "http://localhost:54321/",
+            "reuseUrlFilter": "http://localhost:54321/*"
+        }
+    },
+    {
+        "key": "ctrl+y",
+        "command": "workbench.action.browser.open",
+        "args": {
+            "url": "http://localhost:54321/",
+            "reuseUrlFilter": "http://localhost:54321/*"
+        },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+u",
+        "command": "workbench.action.editorDictation.start",
+        "when": "editorTextFocus && !editorDictation.inProgress"
+    },
+    {
+        "key": "ctrl+u",
+        "command": "workbench.action.editorDictation.stop",
+        "when": "editorDictation.inProgress"
+    },
+    {
+        "key": "ctrl+u",
+        "command": "workbench.action.terminal.startVoice",
+        "when": "terminalFocus && !terminalDictationInProgress"
+    },
+    {
+        "key": "ctrl+u",
+        "command": "workbench.action.terminal.stopVoice",
+        "when": "terminalDictationInProgress"
+    },
+    {
+        "key": "ctrl+shift+f",
+        "command": "-workbench.action.terminal.searchWorkspace",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+shift+f",
+        "command": "workbench.action.findInFiles",
+        "when": "terminalFocus"
+    }
+]

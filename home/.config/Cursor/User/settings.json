@@ -1,0 +1,23 @@
+{
+  "cursor.composer.conversationDensity": "detailed",
+  "terminal.integrated.profiles.linux": {
+    "agent": {
+      "path": "agent",
+      "args": ["--model", "composer-2.5"]
+    },
+    "fish": {
+      "args": ["-i", "-l"],
+      "path": "fish"
+    }
+  },
+  "terminal.integrated.defaultProfile.linux": "fish",
+  "terminal.integrated.commandsToSkipShell": [
+    "workbench.action.browser.open",
+    "workbench.action.createTerminalEditor",
+    "workbench.action.findInFiles",
+    "workbench.action.terminal.newWithProfile",
+    "workbench.action.terminal.paste",
+    "workbench.action.terminal.startVoice",
+    "workbench.action.terminal.stopVoice"
+  ]
+}
