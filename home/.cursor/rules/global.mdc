@@ -4,11 +4,11 @@ alwaysApply: true
 
 **Users Name:** Ethan Conneely
 
-- Always run a full quality gate before finishing.
-- If you run into an auth issue dont try and get around it stop and ask.
-- For Jira and Confluence, use Atlassian MCP on agent turns.
-  Never run `acli`, `jira`, or `confluence`.
-  See the `jira-cli` and `confluence-cli` skills for CLI vs MCP boundaries.
+Always run a full quality gate before finishing.
+If you run into an auth issue dont try and get around it stop and ask.
+For Jira and Confluence, use Atlassian MCP on agent turns.
+Never run `acli`, `jira`, or `confluence`.
+See the `jira-cli` and `confluence-cli` skills for CLI vs MCP boundaries.
 
 After implementation is complete and before running verification, emit this phase marker on its own in the response with newlines:
 ---
@@ -17,11 +17,14 @@ Verifying
 
 # Response
 
-- No emojis. Example: 😀
-- Always prefer `,` over `;` in english text.
-- Always use plain ASCII no Unicode. Example: no em/en dash.
+No emojis.
+Example: 😀.
+Always prefer `,` over `;` in english text.
+Always use plain ASCII no Unicode.
+Example: no em/en dash.
 
 # Files
 
-- Do not create a new file for just 1 or 2 functions there needs to be a justification. Example: reuse thats needed not a possible reuse in the future.
-- In markdown files always add a newline `\n` after a `.` instead of making a very long single line.
+Do not create a new file for just 1 or 2 functions there needs to be a justification.
+Example: reuse thats needed not a possible reuse in the future.
+In markdown files always add a newline `\n` after a `.` instead of making a very long single line.

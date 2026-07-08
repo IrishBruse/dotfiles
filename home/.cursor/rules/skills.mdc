@@ -27,17 +27,17 @@ description: >
 
 ## Self-contained
 
-Keep each skill self-contained. Do not pull in or duplicate guidance from other skills unless:
-
-- the user asks to reference or align with another skill, or
-- the skill already references other skills and you are extending that linkage
+Keep each skill self-contained.
+Do not pull in or duplicate guidance from other skills unless the user asks to reference or align with another skill.
+The same applies when the skill already references other skills and you are extending that linkage.
 
 Do not add provenance or mirroring labels on skill content.
 Write the rules directly, do not prefix sections with where they came from.
 
 Bad: `Core rules (mirrored from other-skill)`
 
-Reference other skills by name only, in backticks: `skill-name-here`. Do not use file paths (e.g. `.cursor/skills/other-skill/SKILL.md`, `reference.md`).
+Reference other skills by name only, in backticks: `skill-name-here`.
+Do not use file paths (e.g. `.cursor/skills/other-skill/SKILL.md`, `reference.md`).
 
 When the skill lives in a repo, do not reference personal global skills.
 The repo and other team members may not have the same global skills you do.
@@ -49,7 +49,7 @@ Use `1.`, `2.`, ... only for short sequences where each item fits on one line.
 
 When there are too many points, or a single numbered item wraps onto multiple lines, break the sequence into headings instead.
 Use `### Step 1 - Short summary` and so on.
-Put detail in paragraphs or bullets under each heading.
+Put detail in paragraphs under each heading.
 
 Good:
 
