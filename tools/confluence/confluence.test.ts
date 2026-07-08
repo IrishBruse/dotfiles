@@ -44,10 +44,10 @@ describe("storageToMarkdown", () => {
 
   it("emits Jira browse URLs for issue links", () => {
     const md = storageToMarkdown(
-      '<ac:link><ri:issue ri:issue-key="NOVACORE-1" /><ac:link-body>NOVACORE-1</ac:link-body></ac:link>',
+      '<ac:link><ri:issue ri:issue-key="PROJ-1" /><ac:link-body>PROJ-1</ac:link-body></ac:link>',
       { siteHost: "example.atlassian.net" }
     );
-    assert.match(md, /https:\/\/example\.atlassian\.net\/browse\/NOVACORE-1/);
+    assert.match(md, /https:\/\/example\.atlassian\.net\/browse\/PROJ-1/);
   });
 });
 
@@ -60,7 +60,7 @@ describe("links", () => {
 
   it("ignores absolute URLs", () => {
     const hits = findRelativeMdLinks(
-      "See [Jira](https://example.atlassian.net/browse/NOVACORE-1)."
+      "See [Jira](https://example.atlassian.net/browse/PROJ-1)."
     );
     assert.equal(hits.length, 0);
   });
@@ -77,10 +77,10 @@ describe("page-input", () => {
   });
 
   it("parses Jira keys", () => {
-    assert.equal(parseJiraKey("NOVACORE-42"), "NOVACORE-42");
+    assert.equal(parseJiraKey("PROJ-42"), "PROJ-42");
     assert.equal(
-      parseJiraKey("https://example.atlassian.net/browse/novacore-9"),
-      "NOVACORE-9"
+      parseJiraKey("https://example.atlassian.net/browse/proj-9"),
+      "PROJ-9"
     );
   });
 });
