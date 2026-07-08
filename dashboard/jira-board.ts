@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import type { Connect } from "vite";
 import type { Plugin, ViteDevServer } from "vite";
 
-import { runBoardSyncWithResult } from "../tools/jira/api.ts";
+import { CONFIG, runBoardSyncWithResult } from "../tools/jira/lib/api.ts";
 
 const VIRTUAL_ID = "virtual:jira-board";
 const RESOLVED_ID = `\0${VIRTUAL_ID}`;
@@ -177,7 +177,7 @@ function enrichTicket(
 ): BoardTicket {
   const mdPath = ticketMarkdownPath(row.key);
   let description = row.summary;
-  let url = `https://globalization-partners.atlassian.net/browse/${row.key}`;
+  let url = `https://${CONFIG.site}/browse/${row.key}`;
   let priority = "Medium";
   let createdAt = "";
   let updatedAt = "";

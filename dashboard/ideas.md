@@ -1,6 +1,6 @@
 # Dashboard ideas
 
-Proposals from a review of ~96 dotfiles agent sessions (Jun 3 through Jun 25, 2026) plus recent work in design-to-code-shell and ui-platform-workspace.
+Proposals from a review of ~96 dotfiles agent sessions (Jun 3 through Jun 25, 2026) plus recent work in other repos.
 
 The dashboard already covers two strong daily loops: Jira tickets and local dev ports.
 The logs show several other recurring loops that are not surfaced yet.
@@ -11,9 +11,9 @@ The logs show several other recurring loops that are not surfaced yet.
 |-------|-----------|-------------------|
 | Dotfiles / CLI tooling | Very high | `memory`, `sprint`, `cron`, `start`, `endpoint`, skills authoring |
 | Jira sync reliability | High (recent spike) | Cron not running, `acli` auth failures, "where are cron logs" |
-| PR / CI triage | High (design-to-code) | Speed up SAM deploy, fix Sonar, review Actions runs |
+| PR / CI triage | High | Speed up deploy, fix Sonar, review Actions runs |
 | Skills and memory | Medium | docsify skill, memory `rm`, skill newline fixes |
-| Sprint context | Medium | Sprint CLI, ticket scoping, NOVACORE tickets |
+| Sprint context | Medium | Sprint CLI, ticket scoping, Jira tickets |
 | Auth / tokens | Medium | `ARTIFACT_AUTH_TOKEN`, SSO refresh |
 | Agent session continuity | Emerging | "Review agent logs" |
 
@@ -43,7 +43,7 @@ Surfaces the failure mode before opening Cursor and wondering why the board is e
 
 ### 2. Sprint context bar
 
-`sprint` CLI and NOVACORE sprint work are constant.
+`sprint` CLI and sprint-scoped Jira work are constant.
 The board has ticket data but no sprint framing.
 
 Add a compact top-center bar (or Jira widget subtitle):
@@ -61,13 +61,13 @@ Low effort, high context every morning.
 
 ### 3. Open PRs widget
 
-A large share of design-to-code work is PR + Actions triage.
+A large share of day-to-day work is PR + Actions triage.
 A bottom-center or right-side widget (alongside ports):
 
 | Repo | PR | CI | Updated |
 |------|----|----|---------|
-| design-to-code-shell | NOVACORE-44310: ... | failing | 2h ago |
-| ui-platform-workspace | ... | passing | 1d ago |
+| my-app | PROJ-44310: ... | failing | 2h ago |
+| other-repo | ... | passing | 1d ago |
 
 Data: `gh pr list --author @me --json number,title,url,headRefName,updatedAt` per watched repo, plus `gh pr checks` or `gh run list` for status.
 
@@ -82,7 +82,7 @@ Matches the actual workflow: open dashboard, see red CI, jump to the run.
 A center or left widget listing last ~10 Cursor sessions:
 
 - First user message (truncated)
-- Project (dotfiles, design-to-code-shell, etc.)
+- Project (dotfiles, my-app, etc.)
 - Date
 - Optional: inferred topic tag (jira, pr/ci, skill, keybind)
 
@@ -99,7 +99,7 @@ Turns the dashboard into a **session inbox**, not just a start page.
 
 Small widget showing:
 
-- Latest 3-5 entries for repos that matter (`dotfiles`, `design-to-code-shell`, `ui-platform-workspace`)
+- Latest 3-5 entries for repos that matter (`dotfiles`, `my-app`, `other-repo`)
 - Global lessons count
 - Link to `memory view` output or a `/memory` page
 
@@ -116,7 +116,7 @@ Add to command palette (and optionally a `/skills` page):
 - Search skill names and descriptions from each `SKILL.md` frontmatter / first heading
 - Open skill path in editor (`cursor://` or `vscode://file/...`)
 
-Fits the pattern of manually attaching skills in ui-platform sessions.
+Fits the pattern of manually attaching skills in larger project sessions.
 Finding the right skill faster reduces friction.
 
 ---
@@ -204,7 +204,7 @@ Smallest set with the biggest impact on actual logs:
 
 1. **Sync health strip** (fixes a recurring pain)
 2. **Sprint bar** (trivial, always useful)
-3. **Open PRs widget** (matches design-to-code work volume)
+3. **Open PRs widget** (matches typical PR/CI work volume)
 4. **Recent agent sessions** (session continuity)
 
 Items 5-9 can follow without restructuring the app.
