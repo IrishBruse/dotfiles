@@ -21,7 +21,7 @@ On an agent turn:
 ## Human CLI
 
 Local tickets live under `./jira/<type>/` as markdown with YAML frontmatter.
-Stories nest under their parent epic: `jira/story/<parent title - NOVACORE-XXXXX>/<story title - NOVACORE-YYYYY>.md`.
+Stories nest under their parent epic: `jira/story/<parent title - PROJ-XXXXX>/<story title - PROJ-YYYYY>.md`.
 
 ```sh
 jira <KEY|URL>             fetch one ticket (Initiative/Epic: full tree)
