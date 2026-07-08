@@ -7,15 +7,15 @@ const JIRA_SKILL_SOURCE =
   "/Users/econneely/git/ui-platform-workspace/.cursor/skills/jira";
 
 const LEGACY_DIRS = [
-  "home/.agents/skills/jira",
+  "home/.agents/jira",
   "home/.agents/skills/jira-work",
 ] as const;
 
-/** Mirror ui-platform-workspace jira skill into home/.agents/jira. */
+/** Mirror ui-platform-workspace jira skill into home/.agents/skills/jira. */
 export function syncJiraSkill(repo: string): void {
   if (!existsSync(JIRA_SKILL_SOURCE)) return;
 
-  const dest = join(repo, "home/.agents/jira");
+  const dest = join(repo, "home/.agents/skills/jira");
 
   $(`rsync -a --delete ${q(JIRA_SKILL_SOURCE + "/")} ${q(dest + "/")}`);
 
