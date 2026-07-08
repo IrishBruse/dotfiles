@@ -16,7 +16,7 @@ Tools should resolve these with `homedir()` from `node:os`, not relative paths f
 ### macos/
 
 - `Brewfile` brew package backup
-- `open.ts` syncs Brewfile and mirrors `ui-platform-workspace/.cursor/skills/jira` into `home/.agents/jira` (gitignored, stowed to `~/.agents/jira`)
+- `open.ts` syncs Brewfile and mirrors `ui-platform-workspace/.cursor/skills/jira` into `home/.agents/skills/jira` (stowed to `~/.agents/skills/jira`)
 
 ### home/.config/Code/User/settings.json
 
