@@ -14,6 +14,7 @@ It recommends a path, asks the user to choose a route with `AskQuestion`, then r
 ## Pull The Ticket Locally First
 
 Whenever the input includes a Jira key or URL that you will inspect, work on, or update, ensure it exists locally under `jira/<type>/`.
+Stories live under `jira/story/<parent title - NOVACORE-XXXXX>/`.
 This is your **first step**.
 
 - Read the local markdown file when it is already present.
