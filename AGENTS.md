@@ -63,14 +63,8 @@ Agent skills live in two stowed locations under `home/`, mirrored to `~/`.
   (`cli-tool`, `jest`, `docs-from-code`, `pr`, `jira-cli`, `confluence-cli`, `jira-board`, etc.).
   Reusable on any repo, no G-P specifics.
 
-- `home/.cursor/skills/` -> `~/.cursor/skills/` - **G-P-only work skills**
-  (`module-federation`, `npm-registry`).
-  Put skills here only when they encode G-P / gp-nova / NOVACORE specific
-  knowledge that does not apply outside G-P repos.
-  New G-P skills go here, not in `~/.agents/skills/`.
+- `home/.cursor/skills/` -> `~/.cursor/skills/` - **Work only skills**
 
-Never author skills in `home/.cursor/skills-cursor/` (repo) / `~/.cursor/skills-cursor/`
-(runtime). That directory holds Cursor's built-in skills and is system-managed.
 
 ### dashboard
 
