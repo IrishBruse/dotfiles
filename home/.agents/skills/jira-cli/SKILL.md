@@ -22,6 +22,7 @@ On an agent turn:
 ## Human CLI
 
 Local tickets live under `./jira/<type>/` as markdown with YAML frontmatter.
+Stories nest under their parent epic: `jira/story/<parent title - NOVACORE-XXXXX>/<story title - NOVACORE-YYYYY>.md`.
 
 ```sh
 jira                       interactive browser (TTY only)
