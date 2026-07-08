@@ -1,4 +1,4 @@
-import { runAcliJson, runAcliJsonAsync } from "./acli.ts";
+import { runAcliJson, runAcliJsonAsync } from "../.lib/acli.ts";
 import { confluenceApiContext, readAcliAccessToken } from "./auth.ts";
 import type { PageViewJson } from "./types.ts";
 
