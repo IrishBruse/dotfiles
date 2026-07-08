@@ -63,7 +63,6 @@ import {
 } from "./lib/local.ts";
 import {
   printChildIssues,
-  printError,
   printPulled,
   printPullSummary
 } from "./lib/output.ts";
@@ -676,7 +675,8 @@ describe("writeBoard", () => {
           meAccountId: me,
           siteHost: site,
           clean: false,
-          boardSprints: [sprint]
+          boardSprints: [sprint],
+          nowMs: Date.parse("2026-01-08T12:00:00.000Z")
         }
       );
 
@@ -741,7 +741,7 @@ describe("writeBoard", () => {
       const outputRoot = path.join(root, "references");
       fs.mkdirSync(path.join(outputRoot, "misc"), { recursive: true });
       fs.writeFileSync(
-        path.join(outputRoot, "misc", "PROJ-OLD.md"),
+        path.join(outputRoot, "misc", "PROJ-99.md"),
         "# old\n",
         "utf-8"
       );
@@ -757,8 +757,8 @@ describe("writeBoard", () => {
         nowMs: afterEnd
       });
 
-      assert.deepEqual(result.deleted, ["PROJ-OLD"]);
-      assert.equal(fs.existsSync(path.join(outputRoot, "misc", "PROJ-OLD.md")), false);
+      assert.deepEqual(result.deleted, ["PROJ-99"]);
+      assert.equal(fs.existsSync(path.join(outputRoot, "misc", "PROJ-99.md")), false);
     });
   });
 });
@@ -803,15 +803,15 @@ describe("command dispatch", () => {
   });
 
   it("fails sync when no local tickets exist", async () => {
-    withTempDir(async (cwd) => {
-      const prev = process.cwd();
-      process.chdir(cwd);
-      try {
-        assert.equal(await runSyncCommand(), 1);
-      } finally {
-        process.chdir(prev);
-      }
-    });
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "jira-sync-test-"));
+    const prev = process.cwd();
+    try {
+      process.chdir(dir);
+      assert.equal(await runSyncCommand(), 1);
+    } finally {
+      process.chdir(prev);
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
   });
 });
 
