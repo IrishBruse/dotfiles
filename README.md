@@ -6,7 +6,7 @@ Personal machine config and small TypeScript CLIs.
 
 `linux/` holds Linux Mint bootstrap: `apt.csv` (generated on workspace open), `flatpaks.csv`, and workspace-open sync (`open.ts`).
 
-`macos/` holds Homebrew `Brewfile` and workspace-open sync (`open.ts`), including the `/jira` agent skill from ui-platform-workspace.
+`macos/` holds Homebrew `Brewfile` and workspace-open sync (`open.ts`).
 
 `tools/` is a shared Node package of command-line helpers for Jira, GitHub PRs, sprint dates, markdown, and agent workflows.
 
