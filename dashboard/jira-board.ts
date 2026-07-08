@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import type { Connect } from "vite";
 import type { Plugin, ViteDevServer } from "vite";
 
-import { runWithResult as runJiraSync } from "./jira-sync.ts";
+import { runBoardSyncWithResult } from "../tools/jira/api.ts";
 
 const VIRTUAL_ID = "virtual:jira-board";
 const RESOLVED_ID = `\0${VIRTUAL_ID}`;
@@ -305,20 +305,22 @@ function jiraSyncMiddleware(server: ViteDevServer): Connect.NextHandleFunction {
     }
 
     syncing = true;
-    try {
-      const result = runJiraSync();
-      if (result.code !== 0) {
-        res.statusCode = 500;
-        res.end(
-          JSON.stringify({ ok: false, error: result.error ?? "Sync failed" })
-        );
-        return;
+    void (async () => {
+      try {
+        const result = await runBoardSyncWithResult();
+        if (result.code !== 0) {
+          res.statusCode = 500;
+          res.end(
+            JSON.stringify({ ok: false, error: result.error ?? "Sync failed" })
+          );
+          return;
+        }
+        reloadBoardModule(server);
+        res.end(JSON.stringify({ ok: true, ...loadBoardData() }));
+      } finally {
+        syncing = false;
       }
-      reloadBoardModule(server);
-      res.end(JSON.stringify({ ok: true, ...loadBoardData() }));
-    } finally {
-      syncing = false;
-    }
+    })();
   };
 }
 
