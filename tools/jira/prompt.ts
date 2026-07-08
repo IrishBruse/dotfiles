@@ -2,10 +2,7 @@ import readline from "node:readline";
 import process from "node:process";
 
 /** Ask a y/N (default No) or Y/n question on a TTY. */
-export function confirm(
-  question: string,
-  defaultNo = true
-): Promise<boolean> {
+export function confirm(question: string, defaultNo = true): Promise<boolean> {
   if (!process.stdin.isTTY || !process.stdout.isTTY) {
     return Promise.resolve(false);
   }

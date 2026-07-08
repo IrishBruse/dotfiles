@@ -1,65 +1,45 @@
 /**
- * Fetch Jira tickets and save to `jira/<type>/<title> - <KEY>.md` in cwd.
+ * `jira pull` -- fetch tickets into `jira/<type>/<title> - <KEY>.md`.
  */
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
-import { CONFIG } from "./CONFIG.ts";
-import { runAcliJson, runAcliJsonAsync } from "./acli.ts";
-import { fetchChildIssues, fetchDescendantIssues, parentKeyFromFields, parentSummaryFromFields } from "./children.ts";
+
+import { runAcliJson, runAcliJsonAsync } from "../../.lib/acli.ts";
+import { createConcurrencyLimiter } from "../../.lib/concurrency.ts";
+import { CONFIG } from "../CONFIG.ts";
 import {
-  assigneeLabel,
+  fetchDescendantIssues,
+  parentKeyFromFields,
+  parentSummaryFromFields
+} from "../children.ts";
+import {
   formatTicketMarkdown,
   isHierarchyRoot,
   issueTypeName,
-  JIRA_PULL_FIELDS
-} from "./format.ts";
-import { listLocalTickets, localTicketPath } from "./local.ts";
+  JIRA_PULL_FIELDS,
+  normalizeSiteHost
+} from "../format.ts";
+import { parseJiraKey } from "../jiraInput.ts";
+import {
+  buildLocalTicketIndex,
+  listLocalTickets,
+  localTicketPath
+} from "../local.ts";
 import {
   printChildIssues,
   printError,
   printPulled,
   printPullSummary,
   pullLog
-} from "./output.ts";
-import { confirm } from "./prompt.ts";
+} from "../output.ts";
+import { confirm } from "../prompt.ts";
 
-/** Max concurrent `acli` fetches during `jira sync` / `jira pull` with no key. */
-const PULL_ALL_CONCURRENCY = 4;
-
-function createPullLimiter(concurrency: number) {
-  const queue: (() => void)[] = [];
-  let active = 0;
-  return function limit<T>(fn: () => Promise<T>): Promise<T> {
-    return new Promise((resolve, reject) => {
-      const run = () => {
-        active++;
-        fn()
-          .then(resolve, reject)
-          .finally(() => {
-            active--;
-            const next = queue.shift();
-            if (next) next();
-          });
-      };
-      if (active < concurrency) run();
-      else queue.push(run);
-    });
-  };
-}
+const PULL_CONCURRENCY = 4;
 
 /** Lowercase slug for `jira/<type>/` paths (e.g. `Epic` -> `epic`). */
 export function issueTypeSlug(name: string): string {
   return name.trim().toLowerCase().replace(/\s+/g, "-");
-}
-
-/** Jira summary for filenames; falls back to the issue key. */
-export function ticketTitleFromFields(
-  fields: Record<string, unknown>,
-  key: string
-): string {
-  const summary = typeof fields.summary === "string" ? fields.summary.trim() : "";
-  return summary || key;
 }
 
 /** Safe markdown filename from the ticket title (e.g. `[DTC] Make foo - NOVACORE-1.md`). */
@@ -68,7 +48,9 @@ export function ticketMarkdownFilename(
   key: string
 ): string {
   const keySuffix = ` - ${key}`;
-  const title = ticketTitleFromFields(fields, key)
+  const summary =
+    typeof fields.summary === "string" ? fields.summary.trim() : "";
+  const title = (summary || key)
     .replace(/[\r\n]+/g, " ")
     .replace(/[\\/:*?"<>|]/g, "-")
     .replace(/\s+/g, " ")
@@ -82,14 +64,6 @@ export function ticketMarkdownFilename(
   return `${title}${keySuffix}.md`;
 }
 
-/** Safe folder name from a ticket title and key (no `.md` suffix). */
-export function ticketFolderName(
-  fields: Record<string, unknown>,
-  key: string
-): string {
-  return ticketMarkdownFilename(fields, key).replace(/\.md$/, "");
-}
-
 /** On-disk path for `jira pull` under a working directory. */
 export function pulledTicketPath(
   cwd: string,
@@ -101,13 +75,11 @@ export function pulledTicketPath(
   const filename = ticketMarkdownFilename(fields, key);
 
   if (typeSlug === "story" && parent?.key) {
-    return path.join(
-      cwd,
-      "jira",
-      typeSlug,
-      ticketFolderName(parent.fields, parent.key),
-      filename
-    );
+    const parentFolder = ticketMarkdownFilename(
+      parent.fields,
+      parent.key
+    ).replace(/\.md$/, "");
+    return path.join(cwd, "jira", typeSlug, parentFolder, filename);
   }
 
   return path.join(cwd, "jira", typeSlug, filename);
@@ -151,6 +123,8 @@ export type PullOptions = {
   noChildren?: boolean;
   /** When true, pull children without prompting. */
   withChildren?: boolean;
+  /** Pre-built key -> path index for local lookups. */
+  ticketIndex?: Map<string, string>;
 };
 
 type PullWriteResult = {
@@ -161,7 +135,10 @@ type PullWriteResult = {
 };
 
 /** Fetch one ticket from Jira and write or refresh its local markdown file. */
-export function pullTicket(ticketKey: string, options: PullOptions = {}): number {
+export function pullTicket(
+  ticketKey: string,
+  options: PullOptions = {}
+): number {
   try {
     pullTicketWrite(ticketKey, options);
     return 0;
@@ -180,7 +157,7 @@ function writePulledIssue(
   const cwd = options.cwd ?? process.cwd();
   const quiet = options.quiet ?? false;
   const meAccountId = CONFIG.meAccountId;
-  const siteHost = CONFIG.site.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const siteHost = normalizeSiteHost(CONFIG.site);
 
   if (!data || typeof data !== "object") {
     throw new Error(`no data returned for ${ticketKey}`);
@@ -194,7 +171,7 @@ function writePulledIssue(
 
   const fields = issue.fields ?? {};
   const body = formatTicketMarkdown(key, fields, siteHost, meAccountId).body;
-  const prior = localTicketPath(key, cwd);
+  const prior = localTicketPath(key, cwd, options.ticketIndex);
   const parent = resolveStoryParent(fields);
   const outPath = pulledTicketPath(cwd, fields, key, parent);
 
@@ -202,20 +179,27 @@ function writePulledIssue(
   fs.writeFileSync(outPath, body, "utf-8");
   if (prior && path.resolve(prior) !== path.resolve(outPath)) {
     fs.unlinkSync(prior);
+    options.ticketIndex?.delete(key);
   }
+  options.ticketIndex?.set(key, outPath);
 
   const summary =
     typeof fields.summary === "string" ? fields.summary.trim() : key;
   const rel = path.relative(cwd, outPath) || outPath;
 
   if (!quiet) {
-    printPulled(key, summary, rel);
+    printPulled(key, summary);
   }
 
-  return { key, title: summary, relPath: rel, issueType: issueTypeName(fields) };
+  return {
+    key,
+    title: summary,
+    relPath: rel,
+    issueType: issueTypeName(fields)
+  };
 }
 
-function pullTicketWrite(
+export function pullTicketWrite(
   ticketKey: string,
   options: PullOptions
 ): PullWriteResult {
@@ -248,7 +232,7 @@ async function pullTicketWriteAsync(
 }
 
 /** Pull a ticket and optionally its children (prompts on a TTY). */
-export async function run(
+export async function runPull(
   ticketKey: string,
   options: PullOptions = {}
 ): Promise<number> {
@@ -266,9 +250,11 @@ async function runPullFlow(
   options: PullOptions
 ): Promise<number> {
   const cwd = options.cwd ?? process.cwd();
+  const ticketIndex = options.ticketIndex ?? buildLocalTicketIndex(cwd);
+  const pullOptions = { ...options, cwd, ticketIndex };
   let pulled = 0;
 
-  const root = pullTicketWrite(ticketKey, { ...options, cwd });
+  const root = pullTicketWrite(ticketKey, pullOptions);
   pulled += 1;
 
   if (options.noChildren) {
@@ -276,20 +262,21 @@ async function runPullFlow(
     return 0;
   }
 
-  if (!options.quiet && isHierarchyRoot(root.issueType)) {
+  const isRoot = isHierarchyRoot(root.issueType);
+  if (!options.quiet && isRoot) {
     pullLog(`scanning descendants of ${ticketKey}...`);
   }
 
-  const descendants = fetchDescendantIssues(ticketKey, {
+  const descendantIssues = fetchDescendantIssues(ticketKey, {
     onProgress: options.quiet ? undefined : pullLog
-  }).map((issue) => issue.key);
+  });
+  const descendants = descendantIssues.map((issue) => issue.key);
   if (descendants.length === 0) {
     if (!options.quiet) printPullSummary(pulled);
     return 0;
   }
 
-  let pullChildren =
-    options.withChildren === true || isHierarchyRoot(root.issueType);
+  let pullChildren = options.withChildren === true || isRoot;
   const canPrompt =
     !pullChildren &&
     !options.noChildren &&
@@ -297,7 +284,7 @@ async function runPullFlow(
     process.stdout.isTTY;
 
   if (canPrompt) {
-    printChildIssues(fetchChildIssues(ticketKey));
+    printChildIssues(descendantIssues);
     pullChildren = await confirm(
       `Pull ${descendants.length} descendant issue(s) too?`,
       true
@@ -313,16 +300,35 @@ async function runPullFlow(
     pullLog(`pulling ${descendants.length} descendant issue(s)...`);
     process.stdout.write("\n");
   }
+
+  const limit = createConcurrencyLimiter(PULL_CONCURRENCY);
+  const results = await Promise.all(
+    descendants.map((key) =>
+      limit(async () => {
+        try {
+          const result = await pullTicketWriteAsync(key, {
+            ...pullOptions,
+            quiet: true
+          });
+          return { ok: true as const, result };
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : String(e);
+          printError(`pull ${key}: ${msg}`);
+          return { ok: false as const };
+        }
+      })
+    )
+  );
+
   let code = 0;
-  for (const key of descendants) {
-    try {
-      if (!options.quiet) pullLog(`fetching ${key}...`);
-      pullTicketWrite(key, { ...options, cwd, quiet: false });
-      pulled += 1;
-    } catch (e) {
+  for (const entry of results) {
+    if (!entry.ok) {
       code = 1;
-      const msg = e instanceof Error ? e.message : String(e);
-      printError(`pull ${key}: ${msg}`);
+      continue;
+    }
+    pulled += 1;
+    if (!options.quiet) {
+      printPulled(entry.result.key, entry.result.title);
     }
   }
 
@@ -341,21 +347,23 @@ export async function pullAll(
     return 1;
   }
 
-  const limit = createPullLimiter(PULL_ALL_CONCURRENCY);
+  const ticketIndex = buildLocalTicketIndex(cwd);
+  const limit = createConcurrencyLimiter(PULL_CONCURRENCY);
   const results = await Promise.all(
     tickets.map((ticket) =>
       limit(async () => {
         try {
-          await pullTicketWriteAsync(ticket.key, {
+          const result = await pullTicketWriteAsync(ticket.key, {
             ...options,
             cwd,
-            quiet: true
+            quiet: true,
+            ticketIndex
           });
-          return { ok: true as const, ticket };
+          return { ok: true as const, result };
         } catch (e) {
           const msg = e instanceof Error ? e.message : String(e);
           printError(`pull ${ticket.key}: ${msg}`);
-          return { ok: false as const, ticket };
+          return { ok: false as const };
         }
       })
     )
@@ -370,17 +378,36 @@ export async function pullAll(
     }
     pulled += 1;
     if (!options.quiet) {
-      printPulled(result.ticket.key, result.ticket.title, result.ticket.relPath);
+      printPulled(result.result.key, result.result.title);
     }
   }
   if (!options.quiet) printPullSummary(pulled);
   return code;
 }
 
-/** @deprecated Use {@link localTicketPath}. */
-export function findCwdJiraTicketMarkdown(
-  key: string,
-  cwd = process.cwd()
-): string | null {
-  return localTicketPath(key, cwd);
+/** Safe folder name from a ticket title and key (no `.md` suffix). */
+export function ticketFolderName(
+  fields: Record<string, unknown>,
+  key: string
+): string {
+  return ticketMarkdownFilename(fields, key).replace(/\.md$/, "");
+}
+
+/** Run `jira pull [KEY|URL]`. */
+export async function runPullCommand(argv: string[]): Promise<number> {
+  const input = argv[3];
+  if (!input) {
+    return pullAll();
+  }
+  const key = parseJiraKey(input);
+  if (!key) {
+    printError(`pull: not a valid Jira key or URL: ${input}`);
+    return 1;
+  }
+  return runPull(key);
+}
+
+/** Run `jira <KEY|URL>` (same as pull one ticket). */
+export async function runPullTicket(key: string): Promise<number> {
+  return runPull(key);
 }

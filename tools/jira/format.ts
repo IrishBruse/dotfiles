@@ -1,7 +1,9 @@
 /**
- * Jira issue field → markdown helpers shared by `jira pull` and dashboard sync.
+ * Jira issue field -> markdown helpers shared by `jira pull` and board sync.
  */
-export type Folder = "me" | "unassigned" | "team" | "misc";
+import type { Folder, StatusBucket } from "./types.ts";
+
+export type { Folder, StatusBucket };
 
 /** NOVACORE Feature Team custom field id. */
 export const FEATURE_TEAM_FIELD = "customfield_10354";
@@ -18,12 +20,10 @@ export const JIRA_VIEW_EXTRA_FIELDS = `created,updated,parent,${EPIC_LINK_FIELD}
 
 export const JIRA_PULL_FIELDS = `${JIRA_SEARCH_FIELDS},${JIRA_VIEW_EXTRA_FIELDS}`;
 
-export type StatusBucket =
-  | "todo"
-  | "inProgress"
-  | "codeReview"
-  | "inTest"
-  | "done";
+/** Strip scheme and trailing slash from a Jira site host. */
+export function normalizeSiteHost(host: string): string {
+  return host.replace(/^https?:\/\//, "").replace(/\/$/, "");
+}
 
 export function classifyFolder(
   assignee: Record<string, unknown> | null | undefined,
@@ -183,10 +183,6 @@ export function isHierarchyRoot(issueType: string): boolean {
   return t === "initiative" || t === "epic";
 }
 
-function normalizeSiteHost(host: string): string {
-  return host.replace(/^https?:\/\//, "").replace(/\/$/, "");
-}
-
 /**
  * Map Jira status (name + category) into buckets.
  * Anything unclear defaults to In progress.
@@ -260,10 +256,8 @@ export function formatTicketMarkdown(
   const site = normalizeSiteHost(siteHost);
   const url = `https://${site}/browse/${key}`;
   const statusBucket = statusBucketFromFields(fields);
-  const created =
-    typeof fields.created === "string" ? fields.created : "";
-  const updated =
-    typeof fields.updated === "string" ? fields.updated : "";
+  const created = typeof fields.created === "string" ? fields.created : "";
+  const updated = typeof fields.updated === "string" ? fields.updated : "";
 
   const md = `---
 title: ${yamlScalar(summary)}

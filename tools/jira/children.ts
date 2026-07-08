@@ -1,11 +1,8 @@
-import { runAcliJson } from "./acli.ts";
+import { runAcliJson } from "../.lib/acli.ts";
 import { EPIC_LINK_FIELD, issueTypeName } from "./format.ts";
+import type { ChildIssue } from "./types.ts";
 
-export type ChildIssue = {
-  key: string;
-  summary: string;
-  issueType: string;
-};
+export type { ChildIssue };
 
 function issueKey(value: unknown): string | null {
   if (value == null || typeof value !== "object") return null;
@@ -29,9 +26,7 @@ function childFromIssue(issue: {
   };
 }
 
-function subtasksFromFields(
-  fields: Record<string, unknown>
-): ChildIssue[] {
+function subtasksFromFields(fields: Record<string, unknown>): ChildIssue[] {
   const raw = fields.subtasks;
   if (!Array.isArray(raw)) return [];
   const out: ChildIssue[] = [];
@@ -161,29 +156,10 @@ export function fetchDescendantIssues(
   );
 }
 
-/** Depth-first issue keys: root first, then descendants (cycle-safe). */
-export function issueTreeKeys(
-  rootKey: string,
-  fetchChildren: (parentKey: string) => readonly { key: string }[]
-): string[] {
-  const visited = new Set<string>();
-  const keys: string[] = [];
-
-  function visit(key: string): void {
-    if (visited.has(key)) return;
-    visited.add(key);
-    keys.push(key);
-    for (const child of fetchChildren(key)) {
-      visit(child.key);
-    }
-  }
-
-  visit(rootKey);
-  return keys;
-}
-
 /** Extract a parent or epic-link issue key from view fields, if any. */
-export function parentKeyFromFields(fields: Record<string, unknown>): string | null {
+export function parentKeyFromFields(
+  fields: Record<string, unknown>
+): string | null {
   const fromParent = issueKey(fields.parent);
   if (fromParent) return fromParent;
 

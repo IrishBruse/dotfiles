@@ -1,96 +1,50 @@
 #!/usr/bin/env node
 /**
- * Jira CLI — pull tickets to local markdown and browse the `jira/` folder.
+ * Jira CLI -- pull tickets to local markdown under `jira/`.
  */
 import process from "node:process";
-import { run as runBoardSync } from "../../dashboard/jira-sync.ts";
-import { runJiraInteractive } from "./interactive.ts";
-import { run as runPull, pullAll } from "./pull.ts";
-import { pushAll, pushTicket } from "./push.ts";
-import { run as runCopy } from "./copy.ts";
+import { runBoardCommand } from "./commands/board.ts";
+import { printHelp } from "./commands/help.ts";
+import { runPullCommand, runPullTicket } from "./commands/pull.ts";
+import { runPushCommand } from "./commands/push.ts";
+import { runSyncCommand } from "./commands/sync.ts";
 import { parseJiraKey } from "./jiraInput.ts";
 import { printError } from "./output.ts";
 
-function printHelp(): void {
-  process.stdout.write(`Usage:
-  jira                       interactive browser for ./jira/ (TTY)
-  jira <KEY|URL>             fetch a ticket into jira/ (Initiative/Epic: full tree)
-  jira pull [KEY|URL]        fetch one ticket, or all local tickets when omitted
-  jira sync                  same as jira pull
-  jira board sync            sync Jira board into ~/.agents/skills/jira-board/
-  jira push [KEY]            push one ticket, or all local tickets when omitted
-  jira copy <KEY|URL> [dir]  copy ticket folder (and descendants) here or under dir
-  jira -h|--help             this message
-
-Interactive keys:
-  u pull selected   a pull all (jira sync)   s push selected   g push all   o open in browser
-`);
-}
-
-async function main(): Promise<void> {
+export async function main(argv: string[] = process.argv): Promise<void> {
   if (process.env.CURSOR_AGENT === "1") {
     printError("this tool is not to be used by an agent");
     process.exit(1);
   }
-  const arg = process.argv[2];
+  const arg = argv[2];
   if (arg === "-h" || arg === "--help") {
     printHelp();
     return;
   }
   if (!arg) {
-    if (process.stdin.isTTY && process.stdout.isTTY) {
-      process.exit(await runJiraInteractive());
-      return;
-    }
     printHelp();
     return;
   }
   if (arg === "sync") {
-    process.exit(await pullAll());
+    process.exit(await runSyncCommand());
+    return;
   }
   if (arg === "board") {
-    const sub = process.argv[3];
-    if (sub === "sync") {
-      process.exit(runBoardSync());
-    }
-    printError("board: unknown subcommand (try: sync)");
-    process.exit(1);
+    process.exit(await runBoardCommand(argv));
+    return;
   }
   if (arg === "pull") {
-    const input = process.argv[3];
-    if (!input) {
-      process.exit(await pullAll());
-    }
-    const key = parseJiraKey(input);
-    if (!key) {
-      printError(`pull: not a valid Jira key or URL: ${input}`);
-      process.exit(1);
-    }
-    process.exit(await runPull(key));
+    process.exit(await runPullCommand(argv));
+    return;
   }
   if (arg === "push") {
-    const input = process.argv[3];
-    if (!input) {
-      process.exit(pushAll());
-    }
-    const key = parseJiraKey(input);
-    if (!key) {
-      printError(`push: not a valid Jira key: ${input}`);
-      process.exit(1);
-    }
-    process.exit(pushTicket(key));
-  }
-  if (arg === "copy") {
-    const input = process.argv[3];
-    if (!input) {
-      printError("copy: missing ticket key or URL");
-      process.exit(1);
-    }
-    process.exit(runCopy(input, process.argv[4]));
+    process.exit(await runPushCommand(argv));
+    return;
   }
   const key = parseJiraKey(arg);
   if (key) {
-    process.exit(await runPull(key));
+    process.exit(await runPullTicket(key));
+    return;
   }
   printError(`unknown command or invalid ticket: ${arg}`);
   printHelp();

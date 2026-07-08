@@ -2,28 +2,15 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 
-const BROWSE_KEY_RE = /\/browse\/([A-Z][A-Z0-9_]*-\d+)/;
+import { parseJiraKey } from "./jiraInput.ts";
+import type { LocalTicket } from "./types.ts";
+
+export type { LocalTicket };
 
 /** True when markdown frontmatter links to a Jira issue key. */
 export function jiraTicketKeyInMarkdown(content: string, key: string): boolean {
   return content.includes(`/browse/${key}`);
 }
-
-export type LocalTicket = {
-  key: string;
-  path: string;
-  relPath: string;
-  typeDir: string;
-  title: string;
-  assigned: string;
-  featureTeam: string;
-  issueType: string;
-  url: string;
-  status: string;
-  created: string;
-  updated: string;
-  description: string;
-};
 
 function parseFrontmatterScalar(fm: string, field: string): string {
   const m = new RegExp(`^${field}:\\s*(.+)$`, "m").exec(fm);
@@ -51,10 +38,9 @@ export function parseTicketMarkdown(
 
   const fm = m[1];
   const url = parseFrontmatterLine(fm, "url");
-  const keyMatch = url.match(BROWSE_KEY_RE);
-  if (!keyMatch) return null;
+  const key = parseJiraKey(url);
+  if (!key) return null;
 
-  const key = keyMatch[1]!;
   const title = parseFrontmatterScalar(fm, "title") || key;
 
   return {
@@ -126,28 +112,27 @@ export function listLocalTickets(cwd = process.cwd()): LocalTicket[] {
   return tickets;
 }
 
+/** Key -> absolute path index for fast lookups within one command. */
+export function buildLocalTicketIndex(
+  cwd = process.cwd()
+): Map<string, string> {
+  const index = new Map<string, string>();
+  for (const ticket of listLocalTickets(cwd)) {
+    index.set(ticket.key, ticket.path);
+  }
+  return index;
+}
+
 /** Resolve a ticket key to its on-disk markdown path under cwd. */
 export function localTicketPath(
   key: string,
-  cwd = process.cwd()
+  cwd = process.cwd(),
+  index?: Map<string, string>
 ): string | null {
-  const root = jiraRootDir(cwd);
-  if (!fs.existsSync(root)) return null;
-
-  const stack = [root];
-  while (stack.length > 0) {
-    const dir = stack.pop()!;
-    for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
-      const fullPath = path.join(dir, ent.name);
-      if (ent.isDirectory()) {
-        stack.push(fullPath);
-        continue;
-      }
-      if (!ent.isFile() || !ent.name.endsWith(".md")) continue;
-
-      const head = fs.readFileSync(fullPath, "utf-8").slice(0, 2048);
-      if (jiraTicketKeyInMarkdown(head, key)) return fullPath;
-    }
+  if (index) {
+    return index.get(key) ?? null;
   }
-  return null;
+
+  const built = buildLocalTicketIndex(cwd);
+  return built.get(key) ?? null;
 }

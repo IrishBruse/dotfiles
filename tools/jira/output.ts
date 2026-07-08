@@ -3,7 +3,7 @@ import {
   paint,
   stderrColorEnabled,
   stdoutColorEnabled
-} from "../dotfiles/paint.ts";
+} from "../dotfiles/api.ts";
 
 import type { ChildIssue } from "./children.ts";
 
@@ -12,7 +12,7 @@ export function printError(msg: string): void {
   process.stderr.write(`${paint(c, "bad", "error")}: ${msg}\n`);
 }
 
-export function printPulled(key: string, title: string, _relPath: string): void {
+export function printPulled(key: string, title: string): void {
   const c = stdoutColorEnabled();
   process.stdout.write(`${paint(c, "label", key)}  ${title}\n`);
 }
@@ -25,7 +25,9 @@ export function printChildIssues(children: ChildIssue[]): void {
   );
   for (const child of children) {
     const type = paint(c, "dim", child.issueType);
-    process.stdout.write(`  ${paint(c, "label", child.key)}  ${type}  ${child.summary}\n`);
+    process.stdout.write(
+      `  ${paint(c, "label", child.key)}  ${type}  ${child.summary}\n`
+    );
   }
 }
 
