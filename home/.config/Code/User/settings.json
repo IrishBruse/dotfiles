@@ -1277,7 +1277,7 @@
   },
   "terminal.integrated.profiles.osx": {
     "agent": {
-      "path": "agent",
+      "path": "/Users/econneely/.local/bin/agent",
       "args": ["--model", "composer-2.5"]
     },
     "fish": {
