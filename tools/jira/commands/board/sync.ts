@@ -9,13 +9,13 @@ import { runAcliJson, runAcliJsonAsync } from "../../../.lib/acli.ts";
 import { createConcurrencyLimiter } from "../../../.lib/concurrency.ts";
 import { writeJiraTicketsSkill } from "./skill.ts";
 import { sprintsInRetentionWindow, writeBoard } from "./write.ts";
-import { CONFIG } from "../../CONFIG.ts";
+import { CONFIG } from "../../lib/CONFIG.ts";
 import {
   JIRA_SEARCH_FIELDS,
   JIRA_VIEW_EXTRA_FIELDS,
   normalizeSiteHost
-} from "../../format.ts";
-import type { BoardSprint, SyncResult, WriteBoardResult } from "../../types.ts";
+} from "../../lib/format.ts";
+import type { BoardSprint, SyncResult, WriteBoardResult } from "../../lib/types.ts";
 
 /** Skill folder: `~/.agents/skills/jira-board/` */
 const JIRA_BOARD_SKILL_DIR = path.resolve(

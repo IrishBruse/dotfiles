@@ -3,9 +3,9 @@ import {
   paint,
   stderrColorEnabled,
   stdoutColorEnabled
-} from "../dotfiles/api.ts";
+} from "../../dotfiles/api.ts";
 
-import type { ChildIssue } from "./children.ts";
+import type { ChildIssue } from "./types.ts";
 
 export function printError(msg: string): void {
   const c = stderrColorEnabled();

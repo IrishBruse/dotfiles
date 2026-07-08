@@ -1,22 +1,29 @@
 /**
  * Jira issue field -> markdown helpers shared by `jira pull` and board sync.
  */
+import { CONFIG } from "./CONFIG.ts";
 import type { Folder, StatusBucket } from "./types.ts";
 
-export type { Folder, StatusBucket };
+/** Feature Team custom field id from CONFIG (empty when not configured). */
+export const FEATURE_TEAM_FIELD = CONFIG.featureTeamField;
 
-/** NOVACORE Feature Team custom field id. */
-export const FEATURE_TEAM_FIELD = "customfield_10354";
-
-/** Epic Link custom field id on NOVACORE (classic parent for Stories). */
-export const EPIC_LINK_FIELD = "customfield_10014";
+/** Epic Link custom field id from CONFIG (empty when not configured). */
+export const EPIC_LINK_FIELD = CONFIG.epicLinkField;
 
 /** Fields allowed by `acli jira workitem search --fields`. */
 export const JIRA_SEARCH_FIELDS =
   "key,summary,assignee,issuetype,description,status";
 
 /** Fields rejected by search but still returned by `acli jira workitem view`. */
-export const JIRA_VIEW_EXTRA_FIELDS = `created,updated,parent,${EPIC_LINK_FIELD},${FEATURE_TEAM_FIELD}`;
+export const JIRA_VIEW_EXTRA_FIELDS = [
+  "created",
+  "updated",
+  "parent",
+  CONFIG.epicLinkField,
+  CONFIG.featureTeamField
+]
+  .filter((field) => field.length > 0)
+  .join(",");
 
 export const JIRA_PULL_FIELDS = `${JIRA_SEARCH_FIELDS},${JIRA_VIEW_EXTRA_FIELDS}`;
 

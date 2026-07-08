@@ -5,8 +5,6 @@ import process from "node:process";
 import { parseJiraKey } from "./jiraInput.ts";
 import type { LocalTicket } from "./types.ts";
 
-export type { LocalTicket };
-
 /** True when markdown frontmatter links to a Jira issue key. */
 export function jiraTicketKeyInMarkdown(content: string, key: string): boolean {
   return content.includes(`/browse/${key}`);

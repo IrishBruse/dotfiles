@@ -1,5 +1,5 @@
 import { run as runBoardSync } from "./board/sync.ts";
-import { printError } from "../output.ts";
+import { printError } from "../lib/output.ts";
 
 /** Run `jira board <subcommand>`. */
 export async function runBoardCommand(argv: string[]): Promise<number> {

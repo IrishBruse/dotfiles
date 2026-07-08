@@ -6,14 +6,14 @@ import {
   assigneeRecord,
   classifyFolder,
   statusBucketFromFields
-} from "../../format.ts";
+} from "../../lib/format.ts";
 import type {
   Folder,
   JiraSkillSection,
   JiraSkillTicket,
   JiraTicketsSkillContent,
   StatusBucket
-} from "../../types.ts";
+} from "../../lib/types.ts";
 
 /** Single-line summary safe for the skill list (matches Python board_sync_lib). */
 export function ticketsSkillOneLine(summary: string): string {
@@ -161,7 +161,7 @@ description: >
 
 Here is the current Jira board status.
 For the full description of any ticket below, read \`references/{me,team,unassigned,misc}/<KEY>.md\`
-Example: \`references/me/NOVACORE-12345.md\`
+Example: \`references/me/PROJ-12345.md\`
 
 ${boardSections.join("\n\n")}
 `;

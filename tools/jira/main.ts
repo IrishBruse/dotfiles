@@ -8,8 +8,8 @@ import { printHelp } from "./commands/help.ts";
 import { runPullCommand, runPullTicket } from "./commands/pull.ts";
 import { runPushCommand } from "./commands/push.ts";
 import { runSyncCommand } from "./commands/sync.ts";
-import { parseJiraKey } from "./jiraInput.ts";
-import { printError } from "./output.ts";
+import { parseJiraKey } from "./lib/jiraInput.ts";
+import { printError } from "./lib/output.ts";
 
 export async function main(argv: string[] = process.argv): Promise<void> {
   if (process.env.CURSOR_AGENT === "1") {

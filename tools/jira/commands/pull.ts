@@ -7,33 +7,33 @@ import process from "node:process";
 
 import { runAcliJson, runAcliJsonAsync } from "../../.lib/acli.ts";
 import { createConcurrencyLimiter } from "../../.lib/concurrency.ts";
-import { CONFIG } from "../CONFIG.ts";
+import { CONFIG } from "../lib/CONFIG.ts";
 import {
   fetchDescendantIssues,
   parentKeyFromFields,
   parentSummaryFromFields
-} from "../children.ts";
+} from "../lib/children.ts";
 import {
   formatTicketMarkdown,
   isHierarchyRoot,
   issueTypeName,
   JIRA_PULL_FIELDS,
   normalizeSiteHost
-} from "../format.ts";
-import { parseJiraKey } from "../jiraInput.ts";
+} from "../lib/format.ts";
+import { parseJiraKey } from "../lib/jiraInput.ts";
 import {
   buildLocalTicketIndex,
   listLocalTickets,
   localTicketPath
-} from "../local.ts";
+} from "../lib/local.ts";
 import {
   printChildIssues,
   printError,
   printPulled,
   printPullSummary,
   pullLog
-} from "../output.ts";
-import { confirm } from "../prompt.ts";
+} from "../lib/output.ts";
+import { confirm } from "../lib/prompt.ts";
 
 const PULL_CONCURRENCY = 4;
 
@@ -42,7 +42,7 @@ export function issueTypeSlug(name: string): string {
   return name.trim().toLowerCase().replace(/\s+/g, "-");
 }
 
-/** Safe markdown filename from the ticket title (e.g. `[DTC] Make foo - NOVACORE-1.md`). */
+/** Safe markdown filename from the ticket title (e.g. `[DTC] Make foo - PROJ-1.md`). */
 export function ticketMarkdownFilename(
   fields: Record<string, unknown>,
   key: string

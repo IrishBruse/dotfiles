@@ -8,14 +8,14 @@ import process from "node:process";
 
 import { runAcli } from "../../.lib/acli.ts";
 import { createConcurrencyLimiter } from "../../.lib/concurrency.ts";
-import { parseJiraKey } from "../jiraInput.ts";
+import { parseJiraKey } from "../lib/jiraInput.ts";
 import {
   buildLocalTicketIndex,
   listLocalTickets,
   localTicketPath,
   parseTicketMarkdown
-} from "../local.ts";
-import { printError } from "../output.ts";
+} from "../lib/local.ts";
+import { printError } from "../lib/output.ts";
 import { pullTicketWrite } from "./pull.ts";
 
 const PUSH_CONCURRENCY = 4;

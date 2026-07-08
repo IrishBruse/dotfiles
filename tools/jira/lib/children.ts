@@ -1,8 +1,6 @@
-import { runAcliJson } from "../.lib/acli.ts";
+import { runAcliJson } from "../../.lib/acli.ts";
 import { EPIC_LINK_FIELD, issueTypeName } from "./format.ts";
 import type { ChildIssue } from "./types.ts";
-
-export type { ChildIssue };
 
 function issueKey(value: unknown): string | null {
   if (value == null || typeof value !== "object") return null;

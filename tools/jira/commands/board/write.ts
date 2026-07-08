@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { formatTicketMarkdown } from "../../format.ts";
-import type { BoardSprint, Folder, WriteBoardResult } from "../../types.ts";
+import { formatTicketMarkdown } from "../../lib/format.ts";
+import type { BoardSprint, Folder, WriteBoardResult } from "../../lib/types.ts";
 
 /** Keep tickets from sprints within this many days before start and after end. */
 export const SPRINT_RETENTION_BUFFER_MS = 2 * 24 * 60 * 60 * 1000;
