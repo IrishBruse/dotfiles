@@ -169,7 +169,7 @@ For `update`, read [`references/update/update.md`](references/update/update.md),
 
 After every investigation report, use the `AskQuestion` tool to guide where to go next. This is the main interaction model for the skill. The prompt must reflect the recommendation and only include options that are valid for the current situation.
 
-Populate the `AskQuestion` tool with these fields. This describes tool input, so never print the fields, labels, or any fence as chat text:
+Populate the `AskQuestion` tool with these fields. This describes tool input, so never print the fields, labels, option text, or any fence as chat text:
 
 - `title`: `<KEY or short idea> - Next step`
 - `prompt`: `I found <short status and recommendation>. What would you like to do?`
@@ -205,22 +205,40 @@ If this gate has not been answered with its approve option for the exact change 
 
 Steps, in order:
 
-1. Show the exact proposed change first: the issue key or the new ticket shape, and every field with its before and after value for edits.
-2. Call `AskQuestion` immediately before the write, using the fixed shape below and no other options.
-3. Perform the write **only** when the user selects `Approve`.
-4. If the user selects `Edit first`, revise the proposal and run this gate again.
-5. If the user selects `Cancel`, stop and make no Jira write.
+1. Call `AskQuestion` immediately before the write, using the fixed shape below and no other options.
+   Put the full proposed change in the `prompt` field only.
+   Do not echo the proposal in chat before or after the tool call.
+2. Perform the write **only** when the user selects `Approve`.
+3. If the user selects `Edit first`, revise the proposal and run this gate again.
+4. If the user selects `Cancel`, stop and make no Jira write.
 
 Rules:
 
 - One approval covers one described change set. To write several tickets, either list the full set in a single gate or run the gate per write. Never reuse an approval for a different change.
 - If the change shown differs in any way from what you are about to write, stop and run the gate again with the corrected proposal.
 - Never infer approval from an earlier route choice, a title selection, a prior gate, or the absence of objection. Only the `Approve` option in this gate counts.
+- The `prompt` must use plain markdown so labels and values render for the user.
+  Use `**Label:**` for field names and separate fields with blank lines.
+  Never wrap the proposal in a code fence in chat or inside the `prompt`.
 
-Populate the `AskQuestion` tool with these exact fields and no other options. This describes tool input, so never print the fields, labels, or any fence as chat text:
+Populate the `AskQuestion` tool with these exact fields and no other options.
+This describes tool input, so never print the fields, labels, option text, or any fence as chat text:
 
 - `title`: `<KEY or new ticket> - Approve Jira write`
-- `prompt`: `I will <create | update | reparent | transition | close | link | comment>: <what>. <exact change summary, before -> after for edits>. Apply this exact change?`
+- `prompt`: open with `I will <create | update | reparent | transition | close | link | comment> <what>.`, then list every field on its own line with `**Label:** value`.
+  For edits, show `before -> after` per changed field.
+  End with `Apply this exact change?`
+
+  Example `prompt` for a create (pass this as one multiline string, not a chat code block):
+
+  I will create a Story under NOVACORE-52213.
+
+  **Summary:** [DTC] Display prototype versions deterministically
+  **Parent:** NOVACORE-52213 ([DTC] Make repeatable operations deterministic)
+  **Feature Team:** dynaFormRaptors (16409)
+  **Local draft:** jira/story/.../Display prototype versions deterministically.md
+
+  Apply this exact change?
 - `options` (exactly these three, in order):
   - `Approve - apply this exact change`
   - `Edit first - change something before applying`

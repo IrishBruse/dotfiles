@@ -16,7 +16,8 @@ Sub-tasks use the same Goal / Acceptance Criteria / Notes format as Tasks, the o
 5. Resolve `cloudId` from a Jira URL, prior context, or `getAccessibleAtlassianResources`.
 6. Optional epic lookup. If the user gives an epic title instead of a key, use JQL and confirm the key before drafting.
 7. Draft locally before any Jira create. Read [`../local-draft.md`](../local-draft.md) and use the ticket template in [`template.md`](template.md).
-8. Show the draft file path and summary, then run the **Jira Write Approval Gate** in `SKILL.md`.
+8. Run the **Jira Write Approval Gate** in `SKILL.md`.
+   Include the local draft path and summary in the gate `prompt`.
 9. Promote only when the gate is answered `Approve` by calling `createJiraIssue` with `issueTypeName: "Task"`, or `"Sub-task"` when the user confirmed a Sub-task.
 10. Reply with issue key, browse URL, epic, Feature Team, and summary. Update the local draft with the Jira key and link.
 

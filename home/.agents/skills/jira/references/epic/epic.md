@@ -21,7 +21,8 @@ Accept an issue key (e.g. NOVACORE-12345) or a full Jira URL.
 6. Clarify if vague. See [`../clarify-vague.md`](../clarify-vague.md) (Epic row: expectations, scenarios, Initiative tie-in).
 7. Feature Team. Resolve in order: copy from the Initiative, copy from a sibling Epic, ask once. See [`../jira-fields.md`](../jira-fields.md) for Feature Team, Capitalizable, assignee, and `createJiraIssue` parameters.
 8. Draft locally before Jira create. See [`../local-draft.md`](../local-draft.md) and use the ticket template in [`template.md`](template.md).
-9. Show the draft file path and summary, then run the **Jira Write Approval Gate** in `SKILL.md`.
+9. Run the **Jira Write Approval Gate** in `SKILL.md`.
+   Include the local draft path and summary in the gate `prompt`.
 10. Promote only when the gate is answered `Approve` by calling `createJiraIssue` with `issueTypeName: "Epic"`.
 11. Reply with issue key, browse URL, parent Initiative, Feature Team, and summary. Update the local draft and hierarchy context.
 
