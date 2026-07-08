@@ -50,12 +50,12 @@ SHELL environment variable.
 
 Prefix a line with `?varname:` (or `?env:NAME:`). When the variable or environment value is truthy, the rest of the line is kept; otherwise the whole line is dropped. Empty remainder yields a blank line when kept.
 
-`?work:` is a shortcut for `?env:WORK:` (work policy / NOVACORE title rules).
+`?work:` is a shortcut for `?env:WORK:` (work policy / Jira ticket title rules).
 
 Example:
 
 ```
-?work: Title must start with NOVACORE-<digits>.
+?work: Title must start with PROJ-<digits>.
 ```
 
 Truthy: non-empty, not `0`, not `false`. Set `WORK=true` for work policy lines.
