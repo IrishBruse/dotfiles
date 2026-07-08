@@ -1,15 +1,16 @@
 import fs from "node:fs";
 import process from "node:process";
 
-import { updatePageStorage } from "./api.ts";
-import { assertNoRelativeMdLinks } from "./links.ts";
+import { updatePageStorage } from "../lib/api.ts";
+import { assertNoRelativeMdLinks } from "../lib/links.ts";
 import {
   listLocalPages,
   parsePageMarkdown,
   resolvePageFilePath
-} from "./local.ts";
-import { markdownToStorage } from "./markdown-to-storage.ts";
-import { printError } from "./output.ts";
+} from "../lib/local.ts";
+import { markdownToStorage } from "../lib/markdown-to-storage.ts";
+import { printError } from "../lib/output.ts";
+import { parsePageId } from "../lib/pageInput.ts";
 import { pullSingle } from "./pull.ts";
 
 export type PushOptions = {
@@ -100,4 +101,18 @@ export async function pushAll(
     }
   }
   return code;
+}
+
+/** Run `confluence push [pageId]`. */
+export async function runPushCommand(argv: string[]): Promise<number> {
+  const input = argv[3];
+  if (!input) {
+    return pushAll();
+  }
+  const pageId = parsePageId(input);
+  if (!pageId) {
+    printError(`push: not a valid page id or URL: ${input}`);
+    return 1;
+  }
+  return pushPage(pageId);
 }

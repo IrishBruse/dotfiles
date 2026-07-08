@@ -2,10 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 
-import { fetchPageSyncMeta } from "./api.ts";
-import { parsePageMarkdown } from "./local.ts";
-import { printError } from "./output.ts";
-import { decideSync, pageChangeState } from "./page-state.ts";
+import { fetchPageSyncMeta } from "../lib/api.ts";
+import { parsePageMarkdown } from "../lib/local.ts";
+import { printError } from "../lib/output.ts";
+import { decideSync, pageChangeState } from "../lib/page-state.ts";
 import { pullSingle } from "./pull.ts";
 import { pushPage } from "./push.ts";
 
@@ -102,4 +102,14 @@ export async function runSync(
     filePath
   });
   return code;
+}
+
+/** Run `confluence sync <path.md>`. */
+export async function runSyncCommand(argv: string[]): Promise<number> {
+  const input = argv[3];
+  if (!input) {
+    printError("sync: path to a .md file is required");
+    return 1;
+  }
+  return runSync(input);
 }

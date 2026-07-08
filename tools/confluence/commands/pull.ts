@@ -5,44 +5,24 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 
-import { fetchPageAcli, fetchPageAcliAsync } from "./api.ts";
-import { slugifyConfluenceTitle } from "./confluence-slug.ts";
-import { storageToMarkdown } from "./confluence-storage-to-markdown.ts";
-import { formatPageMarkdown, spaceKeyFromWebui } from "./format.ts";
+import { createConcurrencyLimiter } from "../../.lib/concurrency.ts";
+import { fetchPageAcli, fetchPageAcliAsync } from "../lib/api.ts";
+import { slugifyConfluenceTitle } from "../lib/confluence-slug.ts";
+import { storageToMarkdown } from "../lib/confluence-storage-to-markdown.ts";
+import { formatPageMarkdown, spaceKeyFromWebui } from "../lib/format.ts";
 import {
   confluenceRootDir,
   defaultSiteHost,
   listLocalPages,
   localPagePath,
   pageUrl
-} from "./local.ts";
-import { printError, printPulled, printPullSummary } from "./output.ts";
-import { parsePageId } from "./page-input.ts";
-import type { ChildRef, PageViewJson } from "./types.ts";
+} from "../lib/local.ts";
+import { printError, printPulled, printPullSummary } from "../lib/output.ts";
+import { parsePageId } from "../lib/pageInput.ts";
+import type { ChildRef, PageViewJson } from "../lib/types.ts";
 
 const PULL_ALL_CONCURRENCY = 4;
 const DEFAULT_CONCURRENCY = 8;
-
-function createLimiter(concurrency: number) {
-  const queue: (() => void)[] = [];
-  let active = 0;
-  return function limit<T>(fn: () => Promise<T>): Promise<T> {
-    return new Promise((resolve, reject) => {
-      const run = () => {
-        active++;
-        fn()
-          .then(resolve, reject)
-          .finally(() => {
-            active--;
-            const next = queue.shift();
-            if (next) next();
-          });
-      };
-      if (active < concurrency) run();
-      else queue.push(run);
-    });
-  };
-}
 
 function folderBase(page: { id: string; title?: string }): string {
   return slugifyConfluenceTitle(page.title ?? "") || "page";
@@ -280,7 +260,7 @@ export async function pullPage(
     64,
     Math.max(1, Math.floor(options.concurrency ?? DEFAULT_CONCURRENCY))
   );
-  const limit = createLimiter(concurrency);
+  const limit = createConcurrencyLimiter(concurrency);
   const fetchPage = (id: string) =>
     limit(() => fetchPageAcliAsync(id, options.acli));
 
@@ -318,7 +298,7 @@ export async function pullAll(
     return 1;
   }
 
-  const limit = createLimiter(PULL_ALL_CONCURRENCY);
+  const limit = createConcurrencyLimiter(PULL_ALL_CONCURRENCY);
   const results = await Promise.all(
     pages.map((page) =>
       limit(async () => {
@@ -352,6 +332,25 @@ export async function pullAll(
   }
   if (!options.quiet) printPullSummary(pulled);
   return code;
+}
+
+/** Run `confluence pull [pageUrl|pageId]`. */
+export async function runPullCommand(argv: string[]): Promise<number> {
+  const input = argv[3];
+  if (!input) {
+    return pullAll();
+  }
+  const pageId = parsePageId(input);
+  if (!pageId) {
+    printError(`pull: not a valid Confluence page id or URL: ${input}`);
+    return 1;
+  }
+  return pullPage(input);
+}
+
+/** Run `confluence <pageUrl|pageId>` (same as pull one page tree). */
+export async function runPullPage(input: string): Promise<number> {
+  return pullPage(input);
 }
 
 /** Pull a single existing page file by id (no subtree walk). */

@@ -1,12 +1,12 @@
 import process from "node:process";
 
-import { fetchPageVersion } from "./api.ts";
-import { findRelativeMdLinks } from "./links.ts";
-import { listLocalPages } from "./local.ts";
-import { printError, printStatusLine } from "./output.ts";
-import { classifyPage } from "./page-state.ts";
+import { fetchPageVersion } from "../lib/api.ts";
+import { findRelativeMdLinks } from "../lib/links.ts";
+import { listLocalPages } from "../lib/local.ts";
+import { printError, printStatusLine } from "../lib/output.ts";
+import { classifyPage } from "../lib/page-state.ts";
 
-export type { PageStatus } from "./page-state.ts";
+export type { PageStatus } from "../lib/page-state.ts";
 
 /** Show local vs remote state for pages under `confluence/`. */
 export async function runStatus(cwd = process.cwd()): Promise<number> {
@@ -65,4 +65,14 @@ export function runVerify(cwd = process.cwd()): number {
     process.stdout.write(`Verified ${pages.length} page(s)\n`);
   }
   return code;
+}
+
+/** Run `confluence status`. */
+export async function runStatusCommand(cwd = process.cwd()): Promise<number> {
+  return runStatus(cwd);
+}
+
+/** Run `confluence verify`. */
+export function runVerifyCommand(cwd = process.cwd()): number {
+  return runVerify(cwd);
 }

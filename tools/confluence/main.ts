@@ -4,32 +4,20 @@
  */
 import process from "node:process";
 
-import { parsePageId } from "./page-input.ts";
-import { pullAll, pullPage } from "./pull.ts";
-import { pushAll, pushPage } from "./push.ts";
-import { printError } from "./output.ts";
-import { runStatus, runVerify } from "./status.ts";
-import { runSync } from "./sync.ts";
+import { printHelp } from "./commands/help.ts";
+import { runPullCommand, runPullPage } from "./commands/pull.ts";
+import { runPushCommand } from "./commands/push.ts";
+import { runStatusCommand, runVerifyCommand } from "./commands/status.ts";
+import { runSyncCommand } from "./commands/sync.ts";
+import { parsePageId } from "./lib/pageInput.ts";
+import { printError } from "./lib/output.ts";
 
-function printHelp(): void {
-  process.stdout.write(`Usage:
-  confluence <pageUrl|pageId>        same as confluence pull <pageUrl|pageId>
-  confluence pull [pageUrl|pageId]   fetch one page tree, or all local pages when omitted
-  confluence push [pageId]           push one page, or all local pages when omitted
-  confluence sync <path.md>          pull or push one file from frontmatter state
-  confluence status                  show clean / modified / behind / links state
-  confluence verify                  fail if any relative .md links remain
-  confluence -h|--help               this message
-
-Markdown pages use YAML frontmatter (id, title, version, url, syncedHash, ...).
-Default pull/push roots are under ./confluence/, but sync works on any frontmatter file.
-Links must use full Confluence wiki URLs or Jira /browse/KEY URLs, not relative .md paths.
-Requires: acli confluence auth login
-`);
-}
-
-async function main(): Promise<void> {
-  const arg = process.argv[2];
+export async function main(argv: string[] = process.argv): Promise<void> {
+  if (process.env.CURSOR_AGENT === "1") {
+    printError("this tool is not to be used by an agent");
+    process.exit(1);
+  }
+  const arg = argv[2];
   if (arg === "-h" || arg === "--help") {
     printHelp();
     return;
@@ -38,58 +26,31 @@ async function main(): Promise<void> {
     printHelp();
     return;
   }
-
   if (arg === "pull") {
-    const input = process.argv[3];
-    if (!input) {
-      process.exit(await pullAll());
-      return;
-    }
-    process.exit(await pullPage(input));
+    process.exit(await runPullCommand(argv));
     return;
   }
-
   if (arg === "push") {
-    const input = process.argv[3];
-    if (!input) {
-      process.exit(await pushAll());
-      return;
-    }
-    const pageId = parsePageId(input);
-    if (!pageId) {
-      printError(`push: not a valid page id or URL: ${input}`);
-      process.exit(1);
-    }
-    process.exit(await pushPage(pageId));
+    process.exit(await runPushCommand(argv));
     return;
   }
-
   if (arg === "sync") {
-    const input = process.argv[3];
-    if (!input) {
-      printError("sync: path to a .md file is required");
-      process.exit(1);
-    }
-    process.exit(await runSync(input));
+    process.exit(await runSyncCommand(argv));
     return;
   }
-
   if (arg === "status") {
-    process.exit(await runStatus());
+    process.exit(await runStatusCommand());
     return;
   }
-
   if (arg === "verify") {
-    process.exit(runVerify());
+    process.exit(runVerifyCommand());
     return;
   }
-
   const pageId = parsePageId(arg);
   if (pageId) {
-    process.exit(await pullPage(arg));
+    process.exit(await runPullPage(arg));
     return;
   }
-
   printError(`unknown command or invalid page: ${arg}`);
   printHelp();
   process.exit(1);
