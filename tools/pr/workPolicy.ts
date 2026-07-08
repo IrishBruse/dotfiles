@@ -9,4 +9,4 @@ export function isWorkPolicy(): boolean {
 }
 
 export const WORK_TITLE_REQUIREMENT =
-  "Title must start with `NOVACORE-<digits> - ` (e.g. `NOVACORE-1234 - `). Use a valid recent Jira ticket in the current sprint usually assigned to me.";
+  "Title must start with `<PROJECT>-<digits> - ` (e.g. `PROJ-1234 - `). Use a valid recent Jira ticket in the current sprint usually assigned to me.";

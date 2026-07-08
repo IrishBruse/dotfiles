@@ -23,7 +23,7 @@ export function printHelp(): void {
       "  -h, --help   Show this message",
       "",
       "Environment:",
-      "  WORK=true    Require NOVACORE-<ticket> title prefix (valid recent Jira ticket)"
+      "  WORK=true    Require <PROJECT>-<ticket> title prefix (valid recent Jira ticket)"
     ].join("\n")
   );
 }
