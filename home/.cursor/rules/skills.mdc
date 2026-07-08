@@ -6,10 +6,12 @@ alwaysApply: false
 
 # Skill authoring
 
+Load `writing-great-skills` when authoring or editing a skill.
+
 ## Frontmatter description
 
-In `SKILL.md` frontmatter, write `description` as a plain 1-2 lines string include minimal usage example.
-Never use YAML block scalars (`>`, `|`, `>-`, `|-`, or variants).
+Write `description` as a plain short string with a minimal usage example.
+Use a normal YAML string, not block scalars (`>`, `|`, `>-`, `|-`, or variants).
 
 Good:
 
@@ -17,39 +19,27 @@ Good:
 description: Create or update a GitHub pull request title and body from the current branch. Use when opening or updating a pull request.
 ```
 
-Bad:
+Weak:
 
 ```yaml
 description: >
-  Routes GitHub pull request work to the right PR skill.
+  Create or update a GitHub pull request title and body from the current branch.
   Use when opening or updating a pull request.
 ```
 
 ## Self-contained
 
 Keep each skill self-contained.
-Do not pull in or duplicate guidance from other skills unless the user asks to reference or align with another skill.
-The same applies when the skill already references other skills and you are extending that linkage.
+Pull in or duplicate another skill's guidance only when the user asks to align with it, or when extending linkage the skill already has.
+Write rules directly, skip provenance or mirroring labels on sections.
 
-Do not add provenance or mirroring labels on skill content.
-Write the rules directly, do not prefix sections with where they came from.
+Reference other skills by name in backticks (`skill-name-here`), not by file path.
+In repo skills, reference only skills that ship with that repo, not personal global skills other teammates may lack.
 
-Bad: `Core rules (mirrored from other-skill)`
-
-Reference other skills by name only, in backticks: `skill-name-here`.
-Do not use file paths (e.g. `.cursor/skills/other-skill/SKILL.md`, `reference.md`).
-
-When the skill lives in a repo, do not reference personal global skills.
-The repo and other team members may not have the same global skills you do.
-Only reference skills that ship with that repo.
-
-## Numbered steps
+## Steps
 
 Use `1.`, `2.`, ... only for short sequences where each item fits on one line.
-
-When there are too many points, or a single numbered item wraps onto multiple lines, break the sequence into headings instead.
-Use `### Step 1 - Short summary` and so on.
-Put detail in paragraphs under each heading.
+When items wrap or the list grows, break into `### Step 1` headings with detail in paragraphs underneath.
 
 Good:
 
@@ -64,7 +54,7 @@ Stop and wait for a reply before continuing.
 Write `plan.md` from the confirmed scope.
 ```
 
-Bad:
+Weak:
 
 ```markdown
 1. Confirm scope with the user. Stop and wait for a reply before continuing.
