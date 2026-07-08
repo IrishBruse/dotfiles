@@ -10,7 +10,6 @@ home/.config/dconf/user
 home/.config/fish/completions/sdd.fish
 home/.config/fish/fish_variables
 home/.config/ghostty/local
-home/.cursor/rules/gp-rules.mdc
 home/.local/bin/chrome
 home/dot-zshrc
 
