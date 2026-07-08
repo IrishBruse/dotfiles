@@ -1,5 +1,5 @@
 import { runAcliJson } from "./acli.ts";
-import { issueTypeName } from "./format.ts";
+import { EPIC_LINK_FIELD, issueTypeName } from "./format.ts";
 
 export type ChildIssue = {
   key: string;
@@ -182,7 +182,31 @@ export function issueTreeKeys(
   return keys;
 }
 
-/** Extract a parent issue key from view fields, if any. */
+/** Extract a parent or epic-link issue key from view fields, if any. */
 export function parentKeyFromFields(fields: Record<string, unknown>): string | null {
-  return issueKey(fields.parent);
+  const fromParent = issueKey(fields.parent);
+  if (fromParent) return fromParent;
+
+  const epicLink = fields[EPIC_LINK_FIELD];
+  if (typeof epicLink === "string" && epicLink) return epicLink;
+  return issueKey(epicLink);
+}
+
+/** Parent summary embedded on a child issue view, when Jira returns it inline. */
+export function parentSummaryFromFields(
+  fields: Record<string, unknown>
+): string | null {
+  const parent = fields.parent;
+  if (parent == null || typeof parent !== "object") return null;
+
+  const parentObj = parent as Record<string, unknown>;
+  const parentFields = parentObj.fields;
+  if (parentFields != null && typeof parentFields === "object") {
+    const summary = (parentFields as Record<string, unknown>).summary;
+    if (typeof summary === "string" && summary.trim()) return summary.trim();
+  }
+
+  const summary = parentObj.summary;
+  if (typeof summary === "string" && summary.trim()) return summary.trim();
+  return null;
 }

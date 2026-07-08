@@ -61,7 +61,7 @@ export function parseTicketMarkdown(
     key,
     path: filePath,
     relPath: path.relative(cwd, filePath) || filePath,
-    typeDir: path.basename(path.dirname(filePath)),
+    typeDir: jiraTypeDirFromPath(filePath, cwd),
     title,
     assigned: parseFrontmatterScalar(fm, "assigned"),
     featureTeam: parseFrontmatterScalar(fm, "feature_team") || "None",
@@ -72,6 +72,33 @@ export function parseTicketMarkdown(
     updated: parseFrontmatterScalar(fm, "updated"),
     description: m[2].trim()
   };
+}
+
+function jiraTypeDirFromPath(filePath: string, cwd: string): string {
+  const rel = path.relative(jiraRootDir(cwd), filePath);
+  const segment = rel.split(path.sep)[0];
+  return segment || path.basename(path.dirname(filePath));
+}
+
+function collectTicketFiles(
+  dir: string,
+  cwd: string,
+  tickets: LocalTicket[]
+): void {
+  if (!fs.existsSync(dir)) return;
+
+  for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = path.join(dir, ent.name);
+    if (ent.isDirectory()) {
+      collectTicketFiles(fullPath, cwd, tickets);
+      continue;
+    }
+    if (!ent.isFile() || !ent.name.endsWith(".md")) continue;
+
+    const content = fs.readFileSync(fullPath, "utf-8");
+    const parsed = parseTicketMarkdown(content, fullPath, cwd);
+    if (parsed) tickets.push(parsed);
+  }
 }
 
 export function jiraRootDir(cwd = process.cwd()): string {
@@ -86,14 +113,7 @@ export function listLocalTickets(cwd = process.cwd()): LocalTicket[] {
   const tickets: LocalTicket[] = [];
   for (const ent of fs.readdirSync(root, { withFileTypes: true })) {
     if (!ent.isDirectory()) continue;
-    const typeDir = path.join(root, ent.name);
-    for (const file of fs.readdirSync(typeDir)) {
-      if (!file.endsWith(".md")) continue;
-      const filePath = path.join(typeDir, file);
-      const content = fs.readFileSync(filePath, "utf-8");
-      const parsed = parseTicketMarkdown(content, filePath, cwd);
-      if (parsed) tickets.push(parsed);
-    }
+    collectTicketFiles(path.join(root, ent.name), cwd, tickets);
   }
 
   tickets.sort((a, b) => {
@@ -113,14 +133,20 @@ export function localTicketPath(
 ): string | null {
   const root = jiraRootDir(cwd);
   if (!fs.existsSync(root)) return null;
-  for (const ent of fs.readdirSync(root, { withFileTypes: true })) {
-    if (!ent.isDirectory()) continue;
-    const typeDir = path.join(root, ent.name);
-    for (const file of fs.readdirSync(typeDir)) {
-      if (!file.endsWith(".md")) continue;
-      const p = path.join(typeDir, file);
-      const head = fs.readFileSync(p, "utf-8").slice(0, 2048);
-      if (jiraTicketKeyInMarkdown(head, key)) return p;
+
+  const stack = [root];
+  while (stack.length > 0) {
+    const dir = stack.pop()!;
+    for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+      const fullPath = path.join(dir, ent.name);
+      if (ent.isDirectory()) {
+        stack.push(fullPath);
+        continue;
+      }
+      if (!ent.isFile() || !ent.name.endsWith(".md")) continue;
+
+      const head = fs.readFileSync(fullPath, "utf-8").slice(0, 2048);
+      if (jiraTicketKeyInMarkdown(head, key)) return fullPath;
     }
   }
   return null;

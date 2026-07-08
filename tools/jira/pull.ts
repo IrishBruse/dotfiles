@@ -6,7 +6,7 @@ import path from "node:path";
 import process from "node:process";
 import { CONFIG } from "./CONFIG.ts";
 import { runAcliJson, runAcliJsonAsync } from "./acli.ts";
-import { fetchChildIssues, fetchDescendantIssues } from "./children.ts";
+import { fetchChildIssues, fetchDescendantIssues, parentKeyFromFields, parentSummaryFromFields } from "./children.ts";
 import {
   assigneeLabel,
   formatTicketMarkdown,
@@ -82,18 +82,66 @@ export function ticketMarkdownFilename(
   return `${title}${keySuffix}.md`;
 }
 
+/** Safe folder name from a ticket title and key (no `.md` suffix). */
+export function ticketFolderName(
+  fields: Record<string, unknown>,
+  key: string
+): string {
+  return ticketMarkdownFilename(fields, key).replace(/\.md$/, "");
+}
+
 /** On-disk path for `jira pull` under a working directory. */
 export function pulledTicketPath(
   cwd: string,
   fields: Record<string, unknown>,
-  key: string
+  key: string,
+  parent?: { key: string; fields: Record<string, unknown> } | null
 ): string {
-  return path.join(
-    cwd,
+  const typeSlug = issueTypeSlug(issueTypeName(fields));
+  const filename = ticketMarkdownFilename(fields, key);
+
+  if (typeSlug === "story" && parent?.key) {
+    return path.join(
+      cwd,
+      "jira",
+      typeSlug,
+      ticketFolderName(parent.fields, parent.key),
+      filename
+    );
+  }
+
+  return path.join(cwd, "jira", typeSlug, filename);
+}
+
+function resolveStoryParent(
+  fields: Record<string, unknown>
+): { key: string; fields: Record<string, unknown> } | null {
+  if (issueTypeSlug(issueTypeName(fields)) !== "story") return null;
+
+  const parentKey = parentKeyFromFields(fields);
+  if (!parentKey) return null;
+
+  const summary = parentSummaryFromFields(fields);
+  if (summary) {
+    return { key: parentKey, fields: { summary } };
+  }
+
+  const data = runAcliJson([
     "jira",
-    issueTypeSlug(issueTypeName(fields)),
-    ticketMarkdownFilename(fields, key)
-  );
+    "workitem",
+    "view",
+    parentKey,
+    "--fields",
+    "summary",
+    "--json"
+  ]);
+  if (!data || typeof data !== "object") {
+    return { key: parentKey, fields: { summary: parentKey } };
+  }
+
+  const parentFields =
+    (data as { fields?: Record<string, unknown> }).fields ?? {};
+  return { key: parentKey, fields: parentFields };
 }
 
 export type PullOptions = {
@@ -147,7 +195,8 @@ function writePulledIssue(
   const fields = issue.fields ?? {};
   const body = formatTicketMarkdown(key, fields, siteHost, meAccountId).body;
   const prior = localTicketPath(key, cwd);
-  const outPath = pulledTicketPath(cwd, fields, key);
+  const parent = resolveStoryParent(fields);
+  const outPath = pulledTicketPath(cwd, fields, key, parent);
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, body, "utf-8");

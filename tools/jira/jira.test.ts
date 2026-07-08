@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { bulkChildIssuesJql, childIssuesJql, issueTreeKeys } from "./children.ts";
+import { bulkChildIssuesJql, childIssuesJql, issueTreeKeys, parentKeyFromFields, parentSummaryFromFields } from "./children.ts";
 import { parseJiraKey } from "./jiraInput.ts";
 import {
   issueTypeSlug,
   pulledTicketPath,
+  ticketFolderName,
   ticketMarkdownFilename
 } from "./pull.ts";
 import { jiraTicketKeyInMarkdown, parseTicketMarkdown } from "./local.ts";
@@ -13,6 +14,7 @@ import {
   adfToMarkdown,
   assigneeLabel,
   classifyFolder,
+  EPIC_LINK_FIELD,
   featureTeamLabel,
   formatTicketMarkdown,
   isHierarchyRoot,
@@ -29,7 +31,7 @@ describe("JIRA field lists", () => {
       JIRA_PULL_FIELDS,
       `${JIRA_SEARCH_FIELDS},${JIRA_VIEW_EXTRA_FIELDS}`
     );
-    for (const blocked of ["created", "updated", "customfield_10354"]) {
+    for (const blocked of ["created", "updated", "parent", EPIC_LINK_FIELD, "customfield_10354"]) {
       assert.ok(
         !JIRA_SEARCH_FIELDS.split(",").includes(blocked),
         `search fields must not include ${blocked}`
@@ -185,6 +187,46 @@ Body here`;
   });
 });
 
+describe("parentKeyFromFields", () => {
+  it("reads parent key from parent or epic link", () => {
+    assert.equal(
+      parentKeyFromFields({
+        parent: { key: "NOVACORE-1" }
+      }),
+      "NOVACORE-1"
+    );
+    assert.equal(
+      parentKeyFromFields({
+        [EPIC_LINK_FIELD]: "NOVACORE-2"
+      }),
+      "NOVACORE-2"
+    );
+  });
+});
+
+describe("parentSummaryFromFields", () => {
+  it("reads summary from embedded parent fields", () => {
+    assert.equal(
+      parentSummaryFromFields({
+        parent: {
+          key: "NOVACORE-1",
+          fields: { summary: "Parent epic title" }
+        }
+      }),
+      "Parent epic title"
+    );
+  });
+});
+
+describe("ticketFolderName", () => {
+  it("drops the .md suffix from ticket filenames", () => {
+    assert.equal(
+      ticketFolderName({ summary: "Ship it" }, "NOVACORE-1"),
+      "Ship it - NOVACORE-1"
+    );
+  });
+});
+
 describe("pulledTicketPath", () => {
   it("places tickets under jira/<type>/ in cwd", () => {
     const p = pulledTicketPath(
@@ -196,6 +238,25 @@ describe("pulledTicketPath", () => {
       "NOVACORE-1"
     );
     assert.equal(p, "/repo/jira/epic/Ship it - NOVACORE-1.md");
+  });
+
+  it("nests stories under the parent epic folder", () => {
+    const p = pulledTicketPath(
+      "/repo",
+      {
+        issuetype: { name: "Story" },
+        summary: "Child story"
+      },
+      "NOVACORE-2",
+      {
+        key: "NOVACORE-1",
+        fields: { summary: "Parent epic" }
+      }
+    );
+    assert.equal(
+      p,
+      "/repo/jira/story/Parent epic - NOVACORE-1/Child story - NOVACORE-2.md"
+    );
   });
 });
 
