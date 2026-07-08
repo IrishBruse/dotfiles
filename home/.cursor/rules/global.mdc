@@ -10,6 +10,11 @@ alwaysApply: true
   Never run `acli`, `jira`, or `confluence`.
   See the `jira-cli` and `confluence-cli` skills for CLI vs MCP boundaries.
 
+After implementation is complete and before running verification, emit this phase marker on its own in the response with newlines:
+---
+Verifying
+---
+
 # Response
 
 - No emojis. Example: 😀
