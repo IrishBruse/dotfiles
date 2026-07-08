@@ -38,7 +38,7 @@ Custom VS Code UI CSS.
 ### tools/
 
 - `ansii` - Print terminal ANSI colors, styles, and CSI sequences with escape codes beside each sample (`ansii 256`, `ansii 24-bit`, `ansii gradient` for extended palettes)
-- `jira` - Human CLI for local ticket markdown under `./jira/` (`jira pull`, `jira push`, `jira sync`, interactive `jira` in a TTY).
+- `jira` - Human CLI for local ticket markdown under `./jira/` (`jira pull`, `jira push`, `jira sync`).
   `jira board sync` updates `~/.agents/skills/jira-board/` (also used by the dashboard).
   Agents use Atlassian MCP, not `jira` or `acli`.
   See `~/.agents/skills/jira-cli/`.
