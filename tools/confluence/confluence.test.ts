@@ -2,8 +2,19 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import process from "node:process";
 import { describe, it } from "node:test";
 
+import { printHelp } from "./commands/help.ts";
+import { runPullCommand } from "./commands/pull.ts";
+import { runPushCommand } from "./commands/push.ts";
+import {
+  runStatus,
+  runVerify,
+  runVerifyCommand
+} from "./commands/status.ts";
+import { runSyncCommand } from "./commands/sync.ts";
+import { confluenceApiContext } from "./lib/auth.ts";
 import { storageToMarkdown } from "./lib/confluence-storage-to-markdown.ts";
 import { slugifyConfluenceTitle } from "./lib/confluence-slug.ts";
 import { formatPageMarkdown, spaceKeyFromWebui } from "./lib/format.ts";
@@ -45,6 +56,39 @@ function writePage(
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, content, "utf-8");
   return filePath;
+}
+
+function captureStdout(run: () => void): string {
+  const original = process.stdout.write.bind(process.stdout);
+  let out = "";
+  process.stdout.write = ((chunk: string | Uint8Array) => {
+    out += String(chunk);
+    return true;
+  }) as typeof process.stdout.write;
+  try {
+    run();
+  } finally {
+    process.stdout.write = original;
+  }
+  return out;
+}
+
+function pageContent(
+  id: string,
+  title: string,
+  body: string,
+  extra = ""
+): string {
+  return `---
+id: "${id}"
+title: ${JSON.stringify(title)}
+version: 1
+url: https://example.atlassian.net/wiki/spaces/GCE1/pages/${id}/${title}
+syncedHash: ${hashBody(body)}
+${extra}---
+
+${body}
+`;
 }
 
 describe("slugifyConfluenceTitle", () => {
@@ -421,5 +465,173 @@ describe("markdownToStorage", () => {
     });
     assert.match(roundTrip, /## Section/);
     assert.match(roundTrip, /Paragraph text/);
+  });
+});
+
+describe("command dispatch", () => {
+  it("rejects invalid pull and push targets", async () => {
+    assert.equal(
+      await runPullCommand(["node", "confluence", "pull", "not-valid"]),
+      1
+    );
+    assert.equal(
+      await runPushCommand(["node", "confluence", "push", "not-valid"]),
+      1
+    );
+  });
+
+  it("requires a markdown path for sync", async () => {
+    assert.equal(await runSyncCommand(["node", "confluence", "sync"]), 1);
+    assert.equal(
+      await runSyncCommand(["node", "confluence", "sync", "notes.txt"]),
+      1
+    );
+    assert.equal(
+      await runSyncCommand(["node", "confluence", "sync", "missing.md"]),
+      1
+    );
+  });
+});
+
+describe("verify and status commands", () => {
+  it("fails verify when confluence tree is empty", () => {
+    withTempDir((cwd) => {
+      assert.equal(runVerify(cwd), 1);
+      assert.equal(runVerifyCommand(cwd), 1);
+    });
+  });
+
+  it("passes verify for clean pages and fails on relative links", () => {
+    withTempDir((cwd) => {
+      writePage(
+        cwd,
+        "confluence/clean/clean.md",
+        pageContent("1", "Clean", "All good.")
+      );
+      assert.equal(runVerify(cwd), 0);
+
+      writePage(
+        cwd,
+        "confluence/bad/bad.md",
+        pageContent("2", "Bad", "See [x](./other.md).")
+      );
+      assert.equal(runVerify(cwd), 1);
+    });
+  });
+
+  it("fails status when no pages exist", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "confluence-status-test-"));
+    try {
+      assert.equal(await runStatus(dir), 1);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("auth context", () => {
+  it("exposes site host and cloud id from config", () => {
+    const ctx = confluenceApiContext();
+    assert.match(ctx.site, /atlassian\.net$/);
+    assert.equal(typeof ctx.cloudId, "string");
+  });
+});
+
+describe("parsePageMarkdown fields", () => {
+  it("reads optional parentId and spaceKey", () => {
+    const page = parsePageMarkdown(
+      pageContent("3", "Child", "Body", 'parentId: "1"\nspaceKey: "GCE1"\n'),
+      "/tmp/workspace/confluence/child.md",
+      "/tmp/workspace"
+    );
+    assert.ok(page);
+    assert.equal(page!.parentId, "1");
+    assert.equal(page!.spaceKey, "GCE1");
+  });
+});
+
+describe("links metadata", () => {
+  it("records line and column for inline links", () => {
+    const source = "Intro\n\nSee [doc](./page.md) here.";
+    const hits = findRelativeMdLinks(source);
+    assert.equal(hits.length, 1);
+    assert.equal(hits[0]!.line, 3);
+    assert.ok(hits[0]!.column > 0);
+  });
+
+  it("detects image markdown with relative md targets", () => {
+    const hits = findRelativeMdLinks("![alt](./image.md)");
+    assert.equal(hits.length, 1);
+    assert.equal(hits[0]!.href, "./image.md");
+  });
+});
+
+describe("storage macro coverage", () => {
+  it("converts iframe macros to links", () => {
+    const md = storageToMarkdown(
+      '<ac:structured-macro ac:name="iframe"><ac:parameter ac:name="src"><ri:url ri:value="https://example.com/embed" /></ac:parameter></ac:structured-macro>',
+      { siteHost: "example.atlassian.net" }
+    );
+    assert.match(md, /https:\/\/example\.com\/embed/);
+    assert.match(md, /embedded content/);
+  });
+
+  it("converts attachment images and info panels", () => {
+    const md = storageToMarkdown(
+      '<ac:image ac:alt="diagram"><ri:attachment ri:filename="diagram.png" /></ac:image>' +
+        '<ac:structured-macro ac:name="info"><ac:rich-text-body><p>Note</p></ac:rich-text-body></ac:structured-macro>',
+      { siteHost: "example.atlassian.net" }
+    );
+    assert.match(md, /diagram\.png/);
+    assert.match(md, /Note/);
+  });
+
+  it("converts external ri:url links", () => {
+    const md = storageToMarkdown(
+      '<ac:link><ri:url ri:value="https://docs.example.com/guide" /><ac:link-body>Guide</ac:link-body></ac:link>',
+      { siteHost: "example.atlassian.net" }
+    );
+    assert.match(md, /\[Guide\]\(https:\/\/docs\.example\.com\/guide\)/);
+  });
+
+  it("renders simple tables", () => {
+    const md = storageToMarkdown(
+      "<table><tbody><tr><th>A</th><th>B</th></tr><tr><td>1</td><td>2</td></tr></tbody></table>"
+    );
+    assert.match(md, /\| A \| B \|/);
+    assert.match(md, /\| 1 \| 2 \|/);
+  });
+});
+
+describe("markdownToStorage edge cases", () => {
+  it("converts italic text and escapes code fence closers", () => {
+    const storage = markdownToStorage(
+      "*soft*\n\n```\n]]>\n```",
+      "example.atlassian.net"
+    );
+    assert.match(storage, /<em>soft<\/em>/);
+    assert.match(storage, /\]\]\]\]><!\[CDATA\[>/);
+  });
+});
+
+describe("cli output", () => {
+  it("prints help text", () => {
+    const help = captureStdout(() => printHelp());
+    assert.match(help, /confluence pull/);
+    assert.match(help, /confluence verify/);
+  });
+
+  it("prints verify success message", () => {
+    withTempDir((cwd) => {
+      writePage(
+        cwd,
+        "confluence/ok/ok.md",
+        pageContent("5", "Ok", "Fine.")
+      );
+      const out = captureStdout(() => {
+        assert.equal(runVerify(cwd), 0);
+      });
+      assert.match(out, /Verified 1 page\(s\)/);
+    });
   });
 });
