@@ -1,7 +1,7 @@
 {
   "name": "dotfiles-tools",
   "version": "0.1.0",
-  "description": "Dotfiles CLI tools (Jira, Confluence, PR, interpolate, and more)",
+  "description": "Dotfiles CLI tools (Jira, Confluence, interpolate, and more)",
   "private": true,
   "license": "ISC",
   "type": "module",
@@ -14,7 +14,6 @@
     "interpolate": "./.bin/interpolate.js",
     "jira": "./.bin/jira.js",
     "md": "./.bin/md.js",
-    "pr": "./.bin/pr.js",
     "start": "./.bin/start",
     "sprint": "./.bin/sprint.js"
   },
