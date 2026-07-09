@@ -152,11 +152,6 @@
         "command": "workbench.action.createTerminalEditor"
     },
     {
-        "key": "ctrl+v",
-        "command": "workbench.action.terminal.paste",
-        "when": "terminalFocus && !ib-utilities.clipboardHasImage"
-    },
-    {
         "key": "ctrl+shift+i",
         "command": "toggle",
         "args": {

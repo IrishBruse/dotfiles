@@ -4230,11 +4230,6 @@
     },
     {
         "key": "cmd+v",
-        "command": "workbench.action.terminal.paste",
-        "when": "terminalFocus && !ib-utilities.clipboardHasImage"
-    },
-    {
-        "key": "cmd+v",
         "command": "execPaste",
         "when": "isMac && activeEditor == 'workbench.editor.browser'"
     },

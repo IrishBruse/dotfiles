@@ -149,11 +149,6 @@
     },
     {
       "key": "ctrl+v",
-      "command": "workbench.action.terminal.paste",
-      "when": "terminalFocus && !ib-utilities.clipboardHasImage"
-    },
-    {
-      "key": "ctrl+v",
       "command": "execPaste",
       "when": "isMac && activeEditor == 'workbench.editor.browser'"
     },
