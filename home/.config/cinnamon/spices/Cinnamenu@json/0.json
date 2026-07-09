@@ -176,6 +176,9 @@
         "type": "generic",
         "default": [],
         "value": [
+            "cinnamon-settings-keyboard.desktop",
+            "cinnamon-settings-startup.desktop",
+            "gnome-session-properties.desktop",
             "cinnamon-settings-display.desktop",
             "cinnamon-settings-windows.desktop"
         ]
@@ -311,7 +314,7 @@
         "type": "keybinding",
         "description": "Keyboard shortcut to open and close the menu",
         "default": "Super_L::Super_R",
-        "value": "Super_L::Super_R"
+        "value": "Super_R"
     },
     "activate-on-hover": {
         "type": "checkbox",
@@ -459,72 +462,72 @@
             "Sinugboanong Binisaya": "ceb",
             "Svenska": "sv",
             "Deutsch": "de",
-            "Français": "fr",
+            "Fran\u00e7ais": "fr",
             "Nederlands": "nl",
-            "Русский": "ru",
+            "\u0420\u0443\u0441\u0441\u043a\u0438\u0439": "ru",
             "Italiano": "it",
-            "Español": "es",
+            "Espa\u00f1ol": "es",
             "Polski": "pl",
-            "مصرى (Maṣri)": "arz",
-            "日本語": "ja",
-            "Tiếng Việt": "vi",
+            "\u0645\u0635\u0631\u0649 (Ma\u1e63ri)": "arz",
+            "\u65e5\u672c\u8a9e": "ja",
+            "Ti\u1ebfng Vi\u1ec7t": "vi",
             "Winaray": "war",
-            "中文": "zh",
-            "العربية": "ar",
-            "Українська": "uk",
-            "Português": "pt",
-            "فارسی": "fa",
-            "Català": "ca",
-            "Српски / Srpski": "sr",
+            "\u4e2d\u6587": "zh",
+            "\u0627\u0644\u0639\u0631\u0628\u064a\u0629": "ar",
+            "\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430": "uk",
+            "Portugu\u00eas": "pt",
+            "\u0641\u0627\u0631\u0633\u06cc": "fa",
+            "Catal\u00e0": "ca",
+            "\u0421\u0440\u043f\u0441\u043a\u0438 / Srpski": "sr",
             "Bahasa Indonesia": "id",
-            "Norsk (Bokmål)": "no",
-            "한국어": "ko",
+            "Norsk (Bokm\u00e5l)": "no",
+            "\ud55c\uad6d\uc5b4": "ko",
             "Suomi": "fi",
             "Magyar": "hu",
-            "Čeština": "cs",
-            "Srpskohrvatski / Српскохрватски": "sh",
-            "Bân-lâm-gú": "zh-min-nan",
-            "Türkçe": "tr",
-            "Română": "ro",
-            "Нохчийн": "ce",
+            "\u010ce\u0161tina": "cs",
+            "Srpskohrvatski / \u0421\u0440\u043f\u0441\u043a\u043e\u0445\u0440\u0432\u0430\u0442\u0441\u043a\u0438": "sh",
+            "B\u00e2n-l\u00e2m-g\u00fa": "zh-min-nan",
+            "T\u00fcrk\u00e7e": "tr",
+            "Rom\u00e2n\u0103": "ro",
+            "\u041d\u043e\u0445\u0447\u0438\u0439\u043d": "ce",
             "Euskara": "eu",
             "Bahasa Melayu": "ms",
-            "Tatarça / Татарча": "tt",
+            "Tatar\u00e7a / \u0422\u0430\u0442\u0430\u0440\u0447\u0430": "tt",
             "Esperanto": "eo",
-            "עברית": "he",
-            "Հայերեն": "hy",
-            "Български": "bg",
+            "\u05e2\u05d1\u05e8\u05d9\u05ea": "he",
+            "\u0540\u0561\u0575\u0565\u0580\u0565\u0576": "hy",
+            "\u0411\u044a\u043b\u0433\u0430\u0440\u0441\u043a\u0438": "bg",
             "Dansk": "da",
-            "تۆرکجه": "azb",
-            "Slovenčina": "sk",
-            "Қазақша": "kk",
+            "\u062a\u06c6\u0631\u06a9\u062c\u0647": "azb",
+            "Sloven\u010dina": "sk",
+            "\u049a\u0430\u0437\u0430\u049b\u0448\u0430": "kk",
             "Minangkabau": "min",
             "Eesti": "et",
             "Hrvatski": "hr",
-            "Беларуская": "be",
-            "Lietuvių": "lt",
-            "Ελληνικά": "el",
+            "\u0411\u0435\u043b\u0430\u0440\u0443\u0441\u043a\u0430\u044f": "be",
+            "Lietuvi\u0173": "lt",
+            "\u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac": "el",
             "Simple English": "simple",
-            "Azərbaycanca": "az",
+            "Az\u0259rbaycanca": "az",
             "Galego": "gl",
-            "Slovenščina": "sl",
-            "اردو": "ur",
+            "Sloven\u0161\u010dina": "sl",
+            "\u0627\u0631\u062f\u0648": "ur",
             "Nynorsk": "nn",
-            "ქართული": "ka",
-            "हिन्दी": "hi",
-            "தமிழ்": "ta",
-            "ไทย": "th",
-            "O‘zbek": "uz",
+            "\u10e5\u10d0\u10e0\u10d7\u10e3\u10da\u10d8": "ka",
+            "\u0939\u093f\u0928\u094d\u0926\u0940": "hi",
+            "\u0ba4\u0bae\u0bbf\u0bb4\u0bcd": "ta",
+            "\u0e44\u0e17\u0e22": "th",
+            "O\u2018zbek": "uz",
             "Latina": "la",
             "Cymraeg": "cy",
             "Asturianu": "ast",
-            "Volapük": "vo",
-            "粵語": "zh-yue",
-            "Македонски": "mk",
-            "বাংলা": "bn",
-            "Latviešu": "lv",
-            "Тоҷикӣ": "tg",
-            "မြန်မာဘာသာ": "my"
+            "Volap\u00fck": "vo",
+            "\u7cb5\u8a9e": "zh-yue",
+            "\u041c\u0430\u043a\u0435\u0434\u043e\u043d\u0441\u043a\u0438": "mk",
+            "\u09ac\u09be\u0982\u09b2\u09be": "bn",
+            "Latvie\u0161u": "lv",
+            "\u0422\u043e\u04b7\u0438\u043a\u04e3": "tg",
+            "\u1019\u103c\u1014\u103a\u1019\u102c\u1018\u102c\u101e\u102c": "my"
         },
         "tooltip": "Wikipedia language",
         "value": "en"
@@ -538,7 +541,7 @@
         "default": false,
         "description": "Use a custom icon",
         "tooltip": "Use a custom icon in the panel",
-        "value": false
+        "value": true
     },
     "menu-icon": {
         "type": "iconfilechooser",
@@ -602,7 +605,7 @@
         "default": false,
         "description": "Use a custom icon size",
         "tooltip": "Use a custom size for the panel icon",
-        "value": false
+        "value": true
     },
     "menu-icon-size": {
         "type": "spinbutton",
@@ -614,14 +617,14 @@
         "description": "Panel icon size (pixels)",
         "dependency": "menu-icon-size-custom",
         "tooltip": "Choose a custom size for the panel icon",
-        "value": 24
+        "value": 22
     },
     "menu-label": {
         "type": "entry",
         "default": "Menu",
         "description": "Panel text",
         "tooltip": "Text to show beside the panel icon",
-        "value": "Menu"
+        "value": ""
     },
     "category-icon-size": {
         "dependency": "show-categories",
@@ -686,19 +689,19 @@
     },
     "info1": {
         "type": "label",
-        "description": "\n• Drag on the menu edge to change the menu size."
+        "description": "\n\u2022 Drag on the menu edge to change the menu size."
     },
     "info2": {
         "type": "label",
-        "description": "\n• Drag and drop menu categories to change their order."
+        "description": "\n\u2022 Drag and drop menu categories to change their order."
     },
     "info3": {
         "type": "label",
-        "description": "\n• Folders can be set up and removed as menu categories by right-clicking on them."
+        "description": "\n\u2022 Folders can be set up and removed as menu categories by right-clicking on them."
     },
     "info4": {
         "type": "label",
-        "description": "\n• Additional key options:\nctrl-p — Open launcher properties dialogue of currently highlighted application.\nctrl-d — Open .desktop file of currently highlighted app in default text editor.\n"
+        "description": "\n\u2022 Additional key options:\nctrl-p \u2014 Open launcher properties dialogue of currently highlighted application.\nctrl-d \u2014 Open .desktop file of currently highlighted app in default text editor.\n"
     },
     "__md5__": "61df6c575553cd652c4e71b734bcc85b"
 }
