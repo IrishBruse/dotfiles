@@ -45,13 +45,7 @@ Use this markdown body for Jira descriptions:
 
 ## Local Draft
 
-Save the draft using the workspace artifact conventions in [`../local-draft.md`](../local-draft.md).
-
-Path:
-
-`jira/story/<parent title - NOVACORE-XXXXX>/<story title - NOVACORE-YYYYY>.md`
-
-Before Jira create, omit the story key from the filename and use the draft title instead.
+Save the draft using the workspace artifact conventions.
 
 Every new Jira file must include frontmatter:
 
