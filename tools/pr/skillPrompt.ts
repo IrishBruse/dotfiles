@@ -10,9 +10,12 @@ const INLINED_SKILL_NOTE =
 
 const SKILL_DIR = "pr";
 
-const BRANCH_REFS: Record<PrSkillBranch, string> = {
-  compose: path.join(SKILL_DIR, "body-format.md"),
-  fix: path.join(SKILL_DIR, "fix.md")
+const BRANCH_REFS: Record<PrSkillBranch, string[]> = {
+  compose: [
+    path.join(SKILL_DIR, "compose.md"),
+    path.join(SKILL_DIR, "body-format.md")
+  ],
+  fix: [path.join(SKILL_DIR, "fix.md")]
 };
 
 function stripFrontMatter(text: string): string {
@@ -55,12 +58,11 @@ export function inlinedSkillLines(branch: PrSkillBranch): string[] {
   const lines = [
     INLINED_SKILL_NOTE,
     "",
-    readSkillFile(path.join(SKILL_DIR, "SKILL.md")),
-    "",
-    readSkillFile(BRANCH_REFS[branch]),
-    "",
-    "---",
-    ""
+    readSkillFile(path.join(SKILL_DIR, "SKILL.md"))
   ];
+  for (const ref of BRANCH_REFS[branch]) {
+    lines.push("", readSkillFile(ref));
+  }
+  lines.push("", "---", "");
   return lines;
 }
