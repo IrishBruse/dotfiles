@@ -1,6 +1,7 @@
 # PR fix branch
 
-Diagnose from inlined workflow and review context, apply scoped fixes, push, and re-check until checks pass and review feedback is addressed or you hit a blocker.
+Diagnose from inlined workflow and review context, apply scoped fixes, and push.
+Re-check until checks pass and review feedback is addressed or you hit a blocker.
 
 ## Signals
 
