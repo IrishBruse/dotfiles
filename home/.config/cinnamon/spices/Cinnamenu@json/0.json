@@ -176,10 +176,10 @@
         "type": "generic",
         "default": [],
         "value": [
+            "cinnamon-settings-keyboard.desktop",
             "cinnamon-settings-startup.desktop",
             "mintupdate.desktop",
             "org.gnome.DiskUtility.desktop",
-            "cinnamon-settings-keyboard.desktop",
             "gnome-session-properties.desktop",
             "cinnamon-settings-display.desktop",
             "cinnamon-settings-windows.desktop"
