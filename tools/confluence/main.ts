@@ -13,10 +13,6 @@ import { parsePageId } from "./lib/pageInput.ts";
 import { printError } from "./lib/output.ts";
 
 export async function main(argv: string[] = process.argv): Promise<void> {
-  if (process.env.CURSOR_AGENT === "1") {
-    printError("this tool is not to be used by an agent");
-    process.exit(1);
-  }
   const arg = argv[2];
   if (arg === "-h" || arg === "--help") {
     printHelp();
