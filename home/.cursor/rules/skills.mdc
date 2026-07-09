@@ -7,25 +7,7 @@ alwaysApply: false
 # Skill authoring
 
 Load `writing-great-skills` when authoring or editing a skill.
-
-## Frontmatter description
-
-Write `description` as a plain short string with a minimal usage example.
-Use a normal YAML string, not block scalars (`>`, `|`, `>-`, `|-`, or variants).
-
-Good:
-
-```yaml
-description: Create or update a GitHub pull request title and body from the current branch. Use when opening or updating a pull request.
-```
-
-Weak:
-
-```yaml
-description: >
-  Create or update a GitHub pull request title and body from the current branch.
-  Use when opening or updating a pull request.
-```
+`postToolUse` style-lint enforces plain `description` strings, `~/` runtime paths (not `home/`), and ASCII-only prose.
 
 ## Self-contained
 
@@ -40,26 +22,3 @@ In repo skills, reference only skills that ship with that repo, not personal glo
 
 Use `1.`, `2.`, ... only for short sequences where each item fits on one line.
 When items wrap or the list grows, break into `### Step 1` headings with detail in paragraphs underneath.
-
-Good:
-
-```markdown
-### Step 1
-
-Confirm scope with the user.
-Stop and wait for a reply before continuing.
-
-### Step 2
-
-Write `plan.md` from the confirmed scope.
-```
-
-Weak:
-
-```markdown
-1. Confirm scope with the user. Stop and wait for a reply before continuing.
-2. Write `plan.md` from the confirmed scope.
-3. Implement only after the user approves the plan.
-4. Run the quality gate before finishing.
-5. Update `plan.md` if decisions change during implementation.
-```
