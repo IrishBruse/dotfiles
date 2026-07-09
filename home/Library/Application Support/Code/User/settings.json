@@ -1655,5 +1655,13 @@
       "args": ["acp"]
     }
   ],
-  "ib-acp-ui.toolCallVerbosity": "compact"
+  "ib-acp-ui.toolCallVerbosity": "compact",
+  "yaml.disableSchemaDetection": [
+    "**/.github/workflows/*.yml",
+    "**/.github/workflows/*.yaml",
+    "**/.gitea/workflows/*.yml",
+    "**/.gitea/workflows/*.yaml",
+    "**/.forgejo/workflows/*.yml",
+    "**/.forgejo/workflows/*.yaml"
+  ]
 }
