@@ -42,12 +42,14 @@ You run **Cinnamon 6.7.4 on Wayland**, but these user services are **enabled** a
 | `hypridle.service` | SIGABRT crash loop (needs Hyprland compositor) |
 | `swaync.service` | Fails to own `org.freedesktop.Notifications` (Cinnamon already has it) |
 | `hyprpolkitagent.service` | Also crashing at login |
+| `waybar.service` | Starts a Hyprland status bar on Cinnamon (Hyprland starts it via `startup.lua` instead) |
 
 Installed **2026-01-06** with the Hyprland PPA stack. Cinnamon's idle monitor then logs repeated `Failed to acquire idle monitor proxy: Timeout was reached` in `~/.xsession-errors`, likely tied to this conflict.
 
 **Fix (if you're staying on Cinnamon):**
 
 ```bash
+systemctl --user mask waybar.service
 systemctl --user disable --now hypridle swaync hyprpolkitagent
 ```
 
