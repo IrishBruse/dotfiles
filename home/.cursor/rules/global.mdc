@@ -9,7 +9,7 @@ See the `jira-cli` and `confluence-cli` skills for CLI vs MCP boundaries.
 
 # Preferences
 
-Always `,` over `;`.
+Always use `,` not `;`.
 Prefer ASCII over Unicode.
 No em/en dash.
 No emojis 😀.
