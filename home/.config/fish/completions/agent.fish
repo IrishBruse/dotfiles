@@ -1,11 +1,9 @@
 # Cursor `agent` CLI completions (fish)
 # Skills: ~/.cursor/skills, ~/.agents/skills, $PWD/.cursor/skills, git root .cursor/skills, …
-# Global /-skill list (plain text, one name per line; must start with /; # comments):
-#   ~/dotfiles/home/.config/fish/global-skills.txt
 # Skill picks: /name only — @ prefixes file refs; no bare filenames in completions (use -f)
 
 function __fish_agent_skill_roots
-    set -l roots ~/.cursor/skills ~/.agents/skills $HOME/dotfiles/home/.agents/skills
+    set -l roots ~/.cursor/skills ~/.agents/skills
 
     # Workspace: cwd (e.g. open project) and git top-level when cwd is a subfolder
     set -l bases $PWD
@@ -54,11 +52,6 @@ function __fish_agent_skills
     end
 end
 
-function __fish_agent_global_skills_list_file
-    set -l def $HOME/dotfiles/home/.config/fish/global-skills.txt
-    test -f $def; and path resolve $def
-end
-
 function __fish_agent_skill_pick_files
     set -l bases $PWD
     set -l gitroot (command git -C $PWD rev-parse --show-toplevel 2>/dev/null)
@@ -84,8 +77,6 @@ function __fish_agent_skill_pick_files
 end
 
 function __fish_agent_all_skill_list_files
-    set -l g (__fish_agent_global_skills_list_file)
-    test -n "$g"; and printf '%s\n' $g
     for f in (__fish_agent_skill_pick_files)
         printf '%s\n' $f
     end
@@ -282,9 +273,11 @@ complete -c agent -n '__fish_agent_last_token_is mcp' -f -a 'login list list-too
 # help (after `agent help …`)
 complete -c agent -n '__fish_agent_last_token_is help' -f -a "$__fish_agent_subcmds"
 
-# --- Shortcuts from ~/.config/fish/config.fish ---
-complete -c ac -w agent
+# --- Shortcuts from ~/.config/fish/conf.d/agent.fish ---
 complete -c a -w 'agent agent'
 complete -c a -f -n __fish_agent_typing_interpolate_template -a '(__fish_agent_interpolate_completions)'
-complete -c ap -w 'agent --mode=plan agent'
 complete -c aa -w 'agent --mode=ask agent'
+complete -c ap -w 'agent --mode=plan agent'
+complete -c ac -w 'agent --continue agent'
+complete -c ag -w 'agent --model=gpt-5.6-terra agent'
+complete -c ao -w 'agent --model=claude-opus-4-8-thinking-medium agent'
