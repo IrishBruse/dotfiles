@@ -50,7 +50,6 @@ Custom VS Code UI CSS.
 - `interpolate` - Expand markdown prompt templates (builtins, env, conditions, shell snippets)
 - `md` - Render piped or file markdown in the terminal
 - `endpoint` - Local HTTP catch-all that appends each request as one JSONL line; prints only the listen URL
-- `memory` - Scoped agent lessons under `~/.agents/memory/` (`global.json`, `repos/<repo>.json`, `misc/<path>.json`; `-g` for global). Run bare `memory` at session start; `add`, `view`, `rm`
 - `dotfiles` - Stow `home/` into ~ with a colored summary (linked, removed, unchanged)
 - `start` - Detect project type (npm, Go, .NET) and exec the dev server with color env preserved
 - `sprint` - Print previous, current, and next sprint date blocks, `sprint <n>` for one sprint, or `sprint YYYY-MM-DD` for the sprint containing that date
