@@ -145,6 +145,18 @@ function __fish_agent_should_suggest_skills
     __fish_agent_is_subagent_prompt; or __fish_agent_is_continue_prompt
 end
 
+set -g __fish_agent_aliases a aa ap ac ag ao
+
+function __fish_agent_is_alias_cmd
+    set -l cl (commandline -opc)
+    test (count $cl) -ge 1; or return 1
+    contains -- $cl[1] $__fish_agent_aliases
+end
+
+function __fish_agent_alias_should_suggest_skills
+    __fish_agent_is_alias_cmd
+end
+
 function __fish_agent_typing_at_ref
     string match -qr '^@' -- (commandline -ct)
 end
@@ -274,10 +286,9 @@ complete -c agent -n '__fish_agent_last_token_is mcp' -f -a 'login list list-too
 complete -c agent -n '__fish_agent_last_token_is help' -f -a "$__fish_agent_subcmds"
 
 # --- Shortcuts from ~/.config/fish/conf.d/agent.fish ---
-complete -c a -w 'agent agent'
+for _alias in $__fish_agent_aliases
+    complete -c $_alias -f
+    complete -c $_alias -f -n '__fish_agent_alias_should_suggest_skills; and not __fish_agent_typing_at_ref' -a '(__fish_agent_skills)'
+    complete -c $_alias -f -n '__fish_agent_alias_should_suggest_skills; and __fish_agent_typing_at_ref' -a '(__fish_agent_at_file_refs)'
+end
 complete -c a -f -n __fish_agent_typing_interpolate_template -a '(__fish_agent_interpolate_completions)'
-complete -c aa -w 'agent --mode=ask agent'
-complete -c ap -w 'agent --mode=plan agent'
-complete -c ac -w 'agent --continue agent'
-complete -c ag -w 'agent --model=gpt-5.6-terra agent'
-complete -c ao -w 'agent --model=claude-opus-4-8-thinking-medium agent'
