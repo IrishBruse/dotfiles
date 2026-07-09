@@ -53,7 +53,7 @@ projects/
 
 plugins/
 
-!.gitignore
+rules/gp-rules.mdc
 
 # User-level cursor hooks (lint markdown and cursor rule files)
 !hooks.json

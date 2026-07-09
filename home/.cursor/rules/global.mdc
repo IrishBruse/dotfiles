@@ -7,16 +7,15 @@ alwaysApply: true
 If you run into an auth issue dont try and get around it stop and ask.
 See the `jira-cli` and `confluence-cli` skills for CLI vs MCP boundaries.
 
-# Response
+# Preferences
 
-No emojis.
-Example: 😀.
-Always prefer `,` over `;` in english text.
-Always use plain ASCII no Unicode.
-Example: no em/en dash.
+Always `,` over `;`.
+Prefer ASCII over Unicode.
+No em/en dash.
+No emojis 😀.
 
-# Files
+# Code
 
+YAGNI:
 Do not create a new file for just 1 or 2 functions there needs to be a justification.
 Example: reuse thats needed not a possible reuse in the future.
-In markdown files always add a newline `\n` after a `.` instead of making a very long single line.
