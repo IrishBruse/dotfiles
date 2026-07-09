@@ -79,7 +79,6 @@ busybox-static,1:1.36.1-6ubuntu3.1
 bzip2,1.0.8-5.1build0.1
 ca-certificates,20260601~24.04.1
 caddy,2.6.2-6ubuntu0.24.04.3
-casper,1.498
 catdoc,1:0.95-5build1
 cava,0.7.4-1build2
 ccache,4.9.1-1
@@ -102,7 +101,6 @@ clang,1:18.0-59~exp2
 clang-15,1:15.0.7-14build3
 clang-19,1:19.1.7-1ubuntu2~kisak~n
 clinfo,3.0.23.01.25-1build1
-cliphist,0.4.0-2ubuntu0.3
 cloc,1.98-1
 cmake,3.28.3-1build7
 cmake-extras,1.7-2
@@ -142,7 +140,7 @@ cups-ipp-utils,2.4.7-1.2ubuntu7.14
 cups-pk-helper,0.2.6-1ubuntu8
 cups-ppdc,2.4.7-1.2ubuntu7.14
 cups-server-common,2.4.7-1.2ubuntu7.14
-curl,8.5.0-2ubuntu10.10
+curl,8.5.0-2ubuntu10.11
 cursor,3.5.33-1779434134
 dash,0.5.12-6ubuntu5
 dbus,1.14.10-4ubuntu4.1
@@ -166,7 +164,6 @@ debianutils,5.17build1
 debtree,1.1.2
 default-jdk-headless,2:1.21-75+exp1
 desktop-file-utils,0.27-2build1
-devtoys,2.0.9
 devtoys.cli,2.0.9
 dhcpcd-base,1:10.0.6-1ubuntu3.2
 dialog,1.3-20240101-1
@@ -703,10 +700,10 @@ libcups2t64,2.4.7-1.2ubuntu7.14
 libcupsfilters2-common,2.0.0-0ubuntu7.2
 libcupsfilters2t64,2.0.0-0ubuntu7.2
 libcupsimage2t64,2.4.7-1.2ubuntu7.14
-libcurl3t64-gnutls,8.5.0-2ubuntu10.10
-libcurl3t64-gnutls,8.5.0-2ubuntu10.10
-libcurl4t64,8.5.0-2ubuntu10.10
-libcurl4t64,8.5.0-2ubuntu10.10
+libcurl3t64-gnutls,8.5.0-2ubuntu10.11
+libcurl3t64-gnutls,8.5.0-2ubuntu10.11
+libcurl4t64,8.5.0-2ubuntu10.11
+libcurl4t64,8.5.0-2ubuntu10.11
 libcvc0,6.7.2
 libcvc-dbg,6.7.2
 libcwidget4,0.5.18-6build1
@@ -1589,7 +1586,6 @@ libva-wayland2,2.23.0-1~24.04~ppa5
 libva-x11-2,2.23.0-1~24.04~ppa5
 libva-x11-2,2.23.0-1~24.04~ppa5
 libvdpau1,1.5-2build1
-libvdpau1,1.5-2build1
 libvdpau-dev,1.5-2build1
 libvidstab1.1,1.1.0-2build1
 libvisio-0.1-1,0.1.7-1build9
@@ -1825,8 +1821,6 @@ linux-firmware,20240318.git3b128b60-0ubuntu2.27
 linux-generic-7.0,7.0.0-14.14~24.04.3
 linux-headers-6.18.18-061818,6.18.18-061818.202603131642
 linux-headers-6.18.18-061818-generic,6.18.18-061818.202603131642
-linux-headers-6.19.10-061910,6.19.10-061910.202603251147
-linux-headers-6.19.10-061910-generic,6.19.10-061910.202603251147
 linux-headers-7.0.0-14-generic,7.0.0-14.14~24.04.3
 linux-headers-generic-7.0,7.0.0-14.14~24.04.3
 linux-hwe-6.11-headers-6.11.0-17,6.11.0-17.17~24.04.2
@@ -1852,11 +1846,9 @@ linux-hwe-7.0-tools-7.0.0-14,7.0.0-14.14~24.04.3
 linux-image-7.0.0-14-generic,7.0.0-14.14~24.04.3
 linux-image-generic-7.0,7.0.0-14.14~24.04.3
 linux-image-unsigned-6.18.18-061818-generic,6.18.18-061818.202603131642
-linux-image-unsigned-6.19.10-061910-generic,6.19.10-061910.202603251147
 linux-libc-dev,6.8.0-134.134
 linuxmint-keyring,2022.06.21
 linux-modules-6.18.18-061818-generic,6.18.18-061818.202603131642
-linux-modules-6.19.10-061910-generic,6.19.10-061910.202603251147
 linux-modules-7.0.0-14-generic,7.0.0-14.14~24.04.3
 linux-sound-base,1.0.25+dfsg-0ubuntu7
 linux-tools-6.11.0-17-generic,6.11.0-17.17~24.04.2
@@ -1882,7 +1874,7 @@ lsof,4.95.0-1build3
 lto-disabled-list,47
 ltrace,0.7.3-6.4ubuntu3
 lua5.4,5.4.6-3build2
-lutris,0.5.20
+lutris,0.5.22
 lvm2,2.03.16-3ubuntu3.2
 mailcap,3.70+nmu1ubuntu1.24.04.1
 mainline,1.4.13-0~202505020443~ubuntu24.04.1
@@ -2369,7 +2361,6 @@ wireless-regdb,2025.10.07-0ubuntu1~24.04.1
 wireless-tools,30~pre9-16.1ubuntu2
 wireplumber,0.4.17-1ubuntu4.1
 wireshark,4.2.2-1.1build3
-wl-clipboard,2.2.1-1build1
 wlogout,1.1.1-3build2
 wmctrl,1.07-7ubuntu3
 wpasupplicant,2:2.10-21ubuntu0.4
