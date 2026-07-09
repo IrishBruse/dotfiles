@@ -1,6 +1,7 @@
 ---
 name: docs-from-code
 description: Audits and aligns user-facing docs to match code as the source of truth. Use when checking doc drift, filling doc gaps.
+disable-model-invocation: true
 ---
 
 # Docs from code
