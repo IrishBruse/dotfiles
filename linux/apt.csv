@@ -141,7 +141,7 @@ cups-pk-helper,0.2.6-1ubuntu8
 cups-ppdc,2.4.7-1.2ubuntu7.14
 cups-server-common,2.4.7-1.2ubuntu7.14
 curl,8.5.0-2ubuntu10.11
-cursor,3.5.33-1779434134
+cursor,3.10.20-1783409369
 dash,0.5.12-6ubuntu5
 dbus,1.14.10-4ubuntu4.1
 dbus-bin,1.14.10-4ubuntu4.1
@@ -1819,8 +1819,6 @@ lightdm-settings,2.1.1
 linux-base,4.5ubuntu9+24.04.2
 linux-firmware,20240318.git3b128b60-0ubuntu2.27
 linux-generic-7.0,7.0.0-14.14~24.04.3
-linux-headers-6.18.18-061818,6.18.18-061818.202603131642
-linux-headers-6.18.18-061818-generic,6.18.18-061818.202603131642
 linux-headers-7.0.0-14-generic,7.0.0-14.14~24.04.3
 linux-headers-generic-7.0,7.0.0-14.14~24.04.3
 linux-hwe-6.11-headers-6.11.0-17,6.11.0-17.17~24.04.2
@@ -1845,10 +1843,8 @@ linux-hwe-7.0-headers-7.0.0-14,7.0.0-14.14~24.04.3
 linux-hwe-7.0-tools-7.0.0-14,7.0.0-14.14~24.04.3
 linux-image-7.0.0-14-generic,7.0.0-14.14~24.04.3
 linux-image-generic-7.0,7.0.0-14.14~24.04.3
-linux-image-unsigned-6.18.18-061818-generic,6.18.18-061818.202603131642
 linux-libc-dev,6.8.0-134.134
 linuxmint-keyring,2022.06.21
-linux-modules-6.18.18-061818-generic,6.18.18-061818.202603131642
 linux-modules-7.0.0-14-generic,7.0.0-14.14~24.04.3
 linux-sound-base,1.0.25+dfsg-0ubuntu7
 linux-tools-6.11.0-17-generic,6.11.0-17.17~24.04.2
@@ -2361,6 +2357,7 @@ wireless-regdb,2025.10.07-0ubuntu1~24.04.1
 wireless-tools,30~pre9-16.1ubuntu2
 wireplumber,0.4.17-1ubuntu4.1
 wireshark,4.2.2-1.1build3
+wl-clipboard,2.2.1-1build1
 wlogout,1.1.1-3build2
 wmctrl,1.07-7ubuntu3
 wpasupplicant,2:2.10-21ubuntu0.4
