@@ -13,7 +13,7 @@ export function printHelp(): void {
       "",
       "  pr fix checks CI and unresolved review comments on the current PR,",
       "  injects failed workflow logs and review threads, and runs the",
-      "  pr-fix skill to repair merge-blocking failures and feedback.",
+      "  pr skill fix branch to repair merge-blocking failures and feedback.",
       "",
       "Commands:",
       "  fix          Fix failed PR checks, workflows, and review comments",

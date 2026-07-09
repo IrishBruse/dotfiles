@@ -10,7 +10,7 @@ export function buildUpdatePrompt(
   prTarget?: string
 ): string {
   const lines = [
-    ...inlinedSkillLines("pr"),
+    ...inlinedSkillLines("compose"),
     "Context below was collected at prompt time. Use it as the latest state; do not re-run git or gh to gather it.",
     "",
     `Repo: ${repoRoot}`,

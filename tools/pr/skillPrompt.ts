@@ -3,14 +3,17 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-export type PrSkillName = "pr" | "pr-fix";
+export type PrSkillBranch = "compose" | "fix";
 
 const INLINED_SKILL_NOTE =
-  "Do not read any PR-related skills (pr, pr-fix) or their reference files. Their instructions are inlined below.";
+  "Do not read any PR-related skills (pr) or their reference files. Their instructions are inlined below.";
 
-const BODY_FORMAT_REF = path.join("pr", "body-format.md");
+const SKILL_DIR = "pr";
 
-const COMPOSE_SKILLS: PrSkillName[] = ["pr"];
+const BRANCH_REFS: Record<PrSkillBranch, string> = {
+  compose: path.join(SKILL_DIR, "body-format.md"),
+  fix: path.join(SKILL_DIR, "fix.md")
+};
 
 function stripFrontMatter(text: string): string {
   const lines = text.split("\n");
@@ -48,15 +51,16 @@ function readSkillFile(relPath: string): string {
 }
 
 /** Inlined skill instructions to place at the top of a `pr` agent prompt. */
-export function inlinedSkillLines(skillName: PrSkillName): string[] {
+export function inlinedSkillLines(branch: PrSkillBranch): string[] {
   const lines = [
     INLINED_SKILL_NOTE,
     "",
-    readSkillFile(path.join(skillName, "SKILL.md"))
+    readSkillFile(path.join(SKILL_DIR, "SKILL.md")),
+    "",
+    readSkillFile(BRANCH_REFS[branch]),
+    "",
+    "---",
+    ""
   ];
-  if (COMPOSE_SKILLS.includes(skillName)) {
-    lines.push("", readSkillFile(BODY_FORMAT_REF));
-  }
-  lines.push("", "---", "");
   return lines;
 }

@@ -22,7 +22,7 @@ export function buildFixPrompt(
   prTarget?: string
 ): FixPrompt {
   const lines = [
-    ...inlinedSkillLines("pr-fix"),
+    ...inlinedSkillLines("fix"),
     "Context below was collected at prompt time. Use it as the latest state; do not re-run git or gh to gather it.",
     "",
     `Repo: ${repoRoot}`,
