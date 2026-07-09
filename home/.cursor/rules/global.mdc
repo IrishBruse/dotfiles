@@ -4,10 +4,7 @@ alwaysApply: true
 
 **Users Name:** Ethan Conneely
 
-Always run a full quality gate before finishing.
 If you run into an auth issue dont try and get around it stop and ask.
-For Jira and Confluence, use Atlassian MCP on agent turns.
-Never run `acli`, `jira`, or `confluence`.
 See the `jira-cli` and `confluence-cli` skills for CLI vs MCP boundaries.
 
 # Response
