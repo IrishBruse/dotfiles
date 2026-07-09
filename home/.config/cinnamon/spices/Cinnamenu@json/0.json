@@ -152,15 +152,14 @@
             "Office",
             "Other",
             "Development",
+            "Science",
             "Multimedia",
             "Administration",
             "Preferences",
             "places",
             "recents",
             "emoji:",
-            "/home/econn",
-            "wine-wine",
-            "Science"
+            "/home/econn"
         ]
     },
     "custom-menu-width": {
@@ -177,19 +176,8 @@
         "type": "generic",
         "default": [],
         "value": [
-            "cinnamon-settings-keyboard.desktop",
-            "transmission-gtk.desktop",
-            "SteamVR.desktop",
-            "steam.desktop",
-            "cinnamon-display-panel.desktop",
-            "cinnamon-settings-windows.desktop",
-            "google-chrome.desktop",
-            "gimp.desktop",
-            "code.desktop",
-            "dev.lizardbyte.app.Sunshine.desktop",
-            "com.discordapp.Discord.desktop:flatpak",
-            "sticky.desktop",
-            "io.github.Soundux.desktop:flatpak"
+            "cinnamon-settings-display.desktop",
+            "cinnamon-settings-windows.desktop"
         ]
     },
     "search-start-folder": {
@@ -550,7 +538,7 @@
         "default": false,
         "description": "Use a custom icon",
         "tooltip": "Use a custom icon in the panel",
-        "value": true
+        "value": false
     },
     "menu-icon": {
         "type": "iconfilechooser",
@@ -633,7 +621,7 @@
         "default": "Menu",
         "description": "Panel text",
         "tooltip": "Text to show beside the panel icon",
-        "value": ""
+        "value": "Menu"
     },
     "category-icon-size": {
         "dependency": "show-categories",

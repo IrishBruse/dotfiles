@@ -42,7 +42,7 @@
             "title": "Behavior",
             "keys": [
                 "group-apps",
-                "scroll-behavior",
+                "list-scroll-behavior",
                 "left-click-action",
                 "middle-click-action",
                 "show-all-workspaces",
@@ -67,7 +67,8 @@
                 "launcher-animation-effect",
                 "enable-window-count-badges",
                 "enable-notification-badges",
-                "enable-app-button-dragging"
+                "enable-app-button-dragging",
+                "enable-click-to-slide"
             ]
         },
         "thumbnailsSection": {
@@ -111,16 +112,17 @@
         "description": "Group windows by application",
         "value": false
     },
-    "scroll-behavior": {
+    "list-scroll-behavior": {
         "type": "combobox",
-        "default": 1,
+        "default": 4,
         "description": "Mouse wheel scroll action",
         "options": {
             "None": 1,
             "Cycle apps": 2,
-            "Cycle windows": 3
+            "Cycle windows": 3,
+            "Slide app list": 4
         },
-        "value": 1
+        "value": 4
     },
     "left-click-action": {
         "type": "combobox",
@@ -230,6 +232,13 @@
         "default": true,
         "description": "Enable app button dragging",
         "value": true
+    },
+    "enable-click-to-slide": {
+        "type": "checkbox",
+        "default": false,
+        "description": "Enable click to slide when slide buttons are visible",
+        "tooltip": "When enabled, clicking the slide buttons at either end of the app list will scroll the list in that direction. When disabled, the list will scroll when the mouse pointer hovers over the slide buttons.",
+        "value": false
     },
     "thumbnail-scroll-behavior": {
         "type": "checkbox",
@@ -367,5 +376,5 @@
         ],
         "value": []
     },
-    "__md5__": "3df0dfb46c743f29a6405292b645807a"
+    "__md5__": "1839a7494b9497b2b137c080673a1e57"
 }
