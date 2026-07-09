@@ -1,8 +1,6 @@
 ---
 name: pr
 description: Create, update, or fix the current GitHub pull request. Compose opens or edits title and body, fix repairs red CI and unresolved review comments.
-disable-model-invocation: true
-user-invocable: false
 ---
 
 # PR
