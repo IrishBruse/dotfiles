@@ -20,7 +20,6 @@ This is your **first step**.
 - Read the local markdown file when it is already present.
 - When it is missing, use Atlassian MCP to inspect the live ticket, then ask the user to run `jira pull <KEY>` so the repo has a local copy.
   See the `jira-cli` skill.
-- Never run `jira`, `confluence`, or `acli` from an agent turn.
 
 This applies to every route, including subcommands and `/jira update`.
 After a Jira write, ask the user to run `jira pull <KEY>` (or `jira sync`) so the local file matches the live ticket.
