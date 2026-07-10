@@ -13,9 +13,12 @@
         "runOn": "folderOpen"
       },
       "presentation": {
-        "reveal": "silent",
-        "panel": "dedicated",
-        "showReuseMessage": false
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
       }
     },
     {
@@ -29,9 +32,12 @@
         "runOn": "folderOpen"
       },
       "presentation": {
-        "reveal": "silent",
-        "panel": "dedicated",
-        "showReuseMessage": false
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
       }
     },
     {
@@ -44,9 +50,12 @@
       },
       "isBackground": true,
       "presentation": {
-        "reveal": "silent",
-        "panel": "dedicated",
-        "showReuseMessage": false
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
       },
       "problemMatcher": {
         "owner": "dashboard",
