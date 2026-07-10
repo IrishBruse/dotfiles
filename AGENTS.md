@@ -8,16 +8,6 @@ In docs and tool code, use the **runtime** path under `~/`, not the repo path un
 Example: `~/.agents/skills/jira-board/`, not `home/.agents/skills/jira-board/` or `dotfiles/home/.agents/...`.
 Tools should resolve these with `homedir()` from `node:os`, not relative paths from `tools/` into the dotfiles tree.
 
-### linux/
-
-- `apt.csv` packages backup
-- `flatpak.csv` packages backup
-
-### macos/
-
-- `Brewfile` brew package backup
-- `open.ts` syncs Brewfile on workspace open
-
 ### home/.config/Code/User/settings.json
 
 Linux vscode settings
@@ -31,44 +21,9 @@ Macos vscode settings
 TypeScript and JSON used to generate VS Code keybindings.
 `gen.ts` is running in a watcher skip running.
 
-### vscode/theme
-
-Custom VS Code UI CSS.
-
-### tools/
-
-- `ansii` - Print terminal ANSI colors, styles, and CSI sequences with escape codes beside each sample (`ansii 256`, `ansii 24-bit`, `ansii gradient` for extended palettes)
-- `jira` - Human CLI for local ticket markdown under `./jira/` (`jira pull`, `jira push`, `jira sync`).
-  `jira board sync` updates `~/.agents/skills/jira-board/` (also used by the dashboard).
-  Agents use Atlassian MCP, not `jira` or `acli`.
-  See `~/.agents/skills/jira-cli/`.
-- `confluence` - Human CLI for local Confluence markdown under `./confluence/`.
-  Commands: `confluence pull`, `confluence push`, `confluence sync <path.md>`, `confluence status`, `confluence verify`.
-  Agents use Atlassian MCP, not `confluence` or `acli`.
-  See `~/.agents/skills/confluence-cli/`.
-- `pr` - GitHub pull request helper: auto create or update via Cursor agent skills; `pr fix` for failed CI
-- `interpolate` - Expand markdown prompt templates (builtins, env, conditions, shell snippets)
-- `md` - Render piped or file markdown in the terminal
-- `endpoint` - Local HTTP catch-all that appends each request as one JSONL line; prints only the listen URL
-- `dotfiles` - Stow `home/` into ~ with a colored summary (linked, removed, unchanged)
-- `start` - Detect project type (npm, Go, .NET) and exec the dev server with color env preserved
-- `sprint` - Print previous, current, and next sprint date blocks, `sprint <n>` for one sprint, or `sprint YYYY-MM-DD` for the sprint containing that date
-
 ### Skills
 
 Agent skills live in two stowed locations under `home/`, mirrored to `~/`.
 
 - `home/.agents/skills/` -> `~/.agents/skills/` - general-purpose, cross-project skills
-  (`cli-tool`, `jest`, `docs-from-code`, `pr`, `jira-cli`, `confluence-cli`, `jira-board`, etc.).
-  Reusable on any repo, no G-P specifics.
-
 - `home/.cursor/skills/` -> `~/.cursor/skills/` - **Work only skills**
-
-
-### dashboard
-
-Local start page Vite app at `dashboard/` (React + TypeScript).
-Dev and preview listen on port `54321`.
-Run `npm run dev`, `build`, or `preview` from that directory.
-The VS Code **Dashboard** task starts the dev server on folder open.
-See `dashboard/AGENTS.md` for UI style guide.
