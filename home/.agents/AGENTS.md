@@ -24,8 +24,8 @@ Optional frontmatter: `paths` (glob patterns to scope the skill to matching file
 
 ## Atlassian access
 
-Agents use **Atlassian MCP** for live Jira and Confluence data and writes.
+Agents use the `jira` and `confluence` CLIs or **Atlassian MCP** for live Jira and Confluence data and writes.
 
-- Never run `acli`, `jira`, or `confluence` from an agent turn.
-- The `jira-cli` and `confluence-cli` skills document what the human CLIs do and how MCP maps to each need.
+- Never run `acli` or other Atlassian shell wrappers.
+- The `atlassian-cli` skill documents the CLIs and how MCP maps to each need.
 - Jira ticket workflow gates live in the `jira` skill under `~/.agents/jira/`.

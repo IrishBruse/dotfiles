@@ -5,7 +5,7 @@ alwaysApply: true
 **Users Name:** Ethan Conneely
 
 If you run into an auth issue dont try and get around it stop and ask.
-See the `jira-cli` and `confluence-cli` skills for CLI vs MCP boundaries.
+See the `atlassian-cli` skill for CLI vs MCP boundaries.
 
 # Preferences
 
