@@ -29,11 +29,59 @@ function settingsPath(): string {
   throw new Error("VS Code settings.json not found");
 }
 
+function stripJsoncComments(text: string): string {
+  let result = "";
+  let i = 0;
+
+  while (i < text.length) {
+    const ch = text[i];
+    const next = text[i + 1];
+
+    if (ch === '"') {
+      result += ch;
+      i++;
+      while (i < text.length) {
+        result += text[i];
+        if (text[i] === "\\") {
+          i++;
+          if (i < text.length) {
+            result += text[i];
+          }
+        } else if (text[i] === '"') {
+          break;
+        }
+        i++;
+      }
+      i++;
+      continue;
+    }
+
+    if (ch === "/" && next === "/") {
+      i += 2;
+      while (i < text.length && text[i] !== "\n") {
+        i++;
+      }
+      continue;
+    }
+
+    if (ch === "/" && next === "*") {
+      i += 2;
+      while (i < text.length && !(text[i] === "*" && text[i + 1] === "/")) {
+        i++;
+      }
+      i += 2;
+      continue;
+    }
+
+    result += ch;
+    i++;
+  }
+
+  return result;
+}
+
 function parseJsonc(text: string): unknown {
-  const stripped = text
-    .replace(/\/\*[\s\S]*?\*\//g, "")
-    .replace(/^\s*\/\/.*$/gm, "");
-  return JSON.parse(stripped);
+  return JSON.parse(stripJsoncComments(text));
 }
 
 function scopeMatches(scope: string | string[], needle: string): boolean {
