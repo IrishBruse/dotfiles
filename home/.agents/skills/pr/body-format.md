@@ -62,6 +62,18 @@ Keep it glanceable but technical:
 - Write bullets as reviewer-facing facts about inputs, outputs, compatibility, defaults, migrations, or generated artifacts.
 - Omit speculative impact and avoid naming unrelated contracts just to say they did not change.
 
+### Screenshots
+
+Always include this section at the end of the body, after optional topical and contract sections.
+
+Leave it empty for the author to add images later.
+Do not describe, invent, or link to screenshots.
+
+```markdown
+## Screenshots
+
+```
+
 ### Exclusions
 
 Do not include test checklists, TODOs, Jira metadata, or conversational filler (e.g., "In this PR, I fixed...").
