@@ -12,13 +12,13 @@ If a later step changes code, loop back to **Step 2** before push.
 
 ### Step 1: Draft PR proper
 
-Follow [`pr.md`](pr.md).
+Follow **Step 1** in [`pr.md`](pr.md).
 
 **Done when:** an open draft PR exists with a non-placeholder title and body.
 
 ### Step 2: Description accuracy
 
-Follow the **update** path in [`pr.md`](pr.md).
+Follow **Step 2** in [`pr.md`](pr.md).
 Compare title and body to `git diff origin/main`, fix drift, stale sections, invented scope, or missing contract changes.
 
 **Done when:** title and body accurately describe what ships in the diff.
@@ -29,7 +29,7 @@ Read and follow the `code-review` skill on the branch diff.
 Apply high-conviction simplifications in scope, skip nits that do not improve structure.
 
 **Done when:** no unresolved structural issues from code-review remain.
-If any remain, each must be explicitly justified in a short note to yourself (not in the Slack message).
+If any remain, each must be justified as a PR review comment or PR body note, not in the final chat.
 
 ### Step 4: Extra checks
 
