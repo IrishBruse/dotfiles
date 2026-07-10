@@ -177,12 +177,14 @@
         "default": [],
         "value": [
             "cinnamon-settings-startup.desktop",
+            "cinnamon-settings-fonts.desktop",
+            "org.gnome.font-viewer.desktop",
+            "cinnamon-settings-windows.desktop",
             "cinnamon-settings-keyboard.desktop",
             "mintupdate.desktop",
             "org.gnome.DiskUtility.desktop",
             "gnome-session-properties.desktop",
-            "cinnamon-settings-display.desktop",
-            "cinnamon-settings-windows.desktop"
+            "cinnamon-settings-display.desktop"
         ]
     },
     "search-start-folder": {

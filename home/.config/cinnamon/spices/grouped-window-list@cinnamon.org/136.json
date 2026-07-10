@@ -141,7 +141,7 @@
             "Launch new app instance": 2,
             "Close last focused window in group": 3
         },
-        "value": 1
+        "value": 3
     },
     "show-all-workspaces": {
         "type": "checkbox",
