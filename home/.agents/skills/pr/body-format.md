@@ -49,7 +49,8 @@ Skip topical sections entirely when the summary already explains the change well
 
 ### Contract changes (Optional)
 
-Include this section when the diff changes schemas, API behavior, generated files, environment variables, persisted data, deployment output, or externally consumed metadata.
+Include this section when the diff changes schemas, API behavior, generated files, environment variables,
+persisted data, deployment output, or externally consumed metadata.
 If none of those changed, omit it.
 
 Keep it glanceable but technical:
@@ -66,11 +67,15 @@ Keep it glanceable but technical:
 
 Always include this section at the end of the body, after optional topical and contract sections.
 
-Leave it empty.
+For UI changes, embed captured screenshots here with short captions.
+Leave it empty only when there is no reviewer-visible UI behavior to verify.
 Terminal evidence is posted as a separate PR comment (see Evidence in `compose.md`).
 
 ```markdown
 ## Screenshots
+
+<caption>
+![<alt text>](<uploaded image URL>)
 
 ```
 

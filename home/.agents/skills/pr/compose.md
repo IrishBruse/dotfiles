@@ -49,4 +49,30 @@ Skip this step when there is nothing to verify.
 
 Completion: every block in the comment maps to output you actually ran and captured this session.
 
+### UI
 
+Embed UI screenshots in the PR body when the diff has reviewer-visible UI behavior to verify.
+Examples include layout, visual state, interactions, or screenshots requested by the user.
+Put them in the `## Screenshots` section per `body-format.md`.
+
+Skip this step when there is no UI behavior to verify.
+
+Stop and report a blocker instead of faking evidence when:
+
+- the app URL is missing and no local dev server is reachable
+- the browser cannot load the app
+- login, MFA, consent, or account choice blocks access
+- a screenshot is blank, stale, or not from this session
+
+1. Load and follow the `browser-use` skill before any browser work.
+2. Resolve the target URL from the diff, running dev server, or user input.
+3. Navigate and interact with `browser-use`, then call `capture_screenshot()` for each reviewer-relevant state.
+4. Save each PNG under a temp directory outside the git working tree, for example `/tmp/pr-ui-evidence/`.
+5. Upload each PNG with the environment's supported GitHub image upload flow and note the returned URL.
+6. Add each screenshot to the PR body `## Screenshots` section.
+   Each entry gets a short caption (route, state, interaction) followed by the image.
+   Do not include file paths, implementation detail, or invented UI.
+7. Apply the body with `gh pr create` or `gh pr edit` as described above.
+
+Completion: every image in the PR body is a real screenshot captured this session, and each has a caption.
+The `## Screenshots` section is empty only when there is no UI behavior to verify.
