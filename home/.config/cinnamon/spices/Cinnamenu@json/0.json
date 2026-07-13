@@ -176,8 +176,8 @@
         "type": "generic",
         "default": [],
         "value": [
-            "cinnamon-settings-keyboard.desktop",
             "nemo.desktop",
+            "cinnamon-settings-keyboard.desktop",
             "cinnamon-settings-startup.desktop",
             "cinnamon-settings-fonts.desktop",
             "org.gnome.font-viewer.desktop",
