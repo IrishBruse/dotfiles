@@ -8,7 +8,7 @@ usage() {
 install-cinnamon-github-release.sh - install Cinnamon from GitHub release archives
 
 Usage:
-  install-cinnamon-github-release.sh [options]
+  sudo install-cinnamon-github-release.sh [options]
 
 Options:
   --tag TAG         Release tag to install (default: master.mint<N> from /etc/linuxmint/info)
@@ -16,10 +16,9 @@ Options:
   --keep-work-dir   Do not delete the work dir on success
   --with-dbg        Install all -dbg packages from the archives (default: upgrade only installed -dbg)
   --download-only   Download archives only, do not install
-  --sudo            Use sudo instead of pkexec for privileged commands
   -h, --help        Show this help
 
-Requires: curl, tar, dpkg, pkexec or sudo, and network access to github.com.
+Requires: curl, tar, dpkg, sudo, and network access to github.com.
 EOF
 }
 
@@ -28,11 +27,13 @@ die() {
     exit 1
 }
 
-run_privileged() {
-    if [[ "$USE_SUDO" == "1" ]]; then
-        sudo "$@"
-    else
-        pkexec "$@"
+require_root() {
+    if [[ "$(id -u)" -ne 0 ]]; then
+        local args=""
+        if [[ ${#ORIG_ARGS[@]} -gt 0 ]]; then
+            printf -v args ' %q' "${ORIG_ARGS[@]}"
+        fi
+        die "run with sudo: sudo $0$args"
     fi
 }
 
@@ -94,7 +95,7 @@ WORK_DIR=""
 KEEP_WORK_DIR=0
 WITH_DBG=0
 DOWNLOAD_ONLY=0
-USE_SUDO=0
+ORIG_ARGS=("$@")
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -111,21 +112,16 @@ while [[ $# -gt 0 ]]; do
         --keep-work-dir) KEEP_WORK_DIR=1; shift ;;
         --with-dbg) WITH_DBG=1; shift ;;
         --download-only) DOWNLOAD_ONLY=1; shift ;;
-        --sudo) USE_SUDO=1; shift ;;
         -h|--help) usage; exit 0 ;;
         *) die "unknown argument: $1 (use --help)" ;;
     esac
 done
 
+require_root
+
 command -v curl >/dev/null || die "curl is required"
 command -v tar >/dev/null || die "tar is required"
 command -v dpkg >/dev/null || die "dpkg is required"
-
-if [[ "$USE_SUDO" == "1" ]]; then
-    command -v sudo >/dev/null || die "sudo is required with --sudo"
-else
-    command -v pkexec >/dev/null || die "pkexec is required (or pass --sudo)"
-fi
 
 [[ -n "$TAG" ]] || TAG="$(default_release_tag)"
 
@@ -182,9 +178,9 @@ remove_stale_local_muffin() {
     local libdir=/usr/local/lib/x86_64-linux-gnu
     if [[ -e "$libdir/libmuffin.so.0" || -d "$libdir/muffin" ]]; then
         echo "Removing stale /usr/local muffin libraries ..."
-        run_privileged rm -f "$libdir"/libmuffin.so*
-        run_privileged rm -rf "$libdir/muffin"
-        run_privileged ldconfig
+        rm -f "$libdir"/libmuffin.so*
+        rm -rf "$libdir/muffin"
+        ldconfig
     fi
 }
 
@@ -206,24 +202,26 @@ dbg_debs_to_install() {
         fi
     done
 
-    printf '%s\n' "${dbg_debs[@]}"
+    if [[ ${#dbg_debs[@]} -gt 0 ]]; then
+        printf '%s\n' "${dbg_debs[@]}"
+    fi
 }
 
 install_debs() {
     local -a debs=()
     mapfile -t debs < <(resolve_debs INSTALL_PATTERNS)
 
-    echo "Installing ${#debs[@]} packages with $( [[ "$USE_SUDO" == "1" ]] && echo sudo || echo pkexec ) ..."
-    run_privileged dpkg -i "${debs[@]}"
+    echo "Installing ${#debs[@]} packages ..."
+    dpkg -i "${debs[@]}"
 
     local -a dbg_debs=()
     mapfile -t dbg_debs < <(dbg_debs_to_install)
     if [[ ${#dbg_debs[@]} -gt 0 ]]; then
         echo "Installing ${#dbg_debs[@]} debug packages ..."
-        run_privileged dpkg -i "${dbg_debs[@]}"
+        dpkg -i "${dbg_debs[@]}"
     fi
 
-    run_privileged apt-get check
+    apt-get check
 }
 
 verify_install() {

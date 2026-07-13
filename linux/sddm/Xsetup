@@ -1,0 +1,34 @@
+#!/bin/bash
+# Xsetup - run as root before the SDDM login dialog appears.
+# Keep the greeter on the main display only, turn other outputs off.
+
+if [ -e /sbin/prime-offload ]; then
+    /sbin/prime-offload
+fi
+
+# Matches primary in ~/.config/cinnamon-monitors.xml
+PRIMARY_OUTPUT="DP-1"
+
+connected_outputs() {
+    xrandr | awk '/ connected / { print $1 }'
+}
+
+primary_is_connected() {
+    connected_outputs | grep -qx "$PRIMARY_OUTPUT"
+}
+
+if ! primary_is_connected; then
+    PRIMARY_OUTPUT="$(connected_outputs | head -n 1)"
+fi
+
+if [ -z "$PRIMARY_OUTPUT" ]; then
+    exit 0
+fi
+
+for output in $(connected_outputs); do
+    if [ "$output" != "$PRIMARY_OUTPUT" ]; then
+        xrandr --output "$output" --off
+    fi
+done
+
+xrandr --output "$PRIMARY_OUTPUT" --primary --auto --pos 0x0
