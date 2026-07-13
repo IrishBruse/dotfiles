@@ -64,6 +64,8 @@ brew "pandoc"
 brew "pngpaste"
 # Interpreted, interactive, object-oriented programming language
 brew "python@3.10"
+# Interpreted, interactive, object-oriented programming language
+brew "python@3.12"
 # Search tool like grep and The Silver Searcher
 brew "ripgrep"
 # Powerful, clean, object-oriented scripting language
@@ -124,6 +126,7 @@ go "github.com/josharian/impl"
 go "jgh"
 go "honnef.co/go/tools/cmd/staticcheck"
 go "github.com/neilpa/yajsv"
+uv "browser-use"
 npm "corepack"
 npm "dotfiles-tools"
 npm "versions"
