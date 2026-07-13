@@ -20,4 +20,4 @@ YAGNI:
 Do not create a new file for just 1 or 2 functions there needs to be a justification.
 
 All subagents must use `composer-2.5` for the model.
-Use subagents for code implementation to speed up implementation time.
+After planning a chunk of work **ALWAYS** use subagents for code implementation to speed up implementation time.
