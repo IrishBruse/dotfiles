@@ -91,6 +91,10 @@
     },
     {
       "key": "ctrl+e",
+      "command": "-workbench.action.quickOpen"
+    },
+    {
+      "key": "ctrl+e",
       "command": "workbench.view.explorer"
     },
     {
