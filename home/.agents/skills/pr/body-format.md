@@ -67,9 +67,8 @@ Keep it glanceable but technical:
 
 Always include this section at the end of the body, after optional topical and contract sections.
 
-For UI changes, embed captured screenshots here with short captions.
-Leave it empty only when there is no reviewer-visible UI behavior to verify.
-Terminal evidence is posted as a separate PR comment (see Evidence in `compose.md`).
+Use this section for screenshots when another skill has captured them.
+Leave it empty when no screenshots are provided.
 
 ```markdown
 ## Screenshots
