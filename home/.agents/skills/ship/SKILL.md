@@ -56,9 +56,9 @@ Stop and report a blocker instead of faking evidence when:
 - login, MFA, consent, or account choice blocks access
 - a screenshot is blank, stale, or not from this session
 
-1. Load and follow the `browser-use` skill before any browser work.
+1. Load and follow the `agent-browser` skill before any browser work.
 2. Resolve the target URL from the diff, running dev server, or user input.
-3. Navigate and interact with `browser-use`, then call `capture_screenshot()` for each new feature.
+3. Navigate and interact with `agent-browser`, then run `agent-browser screenshot <path>` for each new feature.
    Capture one screenshot for each feature's main reviewer-visible state.
 4. Save each PNG under a temp directory outside the git working tree, for example `/tmp/pr-ui-evidence/`.
 5. Upload each PNG with the environment's supported GitHub image upload flow and note the returned URL.
