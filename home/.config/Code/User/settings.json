@@ -1296,7 +1296,8 @@
     "workbench.action.terminal.newWithProfile",
     "workbench.action.terminal.paste",
     "workbench.action.terminal.startVoice",
-    "workbench.action.terminal.stopVoice"
+    "workbench.action.terminal.stopVoice",
+    "workbench.view.explorer"
   ],
   "terminal.integrated.cursorBlinking": true,
   "terminal.integrated.cursorStyle": "line",
@@ -1654,5 +1655,9 @@
     "**/.gitea/workflows/*.yaml",
     "**/.forgejo/workflows/*.yml",
     "**/.forgejo/workflows/*.yaml"
-  ]
+  ],
+  "[skill]": {
+    "diffEditor.ignoreTrimWhitespace": true
+  },
+  "diffEditor.hideUnchangedRegions.enabled": true
 }

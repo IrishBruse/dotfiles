@@ -4172,6 +4172,10 @@
     },
     {
         "key": "cmd+e",
+        "command": "-workbench.action.quickOpen"
+    },
+    {
+        "key": "cmd+e",
         "command": "workbench.view.explorer"
     },
     {
