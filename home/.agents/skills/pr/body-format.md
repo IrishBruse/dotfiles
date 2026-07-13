@@ -66,8 +66,8 @@ Keep it glanceable but technical:
 
 Always include this section at the end of the body, after optional topical and contract sections.
 
-Leave it empty for the author to add images later.
-Do not describe, invent, or link to screenshots.
+Leave it empty.
+Terminal evidence is posted as a separate PR comment (see Evidence in `compose.md`).
 
 ```markdown
 ## Screenshots

@@ -1,11 +1,11 @@
 ---
 name: pr
-description: Create, update, or fix the current GitHub pull request. Compose opens or edits title and body, fix repairs red CI and unresolved review comments.
+description: Create, update, or fix the current GitHub pull request. Compose title, body, and terminal evidence comment. Fix repairs red CI and unresolved review comments.
 ---
 
 # PR
 
-Work on the current branch pull request: **compose** title and body, or **fix** merge-blocking CI and review feedback.
+Work on the current branch pull request: **compose** title and body plus terminal evidence comment, or **fix** merge-blocking CI and review feedback.
 
 ## Branch
 

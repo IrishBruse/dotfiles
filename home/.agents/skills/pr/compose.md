@@ -30,3 +30,23 @@ Update:
 ```bash
 gh pr edit --title "<title>" --body "<body>"
 ```
+
+## Evidence
+
+### Api
+
+Post terminal evidence as a PR comment when the diff has reviewer-visible behavior to verify (API responses, CLI output, dev-server logs).
+
+1. Run each verification command and capture the real stdout from this session.
+2. Build the comment body: one `<details><summary>command</summary>` block per command, with a fenced code block of the captured output inside.
+3. Post it:
+
+```bash
+gh pr comment --body "<evidence>"
+```
+
+Skip this step when there is nothing to verify.
+
+Completion: every block in the comment maps to output you actually ran and captured this session.
+
+
