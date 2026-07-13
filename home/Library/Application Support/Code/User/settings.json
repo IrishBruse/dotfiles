@@ -1653,9 +1653,7 @@
     {
       "name": "Cursor",
       "command": "/Users/econneely/.local/bin/agent",
-      "args": [
-        "acp"
-      ]
+      "args": ["acp"]
     }
   ],
   "ib-acp-ui.toolCallVerbosity": "compact",
@@ -1666,5 +1664,9 @@
     "**/.gitea/workflows/*.yaml",
     "**/.forgejo/workflows/*.yml",
     "**/.forgejo/workflows/*.yaml"
-  ]
+  ],
+  "[skill]": {
+    "diffEditor.ignoreTrimWhitespace": true
+  },
+  "diffEditor.hideUnchangedRegions.enabled": true
 }
