@@ -80,6 +80,15 @@ Look for feature logic leaking into shared paths, implementation details leaking
 
 Push code toward the module that already owns the concept and reuse the canonical helper instead of normalizing architectural drift.
 
+### Locality and component extraction
+
+Look for behavior living far from the feature, route, or component that owns it, and broad folders that mix unrelated concepts.
+Flag React components that combine state, data shaping, layout, and repeated UI into one hard-to-reuse block.
+
+Push behavior into the smallest local folder that owns it.
+Extract React components when a section has a stable responsibility, repeated structure, or reusable UI contract.
+Keep feature-specific behavior beside the component that uses it instead of promoting it to shared space too early.
+
 ### Orchestration and atomicity
 
 Look for independent work serialized for no good reason, and related updates that can leave state half-applied.
@@ -93,9 +102,10 @@ Prioritize findings in this order:
 1. Structural regressions and missed code-judo simplifications
 2. Spaghetti / branching complexity
 3. Boundary, abstraction, and type-contract problems
-4. Performance issues on hot paths
-5. File-size and decomposition
-6. Dead code, low-information comments, and remaining legibility concerns
+4. Folder locality, component extraction, and reuse problems
+5. Performance issues on hot paths
+6. File-size and decomposition
+7. Dead code, low-information comments, and remaining legibility concerns
 
 Prefer a small number of high-conviction comments over a long list of cosmetic nits. Do not flood the review with low-value notes when larger structural issues exist.
 
@@ -112,6 +122,8 @@ Good phrases:
 - `this abstraction seems unnecessary. can we just keep the direct flow?`
 - `why does this need a cast / optional here? can we make the boundary more explicit instead?`
 - `this looks like a bespoke helper for something we already have elsewhere. can we reuse the canonical one?`
+- `this behavior is far from the feature that owns it. can we move it beside the component or route that uses it?`
+- `this component is carrying state, data shaping, and layout. can we extract the reusable UI pieces and keep the behavior local?`
 - `i think there's a code-judo move here that makes this much simpler. can we reframe this so these branches disappear?`
 - `this refactor moves complexity around, but doesn't really delete it. is there a way to make the model itself simpler?`
 - `this comment just restates the code. can we drop it or explain the intent instead?`
@@ -120,6 +132,7 @@ Good phrases:
 
 ## Approval bar
 
-Do not approve merely because behavior seems correct. Approve only when none of the concerns above fire: no structural regression, no visible missed code-judo move, no unjustified file-size explosion, no spaghetti growth, no magic or thin abstraction, no wrapper/cast/optionality churn obscuring the design, no boundary leak or canonical-helper duplication, no swallowed errors, no hot-path performance regression, and no dead code or low-information comments left behind.
+Do not approve merely because behavior seems correct.
+Approve only when none of the concerns above fire: no structural regression, no visible missed code-judo move, no unjustified file-size explosion, no spaghetti growth, no magic or thin abstraction, no wrapper/cast/optionality churn obscuring the design, no boundary leak or canonical-helper duplication, no misplaced behavior, no overgrown React component that should be extracted, no swallowed errors, no hot-path performance regression, and no dead code or low-information comments left behind.
 
 If any fire and the author cannot justify them, leave explicit, actionable feedback and push for a cleaner decomposition.

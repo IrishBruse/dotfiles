@@ -62,6 +62,8 @@ Keep it glanceable but technical:
 - Write the lead sentence as a plain statement of which external surface changed.
 - Write bullets as reviewer-facing facts about inputs, outputs, compatibility, defaults, migrations, or generated artifacts.
 - Omit speculative impact and avoid naming unrelated contracts just to say they did not change.
+- For API behavior changes, include concise request/response examples in this section.
+  Use real examples captured from this branch, not test commands or generic verification output.
 
 ### Screenshots
 

@@ -30,7 +30,8 @@ Capture reviewer evidence for behavior that ships in the diff.
 #### Terminal
 
 Post terminal evidence as a PR comment when the diff has reviewer-visible behavior to verify.
-Examples include API responses, CLI output, or dev-server logs.
+Examples include CLI output or dev-server logs.
+When the diff changes API behavior, put concise request/response examples in the PR body `Contract changes` section.
 
 1. Run each verification command and capture the real stdout from this session.
 2. Build the comment body: one `<details><summary>command</summary>` block per command.
@@ -61,7 +62,8 @@ Stop and report a blocker instead of faking evidence when:
 3. Navigate and interact with `agent-browser`, then run `agent-browser screenshot <path>` for each new feature.
    Capture one screenshot for each feature's main reviewer-visible state.
 4. Save each PNG under a temp directory outside the git working tree, for example `/tmp/pr-ui-evidence/`.
-5. Upload each PNG with the environment's supported GitHub image upload flow and note the returned URL.
+5. Upload each PNG with `gh image` and note the returned URL.
+   Run from the repo workspace: `gh image /tmp/pr-ui-evidence/example.png --repo owner/repo`.
 6. Add each screenshot to the PR body `## Screenshots` section.
    Each entry gets a short caption (route, state, interaction) followed by the image.
    Put minor UI changes in a `### Minor Changes` subsection at the bottom of `## Screenshots`.
