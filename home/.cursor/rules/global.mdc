@@ -4,20 +4,11 @@ alwaysApply: true
 
 **Users Name:** Ethan Conneely
 
-If you run into an auth issue dont try and get around it stop and ask.
-See the `atlassian-cli` skill for CLI vs MCP boundaries.
-
-# Preferences
-
 Always use `,` not `;`.
 Prefer ASCII over Unicode.
 No em/en dash.
 No emojis 😀.
 
-# Code
-
-YAGNI:
-Do not create a new file for just 1 or 2 functions there needs to be a justification.
-
+If you run into an auth issue dont try and get around it stop and ask.
+See the `atlassian-cli` skill for CLI vs MCP boundaries.
 All subagents must use `composer-2.5` for the model.
-After planning a chunk of work **ALWAYS** use subagents for code implementation to speed up implementation time.
