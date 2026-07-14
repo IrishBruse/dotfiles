@@ -1,2 +1,4 @@
 !local.fish
 secrets.fish
+linux/apt.csv
+linux/flatpaks.csv
