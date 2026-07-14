@@ -178,7 +178,7 @@ Avoid bare `wait 2000` except when debugging - it makes scripts slow and flaky. 
 ### Log in
 
 ```bash
-agent-browser open https://app.example.com/login
+agent-browser open https://example.com/
 agent-browser snapshot -i
 
 # Pick the email/password refs out of the snapshot, then:
@@ -192,7 +192,7 @@ agent-browser snapshot -i
 Credentials in shell history are a leak. For anything sensitive, use the auth vault (see [references/authentication.md](references/authentication.md)):
 
 ```bash
-agent-browser auth save my-app --url https://app.example.com/login \
+agent-browser auth save my-app --url https://example.com/ \
   --username user@example.com --password-stdin
 # (type password, Ctrl+D)
 
@@ -205,7 +205,7 @@ If credentials live in an external vault, use a configured credential provider p
 agent-browser plugin add agent-browser-plugin-vault --name vault
 agent-browser plugin list
 agent-browser auth login my-app --credential-provider vault --item "My App"
-agent-browser auth login my-app --credential-provider vault --item "My App" --url https://app.example.com/login --username-selector "#email" --password-selector "#password"
+agent-browser auth login my-app --credential-provider vault --item "My App" --url https://example.com/ --username-selector "#email" --password-selector "#password"
 ```
 
 Plugins can also provide browser providers, launch mutators such as stealth setup, and arbitrary namespaced commands:
