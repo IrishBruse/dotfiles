@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
-# Install the Cinnamon desktop stack from Linux Mint GitHub release archives.
+# Install the Cinnamon desktop stack and mintupdate from Linux Mint GitHub release archives.
 # Replicates the flow used to upgrade to Cinnamon 6.7.x on Mint 22.
+# mintupdate master.mint22 includes b73a008 (Wayland tray re-activation fix).
 set -euo pipefail
 
 usage() {
     cat <<'EOF'
-install-cinnamon-github-release.sh - install Cinnamon from GitHub release archives
+install-cinnamon-github-release.sh - install Cinnamon and mintupdate from GitHub release archives
 
 Usage:
-  sudo install-cinnamon-github-release.sh [options]
+  install-cinnamon-github-release.sh [options]
 
 Options:
   --tag TAG         Release tag to install (default: master.mint<N> from /etc/linuxmint/info)
@@ -29,11 +30,8 @@ die() {
 
 require_root() {
     if [[ "$(id -u)" -ne 0 ]]; then
-        local args=""
-        if [[ ${#ORIG_ARGS[@]} -gt 0 ]]; then
-            printf -v args ' %q' "${ORIG_ARGS[@]}"
-        fi
-        die "run with sudo: sudo $0$args"
+        command -v sudo >/dev/null || die "sudo is required"
+        exec sudo "${BASH_SOURCE[0]}" "${ORIG_ARGS[@]}"
     fi
 }
 
@@ -57,6 +55,8 @@ REPOS=(
     cinnamon-settings-daemon
     cinnamon-screensaver
     cinnamon
+    xapp
+    mintupdate
 )
 
 # Bottom-up install order from the 6.7 stack upgrade.
@@ -78,6 +78,10 @@ INSTALL_PATTERNS=(
     cinnamon-screensaver/packages/cinnamon-screensaver_*.deb
     cinnamon/packages/cinnamon-common_*.deb
     cinnamon/packages/cinnamon_*.deb
+    xapp/packages/xapps-common_*.deb
+    xapp/packages/libxapp1_*.deb
+    xapp/packages/gir1.2-xapp-1.0_*.deb
+    mintupdate/packages/mintupdate_*.deb
 )
 
 DBG_PATTERNS=(
