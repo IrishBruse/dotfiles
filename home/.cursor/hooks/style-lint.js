@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// postToolUse hook: warn the agent about global.mdc and skills.mdc style issues after writes.
+// postToolUse hook: warn the agent about global.mdc and writing-great-skills style issues after writes.
 
 const { lint: lintProseSemicolons } = require("./style-lint/prose-semicolons");
 const { lint: lintLongLines } = require("./style-lint/long-lines");
@@ -14,12 +14,11 @@ const {
   readWrittenContent,
 } = require("./style-lint/io");
 
-const SKILL_PATH =
-  /(?:^|\/)(?:\.agents\/skills\/.+\/SKILL\.md|\.cursor\/skills\/.+\/SKILL\.md)$/i;
+const AGENTS_OR_CURSOR_PATH = /(?:^|\/)\.(?:cursor|agents)\//;
 
 function isSkillFile(filePath) {
   const normalized = filePath.replace(/\\/g, "/");
-  return SKILL_PATH.test(normalized) && normalized.endsWith("SKILL.md");
+  return AGENTS_OR_CURSOR_PATH.test(normalized);
 }
 
 function runLints(content, filePath) {
@@ -30,7 +29,7 @@ function runLints(content, filePath) {
   warnings.push(...lintProseSemicolons(content));
   warnings.push(...lintLongLines(content));
 
-  // skills.mdc: SKILL.md only
+  // writing-great-skills: SKILL.md only
   if (skill) {
     warnings.push(...lintDescriptionBlock(content));
     warnings.push(...lintHomeRepoPaths(content));
@@ -64,7 +63,7 @@ async function main() {
 
     const { warnings, skill } = runLints(content, filePath);
     if (warnings.length > 0) {
-      const source = skill ? "global.mdc, skills.mdc" : "global.mdc";
+      const source = skill ? "global.mdc, writing-great-skills" : "global.mdc";
       warnAgent(filePath, warnings, source);
       return;
     }

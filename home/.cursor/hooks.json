@@ -3,21 +3,15 @@
   "hooks": {
     "beforeShellExecution": [
       {
-        "command": "./hooks/block-acli.js",
+        "command": "node ./hooks/block-acli.js",
         "failClosed": true
       }
     ],
     "preToolUse": [
       {
-        "command": "./hooks/block-acli.js",
+        "command": "node ./hooks/block-acli.js",
         "matcher": "^Shell$",
         "failClosed": true
-      }
-    ],
-    "sessionStart": [
-      {
-        "command": "./hooks/sprint-id-cache.js",
-        "timeout": 15
       }
     ],
     "postToolUse": [

@@ -1,6 +1,6 @@
 ---
 name: writing-great-skills
-description: Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable.
+description: Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable. Use when authoring or editing a skill, SKILL.md structure, or skill frontmatter.
 ---
 
 A skill exists to wrangle determinism out of a stochastic system. **Predictability** — the agent taking the same _process_ every run, not producing the same output — is the root virtue; every lever below serves it.
@@ -42,12 +42,26 @@ Push too little down and the top bloats; push too much and you hide material the
 
 Where the ladder decides _how far down_ a piece sits, **co-location** decides _what sits beside it_ once there: keep a concept's definition, rules, and caveats under one heading rather than scattered, so reading one part brings its neighbours with it.
 
+### Step formatting
+
+Use `1.`, `2.`, ... only for short sequences where each **step** fits on one line.
+When items wrap or the list grows, break into `### Step 1` headings with detail in paragraphs underneath.
+
 ## When to split
 
 **Granularity** is how finely you divide skills, and each cut spends one of the two loads, so split only when the cut earns it. Two cuts:
 
 - **By invocation** — split off a **model-invoked** skill when you have a distinct **leading word** that should trigger it on its own, or another skill must reach it. You pay **context load** for the new always-loaded **description**, so that independent reach has to be worth it.
 - **By sequence** — split a run of **steps** when the steps still ahead (a step's **post-completion steps**) tempt the agent to rush the one in front of it (**premature completion**). Keeping them out of view encourages the agent to do more **legwork** on the current task.
+
+## Self-contained
+
+Keep each skill self-contained.
+Pull in or duplicate another skill's guidance only when the user asks to align with it, or when extending linkage the skill already has.
+Write rules directly, skip provenance or mirroring labels on sections.
+
+Reference other skills by name in backticks (`skill-name-here`), not by file path.
+In repo skills, reference only skills that ship with that repo, not personal global skills other teammates may lack.
 
 ## Pruning
 
