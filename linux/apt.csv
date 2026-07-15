@@ -2295,7 +2295,7 @@ wayland-utils,1.2.0-1build1
 wbritish,2020.12.07-2
 webapp-manager,1.4.6
 webp-pixbuf-loader,0.2.4-2build2
-wget,1.21.4-1ubuntu4.1
+wget,1.21.4-1ubuntu4.3
 whiptail,0.52.24-2ubuntu2
 winbind,2:4.19.5+dfsg-4ubuntu9.6
 wine32,9.0~repack-4build3
