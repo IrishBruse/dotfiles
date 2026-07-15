@@ -32,9 +32,9 @@ Each `Added`, `Changed`, or `Removed` line must be short and scannable:
 
 Examples:
 
-- **Added:** Metadata audit fields
-- **Changed:** Share enrichment flow
-- **Removed:** Inline metadata parsing
+- Added: Metadata audit fields
+- Changed: Share enrichment flow
+- Removed: Inline metadata parsing
 
 ### Feature And API ## Sections
 
