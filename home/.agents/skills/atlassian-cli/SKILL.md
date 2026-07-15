@@ -1,18 +1,20 @@
 ---
 name: atlassian-cli
-description: Runs the `jira` and `confluence` CLIs and Atlassian MCP. Use for local `jira/` or `confluence/` markdown or live Jira and Confluence data.
+description: Runs the `jira` and `confluence` CLIs and Confluence MCP. Use for local `jira/` or `confluence/` markdown or live Jira and Confluence data.
 ---
 
 # Atlassian CLI
 
-Use the `jira` or `confluence` CLI, or Atlassian MCP, for Jira and Confluence work.
-Never run `acli` or other Atlassian shell wrappers.
+Use the `jira` or `confluence` CLI for Jira and Confluence work.
+Use Atlassian MCP for Confluence reads and writes when the CLI is not enough.
+Never run bare `acli`. Use `jira` or `jira acli` for Jira, and `confluence` for Confluence.
 Ticket workflow gates live in the `jira` skill.
 
 ## Surfaces
 
-- **CLI** (`jira`, `confluence`) syncs local markdown against live issues and pages: pull, push, sync, and more.
-- **MCP** reads, searches, and writes live Jira and Confluence directly, without local files.
+- **Jira CLI** (`jira`) is the single surface for all Jira reads, searches, writes, and local markdown sync.
+- **Confluence CLI** (`confluence`) syncs local markdown against live pages: pull, push, sync, and more.
+- **Confluence MCP** reads, searches, and writes live Confluence directly, without local files.
 
 Read existing files under `./jira/` and `./confluence/` before editing them.
 
@@ -26,8 +28,20 @@ jira <KEY|URL>             fetch one ticket (Initiative/Epic: full tree)
 jira pull [KEY|URL]        fetch one ticket, or all local tickets when omitted
 jira sync                  same as jira pull
 jira push [KEY]            push one ticket, or all local tickets when omitted
+jira show <KEY|URL>        print one issue as JSON (no local file write)
+jira search --jql "..."      search issues via JQL (JSON stdout)
+jira create [flags]          create a work item (--from-draft, --from-json)
+jira edit <KEY> [flags]      edit summary, description, or labels
+jira transition <KEY>        transition status (--status required)
+jira comment <KEY>           add a comment (--body-file or --body)
+jira link                    link work items (--out, --in, --type)
+jira projects                list visible projects (JSON stdout)
+jira types <PROJECT>         list issue types for a project (JSON stdout)
 jira board sync            refresh ~/.agents/skills/jira-board/ (dashboard cache)
+jira acli <args...>          passthrough to acli jira STOP and ask for permission to run the command
 ```
+
+Jira writes require the `jira` skill **Jira Write Approval Gate** before running `jira create`, `jira edit`, `jira transition`, `jira comment`, or `jira link`.
 
 ## Confluence CLI
 
@@ -44,19 +58,17 @@ confluence verify                  fail if any relative .md links remain
 
 Links in markdown must use full Confluence wiki URLs or Jira `/browse/KEY` URLs, not relative `.md` paths.
 
-## MCP mapping
+## Confluence MCP mapping
 
 | Need | MCP |
 | --- | --- |
-| One issue by key | `getJiraIssue` |
-| JQL search | `searchJiraIssuesUsingJql` |
-| Projects and issue types | `getVisibleJiraProjects`, `getJiraProjectIssueTypesMetadata`, `getJiraIssueTypeMetaWithFields` |
 | One page by id | `getConfluencePage` |
 | Child pages | `getConfluencePageDescendants` |
 | CQL search | `searchConfluenceUsingCql` |
 | Cloud/site id | `getAccessibleAtlassianResources` |
 | Broad search | `searchAtlassian` |
-| Create, edit, transition, link, comment (Jira) | matching Atlassian MCP write tools after the `jira` skill **Jira Write Approval Gate** |
+| Create, edit, publish (Confluence) | matching Atlassian MCP write tools |
 
-If both CLI and MCP are unavailable, say so and stop.
-Do not substitute `acli`.
+If the Jira CLI is unavailable, say so and stop for Jira work.
+If both Confluence CLI and MCP are unavailable, say so and stop for Confluence work.
+Do not substitute bare `acli`.
