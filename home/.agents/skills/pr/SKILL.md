@@ -1,6 +1,6 @@
 ---
 name: pr
-description: Create, update, release, or fix the current GitHub pull request. Compose, polish for merge, or repair CI and review feedback.
+description: Create, update, or release the current GitHub pull request. Compose or polish for merge.
 ---
 
 # PR
@@ -13,11 +13,9 @@ Work on the current branch pull request.
   Use **update** within compose when a current PR section or `gh pr view` output is present.
   Otherwise use **create**.
 - **release** polishes a PR for merge: PR proper, description accuracy, reviewer evidence, and ready status.
-- **fix** repairs red CI or unresolved review threads.
 
 Follow `~/.agents/skills/pr/compose.md` for **compose**.
 Follow `~/.agents/skills/pr/release.md` for **release**.
-Follow `~/.agents/skills/pr/fix.md` for **fix**.
 
 ## Context
 
@@ -30,4 +28,3 @@ If those sections are absent:
   For update, also run `gh pr view --json number,title,body`.
 - **release**: run `git diff origin/main`, `gh pr view --json number,title,body,url,isDraft`.
   Check `.github/PULL_REQUEST_TEMPLATE.md` when present.
-- **fix**: run `gh pr checks`, `gh pr view --json statusCheckRollup`, and fetch unresolved review threads with the GitHub GraphQL API.
