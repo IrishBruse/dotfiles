@@ -6,7 +6,7 @@ import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 
-import { runAcli } from "../../.lib/acli.ts";
+import { editWorkitem } from "../lib/acli-jira.ts";
 import { createConcurrencyLimiter } from "../../.lib/concurrency.ts";
 import { parseJiraKey } from "../lib/jiraInput.ts";
 import {
@@ -35,18 +35,12 @@ function pushTicketFile(
   const descFile = path.join(tmpDir, "description.md");
   try {
     fs.writeFileSync(descFile, ticket.description, "utf-8");
-    runAcli([
-      "jira",
-      "workitem",
-      "edit",
-      "--key",
-      ticket.key,
-      "--summary",
-      ticket.title,
-      "--description-file",
-      descFile,
-      "--yes"
-    ]);
+    editWorkitem({
+      key: ticket.key,
+      summary: ticket.title,
+      descriptionFile: descFile,
+      yes: true
+    });
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }

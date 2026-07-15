@@ -25,6 +25,28 @@ function parseFrontmatterLine(fm: string, field: string): string {
   return m?.[1] ?? "";
 }
 
+/** Parse draft frontmatter fields before a Jira key exists. */
+export function parseDraftFrontmatter(content: string): {
+  title: string;
+  issueType: string;
+  project: string;
+  parent: string;
+  featureTeam: string;
+  description: string;
+} | null {
+  const m = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/.exec(content);
+  if (!m) return null;
+  const fm = m[1];
+  return {
+    title: parseFrontmatterScalar(fm, "title"),
+    issueType: parseFrontmatterScalar(fm, "type"),
+    project: parseFrontmatterScalar(fm, "project"),
+    parent: parseFrontmatterScalar(fm, "parent"),
+    featureTeam: parseFrontmatterScalar(fm, "feature_team"),
+    description: m[2].trim()
+  };
+}
+
 /** Parse a pulled ticket markdown file into structured fields. */
 export function parseTicketMarkdown(
   content: string,

@@ -1,4 +1,4 @@
-import { runAcliJson } from "../../.lib/acli.ts";
+import { searchWorkitems, viewWorkitem } from "./acli-jira.ts";
 import { EPIC_LINK_FIELD, issueTypeName } from "./format.ts";
 import type { ChildIssue } from "./types.ts";
 
@@ -73,16 +73,10 @@ function childrenFromSearch(data: unknown): ChildIssue[] {
 }
 
 function searchChildIssues(jql: string): ChildIssue[] {
-  const fromSearch = runAcliJson([
-    "jira",
-    "workitem",
-    "search",
-    "--jql",
+  const fromSearch = searchWorkitems({
     jql,
-    "--fields",
-    "key,summary,issuetype",
-    "--json"
-  ]);
+    fields: "key,summary,issuetype"
+  });
   return childrenFromSearch(fromSearch);
 }
 
@@ -97,15 +91,7 @@ function fetchChildIssuesBulk(parentKeys: readonly string[]): ChildIssue[] {
 export function fetchChildIssues(parentKey: string): ChildIssue[] {
   const searchChildren = searchChildIssues(childIssuesJql(parentKey));
 
-  const parentView = runAcliJson([
-    "jira",
-    "workitem",
-    "view",
-    parentKey,
-    "--fields",
-    "subtasks",
-    "--json"
-  ]);
+  const parentView = viewWorkitem(parentKey, { fields: "subtasks" });
 
   const subtasks =
     parentView && typeof parentView === "object"

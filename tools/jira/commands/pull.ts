@@ -5,7 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 
-import { runAcliJson, runAcliJsonAsync } from "../../.lib/acli.ts";
+import { viewWorkitem, viewWorkitemAsync } from "../lib/acli-jira.ts";
 import { createConcurrencyLimiter } from "../../.lib/concurrency.ts";
 import { CONFIG } from "../lib/CONFIG.ts";
 import {
@@ -98,15 +98,7 @@ function resolveStoryParent(
     return { key: parentKey, fields: { summary } };
   }
 
-  const data = runAcliJson([
-    "jira",
-    "workitem",
-    "view",
-    parentKey,
-    "--fields",
-    "summary",
-    "--json"
-  ]);
+  const data = viewWorkitem(parentKey, { fields: "summary" });
   if (!data || typeof data !== "object") {
     return { key: parentKey, fields: { summary: parentKey } };
   }
@@ -203,15 +195,7 @@ export function pullTicketWrite(
   ticketKey: string,
   options: PullOptions
 ): PullWriteResult {
-  const data = runAcliJson([
-    "jira",
-    "workitem",
-    "view",
-    ticketKey,
-    "--fields",
-    JIRA_PULL_FIELDS,
-    "--json"
-  ]);
+  const data = viewWorkitem(ticketKey, { fields: JIRA_PULL_FIELDS });
   return writePulledIssue(data, ticketKey, options);
 }
 
@@ -219,15 +203,9 @@ async function pullTicketWriteAsync(
   ticketKey: string,
   options: PullOptions
 ): Promise<PullWriteResult> {
-  const data = await runAcliJsonAsync([
-    "jira",
-    "workitem",
-    "view",
-    ticketKey,
-    "--fields",
-    JIRA_PULL_FIELDS,
-    "--json"
-  ]);
+  const data = await viewWorkitemAsync(ticketKey, {
+    fields: JIRA_PULL_FIELDS
+  });
   return writePulledIssue(data, ticketKey, options);
 }
 

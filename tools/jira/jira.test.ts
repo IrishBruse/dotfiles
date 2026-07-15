@@ -21,7 +21,10 @@ import {
   SPRINT_RETENTION_BUFFER_MS,
   writeBoard
 } from "./commands/board/write.ts";
+import { buildAcliPassthroughArgs } from "./commands/acli.ts";
 import { printHelp } from "./commands/help.ts";
+import { runSearchCommand } from "./commands/search.ts";
+import { runShowCommand } from "./commands/show.ts";
 import { runPullCommand } from "./commands/pull.ts";
 import { runPushCommand } from "./commands/push.ts";
 import { runSyncCommand } from "./commands/sync.ts";
@@ -52,13 +55,20 @@ import {
   statusBucketFromFields,
   yamlScalar
 } from "./lib/format.ts";
-import { parseJiraKey } from "./lib/jiraInput.ts";
+import {
+  buildCreateWorkitemJson,
+  capitalizableYesField,
+  parseFieldFlags
+} from "./lib/custom-fields.ts";
+import { parseSubcommandArgv } from "./lib/argv.ts";
+import { parseCreatedIssueKey } from "./lib/acli-jira.ts";
 import {
   buildLocalTicketIndex,
   jiraRootDir,
   jiraTicketKeyInMarkdown,
   listLocalTickets,
   localTicketPath,
+  parseDraftFrontmatter,
   parseTicketMarkdown
 } from "./lib/local.ts";
 import {
@@ -877,6 +887,8 @@ describe("cli output", () => {
     const help = captureStdout(() => printHelp());
     assert.match(help, /jira pull/);
     assert.match(help, /jira board sync/);
+    assert.match(help, /jira show/);
+    assert.match(help, /jira acli/);
 
     const pulled = captureStdout(() => printPulled("PROJ-1", "Title"));
     assert.match(pulled, /PROJ-1/);
@@ -894,5 +906,97 @@ describe("cli output", () => {
     );
     assert.match(out, /PROJ-2/);
     assert.match(out, /Child/);
+  });
+});
+
+describe("acli passthrough argv", () => {
+  it("prefixes jira when omitted", () => {
+    assert.deepEqual(
+      buildAcliPassthroughArgs(["node", "jira", "acli", "workitem", "view", "KEY-1"]),
+      ["jira", "workitem", "view", "KEY-1"]
+    );
+  });
+
+  it("does not double-prefix jira", () => {
+    assert.deepEqual(
+      buildAcliPassthroughArgs(["node", "jira", "acli", "jira", "project", "list"]),
+      ["jira", "project", "list"]
+    );
+  });
+});
+
+describe("argv and custom fields", () => {
+  it("parses subcommand flags", () => {
+    const parsed = parseSubcommandArgv(
+      ["node", "jira", "search", "--jql", "project = X", "--fields", "key,summary"],
+      3
+    );
+    assert.equal(parsed.flags.get("jql"), "project = X");
+    assert.equal(parsed.flags.get("fields"), "key,summary");
+  });
+
+  it("parses field flags for create", () => {
+    const fields = parseFieldFlags([
+      "customfield_10354=16409",
+      "customfield_10998=15465"
+    ]);
+    assert.deepEqual(fields.customfield_10354, [{ id: "16409" }]);
+    assert.deepEqual(fields.customfield_10998, [{ id: "15465" }]);
+  });
+
+  it("builds create JSON with parent and custom fields", () => {
+    const json = buildCreateWorkitemJson({
+      project: "NOVACORE",
+      issueType: "Epic",
+      summary: "Test epic",
+      description: "Body",
+      parent: "NOVACORE-1",
+      customFields: capitalizableYesField()
+    });
+    assert.equal((json.fields.project as { key: string }).key, "NOVACORE");
+    assert.equal((json.fields.issuetype as { name: string }).name, "Epic");
+    assert.equal((json.fields.parent as { key: string }).key, "NOVACORE-1");
+  });
+
+  it("parses created issue keys from JSON stdout", () => {
+    assert.equal(
+      parseCreatedIssueKey('{"key":"NOVACORE-99","id":"123"}'),
+      "NOVACORE-99"
+    );
+    assert.equal(parseCreatedIssueKey("Created NOVACORE-42"), "NOVACORE-42");
+  });
+});
+
+describe("draft frontmatter", () => {
+  it("parses local draft fields without a Jira key", () => {
+    const draft = parseDraftFrontmatter(`---
+title: "Story title"
+assigned: "None"
+type: "Story"
+url: "None"
+status: "draft"
+project: "NOVACORE"
+parent: "NOVACORE-100"
+feature_team: "None"
+---
+## User Story
+Body here`);
+    assert.ok(draft);
+    assert.equal(draft.project, "NOVACORE");
+    assert.equal(draft.issueType, "Story");
+    assert.equal(draft.parent, "NOVACORE-100");
+    assert.match(draft.description, /Body here/);
+  });
+});
+
+describe("show and search command validation", () => {
+  it("rejects show without a key", () => {
+    const code = runShowCommand(["node", "jira", "show"]);
+    assert.equal(code, 1);
+  });
+
+  it("rejects search without jql", () => {
+    const code = runSearchCommand(["node", "jira", "search"]);
+    assert.equal(code, 1);
   });
 });

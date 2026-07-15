@@ -5,7 +5,11 @@ import { homedir } from "node:os";
 import path from "node:path";
 import process from "node:process";
 
-import { runAcliJson, runAcliJsonAsync } from "../../../.lib/acli.ts";
+import {
+  listBoardSprints,
+  searchWorkitems,
+  viewWorkitemAsync
+} from "../../lib/acli-jira.ts";
 import { createConcurrencyLimiter } from "../../../.lib/concurrency.ts";
 import { writeJiraTicketsSkill } from "./skill.ts";
 import { sprintsInRetentionWindow, writeBoard } from "./write.ts";
@@ -55,10 +59,7 @@ async function fetchWorkitemViewFieldsAsync(
   fields: string,
   acli = ACLI
 ): Promise<Record<string, unknown>> {
-  const data = await runAcliJsonAsync(
-    ["jira", "workitem", "view", key, "--fields", fields, "--json"],
-    acli
-  );
+  const data = await viewWorkitemAsync(key, { fields, acli });
   return workitemViewFields(data);
 }
 
@@ -152,37 +153,9 @@ function printSyncSummary(options: {
   process.stdout.write(`${lines.join("\n")}\n`);
 }
 
-function truncate(s: string, max: number): string {
-  const t = s.trim();
-  return t.length <= max ? t : `${t.slice(0, max)}...`;
-}
-
-function summarizeAcliArgs(args: string[]): string {
-  const parts: string[] = [];
-  for (let i = 0; i < args.length; i++) {
-    const a = args[i];
-    if (a === undefined) continue;
-    if (a === "--jql") {
-      const jql = args[i + 1];
-      if (jql !== undefined) {
-        parts.push("--jql", truncate(jql, 100));
-        i += 1;
-      }
-      continue;
-    }
-    parts.push(a);
-  }
-  return parts.join(" ");
-}
-
 function nonEmpty(s: string): string | null {
   const t = s.trim();
   return t.length > 0 ? t : null;
-}
-
-function runAcliJsonLogged(acli: string, args: string[]): unknown {
-  log(`run ${acli} ${summarizeAcliArgs(args)}`);
-  return runAcliJson(args, acli);
 }
 
 function stripOpenSprintsClause(jql: string): string {
@@ -215,62 +188,8 @@ function scopeJqlToBoardSprints(userJql: string, sprintIds: number[]): string {
   return orderBy ? `${core} ORDER BY ${orderBy}` : core;
 }
 
-function isSprintListPage(value: unknown): value is { sprints?: unknown } {
-  return value != null && typeof value === "object" && "sprints" in value;
-}
-
-function parseBoardSprintsFromAcli(data: unknown): BoardSprint[] {
-  if (!isSprintListPage(data)) return [];
-  const sprints = data.sprints;
-  if (!Array.isArray(sprints)) return [];
-  const out: BoardSprint[] = [];
-  for (const s of sprints) {
-    if (!s || typeof s !== "object" || !("id" in s)) continue;
-    const row = s as {
-      id?: unknown;
-      startDate?: unknown;
-      endDate?: unknown;
-      state?: unknown;
-    };
-    if (typeof row.id !== "number") continue;
-    out.push({
-      id: row.id,
-      startDate: typeof row.startDate === "string" ? row.startDate : undefined,
-      endDate: typeof row.endDate === "string" ? row.endDate : undefined,
-      state: typeof row.state === "string" ? row.state : undefined
-    });
-  }
-  return out;
-}
-
-function mergeBoardSprintPages(data: unknown): BoardSprint[] {
-  const pages: unknown[] = Array.isArray(data)
-    ? data.filter(isSprintListPage)
-    : isSprintListPage(data)
-      ? [data]
-      : [];
-  const byId = new Map<number, BoardSprint>();
-  for (const page of pages) {
-    for (const sprint of parseBoardSprintsFromAcli(page)) {
-      byId.set(sprint.id, sprint);
-    }
-  }
-  return [...byId.values()];
-}
-
 function fetchBoardSprints(acli: string, boardId: string): BoardSprint[] {
-  const data = runAcliJsonLogged(acli, [
-    "jira",
-    "board",
-    "list-sprints",
-    "--id",
-    boardId,
-    "--state",
-    "active,closed,future",
-    "--json",
-    "--paginate"
-  ]);
-  return mergeBoardSprintPages(data);
+  return listBoardSprints(boardId, acli);
 }
 
 /** Sync Jira -> skill markdown; returns 0 on success. */
@@ -347,17 +266,12 @@ async function runImpl(): Promise<number> {
     process.stderr.write(`${LOG_PREFIX} fetching from Jira...\n`);
   }
 
-  const data = runAcliJsonLogged(ACLI, [
-    "jira",
-    "workitem",
-    "search",
-    "--jql",
-    effectiveJql,
-    "--json",
-    "--paginate",
-    "--fields",
-    JIRA_SEARCH_FIELDS
-  ]);
+  const data = searchWorkitems({
+    jql: effectiveJql,
+    fields: JIRA_SEARCH_FIELDS,
+    paginate: true,
+    acli: ACLI
+  });
 
   if (!Array.isArray(data)) {
     return syncFail("expected JSON array from acli.");
