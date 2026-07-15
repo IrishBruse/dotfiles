@@ -11,6 +11,11 @@ It answers: **what should this become, what is it related to, and what should ha
 
 It recommends a path, asks the user to choose a route with `AskQuestion`, then reads and follows the matching reference workflow only after the user confirms.
 
+## Workspace Context
+
+Before Jira legwork, run `jira info` to read plain-text workspace context: configured project, board cache (current sprints, ticket counts), and local `jira/` ticket count.
+Refresh sprint and board data with `jira board sync` when the cache is missing or stale.
+
 ## Pull The Ticket Locally First
 
 Whenever the input includes a Jira key or URL that you will inspect, work on, or update, ensure it exists locally under `jira/<type>/`.
