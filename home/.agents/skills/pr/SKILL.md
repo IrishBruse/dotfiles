@@ -1,28 +1,23 @@
 ---
 name: pr
-description: Create, update, or fix the current GitHub pull request. Compose title and body. Fix repairs red CI and unresolved review comments.
+description: Create, update, or ready the current GitHub pull request. Compose title and body, or run the merge-ready pass.
 ---
 
 # PR
 
-Work on the current branch pull request: **compose** title and body, or **fix** merge-blocking CI and review feedback.
+Work on the current branch pull request.
 
-## Branch
+Run `gh pr view` first. No open PR routes **compose** **create**; an open PR routes **compose** **update** or **ready**.
 
-Use **compose** when the prompt includes git diff, PR template, or current PR title and body for editing.
-Use **update** within compose when a current PR section or `gh pr view` output is present.
-Otherwise use **create**.
-Use **fix** when the prompt includes failed checks, workflow logs, or unresolved review threads.
-Follow `~/.agents/skills/pr/compose.md` for the compose branch.
-Follow `~/.agents/skills/pr/fix.md` for the fix branch.
+## Branches
+
+- **compose**: draft PR title and body.
+- **ready**: merge-ready pass: PR proper, simplify code, description accuracy, reviewer evidence, documented checks, push, babysit CI, PR link response.
+
+Follow `~/.agents/skills/pr/compose.md` for **compose**.
+Follow `~/.agents/skills/pr/ready.md` for **ready**.
 
 ## Context
 
-When prompt sections inline git state, open PRs, checks, workflow logs, review threads, or the PR template, use that output as the latest state.
-Do not re-run git or gh to gather it.
-
-If those sections are absent:
-
-- **compose**: run `git diff origin/main`, check `.github/PULL_REQUEST_TEMPLATE.md`.
-  For update, also run `gh pr view --json number,title,body`.
-- **fix**: run `gh pr checks`, `gh pr view --json statusCheckRollup`, and fetch unresolved review threads with the GitHub GraphQL API.
+- **compose**: `git diff origin/main`, `.github/PULL_REQUEST_TEMPLATE.md`. For update, `gh pr view --json number,title,body`.
+- **ready**: `git diff origin/main`, `gh pr view --json number,title,body,url,isDraft`, PR template when present.

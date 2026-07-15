@@ -32,13 +32,58 @@ Each `Added`, `Changed`, or `Removed` line must be short and scannable:
 
 Examples:
 
-- **Added:** Metadata audit fields
-- **Changed:** Share enrichment flow
-- **Removed:** Inline metadata parsing
+- Added: Metadata audit fields
+- Changed: Share enrichment flow
+- Removed: Inline metadata parsing
 
-### Topical ## Sections
+### Feature And API ## Sections
 
-Create 0 to 3 custom sections based on the functional areas touched by the diff (e.g., `## Database`, `## Authentication`, `## Frontend UI`).
+After `Summary`, create one `##` section per changed feature, workflow, or API surface.
+Title each section by what changed, for example `## Prototype panel API` or `## Developer mode`.
+Do not use generic evidence headings like `## Screenshots` or `## API details`.
+
+Each section should lead with the best reviewer evidence for that change, then explain it.
+For UI changes, put the screenshot directly under the section title.
+Put a short caption directly below each screenshot.
+Follow the caption with a short paragraph and 1-3 bullets explaining the behavior.
+
+```markdown
+## Eligibility review panel
+
+![<alt text>](<uploaded image URL>)
+<short caption>
+
+The panel lets reviewers approve or reject flagged accounts without leaving the account workflow.
+
+- Shows risk reasons beside the review actions.
+- Requires confirmation before rejection.
+- Updates the account header after save.
+```
+
+For API behavior changes, put the captured request/response details directly under the API section title.
+Follow the details with a short paragraph and 1-3 bullets explaining the behavior.
+Use real examples captured from this branch, not test commands or generic verification output.
+
+````markdown
+## Eligibility review API
+
+<details><summary>curl ...</summary>
+
+```json
+<captured response>
+```
+
+</details>
+
+The API records the review decision and exposes the latest review status to account workflows.
+
+- `POST` creates the latest decision.
+- `GET` returns the current review state.
+````
+
+### Explanatory ## Sections
+
+Create 0 to 3 extra sections when the summary and evidence-led sections do not explain the change fully.
 Skip topical sections entirely when the summary already explains the change well.
 
 - Start each section with a short, single lead sentence explaining the goal of that area.
@@ -62,24 +107,10 @@ Keep it glanceable but technical:
 - Write the lead sentence as a plain statement of which external surface changed.
 - Write bullets as reviewer-facing facts about inputs, outputs, compatibility, defaults, migrations, or generated artifacts.
 - Omit speculative impact and avoid naming unrelated contracts just to say they did not change.
-- For API behavior changes, include concise request/response examples in this section.
-  Use real examples captured from this branch, not test commands or generic verification output.
-
-### Screenshots
-
-Always include this section at the end of the body, after optional topical and contract sections.
-
-Use this section for screenshots when another skill has captured them.
-Leave it empty when no screenshots are provided.
-
-```markdown
-## Screenshots
-
-<caption>
-![<alt text>](<uploaded image URL>)
-
-```
+- Keep this section text-only and brief.
+- Put API request/response examples in the relevant API section, not in `Contract changes`.
 
 ### Exclusions
 
-Do not include test checklists, TODOs, Jira metadata, or conversational filler (e.g., "In this PR, I fixed...").
+Do not include test checklists, TODOs, Jira metadata, generic `## Screenshots` sections,
+generic `## API details` sections, or conversational filler (e.g., "In this PR, I fixed...").
