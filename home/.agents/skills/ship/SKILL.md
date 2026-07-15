@@ -31,12 +31,6 @@ Follow **Description accuracy** in the `pr` skill **release** path.
 Follow **Evidence** in the `pr` skill **release** path.
 Follow **Ready status** in the `pr` skill **release** path.
 
-### Step 5: Extra checks
-
-Read and follow [`checks.md`](checks.md).
-
-**Done when:** every applicable documented check in the current repo has been run and passed.
-
 ### Step 6: Push
 
 Commit any changes from steps 4-5 when there are changes.
@@ -51,8 +45,6 @@ If release could not mark a draft PR ready earlier, run `gh pr ready` after baby
 
 **Done when:** `gh pr view` shows mergeable and green checks, or you hit a blocker and report it instead of the Slack message.
 
-### Step 8: Slack message
+### Step 8: Response
 
-Read [`slack.md`](slack.md).
-Your **entire chat response** is only the 1-2 line Slack message ending with the PR URL from `gh pr view --json url`.
-No preamble, summary, or checklist unless babysit blocked.
+Reply with just the PR link as the final message.
