@@ -1,8 +1,10 @@
 # PR release branch
 
-Merge-ready PR polish: PR proper, description accuracy, reviewer evidence, and ready status.
+Last pass before merge: polish the PR, simplify the code, run documented checks, push, babysit CI, then reply with the PR link only.
 
-## PR proper
+If a step changes code, repeat description accuracy, evidence, checks, push, and babysit before the final response.
+
+### Step 1: PR proper
 
 If no open PR on the current branch:
 
@@ -17,7 +19,15 @@ If a PR already exists:
 
 **Done when:** an open PR exists with a non-placeholder title and body.
 
-## Description accuracy
+### Step 2: Code review / simplify
+
+Read and follow the `code-review` skill on the branch diff.
+Apply high-conviction simplifications in scope, skip nits that do not improve structure.
+
+**Done when:** no unresolved structural issues from code-review remain.
+If any remain, each must be justified as a PR review comment or PR body note, not in the final chat.
+
+### Step 3: Description accuracy
 
 Gather state when not already inlined in the prompt:
 
@@ -36,7 +46,7 @@ Do not pass `--draft` on update.
 
 **Done when:** title and body accurately describe what ships in the diff.
 
-## Evidence
+### Step 4: Evidence and ready status
 
 Capture reviewer evidence for behavior that ships in the diff: API curls and UI screenshots only.
 
@@ -50,9 +60,36 @@ Do not use PR comments for evidence.
 UI screenshots are under the changed feature section when reviewer-visible UI changed.
 Skipped evidence types are not applicable to the diff.
 
-## Ready status
-
 If the PR is still a draft after PR proper, description accuracy, and evidence are complete, run `gh pr ready`.
 Release is allowed to mark the PR as non-draft.
 
 **Done when:** the PR is ready for review, or a blocker prevents marking it ready.
+
+### Step 5: Repo checks
+
+Scan the current repo for pre-merge commands in `package.json`, and CI workflows.
+Run each check that applies to the diff.
+Fix in-scope failures and stop to report blockers that need out-of-scope work.
+
+**Done when:** every applicable check has passed, or you stopped to report a blocker.
+
+### Step 6: Push
+
+Commit any changes from earlier steps when there are changes.
+Push the branch.
+
+**Done when:** `git status` is clean and the remote branch includes all commits.
+
+### Step 7: Babysit
+
+Read and follow the `babysit` skill until the PR is mergeable, CI is green, and review comments are triaged.
+If release could not mark a draft PR ready earlier, run `gh pr ready` after babysit completes.
+
+**Done when:** `gh pr view` shows mergeable and green checks, or you hit a blocker and report it instead of the PR link.
+
+### Step 8: Response
+
+Reply with just the PR link as the final message.
+
+**Done when:** the entire chat response is only the PR URL from `gh pr view --json url`.
+If babysit blocked, report the blocker instead of the PR link.
