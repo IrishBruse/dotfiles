@@ -12,68 +12,15 @@ If a later step changes code, loop back to **Step 2** before push.
 
 ### Step 1: Draft PR proper
 
-Follow **Step 1** in [`pr.md`](pr.md).
-
-**Done when:** an open draft PR exists with a non-placeholder title and body.
+Follow **Draft proper** in the `pr` skill **release** path at `~/.agents/skills/pr/release.md`.
 
 ### Step 2: Description accuracy
 
-Follow **Step 2** in [`pr.md`](pr.md).
-Compare title and body to `git diff origin/main`, fix drift, stale sections, invented scope, or missing contract changes.
-
-**Done when:** title and body accurately describe what ships in the diff.
+Follow **Description accuracy** in the `pr` skill **release** path.
 
 ### Step 3: Evidence
 
-Capture reviewer evidence for behavior that ships in the diff.
-
-#### Terminal
-
-Post terminal evidence as a PR comment when the diff has reviewer-visible behavior to verify.
-Examples include CLI output or dev-server logs.
-When the diff changes API behavior, put concise request/response examples in the PR body `Contract changes` section.
-
-1. Run each verification command and capture the real stdout from this session.
-2. Build the comment body: one `<details><summary>command</summary>` block per command.
-   Put the captured output inside a fenced code block.
-3. Post it:
-
-```bash
-gh pr comment --body "<evidence>"
-```
-
-Completion: every block in the comment maps to output you actually ran and captured this session.
-
-#### UI
-
-Embed UI screenshots in the PR body for every new reviewer-visible feature.
-Also capture reviewer-visible minor UI changes, including layout, visual state, or interaction tweaks.
-Put them in the `## Screenshots` section.
-
-Stop and report a blocker instead of faking evidence when:
-
-- the app URL is missing and no local dev server is reachable
-- the browser cannot load the app
-- login, MFA, consent, or account choice blocks access
-- a screenshot is blank, stale, or not from this session
-
-1. Load and follow the `agent-browser` skill before any browser work.
-2. Resolve the target URL from the diff, running dev server, or user input.
-3. Navigate and interact with `agent-browser`, then run `agent-browser screenshot <path>` for each new feature.
-   Capture one screenshot for each feature's main reviewer-visible state.
-4. Save each PNG under a temp directory outside the git working tree, for example `/tmp/pr-ui-evidence/`.
-5. Upload each PNG with `gh image` and note the returned URL.
-   Run from the repo workspace: `gh image /tmp/pr-ui-evidence/example.png --repo owner/repo`.
-6. Add each screenshot to the PR body `## Screenshots` section.
-   Each entry gets a short caption (route, state, interaction) followed by the image.
-   Put minor UI changes in a `### Minor Changes` subsection at the bottom of `## Screenshots`.
-   Do not include file paths, implementation detail, or invented UI.
-7. Apply the body with `gh pr edit`.
-
-**Done when:** every new reviewer-visible feature has a real screenshot captured this session.
-Each image has a caption, and minor UI changes are grouped at the bottom when present.
-Terminal evidence is posted as a PR comment when applicable.
-Skip only the evidence types that have no reviewer-visible behavior to verify.
+Follow **Evidence** in the `pr` skill **release** path.
 
 ### Step 4: Code review / simplify
 
