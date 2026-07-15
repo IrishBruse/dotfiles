@@ -1,6 +1,6 @@
 # Ship Slack message
 
-Step 7 of the `ship` skill.
+Step 8 of the `ship` skill.
 
 ## Format
 
@@ -34,3 +34,8 @@ https://github.com/gp-nova/repo/pull/123
 ```
 
 Do not include file paths, diff inventory, test checklists, or Jira keys unless the team expects them in Slack.
+
+## Done when
+
+The entire chat response is only the Slack-ready message and the PR URL.
+If babysit blocked, report the blocker instead of writing a Slack message.

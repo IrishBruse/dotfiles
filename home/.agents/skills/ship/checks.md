@@ -1,6 +1,6 @@
 # Ship extra checks
 
-Step 4 of the `ship` skill.
+Step 5 of the `ship` skill.
 
 ## Discover
 
@@ -25,3 +25,4 @@ Stop and report when a failure needs out-of-scope work or CI/workflow changes.
 ## Done when
 
 Every discovered check in scope has been run and passed.
+If a check fails for an out-of-scope reason, stop and report the blocker.

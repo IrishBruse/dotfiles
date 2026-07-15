@@ -6,29 +6,30 @@ disable-model-invocation: true
 
 # Ship
 
-Last pass before merge: polish the draft PR, simplify the code, run documented checks, push, babysit CI, then reply with a Slack message only.
+Last pass before merge: polish the PR, simplify the code, run documented checks, push, babysit CI, then reply with a Slack message only.
 
-If a later step changes code, loop back to **Step 2** before push.
+If a step changes code, repeat description accuracy, evidence, checks, push, and babysit before the Slack message.
 
-### Step 1: Draft PR proper
+### Step 1: PR proper
 
-Follow **Draft proper** in the `pr` skill **release** path at `~/.agents/skills/pr/release.md`.
+Follow **PR proper** in the `pr` skill **release** path at `~/.agents/skills/pr/release.md`.
 
-### Step 2: Description accuracy
-
-Follow **Description accuracy** in the `pr` skill **release** path.
-
-### Step 3: Evidence
-
-Follow **Evidence** in the `pr` skill **release** path.
-
-### Step 4: Code review / simplify
+### Step 2: Code review / simplify
 
 Read and follow the `code-review` skill on the branch diff.
 Apply high-conviction simplifications in scope, skip nits that do not improve structure.
 
 **Done when:** no unresolved structural issues from code-review remain.
 If any remain, each must be justified as a PR review comment or PR body note, not in the final chat.
+
+### Step 3: Description accuracy
+
+Follow **Description accuracy** in the `pr` skill **release** path.
+
+### Step 4: Evidence and ready status
+
+Follow **Evidence** in the `pr` skill **release** path.
+Follow **Ready status** in the `pr` skill **release** path.
 
 ### Step 5: Extra checks
 
@@ -46,7 +47,7 @@ Push the branch.
 ### Step 7: Babysit
 
 Read and follow the `babysit` skill until the PR is mergeable, CI is green, and review comments are triaged.
-If still a draft when babysit completes, run `gh pr ready`.
+If release could not mark a draft PR ready earlier, run `gh pr ready` after babysit completes.
 
 **Done when:** `gh pr view` shows mergeable and green checks, or you hit a blocker and report it instead of the Slack message.
 
