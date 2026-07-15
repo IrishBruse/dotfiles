@@ -16,7 +16,7 @@
     ],
     "postToolUse": [
       {
-        "command": "./hooks/style-lint.js",
+        "command": "node ./hooks/style-lint.js",
         "matcher": "^(Write|StrReplace)$"
       }
     ]
