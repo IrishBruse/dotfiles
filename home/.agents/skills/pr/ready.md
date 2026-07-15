@@ -1,4 +1,4 @@
-# PR release branch
+# Ready
 
 Last pass before merge: polish the PR, simplify the code, run documented checks, push, babysit CI, then reply with the PR link only.
 
@@ -61,7 +61,7 @@ UI screenshots are under the changed feature section when reviewer-visible UI ch
 Skipped evidence types are not applicable to the diff.
 
 If the PR is still a draft after PR proper, description accuracy, and evidence are complete, run `gh pr ready`.
-Release is allowed to mark the PR as non-draft.
+Ready may mark the PR non-draft.
 
 **Done when:** the PR is ready for review, or a blocker prevents marking it ready.
 
@@ -83,7 +83,7 @@ Push the branch.
 ### Step 7: Babysit
 
 Read and follow the `babysit` skill until the PR is mergeable, CI is green, and review comments are triaged.
-If release could not mark a draft PR ready earlier, run `gh pr ready` after babysit completes.
+If ready could not mark a draft PR earlier, run `gh pr ready` after babysit completes.
 
 **Done when:** `gh pr view` shows mergeable and green checks, or you hit a blocker and report it instead of the PR link.
 

@@ -17,7 +17,7 @@ Compose the body using the layout in `~/.agents/skills/pr/body-format.md`.
 ## Boundary
 
 Do not capture API or UI evidence in compose.
-When a PR update needs reviewer evidence, follow the `pr` skill **release** branch.
+When a PR update needs reviewer evidence, follow the `pr` skill **ready** branch.
 
 ## Apply
 
