@@ -176,13 +176,13 @@
         "type": "generic",
         "default": [],
         "value": [
+            "mintupdate.desktop",
             "nemo.desktop",
             "cinnamon-settings-keyboard.desktop",
             "cinnamon-settings-startup.desktop",
             "cinnamon-settings-fonts.desktop",
             "org.gnome.font-viewer.desktop",
             "cinnamon-settings-windows.desktop",
-            "mintupdate.desktop",
             "org.gnome.DiskUtility.desktop",
             "gnome-session-properties.desktop",
             "cinnamon-settings-display.desktop"
