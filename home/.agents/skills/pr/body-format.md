@@ -51,7 +51,6 @@ Follow the caption with a short paragraph and 1-3 bullets explaining the behavio
 ## Eligibility review panel
 
 ![<alt text>](<uploaded image URL>)
-
 <short caption>
 
 The panel lets reviewers approve or reject flagged accounts without leaving the account workflow.
