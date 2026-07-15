@@ -5,14 +5,17 @@ import process from "node:process";
 
 import { listProjectIssueTypes } from "../lib/acli-jira.ts";
 import { parseSubcommandArgv } from "../lib/argv.ts";
+import { CONFIG } from "../lib/CONFIG.ts";
 import { printError } from "../lib/output.ts";
 
-/** Run `jira types <PROJECT> [--format text]`. */
+/** Run `jira types [--format text]`. */
 export function runTypesCommand(argv: string[]): number {
   const parsed = parseSubcommandArgv(argv, 3);
-  const project = parsed.positional[0];
+  const project = CONFIG.project.trim().toUpperCase();
   if (!project) {
-    printError("types: missing project key");
+    printError(
+      "types: set CONFIG.project in tools/jira/lib/CONFIG.ts (or use jira acli)"
+    );
     return 1;
   }
 

@@ -22,6 +22,8 @@ import {
   writeBoard
 } from "./commands/board/write.ts";
 import { buildAcliPassthroughArgs } from "./commands/acli.ts";
+import { runAcliPassthroughCommand } from "./commands/acli.ts";
+import { runInfoCommand } from "./commands/info.ts";
 import { printHelp } from "./commands/help.ts";
 import { runSearchCommand } from "./commands/search.ts";
 import { runShowCommand } from "./commands/show.ts";
@@ -61,6 +63,18 @@ import {
   parseFieldFlags
 } from "./lib/custom-fields.ts";
 import { parseSubcommandArgv } from "./lib/argv.ts";
+import {
+  readBoardInfoCache,
+  writeBoardInfoCache
+} from "./lib/board-cache.ts";
+import {
+  formatJiraInfoPlainText,
+  gatherJiraInfo
+} from "./lib/info.ts";
+import {
+  blockedAcliJiraReason,
+  buildAcliJiraArgs
+} from "./lib/acli-policy.ts";
 import { parseCreatedIssueKey } from "./lib/acli-jira.ts";
 import {
   buildLocalTicketIndex,
@@ -889,6 +903,7 @@ describe("cli output", () => {
     assert.match(help, /jira board sync/);
     assert.match(help, /jira show/);
     assert.match(help, /jira acli/);
+    assert.match(help, /jira info/);
 
     const pulled = captureStdout(() => printPulled("PROJ-1", "Title"));
     assert.match(pulled, /PROJ-1/);
@@ -910,18 +925,48 @@ describe("cli output", () => {
 });
 
 describe("acli passthrough argv", () => {
-  it("prefixes jira when omitted", () => {
+  it("aliases jira acli args to acli jira", () => {
     assert.deepEqual(
       buildAcliPassthroughArgs(["node", "jira", "acli", "workitem", "view", "KEY-1"]),
       ["jira", "workitem", "view", "KEY-1"]
     );
-  });
-
-  it("does not double-prefix jira", () => {
     assert.deepEqual(
       buildAcliPassthroughArgs(["node", "jira", "acli", "jira", "project", "list"]),
       ["jira", "project", "list"]
     );
+    assert.deepEqual(buildAcliJiraArgs(["node", "jira", "acli"]), ["jira"]);
+  });
+
+  it("blocks unsafe auth and destructive commands", () => {
+    assert.match(
+      blockedAcliJiraReason(["jira", "auth", "login"]) ?? "",
+      /blocked for agents: auth login/
+    );
+    assert.match(
+      blockedAcliJiraReason(["jira", "workitem", "delete", "KEY-1"]) ?? "",
+      /blocked for agents: workitem delete/
+    );
+    assert.match(
+      blockedAcliJiraReason(["jira", "workitem", "create", "--summary", "x"]) ?? "",
+      /use jira create/
+    );
+    assert.equal(blockedAcliJiraReason(["jira", "auth", "status"]), null);
+    assert.equal(
+      blockedAcliJiraReason(["jira", "workitem", "view", "KEY-1", "--json"]),
+      null
+    );
+  });
+
+  it("rejects blocked commands before spawning acli", () => {
+    const code = runAcliPassthroughCommand([
+      "node",
+      "jira",
+      "acli",
+      "workitem",
+      "delete",
+      "KEY-1"
+    ]);
+    assert.equal(code, 1);
   });
 });
 
@@ -986,6 +1031,71 @@ Body here`);
     assert.equal(draft.issueType, "Story");
     assert.equal(draft.parent, "NOVACORE-100");
     assert.match(draft.description, /Body here/);
+  });
+});
+
+describe("jira info", () => {
+  it("formats plain-text workspace context", () => {
+    const text = formatJiraInfoPlainText({
+      site: "example.atlassian.net",
+      project: "TEAM",
+      boardId: "42",
+      boardJql: "project = TEAM",
+      meAccountId: "account-me",
+      featureTeamField: "customfield_1",
+      epicLinkField: "",
+      boardCache: {
+        syncedAt: "2026-07-15T12:00:00.000Z",
+        boardId: "42",
+        site: "example.atlassian.net",
+        project: "TEAM",
+        effectiveJql: "project = TEAM AND sprint in (99)",
+        retainedSprints: [
+          {
+            id: 99,
+            name: "Sprint 12",
+            state: "active",
+            startDate: "2026-07-01T00:00:00.000Z",
+            endDate: "2026-07-14T00:00:00.000Z"
+          }
+        ],
+        counts: { me: 2, team: 3, unassigned: 1, misc: 0 },
+        issueCount: 6
+      },
+      localTicketCount: 4
+    });
+    assert.match(text, /Project: TEAM/);
+    assert.match(text, /Sprint 12/);
+    assert.match(text, /Tickets under jira\/: 4/);
+    assert.match(text, /Sprint board: me 2, team 3, unassigned 1, misc 0/);
+  });
+
+  it("reads and writes the board info cache", () => {
+    withTempDir((dir) => {
+      const home = path.join(dir, "home");
+      fs.mkdirSync(home, { recursive: true });
+      writeBoardInfoCache(
+        {
+          syncedAt: "2026-07-15T12:00:00.000Z",
+          boardId: "42",
+          site: "example.atlassian.net",
+          project: "TEAM",
+          effectiveJql: "project = TEAM",
+          retainedSprints: [],
+          counts: { me: 0, team: 0, unassigned: 0, misc: 0 },
+          issueCount: 0
+        },
+        home
+      );
+      const cache = readBoardInfoCache(home);
+      assert.equal(cache?.project, "TEAM");
+    });
+  });
+
+  it("prints plain text from runInfoCommand", () => {
+    const out = captureStdout(() => runInfoCommand());
+    assert.match(out, /Jira workspace/);
+    assert.match(out, /Config \(tools\/jira\/lib\/CONFIG\.ts\):/);
   });
 });
 

@@ -9,6 +9,7 @@ import {
   parseCreatedIssueKey
 } from "../lib/acli-jira.ts";
 import { flagBool, flagString, parseSubcommandArgv } from "../lib/argv.ts";
+import { CONFIG } from "../lib/CONFIG.ts";
 import {
   NOVACORE_CAPITALIZABLE_FIELD,
   buildCreateWorkitemJson,
@@ -32,6 +33,10 @@ function collectFieldFlags(argv: string[]): string[] {
   return fields;
 }
 
+function configuredProject(): string {
+  return CONFIG.project.trim().toUpperCase();
+}
+
 /** Run `jira create` with flags or `--from-draft`. */
 export function runCreateCommand(argv: string[]): number {
   const parsed = parseSubcommandArgv(argv, 3);
@@ -48,7 +53,7 @@ export function runCreateCommand(argv: string[]): number {
     return runCreateFromDraft(fromDraft, parsed, argv, yes, pullAfter);
   }
 
-  const project = flagString(parsed.flags, "project");
+  const project = configuredProject();
   const type = flagString(parsed.flags, "type");
   const summary = flagString(parsed.flags, "summary");
   const descriptionFile = flagString(parsed.flags, "description-file");
@@ -57,8 +62,18 @@ export function runCreateCommand(argv: string[]): number {
   const labels = labelsRaw ? labelsRaw.split(",").map((s) => s.trim()) : [];
   const customFields = parseFieldFlags(collectFieldFlags(argv));
 
-  if (!project || !type || !summary) {
-    printError("create: --project, --type, and --summary are required");
+  if (!summary) {
+    printError("create: --summary is required");
+    return 1;
+  }
+  if (!project) {
+    printError(
+      "create: set CONFIG.project in tools/jira/lib/CONFIG.ts (or use jira acli)"
+    );
+    return 1;
+  }
+  if (!type) {
+    printError("create: --type is required");
     return 1;
   }
 
@@ -136,7 +151,7 @@ function runCreateFromDraft(
     return 1;
   }
 
-  const project = flagString(parsed.flags, "project", draft.project);
+  const project = draft.project.trim() || configuredProject();
   const type = flagString(parsed.flags, "type", draft.issueType);
   const summary = flagString(parsed.flags, "summary", draft.title);
   const parent = flagString(parsed.flags, "parent", draft.parent);

@@ -250,6 +250,7 @@ function parseBoardSprintsFromAcli(data: unknown): BoardSprint[] {
     if (!s || typeof s !== "object" || !("id" in s)) continue;
     const row = s as {
       id?: unknown;
+      name?: unknown;
       startDate?: unknown;
       endDate?: unknown;
       state?: unknown;
@@ -257,6 +258,7 @@ function parseBoardSprintsFromAcli(data: unknown): BoardSprint[] {
     if (typeof row.id !== "number") continue;
     out.push({
       id: row.id,
+      name: typeof row.name === "string" ? row.name : undefined,
       startDate: typeof row.startDate === "string" ? row.startDate : undefined,
       endDate: typeof row.endDate === "string" ? row.endDate : undefined,
       state: typeof row.state === "string" ? row.state : undefined

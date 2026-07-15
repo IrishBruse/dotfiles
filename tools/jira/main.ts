@@ -9,6 +9,7 @@ import { runCommentCommand } from "./commands/comment.ts";
 import { runCreateCommand } from "./commands/create.ts";
 import { runEditCommand } from "./commands/edit.ts";
 import { printHelp } from "./commands/help.ts";
+import { runInfoCommand } from "./commands/info.ts";
 import { runTypesCommand } from "./commands/issue-types.ts";
 import { runLinkCommand } from "./commands/link.ts";
 import { runProjectsCommand } from "./commands/projects.ts";
@@ -41,6 +42,7 @@ export async function main(argv: string[] = process.argv): Promise<void> {
     transition: () => runTransitionCommand(argv),
     comment: () => runCommentCommand(argv),
     link: () => runLinkCommand(argv),
+    info: () => runInfoCommand(),
     projects: () => runProjectsCommand(argv),
     types: () => runTypesCommand(argv)
   };

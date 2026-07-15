@@ -36,6 +36,7 @@ export type ChildIssue = {
 /** Jira board sprint metadata from acli list-sprints. */
 export type BoardSprint = {
   id: number;
+  name?: string;
   startDate?: string;
   endDate?: string;
   state?: string;

@@ -1,9 +1,13 @@
 /**
  * Sync Jira issues into the jira-board skill via `acli jira workitem search`.
  */
-import { homedir } from "node:os";
 import path from "node:path";
 import process from "node:process";
+
+import {
+  JIRA_BOARD_SKILL_DIR,
+  writeBoardInfoCache
+} from "../../lib/board-cache.ts";
 
 import {
   listBoardSprints,
@@ -20,14 +24,6 @@ import {
   normalizeSiteHost
 } from "../../lib/format.ts";
 import type { BoardSprint, SyncResult, WriteBoardResult } from "../../lib/types.ts";
-
-/** Skill folder: `~/.agents/skills/jira-board/` */
-const JIRA_BOARD_SKILL_DIR = path.resolve(
-  homedir(),
-  ".agents",
-  "skills",
-  "jira-board"
-);
 
 /** Per-ticket markdown under `<skill>/references/{me,team,unassigned}/`. */
 export const BOARD_OUTPUT_ROOT = path.join(JIRA_BOARD_SKILL_DIR, "references");
@@ -308,6 +304,20 @@ async function runImpl(): Promise<number> {
     `writing jira-board skill → ${JIRA_BOARD_SKILL_PATH}, ${JIRA_BOARD_SPRINT_JSON_PATH}`
   );
   writeJiraTicketsSkill(issues, JIRA_BOARD_SKILL_PATH, meAccountId, outRoot);
+
+  const retainedSprints = boardSprints.filter((sprint) =>
+    sprintIds.includes(sprint.id)
+  );
+  writeBoardInfoCache({
+    syncedAt: new Date().toISOString(),
+    boardId,
+    site: siteHost,
+    project: CONFIG.project.trim().toUpperCase(),
+    effectiveJql,
+    retainedSprints,
+    counts: result.counts,
+    issueCount: issues.length
+  });
 
   log("done.");
   printSyncSummary({

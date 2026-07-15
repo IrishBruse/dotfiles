@@ -6,6 +6,8 @@ export const CONFIG = {
   meAccountId: "",
   /** Board ID from Jira url */
   boardId: "",
+  /** Default Jira project key for create and types */
+  project: "",
   /** JQL (put ORDER BY at the end; avoid `sprint in openSprints()` when boardId is set) */
   boardJql: "project = PROJ ORDER BY assignee, key",
   /** Custom field id for team label in pulled markdown (optional; set per site) */
