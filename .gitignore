@@ -16,3 +16,4 @@ home/dot-zshrc
 # Unignore global ignore
 !tools/confluence
 home/dot-npmrc
+home/.config/jira/config.json
