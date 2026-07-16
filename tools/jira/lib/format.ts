@@ -89,12 +89,27 @@ export function adfToMarkdown(adf: unknown): string {
 
   const lines: string[] = [];
 
+  function formatTextNode(o: Record<string, unknown>): string {
+    if (o.type !== "text" || typeof o.text !== "string") return "";
+    let text = o.text;
+    const marks = Array.isArray(o.marks) ? o.marks : [];
+    const types = new Set(
+      marks
+        .filter((mark) => mark && typeof mark === "object")
+        .map((mark) => String((mark as { type?: string }).type ?? ""))
+    );
+    if (types.has("code")) text = `\`${text}\``;
+    if (types.has("strong")) text = `**${text}**`;
+    if (types.has("em")) text = `*${text}*`;
+    return text;
+  }
+
   function appendCollectText(out: string[], n: unknown): void {
     if (n == null) return;
     if (typeof n === "object" && n !== null && "type" in n) {
       const o = n as Record<string, unknown>;
       if (o.type === "text" && typeof o.text === "string") {
-        out.push(o.text);
+        out.push(formatTextNode(o));
       }
       const content = o.content;
       if (Array.isArray(content)) {

@@ -1,11 +1,13 @@
-/**
- * NOVACORE custom field helpers for `acli jira workitem create --from-json`.
- */
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-/** NOVACORE Feature Team field id. */
+import type { AdfDoc } from "./markdown-adf.ts";
+import { markdownToAdf, parseAdfDoc } from "./markdown-adf.ts";
+
+/**
+ * NOVACORE custom field helpers for `acli jira workitem create --from-json`.
+ */
 export const NOVACORE_FEATURE_TEAM_FIELD = "customfield_10354";
 
 /** NOVACORE Capitalizable field id (Epic creates). */
@@ -41,7 +43,7 @@ export function buildCreateWorkitemJson(options: {
     summary: options.summary
   };
   if (options.description) {
-    fields.description = options.description;
+    fields.description = descriptionToAdf(options.description);
   }
   if (options.parent) {
     fields.parent = { key: options.parent };
@@ -55,6 +57,10 @@ export function buildCreateWorkitemJson(options: {
     }
   }
   return { fields };
+}
+
+function descriptionToAdf(description: string): AdfDoc {
+  return parseAdfDoc(description) ?? markdownToAdf(description);
 }
 
 function formatCustomFieldValue(value: CustomFieldValue): unknown {

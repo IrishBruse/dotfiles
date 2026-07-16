@@ -1,10 +1,12 @@
 /**
  * `jira edit` -- edit a Jira work item.
  */
+import fs from "node:fs";
 import process from "node:process";
 
 import { editWorkitem } from "../../lib/acli-jira.ts";
 import { flagBool, flagString, parseSubcommandArgv } from "../../lib/argv.ts";
+import { prepareAcliDescriptionFileFromPath } from "../../lib/markdown-adf.ts";
 import { parseJiraKey } from "../../lib/jiraInput.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
@@ -36,14 +38,27 @@ export function runEditCommand(
   }
 
   try {
-    editWorkitem({
-      key,
-      fromJson: fromJson || undefined,
-      summary: summary || undefined,
-      descriptionFile: descriptionFile || undefined,
-      labels: labels || undefined,
-      yes
-    });
+    let descriptionPath = descriptionFile || undefined;
+    let descDir: string | undefined;
+    if (descriptionFile) {
+      const prepared = prepareAcliDescriptionFileFromPath(descriptionFile);
+      descDir = prepared.dir;
+      descriptionPath = prepared.filePath;
+    }
+    try {
+      editWorkitem({
+        key,
+        fromJson: fromJson || undefined,
+        summary: summary || undefined,
+        descriptionFile: descriptionPath,
+        labels: labels || undefined,
+        yes
+      });
+    } finally {
+      if (descDir) {
+        fs.rmSync(descDir, { recursive: true, force: true });
+      }
+    }
     if (isJsonMode(options)) {
       printJsonSuccess({ key, action: "edit" });
     } else {

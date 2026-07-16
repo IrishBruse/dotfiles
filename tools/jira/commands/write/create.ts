@@ -18,6 +18,7 @@ import {
   writeCreateJsonTemp
 } from "../../lib/custom-fields.ts";
 import { parseDraftFrontmatter } from "../../lib/local.ts";
+import { prepareAcliDescriptionFileFromPath } from "../../lib/markdown-adf.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { failCommand, printJsonSuccess } from "../../lib/output.ts";
@@ -124,16 +125,30 @@ export function runCreateCommand(
   }
 
   return tryCreate(
-    () =>
-      createWorkitem({
-        project,
-        type,
-        summary,
-        descriptionFile: descriptionFile || undefined,
-        parent: parent || undefined,
-        labels: labels.length ? labels : undefined,
-        yes
-      }),
+    () => {
+      let descriptionPath = descriptionFile || undefined;
+      let descDir: string | undefined;
+      if (descriptionFile) {
+        const prepared = prepareAcliDescriptionFileFromPath(descriptionFile);
+        descDir = prepared.dir;
+        descriptionPath = prepared.filePath;
+      }
+      try {
+        return createWorkitem({
+          project,
+          type,
+          summary,
+          descriptionFile: descriptionPath,
+          parent: parent || undefined,
+          labels: labels.length ? labels : undefined,
+          yes
+        });
+      } finally {
+        if (descDir) {
+          fs.rmSync(descDir, { recursive: true, force: true });
+        }
+      }
+    },
     pullAfter,
     options
   );

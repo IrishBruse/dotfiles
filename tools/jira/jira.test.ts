@@ -76,6 +76,12 @@ import {
   yamlScalar
 } from "./lib/format.ts";
 import {
+  markdownToAdf,
+  parseAdfDoc,
+  parseInlineMarkdown,
+  writeAcliDescriptionFile
+} from "./lib/markdown-adf.ts";
+import {
   buildCreateWorkitemJson,
   capitalizableYesField,
   parseFieldFlags
@@ -344,13 +350,16 @@ describe("format helpers", () => {
         },
         {
           type: "paragraph",
-          content: [{ type: "text", text: "Hello world" }]
+          content: [
+            { type: "text", text: "Hello " },
+            { type: "text", text: "world", marks: [{ type: "strong" }] }
+          ]
         }
       ]
     };
     const md = adfToMarkdown(adf);
     assert.match(md, /## Overview/);
-    assert.match(md, /Hello world/);
+    assert.match(md, /Hello \*\*world\*\*/);
     assert.equal(issueDescriptionMarkdown({ description: adf }), md);
   });
 
@@ -402,7 +411,66 @@ describe("format helpers", () => {
     assert.equal(issueDescriptionMarkdown({ description: null }), "");
     assert.equal(issueDescriptionMarkdown({}), "");
   });
+});
 
+describe("markdown to ADF", () => {
+  it("converts headings, bold, and paragraphs", () => {
+    const adf = markdownToAdf("## User Story\n\n**As a** developer");
+    assert.equal(adf.type, "doc");
+    assert.equal(adf.content[0]?.type, "heading");
+    assert.deepEqual((adf.content[0] as { attrs?: { level?: number } }).attrs, {
+      level: 2
+    });
+    const paragraph = adf.content[1];
+    assert.equal(paragraph?.type, "paragraph");
+    assert.deepEqual(parseInlineMarkdown("**As a** developer"), [
+      { type: "text", text: "As a", marks: [{ type: "strong" }] },
+      { type: "text", text: " developer" }
+    ]);
+  });
+
+  it("converts bullet lists and code blocks", () => {
+    const adf = markdownToAdf("```ts\nconst x = 1;\n```\n\n- First\n- Second");
+    assert.equal(adf.content[0]?.type, "codeBlock");
+    assert.equal(adf.content[1]?.type, "bulletList");
+  });
+
+  it("round-trips common description markdown", () => {
+    const source = "## Scope\n\n**Goal:** ship it\n\n- one\n- two";
+    const roundTrip = adfToMarkdown(markdownToAdf(source));
+    assert.match(roundTrip, /## Scope/);
+    assert.match(roundTrip, /\*\*Goal:\*\* ship it/);
+    assert.match(roundTrip, /- one/);
+    assert.match(roundTrip, /- two/);
+  });
+
+  it("writes ADF JSON for acli description files", () => {
+    withTempDir((root) => {
+      const filePath = path.join(root, "description.adf.json");
+      writeAcliDescriptionFile("# Title\n\n**bold**", filePath);
+      const parsed = parseAdfDoc(fs.readFileSync(filePath, "utf-8"));
+      assert.ok(parsed);
+      assert.equal(parsed?.content[0]?.type, "heading");
+    });
+  });
+
+  it("builds create JSON with ADF descriptions", () => {
+    const json = buildCreateWorkitemJson({
+      project: "PROJ",
+      issueType: "Task",
+      summary: "Title",
+      description: "## Notes\n\n**Important**"
+    });
+    const description = json.fields.description as {
+      type?: string;
+      content?: Array<{ type?: string }>;
+    };
+    assert.equal(description.type, "doc");
+    assert.equal(description.content?.[0]?.type, "heading");
+  });
+});
+
+describe("format helpers continued", () => {
   it("reads issue type names", () => {
     assert.equal(
       issueTypeName({ issuetype: { name: "Story" } }),

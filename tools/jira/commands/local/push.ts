@@ -2,12 +2,11 @@
  * `jira push` -- push local ticket markdown back to Jira.
  */
 import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
 import process from "node:process";
 
 import { editWorkitem } from "../../lib/acli-jira.ts";
 import { createConcurrencyLimiter } from "../../../.lib/concurrency.ts";
+import { prepareAcliDescriptionFile } from "../../lib/markdown-adf.ts";
 import { parseJiraKey } from "../../lib/jiraInput.ts";
 import type { OutputMode } from "../../lib/output-mode.ts";
 import { isJsonMode } from "../../lib/output-mode.ts";
@@ -33,18 +32,23 @@ function pushTicketFile(
     throw new Error(`could not parse ticket markdown: ${filePath}`);
   }
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "jira-push-"));
-  const descFile = path.join(tmpDir, "description.md");
+  let descDir: string | undefined;
   try {
-    fs.writeFileSync(descFile, ticket.description, "utf-8");
+    const prepared = prepareAcliDescriptionFile(
+      ticket.description,
+      "jira-push-desc-"
+    );
+    descDir = prepared.dir;
     editWorkitem({
       key: ticket.key,
       summary: ticket.title,
-      descriptionFile: descFile,
+      descriptionFile: prepared.filePath,
       yes: true
     });
   } finally {
-    fs.rmSync(tmpDir, { recursive: true, force: true });
+    if (descDir) {
+      fs.rmSync(descDir, { recursive: true, force: true });
+    }
   }
 
   pullTicketWrite(ticket.key, {
