@@ -117,7 +117,7 @@ export function formatJiraInfoPlainText(info: JiraInfo): string {
   const lines = [
     "Jira workspace",
     "",
-    "Config (tools/jira/lib/CONFIG.ts):",
+    "Config (~/.config/jira/config.json):",
     `  Site: ${displayValue(info.site)}`,
     `  Project: ${displayValue(info.project)}`,
     `  Board ID: ${displayValue(info.boardId)}`,

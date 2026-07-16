@@ -16,7 +16,8 @@ import {
   classifyFolder as classifyFolderImpl,
   formatTicketMarkdown as formatTicketMarkdownImpl,
   JIRA_SEARCH_FIELDS as jiraSearchFields,
-  JIRA_VIEW_EXTRA_FIELDS as jiraViewExtraFields,
+  jiraViewExtraFields as jiraViewExtraFieldsImpl,
+  jiraPullFields as jiraPullFieldsImpl,
   normalizeSiteHost as normalizeSiteHostImpl,
   statusBucketFromFields as statusBucketFromFieldsImpl
 } from "./format.ts";
@@ -49,7 +50,14 @@ export const CONFIG: typeof jiraConfig = jiraConfig;
 export const JIRA_SEARCH_FIELDS: string = jiraSearchFields;
 
 /** Fields returned by `acli jira workitem view` but not search. */
-export const JIRA_VIEW_EXTRA_FIELDS: string = jiraViewExtraFields;
+export function jiraViewExtraFields(): string {
+  return jiraViewExtraFieldsImpl();
+}
+
+/** Search plus view-only fields for pull/show. */
+export function jiraPullFields(): string {
+  return jiraPullFieldsImpl();
+}
 
 /** Keep tickets from sprints within this many days before start and after end. */
 export const SPRINT_RETENTION_BUFFER_MS: number = sprintRetentionBufferMs;

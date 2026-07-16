@@ -225,13 +225,13 @@ async function runImpl(options: CommandOptions): Promise<SyncResult> {
   const boardId = nonEmpty(CONFIG.boardId);
 
   if (!jql) {
-    return { code: syncFail("set CONFIG.boardJql.", options) };
+    return { code: syncFail("set boardJql in ~/.config/jira/config.json.", options) };
   }
   if (!meAccountId) {
-    return { code: syncFail("set CONFIG.meAccountId.", options) };
+    return { code: syncFail("set meAccountId in ~/.config/jira/config.json.", options) };
   }
   if (!siteHost) {
-    return { code: syncFail("set CONFIG.site.", options) };
+    return { code: syncFail("set site in ~/.config/jira/config.json.", options) };
   }
   siteHost = normalizeSiteHost(siteHost);
 

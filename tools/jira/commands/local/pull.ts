@@ -17,7 +17,7 @@ import {
   formatTicketMarkdown,
   isHierarchyRoot,
   issueTypeName,
-  JIRA_PULL_FIELDS,
+  jiraPullFields,
   normalizeSiteHost
 } from "../../lib/format.ts";
 import { parseJiraKey } from "../../lib/jiraInput.ts";
@@ -202,7 +202,7 @@ export function pullTicketWrite(
   ticketKey: string,
   options: PullOptions
 ): PullWriteResult {
-  const data = viewWorkitem(ticketKey, { fields: JIRA_PULL_FIELDS });
+  const data = viewWorkitem(ticketKey, { fields: jiraPullFields() });
   return writePulledIssue(data, ticketKey, options);
 }
 
@@ -211,7 +211,7 @@ async function pullTicketWriteAsync(
   options: PullOptions
 ): Promise<PullWriteResult> {
   const data = await viewWorkitemAsync(ticketKey, {
-    fields: JIRA_PULL_FIELDS
+    fields: jiraPullFields()
   });
   return writePulledIssue(data, ticketKey, options);
 }

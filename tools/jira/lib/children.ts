@@ -1,5 +1,5 @@
 import { searchWorkitems, viewWorkitem } from "./acli-jira.ts";
-import { EPIC_LINK_FIELD, issueTypeName } from "./format.ts";
+import { epicLinkFieldId, issueTypeName } from "./format.ts";
 import type { ChildIssue } from "./types.ts";
 
 function issueKey(value: unknown): string | null {
@@ -147,7 +147,7 @@ export function parentKeyFromFields(
   const fromParent = issueKey(fields.parent);
   if (fromParent) return fromParent;
 
-  const epicLink = fields[EPIC_LINK_FIELD];
+  const epicLink = fields[epicLinkFieldId()];
   if (typeof epicLink === "string" && epicLink) return epicLink;
   return issueKey(epicLink);
 }

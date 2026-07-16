@@ -89,7 +89,7 @@ export function runCreateCommand(
   }
   if (!project) {
     return failCommand(
-      "create: set CONFIG.project in tools/jira/lib/CONFIG.ts (or use jira acli)",
+      "create: set project in ~/.config/jira/config.json (or use jira acli)",
       options.outputMode
     );
   }

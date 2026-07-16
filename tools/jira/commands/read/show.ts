@@ -5,7 +5,7 @@ import process from "node:process";
 
 import { viewWorkitem } from "../../lib/acli-jira.ts";
 import { parseSubcommandArgv } from "../../lib/argv.ts";
-import { JIRA_PULL_FIELDS } from "../../lib/format.ts";
+import { jiraPullFields } from "../../lib/format.ts";
 import { parseJiraKey } from "../../lib/jiraInput.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
@@ -33,7 +33,7 @@ export function runShowCommand(
   const fields =
     typeof parsed.flags.get("fields") === "string"
       ? String(parsed.flags.get("fields"))
-      : JIRA_PULL_FIELDS;
+      : jiraPullFields();
   const formatText = parsed.flags.get("format") === "text";
 
   try {

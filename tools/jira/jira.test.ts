@@ -3,7 +3,19 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
-import { describe, it } from "node:test";
+import { before, describe, it } from "node:test";
+
+import { setJiraConfigPathForTests } from "./lib/CONFIG.ts";
+
+const FIXTURE_CONFIG = path.join(
+  path.dirname(new URL(import.meta.url).pathname),
+  "fixtures",
+  "config.json"
+);
+
+before(() => {
+  setJiraConfigPathForTests(FIXTURE_CONFIG);
+});
 
 import {
   buildJiraTicketsSkillContent,
@@ -51,12 +63,13 @@ import {
   assigneeLabel,
   assigneeRecord,
   classifyFolder,
+  epicLinkFieldId,
   featureTeamLabel,
   formatTicketMarkdown,
   isHierarchyRoot,
   issueDescriptionMarkdown,
   issueTypeName,
-  JIRA_PULL_FIELDS,
+  jiraPullFields,
   normalizeSiteHost,
   statusBucketFromFields,
   yamlScalar
@@ -825,7 +838,7 @@ describe("command dispatch", () => {
     assert.equal(await runPushCommand(["node", "jira", "push", "not-a-key"]), 1);
   });
 
-  it("fails sync when CONFIG is incomplete", async () => {
+  it("fails sync when config is incomplete", async () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "jira-sync-test-"));
     const prev = process.cwd();
     try {
@@ -853,9 +866,9 @@ describe("format misc helpers", () => {
   });
 
   it("includes core fields in pull field list", () => {
-    assert.match(JIRA_PULL_FIELDS, /key,summary,assignee/);
-    assert.match(JIRA_PULL_FIELDS, /created/);
-    assert.match(JIRA_PULL_FIELDS, /updated/);
+    assert.match(jiraPullFields(), /key,summary,assignee/);
+    assert.match(jiraPullFields(), /created/);
+    assert.match(jiraPullFields(), /updated/);
   });
 });
 
@@ -889,7 +902,7 @@ describe("children parent extraction", () => {
       "PROJ-1"
     );
     assert.equal(
-      parentKeyFromFields({ "": { key: "PROJ-EPIC" } }),
+      parentKeyFromFields({ [epicLinkFieldId()]: { key: "PROJ-EPIC" } }),
       "PROJ-EPIC"
     );
   });
@@ -1143,7 +1156,7 @@ describe("jira info", () => {
   it("prints plain text from runInfoCommand", () => {
     const out = captureStdout(() => runInfoCommand());
     assert.match(out, /Jira workspace/);
-    assert.match(out, /Config \(tools\/jira\/lib\/CONFIG\.ts\):/);
+    assert.match(out, /Config \(~\/\.config\/jira\/config\.json\):/);
   });
 });
 

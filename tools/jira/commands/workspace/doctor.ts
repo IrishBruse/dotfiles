@@ -64,14 +64,14 @@ function configCheck(): DoctorCheck {
     return {
       name: "config",
       ok: false,
-      message: `CONFIG missing: ${missing.join(", ")}`,
-      fix: "Edit tools/jira/lib/CONFIG.ts"
+      message: `Config missing: ${missing.join(", ")}`,
+      fix: "Create ~/.config/jira/config.json (see tools/jira/jira.config.example.json)"
     };
   }
   return {
     name: "config",
     ok: true,
-    message: `CONFIG OK (project ${configuredProject()})`
+    message: `Config OK (project ${configuredProject()})`
   };
 }
 

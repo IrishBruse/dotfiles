@@ -1,0 +1,11 @@
+{
+  "site": "example.atlassian.net",
+  "meAccountId": "account-me",
+  "boardId": "42",
+  "project": "PROJ",
+  "boardJql": "project = PROJ ORDER BY assignee, key",
+  "featureTeamField": "customfield_10001",
+  "epicLinkField": "customfield_10014",
+  "clean": true,
+  "boardCacheMaxAgeDays": 7
+}

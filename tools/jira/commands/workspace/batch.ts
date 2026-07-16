@@ -12,7 +12,7 @@ import {
 } from "../../lib/acli-jira.ts";
 import { flagBool, flagString, parseSubcommandArgv } from "../../lib/argv.ts";
 import { configuredProject } from "../../lib/CONFIG.ts";
-import { JIRA_PULL_FIELDS, JIRA_SEARCH_FIELDS } from "../../lib/format.ts";
+import { jiraPullFields, JIRA_SEARCH_FIELDS } from "../../lib/format.ts";
 import { gatherJiraInfo } from "../../lib/info.ts";
 import { parseJiraKey } from "../../lib/jiraInput.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
@@ -88,7 +88,7 @@ function runBatchItem(itemArgv: string[]): {
           return {
             success: false,
             data: null,
-            error: "types: set CONFIG.project in tools/jira/lib/CONFIG.ts"
+            error: "types: set project in ~/.config/jira/config.json (or use jira acli)"
           };
         }
         return {
@@ -115,7 +115,7 @@ function runBatchItem(itemArgv: string[]): {
         const fields =
           typeof parsed.flags.get("fields") === "string"
             ? String(parsed.flags.get("fields"))
-            : JIRA_PULL_FIELDS;
+            : jiraPullFields();
         return { success: true, data: viewWorkitem(key, { fields }), error: null };
       }
       case "search": {

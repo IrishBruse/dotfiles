@@ -1,31 +1,41 @@
 /**
- * Jira issue field -> markdown helpers shared by `jira pull` and board sync.
+ * Jira issue field -> markdown helpers shared by `jira pull` and sync.
  */
-import { CONFIG } from "./CONFIG.ts";
+import { loadJiraConfig } from "./CONFIG.ts";
 import type { Folder, StatusBucket } from "./types.ts";
 
-/** Feature Team custom field id from CONFIG (empty when not configured). */
-export const FEATURE_TEAM_FIELD = CONFIG.featureTeamField;
+/** Feature Team custom field id from config (empty when not configured). */
+export function featureTeamFieldId(): string {
+  return loadJiraConfig().featureTeamField;
+}
 
-/** Epic Link custom field id from CONFIG (empty when not configured). */
-export const EPIC_LINK_FIELD = CONFIG.epicLinkField;
+/** Epic Link custom field id from config (empty when not configured). */
+export function epicLinkFieldId(): string {
+  return loadJiraConfig().epicLinkField;
+}
 
 /** Fields allowed by `acli jira workitem search --fields`. */
 export const JIRA_SEARCH_FIELDS =
   "key,summary,assignee,issuetype,description,status";
 
-/** Fields rejected by search but still returned by `acli jira workitem view`. */
-export const JIRA_VIEW_EXTRA_FIELDS = [
-  "created",
-  "updated",
-  "parent",
-  CONFIG.epicLinkField,
-  CONFIG.featureTeamField
-]
-  .filter((field) => field.length > 0)
-  .join(",");
+/** Fields returned by `acli jira workitem view` but not search. */
+export function jiraViewExtraFields(): string {
+  const config = loadJiraConfig();
+  return [
+    "created",
+    "updated",
+    "parent",
+    config.epicLinkField,
+    config.featureTeamField
+  ]
+    .filter((field) => field.length > 0)
+    .join(",");
+}
 
-export const JIRA_PULL_FIELDS = `${JIRA_SEARCH_FIELDS},${JIRA_VIEW_EXTRA_FIELDS}`;
+/** Search plus view-only fields for pull/show. */
+export function jiraPullFields(): string {
+  return `${JIRA_SEARCH_FIELDS},${jiraViewExtraFields()}`;
+}
 
 /** Strip scheme and trailing slash from a Jira site host. */
 export function normalizeSiteHost(host: string): string {
@@ -52,7 +62,7 @@ export function assigneeLabel(
 /** Human-readable Feature Team label from Jira fields, or `"None"`. */
 export function featureTeamLabel(
   fields: Record<string, unknown>,
-  fieldId: string = FEATURE_TEAM_FIELD
+  fieldId: string = featureTeamFieldId()
 ): string {
   const raw = fields[fieldId];
   if (!Array.isArray(raw) || raw.length === 0) return "None";

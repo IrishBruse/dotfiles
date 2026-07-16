@@ -19,7 +19,7 @@ export function runTypesCommand(
   const project = configuredProject();
   if (!project) {
     return failCommand(
-      "types: set CONFIG.project in tools/jira/lib/CONFIG.ts (or use jira acli)",
+      "types: set project in ~/.config/jira/config.json (or use jira acli)",
       options.outputMode
     );
   }
