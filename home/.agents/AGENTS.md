@@ -27,5 +27,5 @@ Optional frontmatter: `paths` (glob patterns to scope the skill to matching file
 Agents use the `jira` CLI for all Jira work, and the `confluence` CLI plus **Confluence MCP** for Confluence.
 
 - Never run bare `acli`. Use `jira` or `jira acli` for Jira.
-- The `atlassian-cli` skill documents the CLIs and Confluence MCP mapping.
+- The `jira-cli` skill documents the Jira CLI. The `confluence-cli` skill documents the Confluence CLI and MCP mapping.
 - Jira ticket workflow gates live in the `jira` skill under `~/.agents/skills/jira/`.

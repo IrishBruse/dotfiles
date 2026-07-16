@@ -2,7 +2,7 @@
 // beforeShellExecution / preToolUse: block all acli usage.
 
 const BLOCK_MESSAGE =
-  "acli is blocked. Use the `jira` or `confluence` CLI, or `jira acli`, instead of bare `acli`. See the atlassian-cli skill.";
+  "acli is blocked. Use the `jira` or `confluence` CLI, or `jira acli`, instead of bare `acli`. See the jira-cli and confluence-cli skills.";
 
 function readHookInput() {
   return new Promise((resolve, reject) => {
