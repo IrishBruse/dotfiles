@@ -47,6 +47,7 @@ import { runPullCommand } from "./commands/local/pull.ts";
 import { runPushCommand } from "./commands/local/push.ts";
 import { runSyncCommand } from "./commands/workspace/sync.ts";
 import {
+  classifyPullChange,
   issueTypeSlug,
   pulledTicketPath,
   ticketFolderName,
@@ -107,7 +108,7 @@ import {
   printJsonError,
   printJsonSuccess,
   printPulled,
-  printPullSummary
+  pullChangeMark
 } from "./lib/output.ts";
 
 const ME = "account-me";
@@ -262,6 +263,45 @@ describe("pull path helpers", () => {
   it("derives folder names without .md suffix", () => {
     const fields = { summary: "Title" };
     assert.equal(ticketFolderName(fields, "PROJ-3"), "Title - PROJ-3");
+  });
+
+  it("classifies pull file changes", () => {
+    assert.equal(
+      classifyPullChange({
+        priorPath: null,
+        outPath: "/tmp/jira/task/A - PROJ-1.md",
+        priorBody: null,
+        newBody: "body"
+      }),
+      "added"
+    );
+    assert.equal(
+      classifyPullChange({
+        priorPath: "/tmp/jira/task/A - PROJ-1.md",
+        outPath: "/tmp/jira/task/A - PROJ-1.md",
+        priorBody: "old",
+        newBody: "new"
+      }),
+      "updated"
+    );
+    assert.equal(
+      classifyPullChange({
+        priorPath: "/tmp/jira/task/A - PROJ-1.md",
+        outPath: "/tmp/jira/task/A - PROJ-1.md",
+        priorBody: "same",
+        newBody: "same"
+      }),
+      "unchanged"
+    );
+    assert.equal(
+      classifyPullChange({
+        priorPath: "/tmp/jira/story/Old - PROJ-1/Child - PROJ-2.md",
+        outPath: "/tmp/jira/story/New - PROJ-3/Child - PROJ-2.md",
+        priorBody: "body",
+        newBody: "body"
+      }),
+      "moved"
+    );
   });
 });
 
@@ -909,7 +949,7 @@ describe("children parent extraction", () => {
 });
 
 describe("cli output", () => {
-  it("prints help and pull summaries", () => {
+  it("prints help and pull change markers", () => {
     const help = captureStdout(() => printHelp());
     assert.match(help, /jira pull/);
     assert.match(help, /jira sync/);
@@ -919,12 +959,20 @@ describe("cli output", () => {
     assert.match(help, /jira acli/);
     assert.match(help, /jira info/);
 
-    const pulled = captureStdout(() => printPulled("PROJ-1", "Title"));
-    assert.match(pulled, /PROJ-1/);
-    assert.match(pulled, /Title/);
+    assert.equal(pullChangeMark("added"), "+ ");
+    assert.equal(pullChangeMark("updated"), "~ ");
+    assert.equal(pullChangeMark("deleted"), "- ");
+    assert.equal(pullChangeMark("moved"), "> ");
+    assert.equal(pullChangeMark("unchanged"), "  ");
 
-    const summary = captureStdout(() => printPullSummary(2));
-    assert.match(summary, /Pulled 2 issues/);
+    const added = captureStdout(() => printPulled("PROJ-1", "Title", "added"));
+    assert.match(added, /\+ PROJ-1/);
+    assert.match(added, /Title/);
+
+    const updated = captureStdout(() =>
+      printPulled("PROJ-2", "Revised", "updated")
+    );
+    assert.match(updated, /~ PROJ-2/);
   });
 
   it("prints child issue listings", () => {

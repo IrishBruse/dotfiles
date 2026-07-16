@@ -5,8 +5,9 @@ import {
   stdoutColorEnabled
 } from "../../dotfiles/api.ts";
 
-import type { ChildIssue } from "./types.ts";
+import type { ChildIssue, PullChangeStatus } from "./types.ts";
 import type { JiraResult, OutputMode } from "./output-mode.ts";
+import type { PaintRole } from "../../dotfiles/api.ts";
 
 export function printJsonSuccess<T>(data: T): void {
   const envelope: JiraResult<T> = {
@@ -46,9 +47,34 @@ export function printError(msg: string): void {
   process.stderr.write(`${paint(c, "bad", "error")}: ${msg}\n`);
 }
 
-export function printPulled(key: string, title: string): void {
+const PULL_STATUS_MARK: Record<
+  PullChangeStatus,
+  { mark: string; role: PaintRole }
+> = {
+  added: { mark: "+", role: "ok" },
+  updated: { mark: "~", role: "warn" },
+  moved: { mark: ">", role: "label" },
+  deleted: { mark: "-", role: "bad" },
+  unchanged: { mark: " ", role: "dim" }
+};
+
+/** Git-style change marker for `jira pull` output. */
+export function pullChangeMark(status: PullChangeStatus): string {
+  const { mark } = PULL_STATUS_MARK[status];
+  return status === "unchanged" ? "  " : `${mark} `;
+}
+
+export function printPulled(
+  key: string,
+  title: string,
+  status: PullChangeStatus = "added"
+): void {
   const c = stdoutColorEnabled();
-  process.stdout.write(`${paint(c, "label", key)}  ${title}\n`);
+  const { role } = PULL_STATUS_MARK[status];
+  const indicator = pullChangeMark(status);
+  process.stdout.write(
+    `${paint(c, role, indicator)}${paint(c, "label", key)}  ${title}\n`
+  );
 }
 
 export function printChildIssues(children: ChildIssue[]): void {
@@ -63,12 +89,6 @@ export function printChildIssues(children: ChildIssue[]): void {
       `  ${paint(c, "label", child.key)}  ${type}  ${child.summary}\n`
     );
   }
-}
-
-export function printPullSummary(total: number): void {
-  const c = stdoutColorEnabled();
-  const noun = total === 1 ? "issue" : "issues";
-  process.stdout.write(`\n${paint(c, "ok", `Pulled ${total} ${noun}.`)}\n`);
 }
 
 /** Progress and status on stderr so stdout stays pipe-friendly. */

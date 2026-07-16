@@ -26,6 +26,9 @@ export type LocalTicket = {
   description: string;
 };
 
+/** Local pull result for one ticket file. */
+export type PullChangeStatus = "added" | "updated" | "moved" | "deleted" | "unchanged";
+
 /** Child issue summary from Jira search or view. */
 export type ChildIssue = {
   key: string;

@@ -28,13 +28,13 @@ import {
   listLocalTickets,
   localTicketPath
 } from "../../lib/local.ts";
+import type { PullChangeStatus } from "../../lib/types.ts";
 import {
   failCommand,
   printChildIssues,
   printError,
   printJsonSuccess,
   printPulled,
-  printPullSummary,
   pullLog
 } from "../../lib/output.ts";
 import { confirm } from "../../lib/prompt.ts";
@@ -129,7 +129,22 @@ type PullWriteResult = {
   title: string;
   relPath: string;
   issueType: string;
+  status: PullChangeStatus;
 };
+
+/** Classify how a pull write changes local markdown. */
+export function classifyPullChange(options: {
+  priorPath: string | null;
+  outPath: string;
+  priorBody: string | null;
+  newBody: string;
+}): PullChangeStatus {
+  const { priorPath, outPath, priorBody, newBody } = options;
+  if (!priorPath) return "added";
+  if (path.resolve(priorPath) !== path.resolve(outPath)) return "moved";
+  if (priorBody === newBody) return "unchanged";
+  return "updated";
+}
 
 /** Fetch one ticket from Jira and write or refresh its local markdown file. */
 export function pullTicket(
@@ -173,6 +188,20 @@ function writePulledIssue(
   const prior = localTicketPath(key, cwd, options.ticketIndex);
   const parent = resolveStoryParent(fields);
   const outPath = pulledTicketPath(cwd, fields, key, parent);
+  let priorBody: string | null = null;
+  if (prior && fs.existsSync(prior)) {
+    try {
+      priorBody = fs.readFileSync(prior, "utf-8");
+    } catch {
+      priorBody = null;
+    }
+  }
+  const status = classifyPullChange({
+    priorPath: priorBody != null ? prior : null,
+    outPath,
+    priorBody,
+    newBody: body
+  });
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, body, "utf-8");
@@ -187,14 +216,15 @@ function writePulledIssue(
   const rel = path.relative(cwd, outPath) || outPath;
 
   if (!quiet) {
-    printPulled(key, summary);
+    printPulled(key, summary, status);
   }
 
   return {
     key,
     title: summary,
     relPath: rel,
-    issueType: issueTypeName(fields)
+    issueType: issueTypeName(fields),
+    status
   };
 }
 
@@ -317,7 +347,7 @@ async function runPullFlow(
     pulled += 1;
     pulledKeys.push(entry.result.key);
     if (!quiet) {
-      printPulled(entry.result.key, entry.result.title);
+      printPulled(entry.result.key, entry.result.title, entry.result.status);
     }
   }
 
@@ -334,9 +364,6 @@ function finishPull(
   if (jsonMode) {
     printJsonSuccess({ keys, count });
     return 0;
-  }
-  if (!options.quiet) {
-    printPullSummary(count);
   }
   return 0;
 }
@@ -386,7 +413,7 @@ export async function pullAll(
     pulled += 1;
     pulledKeys.push(result.result.key);
     if (!quiet) {
-      printPulled(result.result.key, result.result.title);
+      printPulled(result.result.key, result.result.title, result.result.status);
     }
   }
   const summaryCode = finishPull(pulled, pulledKeys, { ...options, quiet });
