@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { homedir } from "node:os";
 
+import { parseBoardSprintRows } from "./board-sprint.ts";
 import type { BoardSprint, Folder } from "./types.ts";
 
 /** Skill folder: `~/.agents/skills/jira-board/`. */
@@ -11,12 +12,10 @@ export function jiraBoardSkillDir(baseDir = homedir()): string {
 
 export const JIRA_BOARD_SKILL_DIR = jiraBoardSkillDir();
 
-/** Cached board context written by `jira board sync`. */
+/** Cached workspace context written by `jira sync`. */
 export function boardInfoCachePath(baseDir = homedir()): string {
   return path.join(jiraBoardSkillDir(baseDir), "info.json");
 }
-
-export const BOARD_INFO_CACHE_PATH = boardInfoCachePath();
 
 export type BoardInfoCache = {
   syncedAt: string;
@@ -27,94 +26,107 @@ export type BoardInfoCache = {
   retainedSprints: BoardSprint[];
   counts: Record<Folder, number>;
   issueCount: number;
+  localTicketCount: number;
+  issueTypes: string[];
 };
 
-/** Persist board context for `jira info`. */
+/** Persist workspace context for `jira info`. */
 export function writeBoardInfoCache(
   cache: BoardInfoCache,
   baseDir = homedir()
 ): void {
   const skillDir = jiraBoardSkillDir(baseDir);
   fs.mkdirSync(skillDir, { recursive: true });
+  const filePath = boardInfoCachePath(baseDir);
+  const tempPath = `${filePath}.tmp`;
   fs.writeFileSync(
-    boardInfoCachePath(baseDir),
+    tempPath,
     `${JSON.stringify(cache, null, 2)}\n`,
     "utf-8"
   );
+  fs.renameSync(tempPath, filePath);
 }
 
-/** Read cached board context when present. */
+const FOLDER_KEYS: Folder[] = ["me", "team", "unassigned", "misc"];
+
+function parseCounts(value: unknown): Record<Folder, number> | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+  const raw = value as Record<string, unknown>;
+  const counts = {} as Record<Folder, number>;
+  for (const key of FOLDER_KEYS) {
+    const count = raw[key];
+    if (typeof count !== "number" || !Number.isFinite(count)) {
+      return null;
+    }
+    counts[key] = count;
+  }
+  return counts;
+}
+
+function parseStringArray(value: unknown): string[] | null {
+  if (!Array.isArray(value)) return null;
+  const out: string[] = [];
+  for (const item of value) {
+    if (typeof item !== "string" || !item.trim()) return null;
+    out.push(item.trim());
+  }
+  return out;
+}
+
+/** Read cached workspace context when present. */
 export function readBoardInfoCache(baseDir = homedir()): BoardInfoCache | null {
   const filePath = boardInfoCachePath(baseDir);
   if (!fs.existsSync(filePath)) return null;
 
+  let parsed: unknown;
   try {
-    const parsed = JSON.parse(
-      fs.readFileSync(filePath, "utf-8")
-    ) as unknown;
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-      return null;
-    }
-    const raw = parsed as Record<string, unknown>;
-    if (typeof raw.syncedAt !== "string" || typeof raw.effectiveJql !== "string") {
-      return null;
-    }
+    parsed = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+  } catch (err) {
+    if (err instanceof SyntaxError) return null;
+    throw err;
+  }
 
-    const counts = parseCounts(raw.counts);
-    const retainedSprints = parseRetainedSprints(raw.retainedSprints);
-
-    return {
-      syncedAt: raw.syncedAt,
-      boardId: typeof raw.boardId === "string" ? raw.boardId : null,
-      site: typeof raw.site === "string" ? raw.site : "",
-      project: typeof raw.project === "string" ? raw.project : "",
-      effectiveJql: raw.effectiveJql,
-      retainedSprints,
-      counts,
-      issueCount:
-        typeof raw.issueCount === "number" && Number.isFinite(raw.issueCount)
-          ? raw.issueCount
-          : 0
-    };
-  } catch {
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
     return null;
   }
-}
+  const raw = parsed as Record<string, unknown>;
+  if (typeof raw.syncedAt !== "string") return null;
+  if (raw.boardId !== null && typeof raw.boardId !== "string") return null;
+  if (typeof raw.site !== "string") return null;
+  if (typeof raw.project !== "string") return null;
+  if (typeof raw.effectiveJql !== "string") return null;
+  if (!Array.isArray(raw.retainedSprints)) return null;
 
-function parseCounts(value: unknown): Record<Folder, number> {
-  const empty: Record<Folder, number> = {
-    me: 0,
-    team: 0,
-    unassigned: 0,
-    misc: 0
+  const counts = parseCounts(raw.counts);
+  if (!counts) return null;
+  if (typeof raw.issueCount !== "number" || !Number.isFinite(raw.issueCount)) {
+    return null;
+  }
+
+  const localTicketCount = raw.localTicketCount;
+  if (
+    typeof localTicketCount !== "number" ||
+    !Number.isFinite(localTicketCount) ||
+    localTicketCount < 0
+  ) {
+    return null;
+  }
+
+  const issueTypes = parseStringArray(raw.issueTypes);
+  if (!issueTypes) return null;
+
+  return {
+    syncedAt: raw.syncedAt,
+    boardId: raw.boardId,
+    site: raw.site,
+    project: raw.project,
+    effectiveJql: raw.effectiveJql,
+    retainedSprints: parseBoardSprintRows(raw.retainedSprints),
+    counts,
+    issueCount: raw.issueCount,
+    localTicketCount,
+    issueTypes
   };
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    return empty;
-  }
-  const raw = value as Record<string, unknown>;
-  for (const key of Object.keys(empty) as Folder[]) {
-    const count = raw[key];
-    if (typeof count === "number" && Number.isFinite(count)) {
-      empty[key] = count;
-    }
-  }
-  return empty;
-}
-
-function parseRetainedSprints(value: unknown): BoardSprint[] {
-  if (!Array.isArray(value)) return [];
-  const sprints: BoardSprint[] = [];
-  for (const entry of value) {
-    if (!entry || typeof entry !== "object" || Array.isArray(entry)) continue;
-    const row = entry as Record<string, unknown>;
-    if (typeof row.id !== "number") continue;
-    sprints.push({
-      id: row.id,
-      name: typeof row.name === "string" ? row.name : undefined,
-      startDate: typeof row.startDate === "string" ? row.startDate : undefined,
-      endDate: typeof row.endDate === "string" ? row.endDate : undefined,
-      state: typeof row.state === "string" ? row.state : undefined
-    });
-  }
-  return sprints;
 }

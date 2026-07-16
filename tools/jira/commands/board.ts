@@ -1,12 +1,17 @@
-import { run as runBoardSync } from "./board/sync.ts";
-import { printError } from "../lib/output.ts";
+import { runSyncCommand } from "./sync.ts";
+import type { CommandOptions } from "../lib/output-mode.ts";
+import { HUMAN_OUTPUT } from "../lib/output-mode.ts";
+import { failCommand } from "../lib/output.ts";
 
-/** Run `jira board <subcommand>`. */
-export async function runBoardCommand(argv: string[]): Promise<number> {
+/** Run `jira board <subcommand>` (deprecated; use `jira sync`). */
+export async function runBoardCommand(
+  argv: string[],
+  options: CommandOptions = HUMAN_OUTPUT
+): Promise<number> {
   const sub = argv[3];
   if (sub === "sync") {
-    return runBoardSync();
+    process.stderr.write("board sync is deprecated, use: jira sync\n");
+    return runSyncCommand(options);
   }
-  printError("board: unknown subcommand (try: sync)");
-  return 1;
+  return failCommand("board: unknown subcommand (use: jira sync)", options.outputMode);
 }

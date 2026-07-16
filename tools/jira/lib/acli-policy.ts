@@ -1,3 +1,5 @@
+import { parseJiraKey } from "./jiraInput.ts";
+
 /** Blocked `acli jira` command paths for agent use. */
 export const BLOCKED_ACLI_JIRA_COMMANDS: readonly (readonly string[])[] = [
   ["auth", "login"],
@@ -27,7 +29,15 @@ const JIRA_CLI_ALTERNATIVES: Readonly<Record<string, string>> = {
   "workitem link create": "jira link"
 };
 
-const ISSUE_KEY_RE = /^[A-Za-z][A-Za-z0-9_]*-\d+$/;
+const ACLI_JIRA_ROOT_COMMANDS = new Set(
+  BLOCKED_ACLI_JIRA_COMMANDS.map((parts) => parts[0])
+);
+
+function consumesFlagValue(path: string[], next: string | undefined): boolean {
+  if (next === undefined || next.startsWith("-")) return false;
+  if (path.length > 0) return true;
+  return !ACLI_JIRA_ROOT_COMMANDS.has(next);
+}
 
 /** Build `acli` argv for `jira acli <args...>` (always `["jira", ...]`). */
 export function buildAcliJiraArgs(argv: string[]): string[] {
@@ -40,9 +50,16 @@ export function buildAcliJiraArgs(argv: string[]): string[] {
 /** Extract the subcommand path from args after the leading `jira`. */
 export function acliJiraCommandPath(jiraArgs: string[]): string[] {
   const path: string[] = [];
-  for (const arg of jiraArgs.slice(1)) {
-    if (arg.startsWith("-")) break;
-    if (ISSUE_KEY_RE.test(arg)) break;
+  const args = jiraArgs.slice(1);
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i]!;
+    if (arg.startsWith("-")) {
+      if (arg.includes("=")) continue;
+      const next = args[i + 1];
+      if (consumesFlagValue(path, next)) i += 1;
+      continue;
+    }
+    if (parseJiraKey(arg)) break;
     if (/^\d+$/.test(arg)) break;
     path.push(arg);
   }
@@ -68,8 +85,7 @@ export function blockedAcliJiraReason(jiraArgs: string[]): string | null {
     if (!pathMatches(path, blocked)) continue;
 
     const command = formatBlockedPath(blocked);
-    const altKey = command;
-    const alt = JIRA_CLI_ALTERNATIVES[altKey];
+    const alt = JIRA_CLI_ALTERNATIVES[command];
     if (alt) {
       return `command blocked for agents: ${command} (use ${alt})`;
     }

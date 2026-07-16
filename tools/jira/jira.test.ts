@@ -12,7 +12,13 @@ import {
   ticketsSkillOneLine,
   writeJiraTicketsSkill
 } from "./commands/board/skill.ts";
+import { runBatchCommand } from "./commands/batch.ts";
+import {
+  buildSyncSummary,
+  formatSyncSummaryHuman
+} from "./commands/board/sync.ts";
 import { runBoardCommand } from "./commands/board.ts";
+import { gatherDoctorChecksForTest, runDoctorCommand } from "./commands/doctor.ts";
 import {
   isSprintInRetentionWindow,
   miscDeleteCutoffMs,
@@ -21,7 +27,6 @@ import {
   SPRINT_RETENTION_BUFFER_MS,
   writeBoard
 } from "./commands/board/write.ts";
-import { buildAcliPassthroughArgs } from "./commands/acli.ts";
 import { runAcliPassthroughCommand } from "./commands/acli.ts";
 import { runInfoCommand } from "./commands/info.ts";
 import { printHelp } from "./commands/help.ts";
@@ -64,18 +69,18 @@ import {
 } from "./lib/custom-fields.ts";
 import { parseSubcommandArgv } from "./lib/argv.ts";
 import {
+  boardInfoCachePath,
   readBoardInfoCache,
   writeBoardInfoCache
 } from "./lib/board-cache.ts";
-import {
-  formatJiraInfoPlainText,
-  gatherJiraInfo
-} from "./lib/info.ts";
+import { formatJiraInfoPlainText, parseProjectIssueTypeNames } from "./lib/info.ts";
+import { parseGlobalFlags } from "./lib/output-mode.ts";
 import {
   blockedAcliJiraReason,
   buildAcliJiraArgs
 } from "./lib/acli-policy.ts";
 import { parseCreatedIssueKey } from "./lib/acli-jira.ts";
+import { parseJiraKey } from "./lib/jiraInput.ts";
 import {
   buildLocalTicketIndex,
   jiraRootDir,
@@ -87,6 +92,8 @@ import {
 } from "./lib/local.ts";
 import {
   printChildIssues,
+  printJsonError,
+  printJsonSuccess,
   printPulled,
   printPullSummary
 } from "./lib/output.ts";
@@ -788,9 +795,8 @@ describe("writeBoard", () => {
 });
 
 describe("writeJiraTicketsSkill", () => {
-  it("writes skill markdown and sprint json beside the skill file", () => {
+  it("writes skill markdown beside the skill file", () => {
     withTempDir((root) => {
-      const boardRoot = path.join(root, "references");
       const skillPath = path.join(root, "skill", "SKILL.md");
       writeJiraTicketsSkill(
         [
@@ -803,15 +809,13 @@ describe("writeJiraTicketsSkill", () => {
           }
         ],
         skillPath,
-        "account-me",
-        boardRoot
+        "account-me"
       );
-      const skillDir = path.dirname(skillPath);
       assert.ok(fs.existsSync(skillPath));
-      assert.ok(fs.existsSync(path.join(skillDir, "sprint.json")));
       const md = fs.readFileSync(skillPath, "utf-8");
       assert.match(md, /name: jira-board/);
       assert.match(md, /PROJ-1: Alpha/);
+      assert.doesNotMatch(md, /references\//);
     });
   });
 });
@@ -826,7 +830,7 @@ describe("command dispatch", () => {
     assert.equal(await runBoardCommand(["node", "jira", "board", "nope"]), 1);
   });
 
-  it("fails sync when no local tickets exist", async () => {
+  it("fails sync when CONFIG is incomplete", async () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "jira-sync-test-"));
     const prev = process.cwd();
     try {
@@ -900,7 +904,9 @@ describe("cli output", () => {
   it("prints help and pull summaries", () => {
     const help = captureStdout(() => printHelp());
     assert.match(help, /jira pull/);
-    assert.match(help, /jira board sync/);
+    assert.match(help, /jira sync/);
+    assert.match(help, /Local tickets:/);
+    assert.match(help, /Agent workspace:/);
     assert.match(help, /jira show/);
     assert.match(help, /jira acli/);
     assert.match(help, /jira info/);
@@ -925,13 +931,13 @@ describe("cli output", () => {
 });
 
 describe("acli passthrough argv", () => {
-  it("aliases jira acli args to acli jira", () => {
+  it("builds acli jira argv from jira acli", () => {
     assert.deepEqual(
-      buildAcliPassthroughArgs(["node", "jira", "acli", "workitem", "view", "KEY-1"]),
+      buildAcliJiraArgs(["node", "jira", "acli", "workitem", "view", "KEY-1"]),
       ["jira", "workitem", "view", "KEY-1"]
     );
     assert.deepEqual(
-      buildAcliPassthroughArgs(["node", "jira", "acli", "jira", "project", "list"]),
+      buildAcliJiraArgs(["node", "jira", "acli", "jira", "project", "list"]),
       ["jira", "project", "list"]
     );
     assert.deepEqual(buildAcliJiraArgs(["node", "jira", "acli"]), ["jira"]);
@@ -954,6 +960,10 @@ describe("acli passthrough argv", () => {
     assert.equal(
       blockedAcliJiraReason(["jira", "workitem", "view", "KEY-1", "--json"]),
       null
+    );
+    assert.match(
+      blockedAcliJiraReason(["jira", "--json", "workitem", "create"]) ?? "",
+      /blocked for agents: workitem create/
     );
   });
 
@@ -1035,6 +1045,16 @@ Body here`);
 });
 
 describe("jira info", () => {
+  it("parses issue type names from project view JSON", () => {
+    assert.deepEqual(
+      parseProjectIssueTypeNames({
+        issueTypes: [{ name: "Story" }, { name: "Epic" }]
+      }),
+      ["Story", "Epic"]
+    );
+    assert.deepEqual(parseProjectIssueTypeNames({}), []);
+  });
+
   it("formats plain-text workspace context", () => {
     const text = formatJiraInfoPlainText({
       site: "example.atlassian.net",
@@ -1044,6 +1064,7 @@ describe("jira info", () => {
       meAccountId: "account-me",
       featureTeamField: "customfield_1",
       epicLinkField: "",
+      issueTypes: ["Story", "Epic", "Task"],
       boardCache: {
         syncedAt: "2026-07-15T12:00:00.000Z",
         boardId: "42",
@@ -1060,7 +1081,9 @@ describe("jira info", () => {
           }
         ],
         counts: { me: 2, team: 3, unassigned: 1, misc: 0 },
-        issueCount: 6
+        issueCount: 6,
+        localTicketCount: 4,
+        issueTypes: ["Story", "Epic", "Task"]
       },
       localTicketCount: 4
     });
@@ -1068,27 +1091,57 @@ describe("jira info", () => {
     assert.match(text, /Sprint 12/);
     assert.match(text, /Tickets under jira\/: 4/);
     assert.match(text, /Sprint board: me 2, team 3, unassigned 1, misc 0/);
+    assert.match(text, /Issue types: Story, Epic, Task/);
   });
 
   it("reads and writes the board info cache", () => {
     withTempDir((dir) => {
       const home = path.join(dir, "home");
       fs.mkdirSync(home, { recursive: true });
-      writeBoardInfoCache(
-        {
+      const input = {
+        syncedAt: "2026-07-15T12:00:00.000Z",
+        boardId: "42",
+        site: "example.atlassian.net",
+        project: "TEAM",
+        effectiveJql: "project = TEAM",
+        retainedSprints: [],
+        counts: { me: 0, team: 0, unassigned: 0, misc: 0 },
+        issueCount: 0,
+        localTicketCount: 0,
+        issueTypes: []
+      };
+      writeBoardInfoCache(input, home);
+      const cache = readBoardInfoCache(home);
+      assert.deepEqual(cache, input);
+    });
+  });
+
+  it("returns null for corrupt or partial board info cache", () => {
+    withTempDir((dir) => {
+      const home = path.join(dir, "home");
+      fs.mkdirSync(home, { recursive: true });
+      const cachePath = boardInfoCachePath(home);
+      fs.mkdirSync(path.dirname(cachePath), { recursive: true });
+
+      fs.writeFileSync(cachePath, "{not json", "utf-8");
+      assert.equal(readBoardInfoCache(home), null);
+
+      fs.writeFileSync(
+        cachePath,
+        JSON.stringify({
           syncedAt: "2026-07-15T12:00:00.000Z",
           boardId: "42",
           site: "example.atlassian.net",
-          project: "TEAM",
           effectiveJql: "project = TEAM",
           retainedSprints: [],
           counts: { me: 0, team: 0, unassigned: 0, misc: 0 },
-          issueCount: 0
-        },
-        home
+          issueCount: 0,
+          localTicketCount: 0,
+          issueTypes: []
+        }),
+        "utf-8"
       );
-      const cache = readBoardInfoCache(home);
-      assert.equal(cache?.project, "TEAM");
+      assert.equal(readBoardInfoCache(home), null);
     });
   });
 
@@ -1108,5 +1161,120 @@ describe("show and search command validation", () => {
   it("rejects search without jql", () => {
     const code = runSearchCommand(["node", "jira", "search"]);
     assert.equal(code, 1);
+  });
+});
+
+describe("agent json output", () => {
+  it("strips global --json from argv", () => {
+    const parsed = parseGlobalFlags(["node", "jira", "--json", "info"]);
+    assert.equal(parsed.outputMode, "json");
+    assert.deepEqual(parsed.argv, ["node", "jira", "info"]);
+  });
+
+  it("prints success envelope", () => {
+    const out = captureStdout(() => printJsonSuccess({ ok: true }));
+    const parsed = JSON.parse(out) as {
+      success: boolean;
+      data: unknown;
+      error: string | null;
+    };
+    assert.equal(parsed.success, true);
+    assert.deepEqual(parsed.data, { ok: true });
+    assert.equal(parsed.error, null);
+  });
+
+  it("prints error envelope", () => {
+    const out = captureStdout(() => printJsonError("bad", "AUTH"));
+    const parsed = JSON.parse(out) as {
+      success: boolean;
+      data: null;
+      error: string;
+      code?: string;
+    };
+    assert.equal(parsed.success, false);
+    assert.equal(parsed.data, null);
+    assert.equal(parsed.error, "bad");
+    assert.equal(parsed.code, "AUTH");
+  });
+
+  it("prints info as JSON envelope", () => {
+    const out = captureStdout(() =>
+      runInfoCommand({ outputMode: "json" })
+    );
+    const parsed = JSON.parse(out) as {
+      success: boolean;
+      data: { project: string };
+    };
+    assert.equal(parsed.success, true);
+    assert.ok(typeof parsed.data.project === "string");
+  });
+});
+
+describe("jira doctor", () => {
+  it("returns structured checks in json mode", () => {
+    const out = captureStdout(() =>
+      runDoctorCommand({ outputMode: "json" })
+    );
+    const parsed = JSON.parse(out) as {
+      success: boolean;
+      data: { checks: Array<{ name: string; ok: boolean }> };
+    };
+    assert.ok(Array.isArray(parsed.data.checks));
+    assert.ok(parsed.data.checks.some((c) => c.name === "acli-policy"));
+  });
+
+  it("includes acli policy sanity check", () => {
+    const checks = gatherDoctorChecksForTest();
+    const policy = checks.find((c) => c.name === "acli-policy");
+    assert.ok(policy);
+    assert.equal(policy?.ok, true);
+  });
+});
+
+describe("jira batch", () => {
+  it("rejects disallowed commands", () => {
+    withTempDir((dir) => {
+      const filePath = path.join(dir, "batch.json");
+      fs.writeFileSync(filePath, JSON.stringify([["create"]]), "utf-8");
+      const code = runBatchCommand(
+        ["node", "jira", "batch", "--file", filePath],
+        { outputMode: "json" }
+      );
+      assert.equal(code, 1);
+    });
+  });
+
+  it("runs info in batch json mode", () => {
+    withTempDir((dir) => {
+      const filePath = path.join(dir, "batch.json");
+      fs.writeFileSync(filePath, JSON.stringify([["info"]]), "utf-8");
+      const out = captureStdout(() =>
+        runBatchCommand(
+          ["node", "jira", "batch", "--file", filePath],
+          { outputMode: "json" }
+        )
+      );
+      const parsed = JSON.parse(out) as {
+        success: boolean;
+        data: Array<{ index: number; success: boolean }>;
+      };
+      assert.equal(parsed.success, true);
+      assert.equal(parsed.data[0]?.success, true);
+    });
+  });
+});
+
+describe("sync summary formatting", () => {
+  it("builds human and structured sync summaries", () => {
+    const summary = buildSyncSummary({
+      boardId: "42",
+      sprintIds: [99],
+      issueCount: 3,
+      counts: { me: 1, team: 1, unassigned: 1, misc: 0 },
+      skillPath: "/tmp/SKILL.md"
+    });
+    const text = formatSyncSummaryHuman(summary);
+    assert.match(text, /Fetched 3 issue/);
+    assert.match(text, /Skill: \/tmp\/SKILL.md/);
   });
 });

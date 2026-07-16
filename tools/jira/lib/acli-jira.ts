@@ -7,6 +7,7 @@ import {
   runAcliJson,
   runAcliJsonAsync
 } from "../../.lib/acli.ts";
+import { parseBoardSprintRows } from "./board-sprint.ts";
 import type { BoardSprint } from "./types.ts";
 
 const DEFAULT_ACLI = "acli";
@@ -245,26 +246,7 @@ function parseBoardSprintsFromAcli(data: unknown): BoardSprint[] {
   if (!isSprintListPage(data)) return [];
   const sprints = data.sprints;
   if (!Array.isArray(sprints)) return [];
-  const out: BoardSprint[] = [];
-  for (const s of sprints) {
-    if (!s || typeof s !== "object" || !("id" in s)) continue;
-    const row = s as {
-      id?: unknown;
-      name?: unknown;
-      startDate?: unknown;
-      endDate?: unknown;
-      state?: unknown;
-    };
-    if (typeof row.id !== "number") continue;
-    out.push({
-      id: row.id,
-      name: typeof row.name === "string" ? row.name : undefined,
-      startDate: typeof row.startDate === "string" ? row.startDate : undefined,
-      endDate: typeof row.endDate === "string" ? row.endDate : undefined,
-      state: typeof row.state === "string" ? row.state : undefined
-    });
-  }
-  return out;
+  return parseBoardSprintRows(sprints);
 }
 
 function mergeBoardSprintPages(data: unknown): BoardSprint[] {

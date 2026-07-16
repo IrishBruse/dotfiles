@@ -6,15 +6,19 @@ import process from "node:process";
 import { createComment } from "../lib/acli-jira.ts";
 import { flagBool, flagString, parseSubcommandArgv } from "../lib/argv.ts";
 import { parseJiraKey } from "../lib/jiraInput.ts";
-import { printError } from "../lib/output.ts";
+import type { CommandOptions } from "../lib/output-mode.ts";
+import { HUMAN_OUTPUT, isJsonMode } from "../lib/output-mode.ts";
+import { failCommand, printJsonSuccess } from "../lib/output.ts";
 
 /** Run `jira comment <KEY> --body-file <path>`. */
-export function runCommentCommand(argv: string[]): number {
+export function runCommentCommand(
+  argv: string[],
+  options: CommandOptions = HUMAN_OUTPUT
+): number {
   const parsed = parseSubcommandArgv(argv, 3);
   const input = parsed.positional[0];
   if (!input) {
-    printError("comment: missing Jira key");
-    return 1;
+    return failCommand("comment: missing Jira key", options.outputMode);
   }
 
   const key = parseJiraKey(input) ?? input;
@@ -23,8 +27,10 @@ export function runCommentCommand(argv: string[]): number {
   const yes = flagBool(parsed.flags, "yes");
 
   if (!bodyFile && !body) {
-    printError("comment: --body-file or --body is required");
-    return 1;
+    return failCommand(
+      "comment: --body-file or --body is required",
+      options.outputMode
+    );
   }
 
   try {
@@ -34,11 +40,14 @@ export function runCommentCommand(argv: string[]): number {
       body: body || undefined,
       yes
     });
-    process.stdout.write(`Commented on ${key}\n`);
+    if (isJsonMode(options)) {
+      printJsonSuccess({ key, action: "comment" });
+    } else {
+      process.stdout.write(`Commented on ${key}\n`);
+    }
     return 0;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    printError(`comment ${key}: ${msg}`);
-    return 1;
+    return failCommand(`comment ${key}: ${msg}`, options.outputMode);
   }
 }

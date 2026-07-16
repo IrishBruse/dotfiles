@@ -6,6 +6,40 @@ import {
 } from "../../dotfiles/api.ts";
 
 import type { ChildIssue } from "./types.ts";
+import type { JiraResult, OutputMode } from "./output-mode.ts";
+
+export function printJsonSuccess<T>(data: T): void {
+  const envelope: JiraResult<T> = {
+    success: true,
+    data,
+    error: null
+  };
+  process.stdout.write(`${JSON.stringify(envelope)}\n`);
+}
+
+export function printJsonError(error: string, code?: string): void {
+  const envelope: JiraResult<null> = {
+    success: false,
+    data: null,
+    error,
+    ...(code ? { code } : {})
+  };
+  process.stdout.write(`${JSON.stringify(envelope)}\n`);
+}
+
+/** Print a failure message; JSON envelope on stdout when in json mode. */
+export function failCommand(
+  msg: string,
+  mode: OutputMode,
+  code?: string
+): number {
+  if (mode === "json") {
+    printJsonError(msg, code);
+  } else {
+    printError(msg);
+  }
+  return 1;
+}
 
 export function printError(msg: string): void {
   const c = stderrColorEnabled();

@@ -86,6 +86,22 @@ function jiraTypeDirFromPath(filePath: string, cwd: string): string {
   return segment || path.basename(path.dirname(filePath));
 }
 
+function countTicketFiles(dir: string): number {
+  if (!fs.existsSync(dir)) return 0;
+
+  let count = 0;
+  for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = path.join(dir, ent.name);
+    if (ent.isDirectory()) {
+      count += countTicketFiles(fullPath);
+      continue;
+    }
+    if (!ent.isFile() || !ent.name.endsWith(".md")) continue;
+    count += 1;
+  }
+  return count;
+}
+
 function collectTicketFiles(
   dir: string,
   cwd: string,
@@ -130,6 +146,23 @@ export function listLocalTickets(cwd = process.cwd()): LocalTicket[] {
     return a.key.localeCompare(b.key, undefined, { sensitivity: "base" });
   });
   return tickets;
+}
+
+/**
+ * Count ticket markdown files under `jira/<type>/` without reading file contents.
+ * @param cwd - Working directory containing the `jira/` folder.
+ * @return Number of `*.md` files found.
+ */
+export function countLocalTickets(cwd = process.cwd()): number {
+  const root = jiraRootDir(cwd);
+  if (!fs.existsSync(root)) return 0;
+
+  let count = 0;
+  for (const ent of fs.readdirSync(root, { withFileTypes: true })) {
+    if (!ent.isDirectory()) continue;
+    count += countTicketFiles(path.join(root, ent.name));
+  }
+  return count;
 }
 
 /** Key -> absolute path index for fast lookups within one command. */

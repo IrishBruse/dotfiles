@@ -9,13 +9,15 @@ import process from "node:process";
 import { editWorkitem } from "../lib/acli-jira.ts";
 import { createConcurrencyLimiter } from "../../.lib/concurrency.ts";
 import { parseJiraKey } from "../lib/jiraInput.ts";
+import type { OutputMode } from "../lib/output-mode.ts";
+import { isJsonMode } from "../lib/output-mode.ts";
 import {
   buildLocalTicketIndex,
   listLocalTickets,
   localTicketPath,
   parseTicketMarkdown
 } from "../lib/local.ts";
-import { printError } from "../lib/output.ts";
+import { failCommand, printError, printJsonSuccess } from "../lib/output.ts";
 import { pullTicketWrite } from "./pull.ts";
 
 const PUSH_CONCURRENCY = 4;
@@ -57,40 +59,43 @@ function pushTicketFile(
 export function pushTicket(
   key: string,
   cwd = process.cwd(),
-  options: { quiet?: boolean } = {}
+  options: { quiet?: boolean; outputMode?: OutputMode } = {}
 ): number {
   try {
     const ticketIndex = buildLocalTicketIndex(cwd);
     const filePath = localTicketPath(key, cwd, ticketIndex);
     if (!filePath) {
-      printError(`no local file for ${key}`);
-      return 1;
+      return failCommand(`no local file for ${key}`, options.outputMode ?? "human");
     }
     pushTicketFile(filePath, ticketIndex, cwd);
-    if (!options.quiet) {
+    const jsonMode = isJsonMode({ outputMode: options.outputMode ?? "human" });
+    if (jsonMode) {
+      printJsonSuccess({ keys: [key], count: 1, action: "push" });
+    } else if (!options.quiet) {
       process.stdout.write(`Pushed ${key} to Jira\n`);
     }
     return 0;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    printError(msg);
-    return 1;
+    return failCommand(msg, options.outputMode ?? "human");
   }
 }
 
 /** Push every local ticket under `jira/` to Jira. */
 export async function pushAll(
   cwd = process.cwd(),
-  options: { quiet?: boolean } = {}
+  options: { quiet?: boolean; outputMode?: OutputMode } = {}
 ): Promise<number> {
   const tickets = listLocalTickets(cwd);
   if (tickets.length === 0) {
-    printError("no tickets under jira/");
-    return 1;
+    return failCommand("no tickets under jira/", options.outputMode ?? "human");
   }
 
   const ticketIndex = buildLocalTicketIndex(cwd);
+  const jsonMode = isJsonMode({ outputMode: options.outputMode ?? "human" });
+  const quiet = options.quiet ?? jsonMode;
   const limit = createConcurrencyLimiter(PUSH_CONCURRENCY);
+  const pushedKeys: string[] = [];
   const results = await Promise.all(
     tickets.map((ticket) =>
       limit(async () => {
@@ -112,23 +117,32 @@ export async function pushAll(
       code = 1;
       continue;
     }
-    if (!options.quiet) {
+    pushedKeys.push(result.key);
+    if (!quiet) {
       process.stdout.write(`Pushed ${result.key}\n`);
     }
+  }
+  if (jsonMode) {
+    printJsonSuccess({ keys: pushedKeys, count: pushedKeys.length, action: "push" });
   }
   return code;
 }
 
 /** Run `jira push [KEY]`. */
-export async function runPushCommand(argv: string[]): Promise<number> {
+export async function runPushCommand(
+  argv: string[],
+  options: { outputMode?: OutputMode } = {}
+): Promise<number> {
   const input = argv[3];
   if (!input) {
-    return pushAll();
+    return pushAll(undefined, options);
   }
   const key = parseJiraKey(input);
   if (!key) {
-    printError(`push: not a valid Jira key: ${input}`);
-    return 1;
+    return failCommand(
+      `push: not a valid Jira key: ${input}`,
+      options.outputMode ?? "human"
+    );
   }
-  return pushTicket(key);
+  return pushTicket(key, undefined, options);
 }

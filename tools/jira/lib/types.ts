@@ -81,4 +81,22 @@ export type JiraTicketsSkillContent = {
 export type SyncResult = {
   code: number;
   error?: string;
+  summary?: SyncSummary;
+};
+
+/** Structured sync summary for human and JSON output. */
+export type SyncSummary = {
+  boardId: string | null;
+  sprintIds: number[];
+  issueCount: number;
+  counts: Record<Folder, number>;
+  skillPath: string;
+};
+
+/** One diagnostic check from jira doctor. */
+export type DoctorCheck = {
+  name: string;
+  ok: boolean;
+  message: string;
+  fix?: string;
 };

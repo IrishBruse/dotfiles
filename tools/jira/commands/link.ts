@@ -5,10 +5,15 @@ import process from "node:process";
 
 import { createLink } from "../lib/acli-jira.ts";
 import { flagBool, flagString, parseSubcommandArgv } from "../lib/argv.ts";
-import { printError } from "../lib/output.ts";
+import type { CommandOptions } from "../lib/output-mode.ts";
+import { HUMAN_OUTPUT, isJsonMode } from "../lib/output-mode.ts";
+import { failCommand, printJsonSuccess } from "../lib/output.ts";
 
 /** Run `jira link --out KEY --in KEY --type "..."`. */
-export function runLinkCommand(argv: string[]): number {
+export function runLinkCommand(
+  argv: string[],
+  options: CommandOptions = HUMAN_OUTPUT
+): number {
   const parsed = parseSubcommandArgv(argv, 3);
   const fromJson = flagString(parsed.flags, "from-json");
   const out = flagString(parsed.flags, "out");
@@ -17,8 +22,10 @@ export function runLinkCommand(argv: string[]): number {
   const yes = flagBool(parsed.flags, "yes");
 
   if (!fromJson && (!out || !inward || !type)) {
-    printError("link: --out, --in, and --type are required (or --from-json)");
-    return 1;
+    return failCommand(
+      "link: --out, --in, and --type are required (or --from-json)",
+      options.outputMode
+    );
   }
 
   try {
@@ -29,7 +36,13 @@ export function runLinkCommand(argv: string[]): number {
       fromJson: fromJson || undefined,
       yes
     });
-    if (fromJson) {
+    if (isJsonMode(options)) {
+      printJsonSuccess(
+        fromJson
+          ? { action: "link", fromJson: true }
+          : { action: "link", out, in: inward, type }
+      );
+    } else if (fromJson) {
       process.stdout.write("Created link(s)\n");
     } else {
       process.stdout.write(`Linked ${out} -> ${inward} (${type})\n`);
@@ -37,7 +50,6 @@ export function runLinkCommand(argv: string[]): number {
     return 0;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    printError(`link: ${msg}`);
-    return 1;
+    return failCommand(`link: ${msg}`, options.outputMode);
   }
 }

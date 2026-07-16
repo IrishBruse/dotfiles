@@ -4,9 +4,11 @@
  */
 import process from "node:process";
 import { runAcliPassthroughCommand } from "./commands/acli.ts";
+import { runBatchCommand } from "./commands/batch.ts";
 import { runBoardCommand } from "./commands/board.ts";
 import { runCommentCommand } from "./commands/comment.ts";
 import { runCreateCommand } from "./commands/create.ts";
+import { runDoctorCommand } from "./commands/doctor.ts";
 import { runEditCommand } from "./commands/edit.ts";
 import { printHelp } from "./commands/help.ts";
 import { runInfoCommand } from "./commands/info.ts";
@@ -20,31 +22,36 @@ import { runShowCommand } from "./commands/show.ts";
 import { runSyncCommand } from "./commands/sync.ts";
 import { runTransitionCommand } from "./commands/transition.ts";
 import { parseJiraKey } from "./lib/jiraInput.ts";
-import { printError } from "./lib/output.ts";
+import { parseGlobalFlags, type CommandOptions } from "./lib/output-mode.ts";
+import { failCommand } from "./lib/output.ts";
 
 export async function main(argv: string[] = process.argv): Promise<void> {
-  const arg = argv[2];
+  const { argv: cleaned, outputMode } = parseGlobalFlags(argv);
+  const opts: CommandOptions = { outputMode };
+  const arg = cleaned[2];
   if (arg === "-h" || arg === "--help" || !arg) {
     printHelp();
     return;
   }
 
   const subcommands: Record<string, () => number | Promise<number>> = {
-    sync: () => runSyncCommand(),
-    board: () => runBoardCommand(argv),
-    pull: () => runPullCommand(argv),
-    push: () => runPushCommand(argv),
-    show: () => runShowCommand(argv),
-    search: () => runSearchCommand(argv),
-    acli: () => runAcliPassthroughCommand(argv),
-    create: () => runCreateCommand(argv),
-    edit: () => runEditCommand(argv),
-    transition: () => runTransitionCommand(argv),
-    comment: () => runCommentCommand(argv),
-    link: () => runLinkCommand(argv),
-    info: () => runInfoCommand(),
-    projects: () => runProjectsCommand(argv),
-    types: () => runTypesCommand(argv)
+    sync: () => runSyncCommand(opts),
+    board: () => runBoardCommand(cleaned, opts),
+    pull: () => runPullCommand(cleaned, { outputMode }),
+    push: () => runPushCommand(cleaned, { outputMode }),
+    show: () => runShowCommand(cleaned, opts),
+    search: () => runSearchCommand(cleaned, opts),
+    batch: () => runBatchCommand(cleaned, opts),
+    doctor: () => runDoctorCommand(opts),
+    acli: () => runAcliPassthroughCommand(cleaned),
+    create: () => runCreateCommand(cleaned, opts),
+    edit: () => runEditCommand(cleaned, opts),
+    transition: () => runTransitionCommand(cleaned, opts),
+    comment: () => runCommentCommand(cleaned, opts),
+    link: () => runLinkCommand(cleaned, opts),
+    info: () => runInfoCommand(opts),
+    projects: () => runProjectsCommand(cleaned, opts),
+    types: () => runTypesCommand(cleaned, opts)
   };
 
   const handler = subcommands[arg];
@@ -55,16 +62,19 @@ export async function main(argv: string[] = process.argv): Promise<void> {
 
   const key = parseJiraKey(arg);
   if (key) {
-    process.exit(await runPullTicket(key));
+    process.exit(await runPullTicket(key, { outputMode }));
     return;
   }
 
-  printError(`unknown command or invalid ticket: ${arg}`);
-  printHelp();
+  failCommand(`unknown command or invalid ticket: ${arg}`, outputMode);
+  if (outputMode === "human") {
+    printHelp();
+  }
   process.exit(1);
 }
 
 main().catch((e) => {
-  printError(e instanceof Error ? e.message : String(e));
+  const msg = e instanceof Error ? e.message : String(e);
+  failCommand(msg, "human");
   process.exit(1);
 });

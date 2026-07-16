@@ -52,7 +52,7 @@ export function assigneeLabel(
 /** Human-readable Feature Team label from Jira fields, or `"None"`. */
 export function featureTeamLabel(
   fields: Record<string, unknown>,
-  fieldId = FEATURE_TEAM_FIELD
+  fieldId: string = FEATURE_TEAM_FIELD
 ): string {
   const raw = fields[fieldId];
   if (!Array.isArray(raw) || raw.length === 0) return "None";

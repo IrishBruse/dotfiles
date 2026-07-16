@@ -15,5 +15,12 @@ export const CONFIG = {
   /** Epic Link custom field id when parent is not in `parent` (classic Jira) */
   epicLinkField: "",
   /** Clear existing *.md under me/, unassigned/, team/ before writing */
-  clean: true
+  clean: true,
+  /** Warn in jira doctor when board cache is older than this many days */
+  boardCacheMaxAgeDays: 7
 } as const;
+
+/** Normalized project key from CONFIG.project. */
+export function configuredProject(): string {
+  return CONFIG.project.trim().toUpperCase();
+}

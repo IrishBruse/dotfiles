@@ -9,7 +9,7 @@ import {
   parseCreatedIssueKey
 } from "../lib/acli-jira.ts";
 import { flagBool, flagString, parseSubcommandArgv } from "../lib/argv.ts";
-import { CONFIG } from "../lib/CONFIG.ts";
+import { configuredProject } from "../lib/CONFIG.ts";
 import {
   NOVACORE_CAPITALIZABLE_FIELD,
   buildCreateWorkitemJson,
@@ -18,14 +18,15 @@ import {
   writeCreateJsonTemp
 } from "../lib/custom-fields.ts";
 import { parseDraftFrontmatter } from "../lib/local.ts";
-import { printError } from "../lib/output.ts";
+import type { CommandOptions } from "../lib/output-mode.ts";
+import { HUMAN_OUTPUT, isJsonMode } from "../lib/output-mode.ts";
+import { failCommand, printJsonSuccess } from "../lib/output.ts";
 import { pullTicket } from "./pull.ts";
 
 function collectFieldFlags(argv: string[]): string[] {
   const fields: string[] = [];
   for (let i = 3; i < argv.length; i++) {
-    const arg = argv[i];
-    if (arg === "--field" && argv[i + 1]) {
+    if (argv[i] === "--field" && argv[i + 1]) {
       fields.push(argv[i + 1]!);
       i += 1;
     }
@@ -33,122 +34,130 @@ function collectFieldFlags(argv: string[]): string[] {
   return fields;
 }
 
-function configuredProject(): string {
-  return CONFIG.project.trim().toUpperCase();
+function tryCreate(
+  fn: () => { stdout: string },
+  pullAfter: boolean,
+  options: CommandOptions
+): number {
+  try {
+    return finishCreate(fn().stdout, pullAfter, options);
+  } catch (e) {
+    return failCommand(
+      `create: ${e instanceof Error ? e.message : String(e)}`,
+      options.outputMode
+    );
+  }
 }
 
-/** Run `jira create` with flags or `--from-draft`. */
-export function runCreateCommand(argv: string[]): number {
+function createViaJsonTemp(
+  json: ReturnType<typeof buildCreateWorkitemJson>,
+  yes: boolean,
+  pullAfter: boolean,
+  options: CommandOptions
+): number {
+  const { dir, filePath } = writeCreateJsonTemp(json);
+  try {
+    return tryCreate(() => createWorkitem({ fromJson: filePath, yes }), pullAfter, options);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+/** Run `jira create` with flags or `--from-draft CI`. */
+export function runCreateCommand(
+  argv: string[],
+  options: CommandOptions = HUMAN_OUTPUT
+): number {
   const parsed = parseSubcommandArgv(argv, 3);
-  const fromDraft = flagString(parsed.flags, "from-draft");
-  const fromJson = flagString(parsed.flags, "from-json");
   const yes = flagBool(parsed.flags, "yes");
   const pullAfter = !flagBool(parsed.flags, "no-pull");
+  const fromJson = flagString(parsed.flags, "from-json");
+  const fromDraft = flagString(parsed.flags, "from-draft");
 
   if (fromJson) {
-    return runCreateFromJson(fromJson, yes, pullAfter);
+    return tryCreate(() => createWorkitem({ fromJson, yes }), pullAfter, options);
   }
-
   if (fromDraft) {
-    return runCreateFromDraft(fromDraft, parsed, argv, yes, pullAfter);
+    return createFromDraft(fromDraft, parsed, argv, yes, pullAfter, options);
   }
 
   const project = configuredProject();
   const type = flagString(parsed.flags, "type");
   const summary = flagString(parsed.flags, "summary");
+  if (!summary) {
+    return failCommand("create: --summary is required", options.outputMode);
+  }
+  if (!project) {
+    return failCommand(
+      "create: set CONFIG.project in tools/jira/lib/CONFIG.ts (or use jira acli)",
+      options.outputMode
+    );
+  }
+  if (!type) {
+    return failCommand("create: --type is required", options.outputMode);
+  }
+
   const descriptionFile = flagString(parsed.flags, "description-file");
   const parent = flagString(parsed.flags, "parent");
   const labelsRaw = flagString(parsed.flags, "label");
   const labels = labelsRaw ? labelsRaw.split(",").map((s) => s.trim()) : [];
   const customFields = parseFieldFlags(collectFieldFlags(argv));
 
-  if (!summary) {
-    printError("create: --summary is required");
-    return 1;
-  }
-  if (!project) {
-    printError(
-      "create: set CONFIG.project in tools/jira/lib/CONFIG.ts (or use jira acli)"
-    );
-    return 1;
-  }
-  if (!type) {
-    printError("create: --type is required");
-    return 1;
-  }
-
-  const needsJson = Object.keys(customFields).length > 0;
-  if (needsJson) {
+  if (Object.keys(customFields).length > 0) {
     const description = descriptionFile
       ? fs.readFileSync(descriptionFile, "utf-8")
       : undefined;
-    const json = buildCreateWorkitemJson({
-      project,
-      issueType: type,
-      summary,
-      description,
-      parent: parent || undefined,
-      labels: labels.length ? labels : undefined,
-      customFields
-    });
-    const { dir, filePath } = writeCreateJsonTemp(json);
-    try {
-      return runCreateFromJson(filePath, yes, pullAfter);
-    } finally {
-      fs.rmSync(dir, { recursive: true, force: true });
-    }
+    return createViaJsonTemp(
+      buildCreateWorkitemJson({
+        project,
+        issueType: type,
+        summary,
+        description,
+        parent: parent || undefined,
+        labels: labels.length ? labels : undefined,
+        customFields
+      }),
+      yes,
+      pullAfter,
+      options
+    );
   }
 
-  try {
-    const result = createWorkitem({
-      project,
-      type,
-      summary,
-      descriptionFile: descriptionFile || undefined,
-      parent: parent || undefined,
-      labels: labels.length ? labels : undefined,
-      yes
-    });
-    return finishCreate(result.stdout, pullAfter);
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    printError(`create: ${msg}`);
-    return 1;
-  }
+  return tryCreate(
+    () =>
+      createWorkitem({
+        project,
+        type,
+        summary,
+        descriptionFile: descriptionFile || undefined,
+        parent: parent || undefined,
+        labels: labels.length ? labels : undefined,
+        yes
+      }),
+    pullAfter,
+    options
+  );
 }
 
-function runCreateFromJson(
-  fromJson: string,
-  yes: boolean,
-  pullAfter: boolean
-): number {
-  try {
-    const result = createWorkitem({ fromJson, yes });
-    return finishCreate(result.stdout, pullAfter);
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    printError(`create: ${msg}`);
-    return 1;
-  }
-}
-
-function runCreateFromDraft(
+function createFromDraft(
   draftPath: string,
   parsed: ReturnType<typeof parseSubcommandArgv>,
   argv: string[],
   yes: boolean,
-  pullAfter: boolean
+  pullAfter: boolean,
+  options: CommandOptions
 ): number {
   if (!fs.existsSync(draftPath)) {
-    printError(`create: draft not found: ${draftPath}`);
-    return 1;
+    return failCommand(`create: draft not found: ${draftPath}`, options.outputMode);
   }
 
   const content = fs.readFileSync(draftPath, "utf-8");
   const draft = parseDraftFrontmatter(content);
   if (!draft) {
-    printError(`create: could not parse draft frontmatter: ${draftPath}`);
-    return 1;
+    return failCommand(
+      `create: could not parse draft frontmatter: ${draftPath}`,
+      options.outputMode
+    );
   }
 
   const project = draft.project.trim() || configuredProject();
@@ -157,48 +166,56 @@ function runCreateFromDraft(
   const parent = flagString(parsed.flags, "parent", draft.parent);
 
   if (!project || !type || !summary) {
-    printError("create: draft missing project, type, or title");
-    return 1;
+    return failCommand("create: draft missing project, type, or title", options.outputMode);
   }
 
   const customFields = parseFieldFlags(collectFieldFlags(argv));
-  const issueTypeLower = type.toLowerCase();
   if (
-    issueTypeLower === "epic" &&
+    type.toLowerCase() === "epic" &&
     project.toUpperCase() === "NOVACORE" &&
     !customFields[NOVACORE_CAPITALIZABLE_FIELD]
   ) {
     Object.assign(customFields, capitalizableYesField());
   }
 
-  const json = buildCreateWorkitemJson({
-    project,
-    issueType: type,
-    summary,
-    description: draft.description,
-    parent: parent && parent !== "None" ? parent : undefined,
-    customFields
-  });
-
-  const { dir, filePath } = writeCreateJsonTemp(json);
-  try {
-    return runCreateFromJson(filePath, yes, pullAfter);
-  } finally {
-    fs.rmSync(dir, { recursive: true, force: true });
-  }
+  return createViaJsonTemp(
+    buildCreateWorkitemJson({
+      project,
+      issueType: type,
+      summary,
+      description: draft.description,
+      parent: parent && parent !== "None" ? parent : undefined,
+      customFields
+    }),
+    yes,
+    pullAfter,
+    options
+  );
 }
 
-function finishCreate(stdout: string, pullAfter: boolean): number {
+function finishCreate(
+  stdout: string,
+  pullAfter: boolean,
+  options: CommandOptions
+): number {
   const key = parseCreatedIssueKey(stdout);
   if (key) {
-    process.stdout.write(`${key}\n`);
+    if (isJsonMode(options)) {
+      printJsonSuccess({ key, action: "create" });
+    } else {
+      process.stdout.write(`${key}\n`);
+    }
     if (pullAfter) {
-      return pullTicket(key);
+      return pullTicket(key, { outputMode: options.outputMode, quiet: isJsonMode(options) });
     }
     return 0;
   }
   if (stdout.trim()) {
-    process.stdout.write(stdout.endsWith("\n") ? stdout : `${stdout}\n`);
+    if (isJsonMode(options)) {
+      printJsonSuccess({ action: "create", stdout: stdout.trim() });
+    } else {
+      process.stdout.write(stdout.endsWith("\n") ? stdout : `${stdout}\n`);
+    }
   }
   return 0;
 }

@@ -21,14 +21,18 @@ import {
   normalizeSiteHost
 } from "../lib/format.ts";
 import { parseJiraKey } from "../lib/jiraInput.ts";
+import type { OutputMode } from "../lib/output-mode.ts";
+import { isJsonMode } from "../lib/output-mode.ts";
 import {
   buildLocalTicketIndex,
   listLocalTickets,
   localTicketPath
 } from "../lib/local.ts";
 import {
+  failCommand,
   printChildIssues,
   printError,
+  printJsonSuccess,
   printPulled,
   printPullSummary,
   pullLog
@@ -111,6 +115,7 @@ function resolveStoryParent(
 export type PullOptions = {
   cwd?: string;
   quiet?: boolean;
+  outputMode?: OutputMode;
   /** When true, skip the child-issue prompt and never pull children. */
   noChildren?: boolean;
   /** When true, pull children without prompting. */
@@ -132,12 +137,14 @@ export function pullTicket(
   options: PullOptions = {}
 ): number {
   try {
-    pullTicketWrite(ticketKey, options);
+    const result = pullTicketWrite(ticketKey, options);
+    if (isJsonMode({ outputMode: options.outputMode ?? "human" })) {
+      printJsonSuccess({ keys: [result.key], count: 1 });
+    }
     return 0;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    printError(`pull ${ticketKey}: ${msg}`);
-    return 1;
+    return failCommand(`pull ${ticketKey}: ${msg}`, options.outputMode ?? "human");
   }
 }
 
@@ -230,34 +237,38 @@ async function runPullFlow(
   const cwd = options.cwd ?? process.cwd();
   const ticketIndex = options.ticketIndex ?? buildLocalTicketIndex(cwd);
   const pullOptions = { ...options, cwd, ticketIndex };
+  const jsonMode = isJsonMode({ outputMode: options.outputMode ?? "human" });
+  const quiet = options.quiet ?? jsonMode;
+  const effectiveOptions = { ...pullOptions, quiet };
+  const pulledKeys: string[] = [];
   let pulled = 0;
 
-  const root = pullTicketWrite(ticketKey, pullOptions);
+  const root = pullTicketWrite(ticketKey, effectiveOptions);
   pulled += 1;
+  pulledKeys.push(root.key);
 
   if (options.noChildren) {
-    if (!options.quiet) printPullSummary(pulled);
-    return 0;
+    return finishPull(pulled, pulledKeys, effectiveOptions);
   }
 
   const isRoot = isHierarchyRoot(root.issueType);
-  if (!options.quiet && isRoot) {
+  if (!quiet && isRoot) {
     pullLog(`scanning descendants of ${ticketKey}...`);
   }
 
   const descendantIssues = fetchDescendantIssues(ticketKey, {
-    onProgress: options.quiet ? undefined : pullLog
+    onProgress: quiet ? undefined : pullLog
   });
   const descendants = descendantIssues.map((issue) => issue.key);
   if (descendants.length === 0) {
-    if (!options.quiet) printPullSummary(pulled);
-    return 0;
+    return finishPull(pulled, pulledKeys, effectiveOptions);
   }
 
   let pullChildren = options.withChildren === true || isRoot;
   const canPrompt =
     !pullChildren &&
     !options.noChildren &&
+    !jsonMode &&
     process.stdin.isTTY &&
     process.stdout.isTTY;
 
@@ -270,11 +281,10 @@ async function runPullFlow(
   }
 
   if (!pullChildren) {
-    if (!options.quiet) printPullSummary(pulled);
-    return 0;
+    return finishPull(pulled, pulledKeys, effectiveOptions);
   }
 
-  if (!options.quiet) {
+  if (!quiet) {
     pullLog(`pulling ${descendants.length} descendant issue(s)...`);
     process.stdout.write("\n");
   }
@@ -285,7 +295,7 @@ async function runPullFlow(
       limit(async () => {
         try {
           const result = await pullTicketWriteAsync(key, {
-            ...pullOptions,
+            ...effectiveOptions,
             quiet: true
           });
           return { ok: true as const, result };
@@ -305,13 +315,30 @@ async function runPullFlow(
       continue;
     }
     pulled += 1;
-    if (!options.quiet) {
+    pulledKeys.push(entry.result.key);
+    if (!quiet) {
       printPulled(entry.result.key, entry.result.title);
     }
   }
 
-  if (!options.quiet) printPullSummary(pulled);
-  return code;
+  const pullCode = finishPull(pulled, pulledKeys, effectiveOptions);
+  return code !== 0 ? code : pullCode;
+}
+
+function finishPull(
+  count: number,
+  keys: string[],
+  options: PullOptions
+): number {
+  const jsonMode = isJsonMode({ outputMode: options.outputMode ?? "human" });
+  if (jsonMode) {
+    printJsonSuccess({ keys, count });
+    return 0;
+  }
+  if (!options.quiet) {
+    printPullSummary(count);
+  }
+  return 0;
 }
 
 /** Re-pull every ticket already present under `jira/`. */
@@ -321,12 +348,14 @@ export async function pullAll(
 ): Promise<number> {
   const tickets = listLocalTickets(cwd);
   if (tickets.length === 0) {
-    printError("no tickets under jira/");
-    return 1;
+    return failCommand("no tickets under jira/", options.outputMode ?? "human");
   }
 
   const ticketIndex = buildLocalTicketIndex(cwd);
+  const jsonMode = isJsonMode({ outputMode: options.outputMode ?? "human" });
+  const quiet = options.quiet ?? jsonMode;
   const limit = createConcurrencyLimiter(PULL_CONCURRENCY);
+  const pulledKeys: string[] = [];
   const results = await Promise.all(
     tickets.map((ticket) =>
       limit(async () => {
@@ -355,12 +384,13 @@ export async function pullAll(
       continue;
     }
     pulled += 1;
-    if (!options.quiet) {
+    pulledKeys.push(result.result.key);
+    if (!quiet) {
       printPulled(result.result.key, result.result.title);
     }
   }
-  if (!options.quiet) printPullSummary(pulled);
-  return code;
+  const summaryCode = finishPull(pulled, pulledKeys, { ...options, quiet });
+  return code !== 0 ? code : summaryCode;
 }
 
 /** Safe folder name from a ticket title and key (no `.md` suffix). */
@@ -372,20 +402,28 @@ export function ticketFolderName(
 }
 
 /** Run `jira pull [KEY|URL]`. */
-export async function runPullCommand(argv: string[]): Promise<number> {
+export async function runPullCommand(
+  argv: string[],
+  options: PullOptions = {}
+): Promise<number> {
   const input = argv[3];
   if (!input) {
-    return pullAll();
+    return pullAll(undefined, options);
   }
   const key = parseJiraKey(input);
   if (!key) {
-    printError(`pull: not a valid Jira key or URL: ${input}`);
-    return 1;
+    return failCommand(
+      `pull: not a valid Jira key or URL: ${input}`,
+      options.outputMode ?? "human"
+    );
   }
-  return runPull(key);
+  return runPull(key, options);
 }
 
 /** Run `jira <KEY|URL>` (same as pull one ticket). */
-export async function runPullTicket(key: string): Promise<number> {
-  return runPull(key);
+export async function runPullTicket(
+  key: string,
+  options: PullOptions = {}
+): Promise<number> {
+  return runPull(key, options);
 }

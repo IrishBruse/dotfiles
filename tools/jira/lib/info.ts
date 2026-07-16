@@ -1,8 +1,8 @@
 import process from "node:process";
 
-import { CONFIG } from "./CONFIG.ts";
+import { CONFIG, configuredProject } from "./CONFIG.ts";
 import { readBoardInfoCache, type BoardInfoCache } from "./board-cache.ts";
-import { listLocalTickets } from "./local.ts";
+import { countLocalTickets } from "./local.ts";
 import type { BoardSprint } from "./types.ts";
 
 export type JiraInfo = {
@@ -14,21 +14,46 @@ export type JiraInfo = {
   featureTeamField: string;
   epicLinkField: string;
   boardCache: BoardInfoCache | null;
+  issueTypes: string[];
   localTicketCount: number;
 };
 
+/** Extract issue type names from `jira project view` JSON. */
+export function parseProjectIssueTypeNames(data: unknown): string[] {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return [];
+
+  const root = data as Record<string, unknown>;
+  const candidates = [root.issueTypes, root.issuetypes];
+  for (const candidate of candidates) {
+    if (!Array.isArray(candidate)) continue;
+    const names: string[] = [];
+    for (const item of candidate) {
+      if (!item || typeof item !== "object" || Array.isArray(item)) continue;
+      const name = (item as { name?: unknown }).name;
+      if (typeof name === "string" && name.trim()) {
+        names.push(name.trim());
+      }
+    }
+    if (names.length > 0) return names;
+  }
+
+  return [];
+}
+
 /** Collect static config plus cached board and local ticket context. */
 export function gatherJiraInfo(cwd = process.cwd()): JiraInfo {
+  const cache = readBoardInfoCache();
   return {
     site: CONFIG.site.trim(),
-    project: CONFIG.project.trim().toUpperCase(),
+    project: configuredProject(),
     boardId: CONFIG.boardId.trim(),
     boardJql: CONFIG.boardJql.trim(),
     meAccountId: CONFIG.meAccountId.trim(),
     featureTeamField: CONFIG.featureTeamField.trim(),
     epicLinkField: CONFIG.epicLinkField.trim(),
-    boardCache: readBoardInfoCache(),
-    localTicketCount: listLocalTickets(cwd).length
+    boardCache: cache,
+    issueTypes: cache?.issueTypes ?? [],
+    localTicketCount: countLocalTickets(cwd)
   };
 }
 
@@ -53,14 +78,11 @@ function formatSprintLine(sprint: BoardSprint): string {
 
 function formatBoardCache(cache: BoardInfoCache | null): string[] {
   if (!cache) {
-    return [
-      "Board cache: not synced",
-      "  Run: jira board sync"
-    ];
+    return ["Workspace cache: not synced", "  Run: jira sync"];
   }
 
   const lines = [
-    "Board cache:",
+    "Workspace cache:",
     `  Last sync: ${cache.syncedAt}`,
     `  Site: ${displayValue(cache.site)}`,
     `  Project: ${displayValue(cache.project)}`,
@@ -78,6 +100,14 @@ function formatBoardCache(cache: BoardInfoCache | null): string[] {
       lines.push(`    - ${formatSprintLine(sprint)}`);
     }
   }
+
+  if (cache.issueTypes.length === 0) {
+    lines.push("  Issue types: (none cached)");
+  } else {
+    lines.push(`  Issue types: ${cache.issueTypes.join(", ")}`);
+  }
+
+  lines.push(`  Local tickets at sync: ${cache.localTicketCount}`);
 
   return lines;
 }

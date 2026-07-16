@@ -160,8 +160,7 @@ description: >
 # Board
 
 Here is the current Jira board status.
-For the full description of any ticket below, read \`references/{me,team,unassigned,misc}/<KEY>.md\`
-Example: \`references/me/PROJ-12345.md\`
+Use \`jira show <KEY>\` or \`jira pull <KEY>\` for full ticket details.
 
 ${boardSections.join("\n\n")}
 `;
@@ -173,69 +172,13 @@ export function formatJiraTicketsSkillJson(
   return `${JSON.stringify(content, null, 2)}\n`;
 }
 
-function readTicketMarkdown(filePath: string): {
-  key: string;
-  fields: Record<string, unknown>;
-} | null {
-  try {
-    const content = fs.readFileSync(filePath, "utf-8");
-    const key = path.basename(filePath, ".md");
-    const frontmatterMatch = /^---\n([\s\S]*?)\n---/.exec(content);
-    if (!frontmatterMatch) return null;
-
-    const fm = frontmatterMatch[1];
-    const fields: Record<string, unknown> = {};
-
-    const titleMatch = /^title:\s*(.+)$/m.exec(fm);
-    if (titleMatch) {
-      fields.summary = JSON.parse(titleMatch[1]);
-    }
-
-    const assignedMatch = /^assigned:\s*(.+)$/m.exec(fm);
-    if (assignedMatch) {
-      const name = JSON.parse(assignedMatch[1]);
-      fields.assignee = name === "Unassigned" ? null : { displayName: name };
-    }
-
-    const statusMatch = /^status:\s*(\S+)$/m.exec(fm);
-    if (statusMatch) {
-      fields.status = { name: statusMatch[1] };
-    }
-
-    return { key, fields };
-  } catch {
-    return null;
-  }
-}
-
+/** Write jira-board SKILL.md from fetched issues. */
 export function writeJiraTicketsSkill(
   issues: Array<{ key?: string; fields?: Record<string, unknown> }>,
   skillPath: string,
-  meAccountId: string,
-  boardOutputRoot: string
+  meAccountId: string
 ): void {
-  const miscDir = path.join(boardOutputRoot, "misc");
-  const miscIssues: Array<{ key?: string; fields?: Record<string, unknown> }> =
-    [];
-
-  if (fs.existsSync(miscDir)) {
-    for (const f of fs.readdirSync(miscDir)) {
-      if (!f.endsWith(".md")) continue;
-      const parsed = readTicketMarkdown(path.join(miscDir, f));
-      if (parsed) {
-        miscIssues.push({ key: parsed.key, fields: parsed.fields });
-      }
-    }
-  }
-
-  const allIssues = [...issues, ...miscIssues];
-  const content = buildJiraTicketsSkillContent(allIssues, meAccountId);
-  const skillDir = path.dirname(skillPath);
-  fs.mkdirSync(skillDir, { recursive: true });
+  const content = buildJiraTicketsSkillContent(issues, meAccountId);
+  fs.mkdirSync(path.dirname(skillPath), { recursive: true });
   fs.writeFileSync(skillPath, formatJiraTicketsSkillMd(content), "utf-8");
-  fs.writeFileSync(
-    path.join(skillDir, "sprint.json"),
-    formatJiraTicketsSkillJson(content),
-    "utf-8"
-  );
 }

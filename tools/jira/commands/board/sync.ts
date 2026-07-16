@@ -1,5 +1,5 @@
 /**
- * Sync Jira issues into the jira-board skill via `acli jira workitem search`.
+ * Sync Jira workspace into the jira-board skill via `acli jira workitem search`.
  */
 import path from "node:path";
 import process from "node:process";
@@ -11,33 +11,38 @@ import {
 
 import {
   listBoardSprints,
+  listProjectIssueTypes,
   searchWorkitems,
   viewWorkitemAsync
 } from "../../lib/acli-jira.ts";
 import { createConcurrencyLimiter } from "../../../.lib/concurrency.ts";
 import { writeJiraTicketsSkill } from "./skill.ts";
-import { sprintsInRetentionWindow, writeBoard } from "./write.ts";
-import { CONFIG } from "../../lib/CONFIG.ts";
+import { sprintsInRetentionWindow } from "./write.ts";
+import { CONFIG, configuredProject } from "../../lib/CONFIG.ts";
 import {
+  assigneeRecord,
+  classifyFolder,
   JIRA_SEARCH_FIELDS,
-  JIRA_VIEW_EXTRA_FIELDS,
   normalizeSiteHost
 } from "../../lib/format.ts";
-import type { BoardSprint, SyncResult, WriteBoardResult } from "../../lib/types.ts";
-
-/** Per-ticket markdown under `<skill>/references/{me,team,unassigned}/`. */
-export const BOARD_OUTPUT_ROOT = path.join(JIRA_BOARD_SKILL_DIR, "references");
+import { parseProjectIssueTypeNames } from "../../lib/info.ts";
+import { countLocalTickets } from "../../lib/local.ts";
+import type { CommandOptions } from "../../lib/output-mode.ts";
+import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
+import { failCommand, printJsonSuccess } from "../../lib/output.ts";
+import type { BoardSprint, Folder, SyncResult, SyncSummary } from "../../lib/types.ts";
 
 const JIRA_BOARD_SKILL_PATH = path.join(JIRA_BOARD_SKILL_DIR, "SKILL.md");
-const JIRA_BOARD_SPRINT_JSON_PATH = path.join(
-  JIRA_BOARD_SKILL_DIR,
-  "sprint.json"
-);
 
 const ACLI = "acli";
 const ENRICH_CONCURRENCY = 4;
 const VERBOSE = process.env.JIRA_SYNC_VERBOSE === "1";
-const LOG_PREFIX = "jira board sync:";
+const LOG_PREFIX = "jira sync:";
+
+function truncate(text: string, maxLen: number): string {
+  if (text.length <= maxLen) return text;
+  return `${text.slice(0, maxLen - 1)}…`;
+}
 
 function log(msg: string): void {
   if (!VERBOSE) return;
@@ -78,75 +83,69 @@ export async function enrichIssuesWithViewFieldsAsync(
   );
 }
 
-function formatKeyList(keys: string[]): string {
-  return keys.join(", ");
+function countIssuesByFolder(
+  issues: Array<{ key?: string; fields?: Record<string, unknown> }>,
+  meAccountId: string
+): Record<Folder, number> {
+  const counts: Record<Folder, number> = {
+    me: 0,
+    team: 0,
+    unassigned: 0,
+    misc: 0
+  };
+  for (const issue of issues) {
+    if (typeof issue.key !== "string" || !issue.key) continue;
+    const folder = classifyFolder(
+      assigneeRecord(issue.fields?.assignee),
+      meAccountId
+    );
+    counts[folder] += 1;
+  }
+  return counts;
 }
 
-function printSyncSummary(options: {
+/** Build structured sync summary. */
+export function buildSyncSummary(options: {
   boardId: string | null;
   sprintIds: number[];
   issueCount: number;
-  result: WriteBoardResult;
-  outRoot: string;
+  counts: Record<Folder, number>;
   skillPath: string;
-  sprintJsonPath: string;
-}): void {
-  const {
-    boardId,
-    sprintIds,
-    issueCount,
-    result,
-    outRoot,
-    skillPath,
-    sprintJsonPath
-  } = options;
-  const { counts, added, updated, moved, archived, deleted } = result;
+}): SyncSummary {
+  return {
+    boardId: options.boardId,
+    sprintIds: options.sprintIds,
+    issueCount: options.issueCount,
+    counts: options.counts,
+    skillPath: options.skillPath
+  };
+}
+
+export function formatSyncSummaryHuman(summary: SyncSummary): string {
+  const { boardId, sprintIds, issueCount, counts } = summary;
   const sprint =
     sprintIds.length > 0 ? sprintIds.join(", ") : "(no board filter)";
   const board = boardId ? `board ${boardId}, ` : "";
-  const lines: string[] = [
-    `Jira sync: ${board}sprint ${sprint}`,
-    `Fetched ${issueCount} issue(s) from Jira`
-  ];
-
   const sprintTotal = counts.me + counts.team + counts.unassigned;
-  lines.push(
-    `References: ${sprintTotal} in sprint (me ${counts.me}, team ${counts.team}, unassigned ${counts.unassigned})` +
-      (counts.misc > 0 ? `, ${counts.misc} in misc` : "")
-  );
+  const lines = [
+    `Jira sync: ${board}sprint ${sprint}`,
+    `Fetched ${issueCount} issue(s) from Jira`,
+    `Board: ${sprintTotal} in sprint (me ${counts.me}, team ${counts.team}, unassigned ${counts.unassigned})` +
+      (counts.misc > 0 ? `, ${counts.misc} in misc` : ""),
+    `Skill: ${summary.skillPath}`
+  ];
+  return `${lines.join("\n")}\n`;
+}
 
-  if (updated.length > 0) {
-    lines.push(`Updated (${updated.length}): ${formatKeyList(updated)}`);
+function printSyncSummary(
+  summary: SyncSummary,
+  options: CommandOptions = HUMAN_OUTPUT
+): void {
+  if (isJsonMode(options)) {
+    printJsonSuccess(summary);
+    return;
   }
-  if (moved.length > 0) {
-    const detail = moved.map((m) => `${m.key} ${m.from} -> ${m.to}`).join(", ");
-    lines.push(`Moved (${moved.length}): ${detail}`);
-  }
-  if (archived.length > 0) {
-    lines.push(
-      `Archived to misc (${archived.length}): ${formatKeyList(archived)}`
-    );
-  }
-  if (deleted.length > 0) {
-    lines.push(
-      `Removed from misc (${deleted.length}): ${formatKeyList(deleted)}`
-    );
-  }
-
-  const changeCount =
-    added.length +
-    updated.length +
-    moved.length +
-    archived.length +
-    deleted.length;
-  if (changeCount === 0) {
-    lines.push("No file changes (all tickets already up to date)");
-  }
-
-  lines.push(`Output: ${outRoot}`);
-  lines.push(`Skill: ${skillPath}`);
-  lines.push(`Sprint: ${sprintJsonPath}`);
-  process.stdout.write(`${lines.join("\n")}\n`);
+  process.stdout.write(formatSyncSummaryHuman(summary));
 }
 
 function nonEmpty(s: string): string | null {
@@ -188,28 +187,30 @@ function fetchBoardSprints(acli: string, boardId: string): BoardSprint[] {
   return listBoardSprints(boardId, acli);
 }
 
-/** Sync Jira -> skill markdown; returns 0 on success. */
-export async function run(): Promise<number> {
-  return (await runWithResult()).code;
+/** Sync Jira -> jira-board SKILL.md; returns 0 on success. */
+export async function run(options: CommandOptions = HUMAN_OUTPUT): Promise<number> {
+  return (await runWithResult(options)).code;
 }
 
 let lastSyncError: string | undefined;
 
-function syncFail(msg: string): number {
+function syncFail(msg: string, options: CommandOptions = HUMAN_OUTPUT): number {
   process.stderr.write(`${LOG_PREFIX} ${msg}\n`);
   lastSyncError = msg;
-  return 1;
+  return failCommand(msg, options.outputMode);
 }
 
 /** Like `run()`, but includes the user-facing error message when `code !== 0`. */
-export async function runWithResult(): Promise<SyncResult> {
+export async function runWithResult(
+  options: CommandOptions = HUMAN_OUTPUT
+): Promise<SyncResult> {
   lastSyncError = undefined;
   try {
-    const code = await runImpl();
-    if (code !== 0) {
-      return { code, error: lastSyncError ?? "Sync failed" };
+    const result = await runImpl(options);
+    if (result.code !== 0) {
+      return { code: result.code, error: lastSyncError ?? "Sync failed" };
     }
-    return { code };
+    return result;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     process.stderr.write(`${LOG_PREFIX} ${msg}\n`);
@@ -217,45 +218,46 @@ export async function runWithResult(): Promise<SyncResult> {
   }
 }
 
-async function runImpl(): Promise<number> {
+async function runImpl(options: CommandOptions): Promise<SyncResult> {
   const jql = nonEmpty(CONFIG.boardJql);
   const meAccountId = nonEmpty(CONFIG.meAccountId);
   let siteHost = nonEmpty(CONFIG.site);
-  const clean = CONFIG.clean;
   const boardId = nonEmpty(CONFIG.boardId);
 
   if (!jql) {
-    return syncFail("set CONFIG.boardJql.");
+    return { code: syncFail("set CONFIG.boardJql.", options) };
   }
   if (!meAccountId) {
-    return syncFail("set CONFIG.meAccountId.");
+    return { code: syncFail("set CONFIG.meAccountId.", options) };
   }
   if (!siteHost) {
-    return syncFail("set CONFIG.site.");
+    return { code: syncFail("set CONFIG.site.", options) };
   }
   siteHost = normalizeSiteHost(siteHost);
 
   let effectiveJql = jql;
   let sprintIds: number[] = [];
-  let boardSprints: BoardSprint[] = [];
+  let retainedSprints: BoardSprint[] = [];
   if (boardId) {
     log(
       `board id ${boardId} — resolving sprints within 2d of start/end on this board…`
     );
-    boardSprints = fetchBoardSprints(ACLI, boardId);
-    const retained = sprintsInRetentionWindow(boardSprints);
-    sprintIds = retained.map((s) => s.id);
+    const boardSprints = fetchBoardSprints(ACLI, boardId);
+    retainedSprints = sprintsInRetentionWindow(boardSprints);
+    sprintIds = retainedSprints.map((s) => s.id);
     if (sprintIds.length === 0) {
-      return syncFail(
-        `no sprints in retention window (±2 days of start/end) on board ${boardId}.`
-      );
+      return {
+        code: syncFail(
+          `no sprints in retention window (±2 days of start/end) on board ${boardId}.`,
+          options
+        )
+      };
     }
     log(`retained sprint id(s) on board: ${sprintIds.join(", ")}`);
     effectiveJql = scopeJqlToBoardSprints(effectiveJql, sprintIds);
   }
 
-  const outRoot = path.resolve(BOARD_OUTPUT_ROOT);
-  log(`site ${siteHost}, output ${outRoot}, clean=${clean}`);
+  log(`site ${siteHost}, skill ${JIRA_BOARD_SKILL_PATH}`);
   log(`JQL ${truncate(effectiveJql, 120)}`);
   log("fetching issues from Jira via acli…");
   if (!VERBOSE) {
@@ -270,7 +272,7 @@ async function runImpl(): Promise<number> {
   });
 
   if (!Array.isArray(data)) {
-    return syncFail("expected JSON array from acli.");
+    return { code: syncFail("expected JSON array from acli.", options) };
   }
 
   log(`received ${data.length} issue(s).`);
@@ -280,54 +282,43 @@ async function runImpl(): Promise<number> {
     fields?: Record<string, unknown>;
   }>;
 
-  if (issues.length > 0) {
-    log(`enriching ${issues.length} issue(s) with view-only fields…`);
-    if (!VERBOSE) {
-      process.stderr.write(
-        `${LOG_PREFIX} enriching ${issues.length} issue(s)...\n`
-      );
+  const counts = countIssuesByFolder(issues, meAccountId);
+
+  log(`writing jira-board skill → ${JIRA_BOARD_SKILL_PATH}`);
+  writeJiraTicketsSkill(issues, JIRA_BOARD_SKILL_PATH, meAccountId);
+
+  const project = configuredProject();
+  let issueTypes: string[] = [];
+  if (project) {
+    try {
+      issueTypes = parseProjectIssueTypeNames(listProjectIssueTypes(project, ACLI));
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      log(`issue types fetch failed: ${msg}`);
     }
-    await enrichIssuesWithViewFieldsAsync(issues, JIRA_VIEW_EXTRA_FIELDS, ACLI);
   }
 
-  log("writing ticket markdown…");
-
-  const result = writeBoard(issues, {
-    outputRoot: outRoot,
-    meAccountId,
-    siteHost,
-    clean,
-    boardSprints
-  });
-
-  log(
-    `writing jira-board skill → ${JIRA_BOARD_SKILL_PATH}, ${JIRA_BOARD_SPRINT_JSON_PATH}`
-  );
-  writeJiraTicketsSkill(issues, JIRA_BOARD_SKILL_PATH, meAccountId, outRoot);
-
-  const retainedSprints = boardSprints.filter((sprint) =>
-    sprintIds.includes(sprint.id)
-  );
   writeBoardInfoCache({
     syncedAt: new Date().toISOString(),
     boardId,
     site: siteHost,
-    project: CONFIG.project.trim().toUpperCase(),
+    project,
     effectiveJql,
     retainedSprints,
-    counts: result.counts,
-    issueCount: issues.length
+    counts,
+    issueCount: issues.length,
+    localTicketCount: countLocalTickets(),
+    issueTypes
   });
 
   log("done.");
-  printSyncSummary({
+  const summary = buildSyncSummary({
     boardId,
     sprintIds,
     issueCount: issues.length,
-    result,
-    outRoot,
-    skillPath: JIRA_BOARD_SKILL_PATH,
-    sprintJsonPath: JIRA_BOARD_SPRINT_JSON_PATH
+    counts,
+    skillPath: JIRA_BOARD_SKILL_PATH
   });
-  return 0;
+  printSyncSummary(summary, options);
+  return { code: 0, summary };
 }

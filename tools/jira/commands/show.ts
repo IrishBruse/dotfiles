@@ -7,21 +7,27 @@ import { viewWorkitem } from "../lib/acli-jira.ts";
 import { parseSubcommandArgv } from "../lib/argv.ts";
 import { JIRA_PULL_FIELDS } from "../lib/format.ts";
 import { parseJiraKey } from "../lib/jiraInput.ts";
-import { printError } from "../lib/output.ts";
+import type { CommandOptions } from "../lib/output-mode.ts";
+import { HUMAN_OUTPUT, isJsonMode } from "../lib/output-mode.ts";
+import { failCommand, printJsonSuccess } from "../lib/output.ts";
 
-/** Run `jira show <KEY|URL> [--json] [--format text] [--fields ...]`. */
-export function runShowCommand(argv: string[]): number {
+/** Run `jira show <KEY|URL> [--format text] [--fields ...]`. */
+export function runShowCommand(
+  argv: string[],
+  options: CommandOptions = HUMAN_OUTPUT
+): number {
   const parsed = parseSubcommandArgv(argv, 3);
   const input = parsed.positional[0];
   if (!input) {
-    printError("show: missing Jira key or URL");
-    return 1;
+    return failCommand("show: missing Jira key or URL", options.outputMode);
   }
 
   const key = parseJiraKey(input);
   if (!key) {
-    printError(`show: not a valid Jira key or URL: ${input}`);
-    return 1;
+    return failCommand(
+      `show: not a valid Jira key or URL: ${input}`,
+      options.outputMode
+    );
   }
 
   const fields =
@@ -32,6 +38,10 @@ export function runShowCommand(argv: string[]): number {
 
   try {
     const data = viewWorkitem(key, { fields });
+    if (isJsonMode(options)) {
+      printJsonSuccess(data);
+      return 0;
+    }
     if (formatText) {
       process.stdout.write(`${JSON.stringify(data, null, 2)}\n`);
     } else {
@@ -40,7 +50,6 @@ export function runShowCommand(argv: string[]): number {
     return 0;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    printError(`show ${key}: ${msg}`);
-    return 1;
+    return failCommand(`show ${key}: ${msg}`, options.outputMode);
   }
 }
