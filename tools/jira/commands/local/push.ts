@@ -6,18 +6,18 @@ import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 
-import { editWorkitem } from "../lib/acli-jira.ts";
-import { createConcurrencyLimiter } from "../../.lib/concurrency.ts";
-import { parseJiraKey } from "../lib/jiraInput.ts";
-import type { OutputMode } from "../lib/output-mode.ts";
-import { isJsonMode } from "../lib/output-mode.ts";
+import { editWorkitem } from "../../lib/acli-jira.ts";
+import { createConcurrencyLimiter } from "../../../.lib/concurrency.ts";
+import { parseJiraKey } from "../../lib/jiraInput.ts";
+import type { OutputMode } from "../../lib/output-mode.ts";
+import { isJsonMode } from "../../lib/output-mode.ts";
 import {
   buildLocalTicketIndex,
   listLocalTickets,
   localTicketPath,
   parseTicketMarkdown
-} from "../lib/local.ts";
-import { failCommand, printError, printJsonSuccess } from "../lib/output.ts";
+} from "../../lib/local.ts";
+import { failCommand, printError, printJsonSuccess } from "../../lib/output.ts";
 import { pullTicketWrite } from "./pull.ts";
 
 const PUSH_CONCURRENCY = 4;

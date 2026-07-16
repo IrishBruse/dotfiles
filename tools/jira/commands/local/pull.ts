@@ -5,29 +5,29 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 
-import { viewWorkitem, viewWorkitemAsync } from "../lib/acli-jira.ts";
-import { createConcurrencyLimiter } from "../../.lib/concurrency.ts";
-import { CONFIG } from "../lib/CONFIG.ts";
+import { viewWorkitem, viewWorkitemAsync } from "../../lib/acli-jira.ts";
+import { createConcurrencyLimiter } from "../../../.lib/concurrency.ts";
+import { CONFIG } from "../../lib/CONFIG.ts";
 import {
   fetchDescendantIssues,
   parentKeyFromFields,
   parentSummaryFromFields
-} from "../lib/children.ts";
+} from "../../lib/children.ts";
 import {
   formatTicketMarkdown,
   isHierarchyRoot,
   issueTypeName,
   JIRA_PULL_FIELDS,
   normalizeSiteHost
-} from "../lib/format.ts";
-import { parseJiraKey } from "../lib/jiraInput.ts";
-import type { OutputMode } from "../lib/output-mode.ts";
-import { isJsonMode } from "../lib/output-mode.ts";
+} from "../../lib/format.ts";
+import { parseJiraKey } from "../../lib/jiraInput.ts";
+import type { OutputMode } from "../../lib/output-mode.ts";
+import { isJsonMode } from "../../lib/output-mode.ts";
 import {
   buildLocalTicketIndex,
   listLocalTickets,
   localTicketPath
-} from "../lib/local.ts";
+} from "../../lib/local.ts";
 import {
   failCommand,
   printChildIssues,
@@ -36,8 +36,8 @@ import {
   printPulled,
   printPullSummary,
   pullLog
-} from "../lib/output.ts";
-import { confirm } from "../lib/prompt.ts";
+} from "../../lib/output.ts";
+import { confirm } from "../../lib/prompt.ts";
 
 const PULL_CONCURRENCY = 4;
 

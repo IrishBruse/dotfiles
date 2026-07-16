@@ -3,11 +3,11 @@
  */
 import process from "node:process";
 
-import { listProjects } from "../lib/acli-jira.ts";
-import { parseSubcommandArgv } from "../lib/argv.ts";
-import type { CommandOptions } from "../lib/output-mode.ts";
-import { HUMAN_OUTPUT, isJsonMode } from "../lib/output-mode.ts";
-import { failCommand, printJsonSuccess } from "../lib/output.ts";
+import { listProjects } from "../../lib/acli-jira.ts";
+import { parseSubcommandArgv } from "../../lib/argv.ts";
+import type { CommandOptions } from "../../lib/output-mode.ts";
+import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
+import { failCommand, printJsonSuccess } from "../../lib/output.ts";
 
 /** Run `jira projects [--format text]`. */
 export function runProjectsCommand(

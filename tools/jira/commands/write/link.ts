@@ -3,11 +3,11 @@
  */
 import process from "node:process";
 
-import { createLink } from "../lib/acli-jira.ts";
-import { flagBool, flagString, parseSubcommandArgv } from "../lib/argv.ts";
-import type { CommandOptions } from "../lib/output-mode.ts";
-import { HUMAN_OUTPUT, isJsonMode } from "../lib/output-mode.ts";
-import { failCommand, printJsonSuccess } from "../lib/output.ts";
+import { createLink } from "../../lib/acli-jira.ts";
+import { flagBool, flagString, parseSubcommandArgv } from "../../lib/argv.ts";
+import type { CommandOptions } from "../../lib/output-mode.ts";
+import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
+import { failCommand, printJsonSuccess } from "../../lib/output.ts";
 
 /** Run `jira link --out KEY --in KEY --type "..."`. */
 export function runLinkCommand(

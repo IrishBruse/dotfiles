@@ -322,3 +322,9 @@ async function runImpl(options: CommandOptions): Promise<SyncResult> {
   printSyncSummary(summary, options);
   return { code: 0, summary };
 }
+
+/** Entry point for `jira sync`. */
+export const runSyncCommand = run;
+
+/** Structured result for `jira sync`. */
+export const runSyncWithResult = runWithResult;

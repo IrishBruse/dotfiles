@@ -7,21 +7,21 @@ import process from "node:process";
 import {
   createWorkitem,
   parseCreatedIssueKey
-} from "../lib/acli-jira.ts";
-import { flagBool, flagString, parseSubcommandArgv } from "../lib/argv.ts";
-import { configuredProject } from "../lib/CONFIG.ts";
+} from "../../lib/acli-jira.ts";
+import { flagBool, flagString, parseSubcommandArgv } from "../../lib/argv.ts";
+import { configuredProject } from "../../lib/CONFIG.ts";
 import {
   NOVACORE_CAPITALIZABLE_FIELD,
   buildCreateWorkitemJson,
   capitalizableYesField,
   parseFieldFlags,
   writeCreateJsonTemp
-} from "../lib/custom-fields.ts";
-import { parseDraftFrontmatter } from "../lib/local.ts";
-import type { CommandOptions } from "../lib/output-mode.ts";
-import { HUMAN_OUTPUT, isJsonMode } from "../lib/output-mode.ts";
-import { failCommand, printJsonSuccess } from "../lib/output.ts";
-import { pullTicket } from "./pull.ts";
+} from "../../lib/custom-fields.ts";
+import { parseDraftFrontmatter } from "../../lib/local.ts";
+import type { CommandOptions } from "../../lib/output-mode.ts";
+import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
+import { failCommand, printJsonSuccess } from "../../lib/output.ts";
+import { pullTicket } from "../local/pull.ts";
 
 function collectFieldFlags(argv: string[]): string[] {
   const fields: string[] = [];

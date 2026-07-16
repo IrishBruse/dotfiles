@@ -11,14 +11,13 @@ import {
   formatJiraTicketsSkillMd,
   ticketsSkillOneLine,
   writeJiraTicketsSkill
-} from "./commands/board/skill.ts";
-import { runBatchCommand } from "./commands/batch.ts";
+} from "./commands/workspace/skill.ts";
+import { runBatchCommand } from "./commands/workspace/batch.ts";
 import {
   buildSyncSummary,
   formatSyncSummaryHuman
-} from "./commands/board/sync.ts";
-import { runBoardCommand } from "./commands/board.ts";
-import { gatherDoctorChecksForTest, runDoctorCommand } from "./commands/doctor.ts";
+} from "./commands/workspace/sync.ts";
+import { gatherDoctorChecksForTest, runDoctorCommand } from "./commands/workspace/doctor.ts";
 import {
   isSprintInRetentionWindow,
   miscDeleteCutoffMs,
@@ -26,21 +25,21 @@ import {
   sprintsInRetentionWindow,
   SPRINT_RETENTION_BUFFER_MS,
   writeBoard
-} from "./commands/board/write.ts";
-import { runAcliPassthroughCommand } from "./commands/acli.ts";
-import { runInfoCommand } from "./commands/info.ts";
+} from "./commands/workspace/write.ts";
+import { runAcliPassthroughCommand } from "./commands/other/acli.ts";
+import { runInfoCommand } from "./commands/workspace/info.ts";
 import { printHelp } from "./commands/help.ts";
-import { runSearchCommand } from "./commands/search.ts";
-import { runShowCommand } from "./commands/show.ts";
-import { runPullCommand } from "./commands/pull.ts";
-import { runPushCommand } from "./commands/push.ts";
-import { runSyncCommand } from "./commands/sync.ts";
+import { runSearchCommand } from "./commands/read/search.ts";
+import { runShowCommand } from "./commands/read/show.ts";
+import { runPullCommand } from "./commands/local/pull.ts";
+import { runPushCommand } from "./commands/local/push.ts";
+import { runSyncCommand } from "./commands/workspace/sync.ts";
 import {
   issueTypeSlug,
   pulledTicketPath,
   ticketFolderName,
   ticketMarkdownFilename
-} from "./commands/pull.ts";
+} from "./commands/local/pull.ts";
 import {
   bulkChildIssuesJql,
   childIssuesJql,
@@ -824,10 +823,6 @@ describe("command dispatch", () => {
   it("rejects invalid pull and push keys", async () => {
     assert.equal(await runPullCommand(["node", "jira", "pull", "not-a-key"]), 1);
     assert.equal(await runPushCommand(["node", "jira", "push", "not-a-key"]), 1);
-  });
-
-  it("fails board sync for unknown subcommands", async () => {
-    assert.equal(await runBoardCommand(["node", "jira", "board", "nope"]), 1);
   });
 
   it("fails sync when CONFIG is incomplete", async () => {

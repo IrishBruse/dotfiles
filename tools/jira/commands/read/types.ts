@@ -3,12 +3,12 @@
  */
 import process from "node:process";
 
-import { listProjectIssueTypes } from "../lib/acli-jira.ts";
-import { parseSubcommandArgv } from "../lib/argv.ts";
-import { configuredProject } from "../lib/CONFIG.ts";
-import type { CommandOptions } from "../lib/output-mode.ts";
-import { HUMAN_OUTPUT, isJsonMode } from "../lib/output-mode.ts";
-import { failCommand, printJsonSuccess } from "../lib/output.ts";
+import { listProjectIssueTypes } from "../../lib/acli-jira.ts";
+import { parseSubcommandArgv } from "../../lib/argv.ts";
+import { configuredProject } from "../../lib/CONFIG.ts";
+import type { CommandOptions } from "../../lib/output-mode.ts";
+import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
+import { failCommand, printJsonSuccess } from "../../lib/output.ts";
 
 /** Run `jira types [--format text]`. */
 export function runTypesCommand(

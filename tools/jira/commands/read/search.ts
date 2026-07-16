@@ -3,12 +3,12 @@
  */
 import process from "node:process";
 
-import { searchWorkitems } from "../lib/acli-jira.ts";
-import { flagBool, flagString, parseSubcommandArgv } from "../lib/argv.ts";
-import { JIRA_SEARCH_FIELDS } from "../lib/format.ts";
-import type { CommandOptions } from "../lib/output-mode.ts";
-import { HUMAN_OUTPUT, isJsonMode } from "../lib/output-mode.ts";
-import { failCommand, printJsonSuccess } from "../lib/output.ts";
+import { searchWorkitems } from "../../lib/acli-jira.ts";
+import { flagBool, flagString, parseSubcommandArgv } from "../../lib/argv.ts";
+import { JIRA_SEARCH_FIELDS } from "../../lib/format.ts";
+import type { CommandOptions } from "../../lib/output-mode.ts";
+import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
+import { failCommand, printJsonSuccess } from "../../lib/output.ts";
 
 /** Run `jira search --jql "..." [--fields ...] [--format text]`. */
 export function runSearchCommand(

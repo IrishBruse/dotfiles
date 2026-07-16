@@ -7,8 +7,8 @@ import process from "node:process";
 import {
   blockedAcliJiraReason,
   buildAcliJiraArgs
-} from "../lib/acli-policy.ts";
-import { printError } from "../lib/output.ts";
+} from "../../lib/acli-policy.ts";
+import { printError } from "../../lib/output.ts";
 
 /** Alias to `acli jira` with unsafe commands blocked for agents. */
 export function runAcliPassthroughCommand(argv: string[]): number {

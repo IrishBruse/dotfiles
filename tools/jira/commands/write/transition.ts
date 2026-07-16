@@ -3,12 +3,12 @@
  */
 import process from "node:process";
 
-import { transitionWorkitem } from "../lib/acli-jira.ts";
-import { flagBool, flagString, parseSubcommandArgv } from "../lib/argv.ts";
-import { parseJiraKey } from "../lib/jiraInput.ts";
-import type { CommandOptions } from "../lib/output-mode.ts";
-import { HUMAN_OUTPUT, isJsonMode } from "../lib/output-mode.ts";
-import { failCommand, printJsonSuccess } from "../lib/output.ts";
+import { transitionWorkitem } from "../../lib/acli-jira.ts";
+import { flagBool, flagString, parseSubcommandArgv } from "../../lib/argv.ts";
+import { parseJiraKey } from "../../lib/jiraInput.ts";
+import type { CommandOptions } from "../../lib/output-mode.ts";
+import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
+import { failCommand, printJsonSuccess } from "../../lib/output.ts";
 
 /** Run `jira transition <KEY> --status "..."`. */
 export function runTransitionCommand(

@@ -1,14 +1,14 @@
-import { enrichIssuesWithViewFieldsAsync as enrichIssuesWithViewFieldsImpl } from "../commands/board/sync.ts";
-import { buildJiraTicketsSkillContent as buildJiraTicketsSkillContentImpl } from "../commands/board/skill.ts";
+import { enrichIssuesWithViewFieldsAsync as enrichIssuesWithViewFieldsImpl } from "../commands/workspace/sync.ts";
+import { buildJiraTicketsSkillContent as buildJiraTicketsSkillContentImpl } from "../commands/workspace/skill.ts";
 import {
   run as runBoardSyncImpl,
   runWithResult as runWithResultImpl
-} from "../commands/board/sync.ts";
+} from "../commands/workspace/sync.ts";
 import {
   sprintsInRetentionWindow as sprintsInRetentionWindowImpl,
   writeBoard as writeBoardImpl,
   SPRINT_RETENTION_BUFFER_MS as sprintRetentionBufferMs
-} from "../commands/board/write.ts";
+} from "../commands/workspace/write.ts";
 import { CONFIG as jiraConfig } from "./CONFIG.ts";
 import {
   assigneeLabel as assigneeLabelImpl,

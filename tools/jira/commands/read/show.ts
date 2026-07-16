@@ -3,13 +3,13 @@
  */
 import process from "node:process";
 
-import { viewWorkitem } from "../lib/acli-jira.ts";
-import { parseSubcommandArgv } from "../lib/argv.ts";
-import { JIRA_PULL_FIELDS } from "../lib/format.ts";
-import { parseJiraKey } from "../lib/jiraInput.ts";
-import type { CommandOptions } from "../lib/output-mode.ts";
-import { HUMAN_OUTPUT, isJsonMode } from "../lib/output-mode.ts";
-import { failCommand, printJsonSuccess } from "../lib/output.ts";
+import { viewWorkitem } from "../../lib/acli-jira.ts";
+import { parseSubcommandArgv } from "../../lib/argv.ts";
+import { JIRA_PULL_FIELDS } from "../../lib/format.ts";
+import { parseJiraKey } from "../../lib/jiraInput.ts";
+import type { CommandOptions } from "../../lib/output-mode.ts";
+import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
+import { failCommand, printJsonSuccess } from "../../lib/output.ts";
 
 /** Run `jira show <KEY|URL> [--format text] [--fields ...]`. */
 export function runShowCommand(

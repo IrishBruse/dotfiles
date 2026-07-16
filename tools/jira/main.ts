@@ -3,24 +3,23 @@
  * Jira CLI -- pull tickets to local markdown under `jira/`.
  */
 import process from "node:process";
-import { runAcliPassthroughCommand } from "./commands/acli.ts";
-import { runBatchCommand } from "./commands/batch.ts";
-import { runBoardCommand } from "./commands/board.ts";
-import { runCommentCommand } from "./commands/comment.ts";
-import { runCreateCommand } from "./commands/create.ts";
-import { runDoctorCommand } from "./commands/doctor.ts";
-import { runEditCommand } from "./commands/edit.ts";
+import { runAcliPassthroughCommand } from "./commands/other/acli.ts";
+import { runBatchCommand } from "./commands/workspace/batch.ts";
+import { runDoctorCommand } from "./commands/workspace/doctor.ts";
+import { runInfoCommand } from "./commands/workspace/info.ts";
+import { runSyncCommand } from "./commands/workspace/sync.ts";
+import { runPullCommand, runPullTicket } from "./commands/local/pull.ts";
+import { runPushCommand } from "./commands/local/push.ts";
+import { runProjectsCommand } from "./commands/read/projects.ts";
+import { runSearchCommand } from "./commands/read/search.ts";
+import { runShowCommand } from "./commands/read/show.ts";
+import { runTypesCommand } from "./commands/read/types.ts";
+import { runCommentCommand } from "./commands/write/comment.ts";
+import { runCreateCommand } from "./commands/write/create.ts";
+import { runEditCommand } from "./commands/write/edit.ts";
+import { runLinkCommand } from "./commands/write/link.ts";
+import { runTransitionCommand } from "./commands/write/transition.ts";
 import { printHelp } from "./commands/help.ts";
-import { runInfoCommand } from "./commands/info.ts";
-import { runTypesCommand } from "./commands/issue-types.ts";
-import { runLinkCommand } from "./commands/link.ts";
-import { runProjectsCommand } from "./commands/projects.ts";
-import { runPullCommand, runPullTicket } from "./commands/pull.ts";
-import { runPushCommand } from "./commands/push.ts";
-import { runSearchCommand } from "./commands/search.ts";
-import { runShowCommand } from "./commands/show.ts";
-import { runSyncCommand } from "./commands/sync.ts";
-import { runTransitionCommand } from "./commands/transition.ts";
 import { parseJiraKey } from "./lib/jiraInput.ts";
 import { parseGlobalFlags, type CommandOptions } from "./lib/output-mode.ts";
 import { failCommand } from "./lib/output.ts";
@@ -36,7 +35,6 @@ export async function main(argv: string[] = process.argv): Promise<void> {
 
   const subcommands: Record<string, () => number | Promise<number>> = {
     sync: () => runSyncCommand(opts),
-    board: () => runBoardCommand(cleaned, opts),
     pull: () => runPullCommand(cleaned, { outputMode }),
     push: () => runPushCommand(cleaned, { outputMode }),
     show: () => runShowCommand(cleaned, opts),

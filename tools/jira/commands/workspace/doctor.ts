@@ -4,15 +4,15 @@
 import { spawnSync } from "node:child_process";
 import process from "node:process";
 
-import { listProjects } from "../lib/acli-jira.ts";
-import { blockedAcliJiraReason } from "../lib/acli-policy.ts";
-import { readBoardInfoCache } from "../lib/board-cache.ts";
-import { CONFIG, configuredProject } from "../lib/CONFIG.ts";
-import { countLocalTickets } from "../lib/local.ts";
-import type { CommandOptions } from "../lib/output-mode.ts";
-import { HUMAN_OUTPUT, isJsonMode } from "../lib/output-mode.ts";
-import { printJsonSuccess } from "../lib/output.ts";
-import type { DoctorCheck } from "../lib/types.ts";
+import { listProjects } from "../../lib/acli-jira.ts";
+import { blockedAcliJiraReason } from "../../lib/acli-policy.ts";
+import { readBoardInfoCache } from "../../lib/board-cache.ts";
+import { CONFIG, configuredProject } from "../../lib/CONFIG.ts";
+import { countLocalTickets } from "../../lib/local.ts";
+import type { CommandOptions } from "../../lib/output-mode.ts";
+import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
+import { printJsonSuccess } from "../../lib/output.ts";
+import type { DoctorCheck } from "../../lib/types.ts";
 
 function acliOnPath(): DoctorCheck {
   const result = spawnSync("acli", ["--version"], {

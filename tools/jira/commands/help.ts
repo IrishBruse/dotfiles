@@ -42,7 +42,6 @@ Write:
   jira link (--from-json <path> | --out <KEY> --in <KEY> --type <name>) [--yes]  Link work items
 
 Other:
-  jira board sync  Deprecated alias for jira sync
   jira acli <args...>  Alias to acli jira (auth login/logout/switch, deletes, and gated writes blocked)
   jira -h, --help  Print help message
 
