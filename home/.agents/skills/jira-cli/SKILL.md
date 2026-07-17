@@ -1,9 +1,32 @@
 ---
 name: jira-cli
-description: "jira CLI for board context, reads, sync, and gated writes. Use for `jira info`/`jira board`, keys/JQL, pull/push, or when `jira` needs the CLI."
+description: "jira CLI for board context, `jira/` pull-edit-push, and gated writes. Use for `jira info`/`jira board`, keys/JQL, or when `jira` needs the CLI."
 ---
 
 # Jira CLI
+
+Run Jira through the `jira` CLI.
+Ticket routing and the write approval **gate** live in the `jira` skill.
+Prefer `jira` over raw `acli` and over Atlassian MCP when the CLI covers the need.
+On auth failure, stop and ask.
+
+## Local-first (when `jira/` exists)
+
+When the workspace has a `jira/` folder, local markdown is the ticket surface:
+
+1. `jira show KEY` (uses the local file when present) or `jira pull KEY` when missing
+   **Done when:** the ticket markdown is in hand for this turn.
+2. Edit summary/description in that file (`title` in frontmatter + body).
+   **Done when:** the file matches the intended change.
+3. After the `jira` skill gate Approve: `jira push KEY`
+   **Done when:** push succeeds (push refreshes the file from Jira).
+
+`jira show` prints the local copy when it exists.
+Use `jira show KEY --remote` (or `--fields`) for a live fetch.
+`jira push` syncs **summary** and **description** only.
+Status, comments, links, labels, and custom fields use the CLI writes below, then `jira pull KEY`.
+
+Without `jira/`, `jira show` fetches live, or `jira pull KEY` first to start this loop.
 
 ## Orientation (every Jira session)
 
@@ -15,11 +38,13 @@ description: "jira CLI for board context, reads, sync, and gated writes. Use for
 
 Verify with `jira doctor --json` when setup looks wrong.
 
-## Prefer CLI for reads
+## Reads
 
 | Need | Use |
 | --- | --- |
-| One issue | `jira show KEY` (markdown stdout) or `jira pull KEY` (local markdown) |
+| One issue | `jira show KEY` (local `jira/` copy when present, else live) |
+| Refresh one issue | `jira show KEY --remote` or `jira pull KEY` |
+| One issue to disk | `jira pull KEY` |
 | JQL | `jira search "..."` |
 | My tickets / unassigned | `jira info` (included) |
 | Full board | `jira board` / `jira sync` |
@@ -35,8 +60,8 @@ After the `jira` skill write gate Approve:
 ```sh
 jira info   # featureTeamOptionId, sprintId, storyPointsField, project
 
-# Typical Task/Story in the current sprint (Feature Team + sprint applied automatically)
-jira create --type Task --summary "..." --parent KEY --story-points 1
+# Typical Task/Story (Feature Team applied automatically; add sprint explicitly when needed)
+jira create --type Task --summary "..." --parent KEY --story-points 1 --sprint 27857
 
 # Explicit fields (override defaults)
 jira create --type Story --summary "..." --parent KEY \
@@ -48,8 +73,9 @@ jira create --type Story --summary "..." --parent KEY \
 Defaults:
 
 - Feature Team from `jira info` is applied on every create when the option id is known.
-- Current sprint from info is applied by default. Opt out with `--no-board-defaults`.
-- `--sprint <id>` / `--story-points <n>` set those fields.
+- Sprint is not inferred from the board (avoids polluting sprint metrics).
+  Use `--sprint <id>` or `--field customfield_10021=<id>` when the ticket belongs in a sprint.
+- `--story-points <n>` sets story points when provided.
 - `--field id=value` always wins over defaults.
 - NOVACORE Epic creates get Capitalizable=Yes when unset.
 - `--from-json` skips defaults (full payload). `--from-draft` still applies defaults.
@@ -69,11 +95,14 @@ jira comment KEY "Cancellation reason..."
 
 `jira show KEY` frontmatter uses the real status name (`status: Cancelled`) plus `status_bucket`.
 
-## Edit custom fields
+## Custom fields and non-markdown edits
+
+Prefer local-first for summary/description.
+Use `jira edit` only for fields `jira push` cannot sync:
 
 ```sh
 jira edit KEY --field customfield_10023=2
-jira edit KEY --summary "New title" --field customfield_10354=16409
+jira edit KEY --labels a,b --field customfield_10354=16409
 ```
 
 If acli rejects custom fields on edit, use Atlassian MCP `editJiraIssue` with the same field ids from `jira info`, then `jira pull KEY`.
@@ -96,8 +125,8 @@ jira search 'project = NOVACORE AND sprint in openSprints() AND "Feature Team" =
 ```sh
 jira <KEY|URL> | jira pull [KEY] | jira push [KEY]
 jira sync | jira board | jira info | jira doctor | jira batch
-jira show KEY | jira search "..." | jira projects | jira types
-jira create --type T --summary "..." [--parent KEY] [--no-board-defaults] [--sprint ID] [--story-points N] [--field id=value] [--from-draft path]
+jira show KEY [--remote] | jira search "..." | jira projects | jira types
+jira create --type T --summary "..." [--parent KEY] [--sprint ID] [--story-points N] [--field id=value] [--from-draft path]
 jira edit KEY [--summary ...] [--description-file ...] [--labels ...] [--field id=value]
 jira transition KEY [Status]
 jira comment KEY "body"
@@ -113,7 +142,9 @@ Pulled tickets: `jira/<type>/<title> - <KEY>.md`.
 ## Writes
 
 1. Complete the `jira` skill **Jira Write Approval Gate** (Approve only).
-2. Run `jira create|edit|transition|comment|link` (writes confirm automatically).
-3. Refresh with `jira pull <KEY>` when local markdown should match.
+2. Apply the write:
+   - summary/description with `jira/` present: edit the local file, then `jira push KEY`
+   - otherwise: `jira create|edit|transition|comment|link`
+3. After CLI writes (not push), refresh with `jira pull KEY`.
 
 One Approve covers one described change set.
