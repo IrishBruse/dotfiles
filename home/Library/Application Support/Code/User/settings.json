@@ -1694,6 +1694,7 @@
   "markdownInlineEditor.math.enabled": false,
   "fish.path.fish": "/opt/homebrew/bin/fish",
   "fish.path.fish_indent": "/opt/homebrew/bin/fish_indent",
+  "editor.allowVariableFontsInAccessibilityMode": true,
   "workbench.layoutControl.enabled": false,
   "terminal.integrated.gpuAcceleration": "on",
   "git.repositoryScanMaxDepth": 2,
@@ -1711,7 +1712,9 @@
     {
       "name": "Cursor",
       "command": "/Users/econneely/.local/bin/agent",
-      "args": ["acp"]
+      "args": [
+        "acp"
+      ]
     }
   ],
   "ib-acp-ui.toolCallVerbosity": "compact",
