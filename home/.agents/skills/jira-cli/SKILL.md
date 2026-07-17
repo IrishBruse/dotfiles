@@ -31,7 +31,7 @@ Verify with `jira doctor --json` when setup looks wrong.
 | Need | Use |
 | --- | --- |
 | One issue | `jira show KEY` (markdown stdout) or `jira pull KEY` (local markdown) |
-| JQL | `jira search --jql "..."` |
+| JQL | `jira search "..."` |
 | Board slice | `jira board` / `jira sync` |
 | cloudId / field ids | `jira info` |
 
@@ -78,13 +78,13 @@ If acli rejects custom fields on edit, use Atlassian MCP `editJiraIssue` with th
 
 ```sh
 # Open sprint for the configured Feature Team (name from jira info)
-jira search --jql 'project = NOVACORE AND sprint in openSprints() AND "Feature Team" = dynaFormRaptors'
+jira search 'project = NOVACORE AND sprint in openSprints() AND "Feature Team" = dynaFormRaptors'
 
 # Children of a parent
-jira search --jql 'parent = NOVACORE-12345'
+jira search 'parent = NOVACORE-12345'
 
 # Recent team ticket to reuse a parent
-jira search --jql 'project = NOVACORE AND sprint in openSprints() AND "Feature Team" = dynaFormRaptors ORDER BY updated DESC' --fields key,summary,parent
+jira search 'project = NOVACORE AND sprint in openSprints() AND "Feature Team" = dynaFormRaptors ORDER BY updated DESC' --fields key,summary,parent
 ```
 
 ## Commands
@@ -92,7 +92,7 @@ jira search --jql 'project = NOVACORE AND sprint in openSprints() AND "Feature T
 ```sh
 jira <KEY|URL> | jira pull [KEY] | jira push [KEY]
 jira sync | jira board [--full] | jira info | jira doctor | jira batch
-jira show KEY | jira search --jql "..." | jira projects | jira types
+jira show KEY | jira search "..." | jira projects | jira types
 jira create --type T --summary "..." [--parent KEY] [--board-defaults] [--sprint ID] [--story-points N] [--field id=value] [--from-draft path] --yes
 jira edit KEY [--summary ...] [--description-file ...] [--labels ...] [--field id=value] --yes
 jira transition KEY --status Name --yes
