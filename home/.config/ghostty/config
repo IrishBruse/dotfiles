@@ -59,7 +59,7 @@ config-file = ?local
 # keybind = clear
 
 keybind = ctrl+w=close_surface
-keybind = ctrl+v=paste_from_clipboard
+keybind = performable:ctrl+v=paste_from_clipboard
 # Copy if there is a selection
 keybind = performable:ctrl+c=copy_to_clipboard
 keybind = ctrl+k=clear_screen
