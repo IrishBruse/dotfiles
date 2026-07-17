@@ -153,6 +153,11 @@
     },
     {
       "key": "ctrl+v",
+      "command": "workbench.action.terminal.paste",
+      "when": "isLinux && terminalFocus && terminalHasBeenCreated || isLinux && terminalFocus && terminalProcessSupported"
+    },
+    {
+      "key": "ctrl+v",
       "command": "execPaste",
       "when": "isMac && activeEditor == 'workbench.editor.browser'"
     },
