@@ -7,7 +7,7 @@ description: "Runs the `jira` CLI (`jira info`, `jira board`, show, search, pull
 
 Run Jira work through the `jira` CLI.
 `jira info` is the **info** hub: project, site, cloudId, me, Feature Team, sprint ids,
-story points field, statuses, link types, and local `jira/` summary.
+story points field, and my/unassigned board tickets.
 
 Ticket routing and the write approval **gate** live in the `jira` skill.
 For Confluence, use the `confluence-cli` skill.
@@ -19,10 +19,10 @@ On auth failure, stop and ask. Do not work around it.
 ## Orientation (every Jira session)
 
 1. `jira info`
-   **Done when:** cloudId, project, featureTeamOptionId, sprintId(s), and field ids are in hand.
-2. `jira board`
-   **Done when:** my tickets and unassigned are known, or you ran `jira sync` then `jira board`
-   because the cache was stale or missing.
+   **Done when:** cloudId, project, featureTeamOptionId, sprintId(s), field ids,
+   and my/unassigned tickets are in hand (run `jira sync` first if board is missing).
+2. `jira board` (optional)
+   **Done when:** full board including teammates/misc is needed.
 
 Verify with `jira doctor --json` when setup looks wrong.
 
@@ -32,7 +32,8 @@ Verify with `jira doctor --json` when setup looks wrong.
 | --- | --- |
 | One issue | `jira show KEY` (markdown stdout) or `jira pull KEY` (local markdown) |
 | JQL | `jira search "..."` |
-| Board slice | `jira board` / `jira sync` |
+| My tickets / unassigned | `jira info` (included) |
+| Full board | `jira board` / `jira sync` |
 | cloudId / field ids | `jira info` |
 | Available statuses | `jira transition KEY` (lists current + known) |
 
@@ -105,7 +106,7 @@ jira search 'project = NOVACORE AND sprint in openSprints() AND "Feature Team" =
 
 ```sh
 jira <KEY|URL> | jira pull [KEY] | jira push [KEY]
-jira sync | jira board [--full] | jira info | jira doctor | jira batch
+jira sync | jira board | jira info | jira doctor | jira batch
 jira show KEY | jira search "..." | jira projects | jira types
 jira create --type T --summary "..." [--parent KEY] [--no-board-defaults] [--sprint ID] [--story-points N] [--field id=value] [--from-draft path]
 jira edit KEY [--summary ...] [--description-file ...] [--labels ...] [--field id=value]
