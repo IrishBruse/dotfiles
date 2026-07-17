@@ -41,7 +41,7 @@ import { runAcliPassthroughCommand } from "./commands/other/acli.ts";
 import { runInfoCommand } from "./commands/workspace/info.ts";
 import { printHelp } from "./commands/help.ts";
 import { runSearchCommand } from "./commands/read/search.ts";
-import { runShowCommand } from "./commands/read/show.ts";
+import { runShowCommand, readLocalShowMarkdown } from "./commands/read/show.ts";
 import { runCommentCommand } from "./commands/write/comment.ts";
 import { runTransitionCommand } from "./commands/write/transition.ts";
 import { runPullCommand } from "./commands/local/pull.ts";
@@ -68,11 +68,14 @@ import {
   epicLinkFieldId,
   featureTeamLabel,
   formatTicketMarkdown,
+  formatStageAge,
   isHierarchyRoot,
   issueDescriptionMarkdown,
   issueTypeName,
   jiraPullFields,
   normalizeSiteHost,
+  daysInStage,
+  stageSinceFromFields,
   statusBucketFromFields,
   yamlScalar
 } from "./lib/format.ts";
@@ -535,6 +538,16 @@ describe("format helpers continued", () => {
     assert.equal(statusBucketFromFields({}), "inProgress");
   });
 
+  it("computes stage age from statuscategorychangedate", () => {
+    const stageSince = "2026-07-14T12:00:00.000Z";
+    const nowMs = Date.parse("2026-07-17T12:00:00.000Z");
+    assert.equal(stageSinceFromFields({ statuscategorychangedate: stageSince }), stageSince);
+    assert.equal(stageSinceFromFields({}), undefined);
+    assert.equal(daysInStage(stageSince, nowMs), 3);
+    assert.equal(formatStageAge(stageSince, nowMs), "3d");
+    assert.equal(formatStageAge(undefined, nowMs), "-");
+  });
+
   it("formats pulled ticket markdown with frontmatter", () => {
     const { folder, body } = formatTicketMarkdown(
       "PROJ-1",
@@ -709,7 +722,8 @@ describe("board content", () => {
           fields: {
             summary: "Mine",
             assignee: { accountId: ME, displayName: "Me" },
-            status: { name: "To Do", statusCategory: { key: "new" } }
+            status: { name: "To Do", statusCategory: { key: "new" } },
+            statuscategorychangedate: "2026-07-14T12:00:00.000Z"
           }
         },
         {
@@ -717,7 +731,8 @@ describe("board content", () => {
           fields: {
             summary: "Theirs",
             assignee: { accountId: "other", displayName: "Bob" },
-            status: { name: "In Progress", statusCategory: { key: "indeterminate" } }
+            status: { name: "In Progress", statusCategory: { key: "indeterminate" } },
+            statuscategorychangedate: "2026-07-01T12:00:00.000Z"
           }
         }
       ],
@@ -726,9 +741,14 @@ describe("board content", () => {
     );
     assert.equal(content.sections.myTickets.statuses.todo.length, 1);
     assert.equal(content.sections.teammates.statuses.inProgress.length, 1);
-    const md = formatBoardPlainText(content);
-    assert.match(md, /PROJ-1  Todo         Mine/);
-    assert.match(md, /PROJ-2  In progress  Bob  Theirs/);
+    assert.equal(
+      content.sections.myTickets.statuses.todo[0]?.stageSince,
+      "2026-07-14T12:00:00.000Z"
+    );
+    const nowMs = Date.parse("2026-07-17T12:00:00.000Z");
+    const md = formatBoardPlainText(content, nowMs);
+    assert.match(md, /PROJ-1  Todo         3d  Mine/);
+    assert.match(md, /PROJ-2  In progress  16d  Bob  Theirs/);
     assert.match(md, /^Teammates$/m);
   });
 
@@ -971,7 +991,7 @@ describe("writeBoardCache", () => {
       writeBoardCache(content, home);
       const md = formatBoardPlainText(content);
       assert.doesNotMatch(md, /Last synced:/);
-      assert.match(md, /PROJ-1  Todo         Alpha/);
+      assert.match(md, /PROJ-1  Todo         -   Alpha/);
       assert.doesNotMatch(md, /references\//);
     });
   });
@@ -1058,7 +1078,7 @@ describe("cli output", () => {
     assert.match(help, /jira pull/);
     assert.match(help, /jira sync/);
     assert.match(help, /Local tickets:/);
-    assert.match(help, /Agent workspace:/);
+    assert.match(help, /Workspace:/);
     assert.match(help, /jira show/);
     assert.match(help, /jira acli/);
     assert.match(help, /jira info/);
@@ -1204,7 +1224,7 @@ describe("argv and custom fields", () => {
     );
   });
 
-  it("applies Feature Team, board sprint, story points, and Epic capitalizable", () => {
+  it("applies Feature Team, explicit sprint, story points, and Epic capitalizable", () => {
     const fields = applyCreateFieldDefaults(
       {},
       {
@@ -1217,6 +1237,7 @@ describe("argv and custom fields", () => {
         },
         project: "NOVACORE",
         issueType: "Epic",
+        sprintId: 27857,
         storyPoints: 1
       }
     );
@@ -1226,7 +1247,7 @@ describe("argv and custom fields", () => {
     assert.deepEqual(fields.customfield_10998, [{ id: "15465" }]);
   });
 
-  it("skips board sprint when boardDefaults is false", () => {
+  it("does not infer sprint from the board without --sprint", () => {
     const fields = applyCreateFieldDefaults(
       {},
       {
@@ -1238,8 +1259,7 @@ describe("argv and custom fields", () => {
           sprints: [{ id: 27857, state: "active" }]
         },
         project: "NOVACORE",
-        issueType: "Task",
-        boardDefaults: false
+        issueType: "Task"
       }
     );
     assert.deepEqual(fields[NOVACORE_FEATURE_TEAM_FIELD], [{ id: "16409" }]);
@@ -1262,7 +1282,6 @@ describe("argv and custom fields", () => {
         },
         project: "NOVACORE",
         issueType: "Task",
-        boardDefaults: true,
         storyPoints: 3
       }
     );
@@ -1620,7 +1639,7 @@ describe("jira info", () => {
       writeBoardCache(content, home);
       const out = captureStdout(() => runInfoCommand(home));
       assert.match(out, /^cloudId: /m);
-      assert.match(out, /PROJ-1  Todo         Mine/);
+      assert.match(out, /PROJ-1  Todo         -   Mine/);
       assert.doesNotMatch(out, /PROJ-2/);
       assert.doesNotMatch(out, /^Teammates$/m);
     });
@@ -1636,6 +1655,66 @@ describe("show and search command validation", () => {
   it("rejects show with an invalid key", () => {
     const code = runShowCommand(["node", "jira", "show", "not-a-key"]);
     assert.equal(code, 1);
+  });
+
+  it("prints local markdown when a jira/ copy exists", () => {
+    withTempDir((cwd) => {
+      const body = `---
+title: "Alpha"
+assigned: "Ada"
+feature_team: "None"
+type: "Task"
+url: https://example.atlassian.net/browse/PROJ-1
+status: todo
+created: ""
+updated: ""
+---
+
+Local body.
+`;
+      writeTicket(cwd, "task", "Alpha - PROJ-1.md", body);
+      const prev = process.cwd();
+      process.chdir(cwd);
+      try {
+        const out = captureStdout(() =>
+          runShowCommand(["node", "jira", "show", "PROJ-1"])
+        );
+        assert.match(out, /Local body/);
+        assert.match(out, /title: "Alpha"/);
+      } finally {
+        process.chdir(prev);
+      }
+    });
+  });
+
+  it("readLocalShowMarkdown skips local when remote or fields are set", () => {
+    withTempDir((cwd) => {
+      const body = `---
+title: "Alpha"
+assigned: "Ada"
+feature_team: "None"
+type: "Task"
+url: https://example.atlassian.net/browse/PROJ-1
+status: todo
+created: ""
+updated: ""
+---
+
+Local body.
+`;
+      writeTicket(cwd, "task", "Alpha - PROJ-1.md", body);
+      assert.equal(
+        readLocalShowMarkdown("PROJ-1", { cwd, remote: true }),
+        null
+      );
+      assert.equal(
+        readLocalShowMarkdown("PROJ-1", { cwd, fieldsExplicit: true }),
+        null
+      );
+      const local = readLocalShowMarkdown("PROJ-1", { cwd });
+      assert.ok(local);
+      assert.match(local.markdown, /Local body/);
+    });
   });
 
   it("rejects search without jql", () => {
@@ -1788,8 +1867,8 @@ describe("jira board command", () => {
       const out = captureStdout(() =>
         runBoardCommand({ outputMode: "human" }, home)
       );
-      assert.match(out, /PROJ-1  Todo         Mine/);
-      assert.match(out, /PROJ-2  Todo         Bob  Theirs/);
+      assert.match(out, /PROJ-1  Todo         -   Mine/);
+      assert.match(out, /PROJ-2  Todo         -   Bob  Theirs/);
       assert.match(out, /^Teammates$/m);
     });
   });

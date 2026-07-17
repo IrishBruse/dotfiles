@@ -32,6 +32,11 @@ export function jiraViewExtraFields(): string {
     .join(",");
 }
 
+/** View-only fields merged during board sync for age-in-stage display. */
+export function jiraBoardViewExtraFields(): string {
+  return "statuscategorychangedate";
+}
+
 /** Search plus view-only fields for pull/show. */
 export function jiraPullFields(): string {
   return `${JIRA_SEARCH_FIELDS},${jiraViewExtraFields()}`;
@@ -278,6 +283,33 @@ export function statusNameFromFields(fields: Record<string, unknown>): string {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return "";
   const name = (raw as { name?: unknown }).name;
   return typeof name === "string" ? name.trim() : "";
+}
+
+/** ISO timestamp when the issue entered its current status category, if known. */
+export function stageSinceFromFields(
+  fields: Record<string, unknown>
+): string | undefined {
+  const raw = fields.statuscategorychangedate;
+  return typeof raw === "string" && raw.trim() ? raw.trim() : undefined;
+}
+
+/** Whole days since `stageSince` (floor), or undefined when the date is invalid. */
+export function daysInStage(stageSince: string, nowMs = Date.now()): number | undefined {
+  const ms = Date.parse(stageSince);
+  if (!Number.isFinite(ms)) return undefined;
+  const diff = nowMs - ms;
+  if (diff < 0) return 0;
+  return Math.floor(diff / (24 * 60 * 60 * 1000));
+}
+
+/** Compact age label for board rows, e.g. `3d`. */
+export function formatStageAge(
+  stageSince: string | undefined,
+  nowMs = Date.now()
+): string {
+  if (!stageSince) return "-";
+  const days = daysInStage(stageSince, nowMs);
+  return days === undefined ? "-" : `${days}d`;
 }
 
 export function formatTicketMarkdown(

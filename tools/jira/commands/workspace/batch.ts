@@ -19,6 +19,7 @@ import { parseJiraKey } from "../../lib/jiraInput.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { failCommand, printJsonSuccess } from "../../lib/output.ts";
+import { readLocalShowMarkdown } from "../read/show.ts";
 
 const ALLOWED_BATCH_COMMANDS = new Set([
   "show",
@@ -125,10 +126,22 @@ function runBatchItem(itemArgv: string[]): {
             error: `show: not a valid Jira key or URL: ${input}`
           };
         }
-        const fields =
-          typeof parsed.flags.get("fields") === "string"
-            ? String(parsed.flags.get("fields"))
-            : jiraPullFields();
+        const fieldsExplicit = parsed.flags.has("fields");
+        const fields = fieldsExplicit
+          ? String(parsed.flags.get("fields"))
+          : jiraPullFields();
+        const remote = flagBool(parsed.flags, "remote");
+        const local = readLocalShowMarkdown(key, { remote, fieldsExplicit });
+        if (local) {
+          const markdown = local.markdown.endsWith("\n")
+            ? local.markdown
+            : `${local.markdown}\n`;
+          return {
+            success: true,
+            data: { source: "local", key, path: local.path, markdown },
+            error: null
+          };
+        }
         return { success: true, data: viewWorkitem(key, { fields }), error: null };
       }
       case "search": {

@@ -199,9 +199,9 @@ export function pickCurrentSprintId(
 }
 
 /**
- * Fill Feature Team (always when known), board sprint (when boardDefaults),
+ * Fill Feature Team (always when known), optional sprint (--sprint only),
  * optional story points, and NOVACORE Epic Capitalizable.
- * Explicit `--field` values win. Callers default boardDefaults to true.
+ * Explicit `--field` values win. Sprint is never inferred from the board.
  */
 export function applyCreateFieldDefaults(
   customFields: Record<string, CustomFieldValue>,
@@ -209,20 +209,12 @@ export function applyCreateFieldDefaults(
     source: CreateFieldDefaultsSource;
     project: string;
     issueType: string;
-    boardDefaults?: boolean;
     sprintId?: number;
     storyPoints?: number;
   }
 ): Record<string, CustomFieldValue> {
   const out = { ...customFields };
-  const {
-    source,
-    project,
-    issueType,
-    boardDefaults = true,
-    sprintId,
-    storyPoints
-  } = options;
+  const { source, project, issueType, sprintId, storyPoints } = options;
 
   const teamField =
     source.featureTeamField.trim() || NOVACORE_FEATURE_TEAM_FIELD;
@@ -231,9 +223,7 @@ export function applyCreateFieldDefaults(
     out[teamField] = [{ id: teamOptionId }];
   }
 
-  const resolvedSprintId =
-    sprintId ??
-    (boardDefaults ? pickCurrentSprintId(source.sprints) : undefined);
+  const resolvedSprintId = sprintId;
   const sprintField = source.sprintField.trim() || JIRA_SPRINT_FIELD;
   if (resolvedSprintId !== undefined && out[sprintField] === undefined) {
     out[sprintField] = resolvedSprintId;

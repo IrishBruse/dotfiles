@@ -73,9 +73,6 @@ function resolveCustomFields(
   issueType: string
 ): Record<string, CustomFieldValue> {
   const info = gatherJiraInfo();
-  // Board sprint on by default; --no-board-defaults opts out.
-  // --board-defaults is accepted as a no-op alias.
-  const boardDefaults = !flagBool(parsed.flags, "no-board-defaults");
   const sprintId = parseOptionalNumber(
     flagString(parsed.flags, "sprint"),
     "--sprint"
@@ -95,7 +92,6 @@ function resolveCustomFields(
     },
     project,
     issueType,
-    boardDefaults,
     sprintId,
     storyPoints
   });

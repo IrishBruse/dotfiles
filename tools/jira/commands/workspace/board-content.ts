@@ -4,6 +4,8 @@ import {
   assigneeLabel,
   assigneeRecord,
   classifyFolder,
+  formatStageAge,
+  stageSinceFromFields,
   statusBucketFromFields
 } from "../../lib/format.ts";
 import { writeBoardCache } from "../../lib/board-cache.ts";
@@ -97,9 +99,10 @@ function ticketsInOrder(section: BoardSection): Array<{
 
 /**
  * One ticket per line for humans and agents:
- *   KEY  Status  Summary
- *   KEY  Status  Assignee  Summary   (teammates / misc)
+ *   KEY  Status  Age  Summary
+ *   KEY  Status  Age  Assignee  Summary   (teammates / misc)
  * Columns are space-padded within each section so titles align.
+ * Age is whole days in the current status category (from sync).
  */
 function padRight(value: string, width: number): string {
   if (value.length >= width) return value;
@@ -110,20 +113,23 @@ function formatTicketLine(
   ticket: BoardTicket,
   bucket: StatusBucket,
   includeAssignee: boolean,
-  widths: { key: number; status: number; assignee: number }
+  widths: { key: number; status: number; age: number; assignee: number },
+  nowMs: number
 ): string {
   const status = padRight(STATUS_LABELS[bucket], widths.status);
   const key = padRight(ticket.key, widths.key);
+  const age = padRight(formatStageAge(ticket.stageSince, nowMs), widths.age);
   if (includeAssignee) {
     const assignee = padRight(ticket.assignee, widths.assignee);
-    return `${key}  ${status}  ${assignee}  ${ticket.summary}`;
+    return `${key}  ${status}  ${age}  ${assignee}  ${ticket.summary}`;
   }
-  return `${key}  ${status}  ${ticket.summary}`;
+  return `${key}  ${status}  ${age}  ${ticket.summary}`;
 }
 
 function formatBoardSectionPlain(
   section: BoardSection,
-  sectionKey: keyof BoardSections
+  sectionKey: keyof BoardSections,
+  nowMs: number
 ): string | null {
   if (!sectionHasTickets(section)) return null;
   const includeAssignee = !SECTIONS_OMIT_ASSIGNEE.has(sectionKey);
@@ -131,12 +137,16 @@ function formatBoardSectionPlain(
   const widths = {
     key: Math.max(...rows.map((r) => r.ticket.key.length)),
     status: STATUS_COLUMN_WIDTH,
+    age: Math.max(
+      ...rows.map((r) => formatStageAge(r.ticket.stageSince, nowMs).length),
+      2
+    ),
     assignee: includeAssignee
       ? Math.max(...rows.map((r) => r.ticket.assignee.length), 1)
       : 0
   };
   const lines = rows.map(({ bucket, ticket }) =>
-    formatTicketLine(ticket, bucket, includeAssignee, widths)
+    formatTicketLine(ticket, bucket, includeAssignee, widths, nowMs)
   );
   return `${section.heading}\n${lines.join("\n")}`;
 }
@@ -174,7 +184,8 @@ export function buildBoardContent(
     sections[SECTION_BY_FOLDER[folder]].statuses[bucket].push({
       key,
       summary,
-      assignee: label
+      assignee: label,
+      stageSince: stageSinceFromFields(fields)
     });
   }
 
@@ -187,28 +198,34 @@ export function buildBoardContent(
 
 function formatBoardSections(
   content: BoardContent,
-  sectionKeys: (keyof BoardSections)[]
+  sectionKeys: (keyof BoardSections)[],
+  nowMs: number
 ): string {
   const blocks = sectionKeys
-    .map((key) => formatBoardSectionPlain(content.sections[key], key))
+    .map((key) => formatBoardSectionPlain(content.sections[key], key, nowMs))
     .filter((block): block is string => block != null);
   return blocks.join("\n\n");
 }
 
 /** My tickets + unassigned only (for `jira info`). */
-export function formatBoardSummaryPlainText(content: BoardContent): string {
-  const body = formatBoardSections(content, ["myTickets", "unassigned"]);
+export function formatBoardSummaryPlainText(
+  content: BoardContent,
+  nowMs = Date.now()
+): string {
+  const body = formatBoardSections(content, ["myTickets", "unassigned"], nowMs);
   return body ? `${body}\n` : "";
 }
 
 /** Full board: my tickets, unassigned, teammates, misc. */
-export function formatBoardPlainText(content: BoardContent): string {
-  const body = formatBoardSections(content, [
-    "myTickets",
-    "unassigned",
-    "teammates",
-    "misc"
-  ]);
+export function formatBoardPlainText(
+  content: BoardContent,
+  nowMs = Date.now()
+): string {
+  const body = formatBoardSections(
+    content,
+    ["myTickets", "unassigned", "teammates", "misc"],
+    nowMs
+  );
   return body ? `${body}\n` : "";
 }
 

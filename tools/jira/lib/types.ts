@@ -60,6 +60,8 @@ export type BoardTicket = {
   key: string;
   summary: string;
   assignee: string;
+  /** ISO timestamp when the ticket entered its current status category. */
+  stageSince?: string;
 };
 
 /** Tickets grouped by status within one board section. */

@@ -23,6 +23,7 @@ import {
   assigneeRecord,
   classifyFolder,
   JIRA_SEARCH_FIELDS,
+  jiraBoardViewExtraFields,
   jiraViewExtraFields,
   normalizeSiteHost
 } from "../../lib/format.ts";
@@ -318,6 +319,15 @@ async function runImpl(options: CommandOptions): Promise<SyncResult> {
     key?: string;
     fields?: Record<string, unknown>;
   }>;
+
+  if (issues.length > 0) {
+    log(`enriching ${issues.length} issue(s) with status age fields…`);
+    await enrichIssuesWithViewFieldsAsync(
+      issues,
+      jiraBoardViewExtraFields(),
+      ACLI
+    );
+  }
 
   const counts = countIssuesByFolder(issues, meAccountId);
 

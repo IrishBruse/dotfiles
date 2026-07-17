@@ -146,11 +146,15 @@ function parseBoardTicket(value: unknown): BoardTicket | null {
   if (typeof raw.key !== "string" || !raw.key.trim()) return null;
   if (typeof raw.summary !== "string") return null;
   if (typeof raw.assignee !== "string") return null;
-  return {
+  const ticket: BoardTicket = {
     key: raw.key.trim(),
     summary: raw.summary,
     assignee: raw.assignee
   };
+  if (typeof raw.stageSince === "string" && raw.stageSince.trim()) {
+    ticket.stageSince = raw.stageSince.trim();
+  }
+  return ticket;
 }
 
 function parseBoardSection(value: unknown): BoardSection | null {
