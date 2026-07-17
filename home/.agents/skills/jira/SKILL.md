@@ -23,9 +23,10 @@ This is your **first step**.
 
 - Read the local markdown file when it is already present.
 - When it is missing, inspect the live ticket, then ensure a local copy is pulled into the repo.
+- For summary/description edits: change the local file, then publish it back to Jira after the write gate.
 
 This applies to every route, including subcommands and `/jira update`.
-After a Jira write, refresh the local copy so it matches the live ticket.
+After a Jira write that did not come from publishing the local file, refresh the local copy so it matches the live ticket.
 
 ## Reference Workflows
 
