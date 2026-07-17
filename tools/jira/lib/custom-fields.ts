@@ -22,37 +22,12 @@ export const NOVACORE_CAPITALIZABLE_FIELD = "customfield_10998";
 /** Default Capitalizable option id (Yes) on NOVACORE. */
 export const NOVACORE_CAPITALIZABLE_YES_ID = "15465";
 
-/** Link types agents commonly need (omit Polaris/noise types). */
+/** Link types for `jira link --type` / MCP createIssueLink (omit Polaris noise). */
 export const AGENT_LINK_TYPES = [
   "Blocks",
   "Relates",
   "Duplicate",
   "Clones"
-] as const;
-
-/** Common workflow statuses for transitions on NOVACORE-style boards. */
-export const AGENT_COMMON_STATUSES = [
-  "To Do",
-  "Ready For Development",
-  "In Progress",
-  "Code Review",
-  "Blocked",
-  "Done",
-  "Cancelled",
-  "Deployed to Dev",
-  "Deployed to Test",
-  "Deployed to Production",
-  "Ready for Release",
-  "Paused"
-] as const;
-
-/** Status buckets used by the jira-board skill. */
-export const AGENT_STATUS_BUCKETS = [
-  "todo",
-  "inProgress",
-  "codeReview",
-  "inTest",
-  "done"
 ] as const;
 
 export type CustomFieldValue =

@@ -5,7 +5,6 @@ tools/.bin/start
 local.fish
 secrets.fish
 
-home/.agents/memory
 home/.config/dconf/user
 home/.config/fish/completions/sdd.fish
 home/.config/fish/fish_variables
@@ -16,4 +15,4 @@ home/dot-zshrc
 # Unignore global ignore
 !tools/confluence
 home/dot-npmrc
-home/.config/jira/config.json
+home/.config/jira/

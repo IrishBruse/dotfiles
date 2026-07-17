@@ -7,6 +7,7 @@ import { runAcliPassthroughCommand } from "./commands/other/acli.ts";
 import { runBatchCommand } from "./commands/workspace/batch.ts";
 import { runDoctorCommand } from "./commands/workspace/doctor.ts";
 import { runInfoCommand } from "./commands/workspace/info.ts";
+import { runBoardCommand } from "./commands/workspace/board.ts";
 import { runSyncCommand } from "./commands/workspace/sync.ts";
 import { runPullCommand, runPullTicket } from "./commands/local/pull.ts";
 import { runPushCommand } from "./commands/local/push.ts";
@@ -21,6 +22,7 @@ import { runLinkCommand } from "./commands/write/link.ts";
 import { runTransitionCommand } from "./commands/write/transition.ts";
 import { printHelp } from "./commands/help.ts";
 import { parseJiraKey } from "./lib/jiraInput.ts";
+import { parseSubcommandArgv, flagBool } from "./lib/argv.ts";
 import { parseGlobalFlags, type CommandOptions } from "./lib/output-mode.ts";
 import { failCommand } from "./lib/output.ts";
 
@@ -30,6 +32,12 @@ export async function main(argv: string[] = process.argv): Promise<void> {
   const arg = cleaned[2];
   if (arg === "-h" || arg === "--help" || !arg) {
     printHelp();
+    return;
+  }
+
+  if (arg === "board") {
+    const { flags } = parseSubcommandArgv(cleaned, 3);
+    process.exit(runBoardCommand({ ...opts, full: flagBool(flags, "full") }));
     return;
   }
 

@@ -1,5 +1,5 @@
 import { enrichIssuesWithViewFieldsAsync as enrichIssuesWithViewFieldsImpl } from "../commands/workspace/sync.ts";
-import { buildJiraTicketsSkillContent as buildJiraTicketsSkillContentImpl } from "../commands/workspace/skill.ts";
+import { buildBoardContent as buildBoardContentImpl } from "../commands/workspace/board-content.ts";
 import {
   run as runBoardSyncImpl,
   runWithResult as runWithResultImpl
@@ -22,16 +22,20 @@ import {
   statusBucketFromFields as statusBucketFromFieldsImpl
 } from "./format.ts";
 import type {
+  BoardContent,
   BoardSprint,
   Folder,
-  JiraTicketsSkillContent,
   StatusBucket,
   SyncResult,
   WriteBoardResult
 } from "./types.ts";
 
 export type {
+  BoardContent,
+  BoardSection,
+  BoardSections,
   BoardSprint,
+  BoardTicket,
   ChildIssue,
   Folder,
   JiraSkillSection,
@@ -63,7 +67,7 @@ export function jiraPullFields(): string {
 export const SPRINT_RETENTION_BUFFER_MS: number = sprintRetentionBufferMs;
 
 /**
- * Sync Jira board into `~/.agents/skills/jira-board/`.
+ * Sync Jira board into `~/.config/jira/board.json`.
  * @return Exit code (0 on success).
  */
 export function runBoardSync(): Promise<number> {
@@ -99,16 +103,33 @@ export function writeBoard(
 }
 
 /**
- * Build structured jira-board skill content from issues.
+ * Build structured board content from issues.
  * @param issues Jira issues with fields.
  * @param meAccountId Account id for folder classification.
- * @return Skill sections grouped by assignee and status.
+ * @param syncedAt ISO timestamp for the cache.
+ * @return Board sections grouped by assignee and status.
+ */
+export function buildBoardContent(
+  issues: Array<{ key?: string; fields?: Record<string, unknown> }>,
+  meAccountId: string,
+  syncedAt: string
+): BoardContent {
+  return buildBoardContentImpl(issues, meAccountId, syncedAt);
+}
+
+/**
+ * @deprecated Use buildBoardContent.
  */
 export function buildJiraTicketsSkillContent(
   issues: Array<{ key?: string; fields?: Record<string, unknown> }>,
   meAccountId: string
-): JiraTicketsSkillContent {
-  return buildJiraTicketsSkillContentImpl(issues, meAccountId);
+): BoardContent & { name: string; description: string } {
+  const content = buildBoardContentImpl(issues, meAccountId, new Date().toISOString());
+  return {
+    ...content,
+    name: "jira-board",
+    description: "deprecated"
+  };
 }
 
 /**

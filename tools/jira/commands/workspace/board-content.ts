@@ -1,5 +1,4 @@
-import fs from "node:fs";
-import path from "node:path";
+import { homedir } from "node:os";
 
 import {
   assigneeLabel,
@@ -7,16 +6,18 @@ import {
   classifyFolder,
   statusBucketFromFields
 } from "../../lib/format.ts";
+import { writeBoardCache } from "../../lib/board-cache.ts";
 import type {
+  BoardContent,
+  BoardSection,
+  BoardSections,
+  BoardTicket,
   Folder,
-  JiraSkillSection,
-  JiraSkillTicket,
-  JiraTicketsSkillContent,
   StatusBucket
 } from "../../lib/types.ts";
 
-/** Single-line summary safe for the skill list (matches Python board_sync_lib). */
-export function ticketsSkillOneLine(summary: string): string {
+/** Single-line summary safe for board ticket lists. */
+export function boardTicketOneLine(summary: string): string {
   return String(summary ?? "")
     .replace(/\n/g, " ")
     .replace(/```/g, "'''")
@@ -39,10 +40,6 @@ const STATUS_ORDER: StatusBucket[] = [
   "done"
 ];
 
-const JIRA_BOARD_SKILL_NAME = "jira-board";
-const JIRA_BOARD_SKILL_DESCRIPTION =
-  "This skill contains in plaintext the current state of the board no need for MCP. Use when needing to get the current state of the Jira Board, when needing to get a ticket for a PR.";
-
 function* issuesWithKeys(
   issues: Array<{ key?: string; fields?: Record<string, unknown> }>
 ): Generator<{ key: string; fields: Record<string, unknown> }> {
@@ -53,7 +50,7 @@ function* issuesWithKeys(
   }
 }
 
-function emptyTicketBuckets(): Record<StatusBucket, JiraSkillTicket[]> {
+function emptyTicketBuckets(): Record<StatusBucket, BoardTicket[]> {
   return {
     todo: [],
     inProgress: [],
@@ -63,7 +60,7 @@ function emptyTicketBuckets(): Record<StatusBucket, JiraSkillTicket[]> {
   };
 }
 
-function sortTicketsInSection(section: JiraSkillSection): void {
+function sortTicketsInSection(section: BoardSection): void {
   for (const bucket of STATUS_ORDER) {
     section.statuses[bucket].sort((a, b) =>
       a.key.localeCompare(b.key, undefined, { sensitivity: "base" })
@@ -71,7 +68,7 @@ function sortTicketsInSection(section: JiraSkillSection): void {
   }
 }
 
-function formatStatusSubsections(section: JiraSkillSection): string {
+function formatStatusSubsections(section: BoardSection): string {
   const parts: string[] = [];
   for (const bucket of STATUS_ORDER) {
     const tickets = section.statuses[bucket];
@@ -84,21 +81,19 @@ function formatStatusSubsections(section: JiraSkillSection): string {
   return parts.join("\n\n");
 }
 
-const SECTION_BY_FOLDER: Record<
-  Folder,
-  keyof JiraTicketsSkillContent["sections"]
-> = {
+const SECTION_BY_FOLDER: Record<Folder, keyof BoardSections> = {
   me: "myTickets",
   team: "teammates",
   unassigned: "unassigned",
   misc: "misc"
 };
 
-export function buildJiraTicketsSkillContent(
+export function buildBoardContent(
   issues: Array<{ key?: string; fields?: Record<string, unknown> }>,
-  meAccountId: string
-): JiraTicketsSkillContent {
-  const sections: JiraTicketsSkillContent["sections"] = {
+  meAccountId: string,
+  syncedAt: string
+): BoardContent {
+  const sections: BoardSections = {
     myTickets: { heading: "My tickets", statuses: emptyTicketBuckets() },
     teammates: { heading: "Teammates", statuses: emptyTicketBuckets() },
     unassigned: { heading: "Unassigned", statuses: emptyTicketBuckets() },
@@ -109,7 +104,7 @@ export function buildJiraTicketsSkillContent(
   };
 
   for (const { key, fields } of issuesWithKeys(issues)) {
-    const summary = ticketsSkillOneLine(
+    const summary = boardTicketOneLine(
       typeof fields.summary === "string" ? fields.summary : ""
     );
     const assignee = assigneeRecord(fields.assignee);
@@ -127,68 +122,47 @@ export function buildJiraTicketsSkillContent(
     sortTicketsInSection(section);
   }
 
-  return {
-    name: JIRA_BOARD_SKILL_NAME,
-    description: JIRA_BOARD_SKILL_DESCRIPTION,
-    sections
-  };
+  return { syncedAt, sections };
 }
 
-function formatSkillSectionMarkdown(section: JiraSkillSection): string {
+function formatBoardSectionMarkdown(section: BoardSection): string {
   const body = formatStatusSubsections(section);
-  if (body) return `## ${section.heading}\n\n${body}`;
-  return `## ${section.heading}`;
+  if (body) return `# ${section.heading}\n\n${body}`;
+  return `# ${section.heading}`;
 }
 
-export function formatJiraTicketsSkillMd(
-  content: JiraTicketsSkillContent,
-  syncedAt?: string
+export type BoardPlainTextOptions = {
+  /** Include teammates and misc sections (default: my tickets and unassigned only). */
+  full?: boolean;
+};
+
+export function formatBoardPlainText(
+  content: BoardContent,
+  options: BoardPlainTextOptions = {}
 ): string {
   const { sections } = content;
-  const boardSections = [
-    formatSkillSectionMarkdown(sections.myTickets),
-    formatSkillSectionMarkdown(sections.teammates),
-    formatSkillSectionMarkdown(sections.unassigned),
-    formatSkillSectionMarkdown(sections.misc)
-  ];
-  const syncLine =
-    syncedAt && syncedAt.trim()
-      ? `Last synced: ${syncedAt.trim()}\n\n`
-      : "";
+  const sectionKeys: (keyof BoardSections)[] = options.full
+    ? ["myTickets", "unassigned", "teammates", "misc"]
+    : ["myTickets", "unassigned"];
+  const boardSections = sectionKeys.map((key) =>
+    formatBoardSectionMarkdown(sections[key])
+  );
 
-  return `---
-name: ${content.name}
-description: >
-  ${content.description}
----
-
-# Board
-
-${syncLine}Here is the current Jira board status.
+  return `Here is the current Jira board status.
 Use \`jira show <KEY>\` or \`jira pull <KEY>\` for full ticket details.
 
 ${boardSections.join("\n\n")}
 `;
 }
 
-export function formatJiraTicketsSkillJson(
-  content: JiraTicketsSkillContent
-): string {
-  return `${JSON.stringify(content, null, 2)}\n`;
-}
-
-/** Write jira-board SKILL.md from fetched issues. */
-export function writeJiraTicketsSkill(
+/** Write board.json from fetched issues. */
+export function writeBoardContentFromIssues(
   issues: Array<{ key?: string; fields?: Record<string, unknown> }>,
-  skillPath: string,
   meAccountId: string,
-  syncedAt?: string
-): void {
-  const content = buildJiraTicketsSkillContent(issues, meAccountId);
-  fs.mkdirSync(path.dirname(skillPath), { recursive: true });
-  fs.writeFileSync(
-    skillPath,
-    formatJiraTicketsSkillMd(content, syncedAt),
-    "utf-8"
-  );
+  syncedAt: string,
+  baseDir = homedir()
+): BoardContent {
+  const content = buildBoardContent(issues, meAccountId, syncedAt);
+  writeBoardCache(content, baseDir);
+  return content;
 }

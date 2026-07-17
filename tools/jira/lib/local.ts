@@ -165,6 +165,31 @@ export function countLocalTickets(cwd = process.cwd()): number {
   return count;
 }
 
+/** Grouped local ticket keys under `jira/<type>/`. */
+export type LocalTicketsSummary = {
+  count: number;
+  byType: Array<{ typeDir: string; keys: string[] }>;
+};
+
+/** Summarize pulled tickets under `jira/` for workspace context. */
+export function summarizeLocalTickets(cwd = process.cwd()): LocalTicketsSummary {
+  const groups = new Map<string, string[]>();
+  for (const ticket of listLocalTickets(cwd)) {
+    const keys = groups.get(ticket.typeDir) ?? [];
+    keys.push(ticket.key);
+    groups.set(ticket.typeDir, keys);
+  }
+
+  const byType = [...groups.entries()]
+    .sort(([a], [b]) => a.localeCompare(b, undefined, { sensitivity: "base" }))
+    .map(([typeDir, keys]) => ({
+      typeDir,
+      keys: keys.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }))
+    }));
+
+  return { count: byType.reduce((sum, group) => sum + group.keys.length, 0), byType };
+}
+
 /** Key -> absolute path index for fast lookups within one command. */
 export function buildLocalTicketIndex(
   cwd = process.cwd()

@@ -3,18 +3,24 @@ import path from "node:path";
 import { homedir } from "node:os";
 
 import { parseBoardSprintRows } from "./board-sprint.ts";
-import type { BoardSprint, Folder } from "./types.ts";
-
-/** Skill folder: `~/.agents/skills/jira-board/`. */
-export function jiraBoardSkillDir(baseDir = homedir()): string {
-  return path.resolve(baseDir, ".agents", "skills", "jira-board");
-}
-
-export const JIRA_BOARD_SKILL_DIR = jiraBoardSkillDir();
+import type {
+  BoardContent,
+  BoardSection,
+  BoardSections,
+  BoardSprint,
+  BoardTicket,
+  Folder,
+  StatusBucket
+} from "./types.ts";
 
 /** Cached workspace context written by `jira sync`. */
 export function boardInfoCachePath(baseDir = homedir()): string {
   return path.join(baseDir, ".config", "jira", "info.json");
+}
+
+/** Cached board state written by `jira sync`. */
+export function boardCachePath(baseDir = homedir()): string {
+  return path.join(baseDir, ".config", "jira", "board.json");
 }
 
 /** One project issue type from `jira project view`. */
@@ -49,18 +55,40 @@ export function writeBoardInfoCache(
   cache: BoardInfoCache,
   baseDir = homedir()
 ): void {
-  const filePath = boardInfoCachePath(baseDir);
+  writeJsonAtomically(boardInfoCachePath(baseDir), cache);
+}
+
+/** Persist board sections for `jira board`. */
+export function writeBoardCache(
+  cache: BoardContent,
+  baseDir = homedir()
+): void {
+  writeJsonAtomically(boardCachePath(baseDir), cache);
+}
+
+function writeJsonAtomically(filePath: string, data: unknown): void {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   const tempPath = `${filePath}.tmp`;
-  fs.writeFileSync(
-    tempPath,
-    `${JSON.stringify(cache, null, 2)}\n`,
-    "utf-8"
-  );
+  fs.writeFileSync(tempPath, `${JSON.stringify(data, null, 2)}\n`, "utf-8");
   fs.renameSync(tempPath, filePath);
 }
 
 const FOLDER_KEYS: Folder[] = ["me", "team", "unassigned", "misc"];
+
+const STATUS_BUCKETS: StatusBucket[] = [
+  "todo",
+  "inProgress",
+  "codeReview",
+  "inTest",
+  "done"
+];
+
+const SECTION_KEYS: (keyof BoardSections)[] = [
+  "myTickets",
+  "teammates",
+  "unassigned",
+  "misc"
+];
 
 function parseCounts(value: unknown): Record<Folder, number> | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -110,6 +138,54 @@ function parseIssueTypeDetails(value: unknown): CachedIssueType[] {
     });
   }
   return out;
+}
+
+function parseBoardTicket(value: unknown): BoardTicket | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const raw = value as Record<string, unknown>;
+  if (typeof raw.key !== "string" || !raw.key.trim()) return null;
+  if (typeof raw.summary !== "string") return null;
+  if (typeof raw.assignee !== "string") return null;
+  return {
+    key: raw.key.trim(),
+    summary: raw.summary,
+    assignee: raw.assignee
+  };
+}
+
+function parseBoardSection(value: unknown): BoardSection | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const raw = value as Record<string, unknown>;
+  if (typeof raw.heading !== "string") return null;
+  if (!raw.statuses || typeof raw.statuses !== "object" || Array.isArray(raw.statuses)) {
+    return null;
+  }
+  const statusesRaw = raw.statuses as Record<string, unknown>;
+  const statuses = {} as Record<StatusBucket, BoardTicket[]>;
+  for (const bucket of STATUS_BUCKETS) {
+    const rows = statusesRaw[bucket];
+    if (!Array.isArray(rows)) return null;
+    const tickets: BoardTicket[] = [];
+    for (const row of rows) {
+      const ticket = parseBoardTicket(row);
+      if (!ticket) return null;
+      tickets.push(ticket);
+    }
+    statuses[bucket] = tickets;
+  }
+  return { heading: raw.heading, statuses };
+}
+
+function parseBoardSections(value: unknown): BoardSections | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const raw = value as Record<string, unknown>;
+  const sections = {} as BoardSections;
+  for (const key of SECTION_KEYS) {
+    const section = parseBoardSection(raw[key]);
+    if (!section) return null;
+    sections[key] = section;
+  }
+  return sections;
 }
 
 /** Read cached workspace context when present. */
@@ -175,5 +251,32 @@ export function readBoardInfoCache(baseDir = homedir()): BoardInfoCache | null {
     featureTeamName: parseOptionalString(raw.featureTeamName),
     featureTeamOptionId: parseOptionalString(raw.featureTeamOptionId),
     meDisplayName: parseOptionalString(raw.meDisplayName)
+  };
+}
+
+/** Read cached board state when present. */
+export function readBoardCache(baseDir = homedir()): BoardContent | null {
+  const filePath = boardCachePath(baseDir);
+  if (!fs.existsSync(filePath)) return null;
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+  } catch (err) {
+    if (err instanceof SyntaxError) return null;
+    throw err;
+  }
+
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    return null;
+  }
+  const raw = parsed as Record<string, unknown>;
+  if (typeof raw.syncedAt !== "string") return null;
+  const sections = parseBoardSections(raw.sections);
+  if (!sections) return null;
+
+  return {
+    syncedAt: raw.syncedAt,
+    sections
   };
 }

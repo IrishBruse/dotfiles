@@ -13,6 +13,7 @@ import {
 import { flagBool, flagString, parseSubcommandArgv } from "../../lib/argv.ts";
 import { configuredProject } from "../../lib/CONFIG.ts";
 import { jiraPullFields, JIRA_SEARCH_FIELDS } from "../../lib/format.ts";
+import { gatherBoardCache } from "./board.ts";
 import { gatherJiraInfo } from "../../lib/info.ts";
 import { parseJiraKey } from "../../lib/jiraInput.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
@@ -24,7 +25,8 @@ const ALLOWED_BATCH_COMMANDS = new Set([
   "search",
   "projects",
   "types",
-  "info"
+  "info",
+  "board"
 ]);
 
 export type BatchItemResult = {
@@ -80,6 +82,17 @@ function runBatchItem(itemArgv: string[]): {
     switch (cmd) {
       case "info":
         return { success: true, data: gatherJiraInfo(), error: null };
+      case "board": {
+        const cache = gatherBoardCache();
+        if (!cache) {
+          return {
+            success: false,
+            data: null,
+            error: "board cache not found (run jira sync)"
+          };
+        }
+        return { success: true, data: cache, error: null };
+      }
       case "projects":
         return { success: true, data: listProjects(), error: null };
       case "types": {

@@ -44,8 +44,9 @@ jira comment <KEY>           add a comment (--body-file or --body)
 jira link                    link work items (--out, --in, --type)
 jira projects                list visible projects (JSON stdout)
 jira types                   list issue types for CONFIG.project (JSON stdout)
-jira info                    workspace context (project, cache, local tickets)
-jira board sync              deprecated alias for jira sync
+jira info                    raw MCP/CLI context (cloudId, project, fields)
+jira board                   my tickets and unassigned (~/.config/jira/board.json)
+jira board --full            include teammates and misc
 jira acli <args...>          passthrough to acli jira STOP and ask for permission to run the command
 ```
 

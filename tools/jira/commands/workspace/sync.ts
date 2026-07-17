@@ -1,11 +1,10 @@
 /**
- * Sync Jira workspace into the jira-board skill via `acli jira workitem search`.
+ * Sync Jira workspace into ~/.config/jira/board.json via `acli jira workitem search`.
  */
-import path from "node:path";
 import process from "node:process";
 
 import {
-  JIRA_BOARD_SKILL_DIR,
+  boardCachePath,
   writeBoardInfoCache
 } from "../../lib/board-cache.ts";
 
@@ -17,7 +16,7 @@ import {
   viewWorkitemAsync
 } from "../../lib/acli-jira.ts";
 import { createConcurrencyLimiter } from "../../../.lib/concurrency.ts";
-import { writeJiraTicketsSkill } from "./skill.ts";
+import { writeBoardContentFromIssues } from "./board-content.ts";
 import { sprintsInRetentionWindow } from "./write.ts";
 import { CONFIG, configuredProject } from "../../lib/CONFIG.ts";
 import {
@@ -43,7 +42,7 @@ import { failCommand, printJsonSuccess } from "../../lib/output.ts";
 import type { BoardSprint, Folder, SyncResult, SyncSummary } from "../../lib/types.ts";
 import type { CachedIssueType } from "../../lib/board-cache.ts";
 
-const JIRA_BOARD_SKILL_PATH = path.join(JIRA_BOARD_SKILL_DIR, "SKILL.md");
+const BOARD_CACHE_PATH = boardCachePath();
 
 const ACLI = "acli";
 const ENRICH_CONCURRENCY = 4;
@@ -148,14 +147,14 @@ export function buildSyncSummary(options: {
   sprintIds: number[];
   issueCount: number;
   counts: Record<Folder, number>;
-  skillPath: string;
+  boardPath: string;
 }): SyncSummary {
   return {
     boardId: options.boardId,
     sprintIds: options.sprintIds,
     issueCount: options.issueCount,
     counts: options.counts,
-    skillPath: options.skillPath
+    boardPath: options.boardPath
   };
 }
 
@@ -170,7 +169,7 @@ export function formatSyncSummaryHuman(summary: SyncSummary): string {
     `Fetched ${issueCount} issue(s) from Jira`,
     `Board: ${sprintTotal} in sprint (me ${counts.me}, team ${counts.team}, unassigned ${counts.unassigned})` +
       (counts.misc > 0 ? `, ${counts.misc} in misc` : ""),
-    `Skill: ${summary.skillPath}`
+    `Cache: ${summary.boardPath}`
   ];
   return `${lines.join("\n")}\n`;
 }
@@ -225,7 +224,7 @@ function fetchBoardSprints(acli: string, boardId: string): BoardSprint[] {
   return listBoardSprints(boardId, acli);
 }
 
-/** Sync Jira -> jira-board SKILL.md; returns 0 on success. */
+/** Sync Jira -> board.json; returns 0 on success. */
 export async function run(options: CommandOptions = HUMAN_OUTPUT): Promise<number> {
   return (await runWithResult(options)).code;
 }
@@ -295,7 +294,7 @@ async function runImpl(options: CommandOptions): Promise<SyncResult> {
     effectiveJql = scopeJqlToBoardSprints(effectiveJql, sprintIds);
   }
 
-  log(`site ${siteHost}, skill ${JIRA_BOARD_SKILL_PATH}`);
+  log(`site ${siteHost}, cache ${BOARD_CACHE_PATH}`);
   log(`JQL ${truncate(effectiveJql, 120)}`);
   log("fetching issues from Jira via acli…");
   if (!VERBOSE) {
@@ -324,8 +323,8 @@ async function runImpl(options: CommandOptions): Promise<SyncResult> {
 
   const syncedAt = new Date().toISOString();
 
-  log(`writing jira-board skill → ${JIRA_BOARD_SKILL_PATH}`);
-  writeJiraTicketsSkill(issues, JIRA_BOARD_SKILL_PATH, meAccountId, syncedAt);
+  log(`writing board cache -> ${BOARD_CACHE_PATH}`);
+  writeBoardContentFromIssues(issues, meAccountId, syncedAt);
 
   const project = configuredProject();
   let issueTypes: string[] = [];
@@ -394,7 +393,7 @@ async function runImpl(options: CommandOptions): Promise<SyncResult> {
     sprintIds,
     issueCount: issues.length,
     counts,
-    skillPath: JIRA_BOARD_SKILL_PATH
+    boardPath: BOARD_CACHE_PATH
   });
   printSyncSummary(summary, options);
   return { code: 0, summary };

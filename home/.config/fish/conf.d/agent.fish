@@ -15,6 +15,10 @@ function ac
 end
 
 function ag
+    agent --model cursor-grok-4.5-high "$argv"
+end
+
+function at
     agent --model gpt-5.6-terra "$argv"
 end
 

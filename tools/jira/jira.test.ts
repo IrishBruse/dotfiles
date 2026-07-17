@@ -18,12 +18,11 @@ before(() => {
 });
 
 import {
-  buildJiraTicketsSkillContent,
-  formatJiraTicketsSkillJson,
-  formatJiraTicketsSkillMd,
-  ticketsSkillOneLine,
-  writeJiraTicketsSkill
-} from "./commands/workspace/skill.ts";
+  boardTicketOneLine,
+  buildBoardContent,
+  formatBoardPlainText
+} from "./commands/workspace/board-content.ts";
+import { runBoardCommand } from "./commands/workspace/board.ts";
 import { runBatchCommand } from "./commands/workspace/batch.ts";
 import {
   buildSyncSummary,
@@ -88,8 +87,11 @@ import {
 } from "./lib/custom-fields.ts";
 import { parseSubcommandArgv } from "./lib/argv.ts";
 import {
+  boardCachePath,
   boardInfoCachePath,
+  readBoardCache,
   readBoardInfoCache,
+  writeBoardCache,
   writeBoardInfoCache
 } from "./lib/board-cache.ts";
 import {
@@ -116,7 +118,8 @@ import {
   listLocalTickets,
   localTicketPath,
   parseDraftFrontmatter,
-  parseTicketMarkdown
+  parseTicketMarkdown,
+  summarizeLocalTickets
 } from "./lib/local.ts";
 import {
   printChildIssues,
@@ -622,6 +625,12 @@ Body.
       const index = buildLocalTicketIndex(cwd);
       assert.equal(localTicketPath("PROJ-2", cwd, index), tickets[1]!.path);
       assert.equal(localTicketPath("PROJ-999", cwd, index), null);
+
+      const summary = summarizeLocalTickets(cwd);
+      assert.equal(summary.count, 2);
+      assert.deepEqual(summary.byType, [
+        { typeDir: "task", keys: ["PROJ-1", "PROJ-2"] }
+      ]);
     });
   });
 });
@@ -672,16 +681,16 @@ describe("children JQL helpers", () => {
   });
 });
 
-describe("board skill content", () => {
+describe("board content", () => {
   it("sanitizes one-line summaries", () => {
     assert.equal(
-      ticketsSkillOneLine("Line\nbreak ```code```"),
+      boardTicketOneLine("Line\nbreak ```code```"),
       "Line break '''code'''"
     );
   });
 
-  it("groups issues into skill sections and statuses", () => {
-    const content = buildJiraTicketsSkillContent(
+  it("groups issues into board sections and statuses", () => {
+    const content = buildBoardContent(
       [
         {
           key: "PROJ-1",
@@ -700,24 +709,27 @@ describe("board skill content", () => {
           }
         }
       ],
-      ME
+      ME,
+      "2026-07-17T12:00:00.000Z"
     );
     assert.equal(content.sections.myTickets.statuses.todo.length, 1);
     assert.equal(content.sections.teammates.statuses.inProgress.length, 1);
-    const md = formatJiraTicketsSkillMd(content);
-    assert.match(md, /name: jira-board/);
+    const md = formatBoardPlainText(content);
     assert.match(md, /PROJ-1: Mine/);
-    assert.match(md, /PROJ-2: Theirs/);
+    assert.doesNotMatch(md, /PROJ-2: Theirs/);
+    const full = formatBoardPlainText(content, { full: true });
+    assert.match(full, /PROJ-2: Theirs/);
   });
 
-  it("includes last sync time at the top of the board section", () => {
-    const content = buildJiraTicketsSkillContent([], ME);
-    const md = formatJiraTicketsSkillMd(content, "2026-07-17T12:00:00.000Z");
-    assert.match(md, /# Board\n\nLast synced: 2026-07-17T12:00:00.000Z\n\nHere is the current Jira board status\./);
+  it("does not include last sync time in plain-text output", () => {
+    const content = buildBoardContent([], ME, "2026-07-17T12:00:00.000Z");
+    const md = formatBoardPlainText(content);
+    assert.match(md, /^Here is the current Jira board status\./m);
+    assert.doesNotMatch(md, /Last synced:/);
   });
 
   it("places unassigned and done tickets in the right sections", () => {
-    const content = buildJiraTicketsSkillContent(
+    const content = buildBoardContent(
       [
         {
           key: "PROJ-3",
@@ -736,14 +748,12 @@ describe("board skill content", () => {
           }
         }
       ],
-      ME
+      ME,
+      "2026-07-17T12:00:00.000Z"
     );
     assert.equal(content.sections.unassigned.statuses.done.length, 1);
     assert.equal(content.sections.myTickets.statuses.codeReview.length, 1);
-    const json = JSON.parse(formatJiraTicketsSkillJson(content)) as {
-      sections: { unassigned: { statuses: { done: unknown[] } } };
-    };
-    assert.equal(json.sections.unassigned.statuses.done.length, 1);
+    assert.equal(content.sections.unassigned.statuses.done.length, 1);
   });
 });
 
@@ -929,11 +939,12 @@ describe("writeBoard", () => {
   });
 });
 
-describe("writeJiraTicketsSkill", () => {
-  it("writes skill markdown beside the skill file", () => {
-    withTempDir((root) => {
-      const skillPath = path.join(root, "skill", "SKILL.md");
-      writeJiraTicketsSkill(
+describe("writeBoardCache", () => {
+  it("writes board.json under the home config dir", () => {
+    withTempDir((dir) => {
+      const home = path.join(dir, "home");
+      fs.mkdirSync(home, { recursive: true });
+      const content = buildBoardContent(
         [
           {
             key: "PROJ-1",
@@ -943,14 +954,12 @@ describe("writeJiraTicketsSkill", () => {
             })
           }
         ],
-        skillPath,
         "account-me",
         "2026-07-17T12:00:00.000Z"
       );
-      assert.ok(fs.existsSync(skillPath));
-      const md = fs.readFileSync(skillPath, "utf-8");
-      assert.match(md, /name: jira-board/);
-      assert.match(md, /Last synced: 2026-07-17T12:00:00.000Z/);
+      writeBoardCache(content, home);
+      const md = formatBoardPlainText(content);
+      assert.doesNotMatch(md, /Last synced:/);
       assert.match(md, /PROJ-1: Alpha/);
       assert.doesNotMatch(md, /references\//);
     });
@@ -997,11 +1006,12 @@ describe("format misc helpers", () => {
   });
 });
 
-describe("board skill edge cases", () => {
+describe("board content edge cases", () => {
   it("skips issues without keys", () => {
-    const content = buildJiraTicketsSkillContent(
+    const content = buildBoardContent(
       [{ fields: { summary: "Ghost" } }, { key: "PROJ-1", fields: { summary: "Real" } }],
-      ME
+      ME,
+      "2026-07-17T12:00:00.000Z"
     );
     const all = Object.values(content.sections).flatMap((section) =>
       Object.values(section.statuses).flat()
@@ -1010,13 +1020,15 @@ describe("board skill edge cases", () => {
     assert.equal(all[0]!.key, "PROJ-1");
   });
 
-  it("renders empty sections in markdown output", () => {
-    const content = buildJiraTicketsSkillContent([], ME);
-    const md = formatJiraTicketsSkillMd(content);
-    assert.match(md, /## My tickets/);
-    assert.match(md, /## Unassigned/);
-    const json = formatJiraTicketsSkillJson(content);
-    assert.match(json, /"myTickets"/);
+  it("renders empty sections in plain-text output", () => {
+    const content = buildBoardContent([], ME, "2026-07-17T12:00:00.000Z");
+    const md = formatBoardPlainText(content);
+    assert.match(md, /# My tickets/);
+    assert.match(md, /# Unassigned/);
+    assert.doesNotMatch(md, /# Teammates/);
+    assert.doesNotMatch(md, /# Misc/);
+    assert.match(formatBoardPlainText(content, { full: true }), /# Teammates/);
+    assert.match(JSON.stringify(content), /"myTickets"/);
   });
 });
 
@@ -1043,6 +1055,7 @@ describe("cli output", () => {
     assert.match(help, /jira show/);
     assert.match(help, /jira acli/);
     assert.match(help, /jira info/);
+    assert.match(help, /jira board/);
 
     assert.equal(pullChangeMark("added"), "+ ");
     assert.equal(pullChangeMark("updated"), "~ ");
@@ -1255,9 +1268,9 @@ describe("jira info", () => {
       site: "example.atlassian.net",
       cloudId: "cloud-uuid",
       project: "TEAM",
-      projectName: "Team Project",
       boardId: "42",
       boardJql: "project = TEAM",
+      effectiveJql: "project = TEAM AND sprint in (99)",
       meAccountId: "account-me",
       meDisplayName: "Ada Lovelace",
       featureTeamField: "customfield_1",
@@ -1266,58 +1279,83 @@ describe("jira info", () => {
       epicLinkField: "customfield_2",
       sprintField: "customfield_10021",
       storyPointsField: "customfield_10023",
-      capitalizableField: "customfield_10998",
-      capitalizableYesId: "15465",
-      issueTypes: ["Story", "Epic", "Task"],
-      issueTypeDetails: [
+      linkTypes: ["Blocks", "Relates", "Duplicate", "Clones"],
+      issueTypes: [
         { name: "Epic", hierarchyLevel: 1, subtask: false },
         { name: "Story", hierarchyLevel: 0, subtask: false },
         { name: "Task", hierarchyLevel: 0, subtask: false }
       ],
       statuses: ["In Progress", "To Do"],
-      boardCache: {
-        syncedAt: "2026-07-15T12:00:00.000Z",
-        boardId: "42",
-        site: "example.atlassian.net",
-        project: "TEAM",
-        projectName: "Team Project",
-        effectiveJql: "project = TEAM AND sprint in (99)",
-        retainedSprints: [
-          {
-            id: 99,
-            name: "Sprint 12",
-            state: "active",
-            startDate: "2026-07-01T00:00:00.000Z",
-            endDate: "2026-07-14T00:00:00.000Z"
-          }
-        ],
-        counts: { me: 2, team: 3, unassigned: 1, misc: 0 },
-        issueCount: 6,
-        localTicketCount: 4,
-        issueTypes: ["Story", "Epic", "Task"],
-        issueTypeDetails: [
-          { name: "Epic", hierarchyLevel: 1, subtask: false },
-          { name: "Story", hierarchyLevel: 0, subtask: false },
-          { name: "Task", hierarchyLevel: 0, subtask: false }
-        ],
-        statuses: ["In Progress", "To Do"],
-        featureTeamName: "Alpha",
-        featureTeamOptionId: "99",
-        meDisplayName: "Ada Lovelace"
-      },
-      localTicketCount: 4
+      sprints: [
+        {
+          id: 99,
+          name: "Sprint 12",
+          state: "active",
+          startDate: "2026-07-01T00:00:00.000Z",
+          endDate: "2026-07-14T00:00:00.000Z"
+        }
+      ],
+      localTickets: {
+        count: 4,
+        byType: [
+          { typeDir: "story", keys: ["TEAM-1", "TEAM-2"] },
+          { typeDir: "task", keys: ["TEAM-3", "TEAM-4"] }
+        ]
+      }
     });
-    assert.match(text, /Project: TEAM \(Team Project\)/);
-    assert.match(text, /Me: Ada Lovelace \(account-me\)/);
-    assert.match(text, /Cloud ID: cloud-uuid/);
-    assert.match(text, /Feature team: Alpha \(customfield_1 \/ option 99\)/);
-    assert.match(text, /Active sprint: Sprint 12 \(99, active/);
-    assert.match(text, /Board counts: me 2, team 3, unassigned 1, misc 0 \(6 total\)/);
-    assert.match(text, /Statuses on board: In Progress, To Do/);
-    assert.match(text, /Local tickets: 4/);
-    assert.match(text, /Board skill: /);
-    assert.doesNotMatch(text, /Workspace cache/);
-    assert.doesNotMatch(text, /Local repo/);
+    assert.match(text, /^cloudId: cloud-uuid$/m);
+    assert.match(text, /^project: TEAM$/m);
+    assert.match(text, /^accountId: account-me$/m);
+    assert.match(text, /^displayName: Ada Lovelace$/m);
+    assert.match(text, /^featureTeamField: customfield_1$/m);
+    assert.match(text, /^featureTeam: Alpha \(99\)$/m);
+    assert.doesNotMatch(text, /^featureTeamName:/m);
+    assert.doesNotMatch(text, /^featureTeamOptionId:/m);
+    assert.match(text, /^sprintId: 99$/m);
+    assert.match(text, /^sprintName: Sprint 12$/m);
+    assert.match(text, /^sprintDates: 2026-07-01 to 2026-07-14$/m);
+    assert.match(
+      text,
+      /^story: TEAM-1, TEAM-2\ntask: TEAM-3, TEAM-4$/m
+    );
+    assert.doesNotMatch(text, /^statuses:/m);
+    assert.doesNotMatch(text, /^linkTypes:/m);
+    assert.match(text, /\n\nBoard:\nboardId:/);
+    assert.doesNotMatch(text, /^boardJql:/m);
+    assert.doesNotMatch(text, /^effectiveJql:/m);
+    assert.doesNotMatch(text, /^issueTypes:/m);
+    assert.doesNotMatch(text, /^board: run jira board \(/m);
+    assert.match(text, /\n\nMe:\naccountId:/);
+    assert.match(text, /\n\nLocal:\nstory: TEAM-1, TEAM-2/);
+    assert.doesNotMatch(text, /\n\nCache and local\n/);
+    assert.doesNotMatch(text, /^syncedAt:/m);
+    assert.match(text, /\n\nMore:\nrun `jira board` for tickets and statuses/);
+    assert.doesNotMatch(text, /Status buckets|Common statuses|projectName/);
+  });
+
+  it("formats empty local tickets in plain-text workspace context", () => {
+    const text = formatJiraInfoPlainText({
+      site: "example.atlassian.net",
+      cloudId: "cloud-uuid",
+      project: "TEAM",
+      boardId: "42",
+      boardJql: "project = TEAM",
+      effectiveJql: "project = TEAM",
+      meAccountId: "account-me",
+      meDisplayName: "Ada Lovelace",
+      featureTeamField: "customfield_1",
+      featureTeamName: "",
+      featureTeamOptionId: "",
+      epicLinkField: "customfield_2",
+      sprintField: "customfield_10021",
+      storyPointsField: "customfield_10023",
+      linkTypes: [],
+      issueTypes: [],
+      statuses: [],
+      sprints: [],
+      localTickets: { count: 0, byType: [] }
+    });
+    assert.match(text, /\n\nLocal:\nNo local tickets in \.\/jira\//);
   });
 
   it("reads and writes the board info cache", () => {
@@ -1412,9 +1450,12 @@ describe("jira info", () => {
 
   it("prints plain text from runInfoCommand", () => {
     const out = captureStdout(() => runInfoCommand());
-    assert.match(out, /^Site: /m);
-    assert.match(out, /^Me: /m);
-    assert.match(out, /^Feature team: /m);
+    assert.match(out, /^site: /m);
+    assert.match(out, /^accountId: /m);
+    assert.match(out, /^featureTeamField: /m);
+    assert.match(out, /^cloudId: /m);
+    assert.match(out, /^boardId: /m);
+    assert.match(out, /\n\nBoard:\nboardId:/);
     assert.doesNotMatch(out, /Jira workspace/);
     assert.doesNotMatch(out, /Config \(~\/\.config\/jira\/config\.json\):/);
   });
@@ -1533,6 +1574,65 @@ describe("jira batch", () => {
   });
 });
 
+describe("jira board command", () => {
+  it("fails when board cache is missing", () => {
+    withTempDir((dir) => {
+      const home = path.join(dir, "home");
+      fs.mkdirSync(home, { recursive: true });
+      assert.equal(runBoardCommand({ outputMode: "human" }, home), 1);
+    });
+  });
+
+  it("omits teammates from default output", () => {
+    withTempDir((dir) => {
+      const home = path.join(dir, "home");
+      fs.mkdirSync(home, { recursive: true });
+      const content = buildBoardContent(
+        [
+          {
+            key: "PROJ-1",
+            fields: issueFields("Mine", { accountId: ME, displayName: "Me" })
+          },
+          {
+            key: "PROJ-2",
+            fields: issueFields("Theirs", {
+              accountId: "other",
+              displayName: "Bob"
+            })
+          }
+        ],
+        ME,
+        "2026-07-17T12:00:00.000Z"
+      );
+      writeBoardCache(content, home);
+      const brief = captureStdout(() =>
+        runBoardCommand({ outputMode: "human" }, home)
+      );
+      const full = captureStdout(() =>
+        runBoardCommand({ outputMode: "human", full: true }, home)
+      );
+      assert.match(brief, /PROJ-1: Mine/);
+      assert.doesNotMatch(brief, /PROJ-2: Theirs/);
+      assert.doesNotMatch(brief, /# Teammates/);
+      assert.match(full, /PROJ-2: Theirs/);
+      assert.match(full, /# Teammates/);
+    });
+  });
+});
+
+describe("board.json cache validation", () => {
+  it("returns null for corrupt board cache", () => {
+    withTempDir((dir) => {
+      const home = path.join(dir, "home");
+      fs.mkdirSync(home, { recursive: true });
+      const cachePath = boardCachePath(home);
+      fs.mkdirSync(path.dirname(cachePath), { recursive: true });
+      fs.writeFileSync(cachePath, "{not json", "utf-8");
+      assert.equal(readBoardCache(home), null);
+    });
+  });
+});
+
 describe("sync summary formatting", () => {
   it("builds human and structured sync summaries", () => {
     const summary = buildSyncSummary({
@@ -1540,10 +1640,10 @@ describe("sync summary formatting", () => {
       sprintIds: [99],
       issueCount: 3,
       counts: { me: 1, team: 1, unassigned: 1, misc: 0 },
-      skillPath: "/tmp/SKILL.md"
+      boardPath: "/tmp/board.json"
     });
     const text = formatSyncSummaryHuman(summary);
     assert.match(text, /Fetched 3 issue/);
-    assert.match(text, /Skill: \/tmp\/SKILL.md/);
+    assert.match(text, /Cache: \/tmp\/board\.json/);
   });
 });

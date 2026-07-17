@@ -55,29 +55,44 @@ export type WriteBoardResult = {
   deleted: string[];
 };
 
-/** One ticket row in the jira-board skill summary. */
-export type JiraSkillTicket = {
+/** One ticket row in the cached board summary. */
+export type BoardTicket = {
   key: string;
   summary: string;
   assignee: string;
 };
 
 /** Tickets grouped by status within one board section. */
-export type JiraSkillSection = {
+export type BoardSection = {
   heading: string;
-  statuses: Record<StatusBucket, JiraSkillTicket[]>;
+  statuses: Record<StatusBucket, BoardTicket[]>;
 };
 
-/** Structured board summary shared by SKILL.md and sprint.json. */
+/** Board sections keyed by assignee group. */
+export type BoardSections = {
+  myTickets: BoardSection;
+  teammates: BoardSection;
+  unassigned: BoardSection;
+  misc: BoardSection;
+};
+
+/** Structured board content written to board.json. */
+export type BoardContent = {
+  syncedAt: string;
+  sections: BoardSections;
+};
+
+/** @deprecated Use BoardTicket */
+export type JiraSkillTicket = BoardTicket;
+
+/** @deprecated Use BoardSection */
+export type JiraSkillSection = BoardSection;
+
+/** @deprecated Use BoardSections */
 export type JiraTicketsSkillContent = {
   name: string;
   description: string;
-  sections: {
-    myTickets: JiraSkillSection;
-    teammates: JiraSkillSection;
-    unassigned: JiraSkillSection;
-    misc: JiraSkillSection;
-  };
+  sections: BoardSections;
 };
 
 /** Board sync exit status with optional error message. */
@@ -93,7 +108,7 @@ export type SyncSummary = {
   sprintIds: number[];
   issueCount: number;
   counts: Record<Folder, number>;
-  skillPath: string;
+  boardPath: string;
 };
 
 /** One diagnostic check from jira doctor. */

@@ -1,31 +1,28 @@
 import process from "node:process";
 
 import { CONFIG, configuredProject } from "./CONFIG.ts";
+import { readBoardInfoCache, type CachedIssueType } from "./board-cache.ts";
 import {
-  readBoardInfoCache,
-  type BoardInfoCache,
-  type CachedIssueType
-} from "./board-cache.ts";
-import {
-  AGENT_COMMON_STATUSES,
   AGENT_LINK_TYPES,
-  AGENT_STATUS_BUCKETS,
   JIRA_SPRINT_FIELD,
-  JIRA_STORY_POINTS_FIELD,
-  NOVACORE_CAPITALIZABLE_FIELD,
-  NOVACORE_CAPITALIZABLE_YES_ID
+  JIRA_STORY_POINTS_FIELD
 } from "./custom-fields.ts";
-import { assigneeRecord, normalizeSiteHost } from "./format.ts";
-import { countLocalTickets } from "./local.ts";
+import { assigneeRecord } from "./format.ts";
+import { summarizeLocalTickets, type LocalTicketsSummary } from "./local.ts";
 import type { BoardSprint } from "./types.ts";
 
+/**
+ * Agent workspace context for MCP and `jira` CLI.
+ * Flat raw values only: cloudId/project/meAccountId for MCP, field ids for
+ * create/edit additional_fields, statuses/linkTypes/issueTypes for CLI flags.
+ */
 export type JiraInfo = {
-  site: string;
   cloudId: string;
+  site: string;
   project: string;
-  projectName: string;
   boardId: string;
   boardJql: string;
+  effectiveJql: string;
   meAccountId: string;
   meDisplayName: string;
   featureTeamField: string;
@@ -34,13 +31,11 @@ export type JiraInfo = {
   epicLinkField: string;
   sprintField: string;
   storyPointsField: string;
-  capitalizableField: string;
-  capitalizableYesId: string;
-  boardCache: BoardInfoCache | null;
-  issueTypes: string[];
-  issueTypeDetails: CachedIssueType[];
+  linkTypes: string[];
+  issueTypes: CachedIssueType[];
   statuses: string[];
-  localTicketCount: number;
+  sprints: BoardSprint[];
+  localTickets: LocalTicketsSummary;
 };
 
 /** Extract issue type names from `jira project view` JSON. */
@@ -75,7 +70,8 @@ export function parseProjectIssueTypeDetails(data: unknown): CachedIssueType[] {
     }
     if (types.length > 0) {
       return types.sort(
-        (a, b) => b.hierarchyLevel - a.hierarchyLevel || a.name.localeCompare(b.name)
+        (a, b) =>
+          b.hierarchyLevel - a.hierarchyLevel || a.name.localeCompare(b.name)
       );
     }
   }
@@ -103,7 +99,8 @@ export function statusNamesFromIssues(
   const names = new Set<string>();
   for (const issue of issues) {
     const status = issue.fields?.status;
-    if (!status || typeof status !== "object" || Array.isArray(status)) continue;
+    if (!status || typeof status !== "object" || Array.isArray(status))
+      continue;
     const name = (status as { name?: unknown }).name;
     if (typeof name === "string" && name.trim()) names.add(name.trim());
   }
@@ -174,10 +171,9 @@ function normalizeFeatureTeamOptions(
   return out;
 }
 
-/** Collect static config plus cached board and local ticket context. */
+/** Collect flat config + cached board values for agents (no nested duplicates). */
 export function gatherJiraInfo(cwd = process.cwd()): JiraInfo {
   const cache = readBoardInfoCache();
-  const project = configuredProject();
   const featureTeamName =
     cache?.featureTeamName.trim() ||
     CONFIG.featureTeam.trim() ||
@@ -188,12 +184,12 @@ export function gatherJiraInfo(cwd = process.cwd()): JiraInfo {
     cache?.meDisplayName.trim() || CONFIG.meDisplayName.trim();
 
   return {
-    site: CONFIG.site.trim(),
     cloudId: CONFIG.cloudId.trim(),
-    project,
-    projectName: cache?.projectName.trim() || "",
+    site: CONFIG.site.trim(),
+    project: configuredProject(),
     boardId: CONFIG.boardId.trim(),
     boardJql: CONFIG.boardJql.trim(),
+    effectiveJql: cache?.effectiveJql.trim() || "",
     meAccountId: CONFIG.meAccountId.trim(),
     meDisplayName,
     featureTeamField: CONFIG.featureTeamField.trim(),
@@ -202,125 +198,121 @@ export function gatherJiraInfo(cwd = process.cwd()): JiraInfo {
     epicLinkField: CONFIG.epicLinkField.trim(),
     sprintField: JIRA_SPRINT_FIELD,
     storyPointsField: JIRA_STORY_POINTS_FIELD,
-    capitalizableField: NOVACORE_CAPITALIZABLE_FIELD,
-    capitalizableYesId: NOVACORE_CAPITALIZABLE_YES_ID,
-    boardCache: cache,
-    issueTypes: cache?.issueTypes ?? [],
-    issueTypeDetails: cache?.issueTypeDetails ?? [],
+    linkTypes: [...AGENT_LINK_TYPES],
+    issueTypes: cache?.issueTypeDetails ?? [],
     statuses: cache?.statuses ?? [],
-    localTicketCount: countLocalTickets(cwd)
+    sprints: cache?.retainedSprints ?? [],
+    localTickets: summarizeLocalTickets(cwd)
   };
 }
 
-function displayValue(value: string, fallback = "(not set)"): string {
-  return value || fallback;
+function formatSprintDate(value: string): string {
+  const date = value.trim().slice(0, 10);
+  return /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : value.trim();
 }
 
-function formatInstant(iso: string | undefined): string {
-  if (!iso) return "?";
-  const ms = Date.parse(iso);
-  if (Number.isNaN(ms)) return iso;
-  return new Date(ms).toISOString().slice(0, 10);
+function formatSprintDateRange(sprint: BoardSprint): string {
+  const start = sprint.startDate ? formatSprintDate(sprint.startDate) : "";
+  const end = sprint.endDate ? formatSprintDate(sprint.endDate) : "";
+  if (start && end) return `${start} to ${end}`;
+  return start || end;
 }
 
-function formatSprintLine(sprint: BoardSprint): string {
-  const label = sprint.name?.trim() || `Sprint ${sprint.id}`;
-  const state = sprint.state?.trim() || "unknown";
-  const start = formatInstant(sprint.startDate);
-  const end = formatInstant(sprint.endDate);
-  return `${label} (${sprint.id}, ${state}, ${start} -> ${end})`;
+function formatSprintKeys(sprint: BoardSprint): string[] {
+  return [
+    formatScalar("sprintId", sprint.id),
+    formatScalar("sprintName", sprint.name?.trim() || ""),
+    formatScalar("sprintDates", formatSprintDateRange(sprint))
+  ];
 }
 
-function formatIssueTypeLine(types: CachedIssueType[], names: string[]): string {
-  if (types.length > 0) {
-    return types
-      .map((t) =>
-        t.subtask ? `${t.name} (subtask)` : `${t.name} (L${t.hierarchyLevel})`
-      )
-      .join(", ");
+const INFO_INDENT = "  ";
+
+/** Key on its own line with each value indented below. */
+function formatIndentedBlock(key: string, lines: string[]): string {
+  if (lines.length === 0) return `${key}:`;
+  return `${key}:\n${lines.map((line) => `${INFO_INDENT}${line}`).join("\n")}`;
+}
+
+function formatScalar(key: string, value: string | number): string {
+  return `${key}: ${value}`;
+}
+
+function formatFeatureTeamValue(name: string, optionId: string): string {
+  const trimmedName = name.trim();
+  const trimmedId = optionId.trim();
+  if (trimmedName && trimmedId) return `${trimmedName} (${trimmedId})`;
+  if (trimmedName) return trimmedName;
+  if (trimmedId) return `(${trimmedId})`;
+  return "";
+}
+
+const LOCAL_TICKET_KEY_LIMIT = 5;
+
+function formatLocalTicketKeys(keys: string[]): string {
+  if (keys.length <= LOCAL_TICKET_KEY_LIMIT) return keys.join(", ");
+  const shown = keys.slice(0, LOCAL_TICKET_KEY_LIMIT).join(", ");
+  return `${shown} +${keys.length - LOCAL_TICKET_KEY_LIMIT} more`;
+}
+
+function formatLocalTicketsBlock(summary: LocalTicketsSummary): string {
+  if (summary.count === 0) {
+    return "No local tickets in ./jira/";
   }
-  if (names.length > 0) return names.join(", ");
-  return "(none cached, run jira sync)";
+
+  return summary.byType
+    .map((group) => `${group.typeDir}: ${formatLocalTicketKeys(group.keys)}`)
+    .join("\n");
 }
 
-function formatFeatureTeamLine(info: JiraInfo): string {
-  const field = displayValue(info.featureTeamField, "(not set)");
-  if (!info.featureTeamName && !info.featureTeamOptionId) {
-    return field;
-  }
-  const name = info.featureTeamName || "(unknown)";
-  const option = info.featureTeamOptionId
-    ? `option ${info.featureTeamOptionId}`
-    : "option (unknown)";
-  return `${name} (${field} / ${option})`;
+function formatInfoSection(title: string, lines: string[]): string {
+  return `${title}\n${lines.join("\n")}`;
 }
 
-function formatMeLine(info: JiraInfo): string {
-  const id = displayValue(info.meAccountId);
-  if (info.meDisplayName) return `${info.meDisplayName} (${id})`;
-  return id;
-}
-
-function formatProjectLine(info: JiraInfo): string {
-  if (info.projectName) return `${info.project} (${info.projectName})`;
-  return displayValue(info.project);
-}
-
-/** Plain-text summary for agents and humans. */
+/** Plain-text key: value lines matching JiraInfo fields (raw, agent-oriented). */
 export function formatJiraInfoPlainText(info: JiraInfo): string {
-  const site = normalizeSiteHost(info.site);
-  const boardId = info.boardId;
-  const project = info.project || "PROJ";
-  const browseBase = site ? `https://${site}/browse/` : "(not set)";
-  const boardUrl =
-    site && boardId
-      ? `https://${site}/jira/software/c/projects/${project}/boards/${boardId}`
-      : "(not set)";
-  const cache = info.boardCache;
-  const skillPath = "~/.agents/skills/jira-board/";
+  const sprintLines =
+    info.sprints.length === 0
+      ? [
+          formatScalar("sprintId", ""),
+          formatScalar("sprintName", ""),
+          formatScalar("sprintDates", "")
+        ]
+      : info.sprints.flatMap((sprint) => formatSprintKeys(sprint));
 
-  const lines = [
-    `Site: ${displayValue(site)}`,
-    `Cloud ID: ${displayValue(info.cloudId)}`,
-    `Project: ${formatProjectLine(info)}`,
-    `Board ID: ${displayValue(boardId)}`,
-    `Board URL: ${boardUrl}`,
-    `Browse base: ${browseBase}`,
-    `Board JQL: ${displayValue(info.boardJql)}`,
-    `Me: ${formatMeLine(info)}`,
-    `Feature team: ${formatFeatureTeamLine(info)}`,
-    `Epic link field: ${displayValue(info.epicLinkField, "(not set)")}`,
-    `Sprint field: ${info.sprintField}`,
-    `Story points field: ${info.storyPointsField}`,
-    `Capitalizable field: ${info.capitalizableField} (Yes=${info.capitalizableYesId})`,
-    `Issue types: ${formatIssueTypeLine(info.issueTypeDetails, info.issueTypes)}`,
-    `Status buckets: ${AGENT_STATUS_BUCKETS.join(", ")}`,
-    `Common statuses: ${AGENT_COMMON_STATUSES.join(", ")}`,
-    `Link types: ${AGENT_LINK_TYPES.join(", ")}`,
-    `Board skill: ${skillPath}`
+  const sections = [
+    formatInfoSection("Workspace:", [
+      formatScalar("cloudId", info.cloudId),
+      formatScalar("site", info.site),
+      formatScalar("project", info.project)
+    ]),
+    formatInfoSection("Board:", [
+      formatScalar("boardId", info.boardId),
+      ...sprintLines
+    ]),
+    formatInfoSection("Me:", [
+      formatScalar("accountId", info.meAccountId),
+      formatScalar("displayName", info.meDisplayName),
+      formatScalar("featureTeamField", info.featureTeamField),
+      formatScalar(
+        "featureTeam",
+        formatFeatureTeamValue(info.featureTeamName, info.featureTeamOptionId)
+      )
+    ]),
+    formatInfoSection("Custom fields:", [
+      formatScalar("epicLinkField", info.epicLinkField),
+      formatScalar("sprintField", info.sprintField),
+      formatScalar("storyPointsField", info.storyPointsField)
+    ]),
+    formatInfoSection("Local:", [
+      // Local ./jira/ state
+      formatLocalTicketsBlock(info.localTickets)
+    ]),
+    formatInfoSection("More:", [
+      // list helpful jump off command the agent might want to run next
+      "run `jira board` for tickets and statuses"
+    ])
   ];
 
-  if (!cache) {
-    lines.push("Cache synced: (not synced, run jira sync)");
-  } else {
-    lines.push(`Cache synced: ${cache.syncedAt}`);
-    lines.push(`Effective JQL: ${cache.effectiveJql}`);
-    lines.push(
-      `Board counts: me ${cache.counts.me}, team ${cache.counts.team}, unassigned ${cache.counts.unassigned}, misc ${cache.counts.misc} (${cache.issueCount} total)`
-    );
-    if (cache.retainedSprints.length === 0) {
-      lines.push("Active sprint: (none in retention window)");
-    } else {
-      for (const sprint of cache.retainedSprints) {
-        lines.push(`Active sprint: ${formatSprintLine(sprint)}`);
-      }
-    }
-    if (info.statuses.length > 0) {
-      lines.push(`Statuses on board: ${info.statuses.join(", ")}`);
-    }
-  }
-
-  lines.push(`Local tickets: ${info.localTicketCount}`);
-
-  return `${lines.join("\n")}\n`;
+  return `${sections.join("\n\n")}\n`;
 }

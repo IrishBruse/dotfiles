@@ -6,7 +6,7 @@ import process from "node:process";
 
 import { listProjects } from "../../lib/acli-jira.ts";
 import { blockedAcliJiraReason } from "../../lib/acli-policy.ts";
-import { readBoardInfoCache } from "../../lib/board-cache.ts";
+import { readBoardInfoCache, readBoardCache } from "../../lib/board-cache.ts";
 import { CONFIG, configuredProject } from "../../lib/CONFIG.ts";
 import { countLocalTickets } from "../../lib/local.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
@@ -76,17 +76,21 @@ function configCheck(): DoctorCheck {
 }
 
 function boardCacheCheck(): DoctorCheck {
-  const cache = readBoardInfoCache();
-  if (!cache) {
+  const infoCache = readBoardInfoCache();
+  const boardCache = readBoardCache();
+  if (!infoCache || !boardCache) {
+    const missing: string[] = [];
+    if (!infoCache) missing.push("info.json");
+    if (!boardCache) missing.push("board.json");
     return {
       name: "board-cache",
       ok: false,
-      message: "Board cache not synced",
+      message: `Board cache not synced (missing ${missing.join(", ")})`,
       fix: "Run: jira sync"
     };
   }
 
-  const syncedMs = Date.parse(cache.syncedAt);
+  const syncedMs = Date.parse(infoCache.syncedAt);
   const maxAgeMs = CONFIG.boardCacheMaxAgeDays * 24 * 60 * 60 * 1000;
   const ageMs = Number.isNaN(syncedMs) ? Infinity : Date.now() - syncedMs;
   const stale = ageMs > maxAgeMs;
@@ -101,7 +105,7 @@ function boardCacheCheck(): DoctorCheck {
     return {
       name: "board-cache",
       ok: false,
-      message: `Board cache stale (${ageLabel}, synced ${cache.syncedAt})`,
+      message: `Board cache stale (${ageLabel}, synced ${infoCache.syncedAt})`,
       fix: "Run: jira sync"
     };
   }
@@ -109,7 +113,7 @@ function boardCacheCheck(): DoctorCheck {
   return {
     name: "board-cache",
     ok: true,
-    message: `Board cache OK (${ageLabel}, ${cache.issueCount} issues)`
+    message: `Board cache OK (${ageLabel}, ${infoCache.issueCount} issues)`
   };
 }
 

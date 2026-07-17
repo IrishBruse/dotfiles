@@ -1404,7 +1404,7 @@
   "git.openRepositoryInParentFolders": "always",
   "git.pruneOnFetch": true,
   "git.replaceTagsWhenPull": true,
-  "git.blame.editorDecoration.enabled": true,
+  "git.blame.editorDecoration.enabled": false,
   "git.blame.statusBarItem.enabled": false,
   "git.discardUntrackedChangesToTrash": false,
   "git.ignoreRebaseWarning": true,
