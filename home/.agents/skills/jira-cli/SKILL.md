@@ -1,20 +1,9 @@
 ---
 name: jira-cli
-description: "Runs the `jira` CLI (`jira info`, `jira board`, show, search, pull/push, writes). Use for Jira keys, URLs, JQL, or local `jira/` markdown."
+description: "jira CLI for board context, reads, sync, and gated writes. Use for `jira info`/`jira board`, keys/JQL, pull/push, or when `jira` needs the CLI."
 ---
 
 # Jira CLI
-
-Run Jira work through the `jira` CLI.
-`jira info` is the **info** hub: project, site, cloudId, me, Feature Team, sprint ids,
-story points field, and my/unassigned board tickets.
-
-Ticket routing and the write approval **gate** live in the `jira` skill.
-For Confluence, use the `confluence-cli` skill.
-
-Prefer `jira` over raw `acli` and over Atlassian MCP when the CLI covers the need.
-Take `cloudId` from `jira info`, not `getAccessibleAtlassianResources`.
-On auth failure, stop and ask. Do not work around it.
 
 ## Orientation (every Jira session)
 
