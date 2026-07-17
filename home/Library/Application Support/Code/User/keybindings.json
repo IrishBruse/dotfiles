@@ -4376,6 +4376,14 @@
         "when": "editorTextFocus"
     },
     {
+        "key": "cmd+o",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": {
+            "text": "\u000f"
+        },
+        "when": "terminalFocus"
+    },
+    {
         "key": "enter",
         "command": "workbench.action.terminal.sendSequence",
         "args": {
