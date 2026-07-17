@@ -81,9 +81,16 @@ import {
   writeAcliDescriptionFile
 } from "./lib/markdown-adf.ts";
 import {
+  applyCreateFieldDefaults,
   buildCreateWorkitemJson,
+  buildEditWorkitemJson,
   capitalizableYesField,
-  parseFieldFlags
+  collectFieldFlags,
+  JIRA_SPRINT_FIELD,
+  JIRA_STORY_POINTS_FIELD,
+  NOVACORE_FEATURE_TEAM_FIELD,
+  parseFieldFlags,
+  pickCurrentSprintId
 } from "./lib/custom-fields.ts";
 import { parseSubcommandArgv } from "./lib/argv.ts";
 import {
@@ -1147,10 +1154,102 @@ describe("argv and custom fields", () => {
   it("parses field flags for create", () => {
     const fields = parseFieldFlags([
       "customfield_10354=16409",
-      "customfield_10998=15465"
+      "customfield_10998=15465",
+      "customfield_10021=27857",
+      "customfield_10023=1"
     ]);
     assert.deepEqual(fields.customfield_10354, [{ id: "16409" }]);
     assert.deepEqual(fields.customfield_10998, [{ id: "15465" }]);
+    assert.equal(fields.customfield_10021, 27857);
+    assert.equal(fields.customfield_10023, 1);
+  });
+
+  it("collects repeated --field flags from argv", () => {
+    assert.deepEqual(
+      collectFieldFlags([
+        "node",
+        "jira",
+        "create",
+        "--field",
+        "customfield_10354=16409",
+        "--summary",
+        "x",
+        "--field",
+        "customfield_10023=1"
+      ]),
+      ["customfield_10354=16409", "customfield_10023=1"]
+    );
+  });
+
+  it("picks the active or in-window sprint", () => {
+    assert.equal(
+      pickCurrentSprintId([
+        { id: 1, state: "closed" },
+        { id: 2, state: "active" }
+      ]),
+      2
+    );
+    assert.equal(
+      pickCurrentSprintId(
+        [
+          {
+            id: 9,
+            startDate: "2026-07-01T00:00:00.000Z",
+            endDate: "2026-07-14T00:00:00.000Z"
+          }
+        ],
+        Date.parse("2026-07-10T12:00:00.000Z")
+      ),
+      9
+    );
+  });
+
+  it("applies Feature Team, board sprint, story points, and Epic capitalizable", () => {
+    const fields = applyCreateFieldDefaults(
+      {},
+      {
+        source: {
+          featureTeamField: NOVACORE_FEATURE_TEAM_FIELD,
+          featureTeamOptionId: "16409",
+          sprintField: JIRA_SPRINT_FIELD,
+          storyPointsField: JIRA_STORY_POINTS_FIELD,
+          sprints: [{ id: 27857, state: "active" }]
+        },
+        project: "NOVACORE",
+        issueType: "Epic",
+        boardDefaults: true,
+        storyPoints: 1
+      }
+    );
+    assert.deepEqual(fields[NOVACORE_FEATURE_TEAM_FIELD], [{ id: "16409" }]);
+    assert.equal(fields[JIRA_SPRINT_FIELD], 27857);
+    assert.equal(fields[JIRA_STORY_POINTS_FIELD], 1);
+    assert.deepEqual(fields.customfield_10998, [{ id: "15465" }]);
+  });
+
+  it("does not override explicit --field values when applying defaults", () => {
+    const fields = applyCreateFieldDefaults(
+      {
+        [NOVACORE_FEATURE_TEAM_FIELD]: [{ id: "999" }],
+        [JIRA_SPRINT_FIELD]: 1
+      },
+      {
+        source: {
+          featureTeamField: NOVACORE_FEATURE_TEAM_FIELD,
+          featureTeamOptionId: "16409",
+          sprintField: JIRA_SPRINT_FIELD,
+          storyPointsField: JIRA_STORY_POINTS_FIELD,
+          sprints: [{ id: 27857, state: "active" }]
+        },
+        project: "NOVACORE",
+        issueType: "Task",
+        boardDefaults: true,
+        storyPoints: 3
+      }
+    );
+    assert.deepEqual(fields[NOVACORE_FEATURE_TEAM_FIELD], [{ id: "999" }]);
+    assert.equal(fields[JIRA_SPRINT_FIELD], 1);
+    assert.equal(fields[JIRA_STORY_POINTS_FIELD], 3);
   });
 
   it("builds create JSON with parent and custom fields", () => {
@@ -1165,6 +1264,21 @@ describe("argv and custom fields", () => {
     assert.equal((json.fields.project as { key: string }).key, "NOVACORE");
     assert.equal((json.fields.issuetype as { name: string }).name, "Epic");
     assert.equal((json.fields.parent as { key: string }).key, "NOVACORE-1");
+  });
+
+  it("builds edit JSON with custom fields as top-level keys", () => {
+    const json = buildEditWorkitemJson({
+      key: "NOVACORE-1",
+      summary: "New title",
+      customFields: {
+        [JIRA_STORY_POINTS_FIELD]: 2,
+        [NOVACORE_FEATURE_TEAM_FIELD]: [{ id: "16409" }]
+      }
+    });
+    assert.deepEqual(json.issues, ["NOVACORE-1"]);
+    assert.equal(json.summary, "New title");
+    assert.equal(json[JIRA_STORY_POINTS_FIELD], 2);
+    assert.deepEqual(json[NOVACORE_FEATURE_TEAM_FIELD], [{ id: "16409" }]);
   });
 
   it("parses created issue keys from JSON stdout", () => {
@@ -1477,6 +1591,11 @@ describe("jira info", () => {
 describe("show and search command validation", () => {
   it("rejects show without a key", () => {
     const code = runShowCommand(["node", "jira", "show"]);
+    assert.equal(code, 1);
+  });
+
+  it("rejects show with an invalid key", () => {
+    const code = runShowCommand(["node", "jira", "show", "not-a-key"]);
     assert.equal(code, 1);
   });
 

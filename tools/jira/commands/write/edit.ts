@@ -6,6 +6,12 @@ import process from "node:process";
 
 import { editWorkitem } from "../../lib/acli-jira.ts";
 import { flagBool, flagString, parseSubcommandArgv } from "../../lib/argv.ts";
+import {
+  buildEditWorkitemJson,
+  collectFieldFlags,
+  parseFieldFlags,
+  writeCreateJsonTemp
+} from "../../lib/custom-fields.ts";
 import { prepareAcliDescriptionFileFromPath } from "../../lib/markdown-adf.ts";
 import { parseJiraKey } from "../../lib/jiraInput.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
@@ -29,34 +35,61 @@ export function runEditCommand(
   const descriptionFile = flagString(parsed.flags, "description-file");
   const labels = flagString(parsed.flags, "labels");
   const yes = flagBool(parsed.flags, "yes");
+  const customFields = parseFieldFlags(collectFieldFlags(argv));
+  const hasCustomFields = Object.keys(customFields).length > 0;
 
-  if (!fromJson && !summary && !descriptionFile && !labels) {
+  if (!fromJson && !summary && !descriptionFile && !labels && !hasCustomFields) {
     return failCommand(
-      "edit: pass --summary, --description-file, --labels, or --from-json",
+      "edit: pass --summary, --description-file, --labels, --field, or --from-json",
       options.outputMode
     );
   }
 
   try {
-    let descriptionPath = descriptionFile || undefined;
-    let descDir: string | undefined;
-    if (descriptionFile) {
-      const prepared = prepareAcliDescriptionFileFromPath(descriptionFile);
-      descDir = prepared.dir;
-      descriptionPath = prepared.filePath;
-    }
-    try {
-      editWorkitem({
-        key,
-        fromJson: fromJson || undefined,
-        summary: summary || undefined,
-        descriptionFile: descriptionPath,
-        labels: labels || undefined,
-        yes
-      });
-    } finally {
-      if (descDir) {
-        fs.rmSync(descDir, { recursive: true, force: true });
+    if (fromJson) {
+      editWorkitem({ key, fromJson, yes });
+    } else if (hasCustomFields) {
+      const description = descriptionFile
+        ? fs.readFileSync(descriptionFile, "utf-8")
+        : undefined;
+      const labelList = labels
+        ? labels.split(",").map((s) => s.trim()).filter(Boolean)
+        : undefined;
+      const { dir, filePath } = writeCreateJsonTemp(
+        buildEditWorkitemJson({
+          key,
+          summary: summary || undefined,
+          description,
+          labels: labelList,
+          customFields
+        }),
+        "jira-edit-"
+      );
+      try {
+        editWorkitem({ key, fromJson: filePath, yes });
+      } finally {
+        fs.rmSync(dir, { recursive: true, force: true });
+      }
+    } else {
+      let descriptionPath = descriptionFile || undefined;
+      let descDir: string | undefined;
+      if (descriptionFile) {
+        const prepared = prepareAcliDescriptionFileFromPath(descriptionFile);
+        descDir = prepared.dir;
+        descriptionPath = prepared.filePath;
+      }
+      try {
+        editWorkitem({
+          key,
+          summary: summary || undefined,
+          descriptionFile: descriptionPath,
+          labels: labels || undefined,
+          yes
+        });
+      } finally {
+        if (descDir) {
+          fs.rmSync(descDir, { recursive: true, force: true });
+        }
       }
     }
     if (isJsonMode(options)) {

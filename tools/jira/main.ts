@@ -55,7 +55,7 @@ export async function main(argv: string[] = process.argv): Promise<void> {
     transition: () => runTransitionCommand(cleaned, opts),
     comment: () => runCommentCommand(cleaned, opts),
     link: () => runLinkCommand(cleaned, opts),
-    info: () => runInfoCommand(opts),
+    info: () => runInfoCommand(),
     projects: () => runProjectsCommand(cleaned, opts),
     types: () => runTypesCommand(cleaned, opts)
   };

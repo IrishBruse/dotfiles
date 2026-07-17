@@ -5,7 +5,7 @@ export function printHelp(): void {
   jira info                    raw MCP/CLI context (cloudId, project, fields)
   jira board                   my tickets and unassigned (~/.config/jira/board.json)
   jira doctor --json           verify acli auth and config
-  Read the jira skill at ~/.agents/skills/jira/SKILL.md
+  Read the jira-cli skill at ~/.agents/skills/jira-cli/SKILL.md
 
 Core loop:
   jira info
@@ -27,19 +27,19 @@ Agent workspace:
   jira sync  Sync board to ~/.config/jira/board.json and workspace cache to ~/.config/jira/info.json
   jira board  Print my tickets and unassigned from ~/.config/jira/board.json
   jira board --full  Include teammates and misc sections
-  jira info  Print raw agent context for MCP/CLI (cloudId, fields; --json)
+  jira info  Print raw agent context for MCP/CLI (cloudId, fields)
   jira doctor  Verify acli, auth, config, and board cache
   jira batch [--file <path>] [--stop-on-error]  Run read-only commands from JSON array on stdin
 
 Read:
-  jira show <KEY|URL> [--fields <list>] [--format text]  Print one issue as JSON (no local file write)
+  jira show <KEY|URL> [--fields <list>]  Print one issue as markdown with frontmatter (no local file write)
   jira search --jql <query> [--fields <list>] [--format text] [--no-paginate]  Search issues via JQL (JSON stdout)
   jira projects [--format text]  List visible projects (JSON stdout)
   jira types [--format text]  List issue types for configured project (JSON stdout)
 
 Write:
-  jira create --type <T> --summary <text> [flags]  Create a work item (--from-draft, --from-json; project from config)
-  jira edit <KEY> [--summary <text>] [--description-file <path>] [--labels <list>] [--from-json <path>] [--yes]  Edit summary, description, or labels
+  jira create --type <T> --summary <text> [flags]  Create (auto Feature Team from info; --board-defaults; --sprint; --story-points; --field; --from-draft)
+  jira edit <KEY> [flags] [--yes]  Edit summary, description, labels, or --field custom fields (--from-json)
   jira transition <KEY> --status <name> [--yes]  Transition status
   jira comment <KEY> (--body-file <path> | --body <text>) [--yes]  Add a comment
   jira link (--from-json <path> | --out <KEY> --in <KEY> --type <name>) [--yes]  Link work items

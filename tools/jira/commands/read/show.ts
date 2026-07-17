@@ -1,17 +1,18 @@
 /**
- * `jira show` -- print one issue as JSON (no local file write).
+ * `jira show` -- print one issue as markdown with frontmatter (no local file write).
  */
 import process from "node:process";
 
 import { viewWorkitem } from "../../lib/acli-jira.ts";
 import { parseSubcommandArgv } from "../../lib/argv.ts";
-import { jiraPullFields } from "../../lib/format.ts";
+import { CONFIG } from "../../lib/CONFIG.ts";
+import { formatTicketMarkdown, jiraPullFields, normalizeSiteHost } from "../../lib/format.ts";
 import { parseJiraKey } from "../../lib/jiraInput.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { failCommand, printJsonSuccess } from "../../lib/output.ts";
 
-/** Run `jira show <KEY|URL> [--format text] [--fields ...]`. */
+/** Run `jira show <KEY|URL> [--fields ...]`. */
 export function runShowCommand(
   argv: string[],
   options: CommandOptions = HUMAN_OUTPUT
@@ -34,7 +35,6 @@ export function runShowCommand(
     typeof parsed.flags.get("fields") === "string"
       ? String(parsed.flags.get("fields"))
       : jiraPullFields();
-  const formatText = parsed.flags.get("format") === "text";
 
   try {
     const data = viewWorkitem(key, { fields });
@@ -42,11 +42,23 @@ export function runShowCommand(
       printJsonSuccess(data);
       return 0;
     }
-    if (formatText) {
-      process.stdout.write(`${JSON.stringify(data, null, 2)}\n`);
-    } else {
-      process.stdout.write(`${JSON.stringify(data)}\n`);
+
+    if (!data || typeof data !== "object") {
+      return failCommand(
+        `show ${key}: no data returned`,
+        options.outputMode
+      );
     }
+
+    const issue = data as { key?: string; fields?: Record<string, unknown> };
+    const issueKey = issue.key ?? key;
+    const body = formatTicketMarkdown(
+      issueKey,
+      issue.fields ?? {},
+      normalizeSiteHost(CONFIG.site),
+      CONFIG.meAccountId
+    ).body;
+    process.stdout.write(body.endsWith("\n") ? body : `${body}\n`);
     return 0;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);

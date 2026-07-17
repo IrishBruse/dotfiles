@@ -307,10 +307,6 @@ export function formatJiraInfoPlainText(info: JiraInfo): string {
     formatInfoSection("Local:", [
       // Local ./jira/ state
       formatLocalTicketsBlock(info.localTickets)
-    ]),
-    formatInfoSection("More:", [
-      // list helpful jump off command the agent might want to run next
-      "run `jira board` for tickets and statuses"
     ])
   ];
 

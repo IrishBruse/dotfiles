@@ -11,29 +11,20 @@ import {
 import { flagBool, flagString, parseSubcommandArgv } from "../../lib/argv.ts";
 import { configuredProject } from "../../lib/CONFIG.ts";
 import {
-  NOVACORE_CAPITALIZABLE_FIELD,
+  applyCreateFieldDefaults,
   buildCreateWorkitemJson,
-  capitalizableYesField,
+  collectFieldFlags,
   parseFieldFlags,
-  writeCreateJsonTemp
+  writeCreateJsonTemp,
+  type CustomFieldValue
 } from "../../lib/custom-fields.ts";
+import { gatherJiraInfo } from "../../lib/info.ts";
 import { parseDraftFrontmatter } from "../../lib/local.ts";
 import { prepareAcliDescriptionFileFromPath } from "../../lib/markdown-adf.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { failCommand, printJsonSuccess } from "../../lib/output.ts";
 import { pullTicket } from "../local/pull.ts";
-
-function collectFieldFlags(argv: string[]): string[] {
-  const fields: string[] = [];
-  for (let i = 3; i < argv.length; i++) {
-    if (argv[i] === "--field" && argv[i + 1]) {
-      fields.push(argv[i + 1]!);
-      i += 1;
-    }
-  }
-  return fields;
-}
 
 function tryCreate(
   fn: () => { stdout: string },
@@ -64,7 +55,52 @@ function createViaJsonTemp(
   }
 }
 
-/** Run `jira create` with flags or `--from-draft CI`. */
+function parseOptionalNumber(
+  raw: string | undefined,
+  label: string
+): number | undefined {
+  if (raw === undefined || raw === "") return undefined;
+  const n = Number(raw);
+  if (!Number.isFinite(n)) {
+    throw new Error(`${label} must be a number`);
+  }
+  return n;
+}
+
+function resolveCustomFields(
+  argv: string[],
+  parsed: ReturnType<typeof parseSubcommandArgv>,
+  project: string,
+  issueType: string
+): Record<string, CustomFieldValue> {
+  const info = gatherJiraInfo();
+  const boardDefaults = flagBool(parsed.flags, "board-defaults");
+  const sprintId = parseOptionalNumber(
+    flagString(parsed.flags, "sprint"),
+    "--sprint"
+  );
+  const storyPoints = parseOptionalNumber(
+    flagString(parsed.flags, "story-points"),
+    "--story-points"
+  );
+
+  return applyCreateFieldDefaults(parseFieldFlags(collectFieldFlags(argv)), {
+    source: {
+      featureTeamField: info.featureTeamField,
+      featureTeamOptionId: info.featureTeamOptionId,
+      sprintField: info.sprintField,
+      storyPointsField: info.storyPointsField,
+      sprints: info.sprints
+    },
+    project,
+    issueType,
+    boardDefaults,
+    sprintId,
+    storyPoints
+  });
+}
+
+/** Run `jira create` with flags or `--from-draft`. */
 export function runCreateCommand(
   argv: string[],
   options: CommandOptions = HUMAN_OUTPUT
@@ -102,12 +138,22 @@ export function runCreateCommand(
   const parent = flagString(parsed.flags, "parent");
   const labelsRaw = flagString(parsed.flags, "label");
   const labels = labelsRaw ? labelsRaw.split(",").map((s) => s.trim()) : [];
-  const customFields = parseFieldFlags(collectFieldFlags(argv));
+
+  let customFields: Record<string, CustomFieldValue>;
+  try {
+    customFields = resolveCustomFields(argv, parsed, project, type);
+  } catch (e) {
+    return failCommand(
+      `create: ${e instanceof Error ? e.message : String(e)}`,
+      options.outputMode
+    );
+  }
+
+  const description = descriptionFile
+    ? fs.readFileSync(descriptionFile, "utf-8")
+    : undefined;
 
   if (Object.keys(customFields).length > 0) {
-    const description = descriptionFile
-      ? fs.readFileSync(descriptionFile, "utf-8")
-      : undefined;
     return createViaJsonTemp(
       buildCreateWorkitemJson({
         project,
@@ -184,13 +230,14 @@ function createFromDraft(
     return failCommand("create: draft missing project, type, or title", options.outputMode);
   }
 
-  const customFields = parseFieldFlags(collectFieldFlags(argv));
-  if (
-    type.toLowerCase() === "epic" &&
-    project.toUpperCase() === "NOVACORE" &&
-    !customFields[NOVACORE_CAPITALIZABLE_FIELD]
-  ) {
-    Object.assign(customFields, capitalizableYesField());
+  let customFields: Record<string, CustomFieldValue>;
+  try {
+    customFields = resolveCustomFields(argv, parsed, project, type);
+  } catch (e) {
+    return failCommand(
+      `create: ${e instanceof Error ? e.message : String(e)}`,
+      options.outputMode
+    );
   }
 
   return createViaJsonTemp(
