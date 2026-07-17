@@ -9,6 +9,9 @@ export const theme = {
   link: "#61AFEF",
   inlineCode: "#C678DD",
   inlineCodeBackground: "#23282f",
+  frontmatterDelimiter: "#5C6370",
+  frontmatterKey: "#E06C75",
+  frontmatterValue: "#98C379",
   heading1: "#D19A66",
   heading2: "#E06C75",
   heading3: "#61AFEF",
@@ -71,3 +74,6 @@ const codeBlockGhostFg = fg(
 );
 export const codeBlockLangStyle = `${italic}${codeBlockGhostFg}${bg(theme.inlineCodeBackground)}`;
 export const codeBlockGhostStyle = `${italic}${codeBlockGhostFg}${bg(theme.inlineCodeBackground)}`;
+export const frontmatterDelimiterStyle = fg(theme.frontmatterDelimiter);
+export const frontmatterKeyStyle = fg(theme.frontmatterKey);
+export const frontmatterValueStyle = fg(theme.frontmatterValue);

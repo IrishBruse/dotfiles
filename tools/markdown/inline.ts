@@ -195,6 +195,78 @@ export function plainInlineLength(line: string, refs: LinkRefs = new Map()): num
   return parseInline(line, refs).reduce((n, span) => n + span.text.length, 0);
 }
 
+/** Word-wrap parsed inline spans to a maximum visible width per line. */
+export function wrapInlineSpans(
+  line: string,
+  width: number,
+  refs: LinkRefs = new Map()
+): InlineSpan[][] {
+  if (width <= 0) return [parseInline(line, refs)];
+
+  const spans = parseInline(line, refs);
+  const lines: InlineSpan[][] = [[]];
+  let lineLen = 0;
+
+  function currentLine(): InlineSpan[] {
+    return lines.at(-1) ?? [];
+  }
+
+  function startNewLine() {
+    lines.push([]);
+    lineLen = 0;
+  }
+
+  function append(text: string, style: InlineSpan["style"], url?: string) {
+    if (text.length === 0) return;
+    pushSpan(currentLine(), text, style, url);
+    lineLen += text.length;
+  }
+
+  function appendWord(word: string, style: InlineSpan["style"], url?: string) {
+    let rest = word;
+    while (rest.length > 0) {
+      if (lineLen > 0 && lineLen + rest.length > width) {
+        startNewLine();
+      }
+      const room = width - lineLen;
+      if (rest.length <= room) {
+        append(rest, style, url);
+        return;
+      }
+      if (lineLen === 0) {
+        append(rest.slice(0, width), style, url);
+        rest = rest.slice(width);
+        if (rest.length > 0) startNewLine();
+        continue;
+      }
+      startNewLine();
+    }
+  }
+
+  for (const span of spans) {
+    for (const token of span.text.split(/(\s+)/)) {
+      if (token.length === 0) continue;
+      if (/^\s+$/.test(token)) {
+        if (lineLen > 0 && lineLen < width) append(" ", span.style, span.url);
+        continue;
+      }
+      appendWord(token, span.style, span.url);
+    }
+  }
+
+  if (lines.length === 1 && lines[0].length === 0) return [[]];
+  return lines;
+}
+
+/** Render pre-parsed inline spans as ANSI text. */
+export function renderInlineSpans(
+  spans: InlineSpan[],
+  restoreFg: string = body,
+  refs: LinkRefs = new Map()
+): string {
+  return spans.map((span) => renderSpan(span, restoreFg, refs)).join("");
+}
+
 function renderSpan(span: InlineSpan, restoreFg: string, refs: LinkRefs): string {
   if (span.style === "code")
     return `${inlineCodeStyle}${span.text}${reset}${restoreFg}`;

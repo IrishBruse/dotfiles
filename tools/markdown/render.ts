@@ -9,7 +9,13 @@ import {
 } from "./colors.ts";
 import type { Block, LinkRefs, ListItem } from "./types.ts";
 import { collectLinkRefs, isLinkRefDefLine } from "./links.ts";
-import { plainInlineLength, renderInline } from "./inline.ts";
+import { renderFrontmatter, splitFrontmatter } from "./frontmatter.ts";
+import {
+  plainInlineLength,
+  renderInline,
+  renderInlineSpans,
+  wrapInlineSpans
+} from "./inline.ts";
 
 export { collectLinkRefs };
 
@@ -303,6 +309,28 @@ export function* parseBlocks(
   }
 }
 
+function tableRowOverhead(columns: number): number {
+  return columns + 1 + columns * 2;
+}
+
+function fitColumnWidths(widths: number[], terminalWidth: number): number[] {
+  const fitted = widths.map((width) => Math.max(1, width));
+  let total = fitted.reduce((sum, width) => sum + width, 0);
+  const maxContent = Math.max(0, terminalWidth - tableRowOverhead(fitted.length));
+  if (total <= maxContent) return fitted;
+
+  while (total > maxContent) {
+    let widest = 0;
+    for (let i = 1; i < fitted.length; i++) {
+      if (fitted[i] > fitted[widest]) widest = i;
+    }
+    if (fitted[widest] <= 1) break;
+    fitted[widest]--;
+    total--;
+  }
+  return fitted;
+}
+
 function columnWidths(rows: string[][], refs: LinkRefs): number[] {
   const cols = Math.max(0, ...rows.map((r) => r.length));
   const widths: number[] = [];
@@ -312,16 +340,15 @@ function columnWidths(rows: string[][], refs: LinkRefs): number[] {
       ...rows.map((r) => plainInlineLength(r[c] ?? "", refs))
     );
   }
-  return widths;
+  return fitColumnWidths(widths, terminalColumns());
 }
 
 function cellPadding(
-  raw: string,
+  visibleLength: number,
   width: number,
-  align: ColumnAlign,
-  refs: LinkRefs
+  align: ColumnAlign
 ): { left: string; right: string } {
-  const pad = Math.max(0, width - plainInlineLength(raw, refs));
+  const pad = Math.max(0, width - visibleLength);
   if (align === "right") {
     return { left: " ".repeat(pad), right: "" };
   }
@@ -360,6 +387,45 @@ function tableBorderLine(
   return `${line}${border}${corners.right}${reset}`;
 }
 
+function renderTableCell(
+  raw: string,
+  width: number,
+  columnAlign: ColumnAlign,
+  refs: LinkRefs
+): string[] {
+  const spanLines = wrapInlineSpans(raw, width, refs);
+  return spanLines.map((spans) => {
+    const visibleLength = spans.reduce((n, span) => n + span.text.length, 0);
+    const { left, right } = cellPadding(visibleLength, width, columnAlign);
+    return ` ${left}${renderInlineSpans(spans, body, refs)}${right} `;
+  });
+}
+
+function renderTableRow(
+  cells: string[],
+  widths: number[],
+  align: ColumnAlign[],
+  refs: LinkRefs,
+  vBar: string
+): string[] {
+  const cellLines = widths.map((width, column) =>
+    renderTableCell(cells[column] ?? "", width, align[column] ?? "left", refs)
+  );
+  const height = Math.max(1, ...cellLines.map((lines) => lines.length));
+  const out: string[] = [];
+
+  for (let lineIndex = 0; lineIndex < height; lineIndex++) {
+    const parts = widths.map((width, column) => {
+      const lines = cellLines[column] ?? [];
+      if (lineIndex < lines.length) return lines[lineIndex] ?? "";
+      return ` ${" ".repeat(width)} `;
+    });
+    out.push(`${vBar}${parts.join(vBar)}${vBar}`);
+  }
+
+  return out;
+}
+
 function renderTable(
   rows: string[][],
   align: ColumnAlign[],
@@ -370,22 +436,15 @@ function renderTable(
   const widths = columnWidths(rows, refs);
   const vBar = `${border}│${reset}`;
 
-  const rowLine = (cells: string[]) => {
-    const parts = widths.map((w, c) => {
-      const raw = cells[c] ?? "";
-      const { left, right } = cellPadding(raw, w, align[c] ?? "left", refs);
-      return ` ${left}${body}${renderInline(raw, body, refs)}${right}${reset} `;
-    });
-    return `${vBar}${parts.join(vBar)}${vBar}`;
-  };
-
   const [head, ...bodyRows] = rows;
   const out: string[] = [
     tableBorderLine({ left: "┌", mid: "┬", right: "┐" }, widths),
-    rowLine(head ?? []),
+    ...renderTableRow(head ?? [], widths, align, refs, vBar),
     tableBorderLine({ left: "├", mid: "┼", right: "┤" }, widths)
   ];
-  for (const row of bodyRows) out.push(rowLine(row));
+  for (const row of bodyRows) {
+    out.push(...renderTableRow(row, widths, align, refs, vBar));
+  }
   out.push(tableBorderLine({ left: "└", mid: "┴", right: "┘" }, widths));
   return out.join("\n");
 }
@@ -488,11 +547,18 @@ export function renderMarkdown(source: string): string {
 }
 
 export function* renderMarkdownChunks(source: string): Generator<string> {
-  const refs = collectLinkRefs(source);
-  let prev: Block["kind"] | null = null;
-  for (const block of parseBlocks(source, refs)) {
-    if (prev !== null) yield "\n\n";
+  const { frontmatter, body } = splitFrontmatter(source);
+  const refs = collectLinkRefs(body);
+  let needsGap = false;
+
+  if (frontmatter !== null) {
+    yield renderFrontmatter(frontmatter);
+    needsGap = true;
+  }
+
+  for (const block of parseBlocks(body, refs)) {
+    if (needsGap) yield "\n\n";
     yield renderBlock(block, refs);
-    prev = block.kind;
+    needsGap = true;
   }
 }
