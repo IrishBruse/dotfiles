@@ -199,8 +199,9 @@ export function pickCurrentSprintId(
 }
 
 /**
- * Fill Feature Team (always when known), optional sprint / story points,
- * and NOVACORE Epic Capitalizable. Explicit `--field` values win.
+ * Fill Feature Team (always when known), board sprint (when boardDefaults),
+ * optional story points, and NOVACORE Epic Capitalizable.
+ * Explicit `--field` values win. Callers default boardDefaults to true.
  */
 export function applyCreateFieldDefaults(
   customFields: Record<string, CustomFieldValue>,
@@ -218,7 +219,7 @@ export function applyCreateFieldDefaults(
     source,
     project,
     issueType,
-    boardDefaults = false,
+    boardDefaults = true,
     sprintId,
     storyPoints
   } = options;

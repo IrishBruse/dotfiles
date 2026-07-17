@@ -42,6 +42,8 @@ import { runInfoCommand } from "./commands/workspace/info.ts";
 import { printHelp } from "./commands/help.ts";
 import { runSearchCommand } from "./commands/read/search.ts";
 import { runShowCommand } from "./commands/read/show.ts";
+import { runCommentCommand } from "./commands/write/comment.ts";
+import { runTransitionCommand } from "./commands/write/transition.ts";
 import { runPullCommand } from "./commands/local/pull.ts";
 import { runPushCommand } from "./commands/local/push.ts";
 import { runSyncCommand } from "./commands/workspace/sync.ts";
@@ -552,7 +554,8 @@ describe("format helpers continued", () => {
     assert.match(body, /^---\n/);
     assert.match(body, /title: "Hello"/);
     assert.match(body, /url: https:\/\/example\.atlassian\.net\/browse\/PROJ-1/);
-    assert.match(body, /status: inProgress/);
+    assert.match(body, /status: "In Progress"/);
+    assert.match(body, /status_bucket: inProgress/);
     assert.match(body, /Body text/);
   });
 });
@@ -564,7 +567,8 @@ assigned: "Ada"
 feature_team: "None"
 type: "Story"
 url: https://example.atlassian.net/browse/PROJ-7
-status: todo
+status: "To Do"
+status_bucket: todo
 created: ""
 updated: ""
 ---
@@ -581,6 +585,7 @@ Description here.
     assert.ok(ticket);
     assert.equal(ticket!.key, "PROJ-7");
     assert.equal(ticket!.title, "Fix login");
+    assert.equal(ticket!.status, "To Do");
     assert.equal(ticket!.description, "Description here.");
     assert.equal(ticket!.typeDir, "story");
   });
@@ -1217,7 +1222,6 @@ describe("argv and custom fields", () => {
         },
         project: "NOVACORE",
         issueType: "Epic",
-        boardDefaults: true,
         storyPoints: 1
       }
     );
@@ -1225,6 +1229,26 @@ describe("argv and custom fields", () => {
     assert.equal(fields[JIRA_SPRINT_FIELD], 27857);
     assert.equal(fields[JIRA_STORY_POINTS_FIELD], 1);
     assert.deepEqual(fields.customfield_10998, [{ id: "15465" }]);
+  });
+
+  it("skips board sprint when boardDefaults is false", () => {
+    const fields = applyCreateFieldDefaults(
+      {},
+      {
+        source: {
+          featureTeamField: NOVACORE_FEATURE_TEAM_FIELD,
+          featureTeamOptionId: "16409",
+          sprintField: JIRA_SPRINT_FIELD,
+          storyPointsField: JIRA_STORY_POINTS_FIELD,
+          sprints: [{ id: 27857, state: "active" }]
+        },
+        project: "NOVACORE",
+        issueType: "Task",
+        boardDefaults: false
+      }
+    );
+    assert.deepEqual(fields[NOVACORE_FEATURE_TEAM_FIELD], [{ id: "16409" }]);
+    assert.equal(fields[JIRA_SPRINT_FIELD], undefined);
   });
 
   it("does not override explicit --field values when applying defaults", () => {
@@ -1443,7 +1467,7 @@ describe("jira info", () => {
     assert.match(text, /\n\nLocal:\nstory: TEAM-1, TEAM-2/);
     assert.doesNotMatch(text, /\n\nCache and local\n/);
     assert.doesNotMatch(text, /^syncedAt:/m);
-    assert.match(text, /\n\nMore:\nrun `jira board` for tickets and statuses/);
+    assert.doesNotMatch(text, /\n\nMore:\n/);
     assert.doesNotMatch(text, /Status buckets|Common statuses|projectName/);
   });
 
@@ -1599,6 +1623,16 @@ describe("show and search command validation", () => {
       "--fields",
       "key,summary"
     ]);
+    assert.equal(code, 1);
+  });
+
+  it("rejects comment without a body", () => {
+    const code = runCommentCommand(["node", "jira", "comment", "PROJ-1"]);
+    assert.equal(code, 1);
+  });
+
+  it("rejects transition without a key", () => {
+    const code = runTransitionCommand(["node", "jira", "transition"]);
     assert.equal(code, 1);
   });
 });

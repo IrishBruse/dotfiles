@@ -4,13 +4,13 @@
 import process from "node:process";
 
 import { createComment } from "../../lib/acli-jira.ts";
-import { flagBool, flagString, parseSubcommandArgv } from "../../lib/argv.ts";
+import { flagString, parseSubcommandArgv } from "../../lib/argv.ts";
 import { parseJiraKey } from "../../lib/jiraInput.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { failCommand, printJsonSuccess } from "../../lib/output.ts";
 
-/** Run `jira comment <KEY> --body-file <path>`. */
+/** Run `jira comment <KEY> ["body"]` (`--body` / `--body-file` aliases). */
 export function runCommentCommand(
   argv: string[],
   options: CommandOptions = HUMAN_OUTPUT
@@ -23,12 +23,13 @@ export function runCommentCommand(
 
   const key = parseJiraKey(input) ?? input;
   const bodyFile = flagString(parsed.flags, "body-file");
-  const body = flagString(parsed.flags, "body");
-  const yes = flagBool(parsed.flags, "yes");
+  const bodyFromFlag = flagString(parsed.flags, "body");
+  const bodyFromPositional = parsed.positional.slice(1).join(" ").trim();
+  const body = bodyFromFlag || bodyFromPositional;
 
   if (!bodyFile && !body) {
     return failCommand(
-      "comment: --body-file or --body is required",
+      "comment: body text, --body, or --body-file is required",
       options.outputMode
     );
   }
@@ -37,8 +38,7 @@ export function runCommentCommand(
     createComment({
       key,
       bodyFile: bodyFile || undefined,
-      body: body || undefined,
-      yes
+      body: bodyFile ? undefined : body || undefined
     });
     if (isJsonMode(options)) {
       printJsonSuccess({ key, action: "comment" });

@@ -73,7 +73,7 @@ export function parseTicketMarkdown(
     featureTeam: parseFrontmatterScalar(fm, "feature_team") || "None",
     issueType: parseFrontmatterScalar(fm, "type"),
     url,
-    status: parseFrontmatterLine(fm, "status"),
+    status: parseFrontmatterScalar(fm, "status"),
     created: parseFrontmatterScalar(fm, "created"),
     updated: parseFrontmatterScalar(fm, "updated"),
     description: m[2].trim()

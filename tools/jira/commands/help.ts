@@ -12,7 +12,7 @@ Core loop:
   jira sync                    refresh ~/.config/jira/board.json and ~/.config/jira/info.json
   jira show KEY | jira search "..."
   jira pull KEY                local markdown under jira/
-  jira create|edit|... --yes   writes (requires jira skill approval gate)
+  jira create|edit|...         writes (requires jira skill approval gate)
 
 Global: --json  structured {success, data, error} envelope on stdout
 
@@ -38,11 +38,11 @@ Read:
   jira types [--format text]  List issue types for configured project (JSON stdout)
 
 Write:
-  jira create --type <T> --summary <text> [flags]  Create (auto Feature Team from info; --board-defaults; --sprint; --story-points; --field; --from-draft)
-  jira edit <KEY> [flags] [--yes]  Edit summary, description, labels, or --field custom fields (--from-json)
-  jira transition <KEY> --status <name> [--yes]  Transition status
-  jira comment <KEY> (--body-file <path> | --body <text>) [--yes]  Add a comment
-  jira link (--from-json <path> | --out <KEY> --in <KEY> --type <name>) [--yes]  Link work items
+  jira create --type <T> --summary <text> [flags]  Create (auto Feature Team + current sprint; --no-board-defaults; --sprint; --story-points; --field; --from-draft)
+  jira edit <KEY> [flags]  Edit summary, description, labels, or --field custom fields (--from-json)
+  jira transition <KEY> [<Status>]  List known statuses, or transition (--status alias)
+  jira comment <KEY> ["body"]  Add a comment (positional body, or --body / --body-file)
+  jira link (--from-json <path> | --out <KEY> --in <KEY> --type <name>)  Link work items
 
 Other:
   jira acli <args...>  Alias to acli jira (auth login/logout/switch, deletes, and gated writes blocked)

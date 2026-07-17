@@ -5,7 +5,7 @@ import fs from "node:fs";
 import process from "node:process";
 
 import { editWorkitem } from "../../lib/acli-jira.ts";
-import { flagBool, flagString, parseSubcommandArgv } from "../../lib/argv.ts";
+import { flagString, parseSubcommandArgv } from "../../lib/argv.ts";
 import {
   buildEditWorkitemJson,
   collectFieldFlags,
@@ -34,7 +34,6 @@ export function runEditCommand(
   const summary = flagString(parsed.flags, "summary");
   const descriptionFile = flagString(parsed.flags, "description-file");
   const labels = flagString(parsed.flags, "labels");
-  const yes = flagBool(parsed.flags, "yes");
   const customFields = parseFieldFlags(collectFieldFlags(argv));
   const hasCustomFields = Object.keys(customFields).length > 0;
 
@@ -47,7 +46,7 @@ export function runEditCommand(
 
   try {
     if (fromJson) {
-      editWorkitem({ key, fromJson, yes });
+      editWorkitem({ key, fromJson });
     } else if (hasCustomFields) {
       const description = descriptionFile
         ? fs.readFileSync(descriptionFile, "utf-8")
@@ -66,7 +65,7 @@ export function runEditCommand(
         "jira-edit-"
       );
       try {
-        editWorkitem({ key, fromJson: filePath, yes });
+        editWorkitem({ key, fromJson: filePath });
       } finally {
         fs.rmSync(dir, { recursive: true, force: true });
       }
@@ -83,8 +82,7 @@ export function runEditCommand(
           key,
           summary: summary || undefined,
           descriptionFile: descriptionPath,
-          labels: labels || undefined,
-          yes
+          labels: labels || undefined
         });
       } finally {
         if (descDir) {

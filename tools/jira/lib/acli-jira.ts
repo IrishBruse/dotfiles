@@ -122,7 +122,6 @@ export type CreateWorkitemOptions = {
   parent?: string;
   labels?: string[];
   fromJson?: string;
-  yes?: boolean;
   acli?: string;
 };
 
@@ -143,7 +142,6 @@ export function createWorkitem(options: CreateWorkitemOptions): { stdout: string
       args.push("--label", options.labels.join(","));
     }
   }
-  if (options.yes) args.push("--yes");
   args.push("--json");
   return runJiraAcli(args, options.acli);
 }
@@ -154,7 +152,6 @@ export type EditWorkitemOptions = {
   descriptionFile?: string;
   labels?: string;
   fromJson?: string;
-  yes?: boolean;
   acli?: string;
 };
 
@@ -170,14 +167,13 @@ export function editWorkitem(options: EditWorkitemOptions): { stdout: string } {
     }
     if (options.labels) args.push("--labels", options.labels);
   }
-  if (options.yes) args.push("--yes");
+  args.push("--yes");
   return runJiraAcli(args, options.acli);
 }
 
 export type TransitionWorkitemOptions = {
   key: string;
   status: string;
-  yes?: boolean;
   acli?: string;
 };
 
@@ -185,23 +181,24 @@ export type TransitionWorkitemOptions = {
 export function transitionWorkitem(
   options: TransitionWorkitemOptions
 ): { stdout: string } {
-  const args = [
-    "workitem",
-    "transition",
-    "--key",
-    options.key,
-    "--status",
-    options.status
-  ];
-  if (options.yes) args.push("--yes");
-  return runJiraAcli(args, options.acli);
+  return runJiraAcli(
+    [
+      "workitem",
+      "transition",
+      "--key",
+      options.key,
+      "--status",
+      options.status,
+      "--yes"
+    ],
+    options.acli
+  );
 }
 
 export type CreateCommentOptions = {
   key: string;
   bodyFile?: string;
   body?: string;
-  yes?: boolean;
   acli?: string;
 };
 
@@ -213,7 +210,6 @@ export function createComment(options: CreateCommentOptions): { stdout: string }
   } else if (options.body) {
     args.push("--body", options.body);
   }
-  if (options.yes) args.push("--yes");
   return runJiraAcli(args, options.acli);
 }
 
@@ -222,7 +218,6 @@ export type CreateLinkOptions = {
   in: string;
   type: string;
   fromJson?: string;
-  yes?: boolean;
   acli?: string;
 };
 
@@ -234,7 +229,7 @@ export function createLink(options: CreateLinkOptions): { stdout: string } {
   } else {
     args.push("--out", options.out, "--in", options.in, "--type", options.type);
   }
-  if (options.yes) args.push("--yes");
+  args.push("--yes");
   return runJiraAcli(args, options.acli);
 }
 

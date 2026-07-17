@@ -272,6 +272,14 @@ export function statusBucketFromFields(
   return "inProgress";
 }
 
+/** Jira status display name from issue fields. */
+export function statusNameFromFields(fields: Record<string, unknown>): string {
+  const raw = fields.status;
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return "";
+  const name = (raw as { name?: unknown }).name;
+  return typeof name === "string" ? name.trim() : "";
+}
+
 export function formatTicketMarkdown(
   key: string,
   fields: Record<string, unknown>,
@@ -287,6 +295,7 @@ export function formatTicketMarkdown(
   const descriptionMd = issueDescriptionMarkdown(fields);
   const site = normalizeSiteHost(siteHost);
   const url = `https://${site}/browse/${key}`;
+  const statusName = statusNameFromFields(fields);
   const statusBucket = statusBucketFromFields(fields);
   const created = typeof fields.created === "string" ? fields.created : "";
   const updated = typeof fields.updated === "string" ? fields.updated : "";
@@ -297,7 +306,8 @@ assigned: ${yamlScalar(assigned)}
 feature_team: ${yamlScalar(featureTeam)}
 type: ${yamlScalar(itype)}
 url: ${url}
-status: ${statusBucket}
+status: ${yamlScalar(statusName)}
+status_bucket: ${statusBucket}
 created: ${yamlScalar(created)}
 updated: ${yamlScalar(updated)}
 ---

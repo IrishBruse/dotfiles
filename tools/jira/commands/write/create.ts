@@ -43,13 +43,12 @@ function tryCreate(
 
 function createViaJsonTemp(
   json: ReturnType<typeof buildCreateWorkitemJson>,
-  yes: boolean,
   pullAfter: boolean,
   options: CommandOptions
 ): number {
   const { dir, filePath } = writeCreateJsonTemp(json);
   try {
-    return tryCreate(() => createWorkitem({ fromJson: filePath, yes }), pullAfter, options);
+    return tryCreate(() => createWorkitem({ fromJson: filePath }), pullAfter, options);
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
@@ -74,7 +73,9 @@ function resolveCustomFields(
   issueType: string
 ): Record<string, CustomFieldValue> {
   const info = gatherJiraInfo();
-  const boardDefaults = flagBool(parsed.flags, "board-defaults");
+  // Board sprint on by default; --no-board-defaults opts out.
+  // --board-defaults is accepted as a no-op alias.
+  const boardDefaults = !flagBool(parsed.flags, "no-board-defaults");
   const sprintId = parseOptionalNumber(
     flagString(parsed.flags, "sprint"),
     "--sprint"
@@ -106,16 +107,15 @@ export function runCreateCommand(
   options: CommandOptions = HUMAN_OUTPUT
 ): number {
   const parsed = parseSubcommandArgv(argv, 3);
-  const yes = flagBool(parsed.flags, "yes");
   const pullAfter = !flagBool(parsed.flags, "no-pull");
   const fromJson = flagString(parsed.flags, "from-json");
   const fromDraft = flagString(parsed.flags, "from-draft");
 
   if (fromJson) {
-    return tryCreate(() => createWorkitem({ fromJson, yes }), pullAfter, options);
+    return tryCreate(() => createWorkitem({ fromJson }), pullAfter, options);
   }
   if (fromDraft) {
-    return createFromDraft(fromDraft, parsed, argv, yes, pullAfter, options);
+    return createFromDraft(fromDraft, parsed, argv, pullAfter, options);
   }
 
   const project = configuredProject();
@@ -164,7 +164,6 @@ export function runCreateCommand(
         labels: labels.length ? labels : undefined,
         customFields
       }),
-      yes,
       pullAfter,
       options
     );
@@ -186,8 +185,7 @@ export function runCreateCommand(
           summary,
           descriptionFile: descriptionPath,
           parent: parent || undefined,
-          labels: labels.length ? labels : undefined,
-          yes
+          labels: labels.length ? labels : undefined
         });
       } finally {
         if (descDir) {
@@ -204,7 +202,6 @@ function createFromDraft(
   draftPath: string,
   parsed: ReturnType<typeof parseSubcommandArgv>,
   argv: string[],
-  yes: boolean,
   pullAfter: boolean,
   options: CommandOptions
 ): number {
@@ -249,7 +246,6 @@ function createFromDraft(
       parent: parent && parent !== "None" ? parent : undefined,
       customFields
     }),
-    yes,
     pullAfter,
     options
   );

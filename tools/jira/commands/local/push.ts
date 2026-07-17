@@ -42,8 +42,7 @@ function pushTicketFile(
     editWorkitem({
       key: ticket.key,
       summary: ticket.title,
-      descriptionFile: prepared.filePath,
-      yes: true
+      descriptionFile: prepared.filePath
     });
   } finally {
     if (descDir) {

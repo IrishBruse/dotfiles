@@ -4,7 +4,7 @@
 import process from "node:process";
 
 import { createLink } from "../../lib/acli-jira.ts";
-import { flagBool, flagString, parseSubcommandArgv } from "../../lib/argv.ts";
+import { flagString, parseSubcommandArgv } from "../../lib/argv.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { failCommand, printJsonSuccess } from "../../lib/output.ts";
@@ -19,7 +19,6 @@ export function runLinkCommand(
   const out = flagString(parsed.flags, "out");
   const inward = flagString(parsed.flags, "in");
   const type = flagString(parsed.flags, "type");
-  const yes = flagBool(parsed.flags, "yes");
 
   if (!fromJson && (!out || !inward || !type)) {
     return failCommand(
@@ -33,8 +32,7 @@ export function runLinkCommand(
       out,
       in: inward,
       type,
-      fromJson: fromJson || undefined,
-      yes
+      fromJson: fromJson || undefined
     });
     if (isJsonMode(options)) {
       printJsonSuccess(
