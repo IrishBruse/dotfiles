@@ -3,6 +3,32 @@
   // Theme
   //
   "workbench.colorCustomizations": {
+    // Surfaces
+    // peek: #1b1d23
+    // chrome: #21252b
+    // code-block: #23282f
+    // input: #252931
+    // background: #282c34
+    // focus: #2c313a
+    // dropdown: #353b45
+
+    // Chrome
+    // border: #3a3f4b
+    // command center: #3b4048
+    // selection: #3e4451
+
+    // Text
+    // muted: #636e83
+    // inactive: #696969
+    // chrome text: #9da5b4
+    // foreground: #abb2bf
+    // bright: #d7dae0
+    // on-accent: #ffffff
+
+    // Accent
+    // accent: #35A854
+    // accent-hover: #35974f
+
     // Editor
     "editor.background": "#282c34",
     "editor.findMatchHighlightBackground": "#636d8377",
@@ -157,7 +183,8 @@
     "textLink.foreground": "#35A854",
 
     // Markdown
-    "markdown.extension.editor.codeSpan.border": "#636d8344",
+    "markdown.extension.editor.codeSpan.border": "#00000000",
+    "markdown.extension.editor.codeSpan.background": "#23282f00",
 
     // Settings
     "settings.modifiedItemIndicator": "#35A854",
@@ -1137,11 +1164,7 @@
   "markdownInlineEditor.colors.heading5": "#C678DD",
   "markdownInlineEditor.colors.heading6": "#C678DD",
   "markdownInlineEditor.colors.inlineCode": "#C678DD",
-  "markdownInlineEditor.colors.inlineCodeBackground": "#23282f00",
-  "markdownInlineEditor.colors.tableBackground": "#000000",
-  "markdownInlineEditor.colors.tableBorder": "#ffffff",
-  "markdownInlineEditor.colors.tableHeaderBackground": "#444444",
-  "markdownInlineEditor.colors.tableText": "#ffffff",
+  "markdownInlineEditor.colors.inlineCodeBackground": "#21252b80",
   //
   // File Associations
   //
@@ -1150,8 +1173,7 @@
     "*.bin": "hexEditor.hexedit",
     "*.gb": "hexEditor.hexedit",
     "*.gbm": "hexEditor.hexedit",
-    "*.gbr": "hexEditor.hexedit",
-    "*.db": "db-viewer.dbViewer"
+    "*.gbr": "hexEditor.hexedit"
   },
   "files.associations": {
     ".air.toml": "ini",
@@ -1258,9 +1280,6 @@
   "debug.console.fontFamily": "Cascadia Mono, Symbols Nerd Font Mono",
   "debug.console.fontSize": 12,
   "debug.toolBarLocation": "docked",
-  "custom_css_hot_reload.imports": [
-    "file://${userHome}/dotfiles/vscode/theme/custom.css"
-  ],
   "todohighlight.keywords": [
     {
       "backgroundColor": "transparent",
@@ -1274,8 +1293,7 @@
   "breadcrumbs.enabled": false,
   "settingsSync.ignoredSettings": [
     "editor.mouseWheelScrollSensitivity",
-    "update.mode",
-    "ib-acp-ui.agents"
+    "update.mode"
   ],
   "editor.bracketPairColorization.enabled": false,
   "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
@@ -1314,7 +1332,7 @@
   "editor.renderLineHighlightOnlyWhenFocus": true,
   "editor.renderWhitespace": "trailing",
   "editor.scrollbar.ignoreHorizontalScrollbarInContentHeight": true,
-  "editor.scrollbar.verticalScrollbarSize": 8,
+  "editor.scrollbar.verticalScrollbarSize": 10,
   "editor.snippetSuggestions": "none",
   "editor.suggest.localityBonus": true,
   "editor.suggest.selectionMode": "whenTriggerCharacter",
@@ -1722,5 +1740,9 @@
   "search.exclude": {
     "**/.git": true
   },
-  "workbench.experimental.modernUI": true
+  "workbench.experimental.modernUI": true,
+  "mermaidChart.showGenerateDiagramCodeLens": false,
+  "mermaidChart.preCommitSync.enabled": false,
+  "mermaid.vscode.maxZoom": 20,
+  "mermaid.vscode.aiExportName": false
 }
