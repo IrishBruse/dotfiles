@@ -34,6 +34,7 @@ Verify with `jira doctor --json` when setup looks wrong.
 | JQL | `jira search "..."` |
 | Board slice | `jira board` / `jira sync` |
 | cloudId / field ids | `jira info` |
+| Available statuses | `jira transition KEY` (lists current + known) |
 
 Use Atlassian MCP only when the CLI cannot cover the need (for example worklog, or edit custom fields if `jira edit --field` is rejected by acli).
 
@@ -44,32 +45,45 @@ After the `jira` skill write gate Approve:
 ```sh
 jira info   # featureTeamOptionId, sprintId, storyPointsField, project
 
-# Typical Task/Story in the current sprint (Feature Team applied automatically from info)
-jira create --type Task --summary "..." --parent KEY \
-  --board-defaults --story-points 1 --yes
+# Typical Task/Story in the current sprint (Feature Team + sprint applied automatically)
+jira create --type Task --summary "..." --parent KEY --story-points 1
 
 # Explicit fields (override defaults)
 jira create --type Story --summary "..." --parent KEY \
   --field customfield_10354=16409 \
   --field customfield_10021=27857 \
-  --field customfield_10023=1 \
-  --yes
+  --field customfield_10023=1
 ```
 
 Defaults:
 
 - Feature Team from `jira info` is applied on every create when the option id is known.
-- `--board-defaults` adds the current sprint from info.
+- Current sprint from info is applied by default. Opt out with `--no-board-defaults`.
 - `--sprint <id>` / `--story-points <n>` set those fields.
 - `--field id=value` always wins over defaults.
 - NOVACORE Epic creates get Capitalizable=Yes when unset.
 - `--from-json` skips defaults (full payload). `--from-draft` still applies defaults.
 
+## Transition and comment
+
+```sh
+# List current status + known board statuses (no write)
+jira transition KEY
+
+# Transition (positional status; --status still works)
+jira transition KEY Cancelled
+
+# Comment (positional body; --body / --body-file still work)
+jira comment KEY "Cancellation reason..."
+```
+
+`jira show KEY` frontmatter uses the real status name (`status: Cancelled`) plus `status_bucket`.
+
 ## Edit custom fields
 
 ```sh
-jira edit KEY --field customfield_10023=2 --yes
-jira edit KEY --summary "New title" --field customfield_10354=16409 --yes
+jira edit KEY --field customfield_10023=2
+jira edit KEY --summary "New title" --field customfield_10354=16409
 ```
 
 If acli rejects custom fields on edit, use Atlassian MCP `editJiraIssue` with the same field ids from `jira info`, then `jira pull KEY`.
@@ -93,15 +107,15 @@ jira search 'project = NOVACORE AND sprint in openSprints() AND "Feature Team" =
 jira <KEY|URL> | jira pull [KEY] | jira push [KEY]
 jira sync | jira board [--full] | jira info | jira doctor | jira batch
 jira show KEY | jira search "..." | jira projects | jira types
-jira create --type T --summary "..." [--parent KEY] [--board-defaults] [--sprint ID] [--story-points N] [--field id=value] [--from-draft path] --yes
-jira edit KEY [--summary ...] [--description-file ...] [--labels ...] [--field id=value] --yes
-jira transition KEY --status Name --yes
-jira comment KEY (--body-file path | --body text) --yes
-jira link --out KEY --in KEY --type Relates --yes
+jira create --type T --summary "..." [--parent KEY] [--no-board-defaults] [--sprint ID] [--story-points N] [--field id=value] [--from-draft path]
+jira edit KEY [--summary ...] [--description-file ...] [--labels ...] [--field id=value]
+jira transition KEY [Status]
+jira comment KEY "body"
+jira link --out KEY --in KEY --type Relates
 jira acli <args...>   # reads / other projects; gated writes blocked
 ```
 
-Global: `--json` for `{success, data, error}`.
+Global: `--json` for `{success, data, error}` (not used by `jira info`).
 
 Config: `~/.config/jira/config.json`. Caches: `~/.config/jira/board.json`, `info.json`.
 Pulled tickets: `jira/<type>/<title> - <KEY>.md`.
@@ -109,7 +123,7 @@ Pulled tickets: `jira/<type>/<title> - <KEY>.md`.
 ## Writes
 
 1. Complete the `jira` skill **Jira Write Approval Gate** (Approve only).
-2. Run `jira create|edit|transition|comment|link` with `--yes`.
+2. Run `jira create|edit|transition|comment|link` (writes confirm automatically).
 3. Refresh with `jira pull <KEY>` when local markdown should match.
 
 One Approve covers one described change set.
