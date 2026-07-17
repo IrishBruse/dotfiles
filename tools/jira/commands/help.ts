@@ -1,39 +1,60 @@
 import process from "node:process";
 
 export function printHelp(): void {
-  process.stdout.write(`Usage:
+  process.stdout.write(`jira - Jira tickets and local jira/ markdown
+
+Usage:
+  jira <KEY|URL>
+  jira <command> [args]
 
 Local tickets:
-  jira <KEY|URL>       Fetch one ticket into jira/ (Initiative/Epic: full tree)
-  jira pull KEY|URL    Fetch/refresh that one ticket into jira/
-  jira pull            Refresh every ticket already under jira/ (no new keys)
-  jira push KEY|URL    Push that one local ticket's summary+description to Jira
-  jira push            Push every local ticket under jira/
+  jira <KEY|URL>       Fetch one ticket into jira/
+  jira pull KEY|URL    Fetch or refresh one ticket
+  jira pull            Refresh every ticket under jira/
+  jira push KEY|URL    Push one local ticket
+  jira push            Push every ticket under jira/
 
 Workspace:
-  jira sync  Sync board to ~/.config/jira/board.json and workspace cache to ~/.config/jira/info.json
-  jira board  Print full board from ~/.config/jira/board.json (includes age in stage)
-  jira info  Print workspace context + my/unassigned tickets (plain text)
-  jira doctor  Verify acli, auth, config, and board cache
-  jira batch [--file <path>] [--stop-on-error]  Run read-only commands from JSON array on stdin
+  jira sync            Refresh board.json and info.json
+  jira board           Print cached board
+  jira info            Context + my/unassigned tickets
+  jira doctor          Verify acli, auth, config, caches
+  jira batch           Run read-only commands from JSON
 
 Read:
-  jira show <KEY|URL> [--fields <list>] [--remote]  Print local jira/ copy when present, else live issue
-  jira search <jql> [--fields <list>] [--format text] [--no-paginate]  Search issues via JQL (JSON stdout)
-  jira projects [--format text]  List visible projects (JSON stdout)
-  jira types [--format text]  List issue types for configured project (JSON stdout)
+  jira show KEY|URL    Local copy when present, else live
+  jira search <jql>    Search issues (JSON)
+  jira projects        List projects (JSON)
+  jira types           List issue types (JSON)
 
 Write:
-  jira create --type <T> --summary <text> [flags]  Create (auto Feature Team; --sprint; --story-points; --field; --from-draft)
-  jira edit <KEY> [flags]  Edit summary, description, labels, or --field custom fields (--from-json)
-  jira transition <KEY> [<Status>]  List known statuses, or transition (--status alias)
-  jira comment <KEY> ["body"]  Add a comment (positional body, or --body / --body-file)
-  jira link (--from-json <path> | --out <KEY> --in <KEY> --type <name>)  Link work items
+  jira create          Create an issue
+  jira edit KEY        Edit summary, description, labels, fields
+  jira transition KEY [S]
+                       List statuses, or transition to S
+  jira comment KEY [body]
+                       Add a comment
+  jira link            Link two work items
 
 Other:
-  jira acli <args...>  Alias to acli jira (auth login/logout/switch, deletes, and gated writes blocked)
-  jira -h, --help  Print help message
-  --json  Structured {success, data, error} envelope on stdout
+  jira acli <args...>  Pass through to acli jira (gated)
+  jira -h, --help      Print this help
+  --json               JSON {success, data, error} on stdout
 
+Flags:
+  show --remote              Force live fetch
+  show --fields LIST         Live fetch with selected fields
+  create --type T --summary TEXT
+                             [--parent KEY] [--sprint ID]
+                             [--story-points N] [--field id=value]
+                             [--from-draft PATH] [--no-board-defaults]
+  edit --summary TEXT        [--description-file PATH]
+                             [--labels ...] [--field id=value]
+  link --out KEY --in KEY --type NAME
+  batch --file PATH [--stop-on-error]
+
+Config: ~/.config/jira/config.json
+Caches: ~/.config/jira/board.json, info.json
+Tickets: jira/<type>/<title> - <KEY>.md
 `);
 }
