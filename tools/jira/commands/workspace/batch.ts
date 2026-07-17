@@ -134,9 +134,9 @@ function runBatchItem(itemArgv: string[]): {
       case "search": {
         const fullArgv = ["node", "jira", ...itemArgv];
         const parsed = parseSubcommandArgv(fullArgv, 3);
-        const jql = flagString(parsed.flags, "jql");
+        const jql = parsed.positional[0]?.trim() ?? "";
         if (!jql) {
-          return { success: false, data: null, error: "search: --jql is required" };
+          return { success: false, data: null, error: "search: missing JQL query" };
         }
         const fields = flagString(parsed.flags, "fields", JIRA_SEARCH_FIELDS);
         const paginate = !flagBool(parsed.flags, "no-paginate");

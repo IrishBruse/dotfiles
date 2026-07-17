@@ -10,15 +10,15 @@ import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { failCommand, printJsonSuccess } from "../../lib/output.ts";
 
-/** Run `jira search --jql "..." [--fields ...] [--format text]`. */
+/** Run `jira search "<jql>" [--fields ...] [--format text]`. */
 export function runSearchCommand(
   argv: string[],
   options: CommandOptions = HUMAN_OUTPUT
 ): number {
   const parsed = parseSubcommandArgv(argv, 3);
-  const jql = flagString(parsed.flags, "jql");
+  const jql = parsed.positional[0]?.trim() ?? "";
   if (!jql) {
-    return failCommand("search: --jql is required", options.outputMode);
+    return failCommand("search: missing JQL query", options.outputMode);
   }
 
   const fields = flagString(parsed.flags, "fields", JIRA_SEARCH_FIELDS);

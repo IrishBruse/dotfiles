@@ -10,7 +10,7 @@ export function printHelp(): void {
 Core loop:
   jira info
   jira sync                    refresh ~/.config/jira/board.json and ~/.config/jira/info.json
-  jira show KEY | jira search --jql "..."
+  jira show KEY | jira search "..."
   jira pull KEY                local markdown under jira/
   jira create|edit|... --yes   writes (requires jira skill approval gate)
 
@@ -33,7 +33,7 @@ Agent workspace:
 
 Read:
   jira show <KEY|URL> [--fields <list>]  Print one issue as markdown with frontmatter (no local file write)
-  jira search --jql <query> [--fields <list>] [--format text] [--no-paginate]  Search issues via JQL (JSON stdout)
+  jira search <jql> [--fields <list>] [--format text] [--no-paginate]  Search issues via JQL (JSON stdout)
   jira projects [--format text]  List visible projects (JSON stdout)
   jira types [--format text]  List issue types for configured project (JSON stdout)
 

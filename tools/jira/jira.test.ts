@@ -1144,10 +1144,10 @@ describe("acli passthrough argv", () => {
 describe("argv and custom fields", () => {
   it("parses subcommand flags", () => {
     const parsed = parseSubcommandArgv(
-      ["node", "jira", "search", "--jql", "project = X", "--fields", "key,summary"],
+      ["node", "jira", "search", "project = X", "--fields", "key,summary"],
       3
     );
-    assert.equal(parsed.flags.get("jql"), "project = X");
+    assert.equal(parsed.positional[0], "project = X");
     assert.equal(parsed.flags.get("fields"), "key,summary");
   });
 
@@ -1590,7 +1590,19 @@ describe("show and search command validation", () => {
     const code = runSearchCommand(["node", "jira", "search"]);
     assert.equal(code, 1);
   });
+
+  it("rejects search when only flags are given", () => {
+    const code = runSearchCommand([
+      "node",
+      "jira",
+      "search",
+      "--fields",
+      "key,summary"
+    ]);
+    assert.equal(code, 1);
+  });
 });
+
 
 describe("agent json output", () => {
   it("strips global --json from argv", () => {
