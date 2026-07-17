@@ -1,8 +1,8 @@
-# Jira Fields And MCP
+# Jira Fields
 
-Shared field conventions and Atlassian MCP create parameters for Task, Story, and Epic routes.
+Shared field conventions and create parameters for Task, Story, and Epic routes.
 
-Resolve every custom field option id from `getJiraIssue` or a reference issue, never from memory. Do not invent option ids.
+Resolve every custom field option id from the ticket itself or a reference issue, never from memory. Do not invent option ids.
 
 ## Assignee
 
@@ -31,19 +31,19 @@ NOVACORE rejects Epic creates without Capitalizable set.
 
 - Field id: `customfield_10998`.
 - Resolve in order: parent Initiative, sibling Epic, default to `Yes` id `15465`.
-- Always include this in `additional_fields` for NOVACORE Epic creates.
+- Always include this on NOVACORE Epic creates.
 
-## Atlassian MCP
+## Create Parameters
 
 Create with:
 
-| Parameter | Value |
+| Field | Value |
 |-----------|-------|
-| `cloudId` | From resources, user site, or Jira URL |
-| `projectKey` | `NOVACORE` unless the user specifies otherwise |
-| `issueTypeName` | `Task`, `Sub-task`, `Story`, or `Epic` per route |
-| `summary` | Draft summary |
-| `description` | Template body as markdown |
-| `parent` | Epic key for Tasks and Stories when known; verified Initiative key for Epics; required parent issue key for Sub-tasks |
-| `contentFormat` | `markdown` |
-| `additional_fields` | Feature Team when known; Capitalizable for NOVACORE Epics; optional labels, priority, components |
+| Site | From the user site or a Jira URL |
+| Project | `NOVACORE` unless the user specifies otherwise |
+| Issue type | `Task`, `Sub-task`, `Story`, or `Epic` per route |
+| Summary | Draft summary |
+| Description | Template body as markdown |
+| Parent | Epic key for Tasks and Stories when known, verified Initiative key for Epics, required parent issue key for Sub-tasks |
+| Content format | `markdown` |
+| Additional fields | Feature Team when known, Capitalizable for NOVACORE Epics, optional labels, priority, components |

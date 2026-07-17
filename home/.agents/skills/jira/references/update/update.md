@@ -31,9 +31,9 @@ Do not use when:
    - Task: [`../task/task.md`](../task/task.md).
    - Story: [`../story/story.md`](../story/story.md).
    - Epic: [`../epic/epic.md`](../epic/epic.md).
-6. Return a short recommendation and a precise proposed Jira change that preserves the current issue type. Steps 1-6 are investigation only. Do not call Jira MCP write tools during investigation.
+6. Return a short recommendation and a precise proposed Jira change that preserves the current issue type. Steps 1-6 are investigation only. Do not perform any Jira write during investigation.
 7. Run the **Jira Write Approval Gate** in `SKILL.md` with the exact proposed change.
-8. Only when the gate is answered `Approve`, call `editJiraIssue`, `createIssueLink`, `transitionJiraIssue`, or a comment tool for that exact approved change.
+8. Only when the gate is answered `Approve`, perform the edit, link, transition, or comment write for that exact approved change.
 9. Refresh the local file per the same rule.
 10. Reply with the issue key, browse URL, fields changed, and any follow-up hygiene still recommended.
 

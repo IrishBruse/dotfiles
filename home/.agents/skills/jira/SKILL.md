@@ -13,20 +13,19 @@ It recommends a path, asks the user to choose a route with `AskQuestion`, then r
 
 ## Workspace Context
 
-Before Jira legwork, run `jira info` to read plain-text workspace context: configured project, board cache (current sprints, ticket counts), and local `jira/` ticket count.
-Refresh sprint and board data with `jira board sync` when the cache is missing or stale.
+Before Jira legwork, read the workspace context: configured project, board data (current sprints, ticket counts), and local ticket count.
+Refresh sprint and board data when it is missing or stale.
 
 ## Pull The Ticket Locally First
 
-Whenever the input includes a Jira key or URL that you will inspect, work on, or update, ensure it exists locally under `jira/<type>/`.
+Whenever the input includes a Jira key or URL that you will inspect, work on, or update, ensure a local copy exists under `jira/<type>/`.
 This is your **first step**.
 
 - Read the local markdown file when it is already present.
-- When it is missing, use Atlassian MCP to inspect the live ticket, then ask the user to run `jira pull <KEY>` so the repo has a local copy.
-  See the `atlassian-cli` skill.
+- When it is missing, inspect the live ticket, then ensure a local copy is pulled into the repo.
 
 This applies to every route, including subcommands and `/jira update`.
-After a Jira write, ask the user to run `jira pull <KEY>` (or `jira sync`) so the local file matches the live ticket.
+After a Jira write, refresh the local copy so it matches the live ticket.
 
 ## Reference Workflows
 
@@ -48,7 +47,7 @@ Read the matching reference file before continuing from a selected route:
 ### Help And No Usable Input
 
 If the user invokes `/jira`, `/jira help`, or `/jira` without any of the usable inputs listed above, do not gather context and do not use `AskQuestion`.
-Reply immediately with this concise CLI-style help menu:
+Reply immediately with this concise help menu:
 
 ```sh
 Jira skill
@@ -98,7 +97,7 @@ Also use it for a specific ticket hygiene request, or when title, scope, parenta
 When using top-level research:
 
 - Read the named Jira ticket when a key is present.
-- Check obvious local files, workspace context, or board cache when directly relevant.
+- Check obvious local files, workspace context, or board data when directly relevant.
 - Search for an explicit key, repo, branch, PR, or feature term when it can resolve the route quickly.
 - If the user passes an existing Jira key, search local files for that key and nearby terms.
   Report whether local drafts or specs already exist.
@@ -135,7 +134,7 @@ For `update`, read [`references/update/update.md`](references/update/update.md),
      Identify issue type, status, parent, children, linked issues, assignee, reporter, Feature Team, labels, and description.
    - For a passed Jira ticket, check whether parent and Feature Team are present. Surface missing values as ticket hygiene in the report (see **Stop Gates**).
    - If only an idea is present, use top-level Jira search for narrow requests and a Jira Search specialist for deep research.
-   - For current sprint or board shape, use the available board cache when present, then Jira MCP if live data is needed.
+   - For current sprint or board shape, use the available board data when present, then fetch live data if needed.
    - **Done when:** ticket fetched, Jira search run, or "no Jira anchor" stated with reason.
 
 4. **Classify the shape**
@@ -202,7 +201,7 @@ After route confirmation, read the matching Reference Workflow file before conti
 ## Jira Write Approval Gate
 
 This gate is the **only** way to perform any remote Jira write in this skill.
-A remote Jira write is any create, edit, reparent, transition, close, link, comment, or publish action against Jira (for example `createJiraIssue`, `editJiraIssue`, `transitionJiraIssue`, `createIssueLink`, `addCommentToJiraIssue`, `addWorklogToJiraIssue`).
+A remote Jira write is any create, edit, reparent, transition, close, link, comment, or publish action against Jira.
 No route, subcommand, prior message, selected option, or silence may substitute for it.
 If this gate has not been answered with its approve option for the exact change shown, do not call any Jira write tool.
 

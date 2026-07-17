@@ -2,11 +2,11 @@
 
 Use this route after `/jira breakdown` or `/jira` has confirmed an existing Jira issue should be analyzed for a safer delivery breakdown.
 
-This is an interactive, gated workflow. Work one major step at a time. Refuse a bulk run. If Atlassian MCP is unavailable, say so, reconcile from available local hierarchy context, and note that the source may be stale.
+This is an interactive, gated workflow. Work one major step at a time. Refuse a bulk run. If live Jira is unavailable, say so, reconcile from available local hierarchy context, and note that the source may be stale.
 
 ## Purpose
 
-Break any Jira issue into recommended delivery increments and follow-up work. The output may recommend child issues, sibling issues, replacement issues, local drafts, or no split when the existing ticket is already appropriately scoped. Every row is marked `Created`, `Not created`, `Local draft`, `Orphan`, or `Recommendation only` after reconciling related Jira issues via MCP. Open questions belong on the owning backlog row. Do not propose Spikes unless the user explicitly requests them.
+Break any Jira issue into recommended delivery increments and follow-up work. The output may recommend child issues, sibling issues, replacement issues, local drafts, or no split when the existing ticket is already appropriately scoped. Every row is marked `Created`, `Not created`, `Local draft`, `Orphan`, or `Recommendation only` after reconciling related Jira issues. Open questions belong on the owning backlog row. Do not propose Spikes unless the user explicitly requests them.
 
 Persist the breakdown using workspace artifact conventions.
 
@@ -69,7 +69,7 @@ Choose the shape from the source issue type and scope:
 - Local task context when present.
 - Local hierarchy context.
 - Initiative or architecture docs with open-question tables, when referenced.
-- Atlassian MCP access to fetch the source issue and related issues. For issue types that can have children, query child relationships and paginate until the result is complete.
+- Access to the source issue and related issues in Jira. For issue types that can have children, query child relationships and paginate until the result is complete.
 
 ## Progress Checklist
 
@@ -84,7 +84,7 @@ Choose the shape from the source issue type and scope:
 ## Workflow
 
 1. Prerequisites, read only. Confirm the source issue key. Read task context, Jira hierarchy, and relevant architecture. Stop.
-2. Reconcile related Jira issues, read only. Fetch the source issue, children when supported, linked issues, parent, and obvious siblings. For each related issue, capture key, summary, issue type, workflow status, and parent. Cross-check orphans from task context. Match by key first, then summary and intent. Merge duplicates. Never re-propose an existing issue as `Not created`. Source order: MCP, then local hierarchy context, then task-context Jira intelligence. Stop.
+2. Reconcile related Jira issues, read only. Fetch the source issue, children when supported, linked issues, parent, and obvious siblings. For each related issue, capture key, summary, issue type, workflow status, and parent. Cross-check orphans from task context. Match by key first, then summary and intent. Merge duplicates. Never re-propose an existing issue as `Not created`. Source order: live Jira, then local hierarchy context, then task-context Jira intelligence. Stop.
 3. Classify and map, read only. Decide whether the source should stay as-is, become a parent, split into siblings, receive child Tasks, or be reclassified. Map reconciled issues to the recommended shape, increment, and Jira status. Rows without a Jira key become `Not created` or `Recommendation only`. Stop.
 4. Draft increments, read only. Draft 1-7 increments with a progress signal for each and counts for `Created`, `Not created`, and `Recommendation only`. Stop.
 5. Complete unified recommendation backlog, read only. Produce one backlog table: `Created` rows by increment, then `Not created` and `Recommendation only` rows. Add `Not created` only where no related issue matches. Put open questions on each owning row. Apply the metrics rule. Stop.
@@ -94,12 +94,12 @@ Choose the shape from the source issue type and scope:
 9. Optional local drafts. Convert user-selected `Not created` rows into local draft files via [`../story/story.md`](../story/story.md) or [`../task/task.md`](../task/task.md). Sub-tasks use [`../task/task.md`](../task/task.md) and the same Goal / Acceptance Criteria / Notes format as Tasks. Set `Jira: _(pending)_` and flip the breakdown row to `Local draft`. Stop.
 10. Stop gate 2. Ask which `Not created` or `Local draft` items to file in Jira.
 11. Optional Jira create. Run the **Jira Write Approval Gate** in `SKILL.md` for the stop gate 2 selected rows. Create only rows answered `Approve`. Prefer Tasks and Sub-tasks through [`../task/task.md`](../task/task.md); create Stories only when the user explicitly requests Story creation. For broader new parent work, route through [`../epic/epic.md`](../epic/epic.md) instead of creating it inside this route. Flip rows to `Created` and record keys. Stop.
-12. Post-create. Refresh the breakdown from MCP workflow status. Update local hierarchy context only after Jira creation or confirmed hygiene corrections.
+12. Post-create. Refresh the breakdown from live Jira workflow status. Update local hierarchy context only after Jira creation or confirmed hygiene corrections.
 
 ## Reconcile Rules
 
 - Do not list a proposed row if a matching Jira child already exists.
-- Refresh `Created` status from MCP, not stale task context alone.
+- Refresh `Created` status from live Jira, not stale task context alone.
 - If a child exists under the wrong or missing parent, mark it `Orphan` and record the hygiene action.
 - Do not reparent, close, or replace Jira issues except per workflow step 11.
 

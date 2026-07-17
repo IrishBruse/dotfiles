@@ -184,7 +184,7 @@ If replacement is not possible, post a superseding comment that states it replac
 
 Format the Jira comment with the header shown in [`template.md`](template.md).
 
-Post using `addCommentToJiraIssue` only after an `Approve` answer from the **Jira Write Approval Gate** in `SKILL.md`.
+Post the comment only after an `Approve` answer from the **Jira Write Approval Gate** in `SKILL.md`.
 
 ## Important Notes
 

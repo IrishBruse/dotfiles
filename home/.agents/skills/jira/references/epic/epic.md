@@ -19,11 +19,11 @@ Accept an issue key (e.g. NOVACORE-12345) or a full Jira URL.
 4. Optional workspace anchor. If the Initiative maps to local context artifacts, read the relevant context when present.
 5. Fit check. Decide whether the proposed Epic belongs to this Initiative. If it does not fit, stop and propose a better route.
 6. Clarify if vague. See [`../clarify-vague.md`](../clarify-vague.md) (Epic row: expectations, scenarios, Initiative tie-in).
-7. Feature Team. Resolve in order: copy from the Initiative, copy from a sibling Epic, ask once. See [`../jira-fields.md`](../jira-fields.md) for Feature Team, Capitalizable, assignee, and `createJiraIssue` parameters.
+7. Feature Team. Resolve in order: copy from the Initiative, copy from a sibling Epic, ask once. See [`../jira-fields.md`](../jira-fields.md) for Feature Team, Capitalizable, assignee, and create parameters.
 8. Draft locally before Jira create. See [`../local-draft.md`](../local-draft.md) and use the ticket template in [`template.md`](template.md).
 9. Run the **Jira Write Approval Gate** in `SKILL.md`.
    Include the local draft path and summary in the gate `prompt`.
-10. Promote only when the gate is answered `Approve` by calling `createJiraIssue` with `issueTypeName: "Epic"`.
+10. Promote only when the gate is answered `Approve` by creating the ticket with issue type `Epic`.
 11. Reply with issue key, browse URL, parent Initiative, Feature Team, and summary. Update the local draft and hierarchy context.
 
 ## Writing Rules
@@ -93,9 +93,9 @@ Scenario: Designer prepares environment through explicit setup
   And no bespoke bootstrap step is required
 ```
 
-When creating or updating the Jira description via MCP, publish each scenario as an ADF `codeBlock` with `language: gherkin`.
+When creating or updating the Jira description, publish each scenario as an ADF `codeBlock` with `language: gherkin`.
 Use the same `Scenario:` line and two-space-indented steps in the block text.
-Do not rely on markdown fences alone in the Jira API payload.
+Do not rely on markdown fences alone in the published description.
 
 ## Initiative Fit Check
 
