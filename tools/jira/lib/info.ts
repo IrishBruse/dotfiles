@@ -226,14 +226,6 @@ function formatSprintKeys(sprint: BoardSprint): string[] {
   ];
 }
 
-const INFO_INDENT = "  ";
-
-/** Key on its own line with each value indented below. */
-function formatIndentedBlock(key: string, lines: string[]): string {
-  if (lines.length === 0) return `${key}:`;
-  return `${key}:\n${lines.map((line) => `${INFO_INDENT}${line}`).join("\n")}`;
-}
-
 function formatScalar(key: string, value: string | number): string {
   return `${key}: ${value}`;
 }
@@ -247,29 +239,7 @@ function formatFeatureTeamValue(name: string, optionId: string): string {
   return "";
 }
 
-const LOCAL_TICKET_KEY_LIMIT = 5;
-
-function formatLocalTicketKeys(keys: string[]): string {
-  if (keys.length <= LOCAL_TICKET_KEY_LIMIT) return keys.join(", ");
-  const shown = keys.slice(0, LOCAL_TICKET_KEY_LIMIT).join(", ");
-  return `${shown} +${keys.length - LOCAL_TICKET_KEY_LIMIT} more`;
-}
-
-function formatLocalTicketsBlock(summary: LocalTicketsSummary): string {
-  if (summary.count === 0) {
-    return "No local tickets in ./jira/";
-  }
-
-  return summary.byType
-    .map((group) => `${group.typeDir}: ${formatLocalTicketKeys(group.keys)}`)
-    .join("\n");
-}
-
-function formatInfoSection(title: string, lines: string[]): string {
-  return `${title}\n${lines.join("\n")}`;
-}
-
-/** Plain-text key: value lines matching JiraInfo fields (raw, agent-oriented). */
+/** Flat key: value lines for agents (no markdown). */
 export function formatJiraInfoPlainText(info: JiraInfo): string {
   const sprintLines =
     info.sprints.length === 0
@@ -280,35 +250,23 @@ export function formatJiraInfoPlainText(info: JiraInfo): string {
         ]
       : info.sprints.flatMap((sprint) => formatSprintKeys(sprint));
 
-  const sections = [
-    formatInfoSection("Workspace:", [
-      formatScalar("cloudId", info.cloudId),
-      formatScalar("site", info.site),
-      formatScalar("project", info.project)
-    ]),
-    formatInfoSection("Board:", [
-      formatScalar("boardId", info.boardId),
-      ...sprintLines
-    ]),
-    formatInfoSection("Me:", [
-      formatScalar("accountId", info.meAccountId),
-      formatScalar("displayName", info.meDisplayName),
-      formatScalar("featureTeamField", info.featureTeamField),
-      formatScalar(
-        "featureTeam",
-        formatFeatureTeamValue(info.featureTeamName, info.featureTeamOptionId)
-      )
-    ]),
-    formatInfoSection("Custom fields:", [
-      formatScalar("epicLinkField", info.epicLinkField),
-      formatScalar("sprintField", info.sprintField),
-      formatScalar("storyPointsField", info.storyPointsField)
-    ]),
-    formatInfoSection("Local:", [
-      // Local ./jira/ state
-      formatLocalTicketsBlock(info.localTickets)
-    ])
+  const lines = [
+    formatScalar("cloudId", info.cloudId),
+    formatScalar("site", info.site),
+    formatScalar("project", info.project),
+    formatScalar("boardId", info.boardId),
+    ...sprintLines,
+    formatScalar("accountId", info.meAccountId),
+    formatScalar("displayName", info.meDisplayName),
+    formatScalar("featureTeamField", info.featureTeamField),
+    formatScalar(
+      "featureTeam",
+      formatFeatureTeamValue(info.featureTeamName, info.featureTeamOptionId)
+    ),
+    formatScalar("epicLinkField", info.epicLinkField),
+    formatScalar("sprintField", info.sprintField),
+    formatScalar("storyPointsField", info.storyPointsField)
   ];
 
-  return `${sections.join("\n\n")}\n`;
+  return `${lines.join("\n")}\n`;
 }

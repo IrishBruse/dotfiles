@@ -1,5 +1,5 @@
 /**
- * `jira board` -- print cached board state from ~/.config/jira/board.json.
+ * `jira board` -- print full cached board from ~/.config/jira/board.json.
  */
 import process from "node:process";
 
@@ -9,13 +9,9 @@ import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { failCommand, printJsonSuccess } from "../../lib/output.ts";
 
-export type BoardCommandOptions = CommandOptions & {
-  full?: boolean;
-};
-
-/** Run `jira board`. */
+/** Run `jira board` (full board). */
 export function runBoardCommand(
-  options: BoardCommandOptions = HUMAN_OUTPUT,
+  options: CommandOptions = HUMAN_OUTPUT,
   baseDir?: string
 ): number {
   const cache = readBoardCache(baseDir);
@@ -31,7 +27,7 @@ export function runBoardCommand(
     return 0;
   }
 
-  process.stdout.write(formatBoardPlainText(cache, { full: options.full }));
+  process.stdout.write(formatBoardPlainText(cache));
   return 0;
 }
 

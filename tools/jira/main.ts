@@ -22,7 +22,6 @@ import { runLinkCommand } from "./commands/write/link.ts";
 import { runTransitionCommand } from "./commands/write/transition.ts";
 import { printHelp } from "./commands/help.ts";
 import { parseJiraKey } from "./lib/jiraInput.ts";
-import { parseSubcommandArgv, flagBool } from "./lib/argv.ts";
 import { parseGlobalFlags, type CommandOptions } from "./lib/output-mode.ts";
 import { failCommand } from "./lib/output.ts";
 
@@ -36,8 +35,7 @@ export async function main(argv: string[] = process.argv): Promise<void> {
   }
 
   if (arg === "board") {
-    const { flags } = parseSubcommandArgv(cleaned, 3);
-    process.exit(runBoardCommand({ ...opts, full: flagBool(flags, "full") }));
+    process.exit(runBoardCommand(opts));
     return;
   }
 

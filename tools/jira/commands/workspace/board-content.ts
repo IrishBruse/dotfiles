@@ -74,11 +74,11 @@ function formatStatusSubsections(section: BoardSection): string {
     const tickets = section.statuses[bucket];
     if (tickets.length === 0) continue;
     const lines = tickets.map(
-      (t) => `- ${t.key}: ${t.summary} — \`${t.assignee}\``
+      (t) => `${t.key}: ${t.summary} (${t.assignee})`
     );
-    parts.push(`**${STATUS_HEADINGS[bucket]}:**\n\n${lines.join("\n")}`);
+    parts.push(`${STATUS_HEADINGS[bucket]}\n${lines.join("\n")}`);
   }
-  return parts.join("\n\n");
+  return parts.join("\n");
 }
 
 const SECTION_BY_FOLDER: Record<Folder, keyof BoardSections> = {
@@ -125,34 +125,34 @@ export function buildBoardContent(
   return { syncedAt, sections };
 }
 
-function formatBoardSectionMarkdown(section: BoardSection): string {
+function formatBoardSectionPlain(section: BoardSection): string {
   const body = formatStatusSubsections(section);
-  if (body) return `# ${section.heading}\n\n${body}`;
-  return `# ${section.heading}`;
+  if (body) return `${section.heading}\n${body}`;
+  return section.heading;
 }
 
-export type BoardPlainTextOptions = {
-  /** Include teammates and misc sections (default: my tickets and unassigned only). */
-  full?: boolean;
-};
-
-export function formatBoardPlainText(
+function formatBoardSections(
   content: BoardContent,
-  options: BoardPlainTextOptions = {}
+  sectionKeys: (keyof BoardSections)[]
 ): string {
-  const { sections } = content;
-  const sectionKeys: (keyof BoardSections)[] = options.full
-    ? ["myTickets", "unassigned", "teammates", "misc"]
-    : ["myTickets", "unassigned"];
-  const boardSections = sectionKeys.map((key) =>
-    formatBoardSectionMarkdown(sections[key])
-  );
+  return sectionKeys
+    .map((key) => formatBoardSectionPlain(content.sections[key]))
+    .join("\n\n");
+}
 
-  return `Here is the current Jira board status.
-Use \`jira show <KEY>\` or \`jira pull <KEY>\` for full ticket details.
+/** My tickets + unassigned only (for `jira info`). */
+export function formatBoardSummaryPlainText(content: BoardContent): string {
+  return `${formatBoardSections(content, ["myTickets", "unassigned"])}\n`;
+}
 
-${boardSections.join("\n\n")}
-`;
+/** Full board: my tickets, unassigned, teammates, misc. */
+export function formatBoardPlainText(content: BoardContent): string {
+  return `${formatBoardSections(content, [
+    "myTickets",
+    "unassigned",
+    "teammates",
+    "misc"
+  ])}\n`;
 }
 
 /** Write board.json from fetched issues. */

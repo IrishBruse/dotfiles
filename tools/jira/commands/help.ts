@@ -2,8 +2,8 @@ import process from "node:process";
 
 export function printHelp(): void {
   process.stdout.write(`Start here (for AI agents):
-  jira info                    raw MCP/CLI context (cloudId, project, fields)
-  jira board                   my tickets and unassigned (~/.config/jira/board.json)
+  jira info                    workspace context + my/unassigned tickets
+  jira board                   full board (~/.config/jira/board.json)
   jira doctor --json           verify acli auth and config
   Read the jira-cli skill at ~/.agents/skills/jira-cli/SKILL.md
 
@@ -25,9 +25,8 @@ Local tickets:
 
 Agent workspace:
   jira sync  Sync board to ~/.config/jira/board.json and workspace cache to ~/.config/jira/info.json
-  jira board  Print my tickets and unassigned from ~/.config/jira/board.json
-  jira board --full  Include teammates and misc sections
-  jira info  Print raw agent context for MCP/CLI (cloudId, fields)
+  jira board  Print full board from ~/.config/jira/board.json
+  jira info  Print workspace context + my/unassigned tickets (plain text)
   jira doctor  Verify acli, auth, config, and board cache
   jira batch [--file <path>] [--stop-on-error]  Run read-only commands from JSON array on stdin
 
