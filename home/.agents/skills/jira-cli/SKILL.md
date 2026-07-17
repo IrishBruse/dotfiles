@@ -1,6 +1,6 @@
 ---
 name: jira-cli
-description: Runs the `jira` CLI for local `jira/` markdown and live Jira reads and writes. Use for Jira keys, URLs, JQL search, pull/push/sync, or agent JSON output from the jira command.
+description: Runs the `jira` CLI for local `jira/` markdown and live Jira reads/writes. Use for Jira keys, URLs, JQL search, or pull/push/sync.
 ---
 
 # Jira CLI

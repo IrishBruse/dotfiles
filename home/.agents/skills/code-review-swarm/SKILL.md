@@ -1,6 +1,6 @@
 ---
 name: code-review-swarm
-description: Parallel subagent maintainability review over code-review lanes. Use for /code-review-swarm or a swarm code-review pass.
+description: Parallel subagent variant of the code-review maintainability pass.
 disable-model-invocation: true
 ---
 

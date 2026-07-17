@@ -1,6 +1,6 @@
 ---
 name: confluence-cli
-description: Runs the `confluence` CLI and Confluence MCP for local `confluence/` markdown and live Confluence pages. Use for Confluence pull/push/sync, page URLs, CQL search, or when the CLI is not enough for Confluence reads and writes.
+description: Runs the `confluence` CLI (plus Confluence MCP for what the CLI can't do) for local `confluence/` markdown and live pages. Use for Confluence pull/push/sync, page URLs, or CQL search.
 ---
 
 # Confluence CLI

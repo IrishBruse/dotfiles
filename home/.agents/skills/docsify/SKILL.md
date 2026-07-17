@@ -1,6 +1,6 @@
 ---
 name: docsify
-description: Writes and structures markdown for a docsify documentation site. Use when authoring docsify content or when the user mentions docsify, _sidebar.md, _navbar.md, or _coverpage.md.
+description: Writes and structures markdown for a docsify site. Use when authoring docsify content or mentioning docsify, _sidebar.md, _navbar.md, or _coverpage.md.
 ---
 
 # Docsify

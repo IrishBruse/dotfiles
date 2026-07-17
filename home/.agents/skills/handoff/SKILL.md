@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: Produces a full handoff summary so a fresh agent can continue the work. Use when handing off to another agent or session, or when the user asks for handoff context.
+description: Produces a full handoff summary so a fresh agent can continue the work.
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: questions
-description: Structured Q&A elicitation loop that gathers requirements one decision at a time. Use when clarifying requirements, preferences, or design decisions before proceeding.
+description: Structured Q&A loop that gathers requirements one decision at a time.
 disable-model-invocation: true
 ---
 

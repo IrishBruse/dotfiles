@@ -1,6 +1,6 @@
 ---
 name: jira
-description: Jira router that does legwork and gates before any write. Use when the user has a ticket idea, key, initiative, epic, PR, or pasted context and needs classification, duplicate/parentage checks, breakdown advice, or a route (task, story, epic, update, search).
+description: Jira router that gates before any write. Use when a ticket idea, key, epic, or PR needs classification, duplicate and parentage checks, or routing to task/story/epic/update/search.
 ---
 
 # Jira

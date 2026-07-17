@@ -1,6 +1,6 @@
 ---
 name: walkthrough
-description: Walks through a response, file, or feature section by section. Use when the user asks to walk through something, break down a response, or invokes /walkthrough.
+description: Walks through a response, file, or feature section by section. Use when asked to walk through or break down something, or on /walkthrough.
 ---
 
 # Walkthrough

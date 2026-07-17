@@ -1,6 +1,6 @@
 ---
 name: browser
-description: Browser automation via `agent-browser` CLI. Use when interacting with websites (navigate, fill forms, click, screenshot, scrape, login, test web apps)
+description: 'Browser automation via `agent-browser` CLI. Use when interacting with websites: navigate, fill, click, scrape, screenshot, or test web apps.'
 ---
 
 # browser
