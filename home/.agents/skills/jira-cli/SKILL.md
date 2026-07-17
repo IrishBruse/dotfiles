@@ -18,7 +18,7 @@ On auth failure, stop and ask. Do not work around it.
 
 ## Orientation (every Jira session)
 
-1. `jira info` (or `jira --json info`)
+1. `jira info`
    **Done when:** cloudId, project, featureTeamOptionId, sprintId(s), and field ids are in hand.
 2. `jira board`
    **Done when:** my tickets and unassigned are known, or you ran `jira sync` then `jira board`

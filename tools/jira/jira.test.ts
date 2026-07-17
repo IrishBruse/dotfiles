@@ -1573,19 +1573,6 @@ describe("jira info", () => {
     assert.doesNotMatch(out, /Jira workspace/);
     assert.doesNotMatch(out, /Config \(~\/\.config\/jira\/config\.json\):/);
   });
-
-  it("prints json envelope from runInfoCommand", () => {
-    const out = captureStdout(() => runInfoCommand({ outputMode: "json" }));
-    const parsed = JSON.parse(out) as {
-      success: boolean;
-      data: { project: string; site: string };
-      error: string | null;
-    };
-    assert.equal(parsed.success, true);
-    assert.equal(typeof parsed.data.project, "string");
-    assert.equal(typeof parsed.data.site, "string");
-    assert.equal(parsed.error, null);
-  });
 });
 
 describe("show and search command validation", () => {
