@@ -7,5 +7,9 @@
   "featureTeamField": "",
   "epicLinkField": "",
   "clean": true,
-  "boardCacheMaxAgeDays": 7
+  "boardCacheMaxAgeDays": 7,
+  "cloudId": "",
+  "meDisplayName": "",
+  "featureTeam": "",
+  "featureTeamOptionId": ""
 }

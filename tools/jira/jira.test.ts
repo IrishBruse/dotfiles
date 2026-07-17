@@ -92,7 +92,16 @@ import {
   readBoardInfoCache,
   writeBoardInfoCache
 } from "./lib/board-cache.ts";
-import { formatJiraInfoPlainText, parseProjectIssueTypeNames } from "./lib/info.ts";
+import {
+  featureTeamOptionFromIssues,
+  formatJiraInfoPlainText,
+  meDisplayNameFromIssues,
+  parseFeatureTeamFromBoardJql,
+  parseProjectIssueTypeDetails,
+  parseProjectIssueTypeNames,
+  parseProjectName,
+  statusNamesFromIssues
+} from "./lib/info.ts";
 import { parseGlobalFlags } from "./lib/output-mode.ts";
 import {
   blockedAcliJiraReason,
@@ -701,6 +710,12 @@ describe("board skill content", () => {
     assert.match(md, /PROJ-2: Theirs/);
   });
 
+  it("includes last sync time at the top of the board section", () => {
+    const content = buildJiraTicketsSkillContent([], ME);
+    const md = formatJiraTicketsSkillMd(content, "2026-07-17T12:00:00.000Z");
+    assert.match(md, /# Board\n\nLast synced: 2026-07-17T12:00:00.000Z\n\nHere is the current Jira board status\./);
+  });
+
   it("places unassigned and done tickets in the right sections", () => {
     const content = buildJiraTicketsSkillContent(
       [
@@ -929,11 +944,13 @@ describe("writeJiraTicketsSkill", () => {
           }
         ],
         skillPath,
-        "account-me"
+        "account-me",
+        "2026-07-17T12:00:00.000Z"
       );
       assert.ok(fs.existsSync(skillPath));
       const md = fs.readFileSync(skillPath, "utf-8");
       assert.match(md, /name: jira-board/);
+      assert.match(md, /Last synced: 2026-07-17T12:00:00.000Z/);
       assert.match(md, /PROJ-1: Alpha/);
       assert.doesNotMatch(md, /references\//);
     });
@@ -1172,28 +1189,98 @@ describe("jira info", () => {
   it("parses issue type names from project view JSON", () => {
     assert.deepEqual(
       parseProjectIssueTypeNames({
-        issueTypes: [{ name: "Story" }, { name: "Epic" }]
+        issueTypes: [
+          { name: "Story", hierarchyLevel: 0 },
+          { name: "Epic", hierarchyLevel: 1 }
+        ]
       }),
-      ["Story", "Epic"]
+      ["Epic", "Story"]
     );
     assert.deepEqual(parseProjectIssueTypeNames({}), []);
+    assert.equal(parseProjectName({ name: "NOVA Core" }), "NOVA Core");
+    assert.deepEqual(
+      parseProjectIssueTypeDetails({
+        issueTypes: [{ name: "Sub-task", hierarchyLevel: -1, subtask: true }]
+      }),
+      [{ name: "Sub-task", hierarchyLevel: -1, subtask: true }]
+    );
+  });
+
+  it("parses feature team and board context helpers", () => {
+    assert.equal(
+      parseFeatureTeamFromBoardJql(
+        'project = NOVACORE AND "Feature Team" = dynaFormRaptors ORDER BY key'
+      ),
+      "dynaFormRaptors"
+    );
+    assert.deepEqual(
+      statusNamesFromIssues([
+        { fields: { status: { name: "Code Review" } } },
+        { fields: { status: { name: "To Do" } } },
+        { fields: { status: { name: "Code Review" } } }
+      ]),
+      ["Code Review", "To Do"]
+    );
+    assert.equal(
+      meDisplayNameFromIssues(
+        [
+          {
+            fields: {
+              assignee: { accountId: "account-me", displayName: "Ada" }
+            }
+          }
+        ],
+        "account-me"
+      ),
+      "Ada"
+    );
+    assert.deepEqual(
+      featureTeamOptionFromIssues(
+        [
+          {
+            fields: {
+              customfield_1: [{ id: "9", value: "dynaFormRaptors" }]
+            }
+          }
+        ],
+        "customfield_1",
+        "dynaFormRaptors"
+      ),
+      { id: "9", name: "dynaFormRaptors" }
+    );
   });
 
   it("formats plain-text workspace context", () => {
     const text = formatJiraInfoPlainText({
       site: "example.atlassian.net",
+      cloudId: "cloud-uuid",
       project: "TEAM",
+      projectName: "Team Project",
       boardId: "42",
       boardJql: "project = TEAM",
       meAccountId: "account-me",
+      meDisplayName: "Ada Lovelace",
       featureTeamField: "customfield_1",
-      epicLinkField: "",
+      featureTeamName: "Alpha",
+      featureTeamOptionId: "99",
+      epicLinkField: "customfield_2",
+      sprintField: "customfield_10021",
+      storyPointsField: "customfield_10023",
+      capitalizableField: "customfield_10998",
+      capitalizableYesId: "15465",
       issueTypes: ["Story", "Epic", "Task"],
+      issueTypeDetails: [
+        { name: "Epic", hierarchyLevel: 1, subtask: false },
+        { name: "Story", hierarchyLevel: 0, subtask: false },
+        { name: "Task", hierarchyLevel: 0, subtask: false }
+      ],
+      statuses: ["In Progress", "To Do"],
       boardCache: {
         syncedAt: "2026-07-15T12:00:00.000Z",
         boardId: "42",
         site: "example.atlassian.net",
         project: "TEAM",
+        projectName: "Team Project",
         effectiveJql: "project = TEAM AND sprint in (99)",
         retainedSprints: [
           {
@@ -1207,15 +1294,30 @@ describe("jira info", () => {
         counts: { me: 2, team: 3, unassigned: 1, misc: 0 },
         issueCount: 6,
         localTicketCount: 4,
-        issueTypes: ["Story", "Epic", "Task"]
+        issueTypes: ["Story", "Epic", "Task"],
+        issueTypeDetails: [
+          { name: "Epic", hierarchyLevel: 1, subtask: false },
+          { name: "Story", hierarchyLevel: 0, subtask: false },
+          { name: "Task", hierarchyLevel: 0, subtask: false }
+        ],
+        statuses: ["In Progress", "To Do"],
+        featureTeamName: "Alpha",
+        featureTeamOptionId: "99",
+        meDisplayName: "Ada Lovelace"
       },
       localTicketCount: 4
     });
-    assert.match(text, /Project: TEAM/);
-    assert.match(text, /Sprint 12/);
-    assert.match(text, /Tickets under jira\/: 4/);
-    assert.match(text, /Sprint board: me 2, team 3, unassigned 1, misc 0/);
-    assert.match(text, /Issue types: Story, Epic, Task/);
+    assert.match(text, /Project: TEAM \(Team Project\)/);
+    assert.match(text, /Me: Ada Lovelace \(account-me\)/);
+    assert.match(text, /Cloud ID: cloud-uuid/);
+    assert.match(text, /Feature team: Alpha \(customfield_1 \/ option 99\)/);
+    assert.match(text, /Active sprint: Sprint 12 \(99, active/);
+    assert.match(text, /Board counts: me 2, team 3, unassigned 1, misc 0 \(6 total\)/);
+    assert.match(text, /Statuses on board: In Progress, To Do/);
+    assert.match(text, /Local tickets: 4/);
+    assert.match(text, /Board skill: /);
+    assert.doesNotMatch(text, /Workspace cache/);
+    assert.doesNotMatch(text, /Local repo/);
   });
 
   it("reads and writes the board info cache", () => {
@@ -1227,16 +1329,55 @@ describe("jira info", () => {
         boardId: "42",
         site: "example.atlassian.net",
         project: "TEAM",
+        projectName: "Team Project",
         effectiveJql: "project = TEAM",
         retainedSprints: [],
         counts: { me: 0, team: 0, unassigned: 0, misc: 0 },
         issueCount: 0,
         localTicketCount: 0,
-        issueTypes: []
+        issueTypes: [],
+        issueTypeDetails: [],
+        statuses: [],
+        featureTeamName: "",
+        featureTeamOptionId: "",
+        meDisplayName: ""
       };
       writeBoardInfoCache(input, home);
       const cache = readBoardInfoCache(home);
       assert.deepEqual(cache, input);
+      assert.match(
+        boardInfoCachePath(home),
+        /[\\/]\.config[\\/]jira[\\/]info\.json$/
+      );
+    });
+  });
+
+  it("reads legacy board info cache without new fields", () => {
+    withTempDir((dir) => {
+      const home = path.join(dir, "home");
+      fs.mkdirSync(home, { recursive: true });
+      const cachePath = boardInfoCachePath(home);
+      fs.mkdirSync(path.dirname(cachePath), { recursive: true });
+      fs.writeFileSync(
+        cachePath,
+        JSON.stringify({
+          syncedAt: "2026-07-15T12:00:00.000Z",
+          boardId: "42",
+          site: "example.atlassian.net",
+          project: "TEAM",
+          effectiveJql: "project = TEAM",
+          retainedSprints: [],
+          counts: { me: 0, team: 0, unassigned: 0, misc: 0 },
+          issueCount: 0,
+          localTicketCount: 0,
+          issueTypes: ["Story"]
+        }),
+        "utf-8"
+      );
+      const cache = readBoardInfoCache(home);
+      assert.equal(cache?.projectName, "");
+      assert.deepEqual(cache?.statuses, []);
+      assert.deepEqual(cache?.issueTypes, ["Story"]);
     });
   });
 
@@ -1271,8 +1412,24 @@ describe("jira info", () => {
 
   it("prints plain text from runInfoCommand", () => {
     const out = captureStdout(() => runInfoCommand());
-    assert.match(out, /Jira workspace/);
-    assert.match(out, /Config \(~\/\.config\/jira\/config\.json\):/);
+    assert.match(out, /^Site: /m);
+    assert.match(out, /^Me: /m);
+    assert.match(out, /^Feature team: /m);
+    assert.doesNotMatch(out, /Jira workspace/);
+    assert.doesNotMatch(out, /Config \(~\/\.config\/jira\/config\.json\):/);
+  });
+
+  it("prints json envelope from runInfoCommand", () => {
+    const out = captureStdout(() => runInfoCommand({ outputMode: "json" }));
+    const parsed = JSON.parse(out) as {
+      success: boolean;
+      data: { project: string; site: string };
+      error: string | null;
+    };
+    assert.equal(parsed.success, true);
+    assert.equal(typeof parsed.data.project, "string");
+    assert.equal(typeof parsed.data.site, "string");
+    assert.equal(parsed.error, null);
   });
 });
 
@@ -1319,18 +1476,6 @@ describe("agent json output", () => {
     assert.equal(parsed.data, null);
     assert.equal(parsed.error, "bad");
     assert.equal(parsed.code, "AUTH");
-  });
-
-  it("prints info as JSON envelope", () => {
-    const out = captureStdout(() =>
-      runInfoCommand({ outputMode: "json" })
-    );
-    const parsed = JSON.parse(out) as {
-      success: boolean;
-      data: { project: string };
-    };
-    assert.equal(parsed.success, true);
-    assert.ok(typeof parsed.data.project === "string");
   });
 });
 

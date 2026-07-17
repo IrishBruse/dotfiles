@@ -2,13 +2,13 @@ import process from "node:process";
 
 export function printHelp(): void {
   process.stdout.write(`Start here (for AI agents):
-  jira info                    workspace + board cache context
+  jira info                    agent workspace context (project, fields, sprint, cache)
   jira doctor --json           verify acli auth and config
   Read the jira skill at ~/.agents/skills/jira/SKILL.md
 
 Core loop:
   jira info
-  jira sync                    refresh ~/.agents/skills/jira-board/SKILL.md and agent cache
+  jira sync                    refresh ~/.agents/skills/jira-board/SKILL.md and ~/.config/jira/info.json
   jira show KEY | jira search --jql "..."
   jira pull KEY                local markdown under jira/
   jira create|edit|... --yes   writes (requires jira skill approval gate)
@@ -23,8 +23,8 @@ Local tickets:
   jira push [KEY|URL]  Push one ticket, or all local tickets when omitted
 
 Agent workspace:
-  jira sync  Sync board summary to ~/.agents/skills/jira-board/SKILL.md and refresh agent cache
-  jira info  Print workspace context (project, sprint cache, issue types, local tickets)
+  jira sync  Sync board summary to ~/.agents/skills/jira-board/SKILL.md and ~/.config/jira/info.json
+  jira info  Print agent workspace context (config + board cache; --json for full object)
   jira doctor  Verify acli, auth, config, and board cache
   jira batch [--file <path>] [--stop-on-error]  Run read-only commands from JSON array on stdin
 

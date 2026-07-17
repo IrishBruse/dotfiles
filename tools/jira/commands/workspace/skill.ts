@@ -141,7 +141,8 @@ function formatSkillSectionMarkdown(section: JiraSkillSection): string {
 }
 
 export function formatJiraTicketsSkillMd(
-  content: JiraTicketsSkillContent
+  content: JiraTicketsSkillContent,
+  syncedAt?: string
 ): string {
   const { sections } = content;
   const boardSections = [
@@ -150,6 +151,10 @@ export function formatJiraTicketsSkillMd(
     formatSkillSectionMarkdown(sections.unassigned),
     formatSkillSectionMarkdown(sections.misc)
   ];
+  const syncLine =
+    syncedAt && syncedAt.trim()
+      ? `Last synced: ${syncedAt.trim()}\n\n`
+      : "";
 
   return `---
 name: ${content.name}
@@ -159,7 +164,7 @@ description: >
 
 # Board
 
-Here is the current Jira board status.
+${syncLine}Here is the current Jira board status.
 Use \`jira show <KEY>\` or \`jira pull <KEY>\` for full ticket details.
 
 ${boardSections.join("\n\n")}
@@ -176,9 +181,14 @@ export function formatJiraTicketsSkillJson(
 export function writeJiraTicketsSkill(
   issues: Array<{ key?: string; fields?: Record<string, unknown> }>,
   skillPath: string,
-  meAccountId: string
+  meAccountId: string,
+  syncedAt?: string
 ): void {
   const content = buildJiraTicketsSkillContent(issues, meAccountId);
   fs.mkdirSync(path.dirname(skillPath), { recursive: true });
-  fs.writeFileSync(skillPath, formatJiraTicketsSkillMd(content), "utf-8");
+  fs.writeFileSync(
+    skillPath,
+    formatJiraTicketsSkillMd(content, syncedAt),
+    "utf-8"
+  );
 }

@@ -290,15 +290,23 @@ export function listProjects(acli = DEFAULT_ACLI): unknown {
   return runJiraAcliJson(["project", "list", "--json", "--paginate"], acli);
 }
 
+/** Fetch a project via `jira project view --key`. */
+export function viewProject(
+  projectKey: string,
+  acli = DEFAULT_ACLI
+): unknown {
+  return runJiraAcliJson(
+    ["project", "view", "--key", projectKey, "--json"],
+    acli
+  );
+}
+
 /** List issue types for a project via `jira project view`. */
 export function listProjectIssueTypes(
   projectKey: string,
   acli = DEFAULT_ACLI
 ): unknown {
-  return runJiraAcliJson(
-    ["project", "view", projectKey, "--json"],
-    acli
-  );
+  return viewProject(projectKey, acli);
 }
 
 /** Extract created issue key from acli create JSON stdout. */

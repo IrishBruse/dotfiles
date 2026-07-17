@@ -14,20 +14,34 @@ export const JIRA_BOARD_SKILL_DIR = jiraBoardSkillDir();
 
 /** Cached workspace context written by `jira sync`. */
 export function boardInfoCachePath(baseDir = homedir()): string {
-  return path.join(jiraBoardSkillDir(baseDir), "info.json");
+  return path.join(baseDir, ".config", "jira", "info.json");
 }
 
+/** One project issue type from `jira project view`. */
+export type CachedIssueType = {
+  name: string;
+  hierarchyLevel: number;
+  subtask: boolean;
+};
+
+/** Cached workspace context written by `jira sync`. */
 export type BoardInfoCache = {
   syncedAt: string;
   boardId: string | null;
   site: string;
   project: string;
+  projectName: string;
   effectiveJql: string;
   retainedSprints: BoardSprint[];
   counts: Record<Folder, number>;
   issueCount: number;
   localTicketCount: number;
   issueTypes: string[];
+  issueTypeDetails: CachedIssueType[];
+  statuses: string[];
+  featureTeamName: string;
+  featureTeamOptionId: string;
+  meDisplayName: string;
 };
 
 /** Persist workspace context for `jira info`. */
@@ -35,9 +49,8 @@ export function writeBoardInfoCache(
   cache: BoardInfoCache,
   baseDir = homedir()
 ): void {
-  const skillDir = jiraBoardSkillDir(baseDir);
-  fs.mkdirSync(skillDir, { recursive: true });
   const filePath = boardInfoCachePath(baseDir);
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
   const tempPath = `${filePath}.tmp`;
   fs.writeFileSync(
     tempPath,
@@ -71,6 +84,30 @@ function parseStringArray(value: unknown): string[] | null {
   for (const item of value) {
     if (typeof item !== "string" || !item.trim()) return null;
     out.push(item.trim());
+  }
+  return out;
+}
+
+function parseOptionalString(value: unknown): string {
+  return typeof value === "string" ? value : "";
+}
+
+function parseIssueTypeDetails(value: unknown): CachedIssueType[] {
+  if (!Array.isArray(value)) return [];
+  const out: CachedIssueType[] = [];
+  for (const item of value) {
+    if (!item || typeof item !== "object" || Array.isArray(item)) continue;
+    const row = item as Record<string, unknown>;
+    if (typeof row.name !== "string" || !row.name.trim()) continue;
+    const hierarchyLevel =
+      typeof row.hierarchyLevel === "number" && Number.isFinite(row.hierarchyLevel)
+        ? row.hierarchyLevel
+        : 0;
+    out.push({
+      name: row.name.trim(),
+      hierarchyLevel,
+      subtask: row.subtask === true
+    });
   }
   return out;
 }
@@ -117,16 +154,26 @@ export function readBoardInfoCache(baseDir = homedir()): BoardInfoCache | null {
   const issueTypes = parseStringArray(raw.issueTypes);
   if (!issueTypes) return null;
 
+  const statuses =
+    raw.statuses === undefined ? [] : parseStringArray(raw.statuses);
+  if (!statuses) return null;
+
   return {
     syncedAt: raw.syncedAt,
     boardId: raw.boardId,
     site: raw.site,
     project: raw.project,
+    projectName: parseOptionalString(raw.projectName),
     effectiveJql: raw.effectiveJql,
     retainedSprints: parseBoardSprintRows(raw.retainedSprints),
     counts,
     issueCount: raw.issueCount,
     localTicketCount,
-    issueTypes
+    issueTypes,
+    issueTypeDetails: parseIssueTypeDetails(raw.issueTypeDetails),
+    statuses,
+    featureTeamName: parseOptionalString(raw.featureTeamName),
+    featureTeamOptionId: parseOptionalString(raw.featureTeamOptionId),
+    meDisplayName: parseOptionalString(raw.meDisplayName)
   };
 }

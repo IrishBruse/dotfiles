@@ -1,5 +1,5 @@
 /**
- * `jira info` -- print workspace context as plain text or JSON.
+ * `jira info` -- print agent workspace context.
  */
 import process from "node:process";
 

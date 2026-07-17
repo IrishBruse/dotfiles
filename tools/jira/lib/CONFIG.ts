@@ -13,19 +13,32 @@ export type JiraConfig = {
   epicLinkField: string;
   clean: boolean;
   boardCacheMaxAgeDays: number;
+  /** Atlassian cloud UUID for MCP tool calls (optional). */
+  cloudId: string;
+  /** Human display name for meAccountId (optional, cache may override). */
+  meDisplayName: string;
+  /** Feature Team option name used by board JQL (optional). */
+  featureTeam: string;
+  /** Feature Team option id for creates (optional, cache may override). */
+  featureTeamOptionId: string;
 };
 
-const CONFIG_KEYS: (keyof JiraConfig)[] = [
+const REQUIRED_STRING_KEYS = [
   "site",
   "meAccountId",
   "boardId",
   "project",
   "boardJql",
   "featureTeamField",
-  "epicLinkField",
-  "clean",
-  "boardCacheMaxAgeDays"
-];
+  "epicLinkField"
+] as const;
+
+const OPTIONAL_STRING_KEYS = [
+  "cloudId",
+  "meDisplayName",
+  "featureTeam",
+  "featureTeamOptionId"
+] as const;
 
 /** Default runtime path: `~/.config/jira/config.json`. */
 export function jiraConfigPath(baseDir = homedir()): string {
@@ -41,20 +54,19 @@ function parseJiraConfig(raw: unknown, filePath: string): JiraConfig {
   }
   const record = raw as Record<string, unknown>;
   const out = {} as JiraConfig;
-  for (const key of CONFIG_KEYS) {
+
+  for (const key of REQUIRED_STRING_KEYS) {
     const value = record[key];
-    if (key === "clean") {
-      if (typeof value !== "boolean") {
-        throw new Error(`Jira config "${key}" must be a boolean: ${filePath}`);
-      }
-      out.clean = value;
-      continue;
+    if (typeof value !== "string") {
+      throw new Error(`Jira config "${key}" must be a string: ${filePath}`);
     }
-    if (key === "boardCacheMaxAgeDays") {
-      if (typeof value !== "number" || !Number.isFinite(value) || value < 0) {
-        throw new Error(`Jira config "${key}" must be a non-negative number: ${filePath}`);
-      }
-      out.boardCacheMaxAgeDays = value;
+    out[key] = value;
+  }
+
+  for (const key of OPTIONAL_STRING_KEYS) {
+    const value = record[key];
+    if (value === undefined) {
+      out[key] = "";
       continue;
     }
     if (typeof value !== "string") {
@@ -62,6 +74,25 @@ function parseJiraConfig(raw: unknown, filePath: string): JiraConfig {
     }
     out[key] = value;
   }
+
+  const clean = record.clean;
+  if (typeof clean !== "boolean") {
+    throw new Error(`Jira config "clean" must be a boolean: ${filePath}`);
+  }
+  out.clean = clean;
+
+  const boardCacheMaxAgeDays = record.boardCacheMaxAgeDays;
+  if (
+    typeof boardCacheMaxAgeDays !== "number" ||
+    !Number.isFinite(boardCacheMaxAgeDays) ||
+    boardCacheMaxAgeDays < 0
+  ) {
+    throw new Error(
+      `Jira config "boardCacheMaxAgeDays" must be a non-negative number: ${filePath}`
+    );
+  }
+  out.boardCacheMaxAgeDays = boardCacheMaxAgeDays;
+
   return out;
 }
 

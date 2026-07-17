@@ -13,6 +13,7 @@ import {
   listBoardSprints,
   listProjectIssueTypes,
   searchWorkitems,
+  viewWorkitem,
   viewWorkitemAsync
 } from "../../lib/acli-jira.ts";
 import { createConcurrencyLimiter } from "../../../.lib/concurrency.ts";
@@ -23,14 +24,24 @@ import {
   assigneeRecord,
   classifyFolder,
   JIRA_SEARCH_FIELDS,
+  jiraViewExtraFields,
   normalizeSiteHost
 } from "../../lib/format.ts";
-import { parseProjectIssueTypeNames } from "../../lib/info.ts";
+import {
+  featureTeamOptionFromIssues,
+  meDisplayNameFromIssues,
+  parseFeatureTeamFromBoardJql,
+  parseProjectIssueTypeDetails,
+  parseProjectIssueTypeNames,
+  parseProjectName,
+  statusNamesFromIssues
+} from "../../lib/info.ts";
 import { countLocalTickets } from "../../lib/local.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { failCommand, printJsonSuccess } from "../../lib/output.ts";
 import type { BoardSprint, Folder, SyncResult, SyncSummary } from "../../lib/types.ts";
+import type { CachedIssueType } from "../../lib/board-cache.ts";
 
 const JIRA_BOARD_SKILL_PATH = path.join(JIRA_BOARD_SKILL_DIR, "SKILL.md");
 
@@ -102,6 +113,33 @@ function countIssuesByFolder(
     counts[folder] += 1;
   }
   return counts;
+}
+
+/** One workitem view when search rows lack Feature Team option ids. */
+function resolveFeatureTeamOptionId(
+  issues: Array<{ key?: string; fields?: Record<string, unknown> }>,
+  fieldId: string,
+  preferredName: string
+): string {
+  const sample = issues.find((issue) => typeof issue.key === "string" && issue.key);
+  if (!sample?.key) return "";
+  try {
+    const data = viewWorkitem(sample.key, {
+      fields: fieldId || jiraViewExtraFields(),
+      acli: ACLI
+    });
+    const fields = workitemViewFields(data);
+    const option = featureTeamOptionFromIssues(
+      [{ fields }],
+      fieldId,
+      preferredName
+    );
+    return option?.id ?? "";
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    log(`feature team option lookup failed: ${msg}`);
+    return "";
+  }
 }
 
 /** Build structured sync summary. */
@@ -284,31 +322,70 @@ async function runImpl(options: CommandOptions): Promise<SyncResult> {
 
   const counts = countIssuesByFolder(issues, meAccountId);
 
+  const syncedAt = new Date().toISOString();
+
   log(`writing jira-board skill → ${JIRA_BOARD_SKILL_PATH}`);
-  writeJiraTicketsSkill(issues, JIRA_BOARD_SKILL_PATH, meAccountId);
+  writeJiraTicketsSkill(issues, JIRA_BOARD_SKILL_PATH, meAccountId, syncedAt);
 
   const project = configuredProject();
   let issueTypes: string[] = [];
+  let issueTypeDetails: CachedIssueType[] = [];
+  let projectName = "";
   if (project) {
     try {
-      issueTypes = parseProjectIssueTypeNames(listProjectIssueTypes(project, ACLI));
+      const projectView = listProjectIssueTypes(project, ACLI);
+      issueTypeDetails = parseProjectIssueTypeDetails(projectView);
+      issueTypes = parseProjectIssueTypeNames(projectView);
+      projectName = parseProjectName(projectView);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       log(`issue types fetch failed: ${msg}`);
     }
   }
 
+  const featureTeamField = CONFIG.featureTeamField.trim();
+  const featureTeamName =
+    CONFIG.featureTeam.trim() ||
+    parseFeatureTeamFromBoardJql(jql);
+  let featureTeamOptionId = CONFIG.featureTeamOptionId.trim();
+  if (featureTeamField && !featureTeamOptionId) {
+    const fromIssues = featureTeamOptionFromIssues(
+      issues,
+      featureTeamField,
+      featureTeamName
+    );
+    if (fromIssues) {
+      featureTeamOptionId = fromIssues.id;
+    } else {
+      featureTeamOptionId = resolveFeatureTeamOptionId(
+        issues,
+        featureTeamField,
+        featureTeamName
+      );
+    }
+  }
+
+  const meDisplayName =
+    CONFIG.meDisplayName.trim() ||
+    meDisplayNameFromIssues(issues, meAccountId);
+
   writeBoardInfoCache({
-    syncedAt: new Date().toISOString(),
+    syncedAt,
     boardId,
     site: siteHost,
     project,
+    projectName,
     effectiveJql,
     retainedSprints,
     counts,
     issueCount: issues.length,
     localTicketCount: countLocalTickets(),
-    issueTypes
+    issueTypes,
+    issueTypeDetails,
+    statuses: statusNamesFromIssues(issues),
+    featureTeamName,
+    featureTeamOptionId,
+    meDisplayName
   });
 
   log("done.");
