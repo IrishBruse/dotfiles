@@ -727,15 +727,15 @@ describe("board content", () => {
     assert.equal(content.sections.myTickets.statuses.todo.length, 1);
     assert.equal(content.sections.teammates.statuses.inProgress.length, 1);
     const md = formatBoardPlainText(content);
-    assert.match(md, /PROJ-1: Mine/);
-    assert.match(md, /PROJ-2: Theirs/);
+    assert.match(md, /PROJ-1  Todo         Mine/);
+    assert.match(md, /PROJ-2  In progress  Bob  Theirs/);
     assert.match(md, /^Teammates$/m);
   });
 
   it("does not include last sync time in plain-text output", () => {
     const content = buildBoardContent([], ME, "2026-07-17T12:00:00.000Z");
     const md = formatBoardPlainText(content);
-    assert.match(md, /^My tickets$/m);
+    assert.equal(md, "");
     assert.doesNotMatch(md, /Last synced:/);
   });
 
@@ -971,7 +971,7 @@ describe("writeBoardCache", () => {
       writeBoardCache(content, home);
       const md = formatBoardPlainText(content);
       assert.doesNotMatch(md, /Last synced:/);
-      assert.match(md, /PROJ-1: Alpha/);
+      assert.match(md, /PROJ-1  Todo         Alpha/);
       assert.doesNotMatch(md, /references\//);
     });
   });
@@ -1034,10 +1034,7 @@ describe("board content edge cases", () => {
   it("renders empty sections in plain-text output", () => {
     const content = buildBoardContent([], ME, "2026-07-17T12:00:00.000Z");
     const md = formatBoardPlainText(content);
-    assert.match(md, /^My tickets$/m);
-    assert.match(md, /^Unassigned$/m);
-    assert.match(md, /^Teammates$/m);
-    assert.match(md, /^Misc /m);
+    assert.equal(md, "");
     assert.match(JSON.stringify(content), /"myTickets"/);
   });
 });
@@ -1623,8 +1620,8 @@ describe("jira info", () => {
       writeBoardCache(content, home);
       const out = captureStdout(() => runInfoCommand(home));
       assert.match(out, /^cloudId: /m);
-      assert.match(out, /PROJ-1: Mine/);
-      assert.doesNotMatch(out, /PROJ-2: Theirs/);
+      assert.match(out, /PROJ-1  Todo         Mine/);
+      assert.doesNotMatch(out, /PROJ-2/);
       assert.doesNotMatch(out, /^Teammates$/m);
     });
   });
@@ -1791,8 +1788,8 @@ describe("jira board command", () => {
       const out = captureStdout(() =>
         runBoardCommand({ outputMode: "human" }, home)
       );
-      assert.match(out, /PROJ-1: Mine/);
-      assert.match(out, /PROJ-2: Theirs/);
+      assert.match(out, /PROJ-1  Todo         Mine/);
+      assert.match(out, /PROJ-2  Todo         Bob  Theirs/);
       assert.match(out, /^Teammates$/m);
     });
   });

@@ -24,13 +24,17 @@ export function boardTicketOneLine(summary: string): string {
     .trim();
 }
 
-const STATUS_HEADINGS: Record<StatusBucket, string> = {
+const STATUS_LABELS: Record<StatusBucket, string> = {
   todo: "Todo",
   inProgress: "In progress",
   codeReview: "Code review",
   inTest: "In test",
   done: "Done"
 };
+
+const STATUS_COLUMN_WIDTH = Math.max(
+  ...Object.values(STATUS_LABELS).map((label) => label.length)
+);
 
 const STATUS_ORDER: StatusBucket[] = [
   "todo",
@@ -39,6 +43,12 @@ const STATUS_ORDER: StatusBucket[] = [
   "inTest",
   "done"
 ];
+
+/** Sections where assignee is implied (me / unassigned) and omitted from lines. */
+const SECTIONS_OMIT_ASSIGNEE = new Set<keyof BoardSections>([
+  "myTickets",
+  "unassigned"
+]);
 
 function* issuesWithKeys(
   issues: Array<{ key?: string; fields?: Record<string, unknown> }>
@@ -68,17 +78,67 @@ function sortTicketsInSection(section: BoardSection): void {
   }
 }
 
-function formatStatusSubsections(section: BoardSection): string {
-  const parts: string[] = [];
+function sectionHasTickets(section: BoardSection): boolean {
+  return STATUS_ORDER.some((bucket) => section.statuses[bucket].length > 0);
+}
+
+function ticketsInOrder(section: BoardSection): Array<{
+  bucket: StatusBucket;
+  ticket: BoardTicket;
+}> {
+  const rows: Array<{ bucket: StatusBucket; ticket: BoardTicket }> = [];
   for (const bucket of STATUS_ORDER) {
-    const tickets = section.statuses[bucket];
-    if (tickets.length === 0) continue;
-    const lines = tickets.map(
-      (t) => `${t.key}: ${t.summary} (${t.assignee})`
-    );
-    parts.push(`${STATUS_HEADINGS[bucket]}\n${lines.join("\n")}`);
+    for (const ticket of section.statuses[bucket]) {
+      rows.push({ bucket, ticket });
+    }
   }
-  return parts.join("\n");
+  return rows;
+}
+
+/**
+ * One ticket per line for humans and agents:
+ *   KEY  Status  Summary
+ *   KEY  Status  Assignee  Summary   (teammates / misc)
+ * Columns are space-padded within each section so titles align.
+ */
+function padRight(value: string, width: number): string {
+  if (value.length >= width) return value;
+  return `${value}${" ".repeat(width - value.length)}`;
+}
+
+function formatTicketLine(
+  ticket: BoardTicket,
+  bucket: StatusBucket,
+  includeAssignee: boolean,
+  widths: { key: number; status: number; assignee: number }
+): string {
+  const status = padRight(STATUS_LABELS[bucket], widths.status);
+  const key = padRight(ticket.key, widths.key);
+  if (includeAssignee) {
+    const assignee = padRight(ticket.assignee, widths.assignee);
+    return `${key}  ${status}  ${assignee}  ${ticket.summary}`;
+  }
+  return `${key}  ${status}  ${ticket.summary}`;
+}
+
+function formatBoardSectionPlain(
+  section: BoardSection,
+  sectionKey: keyof BoardSections
+): string | null {
+  if (!sectionHasTickets(section)) return null;
+  const includeAssignee = !SECTIONS_OMIT_ASSIGNEE.has(sectionKey);
+  const rows = ticketsInOrder(section);
+  const widths = {
+    key: Math.max(...rows.map((r) => r.ticket.key.length)),
+    status: STATUS_COLUMN_WIDTH,
+    assignee: includeAssignee
+      ? Math.max(...rows.map((r) => r.ticket.assignee.length), 1)
+      : 0
+  };
+  const lines = rows.map(({ bucket, ticket }) =>
+    formatTicketLine(ticket, bucket, includeAssignee, widths)
+  );
+  return `${section.heading}\n${lines.join("\n")}`;
 }
 
 const SECTION_BY_FOLDER: Record<Folder, keyof BoardSections> = {
@@ -125,34 +185,31 @@ export function buildBoardContent(
   return { syncedAt, sections };
 }
 
-function formatBoardSectionPlain(section: BoardSection): string {
-  const body = formatStatusSubsections(section);
-  if (body) return `${section.heading}\n${body}`;
-  return section.heading;
-}
-
 function formatBoardSections(
   content: BoardContent,
   sectionKeys: (keyof BoardSections)[]
 ): string {
-  return sectionKeys
-    .map((key) => formatBoardSectionPlain(content.sections[key]))
-    .join("\n\n");
+  const blocks = sectionKeys
+    .map((key) => formatBoardSectionPlain(content.sections[key], key))
+    .filter((block): block is string => block != null);
+  return blocks.join("\n\n");
 }
 
 /** My tickets + unassigned only (for `jira info`). */
 export function formatBoardSummaryPlainText(content: BoardContent): string {
-  return `${formatBoardSections(content, ["myTickets", "unassigned"])}\n`;
+  const body = formatBoardSections(content, ["myTickets", "unassigned"]);
+  return body ? `${body}\n` : "";
 }
 
 /** Full board: my tickets, unassigned, teammates, misc. */
 export function formatBoardPlainText(content: BoardContent): string {
-  return `${formatBoardSections(content, [
+  const body = formatBoardSections(content, [
     "myTickets",
     "unassigned",
     "teammates",
     "misc"
-  ])}\n`;
+  ]);
+  return body ? `${body}\n` : "";
 }
 
 /** Write board.json from fetched issues. */
