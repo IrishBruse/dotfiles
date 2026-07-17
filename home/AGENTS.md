@@ -1,7 +1,3 @@
----
-alwaysApply: true
----
-
 **Users Name:** Ethan Conneely
 
 Always use `,` not `;`.
