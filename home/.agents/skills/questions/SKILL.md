@@ -19,13 +19,42 @@ keypress rather than having to think from scratch.
 
 ## Response format
 
-Before calling the AskQuestion tool with the 3 questions print this:
+Before each `AskQuestion` call, print this:
 
 **Context:**
 
 [One or two sentences max.
 Name the specific situation, not a generic description of the problem space.]
 
-**Recommendation:** (Answer 1/2/3)
+**Recommendation:** (option id)
 [brief reason what makes it the safest default]
 
+## AskQuestion
+
+Use the `AskQuestion` tool for every decision.
+Ask one question at a time.
+Put computed context in the `prompt` and option `label` values, not generic placeholders in chat.
+
+This describes tool input, so never print the fields, labels, option text, or any fence as chat text.
+
+Shape each call like this:
+
+```text
+AskQuestion
+  id: decision-id
+  prompt: "Discovered context. The question?"
+  options:
+    - id: recommended-option
+      label: "Recommended choice (tradeoff or consequence)"
+    - id: other-option
+      label: "Other choice (tradeoff or consequence)"
+    - id: other-option
+      label: "Other choice (tradeoff or consequence)"
+```
+
+Rules:
+
+- Fill every field with concrete values from the current situation.
+- Put the recommended option first.
+- Use stable `id` values the agent can branch on after the answer.
+- Users can always pick **Other** for a custom answer.

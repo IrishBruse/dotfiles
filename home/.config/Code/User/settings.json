@@ -1164,7 +1164,7 @@
   "markdownInlineEditor.colors.heading5": "#C678DD",
   "markdownInlineEditor.colors.heading6": "#C678DD",
   "markdownInlineEditor.colors.inlineCode": "#C678DD",
-  "markdownInlineEditor.colors.inlineCodeBackground": "#21252b",
+  "markdownInlineEditor.colors.inlineCodeBackground": "#21252bA0",
   //
   // File Associations
   //
