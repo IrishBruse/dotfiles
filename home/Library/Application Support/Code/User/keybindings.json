@@ -192,6 +192,11 @@
         "command": "-actions.findWithSelection"
     },
     {
+        "key": "cmd+up",
+        "command": "-chat.action.focus",
+        "when": "inChatInput && isLinux && !quickChatHasFocus || inChatInput && isWindows && !quickChatHasFocus"
+    },
+    {
         "key": "alt+right",
         "command": "-cursorWordEndRight",
         "when": "textInputFocus"
@@ -698,6 +703,11 @@
         "key": "ctrl+enter",
         "command": "-explorer.openToSide",
         "when": "explorerViewletFocus && foldersViewVisible && !inputFocus"
+    },
+    {
+        "key": "cmd+up",
+        "command": "-interactive.history.focus",
+        "when": "isCompositeNotebook && isLinux && !notebookEditorFocused || isCompositeNotebook && isWindows && !notebookEditorFocused"
     },
     {
         "key": "cmd+down",
@@ -2643,11 +2653,6 @@
         "when": "chatCursorAtTop && inChatInput && !quickChatHasFocus"
     },
     {
-        "key": "cmd+shift+up",
-        "command": "workbench.chat.action.focusLastFocused",
-        "when": "inChatInput && isLinux && !quickChatHasFocus || inChatInput && isWindows && !quickChatHasFocus"
-    },
-    {
         "key": "cmd+alt+enter",
         "command": "editor.action.replaceAll",
         "when": "editorFocus && findWidgetVisible"
@@ -4214,11 +4219,6 @@
         "when": "isMac"
     },
     {
-        "key": "capslock",
-        "command": "workbench.action.terminal.toggleTerminal",
-        "when": "isLinux"
-    },
-    {
         "key": "shift+alt+up",
         "command": "editor.action.insertCursorAbove",
         "when": "editorTextFocus"
@@ -4231,11 +4231,6 @@
     {
         "key": "cmd+t",
         "command": "workbench.action.createTerminalEditor"
-    },
-    {
-        "key": "cmd+v",
-        "command": "workbench.action.terminal.paste",
-        "when": "isLinux && terminalFocus && terminalHasBeenCreated || isLinux && terminalFocus && terminalProcessSupported"
     },
     {
         "key": "cmd+v",

@@ -153,7 +153,7 @@
     },
     {
       "key": "ctrl+v",
-      "command": "workbench.action.terminal.paste",
+      "command": "ib-utilities.terminalPaste",
       "when": "isLinux && terminalFocus && terminalHasBeenCreated || isLinux && terminalFocus && terminalProcessSupported"
     },
     {

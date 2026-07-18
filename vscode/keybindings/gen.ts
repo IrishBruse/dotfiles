@@ -77,10 +77,15 @@ function resolveKeybindForOs(b: Keybind, os: OS): Keybind {
   return resolved;
 }
 
+function isLinuxOnlyBinding(binding: Keybind): boolean {
+  return binding.when?.includes("isLinux") ?? false;
+}
+
 function resolveKeybindsForOs(bindings: Keybind[], os: OS): Keybind[] {
   return bindings
     .map((binding) => resolveKeybindForOs(binding, os))
     .filter((binding) => {
+      if (os === "macos" && isLinuxOnlyBinding(binding)) return false;
       if (os !== "linux" || !binding.command) return true;
       const cmd = binding.command.startsWith("-")
         ? binding.command.slice(1)

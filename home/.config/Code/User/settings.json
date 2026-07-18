@@ -1371,6 +1371,7 @@
     "workbench.action.createTerminalEditor",
     "workbench.action.findInFiles",
     "workbench.action.terminal.newWithProfile",
+    "ib-utilities.terminalPaste",
     "workbench.action.terminal.paste",
     "workbench.action.terminal.startVoice",
     "workbench.action.terminal.stopVoice",
