@@ -1164,7 +1164,7 @@
   "markdownInlineEditor.colors.heading5": "#C678DD",
   "markdownInlineEditor.colors.heading6": "#C678DD",
   "markdownInlineEditor.colors.inlineCode": "#C678DD",
-  "markdownInlineEditor.colors.inlineCodeBackground": "#21252b80",
+  "markdownInlineEditor.colors.inlineCodeBackground": "#21252b",
   //
   // File Associations
   //
@@ -1267,7 +1267,6 @@
   "terminal.integrated.fontFamily": "Cascadia Mono, Symbols Nerd Font Mono",
   "terminal.integrated.fontSize": 12,
   "window.title": "${folderName}",
-  "workbench.colorTheme": "Empty Dark Theme",
   "workbench.editor.empty.hint": "hidden",
   "workbench.iconTheme": "material-icon-theme",
   "workbench.productIconTheme": "material-product-icons",
@@ -1741,9 +1740,10 @@
   "search.exclude": {
     "**/.git": true
   },
-  "workbench.experimental.modernUI": true,
   "mermaidChart.showGenerateDiagramCodeLens": false,
   "mermaidChart.preCommitSync.enabled": false,
   "mermaid.vscode.maxZoom": 20,
-  "mermaid.vscode.aiExportName": false
+  "mermaid.vscode.aiExportName": false,
+  "workbench.experimental.modernUI": true,
+  "workbench.colorTheme": "Empty Dark Theme"
 }
