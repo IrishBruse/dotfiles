@@ -176,8 +176,8 @@
         "type": "generic",
         "default": [],
         "value": [
-            "mintupdate.desktop",
             "nemo.desktop",
+            "mintupdate.desktop",
             "cinnamon-settings-keyboard.desktop",
             "cinnamon-settings-startup.desktop",
             "cinnamon-settings-fonts.desktop",

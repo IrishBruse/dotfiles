@@ -93,7 +93,7 @@ cinnamon-session,6.7.3
 cinnamon-session-common,6.7.3
 cinnamon-settings-daemon,6.7.2
 circle-flags-svg,2.7.0+mint1
-cjs,115.0
+cjs,115.1+zena
 ckan,1.36.4.26132
 clang,1:18.0-59~exp2
 clang-15,1:15.0.7-14build3
@@ -103,7 +103,7 @@ cloc,1.98-1
 cmake,3.28.3-1build7
 cmake-extras,1.7-2
 cmatrix,2.0-6
-code,1.129.0-1784074987
+code,1.129.1-1784303641
 colord,1.4.7-1build2
 colord-data,1.4.7-1build2
 command-not-found,23.04.0
@@ -138,7 +138,7 @@ cups-pk-helper,0.2.6-1ubuntu8
 cups-ppdc,2.4.7-1.2ubuntu7.14
 cups-server-common,2.4.7-1.2ubuntu7.14
 curl,8.5.0-2ubuntu10.11
-cursor,3.12.10-1784174163
+cursor,3.12.17-1784259156
 dash,0.5.12-6ubuntu5
 dbus,1.14.10-4ubuntu4.1
 dbus-bin,1.14.10-4ubuntu4.1
@@ -660,7 +660,7 @@ libchromaprint1,1.5.1-5
 libcinnamon-control-center1,6.6.0+zena
 libcinnamon-desktop4,6.7.2
 libcinnamon-menu-3-0,6.6.0+zena
-libcjs0,115.0
+libcjs0,115.1+zena
 libcjson1,1.7.17-1
 libclone-perl,0.46-1build3
 libclucene-contribs1t64,2.3.3.4+dfsg-1.2ubuntu2
