@@ -1,11 +1,8 @@
 #!/usr/bin/env node
-// postToolUse hook: warn the agent about global.mdc and writing-great-skills style issues after writes.
+// postToolUse hook: warn the agent about global.mdc style issues after markdown writes.
 
 const { lint: lintProseSemicolons } = require("./style-lint/prose-semicolons");
 const { lint: lintLongLines } = require("./style-lint/long-lines");
-const { lint: lintDescriptionBlock } = require("./style-lint/description-block");
-const { lint: lintHomeRepoPaths } = require("./style-lint/home-repo-paths");
-const { lint: lintNonAscii } = require("./style-lint/non-ascii");
 const {
   noop,
   warnAgent,
@@ -14,29 +11,11 @@ const {
   readWrittenContent,
 } = require("./style-lint/io");
 
-const AGENTS_OR_CURSOR_PATH = /(?:^|\/)\.(?:cursor|agents)\//;
-
-function isSkillFile(filePath) {
-  const normalized = filePath.replace(/\\/g, "/");
-  return AGENTS_OR_CURSOR_PATH.test(normalized);
-}
-
-function runLints(content, filePath) {
-  const skill = isSkillFile(filePath);
+function runLints(content) {
   const warnings = [];
-
-  // global.mdc: all markdown
   warnings.push(...lintProseSemicolons(content));
   warnings.push(...lintLongLines(content));
-
-  // writing-great-skills: SKILL.md only
-  if (skill) {
-    warnings.push(...lintDescriptionBlock(content));
-    warnings.push(...lintHomeRepoPaths(content));
-    warnings.push(...lintNonAscii(content));
-  }
-
-  return { warnings, skill };
+  return warnings;
 }
 
 async function main() {
@@ -61,10 +40,9 @@ async function main() {
       return;
     }
 
-    const { warnings, skill } = runLints(content, filePath);
+    const warnings = runLints(content);
     if (warnings.length > 0) {
-      const source = skill ? "global.mdc, writing-great-skills" : "global.mdc";
-      warnAgent(filePath, warnings, source);
+      warnAgent(filePath, warnings, "global.mdc");
       return;
     }
 
