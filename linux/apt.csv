@@ -42,6 +42,7 @@ automake,1:1.16.5-1.3ubuntu1
 avahi-autoipd,0.8-13ubuntu6.2
 avahi-daemon,0.8-13ubuntu6.2
 avahi-utils,0.8-13ubuntu6.2
+azure-cli,2.88.0-1~noble
 baobab,46.0-1build1
 base-files,13ubuntu10mint22.3.0
 base-passwd,3.6.3build1
@@ -434,11 +435,11 @@ hunspell-en-us,1:2020.12.07-2
 hurl,6.0.0
 hwdata,0.379-1
 hyphen-en-us,2.8.8-7build3
-hypridle,0.1.7-1ppa6
-hyprland,0.55.4-1ppa2
+hypridle,0.1.7-1ppa7
+hyprland,0.55.4-1ppa5
 hyprland-qt-support0,0.1.0-1ppa4
-hyprlock,0.9.5-1ppa2
-hyprpicker,0.4.7-1ppa1
+hyprlock,0.9.6-1ppa1
+hyprpicker,0.4.7-1ppa2
 hyprpolkitagent,0.1.3-1ppa2
 i965-va-driver,2.4.1+dfsg1-1ubuntu0.2
 i965-va-driver,2.4.1+dfsg1-1ubuntu0.2
@@ -528,7 +529,8 @@ libapparmor1,4.0.1really4.0.1-0ubuntu0.24.04.7
 libapparmor1,4.0.1really4.0.1-0ubuntu0.24.04.7
 libappstream5,1.0.2-1build6
 libapt-pkg6.0t64,2.8.3
-libaquamarine11,0.12.1-1ppa1
+libaquamarine11,0.12.1-1ppa2
+libaquamarine12,0.13.0-1ppa1
 libarchive13t64,3.7.2-2ubuntu0.7
 libarchive-tools,3.7.2-2ubuntu0.7
 libargon2-1,0~20190702+dfsg-4build1
@@ -1013,7 +1015,8 @@ libhwasan0,16-20260315-1ubuntu1~24~ppa1
 libhwy1t64,1.0.7-8.1build1
 libhyphen0,2.8.8-7build3
 libhyprutils11,0.12.0-1ppa1
-libhyprwire3,0.3.1-1ppa3
+libhyprutils13,0.14.0-1ppa1
+libhyprwire3,0.3.1-1ppa4
 libibus-1.0-5,1.5.29-2
 libibus-1.0-dev,1.5.29-2
 libibverbs1,50.0-2ubuntu0.2
@@ -2357,7 +2360,7 @@ xcvt,0.1.2-1build1
 xdg-dbus-proxy,0.1.5-1ubuntu0.2
 xdg-desktop-portal,1.20.0+ds-2ubuntu1
 xdg-desktop-portal-gtk,1.15.1-1build2
-xdg-desktop-portal-hyprland,1.3.12-1ppa2
+xdg-desktop-portal-hyprland,1.4.0-1ppa1
 xdg-desktop-portal-wlr,0.7.1-1build2
 xdg-desktop-portal-xapp,1.1.3+zena
 xdg-user-dirs,0.18-1build1
