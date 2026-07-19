@@ -159,7 +159,8 @@
             "places",
             "recents",
             "emoji:",
-            "/home/econn"
+            "/home/econn",
+            "chrome-apps"
         ]
     },
     "custom-menu-width": {
@@ -176,6 +177,8 @@
         "type": "generic",
         "default": [],
         "value": [
+            "chrome-hnpfjngllnobngcgfapefoaidbinmjnm-Default.desktop",
+            "cinnamon-settings-display.desktop",
             "nemo.desktop",
             "mintupdate.desktop",
             "cinnamon-settings-keyboard.desktop",
@@ -184,8 +187,7 @@
             "org.gnome.font-viewer.desktop",
             "cinnamon-settings-windows.desktop",
             "org.gnome.DiskUtility.desktop",
-            "gnome-session-properties.desktop",
-            "cinnamon-settings-display.desktop"
+            "gnome-session-properties.desktop"
         ]
     },
     "search-start-folder": {
