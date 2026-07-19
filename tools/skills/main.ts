@@ -2,6 +2,7 @@ import process from "node:process";
 
 import { printHelp } from "./commands/help.ts";
 import { runLint } from "./commands/lint.ts";
+import { runLs } from "./commands/ls.ts";
 
 function printError(message: string): void {
   process.stderr.write(`skills: ${message}\n`);
@@ -19,6 +20,11 @@ export async function main(argv: string[]): Promise<void> {
 
   if (subcommand === "lint") {
     const code = await runLint(args.slice(1));
+    process.exit(code);
+  }
+
+  if (subcommand === "ls") {
+    const code = await runLs(args.slice(1));
     process.exit(code);
   }
 
