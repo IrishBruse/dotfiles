@@ -2034,7 +2034,6 @@
                         "ib-utilities.refreshSnippetView",
                         "ib-utilities.relativeGoTo",
                         "ib-utilities.showSnippetView",
-                        "ib-utilities.terminalPaste",
                         "iconSelectBox.focusDown",
                         "iconSelectBox.focusNext",
                         "iconSelectBox.focusPrevious",
