@@ -1292,7 +1292,8 @@
   "breadcrumbs.enabled": false,
   "settingsSync.ignoredSettings": [
     "editor.mouseWheelScrollSensitivity",
-    "update.mode"
+    "update.mode",
+    "ib-utilities.jira.baseUrl"
   ],
   "editor.bracketPairColorization.enabled": false,
   "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
@@ -1767,5 +1768,6 @@
       "icon": "eye-watch",
       "prompt": "/babysit ${repoRoot}"
     }
-  ]
+  ],
+  "ib-utilities.jira.baseUrl": "https://example.atlassian.net/"
 }
