@@ -4,9 +4,7 @@ description: Produces a full handoff summary so a fresh agent can continue the w
 disable-model-invocation: true
 ---
 
-Produce a handoff summary so a fresh agent can continue the work.
-Do not write any files.
-Your entire response must be only the handoff context in full.
+Produce a `HANDOFF.md` so a fresh agent can continue the work.
 No preamble, closing remarks, or commentary outside the handoff.
 Include a "suggested skills" section, which suggests skills the next agent should invoke.
 Do not duplicate content already captured in other artifacts (PRDs, plans, ADRs, issues, commits, diffs).
