@@ -150,7 +150,8 @@ For `update`, read [`references/update/update.md`](references/update/update.md),
    - **Done when:** each input has exactly one classification, or "uncertain" with the missing signal named.
 
 5. **Assess breakdown need**
-   - Recommend breakdown when the work has multiple actors, multiple repos, multiple measurable outcomes, multiple lifecycle phases, or more than one implementation stream.
+   - Recommend breakdown when the work has multiple actors, multiple repos, multiple measurable outcomes, multiple lifecycle phases,
+or more than one implementation stream.
    - Sizing detail in [`references/breakdown/breakdown.md`](references/breakdown/breakdown.md). Prefer 3-8 child tickets for a normal epic.
 If more than 10 are likely, recommend initiative-to-epic shaping first.
    - Separate actor-facing stories from internal tasks.
@@ -188,9 +189,11 @@ Route prompt rules:
 - Make the recommended path the first option when there is a clear recommendation.
 - Include `Search More` when duplicate risk, parentage, ownership, repo state, PR state, or delivery scope is uncertain.
 - Include `Do Nothing` unless the user explicitly asked to create or update something and the next gate is already clear.
-- When the recommendation depends on missing information, include an option to provide or search for that missing information instead of offering a Jira write as the primary path.
+- When the recommendation depends on missing information,
+include an option to provide or search for that missing information instead of offering a Jira write as the primary path.
 - When a route needs a new Jira ticket title, use `AskQuestion` before finalizing the title.
-Offer 3-5 recommended title options from the investigation context, put the strongest recommendation first, and include a custom-title option when the wording is not obvious. Do not silently invent the final ticket title.
+Offer 3-5 recommended title options from the investigation context, put the strongest recommendation first,
+and include a custom-title option when the wording is not obvious. Do not silently invent the final ticket title.
 - If the user selects a route and that route reveals another decision, use `AskQuestion` again with the new, narrower fork.
 - Omit empty report sections.
 

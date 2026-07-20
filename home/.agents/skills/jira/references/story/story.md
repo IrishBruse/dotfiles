@@ -9,7 +9,8 @@ Use [`../epic/epic.md`](../epic/epic.md) for broader outcomes under an Initiativ
 ## Workflow
 
 1.
-Collect inputs: project key, story intent, parent epic key, optional Feature Team, labels, dependencies, references, relevant repositories, and developer-facing context.
+Collect inputs: project key, story intent, parent epic key, optional Feature Team, labels, dependencies, references, relevant repositories,
+and developer-facing context.
 2. Parent epic gate. Ask once for the epic when missing. The user may say `skip`.
 3. Fetch parent when known. Confirm the parent, read summary/context, and copy Feature Team when available.
 See [`../jira-fields.md`](../jira-fields.md) for Feature Team, assignee, and create parameters.

@@ -17,7 +17,8 @@ Do not use `&lt;`, `&gt;`, `&amp;lt;`, or `&amp;gt;`.
 
 ## Human-First Elicitation
 
-Do not draft Spine, Outcomes, Extensions, Preconditions, or Key Rules until the human has supplied an initial actor and action roster and the agent supplement pass is complete.
+Do not draft Spine, Outcomes, Extensions, Preconditions,
+or Key Rules until the human has supplied an initial actor and action roster and the agent supplement pass is complete.
 
 Exception: if the human explicitly asks the agent to propose actors first, suggest only a short actor and one-line action list.
 Still do not produce full use cases until they confirm or edit that roster.
@@ -142,7 +143,8 @@ For each agreed actor/action line, draft:
 
 Use the Use Case Template in [`template.md`](template.md).
 
-Introduce the review in plain chat (no code fence): tell the user these are the use cases expanded from the agreed actor/action roster, and invite them to review together.
+Introduce the review in plain chat (no code fence): tell the user these are the use cases expanded from the agreed actor/action roster,
+and invite them to review together.
 
 ### 6. Collaborative Refinement
 

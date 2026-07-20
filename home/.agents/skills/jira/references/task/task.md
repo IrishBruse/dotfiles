@@ -2,13 +2,15 @@
 
 Use this route after `/jira task`, `/jira subtask`, or `/jira` has confirmed the work should become a new internal Task or Sub-task.
 
-Tasks and Sub-tasks are for discrete project work that is not user-facing Story work: enablement, setup, migration, documentation, security remediation, or platform plumbing.
+Tasks and Sub-tasks are for discrete project work that is not user-facing Story work: enablement, setup, migration, documentation, security remediation,
+or platform plumbing.
 Sub-tasks use the same Goal / Acceptance Criteria / Notes format as Tasks, the only difference is Jira issue type and parent handling.
 
 ## Workflow
 
 1.
-Collect inputs: project key, task intent, optional epic key, optional parent issue key for Sub-tasks, optional Feature Team, optional labels, priority, components, and references.
+Collect inputs: project key, task intent, optional epic key, optional parent issue key for Sub-tasks, optional Feature Team, optional labels, priority,
+components, and references.
 2. Clarify if vague. Read [`../clarify-vague.md`](../clarify-vague.md).
 If intent is too thin to write a clear Goal and testable AC, ask targeted questions before drafting.
 3. Parentage gate.

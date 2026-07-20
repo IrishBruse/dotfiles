@@ -11,7 +11,8 @@ Launch multiple `generalPurpose` subagents in parallel. Give each subagent one r
 
 Each specialist subagent must:
 
-- Receive the normalized user input plus relevant Jira keys, repo names, PR links, branch names, feature names, actors, suspected parent Initiative or Epic, and the specific research lane.
+- Receive the normalized user input plus relevant Jira keys, repo names, PR links, branch names, feature names, actors, suspected parent Initiative or Epic,
+and the specific research lane.
 - Return concise findings only for its lane.
 - Include source references with keys, titles, URLs, file paths, or commands used where available.
 - Report confidence, duplicate or parentage risks, ticket hygiene findings, and open questions relevant to its lane.

@@ -36,7 +36,8 @@ Do not use when:
 Do not perform any Jira write during investigation.
 7. Run the **Jira Write Approval Gate** in `SKILL.md` with the exact proposed change.
 8.
-Only when the gate is answered `Approve`, apply that exact change: summary/description by editing the local file then publishing it, other fields by the usual Jira update path (fields, transition, comment, link, ...).
+Only when the gate is answered `Approve`, apply that exact change: summary/description by editing the local file then publishing it, other fields by the usual Jira update path (fields, transition,
+comment, link, ...).
 9. Refresh the local file after writes that did not come from publishing the local file.
 10. Reply with the issue key, browse URL, fields changed, and any follow-up hygiene still recommended.
 
