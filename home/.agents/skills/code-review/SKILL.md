@@ -10,7 +10,8 @@ An unusually strict review of implementation quality, maintainability, abstracti
 
 Above all, be **ambitious** about structure.
 Do not merely identify local cleanup.
-Actively hunt for **code judo**: a restructuring that preserves behavior while making the implementation dramatically simpler, smaller, more direct, and more elegant.
+Actively hunt for **code judo**: a restructuring that preserves behavior while making the implementation dramatically simpler, smaller, more direct,
+and more elegant.
 Prefer deleting complexity over rearranging it, and prefer the solution that makes the code feel inevitable in hindsight.
 
 ## Core prompt
@@ -31,9 +32,11 @@ These are presumptive blockers unless the author justifies them clearly.
 ### Code judo (missed simplification)
 
 The headline concern.
-Look for a complicated implementation where a reframing would delete whole branches, helpers, modes, conditionals, or layers, and for refactors that move complexity around without reducing the concepts a reader must hold.
+Look for a complicated implementation where a reframing would delete whole branches, helpers, modes, conditionals, or layers,
+and for refactors that move complexity around without reducing the concepts a reader must hold.
 
-Push to reframe the state model so conditionals disappear, turn special-case logic into a simpler default flow, or change the ownership boundary so the change becomes a natural extension of an existing abstraction.
+Push to reframe the state model so conditionals disappear, turn special-case logic into a simpler default flow,
+or change the ownership boundary so the change becomes a natural extension of an existing abstraction.
 Do not accept a cleaner version of the same messy idea when a much simpler idea is plausible.
 
 ### File size
@@ -44,7 +47,8 @@ Push to extract helpers, subcomponents, or modules first. Waive only for a compe
 
 ### Spaghetti growth
 
-Look for new ad-hoc conditionals, scattered special cases, one-off booleans, nullable modes, or flags bolted into unrelated flows, and repeated conditionals that signal a missing model.
+Look for new ad-hoc conditionals, scattered special cases, one-off booleans, nullable modes, or flags bolted into unrelated flows,
+and repeated conditionals that signal a missing model.
 Also flag stored state that can be derived from source state, which invites stale-state bugs.
 
 Push the logic into a dedicated abstraction, helper, state machine, or typed dispatcher instead of tangling an existing path.
@@ -52,7 +56,8 @@ Treat "weird if statements in random places" as a design problem, not a nit.
 
 ### Magic and thin abstractions
 
-Look for brittle or "magic" behavior, generic mechanisms that hide simple data-shape assumptions, and thin wrappers, identity abstractions, or pass-through helpers that add indirection without buying clarity.
+Look for brittle or "magic" behavior, generic mechanisms that hide simple data-shape assumptions, and thin wrappers, identity abstractions,
+or pass-through helpers that add indirection without buying clarity.
 Flag a helper used in only one place that would read more directly inlined.
 
 Push for direct, boring, maintainable code. Delete wrappers that do not clarify the API.
@@ -67,19 +72,23 @@ Let unexpected errors surface instead of being swallowed.
 
 ### Comments and dead code
 
-Look for low-information comments that restate the code instead of explaining intent, edge cases, or invariants, and for dead or compatibility code: unused branches, parameters, fallback paths, or old behavior preserved without evidence it is still needed.
+Look for low-information comments that restate the code instead of explaining intent, edge cases, or invariants,
+and for dead or compatibility code: unused branches, parameters, fallback paths, or old behavior preserved without evidence it is still needed.
 
 Push to delete the comment or rewrite it to capture intent, and to remove dead paths outright rather than carrying them.
 
 ### Performance
 
-Look for blocking operations in hot paths (sync work that stalls the event loop), uncached expensive computation or lookups that could be reused safely, busy waits that poll instead of using events or backoff, string concatenation in loops, N+1 I/O where batching would cut latency, and chatty logging or telemetry inside tight loops.
+Look for blocking operations in hot paths (sync work that stalls the event loop), uncached expensive computation or lookups that could be reused safely,
+busy waits that poll instead of using events or backoff, string concatenation in loops, N+1 I/O where batching would cut latency,
+and chatty logging or telemetry inside tight loops.
 
 Push for the async, cached, batched, or event-driven form. Do not over-index on micro-optimizations that do not affect a hot path.
 
 ### Canonical layer and reuse
 
-Look for feature logic leaking into shared paths, implementation details leaking through APIs, bespoke helpers duplicating an existing canonical utility, and logic living in the wrong package or layer.
+Look for feature logic leaking into shared paths, implementation details leaking through APIs, bespoke helpers duplicating an existing canonical utility,
+and logic living in the wrong package or layer.
 
 Push code toward the module that already owns the concept and reuse the canonical helper instead of normalizing architectural drift.
 
@@ -139,6 +148,9 @@ Good phrases:
 ## Approval bar
 
 Do not approve merely because behavior seems correct.
-Approve only when none of the concerns above fire: no structural regression, no visible missed code-judo move, no unjustified file-size explosion, no spaghetti growth, no magic or thin abstraction, no wrapper/cast/optionality churn obscuring the design, no boundary leak or canonical-helper duplication, no misplaced behavior, no overgrown React component that should be extracted, no swallowed errors, no hot-path performance regression, and no dead code or low-information comments left behind.
+Approve only when none of the concerns above fire: no structural regression, no visible missed code-judo move, no unjustified file-size explosion,
+no spaghetti growth, no magic or thin abstraction, no wrapper/cast/optionality churn obscuring the design, no boundary leak or canonical-helper duplication,
+no misplaced behavior, no overgrown React component that should be extracted, no swallowed errors, no hot-path performance regression,
+and no dead code or low-information comments left behind.
 
 If any fire and the author cannot justify them, leave explicit, actionable feedback and push for a cleaner decomposition.
