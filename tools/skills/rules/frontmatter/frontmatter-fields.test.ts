@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { MAX_DESCRIPTION_LENGTH, MAX_NAME_LENGTH, lint } from "./frontmatter-fields.ts";
+import { MAX_DESCRIPTION_LENGTH, MAX_NAME_LENGTH, containsDisallowedXmlTags, lint } from "./frontmatter-fields.ts";
 
 const SKILL_PATH = "/tmp/demo/SKILL.md";
 
@@ -115,5 +115,39 @@ description:
 # Demo
 `;
     assert.deepEqual(lint(content, "/tmp/demo/reference.md"), []);
+  });
+
+  it("allows path placeholders such as test/<id> in description", () => {
+    const content = `---
+name: demo-skill
+description: Validates files under test/<id> paths. Use when the user edits path templates.
+---
+
+# Demo
+`;
+    assert.deepEqual(lint(content, SKILL_PATH), []);
+    assert.equal(containsDisallowedXmlTags("test/<id>"), false);
+    assert.equal(containsDisallowedXmlTags("jira/<type>/"), false);
+  });
+
+  it("flags real XML-like tags in description", () => {
+    const content = `---
+name: demo-skill
+description: Use <important> tags when writing summaries. Use when formatting output.
+---
+
+# Demo
+`;
+    const diagnostics = lint(content, SKILL_PATH);
+    assert.ok(
+      diagnostics.some(
+        (diagnostic) =>
+          diagnostic.code === "frontmatter-description" &&
+          diagnostic.message.includes("XML tags")
+      )
+    );
+    assert.equal(containsDisallowedXmlTags("<important>"), true);
+    assert.equal(containsDisallowedXmlTags('<note attr="x">'), true);
+    assert.equal(containsDisallowedXmlTags("</note>"), true);
   });
 });

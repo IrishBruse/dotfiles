@@ -4,6 +4,10 @@ import { displayPath } from "../../discover.ts";
 import { formatOutput, paintOutput } from "./color.ts";
 import { diagnosticSeverity, type Diagnostic } from "../core/types.ts";
 
+export function formatRuleId(code: string): string {
+  return `@skills/${code}`;
+}
+
 export function formatDiagnosticLine(diagnostic: Diagnostic): string {
   const location = paintOutput(
     "label",
@@ -14,8 +18,10 @@ export function formatDiagnosticLine(diagnostic: Diagnostic): string {
     severity === "error" ? "bad" : "warn",
     severity
   );
-  const code = paintOutput("dim", diagnostic.code);
-  return formatOutput(`  ${location} ${severityLabel} ${code}: ${diagnostic.message}`);
+  const ruleId = paintOutput("dim", formatRuleId(diagnostic.code));
+  return formatOutput(
+    `  ${location}  ${severityLabel}  ${diagnostic.message}  ${ruleId}`
+  );
 }
 
 /** One file path header plus indented diagnostics (line:col only). */
@@ -27,7 +33,7 @@ export function formatFileDiagnostics(
   return [header, ...diagnostics.map(formatDiagnosticLine)].join("\n");
 }
 
-/** Compiler-style single line (path:line:col prefix on every diagnostic). */
+/** ESLint-style single line (path:line:col, message, @rule at end). */
 export function formatDiagnostic(filePath: string, diagnostic: Diagnostic): string {
   const location = paintOutput(
     "label",
@@ -38,9 +44,9 @@ export function formatDiagnostic(filePath: string, diagnostic: Diagnostic): stri
     severity === "error" ? "bad" : "warn",
     severity
   );
-  const code = paintOutput("dim", diagnostic.code);
+  const ruleId = paintOutput("dim", formatRuleId(diagnostic.code));
   return formatOutput(
-    `${location} - ${severityLabel} ${code}: ${diagnostic.message}`
+    `${location}  ${severityLabel}  ${diagnostic.message}  ${ruleId}`
   );
 }
 

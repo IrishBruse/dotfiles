@@ -15,10 +15,11 @@ skills lint path/to/skill-folder/   # one skill tree
 skills lint path/to/SKILL.md --fix  # apply safe fixes, then report the rest
 ```
 
-Diagnostics look like a compiler:
+Diagnostics look like ESLint:
 
 ```text
-SKILL.md:12:1 - warning long-line: Line exceeds 160 characters (201).
+~/skills/demo/SKILL.md
+  12:1  warning  Line exceeds 160 characters (201).  @skills/long-line
 ```
 
 Exit code is `1` when any warning or error remains.

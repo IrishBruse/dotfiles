@@ -7,7 +7,7 @@ import { displayPath } from "../../discover.ts";
 import { formatDiagnostic, formatFileDiagnostics, formatFixedFiles } from "./format.ts";
 
 describe("formatDiagnostic", () => {
-  it("uses compiler-style location and code", () => {
+  it("uses eslint-style location, message, and @rule id", () => {
     const line = formatDiagnostic("/tmp/SKILL.md", {
       line: 8,
       column: 12,
@@ -16,8 +16,9 @@ describe("formatDiagnostic", () => {
     });
     assert.match(line, /\/tmp\/SKILL\.md:8:12/);
     assert.match(line, /warning/);
-    assert.match(line, /long-line/);
+    assert.match(line, /@skills\/long-line/);
     assert.match(line, /Line exceeds 160 characters/);
+    assert.doesNotMatch(line, /long-line:/);
   });
 
   it("shortens home paths to ~/", () => {
@@ -41,7 +42,8 @@ describe("formatDiagnostic", () => {
       severity: "error",
       message: "SKILL.md exceeds 500 lines (501).",
     });
-    assert.match(line, /error skill-length/);
+    assert.match(line, /error/);
+    assert.match(line, /@skills\/skill-length/);
   });
 });
 
@@ -64,8 +66,8 @@ describe("formatFileDiagnostics", () => {
     ]);
     assert.equal(output.split("\n").length, 3);
     assert.match(output, /^\/tmp\/SKILL\.md$/m);
-    assert.match(output, /^\s+8:12 warning long-line:/m);
-    assert.match(output, /^\s+1:1 error skill-length:/m);
+    assert.match(output, /^\s+8:12\s+warning\s+Line exceeds.*@skills\/long-line/m);
+    assert.match(output, /^\s+1:1\s+error\s+SKILL\.md exceeds.*@skills\/skill-length/m);
     assert.doesNotMatch(output, /\/tmp\/SKILL\.md:8:12/);
   });
 
@@ -81,7 +83,7 @@ describe("formatFileDiagnostics", () => {
       },
     ]);
     assert.match(output, /^~\/\.agents\/skills\/jira\/SKILL\.md$/m);
-    assert.match(output, /^\s+3:1 warning long-line:/m);
+    assert.match(output, /^\s+3:1\s+warning\s+Line exceeds.*@skills\/long-line/m);
   });
 });
 

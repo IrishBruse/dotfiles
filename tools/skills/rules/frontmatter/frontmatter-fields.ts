@@ -15,7 +15,32 @@ const VAGUE_SKILL_NAMES = new Set([
   "data",
   "files",
 ]);
-const XML_TAG = /<[^>]+>/;
+const XML_TAG = /<[^>]+>/g;
+/** Path-segment placeholders such as `<id>` in `test/<id>`. */
+const PATH_PLACEHOLDER = /^[a-z][a-z0-9_-]*$/;
+
+export function containsDisallowedXmlTags(text: string): boolean {
+  for (const match of text.matchAll(XML_TAG)) {
+    const token = match[0];
+    const index = match.index ?? 0;
+    const inner = token.slice(1, -1);
+
+    if (inner.startsWith("/")) return true;
+    if (/=/.test(inner) || inner.endsWith("/")) return true;
+
+    if (
+      PATH_PLACEHOLDER.test(inner) &&
+      index > 0 &&
+      text[index - 1] === "/"
+    ) {
+      continue;
+    }
+
+    return true;
+  }
+
+  return false;
+}
 const DESCRIPTION_SECOND_PERSON =
   /\b(I can help|I will help|You can use this|You can use)\b/i;
 
@@ -232,7 +257,7 @@ export function lint(content: string, filePath?: string): Diagnostic[] {
           "error"
         );
       }
-      if (XML_TAG.test(name)) {
+      if (containsDisallowedXmlTags(name)) {
         pushDiagnostic(
           diagnostics,
           nameLine,
@@ -321,7 +346,7 @@ export function lint(content: string, filePath?: string): Diagnostic[] {
     );
   }
 
-  if (XML_TAG.test(description)) {
+  if (containsDisallowedXmlTags(description)) {
     pushDiagnostic(
       diagnostics,
       descriptionField.line,

@@ -33,6 +33,7 @@ Options:
   -h, --help   Show help
 
 Exit code 1 when lint finds warnings or ls finds no skills. Lint diagnostics
-use compiler-style \`file:line:column - warning code: message\` on stderr.
+use ESLint-style output on stderr: file path, then indented
+\`line:col  severity  message  @skills/rule-id\` lines.
 `);
 }
