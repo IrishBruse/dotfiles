@@ -2,6 +2,7 @@
  * `jira show` -- print one issue as markdown (local `jira/` copy when present).
  */
 import fs from "node:fs";
+import path from "node:path";
 import process from "node:process";
 
 import { viewWorkitem } from "../../lib/acli-jira.ts";
@@ -13,6 +14,30 @@ import { localTicketPath } from "../../lib/local.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { failCommand, printJsonSuccess } from "../../lib/output.ts";
+
+/** Insert or replace `path:` as the first frontmatter field for show output. */
+export function injectPathIntoFrontmatter(
+  markdown: string,
+  filePath: string
+): string {
+  const pathLine = `path: ${path.resolve(filePath)}`;
+  const open = "---\n";
+  if (!markdown.startsWith(open)) {
+    return markdown;
+  }
+
+  const rest = markdown.slice(open.length);
+  const closeIdx = rest.indexOf("\n---");
+  if (closeIdx === -1) {
+    return markdown;
+  }
+
+  const fm = rest.slice(0, closeIdx);
+  const after = rest.slice(closeIdx);
+  const lines = fm.split("\n").filter((line) => !/^path:\s/.test(line));
+  const newFm = [pathLine, ...lines].join("\n");
+  return `${open}${newFm}${after}`;
+}
 
 /** Load local ticket markdown when present and remote was not requested. */
 export function readLocalShowMarkdown(
@@ -26,9 +51,11 @@ export function readLocalShowMarkdown(
   if (options.remote || options.fieldsExplicit) return null;
   const filePath = localTicketPath(key, options.cwd ?? process.cwd());
   if (!filePath) return null;
+  const resolved = path.resolve(filePath);
+  const raw = fs.readFileSync(filePath, "utf-8");
   return {
-    path: filePath,
-    markdown: fs.readFileSync(filePath, "utf-8")
+    path: resolved,
+    markdown: injectPathIntoFrontmatter(raw, resolved)
   };
 }
 

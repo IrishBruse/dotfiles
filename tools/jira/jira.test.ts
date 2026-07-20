@@ -41,7 +41,11 @@ import { runAcliPassthroughCommand } from "./commands/other/acli.ts";
 import { runInfoCommand } from "./commands/workspace/info.ts";
 import { printHelp } from "./commands/help.ts";
 import { runSearchCommand } from "./commands/read/search.ts";
-import { runShowCommand, readLocalShowMarkdown } from "./commands/read/show.ts";
+import {
+  injectPathIntoFrontmatter,
+  runShowCommand,
+  readLocalShowMarkdown
+} from "./commands/read/show.ts";
 import { runCommentCommand } from "./commands/write/comment.ts";
 import { runTransitionCommand } from "./commands/write/transition.ts";
 import { runPullCommand } from "./commands/local/pull.ts";
@@ -1675,16 +1679,54 @@ Local body.
       writeTicket(cwd, "task", "Alpha - PROJ-1.md", body);
       const prev = process.cwd();
       process.chdir(cwd);
+      const ticketPath = path.resolve(
+        process.cwd(),
+        "jira",
+        "task",
+        "Alpha - PROJ-1.md"
+      );
       try {
-        const out = captureStdout(() =>
+        const stdout = captureStdout(() =>
           runShowCommand(["node", "jira", "show", "PROJ-1"])
         );
-        assert.match(out, /Local body/);
-        assert.match(out, /title: "Alpha"/);
+        assert.match(stdout, /^---\npath: .+\n/);
+        assert.match(
+          stdout,
+          new RegExp(
+            `^---\\npath: ${ticketPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\n`
+          )
+        );
+        assert.match(stdout, /Local body/);
+        assert.match(stdout, /title: "Alpha"/);
       } finally {
         process.chdir(prev);
       }
     });
+  });
+
+  it("injectPathIntoFrontmatter adds path as the first frontmatter field", () => {
+    const markdown = `---
+title: "Alpha"
+url: https://example.atlassian.net/browse/PROJ-1
+---
+
+Body.
+`;
+    const out = injectPathIntoFrontmatter(
+      markdown,
+      "/tmp/jira/task/Alpha - PROJ-1.md"
+    );
+    assert.equal(
+      out,
+      `---
+path: /tmp/jira/task/Alpha - PROJ-1.md
+title: "Alpha"
+url: https://example.atlassian.net/browse/PROJ-1
+---
+
+Body.
+`
+    );
   });
 
   it("readLocalShowMarkdown skips local when remote or fields are set", () => {
@@ -1713,6 +1755,14 @@ Local body.
       );
       const local = readLocalShowMarkdown("PROJ-1", { cwd });
       assert.ok(local);
+      const ticketPath = path.resolve(cwd, "jira", "task", "Alpha - PROJ-1.md");
+      assert.equal(local.path, ticketPath);
+      assert.match(
+        local.markdown,
+        new RegExp(
+          `^---\\npath: ${ticketPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\n`
+        )
+      );
       assert.match(local.markdown, /Local body/);
     });
   });
