@@ -1,38 +1,66 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 
 import { MAX_LINE } from "../core/shared.ts";
-import { fix, isSimpleProseLine, wrapProse } from "./long-lines.fix.ts";
+import { fixSkillContent } from "../engine/fix.ts";
+import { lintSkillContent } from "../engine/run.ts";
+import {
+  fix,
+  isSimpleProseLine,
+  isWrappableLine,
+  wrapLinePreservingInlineCode,
+  wrapProse,
+} from "./long-lines.fix.ts";
 
-describe("isSimpleProseLine", () => {
-  it("accepts plain paragraphs and rejects block markdown", () => {
+describe("isWrappableLine", () => {
+  it("accepts plain prose and list items", () => {
     assert.equal(
-      isSimpleProseLine(
+      isWrappableLine(
         "Mechanics: omit `disable-model-invocation`, and write a model-facing description."
       ),
       true
     );
-    assert.equal(isSimpleProseLine("- List item prose."), false);
-    assert.equal(isSimpleProseLine("1. Numbered item."), false);
-    assert.equal(isSimpleProseLine("## Heading"), false);
-    assert.equal(isSimpleProseLine("> Quote"), false);
-    assert.equal(isSimpleProseLine("| table | row |"), false);
+    assert.equal(isWrappableLine("- List item prose."), true);
+    assert.equal(isWrappableLine("1. Numbered item."), true);
+    assert.equal(isWrappableLine("## Heading"), false);
+    assert.equal(isWrappableLine("> Quote"), false);
+    assert.equal(isWrappableLine("| table | row |"), false);
   });
 });
 
-describe("wrapProse", () => {
+describe("isSimpleProseLine", () => {
+  it("excludes list markers", () => {
+    assert.equal(isSimpleProseLine("- List item prose."), false);
+    assert.equal(isSimpleProseLine("1. Numbered item."), false);
+  });
+});
+
+describe("wrapLinePreservingInlineCode", () => {
   it("breaks at the last space before the line limit", () => {
     const line = `${"alpha ".repeat(20).trimEnd()} ${"beta ".repeat(20).trimEnd()}`;
     assert.ok(line.length > MAX_LINE);
 
-    const wrapped = wrapProse(line);
+    const wrapped = wrapLinePreservingInlineCode(line);
     assert.ok(wrapped.includes("\n"));
     for (const part of wrapped.split("\n")) {
       assert.ok(part.length <= MAX_LINE, `chunk too long (${part.length}): ${part}`);
     }
-    assert.equal(wrapped.split("\n").length, 2);
-    assert.ok(wrapped.startsWith("alpha "));
-    assert.ok(wrapped.includes("\nbeta "));
+  });
+
+  it("wraps across inline code spans on one line", () => {
+    const line =
+      `It contributes to **context load** - the description sits in the window every turn. ` +
+      "Mechanics: omit `disable-model-invocation`, and write a model-facing description with " +
+      'rich trigger phrasing ("Use when the user wants..., mentions...").';
+    assert.ok(line.length > MAX_LINE);
+
+    const wrapped = wrapLinePreservingInlineCode(line);
+    assert.ok(wrapped.includes("\n"));
+    assert.match(wrapped, /`disable-model-invocation`/);
+    for (const part of wrapped.split("\n")) {
+      assert.ok(part.length <= MAX_LINE, `chunk too long (${part.length}): ${part}`);
+    }
   });
 
   it("wraps a long simple paragraph under the limit per line", () => {
@@ -48,7 +76,7 @@ describe("wrapProse", () => {
 
   it("leaves a single long token unchanged", () => {
     const line = "x".repeat(MAX_LINE + 20);
-    assert.equal(wrapProse(line), line);
+    assert.equal(wrapLinePreservingInlineCode(line), line);
   });
 });
 
@@ -59,6 +87,10 @@ describe("long-lines fix", () => {
     const fixed = fix(content);
     assert.ok(fixed.includes("\n"));
     assert.match(fixed, /`c{20}`/);
+    for (const part of fixed.split("\n")) {
+      if (part === "") continue;
+      assert.ok(part.length <= MAX_LINE, `chunk too long (${part.length}): ${part}`);
+    }
   });
 
   it("skips code blocks", () => {
@@ -67,7 +99,7 @@ describe("long-lines fix", () => {
     assert.equal(fix(content), content);
   });
 
-  it("skips list items and wraps simple continuation paragraphs", () => {
+  it("wraps list items and simple continuation paragraphs", () => {
     const longListItem = `- ${"item ".repeat(40).trimEnd()} more`;
     const longParagraph = `${"plain ".repeat(40).trimEnd()} text`;
     assert.ok(longListItem.length > MAX_LINE);
@@ -76,11 +108,30 @@ describe("long-lines fix", () => {
     const content = `${longListItem}\n${longParagraph}\n`;
     const fixed = fix(content);
 
-    assert.equal(fixed.split("\n")[0], longListItem);
-    assert.ok(fixed.split("\n").length > 2);
-    for (const part of fixed.split("\n").slice(1)) {
+    assert.ok(fixed.includes("\n"));
+    assert.match(fixed, /^- item /m);
+    for (const part of fixed.split("\n")) {
       if (part === "") continue;
       assert.ok(part.length <= MAX_LINE, `chunk too long (${part.length}): ${part}`);
     }
+  });
+
+  it("fixes long lines in a real skill body with inline code", () => {
+    const path = "/home/econn/git/skills/skills/productivity/writing-great-skills/SKILL.md";
+    let content: string;
+    try {
+      content = readFileSync(path, "utf8");
+    } catch {
+      return;
+    }
+
+    const fixed = fixSkillContent(content, path);
+    assert.notEqual(fixed, content);
+    const longLines = fixed.split("\n").filter((line) => line.length > MAX_LINE);
+    assert.equal(
+      lintSkillContent(fixed, path).filter((diagnostic) => diagnostic.code === "long-line").length,
+      0
+    );
+    assert.equal(longLines.length, 0);
   });
 });

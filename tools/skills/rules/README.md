@@ -19,7 +19,8 @@ Diagnostics look like ESLint:
 
 ```text
 ~/skills/demo/SKILL.md
-  12:1  warning  Line exceeds 160 characters (201).  @skills/long-line
+  12:1     warning  Line exceeds 160 characters (201).  @skills/long-line(fixable)
+  3:14     warning  Model-invoked descriptions should include when to use the skill.  @skills/description-triggers
 ```
 
 Exit code is `1` when any warning or error remains.

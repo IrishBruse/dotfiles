@@ -5,7 +5,7 @@ import { describe, it } from "node:test";
 
 import { displayPath } from "../../discover.ts";
 import { stripAnsi } from "./color.ts";
-import { formatDiagnostic, formatFileDiagnostics, formatFixedFiles } from "./format.ts";
+import { formatDiagnostic, formatFileDiagnostics, formatFixedFiles, LOCATION_WIDTH } from "./format.ts";
 
 describe("formatDiagnostic", () => {
   it("uses eslint-style location, message, and @rule id", () => {
@@ -17,7 +17,7 @@ describe("formatDiagnostic", () => {
     });
     assert.match(line, /\/tmp\/SKILL\.md:8:12/);
     assert.match(line, /warning/);
-    assert.match(line, /@skills\/long-line/);
+    assert.match(line, /@skills\/long-line\(fixable\)/);
     assert.match(line, /Line exceeds 160 characters/);
     assert.doesNotMatch(line, /long-line:/);
   });
@@ -67,8 +67,9 @@ describe("formatFileDiagnostics", () => {
     ]);
     assert.equal(output.split("\n").length, 3);
     assert.match(output, /^\/tmp\/SKILL\.md$/m);
-    assert.match(output, /^\s+8:12\s+warning\s+Line exceeds.*@skills\/long-line/m);
-    assert.match(output, /^\s+1:1\s+error\s+SKILL\.md exceeds.*@skills\/skill-length/m);
+    assert.match(output, /^\s+8:12\s+warning\s+Line exceeds.*@skills\/long-line\(fixable\)/m);
+    assert.match(output, /^\s+1:1\s+error\s+SKILL\.md exceeds.*@skills\/skill-length$/m);
+    assert.doesNotMatch(output, /skill-length\(fixable\)/);
     assert.doesNotMatch(output, /\/tmp\/SKILL\.md:8:12/);
   });
 
@@ -107,8 +108,10 @@ describe("formatFileDiagnostics", () => {
     const ruleStarts = detailLines.map((line) => line.indexOf("@skills/"));
     assert.equal(ruleStarts.length, 2);
     assert.equal(ruleStarts[0], ruleStarts[1]);
-    assert.match(detailLines[0] ?? "", /^\s+2:15\s+warning\s+Missing semicolon\s+@skills\/prose-semicolon$/);
-    assert.match(detailLines[1] ?? "", /^\s+6:7\s+error\s+'result' is assigned/);
+    assert.equal(LOCATION_WIDTH, "999:999".length);
+    assert.match(detailLines[0] ?? "", /^\s+2:15\s{5}warning\s+Missing semicolon\s+@skills\/prose-semicolon\(fixable\)$/);
+    assert.match(detailLines[1] ?? "", /^\s+6:7\s{6}error\s+'result' is assigned.*@skills\/negation-steering$/);
+    assert.doesNotMatch(detailLines[1] ?? "", /negation-steering\(fixable\)/);
   });
 });
 

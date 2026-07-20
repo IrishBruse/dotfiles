@@ -1,18 +1,36 @@
-import { headingAnchor } from "../core/fix-shared.ts";
+import {
+  getCodeBlockLineRanges,
+  headingAnchor,
+  isLineInCodeBlock,
+} from "../core/fix-shared.ts";
 import { isSkillMd } from "../core/shared.ts";
 import { MIN_REFERENCE_LINES } from "./reference-toc.ts";
 
 const TOC_HEADING = /^#{1,6}\s+(?:contents|table of contents)\b/i;
 const LEVEL_TWO_HEADING = /^## (.+)$/;
 
-function hasContentsHeading(lines: string[]): boolean {
-  return lines.slice(0, 30).some((line) => TOC_HEADING.test(line.trim()));
+function hasContentsHeading(
+  lines: string[],
+  codeBlockRanges: Array<{ start: number; end: number }>
+): boolean {
+  return lines
+    .slice(0, 30)
+    .some(
+      (line, index) =>
+        !isLineInCodeBlock(index, codeBlockRanges) &&
+        TOC_HEADING.test(line.trim())
+    );
 }
 
-function collectSectionHeadings(lines: string[]): string[] {
+function collectSectionHeadings(
+  lines: string[],
+  codeBlockRanges: Array<{ start: number; end: number }>
+): string[] {
   const headings: string[] = [];
 
-  for (const line of lines) {
+  for (let index = 0; index < lines.length; index++) {
+    if (isLineInCodeBlock(index, codeBlockRanges)) continue;
+    const line = lines[index] ?? "";
     const match = LEVEL_TWO_HEADING.exec(line);
     if (!match) continue;
     const title = match[1]?.trim() ?? "";
@@ -28,12 +46,17 @@ export function fix(content: string, filePath?: string): string {
 
   const lines = content.split("\n");
   if (lines.length <= MIN_REFERENCE_LINES) return content;
-  if (hasContentsHeading(lines)) return content;
 
-  const firstSectionIndex = lines.findIndex((line) => /^## /.test(line));
+  const codeBlockRanges = getCodeBlockLineRanges(content);
+  if (hasContentsHeading(lines, codeBlockRanges)) return content;
+
+  const firstSectionIndex = lines.findIndex(
+    (line, index) =>
+      !isLineInCodeBlock(index, codeBlockRanges) && /^## /.test(line)
+  );
   if (firstSectionIndex === -1) return content;
 
-  const headings = collectSectionHeadings(lines);
+  const headings = collectSectionHeadings(lines, codeBlockRanges);
   if (headings.length === 0) return content;
 
   const tocLines = [

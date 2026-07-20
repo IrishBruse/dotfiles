@@ -34,6 +34,7 @@ Options:
 
 Exit code 1 when lint finds warnings or ls finds no skills. Lint diagnostics
 use ESLint-style output on stderr: file path, then indented
-\`line:col  severity  message  @skills/rule-id\` lines.
+\`line:col  severity  message  @skills/rule-id\` lines. Auto-fixable rules
+append \`(fixable)\` to the rule id.
 `);
 }

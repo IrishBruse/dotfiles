@@ -40,6 +40,10 @@ Rules that need other files in the skill receive a `LintContext` built by
 Fixers must be idempotent: running `--fix` twice should not keep changing
 the file.
 
+Line-based fixers use `mapDocumentLines` in [core/fix-shared.ts](../core/fix-shared.ts),
+which skips every line inside fenced ` ``` ` code blocks. Structural fixers
+such as `reference-toc.fix` use `getCodeBlockLineRanges` for the same rule.
+
 ## Registering a rule
 
 1. Import `lint` in `run.ts` and spread its diagnostics into the result.

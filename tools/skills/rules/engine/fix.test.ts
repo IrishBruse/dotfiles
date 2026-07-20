@@ -23,14 +23,15 @@ First idea; second idea. Use an em dash — here.
     );
   });
 
-  it("wraps long prose lines after sentence boundaries", () => {
+  it("wraps long prose lines at word boundaries", () => {
     const partA = "This is the first sentence.";
     const partB = "This is the second sentence.";
     const filler = "word ".repeat(30).trim();
     const content = `${partA} ${filler} ${partB} ${filler}\n`;
     const fixed = fixSkillContent(content);
     assert.ok(fixed.includes("\n"));
-    assert.match(fixed, /This is the first sentence\.\n/);
+    assert.match(fixed, /This is the first sentence\./);
+    assert.match(fixed, /This is the second sentence\./);
   });
 
   it("fixes frontmatter orphans, nested references, and reference toc", () => {
@@ -54,5 +55,31 @@ ${body}
     assert.match(fixed, /`child\.md`/);
     assert.match(fixed, /## Contents/);
     assert.deepEqual(lintSkillContent(fixed, "/tmp/demo/reference.md"), []);
+  });
+
+  it("never auto-fixes inside fenced code blocks", () => {
+    const long = "word ".repeat(50).trim();
+    const body = Array.from({ length: 100 }, () => "detail").join("\n");
+    const content = `---
+name: demo-skill
+description: Test. Use when testing fixes.
+---
+
+\`\`\`markdown
+## Heading Inside Code
+idea; second — ${long}
+\`\`\`
+
+## Real Section
+
+${body}
+`;
+    const fixed = fixSkillContent(content, "/tmp/demo/reference.md");
+    const fenced = fixed.match(/```markdown\n([\s\S]*?)\n```/)?.[1] ?? "";
+    assert.match(fenced, /idea; second —/);
+    assert.doesNotMatch(fenced, /## Contents/);
+    assert.doesNotMatch(fenced, /idea, second/);
+    assert.match(fixed, /## Contents[\s\S]*Real Section/);
+    assert.doesNotMatch(fixed, /Heading Inside Code\]\(#heading-inside-code\)/);
   });
 });

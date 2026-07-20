@@ -12,9 +12,10 @@ for an agent to follow.
 Keep prose lines at or under 160 characters.
 
 Long lines are hard to review in diffs and in narrow terminals.
-URL-only lines and table rows are allowed. `--fix` wraps simple prose
-paragraphs at the nearest space before 160 characters. List items,
-headings, blockquotes, and other block markdown are left unchanged.
+URL-only lines and table rows are allowed. `--fix` wraps prose paragraphs
+and list items at the nearest space before 160 characters, including lines
+with inline `` `code` `` spans. Headings, blockquotes, and other block
+markdown are left unchanged.
 
 ### Incorrect
 

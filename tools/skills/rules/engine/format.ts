@@ -2,11 +2,16 @@ import process from "node:process";
 
 import { displayPath } from "../../discover.ts";
 import { formatOutput, paintOutput, stripAnsi } from "./color.ts";
+import { isFixableRule } from "./fixable.ts";
 import { diagnosticSeverity, type Diagnostic } from "../core/types.ts";
 
 export function formatRuleId(code: string): string {
-  return `@skills/${code}`;
+  const suffix = isFixableRule(code) ? "(fixable)" : "";
+  return `@skills/${code}${suffix}`;
 }
+
+/** Fixed width for line:column (fits 999:999). */
+export const LOCATION_WIDTH = "999:999".length;
 
 function padVisible(
   text: string,
@@ -34,14 +39,13 @@ function formatAlignedDiagnosticLines(diagnostics: Diagnostic[]): string[] {
     ruleId: formatRuleId(diagnostic.code),
   }));
 
-  const locationWidth = Math.max(...rows.map((row) => row.location.length));
   const severityWidth = Math.max(...rows.map((row) => row.severity.length));
   const messageWidth = Math.max(...rows.map((row) => row.message.length));
 
   return rows.map((row) => {
     const location = paintOutput(
       "label",
-      padVisible(row.location, locationWidth, "left")
+      padVisible(row.location, LOCATION_WIDTH, "left")
     );
     const severity = paintOutput(
       row.severityRole,
