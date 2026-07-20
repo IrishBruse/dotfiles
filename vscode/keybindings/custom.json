@@ -153,6 +153,11 @@
     },
     {
       "key": "ctrl+v",
+      "command": "ib-utilities.terminalPaste",
+      "when": "terminalFocus"
+    },
+    {
+      "key": "ctrl+v",
       "command": "execPaste",
       "when": "isMac && activeEditor == 'workbench.editor.browser'"
     },
