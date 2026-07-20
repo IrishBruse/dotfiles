@@ -1777,6 +1777,14 @@
       "type": "agent",
       "icon": "eye-watch",
       "prompt": "/babysit ${repoRoot}"
+    },
+    {
+      "id": "jiraBoard",
+      "label": "Jira Board",
+      "type": "terminal",
+      "icon": "notebook",
+      "command": "jira board",
+      "terminalMode": "editor"
     }
   ]
 }
