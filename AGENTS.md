@@ -5,8 +5,6 @@
 Files here mirror `~` and are manually stowed by the user. You can assume that any path in this will be mirrored to its `~/` equivalent.
 
 In docs and tool code, use the **runtime** path under `~/`, not the repo path under `home/`.
-Example: `~/.config/jira/board.json`, not `home/.config/jira/board.json` or `dotfiles/home/.config/...`.
-Tools should resolve these with `homedir()` from `node:os`, not relative paths from `tools/` into the dotfiles tree.
 
 ### home/.config/Code/User/settings.json
 
