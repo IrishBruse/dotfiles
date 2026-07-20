@@ -1403,7 +1403,7 @@
   ],
   "scm.countBadge": "focused",
   "scm.defaultViewMode": "tree",
-  "scm.diffDecorations": "none",
+  "scm.diffDecorations": "minimap",
   "scm.diffDecorationsGutterAction": "none",
   "scm.diffDecorationsGutterVisibility": "hover",
   "scm.diffDecorationsGutterWidth": 1,
@@ -1731,9 +1731,7 @@
     {
       "name": "Cursor",
       "command": "/Users/econneely/.local/bin/agent",
-      "args": [
-        "acp"
-      ]
+      "args": ["acp"]
     }
   ],
   "ib-acp-ui.toolCallVerbosity": "compact",
