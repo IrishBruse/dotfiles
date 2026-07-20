@@ -1,7 +1,7 @@
 ---
 name: code-review
-description: Runs an extremely strict maintainability review for abstraction quality, giant files, and spaghetti conditions.
-Use for a thermo-nuclear or especially harsh code-quality review.
+description: 'Runs an extremely strict maintainability review for abstraction quality, giant files, and spaghetti conditions.
+  Use when the user wants a thermo-nuclear or especially harsh code-quality review.'
 ---
 
 # Thermo-Nuclear Code Quality Review
@@ -64,7 +64,8 @@ Push for direct, boring, maintainable code. Delete wrappers that do not clarify 
 
 ### Type and boundary cleanliness
 
-Look for unnecessary optionality, `unknown`, `any`, or cast-heavy code, nullable values that proliferate defensive checks, and silent fallbacks that paper over an unclear invariant.
+Look for unnecessary optionality, `unknown`, `any`, or cast-heavy code, nullable values that proliferate defensive checks,
+and silent fallbacks that paper over an unclear invariant.
 Flag catch-all `try`/`catch` blocks that swallow errors without naming which exceptions are expected.
 
 Push for explicit typed models or shared contracts so the control flow gets simpler, and make the invariant explicit at the boundary.
