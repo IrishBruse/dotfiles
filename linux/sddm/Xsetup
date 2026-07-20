@@ -2,33 +2,66 @@
 # Xsetup - run as root before the SDDM login dialog appears.
 # Keep the greeter on the main display only, turn other outputs off.
 
-if [ -e /sbin/prime-offload ]; then
-    /sbin/prime-offload
-fi
+LOG=/var/log/sddm-xsetup.log
+{
+    echo "=== $(date -Is) Xsetup start ==="
+    echo "DISPLAY=${DISPLAY:-unset}"
 
-# Matches primary in ~/.config/cinnamon-monitors.xml
-PRIMARY_OUTPUT="DP-1"
-
-connected_outputs() {
-    xrandr | awk '/ connected / { print $1 }'
-}
-
-primary_is_connected() {
-    connected_outputs | grep -qx "$PRIMARY_OUTPUT"
-}
-
-if ! primary_is_connected; then
-    PRIMARY_OUTPUT="$(connected_outputs | head -n 1)"
-fi
-
-if [ -z "$PRIMARY_OUTPUT" ]; then
-    exit 0
-fi
-
-for output in $(connected_outputs); do
-    if [ "$output" != "$PRIMARY_OUTPUT" ]; then
-        xrandr --output "$output" --off
+    if [ -e /sbin/prime-offload ]; then
+        /sbin/prime-offload
     fi
-done
 
-xrandr --output "$PRIMARY_OUTPUT" --primary --auto --pos 0x0
+    MONITORS_XML="/home/econn/.config/cinnamon-monitors.xml"
+    PRIMARY_OUTPUT="DP-1"
+
+    if [ -f "$MONITORS_XML" ]; then
+        detected="$(grep -B5 '<primary>yes</primary>' "$MONITORS_XML" \
+            | grep '<connector>' \
+            | head -1 \
+            | sed 's/.*<connector>\([^<]*\)<\/connector>.*/\1/')"
+        if [ -n "$detected" ]; then
+            PRIMARY_OUTPUT="$detected"
+        fi
+    fi
+
+    connected_outputs() {
+        xrandr | awk '/ connected / { print $1 }'
+    }
+
+    echo "Target primary: $PRIMARY_OUTPUT"
+    echo "Connected before:"
+    xrandr --query || true
+
+    if ! connected_outputs | grep -qx "$PRIMARY_OUTPUT"; then
+        PRIMARY_OUTPUT="$(connected_outputs | head -n 1)"
+        echo "Fallback primary: ${PRIMARY_OUTPUT:-none}"
+    fi
+
+    if [ -z "$PRIMARY_OUTPUT" ]; then
+        echo "No connected outputs"
+        exit 0
+    fi
+
+    # Apply all layout changes in one xrandr call so secondary outputs stay off.
+    xrandr_args=(--output "$PRIMARY_OUTPUT" --auto --primary --pos 0x0)
+    for output in $(connected_outputs); do
+        if [ "$output" != "$PRIMARY_OUTPUT" ]; then
+            xrandr_args+=(--output "$output" --off)
+        fi
+    done
+
+    echo "Running: xrandr ${xrandr_args[*]}"
+    if ! xrandr "${xrandr_args[@]}"; then
+        echo "Atomic xrandr failed, retrying sequentially"
+        xrandr --output "$PRIMARY_OUTPUT" --auto --primary --pos 0x0 || true
+        for output in $(connected_outputs); do
+            if [ "$output" != "$PRIMARY_OUTPUT" ]; then
+                xrandr --output "$output" --off || true
+            fi
+        done
+    fi
+
+    echo "Connected after:"
+    xrandr --query || true
+    echo "=== Xsetup done ==="
+} >>"$LOG" 2>&1
