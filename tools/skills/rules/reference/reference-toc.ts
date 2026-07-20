@@ -7,6 +7,7 @@ export const MIN_REFERENCE_LINES = 100;
 const TOC_HEADING =
   /^#{1,6}\s+(?:contents|table of contents)\b/i;
 
+/** @skills/reference-toc */
 export function lint(content: string, filePath?: string): Diagnostic[] {
   if (filePath === undefined || isSkillMd(filePath)) return [];
 

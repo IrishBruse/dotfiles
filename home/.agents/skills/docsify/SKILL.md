@@ -2,6 +2,7 @@
 name: docsify
 description: 'Docsify site files and markdown extensions (`_sidebar.md`, `_navbar.md`, `_coverpage.md`, docsify-cli). Use when the user mentions docsify or
   docsify-cli, or is editing those docsify site files.'
+argument-hint: "[test] <test>"
 ---
 
 # Docsify

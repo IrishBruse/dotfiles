@@ -149,6 +149,10 @@ function shouldRewrite(lines: string[], start: number, end: number): boolean {
   return false;
 }
 
+/**
+ * @skills/frontmatter-description
+ * @skills/frontmatter-orphan
+ */
 export function fix(content: string): string {
   const match = /^---\n([\s\S]*?)\n---/.exec(content);
   if (!match) return content;

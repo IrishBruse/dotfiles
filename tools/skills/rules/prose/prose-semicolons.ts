@@ -3,6 +3,7 @@ import type { Diagnostic } from "../core/types.ts";
 
 const PROSE_SEMICOLON = /[a-zA-Z][\w'']*;\s+[a-z]/g;
 
+/** @skills/prose-semicolon */
 export function lint(content: string): Diagnostic[] {
   const diagnostics: Diagnostic[] = [];
 

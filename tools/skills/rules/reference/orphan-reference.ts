@@ -29,6 +29,7 @@ function collectReferencesFromFile(
   }
 }
 
+/** @skills/orphan-reference */
 export function lint(
   content: string,
   filePathOrContext?: string | LintContext

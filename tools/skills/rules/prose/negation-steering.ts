@@ -6,6 +6,7 @@ const NEGATION_START = /^(?:-\s*)?(?:Do not|Don't|Never)\b/i;
 const POSITIVE_STEERING =
   /\b(?:Use|Prefer|Instead|→|—>|->)\b|,\s*(?:use|prefer)\b/i;
 
+/** @skills/negation-steering */
 export function lint(
   content: string,
   filePathOrContext?: string | LintContext

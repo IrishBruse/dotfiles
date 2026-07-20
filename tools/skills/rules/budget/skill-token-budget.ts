@@ -5,6 +5,7 @@ import type { Diagnostic } from "../core/types.ts";
 export const MAX_SKILL_TOKENS = 5000;
 const CHARS_PER_TOKEN = 4;
 
+/** @skills/skill-token-budget */
 export function lint(
   content: string,
   filePathOrContext?: string | LintContext

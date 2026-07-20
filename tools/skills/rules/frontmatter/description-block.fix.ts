@@ -33,6 +33,7 @@ function literalBlock(lines: string[]): string {
     .trim();
 }
 
+/** @skills/description-block */
 export function fix(content: string): string {
   const match = /^---\n([\s\S]*?)\n---/.exec(content);
   if (!match) return content;

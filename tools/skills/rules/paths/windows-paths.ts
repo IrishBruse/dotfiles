@@ -3,6 +3,7 @@ import type { Diagnostic } from "../core/types.ts";
 
 const WINDOWS_PATH = /\b[\w.-]+(?:\\[\w.-]+)+\b/g;
 
+/** @skills/windows-path */
 export function lint(content: string): Diagnostic[] {
   const diagnostics: Diagnostic[] = [];
 

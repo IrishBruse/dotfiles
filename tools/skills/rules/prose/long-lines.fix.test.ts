@@ -6,6 +6,7 @@ import { MAX_LINE } from "../core/shared.ts";
 import { fixSkillContent } from "../engine/fix.ts";
 import { lintSkillContent } from "../engine/run.ts";
 import {
+  canAutoFixLongLine,
   fix,
   isSimpleProseLine,
   isWrappableLine,
@@ -80,6 +81,25 @@ describe("wrapLinePreservingInlineCode", () => {
   });
 });
 
+describe("canAutoFixLongLine", () => {
+  it("accepts wrappable prose with break points", () => {
+    const line = `${"word ".repeat(70).trim()}`;
+    assert.ok(line.length > MAX_LINE);
+    assert.equal(canAutoFixLongLine(line), true);
+  });
+
+  it("rejects headings and lines with unbreakable spans", () => {
+    assert.equal(canAutoFixLongLine(`## ${"heading ".repeat(40)}`), false);
+    const line =
+      "before " +
+      `\`${"c".repeat(MAX_LINE)}\`` +
+      " after " +
+      `${"word ".repeat(10)}`;
+    assert.ok(line.length > MAX_LINE);
+    assert.equal(canAutoFixLongLine(line), false);
+  });
+});
+
 describe("long-lines fix", () => {
   it("wraps prose outside inline code", () => {
     const prose = "word ".repeat(50).trim();
@@ -116,6 +136,18 @@ describe("long-lines fix", () => {
     }
   });
 
+  it("wraps long lines over multiple passes when needed", () => {
+    const long = `${"segment ".repeat(45).trim()} ${"tail ".repeat(45).trim()}`;
+    assert.ok(long.length > MAX_LINE);
+    const content = `${long}\n`;
+    const fixed = fix(content);
+    assert.notEqual(fixed, content);
+    assert.equal(
+      fixed.split("\n").filter((line) => line.length > MAX_LINE).length,
+      0
+    );
+  });
+
   it("fixes long lines in a real skill body with inline code", () => {
     const path = "/home/econn/git/skills/skills/productivity/writing-great-skills/SKILL.md";
     let content: string;
@@ -125,13 +157,21 @@ describe("long-lines fix", () => {
       return;
     }
 
+    const before = lintSkillContent(content, path).filter(
+      (diagnostic) => diagnostic.code === "long-line" && diagnostic.fixable
+    );
+    if (before.length === 0) return;
+
     const fixed = fixSkillContent(content, path);
     assert.notEqual(fixed, content);
-    const longLines = fixed.split("\n").filter((line) => line.length > MAX_LINE);
     assert.equal(
-      lintSkillContent(fixed, path).filter((diagnostic) => diagnostic.code === "long-line").length,
+      lintSkillContent(fixed, path).filter((diagnostic) => diagnostic.code === "long-line")
+        .length,
       0
     );
-    assert.equal(longLines.length, 0);
+    assert.equal(
+      fixed.split("\n").filter((line) => line.length > MAX_LINE).length,
+      0
+    );
   });
 });

@@ -1,6 +1,8 @@
 import { MAX_LINE } from "../core/shared.ts";
 import type { Diagnostic } from "../core/types.ts";
+import { canAutoFixLongLine } from "./long-lines.fix.ts";
 
+/** @skills/long-line */
 export function lint(content: string): Diagnostic[] {
   const lines = content.split("\n");
   const diagnostics: Diagnostic[] = [];
@@ -22,6 +24,7 @@ export function lint(content: string): Diagnostic[] {
       column: 1,
       code: "long-line",
       message: `Line exceeds ${MAX_LINE} characters (${line.length}). Wrap or split into shorter lines.`,
+      fixable: canAutoFixLongLine(line),
     });
     if (diagnostics.length >= 3) break;
   }

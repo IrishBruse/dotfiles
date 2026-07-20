@@ -3,6 +3,7 @@ import type { Diagnostic } from "../core/types.ts";
 
 const DESCRIPTION_BLOCK_SCALAR = /^description:\s*[>|][-+]?(?:\s|$)/m;
 
+/** @skills/description-block */
 export function lint(content: string): Diagnostic[] {
   const frontmatter = extractFrontmatter(content);
   if (!frontmatter || !DESCRIPTION_BLOCK_SCALAR.test(frontmatter)) return [];

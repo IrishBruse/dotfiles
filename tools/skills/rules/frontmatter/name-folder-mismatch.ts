@@ -5,6 +5,7 @@ import { filePathFromContext, type LintContext } from "../core/context.ts";
 import { extractFrontmatter, isSkillMd } from "../core/shared.ts";
 import type { Diagnostic } from "../core/types.ts";
 
+/** @skills/name-folder-mismatch */
 export function lint(
   content: string,
   filePathOrContext?: string | LintContext

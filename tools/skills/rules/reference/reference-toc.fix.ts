@@ -41,6 +41,7 @@ function collectSectionHeadings(
   return headings;
 }
 
+/** @skills/reference-toc */
 export function fix(content: string, filePath?: string): string {
   if (filePath === undefined || isSkillMd(filePath)) return content;
 

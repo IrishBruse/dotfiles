@@ -10,6 +10,7 @@ function isSkillMarkdownTarget(target: string): boolean {
   return path.basename(normalized) === "SKILL.md";
 }
 
+/** @skills/nested-reference */
 export function lint(content: string, filePath?: string): Diagnostic[] {
   if (filePath === undefined || isSkillMd(filePath)) return [];
 

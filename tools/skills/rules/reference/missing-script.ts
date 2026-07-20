@@ -28,6 +28,7 @@ function checkScriptPath(
   });
 }
 
+/** @skills/missing-script */
 export function lint(
   content: string,
   filePathOrContext?: string | LintContext

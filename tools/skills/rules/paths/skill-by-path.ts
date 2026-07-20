@@ -4,6 +4,7 @@ import type { Diagnostic } from "../core/types.ts";
 const SKILL_BY_PATH =
   /(?:~\/\.(?:agents|cursor)\/skills\/[A-Za-z0-9._-]+(?:\/SKILL\.md)?|\.(?:agents|cursor)\/skills\/[A-Za-z0-9._-]+(?:\/SKILL\.md)?)/g;
 
+/** @skills/skill-by-path */
 export function lint(content: string): Diagnostic[] {
   const diagnostics: Diagnostic[] = [];
 

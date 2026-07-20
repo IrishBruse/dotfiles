@@ -197,6 +197,14 @@ function lintOrphanFrontmatterLines(frontmatter: string): Diagnostic[] {
   return diagnostics;
 }
 
+/**
+ * @skills/description-triggers
+ * @skills/description-voice
+ * @skills/frontmatter-description
+ * @skills/frontmatter-name
+ * @skills/frontmatter-orphan
+ * @skills/vague-skill-name
+ */
 export function lint(content: string, filePath?: string): Diagnostic[] {
   if (!isSkillMd(filePath)) return [];
 

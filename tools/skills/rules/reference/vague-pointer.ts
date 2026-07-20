@@ -9,6 +9,7 @@ const VAGUE_FOR_MORE =
 const CONDITIONAL = /\b(?:if|when|on)\b/i;
 const SPECIFIC_REFERENCE_LINK = /\[[^\]]+\]\(references\/[^)]+\.md/i;
 
+/** @skills/vague-pointer */
 export function lint(
   content: string,
   filePathOrContext?: string | LintContext

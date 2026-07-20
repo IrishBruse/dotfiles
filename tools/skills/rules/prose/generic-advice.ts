@@ -15,6 +15,7 @@ const PATTERNS: Array<{ pattern: RegExp; label: string }> = [
   { pattern: /\bmake sure to\b/i, label: "make sure to" },
 ];
 
+/** @skills/generic-advice */
 export function lint(content: string): Diagnostic[] {
   const diagnostics: Diagnostic[] = [];
 

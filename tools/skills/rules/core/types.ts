@@ -6,6 +6,8 @@ export interface Diagnostic {
   code: string;
   message: string;
   severity?: DiagnosticSeverity;
+  /** When set, overrides rule-level auto-fix registration for this diagnostic. */
+  fixable?: boolean;
 }
 
 export function diagnosticSeverity(

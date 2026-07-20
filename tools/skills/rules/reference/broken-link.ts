@@ -16,6 +16,7 @@ function stripInlineCode(text: string): string {
   return text.replace(/`[^`\n]+`/g, "");
 }
 
+/** @skills/broken-link */
 export function lint(
   content: string,
   filePathOrContext?: string | LintContext

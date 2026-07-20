@@ -10,6 +10,7 @@ import {
   resolveLintScopes,
 } from "../rules/engine/discover.ts";
 import { fixSkillContent } from "../rules/engine/fix.ts";
+import { isFixableDiagnostic } from "../rules/engine/fixable.ts";
 import { printFileDiagnostics, printFixedFiles, printSummary } from "../rules/engine/format.ts";
 import { lintSkillContent } from "../rules/engine/run.ts";
 import { diagnosticSeverity, type Diagnostic } from "../rules/core/types.ts";
@@ -57,6 +58,7 @@ export async function runLint(argv: string[]): Promise<number> {
 
   let warningCount = 0;
   let errorCount = 0;
+  let fixableCount = 0;
   let filesWithIssues = 0;
   let filesChecked = 0;
   const fixedFiles: string[] = [];
@@ -110,6 +112,9 @@ export async function runLint(argv: string[]): Promise<number> {
 
     filesWithIssues++;
     for (const diagnostic of diagnostics) {
+      if (isFixableDiagnostic(diagnostic)) {
+        fixableCount++;
+      }
       if (diagnosticSeverity(diagnostic) === "error") {
         errorCount++;
       } else {
@@ -119,7 +124,7 @@ export async function runLint(argv: string[]): Promise<number> {
     printFileDiagnostics(filePath, diagnostics);
   }
 
-  printSummary(warningCount, errorCount, filesWithIssues, filesChecked);
+  printSummary(warningCount, errorCount, fixableCount, filesWithIssues, filesChecked);
   printFixedFiles(fixedFiles);
 
   return warningCount > 0 || errorCount > 0 ? 1 : 0;

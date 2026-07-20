@@ -21,4 +21,13 @@ describe("long-lines lint", () => {
     const content = `See https://${"a".repeat(MAX_LINE)}.example\n`;
     assert.deepEqual(lint(content), []);
   });
+
+  it("marks only auto-wrappable lines as fixable", () => {
+    const wrappable = `${"word ".repeat(70).trim()}\n`;
+    const heading = `## ${"heading ".repeat(40)}\n`;
+    const diagnostics = lint(`${wrappable}${heading}`);
+    assert.equal(diagnostics.length, 2);
+    assert.equal(diagnostics[0]?.fixable, true);
+    assert.equal(diagnostics[1]?.fixable, false);
+  });
 });

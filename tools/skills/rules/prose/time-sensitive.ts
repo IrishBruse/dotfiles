@@ -4,6 +4,7 @@ import type { Diagnostic } from "../core/types.ts";
 const TIME_SENSITIVE =
   /\b(?:before|after|until)\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}\b/i;
 
+/** @skills/time-sensitive */
 export function lint(content: string): Diagnostic[] {
   const diagnostics: Diagnostic[] = [];
 

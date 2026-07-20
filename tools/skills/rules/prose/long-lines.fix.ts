@@ -1,5 +1,5 @@
 import { MAX_LINE } from "../core/shared.ts";
-import { mapDocumentLines } from "../core/fix-shared.ts";
+import { isCodeFenceLine } from "../core/fix-shared.ts";
 
 type LineToken =
   | { kind: "prose"; text: string }
@@ -182,17 +182,63 @@ function wrapLine(line: string): string {
   });
 }
 
-export function fix(content: string): string {
-  return mapDocumentLines(content, (rawLine, _lineNumber, inCodeBlock) => {
-    if (inCodeBlock) return rawLine;
-    if (
-      rawLine.length <= MAX_LINE ||
-      rawLine.includes("://") ||
-      /^\s*\|/.test(rawLine) ||
-      !isWrappableLine(rawLine)
-    ) {
-      return rawLine;
+function shouldSkipLongLine(line: string): boolean {
+  return (
+    line.length <= MAX_LINE ||
+    line.includes("://") ||
+    /^\s*\|/.test(line) ||
+    !isWrappableLine(line)
+  );
+}
+
+function fixLongLine(line: string): string {
+  if (shouldSkipLongLine(line)) {
+    return line;
+  }
+  return wrapLine(line);
+}
+
+export function canAutoFixLongLine(line: string): boolean {
+  if (shouldSkipLongLine(line)) {
+    return false;
+  }
+  const fixed = fixLongLine(line);
+  if (fixed === line) {
+    return false;
+  }
+  return fixed.split("\n").every((part) => part.length <= MAX_LINE);
+}
+
+function fixLongLinesOnce(content: string): string {
+  const lines = content.split("\n");
+  let inCodeBlock = false;
+  const out: string[] = [];
+
+  for (const rawLine of lines) {
+    if (isCodeFenceLine(rawLine)) {
+      inCodeBlock = !inCodeBlock;
+      out.push(rawLine);
+      continue;
     }
-    return wrapLine(rawLine);
-  });
+    if (inCodeBlock) {
+      out.push(rawLine);
+      continue;
+    }
+    out.push(...fixLongLine(rawLine).split("\n"));
+  }
+
+  return out.join("\n");
+}
+
+/** @skills/long-line */
+export function fix(content: string): string {
+  let result = content;
+  for (let pass = 0; pass < 20; pass++) {
+    const next = fixLongLinesOnce(result);
+    if (next === result) {
+      break;
+    }
+    result = next;
+  }
+  return result;
 }

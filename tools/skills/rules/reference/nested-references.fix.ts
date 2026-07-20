@@ -19,6 +19,7 @@ function fixNestedReferenceLinks(text: string): string {
   });
 }
 
+/** @skills/nested-reference */
 export function fix(content: string, filePath?: string): string {
   if (filePath === undefined || isSkillMd(filePath)) return content;
 

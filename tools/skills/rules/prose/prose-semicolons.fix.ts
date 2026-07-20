@@ -14,6 +14,7 @@ function fixProseSemicolonsInText(text: string): string {
   return text.replace(PROSE_SEMICOLON, "$1, $2");
 }
 
+/** @skills/prose-semicolon */
 export function fix(content: string): string {
   return mapDocumentLines(content, (rawLine, _lineNumber, inCodeBlock) => {
     if (inCodeBlock) return rawLine;

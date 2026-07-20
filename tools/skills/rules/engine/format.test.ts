@@ -5,7 +5,8 @@ import { describe, it } from "node:test";
 
 import { displayPath } from "../../discover.ts";
 import { stripAnsi } from "./color.ts";
-import { formatDiagnostic, formatFileDiagnostics, formatFixedFiles, LOCATION_WIDTH } from "./format.ts";
+import { formatDiagnostic, formatFileDiagnostics, formatFixedFiles, formatSummary, LOCATION_WIDTH, SEVERITY_WIDTH } from "./format.ts";
+import { outputColorEnabled } from "./color.ts";
 
 describe("formatDiagnostic", () => {
   it("uses eslint-style location, message, and @rule id", () => {
@@ -46,6 +47,32 @@ describe("formatDiagnostic", () => {
     assert.match(line, /error/);
     assert.match(line, /@skills\/skill-length/);
   });
+
+  it("omits fixable for long lines that cannot be auto-wrapped", () => {
+    const line = formatDiagnostic("/tmp/SKILL.md", {
+      line: 2,
+      column: 1,
+      code: "long-line",
+      message: "Line exceeds 160 characters (344). Wrap or split into shorter lines.",
+      fixable: false,
+    });
+    assert.match(line, /@skills\/long-line$/);
+    assert.doesNotMatch(line, /\(fixable\)/);
+  });
+
+  it("styles fixable suffix in green when color is enabled", () => {
+    const line = formatDiagnostic("/tmp/SKILL.md", {
+      line: 8,
+      column: 12,
+      code: "long-line",
+      message: "Line exceeds 160 characters (201).",
+    });
+    if (outputColorEnabled()) {
+      assert.match(line, /\u001b\[2m@skills\/long-line\u001b\[0m\u001b\[32m\(fixable\)/);
+    } else {
+      assert.match(line, /@skills\/long-line\(fixable\)/);
+    }
+  });
 });
 
 describe("formatFileDiagnostics", () => {
@@ -68,7 +95,7 @@ describe("formatFileDiagnostics", () => {
     assert.equal(output.split("\n").length, 3);
     assert.match(output, /^\/tmp\/SKILL\.md$/m);
     assert.match(output, /^\s+8:12\s+warning\s+Line exceeds.*@skills\/long-line\(fixable\)/m);
-    assert.match(output, /^\s+1:1\s+error\s+SKILL\.md exceeds.*@skills\/skill-length$/m);
+    assert.match(output, /^\s+1:1\s+error  \s+SKILL\.md exceeds.*@skills\/skill-length$/m);
     assert.doesNotMatch(output, /skill-length\(fixable\)/);
     assert.doesNotMatch(output, /\/tmp\/SKILL\.md:8:12/);
   });
@@ -109,9 +136,46 @@ describe("formatFileDiagnostics", () => {
     assert.equal(ruleStarts.length, 2);
     assert.equal(ruleStarts[0], ruleStarts[1]);
     assert.equal(LOCATION_WIDTH, "999:999".length);
+    assert.equal(SEVERITY_WIDTH, "warning".length);
     assert.match(detailLines[0] ?? "", /^\s+2:15\s{5}warning\s+Missing semicolon\s+@skills\/prose-semicolon\(fixable\)$/);
-    assert.match(detailLines[1] ?? "", /^\s+6:7\s{6}error\s+'result' is assigned.*@skills\/negation-steering$/);
+    assert.match(detailLines[1] ?? "", /^\s+6:7\s+error  \s+'result' is assigned.*@skills\/negation-steering$/);
     assert.doesNotMatch(detailLines[1] ?? "", /negation-steering\(fixable\)/);
+  });
+
+  it("ends each file block with a blank line for separation", () => {
+    const block = `${formatFileDiagnostics("/tmp/SKILL.md", [
+      {
+        line: 1,
+        column: 1,
+        code: "long-line",
+        message: "Line exceeds 160 characters (201).",
+      },
+    ])}\n\n`;
+    assert.ok(block.endsWith("\n\n"));
+  });
+});
+
+describe("formatSummary", () => {
+  it("colors warnings, errors, and file counts", () => {
+    const output = formatSummary(34, 2, 12, 22, 68);
+    if (outputColorEnabled()) {
+      assert.match(output, /\u001b\[2mskills lint: found \u001b\[0m/);
+      assert.match(output, /\u001b\[33m34 warnings\u001b\[0m/);
+      assert.match(output, /\u001b\[31m2 errors\u001b\[0m/);
+      assert.match(output, /\u001b\[32m12 fixable\u001b\[0m/);
+      assert.match(output, /\u001b\[36m22 files\u001b\[0m/);
+      assert.match(output, /\u001b\[36m68 files\u001b\[0m/);
+    } else {
+      assert.equal(
+        output,
+        "skills lint: found 34 warnings, 2 errors, 12 fixable in 22 files (checked 68 files)"
+      );
+    }
+  });
+
+  it("omits fixable when there are none", () => {
+    const output = formatSummary(3, 0, 0, 2, 10);
+    assert.doesNotMatch(output, /fixable/);
   });
 });
 

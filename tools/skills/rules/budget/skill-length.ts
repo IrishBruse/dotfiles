@@ -3,6 +3,7 @@ import type { Diagnostic } from "../core/types.ts";
 
 export const MAX_SKILL_LINES = 500;
 
+/** @skills/skill-length */
 export function lint(content: string, filePath?: string): Diagnostic[] {
   if (!isSkillMd(filePath)) {
     return [];

@@ -17,6 +17,7 @@ function targetsSkillMd(target: string): boolean {
   return path.basename(normalized) === "SKILL.md";
 }
 
+/** @skills/skill-backlink */
 export function lint(
   content: string,
   filePathOrContext?: string | LintContext

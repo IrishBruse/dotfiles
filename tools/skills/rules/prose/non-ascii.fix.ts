@@ -22,6 +22,7 @@ function fixNonAsciiInText(text: string): string {
     .join("");
 }
 
+/** @skills/non-ascii */
 export function fix(content: string): string {
   return mapDocumentLines(content, (rawLine, _lineNumber, inCodeBlock) => {
     if (inCodeBlock) return rawLine;

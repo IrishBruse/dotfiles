@@ -4,6 +4,7 @@ import type { Diagnostic } from "../core/types.ts";
 const TOOL_MENU =
   /\b(?:you can )?use [A-Za-z][\w.-]*(?:,\s*[A-Za-z][\w.-]*){1,}(?:,\s*)?or [A-Za-z][\w.-]*/i;
 
+/** @skills/tool-menu */
 export function lint(content: string): Diagnostic[] {
   const diagnostics: Diagnostic[] = [];
 

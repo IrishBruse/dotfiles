@@ -1,6 +1,7 @@
 import { forEachProseLine } from "../core/shared.ts";
 import type { Diagnostic } from "../core/types.ts";
 
+/** @skills/non-ascii */
 export function lint(content: string): Diagnostic[] {
   const diagnostics: Diagnostic[] = [];
 

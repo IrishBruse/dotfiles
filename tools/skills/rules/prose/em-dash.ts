@@ -3,6 +3,7 @@ import type { Diagnostic } from "../core/types.ts";
 
 const EM_EN_DASH = /[\u2013\u2014]/;
 
+/** @skills/em-dash */
 export function lint(content: string): Diagnostic[] {
   const diagnostics: Diagnostic[] = [];
 

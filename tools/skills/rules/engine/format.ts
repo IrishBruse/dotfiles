@@ -2,7 +2,7 @@ import process from "node:process";
 
 import { displayPath } from "../../discover.ts";
 import { formatOutput, paintOutput, stripAnsi } from "./color.ts";
-import { isFixableRule } from "./fixable.ts";
+import { isFixableDiagnostic, isFixableRule } from "./fixable.ts";
 import { diagnosticSeverity, type Diagnostic } from "../core/types.ts";
 
 export function formatRuleId(code: string): string {
@@ -10,8 +10,24 @@ export function formatRuleId(code: string): string {
   return `@skills/${code}${suffix}`;
 }
 
+function formatStyledRuleId(diagnostic: Diagnostic): string {
+  const id = `@skills/${diagnostic.code}`;
+  if (!isFixableDiagnostic(diagnostic)) {
+    return paintOutput("dim", id);
+  }
+  return `${paintOutput("dim", id)}${paintOutput("ok", "(fixable)")}`;
+}
+
 /** Fixed width for line:column (fits 999:999). */
 export const LOCATION_WIDTH = "999:999".length;
+
+/** Fixed width for severity labels (fits "warning"). */
+export const SEVERITY_WIDTH = "warning".length;
+
+function formatSeverityLabel(severity: ReturnType<typeof diagnosticSeverity>): string {
+  const role = severity === "error" ? ("bad" as const) : ("warn" as const);
+  return paintOutput(role, padVisible(severity, SEVERITY_WIDTH, "left"));
+}
 
 function padVisible(
   text: string,
@@ -31,15 +47,10 @@ function formatAlignedDiagnosticLines(diagnostics: Diagnostic[]): string[] {
   const rows = diagnostics.map((diagnostic) => ({
     location: `${diagnostic.line}:${diagnostic.column}`,
     severity: diagnosticSeverity(diagnostic),
-    severityRole:
-      diagnosticSeverity(diagnostic) === "error"
-        ? ("bad" as const)
-        : ("warn" as const),
     message: diagnostic.message,
-    ruleId: formatRuleId(diagnostic.code),
+    diagnostic,
   }));
 
-  const severityWidth = Math.max(...rows.map((row) => row.severity.length));
   const messageWidth = Math.max(...rows.map((row) => row.message.length));
 
   return rows.map((row) => {
@@ -47,12 +58,9 @@ function formatAlignedDiagnosticLines(diagnostics: Diagnostic[]): string[] {
       "label",
       padVisible(row.location, LOCATION_WIDTH, "left")
     );
-    const severity = paintOutput(
-      row.severityRole,
-      padVisible(row.severity, severityWidth, "left")
-    );
+    const severity = formatSeverityLabel(row.severity);
     const message = padVisible(row.message, messageWidth, "left");
-    const ruleId = paintOutput("dim", row.ruleId);
+    const ruleId = formatStyledRuleId(row.diagnostic);
     return formatOutput(
       `  ${location}  ${severity}  ${message}  ${ruleId}`
     );
@@ -78,12 +86,8 @@ export function formatDiagnostic(filePath: string, diagnostic: Diagnostic): stri
     "label",
     `${displayPath(filePath)}:${diagnostic.line}:${diagnostic.column}`
   );
-  const severity = diagnosticSeverity(diagnostic);
-  const severityLabel = paintOutput(
-    severity === "error" ? "bad" : "warn",
-    severity
-  );
-  const ruleId = paintOutput("dim", formatRuleId(diagnostic.code));
+  const severityLabel = formatSeverityLabel(diagnosticSeverity(diagnostic));
+  const ruleId = formatStyledRuleId(diagnostic);
   return formatOutput(
     `${location}  ${severityLabel}  ${diagnostic.message}  ${ruleId}`
   );
@@ -92,27 +96,57 @@ export function formatDiagnostic(filePath: string, diagnostic: Diagnostic): stri
 export function formatSummary(
   warningCount: number,
   errorCount: number,
+  fixableCount: number,
   filesWithWarnings: number,
   filesChecked: number
 ): string {
-  const parts: string[] = [];
+  const issueParts: string[] = [];
 
   if (warningCount > 0) {
-    parts.push(
-      `${warningCount} warning${warningCount === 1 ? "" : "s"}`
+    issueParts.push(
+      paintOutput(
+        "warn",
+        `${warningCount} warning${warningCount === 1 ? "" : "s"}`
+      )
     );
   }
   if (errorCount > 0) {
-    parts.push(`${errorCount} error${errorCount === 1 ? "" : "s"}`);
+    issueParts.push(
+      paintOutput("bad", `${errorCount} error${errorCount === 1 ? "" : "s"}`)
+    );
+  }
+  if (fixableCount > 0) {
+    issueParts.push(
+      paintOutput("ok", `${fixableCount} fixable`)
+    );
   }
 
-  const issueText = parts.join(", ");
-  const fileText = `in ${filesWithWarnings} file${filesWithWarnings === 1 ? "" : "s"}`;
-  return formatOutput(
+  const issueText = issueParts.join(paintOutput("dim", ", "));
+  const fileText = [
+    paintOutput("dim", "in "),
     paintOutput(
-      "dim",
-      `skills lint: found ${issueText} ${fileText} (checked ${filesChecked} file${filesChecked === 1 ? "" : "s"})`
-    )
+      "label",
+      `${filesWithWarnings} file${filesWithWarnings === 1 ? "" : "s"}`
+    ),
+  ].join("");
+  const checkedText = [
+    paintOutput("dim", "(checked "),
+    paintOutput(
+      "label",
+      `${filesChecked} file${filesChecked === 1 ? "" : "s"}`
+    ),
+    paintOutput("dim", ")"),
+  ].join("");
+
+  return formatOutput(
+    [
+      paintOutput("dim", "skills lint: found "),
+      issueText,
+      paintOutput("dim", " "),
+      fileText,
+      paintOutput("dim", " "),
+      checkedText,
+    ].join("")
   );
 }
 
@@ -125,18 +159,19 @@ export function printFileDiagnostics(
   diagnostics: Diagnostic[]
 ): void {
   if (diagnostics.length === 0) return;
-  process.stderr.write(`${formatFileDiagnostics(filePath, diagnostics)}\n`);
+  process.stderr.write(`${formatFileDiagnostics(filePath, diagnostics)}\n\n`);
 }
 
 export function printSummary(
   warningCount: number,
   errorCount: number,
+  fixableCount: number,
   filesWithWarnings: number,
   filesChecked: number
 ): void {
   if (warningCount === 0 && errorCount === 0) return;
   process.stderr.write(
-    `${formatSummary(warningCount, errorCount, filesWithWarnings, filesChecked)}\n`
+    `${formatSummary(warningCount, errorCount, fixableCount, filesWithWarnings, filesChecked)}\n`
   );
 }
 
