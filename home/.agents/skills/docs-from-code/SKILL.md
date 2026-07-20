@@ -37,7 +37,8 @@ Public behavior in the repo defines what user docs should say.
 6. **Coverage notes** - Implemented paths with no matching test (or skipped).
   No test churn unless asked.
 7.
-**Consumer pass** (only if requested) - Rewrite user docs for external readers: no repo-internal paths, no dev-only commands in end-user guides, tone matches existing style.
+**Consumer pass** (only if requested) - Rewrite user docs for external readers: no repo-internal paths, no dev-only commands in end-user guides,
+tone matches existing style.
 
 ## Output format
 
