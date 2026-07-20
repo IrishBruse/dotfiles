@@ -1,18 +1,18 @@
 import { readFile, writeFile } from "node:fs/promises";
 import process from "node:process";
 
-import { buildLintContexts } from "../lint/context.ts";
+import { buildLintContexts } from "../rules/core/context.ts";
 import {
   defaultSkillRoots,
   discoverSkillFiles,
   displayPath,
   isMarkdownPath,
   resolveLintScopes,
-} from "../lint/discover.ts";
-import { fixSkillContent } from "../lint/fix.ts";
-import { printFileDiagnostics, printFixedFiles, printSummary } from "../lint/format.ts";
-import { lintSkillContent } from "../lint/run.ts";
-import { diagnosticSeverity, type Diagnostic } from "../lint/types.ts";
+} from "../rules/engine/discover.ts";
+import { fixSkillContent } from "../rules/engine/fix.ts";
+import { printFileDiagnostics, printFixedFiles, printSummary } from "../rules/engine/format.ts";
+import { lintSkillContent } from "../rules/engine/run.ts";
+import { diagnosticSeverity, type Diagnostic } from "../rules/core/types.ts";
 import { parseLintArgs } from "./argv.ts";
 import { printHelp } from "./help.ts";
 

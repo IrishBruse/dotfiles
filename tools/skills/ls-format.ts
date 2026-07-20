@@ -1,7 +1,7 @@
 import process from "node:process";
 
 import type { SkillDisplay, SkillDisplayField } from "./frontmatter.ts";
-import { paintStdout } from "./lint/color.ts";
+import { paintStdout } from "./rules/engine/color.ts";
 
 function formatFieldValue(field: SkillDisplayField): string {
   if (!field.valueRole) return field.value;

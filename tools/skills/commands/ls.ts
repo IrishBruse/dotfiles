@@ -10,8 +10,8 @@ import {
 } from "../discover.ts";
 import { parseSkillFrontmatter, skillDisplay, skillListSortRank } from "../frontmatter.ts";
 import { formatSkillLines } from "../ls-format.ts";
-import { paintStdout } from "../lint/color.ts";
-import { extractFrontmatter } from "../lint/shared.ts";
+import { paintStdout } from "../rules/engine/color.ts";
+import { extractFrontmatter } from "../rules/core/shared.ts";
 import { parseSkillsArgs } from "./argv.ts";
 import { printHelp } from "./help.ts";
 
