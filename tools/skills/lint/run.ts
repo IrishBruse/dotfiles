@@ -14,6 +14,7 @@ import { lint as lintNonAscii } from "./non-ascii.ts";
 import { lint as lintOrphanReference } from "./orphan-reference.ts";
 import { lint as lintProseSemicolons } from "./prose-semicolons.ts";
 import { lint as lintReferenceToc } from "./reference-toc.ts";
+import { lint as lintSkillBacklink } from "./skill-backlink.ts";
 import { lint as lintSkillByPath } from "./skill-by-path.ts";
 import { lint as lintSkillLength } from "./skill-length.ts";
 import { lint as lintSkillTokenBudget } from "./skill-token-budget.ts";
@@ -42,6 +43,7 @@ export function lintSkillContent(
     ...lintNestedReferences(content, filePath),
     ...lintReferenceToc(content, filePath),
     ...lintSkillLength(content, filePath),
+    ...lintSkillBacklink(content, filePathOrContext),
     ...lintSkillTokenBudget(content, filePathOrContext),
     ...lintNameFolderMismatch(content, filePathOrContext),
     ...lintBrokenLink(content, filePathOrContext),
