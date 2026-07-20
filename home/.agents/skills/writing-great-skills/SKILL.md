@@ -1,6 +1,6 @@
 ---
 name: writing-great-skills
-description: 'Reference for writing and editing skills well: the vocabulary and principles that make a skill predictable. Use when authoring or editing a skill, SKILL.md structure, or frontmatter.'
+description: 'Reference for writing and editing skills well: the vocabulary and principles that make a skill predictable. Use when authoring or editing a skill, SKILL.md structure, frontmatter, or validating with skills lint.'
 ---
 
 A skill exists to wrangle determinism out of a stochastic system. **Predictability** — the agent taking the same _process_ every run, not producing the same output — is the root virtue; every lever below serves it.
@@ -70,6 +70,12 @@ Keep each meaning in a **single source of truth**: one authoritative place, so c
 Check every line for **relevance**: does it still bear on what the skill does?
 
 Then hunt **no-ops** sentence by sentence, not just line by line: run the no-op test on each sentence in isolation, and when one fails, delete the whole sentence rather than trim words from it. Be aggressive — most prose that fails should go, not be rewritten.
+
+## Skills CLI
+
+After editing skill markdown, run `skills lint path/to/SKILL.md --fix`.
+It scopes to that skill's folder, auto-fixes, and lints every `.md` and `.mdc` file there (a folder path scopes the same way).
+Exit code 1 means warnings remain.
 
 ## Leading words
 
