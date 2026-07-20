@@ -2,7 +2,7 @@
 
 Multiple isolated browser sessions with state persistence and concurrent browsing.
 
-**Related**: `authentication.md` for login patterns, [SKILL.md](../SKILL.md) for quick start.
+**Related**: `authentication.md` for login patterns.
 
 ## Contents
 
