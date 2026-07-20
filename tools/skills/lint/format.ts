@@ -4,6 +4,30 @@ import { displayPath } from "../discover.ts";
 import { formatOutput, paintOutput } from "./color.ts";
 import { diagnosticSeverity, type Diagnostic } from "./types.ts";
 
+export function formatDiagnosticLine(diagnostic: Diagnostic): string {
+  const location = paintOutput(
+    "label",
+    `${diagnostic.line}:${diagnostic.column}`
+  );
+  const severity = diagnosticSeverity(diagnostic);
+  const severityLabel = paintOutput(
+    severity === "error" ? "bad" : "warn",
+    severity
+  );
+  const code = paintOutput("dim", diagnostic.code);
+  return formatOutput(`  ${location} ${severityLabel} ${code}: ${diagnostic.message}`);
+}
+
+/** One file path header plus indented diagnostics (line:col only). */
+export function formatFileDiagnostics(
+  filePath: string,
+  diagnostics: Diagnostic[]
+): string {
+  const header = formatOutput(paintOutput("label", displayPath(filePath)));
+  return [header, ...diagnostics.map(formatDiagnosticLine)].join("\n");
+}
+
+/** Compiler-style single line (path:line:col prefix on every diagnostic). */
 export function formatDiagnostic(filePath: string, diagnostic: Diagnostic): string {
   const location = paintOutput(
     "label",
@@ -49,6 +73,14 @@ export function formatSummary(
 
 export function printDiagnostic(filePath: string, diagnostic: Diagnostic): void {
   process.stderr.write(`${formatDiagnostic(filePath, diagnostic)}\n`);
+}
+
+export function printFileDiagnostics(
+  filePath: string,
+  diagnostics: Diagnostic[]
+): void {
+  if (diagnostics.length === 0) return;
+  process.stderr.write(`${formatFileDiagnostics(filePath, diagnostics)}\n`);
 }
 
 export function printSummary(

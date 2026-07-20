@@ -9,7 +9,7 @@ import {
   resolveLintScopes,
 } from "../lint/discover.ts";
 import { fixSkillContent } from "../lint/fix.ts";
-import { printDiagnostic, printFixed, printSummary } from "../lint/format.ts";
+import { printFileDiagnostics, printFixed, printSummary } from "../lint/format.ts";
 import { lintSkillContent } from "../lint/run.ts";
 import { diagnosticSeverity, type Diagnostic } from "../lint/types.ts";
 import { parseLintArgs } from "./argv.ts";
@@ -107,8 +107,8 @@ export async function runLint(argv: string[]): Promise<number> {
       } else {
         warningCount++;
       }
-      printDiagnostic(filePath, diagnostic);
     }
+    printFileDiagnostics(filePath, diagnostics);
   }
 
   printSummary(warningCount, errorCount, filesWithIssues, filesChecked);
