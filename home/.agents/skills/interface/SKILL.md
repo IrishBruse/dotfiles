@@ -1,8 +1,7 @@
 ---
 name: interface
-description:
-  Produces a structured code interface breakdown (exports, props, types, API) for a feature, module, component, or service path.
-  Use when asked for an interface breakdown or API explanation of a path.
+description: 'Produces a structured code interface breakdown (exports, props, types, API) for a feature, module, component, or service path.
+  Use when asked for an interface breakdown or API explanation of a path.'
 disable-model-invocation: true
 ---
 
@@ -71,7 +70,8 @@ Extract and categorize the following from the files:
 #### Exported types
 
 Every public type in the source language.
-Examples: `interface`, `type`, `enum` (TypeScript); `class`, `struct`, `interface`, `record` (C#); `TypedDict`, dataclass, Protocol (Python); and equivalents elsewhere.
+Examples: `interface`, `type`, `enum` (TypeScript), `class`, `struct`, `interface`, `record` (C#),
+`TypedDict`, dataclass, Protocol (Python), and equivalents elsewhere.
 Include component props types, options objects, request/response shapes, and error types.
 Include the full definition.
 Pull descriptions from doc comments (JSDoc, XML docs, etc.) where present.
