@@ -2,6 +2,22 @@
 
 Implementation patterns referenced from the skill.
 
+## Contents
+
+- [Bin stub](#bin-stub)
+- [package.json bin entry](#packagejson-bin-entry)
+- [Simple single-purpose CLI](#simple-single-purpose-cli)
+- [Subcommand CLI](#subcommand-cli)
+- [Async main](#async-main)
+- [Flag parsing (no library)](#flag-parsing-no-library)
+- [Stdin or file input](#stdin-or-file-input)
+- [Help template](#help-template)
+- [TTY-gated paint helper](#tty-gated-paint-helper)
+- [Semantic ANSI constants](#semantic-ansi-constants)
+- [True color from hex](#true-color-from-hex)
+- [Strip ANSI for width](#strip-ansi-for-width)
+- [Validation](#validation)
+
 ## Bin stub
 
 `.bin/<name>.js` at the package root:
