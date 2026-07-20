@@ -1,167 +1,100 @@
 # Skills lint rules
 
-Markdown lint rules for the `skills lint` command. Each rule lives in a category folder under `tools/skills/rules/`.
-Rules encode [writing-great-skills](~/.agents/skills/writing-great-skills/SKILL.md) conventions and `global.mdc` prose style.
+`skills lint` checks agent skill markdown the way ESLint checks JavaScript:
+each rule has a stable code, a severity, and (sometimes) an auto-fix.
 
-## Usage
+Rules live under `tools/skills/rules/`, grouped by what they care about.
+This page is the index. Each category folder has its own README with
+incorrect / correct examples for every rule.
+
+## Getting started
 
 ```bash
-skills lint                         # scan default skill roots
-skills lint path/to/skill-folder/   # scope to one skill tree
-skills lint path/to/SKILL.md --fix  # auto-fix, then report remaining issues
+skills lint                         # scan default skill roots under ~
+skills lint path/to/skill-folder/   # one skill tree
+skills lint path/to/SKILL.md --fix  # apply safe fixes, then report the rest
 ```
 
-Diagnostics use compiler-style output: `file:line:column - severity code: message`.
-Exit code 1 when any warnings or errors remain.
+Diagnostics look like a compiler:
 
-## Layout
-
-```
-rules/
-  core/         Shared types, helpers, and skill-folder context
-  engine/       Orchestration (run all rules, apply fixes, format output)
-  frontmatter/  SKILL.md YAML frontmatter
-  prose/        Body prose style (global.mdc)
-  paths/        File and skill path conventions
-  reference/    Progressive disclosure and reference-file structure
-  budget/       SKILL.md size limits
+```text
+SKILL.md:12:1 - warning long-line: Line exceeds 160 characters (201).
 ```
 
-Co-locate each rule with its tests: `rule-name.ts`, `rule-name.test.ts`, and optionally `rule-name.fix.ts` + `rule-name.fix.test.ts`.
+Exit code is `1` when any warning or error remains.
 
-## Engine
+## Categories
 
-| File | Role |
+| Category | What it covers |
 | --- | --- |
-| `engine/run.ts` | Runs every rule, merges diagnostics, sorts by line/column |
-| `engine/fix.ts` | Applies safe auto-fixes in a fixed order, then re-lints |
-| `engine/format.ts` | Prints diagnostics and summary to stderr |
-| `engine/color.ts` | Terminal color for lint output |
-| `engine/discover.ts` | Re-exports skill discovery helpers from `skills/discover.ts` |
+| [frontmatter](frontmatter/README.md) | `SKILL.md` YAML: `name`, `description`, shape |
+| [prose](prose/README.md) | Body text: line length, punctuation, filler |
+| [paths](paths/README.md) | How file and skill paths are written |
+| [reference](reference/README.md) | Linked reference files, scripts, orphans |
+| [budget](budget/README.md) | `SKILL.md` length and token limits |
+| [core](core/README.md) | Shared types and helpers (not rules) |
+| [engine](engine/README.md) | How rules are run and fixed |
 
-`engine/run.ts` is the only place that imports rules. Add new rules there.
-`engine/fix.ts` is the only place that imports fixers.
+## Rule reference
 
-### Auto-fix pipeline
+| Code | Severity | Fixable | Category | Summary |
+| --- | --- | --- | --- | --- |
+| `frontmatter-orphan` | error | yes | frontmatter | Frontmatter lines that are not `key: value` |
+| `frontmatter-description` | error | yes | frontmatter | Empty or broken `description` field |
+| `frontmatter-name` | error | | frontmatter | Missing or invalid `name` |
+| `description-block` | warning | yes | frontmatter | Block scalar (`>` / `\|`) for `description` |
+| `description-triggers` | warning | | frontmatter | Model-invoked skill missing "use when/for" |
+| `description-voice` | warning | | frontmatter | Second-person phrasing in the description |
+| `vague-skill-name` | warning | | frontmatter | Generic names like `helper` or `utils` |
+| `name-folder-mismatch` | error | | frontmatter | `name` does not match the skill folder |
+| `long-line` | warning | yes | prose | Prose line longer than 160 characters |
+| `prose-semicolon` | warning | yes | prose | Semicolon joining English clauses |
+| `non-ascii` | warning | yes | prose | Non-ASCII characters in prose |
+| `em-dash` | warning | yes | prose | Em or en dashes in prose |
+| `generic-advice` | warning | | prose | Filler phrases like "best practices" |
+| `tool-menu` | warning | | prose | "use A, B, or C" without a default |
+| `negation-steering` | warning | | prose | "Do not / Never" without what to do instead |
+| `time-sensitive` | warning | | prose | Dated guidance that will go stale |
+| `windows-path` | warning | | paths | Backslash paths in prose |
+| `skill-by-path` | warning | | paths | Skill referenced by filesystem path |
+| `nested-reference` | warning | yes | reference | Reference file linking to another reference |
+| `reference-toc` | warning | yes | reference | Long reference file without a contents list |
+| `skill-backlink` | warning | | reference | Reference file pointing back at `SKILL.md` |
+| `orphan-reference` | warning | | reference | Reference file never linked from the skill |
+| `vague-pointer` | warning | | reference | Vague "see references" without a file or trigger |
+| `broken-link` | error | | reference | Relative link that does not resolve |
+| `missing-script` | error | | reference | `scripts/...` path that does not exist |
+| `skill-length` | error | | budget | `SKILL.md` longer than 500 lines |
+| `skill-token-budget` | warning | | budget | Body larger than ~5000 estimated tokens |
 
-`skills lint --fix` runs fixers in this order:
+## What lint does not check
 
-1. `frontmatter/description-block.fix` - block scalars (`>`, `|`) to plain quoted strings
-2. `frontmatter/frontmatter-description.fix` - merge orphan/indented description lines, wrap long descriptions
-3. `paths/home-repo-paths.fix` - `home/.agents/...` to `~/.agents/...`
-4. `prose/prose-semicolons.fix` - `word; next` to `word, next` in prose
-5. `prose/em-dash.fix` - em dashes to hyphens or commas
-6. `prose/non-ascii.fix` - common Unicode punctuation to ASCII
-7. `reference/nested-references.fix` - `[text](file.md)` to `` `file.md` `` in reference files
-8. `reference/reference-toc.fix` - insert `## Contents` in long reference files
-9. `prose/long-lines.fix` - wrap prose over 160 characters
+Lint enforces structure, resolvable paths, and known anti-patterns.
+It cannot judge whether a description fires on real prompts, whether the
+domain advice is correct, or whether a section is the right level of detail.
 
-Rules without a `.fix.ts` counterpart are lint-only.
+For authoring principles beyond what lint can enforce, see `writing-great-skills`
+and the Agent Skills docs:
 
-### Skill-folder context
-
-Several reference rules need the full skill tree, not just the current file.
-`commands/lint.ts` builds a `LintContext` per skill root (`core/context.ts`) with:
-
-- `skillRoot` - directory containing `SKILL.md`
-- `relativeFiles` - every file under the skill folder
-- `markdownContents` - relative path to content for each `.md`/`.mdc` file
-- `skillMdContent` - `SKILL.md` body when available
-
-Pass `LintContext` (not just a path string) to `lintSkillContent` for rules that resolve links, scripts, or orphans.
-
-## Groups
-
-### core/
-
-Shared infrastructure. Not lint rules themselves.
-
-| File | Purpose |
-| --- | --- |
-| `types.ts` | `Diagnostic` type, severity helpers |
-| `shared.ts` | `MAX_LINE` (160), `isSkillMd`, frontmatter extraction, prose line iteration |
-| `fix-shared.ts` | YAML quoting, line mapping, inline-code-aware text replacement |
-| `context.ts` | `LintContext`, link resolution, `buildLintContexts` |
-
-### frontmatter/
-
-Rules for `SKILL.md` YAML frontmatter only.
-
-| Code | Severity | Fix | Rule |
-| --- | --- | --- | --- |
-| `frontmatter-orphan` | error | yes | Lines after `description:` that are not valid key/value pairs |
-| `frontmatter-description` | error | yes | Invalid description format (indented continuations, empty) |
-| `frontmatter-name` | error | | Missing, empty, overlong, or invalid `name` |
-| `description-block` | warning | yes | `description` uses YAML block scalar (`>`, `|`) |
-| `description-triggers` | warning | | Model-invoked skills missing "Use when..." in description |
-| `description-voice` | warning | | Second-person description ("I can help", "You can use this") |
-| `vague-skill-name` | warning | | Generic names like `helper`, `utils` |
-| `name-folder-mismatch` | error | | `name` must match the skill folder name |
-
-### prose/
-
-Body prose style. Applies to all markdown files unless noted. Skips fenced code blocks.
-
-| Code | Severity | Fix | Rule |
-| --- | --- | --- | --- |
-| `long-line` | warning | yes | Prose lines over 160 characters |
-| `prose-semicolon` | warning | yes | `word; next` in English prose (prefer commas) |
-| `non-ascii` | warning | yes | Non-ASCII characters outside code |
-| `em-dash` | warning | yes | Em/en dashes in prose |
-| `generic-advice` | warning | | Vague filler ("handle errors appropriately", "as needed") |
-| `tool-menu` | warning | | Multiple equal-weight tool options without a default |
-| `negation-steering` | warning | | `SKILL.md` only: "Do not..." without paired positive guidance |
-| `time-sensitive` | warning | | Dated guidance that will go stale |
-
-### paths/
-
-Path conventions in prose.
-
-| Code | Severity | Fix | Rule |
-| --- | --- | --- | --- |
-| `home-repo-path` | warning | yes | `home/.agents/...` instead of runtime `~/.agents/...` |
-| `windows-path` | warning | | Backslash file paths |
-| `skill-by-path` | warning | | Reference skills by `` `skill-name` ``, not file path |
-
-### reference/
-
-Progressive disclosure and reference-file structure. Most rules skip `SKILL.md`.
-
-| Code | Severity | Fix | Rule |
-| --- | --- | --- | --- |
-| `nested-reference` | warning | yes | `.md` links between reference files (link from `SKILL.md` only) |
-| `reference-toc` | warning | yes | Reference files over 100 lines need `## Contents` near the top |
-| `skill-backlink` | warning | | Reference files must not link or point back to `SKILL.md` |
-| `orphan-reference` | warning | | Every `references/*.md` must be linked from `SKILL.md` |
-| `vague-pointer` | warning | | `SKILL.md` only: "see references" without naming a specific file |
-| `broken-link` | error | | Relative markdown/script links must resolve in the skill folder |
-| `missing-script` | error | | `scripts/...` references must exist on disk |
-
-### budget/
-
-`SKILL.md` size limits.
-
-| Code | Severity | Fix | Rule |
-| --- | --- | --- | --- |
-| `skill-length` | error | | `SKILL.md` over 500 lines |
-| `skill-token-budget` | warning | | `SKILL.md` body over ~5000 estimated tokens |
+- [Specification](https://agentskills.io/specification): `name`, `description`,
+  progressive disclosure, file references
+- [Writing effective descriptions](https://agentskills.io/skill-creation/optimizing-descriptions#writing-effective-descriptions)
+- [Testing whether a description triggers](https://agentskills.io/skill-creation/optimizing-descriptions#testing-whether-a-description-triggers)
+- [Best practices](https://agentskills.io/skill-creation/best-practices):
+  progressive disclosure, defaults over menus, specificity to fragility
+- [Using scripts in skills](https://agentskills.io/skill-creation/using-scripts)
 
 ## Adding a rule
 
-1. Pick the category folder (or add a new one if the concern is genuinely distinct).
-2. Export `lint(content, filePathOrContext?)` returning `Diagnostic[]` from `core/types.ts`.
-3. Add co-located `rule-name.test.ts`.
-4. Register the rule in `engine/run.ts`.
-5. If auto-fixable, add `rule-name.fix.ts`, `rule-name.fix.test.ts`, and register in `engine/fix.ts`.
-6. Document the code in [writing-great-skills](~/.agents/skills/writing-great-skills/SKILL.md) under **Lint rules**.
+1. Create `category/rule-name.ts` exporting `lint(content, filePathOrContext?)`.
+2. Add `rule-name.test.ts` beside it.
+3. Register the rule in [engine/run.ts](engine/run.ts).
+4. Optional: add `rule-name.fix.ts` and register it in [engine/fix.ts](engine/fix.ts).
+5. Document the rule in the category README and add a row to the table above.
 
-Convention for rule files:
-
-- One diagnostic code per file (matches the filename).
-- Use `isSkillMd(filePath)` when the rule applies only to `SKILL.md`.
-- Use `forEachProseLine` from `core/shared.ts` for line-by-line prose checks.
-- Use `LintContext` when resolving paths relative to a skill folder.
-- Fixers are idempotent: running `--fix` twice should not keep changing the file.
+Convention: one diagnostic code per file, matching the filename.
+Prefer helpers from [core/shared.ts](core/shared.ts) (`forEachProseLine`, `isSkillMd`).
+Use `LintContext` when the rule needs other files in the skill folder.
 
 ## Tests
 

@@ -8,7 +8,7 @@ Usage:
 
 Commands:
   ls       List skills from global and project locations
-  lint     Check skill markdown for style issues (global.mdc, writing-great-skills)
+  lint     Check skill markdown against tools/skills/rules
 
 skills ls scans standard agent skill roots under ~ (for example ~/.agents/skills,
 ~/.cursor/skills, ~/.claude/skills, ~/.config/opencode/skills) and skills.sh-
