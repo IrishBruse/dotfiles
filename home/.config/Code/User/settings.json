@@ -1403,7 +1403,7 @@
   ],
   "scm.countBadge": "focused",
   "scm.defaultViewMode": "tree",
-  "scm.diffDecorations": "none",
+  "scm.diffDecorations": "minimap",
   "scm.diffDecorationsGutterAction": "none",
   "scm.diffDecorationsGutterVisibility": "hover",
   "scm.diffDecorationsGutterWidth": 1,
@@ -1725,6 +1725,13 @@
   "mediaPreview.video.autoPlay": true,
   "ib-acp-ui.sessionFilePrettyRpc": true,
   "ib-acp-ui.contentWidthPercent": 75,
+  "ib-acp-ui.agents": [
+    {
+      "name": "Cursor",
+      "command": "/Users/econneely/.local/bin/agent",
+      "args": ["acp"]
+    }
+  ],
   "ib-acp-ui.toolCallVerbosity": "compact",
   "yaml.disableSchemaDetection": [
     "**/.github/workflows/*.yml",
@@ -1765,9 +1772,17 @@
     {
       "id": "babysit",
       "label": "Babysit",
-      "type": "agent",
+      "type": "terminal",
       "icon": "eye-watch",
-      "prompt": "/babysit ${repoRoot}"
+      "command": "agent --model composer-2.5 \"/babysit ${repoRoot}\""
+    },
+    {
+      "id": "jiraBoard",
+      "label": "Jira Board",
+      "type": "terminal",
+      "icon": "notebook",
+      "command": "jira board",
+      "terminalMode": "editor"
     }
   ],
   "ib-utilities.jira.baseUrl": "https://example.atlassian.net/"
