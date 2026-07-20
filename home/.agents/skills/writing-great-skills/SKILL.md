@@ -1,7 +1,7 @@
 ---
 name: writing-great-skills
-description: 'Reference for writing and editing skills well: the vocabulary and principles that make a skill predictable.
-Use when authoring or editing a skill, SKILL.md structure, frontmatter, or validating with skills lint.'
+description: 'Reference for writing and editing skills well: the vocabulary and principles that make a skill predictable. Use when authoring or editing a skill,
+  SKILL.md structure, frontmatter, or validating with skills lint.'
 ---
 
 A skill exists to wrangle determinism out of a stochastic system.
@@ -99,47 +99,16 @@ delete the whole sentence rather than trim words from it. Be aggressive - most p
 
 ## Skills CLI
 
-After editing skill markdown, run `skills lint path/to/skills/skill-folder/ --fix`.
-It scopes to that skill's folder, auto-fixes, and lints every `.md` and `.mdc` file there (a folder path scopes the same way).
-Exit code 1 means warnings remain.
+### Lint after edits
+
+Run `skills lint <skill-folder>/ --fix` once. Invoke the `skills` cli directly.
+
+`<skill-folder>` is the directory of the `SKILL.md` you edited. The command scopes to every `.md` and `.mdc` file there.
+Exit 0: clean. Exit 1: report every stderr warning before finishing.
 
 `--fix` auto-applies: block-scalar descriptions to plain strings, orphan/indented frontmatter lines merged into quoted descriptions
 (wrapped when over 160 chars), nested reference links converted to backtick paths, Contents sections inserted in long reference files,
-long prose wrapped, prose semicolons, non-ASCII, and `home/` repo paths.
-
-### Lint rules
-
-Structural errors:
-
-- `name-folder-mismatch` - frontmatter `name` must match the skill folder name
-- `broken-link` - relative markdown/script links must resolve in the skill folder
-- `missing-script` - `scripts/...` references must exist
-
-Budget:
-
-- `skill-length` - `SKILL.md` over 500 lines
-- `skill-token-budget` - `SKILL.md` body over ~5000 estimated tokens
-
-Progressive disclosure:
-
-- `nested-reference` - reference files link only from `SKILL.md`, not from each other
-- `skill-backlink` - reference files must not link or point back to `SKILL.md`
-- `reference-toc` - long reference files need a Contents section near the top
-- `orphan-reference` - every `references/*.md` file must be linked from `SKILL.md`
-- `vague-pointer` - name the specific reference file and when to load it
-
-Description and frontmatter:
-
-- `description-triggers`, `description-voice`, `frontmatter-*`, `vague-skill-name`
-
-Prose and style:
-
-- `generic-advice` - cut vague filler and no-op guidance
-- `tool-menu` - pick one default tool, not a list of equals
-- `negation-steering` - on `SKILL.md` only: pair "Do not..." guardrails with what to do instead
-- `skill-by-path` - reference other skills by `` `skill-name` ``, not file path
-- `time-sensitive` - dated guidance goes stale, move to a deprecated section
-- `home-repo-path`, `windows-path`, `non-ascii`, `em-dash`, `prose-semicolon`, `long-line`
+long prose wrapped, prose semicolons, and non-ASCII.
 
 ## Leading words
 

@@ -5,7 +5,6 @@ import { compareDiagnostics, type Diagnostic } from "../core/types.ts";
 import { lint as lintDescriptionBlock } from "../frontmatter/description-block.ts";
 import { lint as lintFrontmatterFields } from "../frontmatter/frontmatter-fields.ts";
 import { lint as lintNameFolderMismatch } from "../frontmatter/name-folder-mismatch.ts";
-import { lint as lintHomeRepoPaths } from "../paths/home-repo-paths.ts";
 import { lint as lintSkillByPath } from "../paths/skill-by-path.ts";
 import { lint as lintWindowsPaths } from "../paths/windows-paths.ts";
 import { lint as lintEmDash } from "../prose/em-dash.ts";
@@ -36,7 +35,6 @@ export function lintSkillContent(
     ...lintLongLines(content),
     ...lintDescriptionBlock(content),
     ...lintFrontmatterFields(content, filePath),
-    ...lintHomeRepoPaths(content),
     ...lintNonAscii(content),
     ...lintEmDash(content),
     ...lintWindowsPaths(content),

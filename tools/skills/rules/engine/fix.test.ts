@@ -5,7 +5,7 @@ import { fixSkillContent } from "./fix.ts";
 import { lintSkillContent } from "./run.ts";
 
 describe("fixSkillContent", () => {
-  it("fixes prose semicolons, repo paths, and non-ascii", () => {
+  it("fixes prose semicolons and non-ascii", () => {
     const content = `---
 name: demo
 description: One line summary. Use when testing fixes.

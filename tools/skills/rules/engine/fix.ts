@@ -1,6 +1,5 @@
 import { fix as fixDescriptionBlock } from "../frontmatter/description-block.fix.ts";
 import { fix as fixFrontmatterDescription } from "../frontmatter/frontmatter-description.fix.ts";
-import { fix as fixHomeRepoPaths } from "../paths/home-repo-paths.fix.ts";
 import { fix as fixEmDash } from "../prose/em-dash.fix.ts";
 import { fix as fixLongLines } from "../prose/long-lines.fix.ts";
 import { fix as fixNonAscii } from "../prose/non-ascii.fix.ts";
@@ -12,7 +11,6 @@ export function fixSkillContent(content: string, filePath?: string): string {
   let result = content;
   result = fixDescriptionBlock(result);
   result = fixFrontmatterDescription(result);
-  result = fixHomeRepoPaths(result);
   result = fixProseSemicolons(result);
   result = fixEmDash(result);
   result = fixNonAscii(result);

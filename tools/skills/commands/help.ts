@@ -27,7 +27,7 @@ Lint options:
                      (typical: skills lint path/to/SKILL.md --fix)
                      Auto-fixes: block-scalar descriptions, orphan frontmatter
                      lines, nested reference links, reference TOCs, long prose
-                     lines, prose semicolons, non-ASCII, and home/ repo paths
+                     lines, prose semicolons, and non-ASCII
 
 Options:
   -h, --help   Show help

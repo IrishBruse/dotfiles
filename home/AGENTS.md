@@ -10,3 +10,5 @@ Never use:
 If you run into an auth issue dont try and get around it stop and ask.
 
 All subagents must use `composer-2.5` for the model.
+
+Only use markdown tables for very small table widths.
