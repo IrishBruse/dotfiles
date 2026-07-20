@@ -14,7 +14,7 @@ export function lint(content: string): Diagnostic[] {
       line: lineNumber,
       column: match.index + 1,
       code: "em-dash",
-      message: `Prefer "," over em/en dash (found ${JSON.stringify(match[0])}).`,
+      message: `Prefer "-" over em/en dash (found ${JSON.stringify(match[0])}).`,
     });
     if (diagnostics.length >= 3) return;
   });

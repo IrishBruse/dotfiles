@@ -68,10 +68,10 @@ Don't edit the "legacy" path...
 
 ## `em-dash`
 
-Prefer a comma (or a split sentence) over em/en dashes.
+Prefer an ASCII hyphen over em/en dashes.
 
-Dashes are fine in code. In skill prose they often hide a clearer
-structure. `--fix` rewrites them.
+Dashes are fine in code. In skill prose, Unicode em/en dashes should be
+plain `-`. `--fix` rewrites them.
 
 ### Incorrect
 
@@ -82,7 +82,7 @@ Open the PR — then wait for CI.
 ### Correct
 
 ```markdown
-Open the PR, then wait for CI.
+Open the PR - then wait for CI.
 ```
 
 ## `generic-advice`

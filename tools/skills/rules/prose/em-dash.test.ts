@@ -11,8 +11,14 @@ describe("em-dash lint", () => {
     assert.equal(diagnostics[0]?.code, "em-dash");
   });
 
-  it("fixes em dashes to commas", () => {
+  it("fixes em dashes to ASCII hyphens", () => {
     const content = "First idea\u2014second idea.\n";
-    assert.equal(fix(content), "First idea, second idea.\n");
+    assert.equal(fix(content), "First idea-second idea.\n");
+  });
+
+  it("preserves em dashes inside inline code", () => {
+    const content = "See `range\u20131` and then this\u2014clause.\n";
+    assert.equal(fix(content), "See `range\u20131` and then this-clause.\n");
   });
 });
+
