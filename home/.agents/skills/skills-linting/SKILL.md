@@ -41,7 +41,8 @@ and non-ASCII.
 Diagnostics look like:
 
 ```text
-SKILL.md:12:1 - warning long-line: Line exceeds 160 characters (201).
+~/skills/demo/SKILL.md
+  12:1  warning  Line exceeds 160 characters (201).  @skills/long-line
 ```
 
 ## List skills
