@@ -1,7 +1,7 @@
 ---
 name: interface
-description: 'Produces a structured code interface breakdown (exports, props, types, API) for a feature, module, component, or service path.
-  Use when asked for an interface breakdown or API explanation of a path.'
+description: 'Produces a structured code interface breakdown (exports, props, types, API) for a feature, module, component, or service path. Use when asked for
+  an interface breakdown or API explanation of a path.'
 disable-model-invocation: true
 ---
 
