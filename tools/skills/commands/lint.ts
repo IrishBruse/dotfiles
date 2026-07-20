@@ -2,46 +2,26 @@ import { readFile, writeFile } from "node:fs/promises";
 import process from "node:process";
 
 import {
-  defaultLintRoots,
+  defaultSkillRoots,
   discoverSkillFiles,
   displayPath,
   isMarkdownPath,
+  resolveLintScopes,
 } from "../lint/discover.ts";
 import { fixSkillContent } from "../lint/fix.ts";
 import { printDiagnostic, printFixed, printSummary } from "../lint/format.ts";
 import { lintSkillContent } from "../lint/run.ts";
-import type { Diagnostic } from "../lint/types.ts";
+import { diagnosticSeverity, type Diagnostic } from "../lint/types.ts";
+import { parseLintArgs } from "./argv.ts";
 import { printHelp } from "./help.ts";
-
-interface LintOptions {
-  fix: boolean;
-  paths: string[];
-}
 
 function printError(message: string): void {
   process.stderr.write(`skills: ${message}\n`);
 }
 
-function parseLintArgs(argv: string[]): LintOptions | "help" | "error" {
-  let fix = false;
-  const paths: string[] = [];
-
-  for (const arg of argv) {
-    if (arg === "-h" || arg === "--help") return "help";
-    if (arg === "--fix") {
-      fix = true;
-      continue;
-    }
-    if (arg.startsWith("-")) return "error";
-    paths.push(arg);
-  }
-
-  return { fix, paths };
-}
-
 async function lintFile(filePath: string): Promise<Diagnostic[]> {
   const content = await readFile(filePath, "utf8");
-  return lintSkillContent(content);
+  return lintSkillContent(content, filePath);
 }
 
 export async function runLint(argv: string[]): Promise<number> {
@@ -56,10 +36,21 @@ export async function runLint(argv: string[]): Promise<number> {
     return 1;
   }
 
-  const files =
-    parsed.paths.length > 0
-      ? parsed.paths
-      : await discoverSkillFiles(defaultLintRoots());
+  let files: string[];
+  try {
+    files =
+      parsed.positional.length > 0
+        ? await resolveLintScopes(parsed.positional)
+        : await discoverSkillFiles(
+            defaultSkillRoots({
+              includeCursorBuiltin: parsed.cursorBuiltin,
+            })
+          );
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    printError(message);
+    return 1;
+  }
 
   if (files.length === 0) {
     printError("no skill markdown files found");
@@ -67,7 +58,8 @@ export async function runLint(argv: string[]): Promise<number> {
   }
 
   let warningCount = 0;
-  let filesWithWarnings = 0;
+  let errorCount = 0;
+  let filesWithIssues = 0;
   let filesChecked = 0;
 
   for (const filePath of files) {
@@ -105,17 +97,21 @@ export async function runLint(argv: string[]): Promise<number> {
       }
     }
 
-    const diagnostics = lintSkillContent(content);
+    const diagnostics = lintSkillContent(content, filePath);
     if (diagnostics.length === 0) continue;
 
-    filesWithWarnings++;
-    warningCount += diagnostics.length;
+    filesWithIssues++;
     for (const diagnostic of diagnostics) {
+      if (diagnosticSeverity(diagnostic) === "error") {
+        errorCount++;
+      } else {
+        warningCount++;
+      }
       printDiagnostic(filePath, diagnostic);
     }
   }
 
-  printSummary(warningCount, 0, filesWithWarnings, filesChecked);
+  printSummary(warningCount, errorCount, filesWithIssues, filesChecked);
 
-  return warningCount > 0 ? 1 : 0;
+  return warningCount > 0 || errorCount > 0 ? 1 : 0;
 }

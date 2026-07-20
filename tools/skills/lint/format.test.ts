@@ -32,4 +32,15 @@ describe("formatDiagnostic", () => {
     assert.match(line, /~\/\.agents\/skills\/jira\/SKILL\.md:3:1/);
     assert.equal(displayPath(filePath), "~/.agents/skills/jira/SKILL.md");
   });
+
+  it("prints errors with an error severity label", () => {
+    const line = formatDiagnostic("/tmp/SKILL.md", {
+      line: 1,
+      column: 1,
+      code: "skill-length",
+      severity: "error",
+      message: "SKILL.md exceeds 500 lines (501).",
+    });
+    assert.match(line, /error skill-length/);
+  });
 });

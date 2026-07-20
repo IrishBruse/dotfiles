@@ -2,17 +2,21 @@ import process from "node:process";
 
 import { displayPath } from "../discover.ts";
 import { formatOutput, paintOutput } from "./color.ts";
-import type { Diagnostic } from "./types.ts";
+import { diagnosticSeverity, type Diagnostic } from "./types.ts";
 
 export function formatDiagnostic(filePath: string, diagnostic: Diagnostic): string {
   const location = paintOutput(
     "label",
     `${displayPath(filePath)}:${diagnostic.line}:${diagnostic.column}`
   );
-  const severity = paintOutput("warn", "warning");
+  const severity = diagnosticSeverity(diagnostic);
+  const severityLabel = paintOutput(
+    severity === "error" ? "bad" : "warn",
+    severity
+  );
   const code = paintOutput("dim", diagnostic.code);
   return formatOutput(
-    `${location} - ${severity} ${code}: ${diagnostic.message}`
+    `${location} - ${severityLabel} ${code}: ${diagnostic.message}`
   );
 }
 

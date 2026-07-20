@@ -8,26 +8,15 @@ import {
   type SkillEntry,
   type SkillRoot,
 } from "../discover.ts";
-import {
-  frontmatterDisplayFields,
-  parseSkillFrontmatter,
-  type DisplayField,
-} from "../frontmatter.ts";
+import { parseSkillFrontmatter, skillDisplay, skillListSortRank } from "../frontmatter.ts";
+import { formatSkillLines } from "../ls-format.ts";
 import { paintStdout } from "../lint/color.ts";
 import { extractFrontmatter } from "../lint/shared.ts";
+import { parseSkillsArgs } from "./argv.ts";
 import { printHelp } from "./help.ts";
 
 function printError(message: string): void {
   process.stderr.write(`skills: ${message}\n`);
-}
-
-function formatDisplayFields(fields: DisplayField[]): string[] {
-  if (fields.length === 0) return [];
-  const width = Math.max(...fields.map((field) => field.key.length));
-  return fields.map(
-    (field) =>
-      `${paintStdout("dim", field.key.padEnd(width))}  ${field.value}`
-  );
 }
 
 function groupSkillsByRoot(skills: SkillEntry[]): Map<SkillRoot, SkillEntry[]> {
@@ -53,6 +42,39 @@ function groupSkillsByRoot(skills: SkillEntry[]): Map<SkillRoot, SkillEntry[]> {
   return new Map(ordered.map((group) => [group.root, group.skills]));
 }
 
+interface SkillLsEntry {
+  skill: SkillEntry;
+  display: ReturnType<typeof skillDisplay>;
+}
+
+async function loadSkillEntries(skills: SkillEntry[]): Promise<SkillLsEntry[]> {
+  return Promise.all(
+    skills.map(async (skill) => {
+      const content = await readFile(skill.skillPath, "utf8");
+      const frontmatter = extractFrontmatter(content).trim();
+      const parsed = frontmatter
+        ? parseSkillFrontmatter(frontmatter)
+        : { entries: [] };
+      return {
+        skill,
+        display: frontmatter ? skillDisplay(parsed, skill.name) : { headingTags: [], fields: [] },
+        rank: skillListSortRank(parsed),
+      };
+    })
+  );
+}
+
+function sortSkillEntries(
+  entries: Awaited<ReturnType<typeof loadSkillEntries>>
+): SkillLsEntry[] {
+  return [...entries]
+    .sort((a, b) => {
+      if (a.rank !== b.rank) return a.rank - b.rank;
+      return a.skill.name.localeCompare(b.skill.name);
+    })
+    .map(({ skill, display }) => ({ skill, display }));
+}
+
 async function printSkills(skills: SkillEntry[]): Promise<void> {
   const groups = groupSkillsByRoot(skills);
   let firstGroup = true;
@@ -62,45 +84,46 @@ async function printSkills(skills: SkillEntry[]): Promise<void> {
     firstGroup = false;
 
     process.stdout.write(
-      `${paintStdout("dim", root.scope)} ${paintStdout("label", displayPath(root.path))}\n`
+      `${paintStdout("dim", root.scope)} ${paintStdout("label", displayPath(root.path))}\n\n`
     );
-    for (const skill of entries) {
-      process.stdout.write(`${paintStdout("ok", skill.name)}\n`);
-      const content = await readFile(skill.skillPath, "utf8");
-      const frontmatter = extractFrontmatter(content).trim();
-      if (!frontmatter) continue;
 
-      const fields = frontmatterDisplayFields(
-        parseSkillFrontmatter(frontmatter),
-        skill.name
-      );
-      for (const line of formatDisplayFields(fields)) {
-        process.stdout.write(`  ${line}\n`);
+    let index = 0;
+    for (const { skill, display } of sortSkillEntries(
+      await loadSkillEntries(entries)
+    )) {
+      if (index > 0) process.stdout.write("\n");
+      index++;
+
+      for (const line of formatSkillLines(display, skill.name)) {
+        process.stdout.write(`${line}\n`);
       }
     }
   }
 }
 
 export async function runLs(argv: string[]): Promise<number> {
-  if (argv.includes("-h") || argv.includes("--help")) {
+  const parsed = parseSkillsArgs(argv);
+  if (parsed === "help") {
     printHelp();
     return 0;
   }
-
-  if (argv.length > 0) {
-    for (const arg of argv) {
-      if (arg.startsWith("-")) {
-        printError(`unknown option ${arg}`);
-        printError("Try skills ls --help");
-        return 1;
-      }
-    }
-    printError(`unexpected argument: ${argv[0]}`);
+  if (parsed === "error") {
+    printError("unknown option");
     printError("Try skills ls --help");
     return 1;
   }
 
-  const skills = await discoverSkills(allSkillRoots(process.cwd()));
+  if (parsed.positional.length > 0) {
+    printError(`unexpected argument: ${parsed.positional[0]}`);
+    printError("Try skills ls --help");
+    return 1;
+  }
+
+  const skills = await discoverSkills(
+    allSkillRoots(process.cwd(), {
+      includeCursorBuiltin: parsed.cursorBuiltin,
+    })
+  );
   if (skills.length === 0) {
     printError("no skills found");
     return 1;

@@ -10,14 +10,21 @@ Commands:
   ls       List skills from global and project locations
   lint     Check skill markdown for style issues (global.mdc, writing-great-skills)
 
-skills ls scans ~/.agents/skills, ~/.cursor/skills, ~/.cursor/skills-cursor,
-and the same paths under the current directory and its parents.
+skills ls scans standard agent skill roots under ~ (for example ~/.agents/skills,
+~/.cursor/skills, ~/.claude/skills, ~/.config/opencode/skills) and skills.sh-
+compatible project paths under the current directory and its parents.
+~/.cursor/skills-cursor is omitted unless you pass --cursor-builtin.
 
-With no paths, skills lint scans ~/.agents/skills and ~/.cursor/skills for .md
-and .mdc files. It does not scan ~/.cursor/skills-cursor.
+With no paths, skills lint scans the same skill roots for .md and .mdc
+files. With a path, lint scopes to that skill folder: a SKILL.md file lints
+every markdown file in its directory, and a directory path lints that tree.
+
+Shared options:
+  --cursor-builtin   Include ~/.cursor/skills-cursor and project skills-cursor
 
 Lint options:
-  --fix        Apply safe auto-fixes, then report remaining warnings
+  --fix              Apply safe auto-fixes, then report remaining warnings
+                     (typical: skills lint path/to/SKILL.md --fix)
 
 Options:
   -h, --help   Show help
