@@ -1,3 +1,15 @@
+export function headingAnchor(heading: string): string {
+  return heading
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, " ")
+    .trim()
+    .replace(/\s+/g, "-");
+}
+
+export function yamlSingleQuote(value: string): string {
+  return `'${value.replace(/'/g, "''")}'`;
+}
+
 export function fixInlineCodeParts(
   line: string,
   fixer: (prose: string) => string

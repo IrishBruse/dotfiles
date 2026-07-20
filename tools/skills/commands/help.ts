@@ -25,6 +25,9 @@ Shared options:
 Lint options:
   --fix              Apply safe auto-fixes, then report remaining warnings
                      (typical: skills lint path/to/SKILL.md --fix)
+                     Auto-fixes: block-scalar descriptions, orphan frontmatter
+                     lines, nested reference links, reference TOCs, long prose
+                     lines, prose semicolons, non-ASCII, and home/ repo paths
 
 Options:
   -h, --help   Show help

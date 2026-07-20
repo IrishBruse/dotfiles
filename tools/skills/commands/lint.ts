@@ -1,6 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import process from "node:process";
 
+import { buildLintContexts } from "../lint/context.ts";
 import {
   defaultSkillRoots,
   discoverSkillFiles,
@@ -17,11 +18,6 @@ import { printHelp } from "./help.ts";
 
 function printError(message: string): void {
   process.stderr.write(`skills: ${message}\n`);
-}
-
-async function lintFile(filePath: string): Promise<Diagnostic[]> {
-  const content = await readFile(filePath, "utf8");
-  return lintSkillContent(content, filePath);
 }
 
 export async function runLint(argv: string[]): Promise<number> {
@@ -57,6 +53,8 @@ export async function runLint(argv: string[]): Promise<number> {
     return 1;
   }
 
+  const lintContexts = await buildLintContexts(files);
+
   let warningCount = 0;
   let errorCount = 0;
   let filesWithIssues = 0;
@@ -85,7 +83,7 @@ export async function runLint(argv: string[]): Promise<number> {
     let wasFixed = false;
 
     if (parsed.fix) {
-      const fixed = fixSkillContent(content);
+      const fixed = fixSkillContent(content, filePath);
       if (fixed !== content) {
         try {
           await writeFile(filePath, fixed, "utf8");
@@ -100,7 +98,11 @@ export async function runLint(argv: string[]): Promise<number> {
       }
     }
 
-    const diagnostics = lintSkillContent(content, filePath);
+    const context = lintContexts.get(filePath);
+    const diagnostics = lintSkillContent(
+      content,
+      context ?? filePath
+    );
     if (wasFixed && diagnostics.length === 0) {
       fixedFiles.push(filePath);
     }

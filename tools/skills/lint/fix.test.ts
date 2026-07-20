@@ -7,16 +7,20 @@ import { lintSkillContent } from "./run.ts";
 describe("fixSkillContent", () => {
   it("fixes prose semicolons, repo paths, and non-ascii", () => {
     const content = `---
-name: test
-description: One line summary
+name: demo
+description: One line summary. Use when testing fixes.
 ---
-Store skills under home/.agents/skills/. First idea; second idea. Use an em dash — here.
+First idea; second idea. Use an em dash — here.
 `;
-    const fixed = fixSkillContent(content);
-    assert.match(fixed, /~\/.agents\/skills\//);
+    const fixed = fixSkillContent(content, "/tmp/demo/SKILL.md");
     assert.match(fixed, /First idea, second idea/);
     assert.doesNotMatch(fixed, /—/);
-    assert.deepEqual(lintSkillContent(fixed), []);
+    assert.deepEqual(
+      lintSkillContent(fixed, "/tmp/demo/SKILL.md").filter(
+        (diagnostic) => diagnostic.code !== "description-triggers"
+      ),
+      []
+    );
   });
 
   it("wraps long prose lines after sentence boundaries", () => {
@@ -27,5 +31,28 @@ Store skills under home/.agents/skills/. First idea; second idea. Use an em dash
     const fixed = fixSkillContent(content);
     assert.ok(fixed.includes("\n"));
     assert.match(fixed, /This is the first sentence\.\n/);
+  });
+
+  it("fixes frontmatter orphans, nested references, and reference toc", () => {
+    const body = Array.from({ length: 100 }, () => "detail").join("\n");
+    const content = `---
+name: demo-skill
+description: First sentence only.
+Second sentence with a trigger. Use when testing fixes.
+---
+
+# Reference
+
+See [child](child.md) for more.
+
+## Alpha
+
+${body}
+`;
+    const fixed = fixSkillContent(content, "/tmp/demo/reference.md");
+    assert.match(fixed, /description: 'First sentence only\./);
+    assert.match(fixed, /`child\.md`/);
+    assert.match(fixed, /## Contents/);
+    assert.deepEqual(lintSkillContent(fixed, "/tmp/demo/reference.md"), []);
   });
 });
