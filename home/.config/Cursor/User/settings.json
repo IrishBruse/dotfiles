@@ -1,5 +1,8 @@
 {
   "cursor.composer.conversationDensity": "detailed",
+  "extensions.supportAgentsWindow": {
+    "irishbruse.ib-utilities": true
+  },
   "terminal.integrated.profiles.linux": {
     "agent": {
       "path": "agent",

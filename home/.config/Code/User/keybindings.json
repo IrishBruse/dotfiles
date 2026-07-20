@@ -156,6 +156,11 @@
         "command": "workbench.action.createTerminalEditor"
     },
     {
+        "key": "ctrl+v",
+        "command": "ib-utilities.terminalPaste",
+        "when": "terminalFocus"
+    },
+    {
         "key": "ctrl+shift+i",
         "command": "toggle",
         "args": {
