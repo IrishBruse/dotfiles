@@ -38,7 +38,8 @@ agent-browser batch \
   '["navigate","http://localhost:3000/target"]'
 ```
 
-`open` with no URL gives you a clean launch so any interception, cookies, or init scripts you register take effect on the *first* real navigation. Use for SSR-only debug (`--resource-type script`), protected-origin auth, or capturing fresh `react suspense`/`vitals` state without noise from a prior page.
+`open` with no URL gives you a clean launch so any interception, cookies, or init scripts you register take effect on the *first* real navigation.
+Use for SSR-only debug (`--resource-type script`), protected-origin auth, or capturing fresh `react suspense`/`vitals` state without noise from a prior page.
 
 ## Snapshot (page analysis)
 
@@ -74,7 +75,9 @@ agent-browser drag @e1 @e2        # Drag and drop
 agent-browser upload @e1 file.pdf # Upload files
 ```
 
-Clicks fail before dispatch when another element covers the target's click point. The error names the covering element, for example `covered by <div#consent-banner>`. Dismiss or interact with that element, run a fresh snapshot, then retry the original action.
+Clicks fail before dispatch when another element covers the target's click point.
+The error names the covering element, for example `covered by <div#consent-banner>`.
+Dismiss or interact with that element, run a fresh snapshot, then retry the original action.
 
 ## Get Information
 
@@ -108,7 +111,8 @@ agent-browser screenshot --full   # Full page
 agent-browser pdf output.pdf      # Save as PDF
 ```
 
-Headless Chromium screenshots hide native scrollbars for consistent image output. Pass `--hide-scrollbars false` when launching to keep native scrollbars visible.
+Headless Chromium screenshots hide native scrollbars for consistent image output.
+Pass `--hide-scrollbars false` when launching to keep native scrollbars visible.
 
 ## Video Recording
 
@@ -207,9 +211,11 @@ agent-browser tab close docs                   # Close tab by label
 agent-browser window new                       # New window
 ```
 
-Tab ids are stable strings of the form `t1`, `t2`, `t3`. They're never reused within a session, so the same id keeps referring to the same tab across commands. Positional integers are **not** accepted - `tab 2` errors with a teaching message; use `t2`.
+Tab ids are stable strings of the form `t1`, `t2`, `t3`. They're never reused within a session, so the same id keeps referring to the same tab across commands.
+Positional integers are **not** accepted - `tab 2` errors with a teaching message, use `t2`.
 
-User-assigned labels (`docs`, `app`, `admin`) are interchangeable with ids everywhere a tab ref is accepted. Labels are the agent-friendly way to write multi-tab workflows:
+User-assigned labels (`docs`, `app`, `admin`) are interchangeable with ids everywhere a tab ref is accepted.
+Labels are the agent-friendly way to write multi-tab workflows:
 
 ```bash
 agent-browser tab new --label docs https://docs.example.com
@@ -221,7 +227,8 @@ agent-browser tab app                    # switch to app
 agent-browser tab close docs             # close by label
 ```
 
-Labels are never auto-generated, never rewritten on navigation, and must be unique within a session. To interact with another tab, switch to it first: the daemon maintains a single active tab, so refs (`@eN`) belong to the tab that was active when the snapshot ran.
+Labels are never auto-generated, never rewritten on navigation, and must be unique within a session.
+To interact with another tab, switch to it first: the daemon maintains a single active tab, so refs (`@eN`) belong to the tab that was active when the snapshot ran.
 
 ## Frames
 
@@ -233,7 +240,8 @@ agent-browser frame main          # Back to main frame
 
 ### Iframe support
 
-Iframes are detected automatically during snapshots. When the main-frame snapshot runs, `Iframe` nodes are resolved and their content is inlined beneath the iframe element in the output (one level of nesting; iframes within iframes are not expanded).
+Iframes are detected automatically during snapshots.
+When the main-frame snapshot runs, `Iframe` nodes are resolved and their content is inlined beneath the iframe element in the output (one level of nesting, iframes within iframes are not expanded).
 
 ```bash
 agent-browser snapshot -i
@@ -258,7 +266,8 @@ The `frame` command accepts:
 
 ## Dialogs
 
-By default, `alert` and `beforeunload` dialogs are automatically accepted so they never block the agent. `confirm` and `prompt` dialogs still require explicit handling. Use `--no-auto-dialog` to disable this behavior.
+By default, `alert` and `beforeunload` dialogs are automatically accepted so they never block the agent.
+`confirm` and `prompt` dialogs still require explicit handling. Use `--no-auto-dialog` to disable this behavior.
 
 ```bash
 agent-browser dialog accept [text]  # Accept dialog
@@ -304,7 +313,8 @@ agent-browser plugin run <name> <type> --payload <json>
                                           # Run an arbitrary plugin request
 ```
 
-Credential provider plugins run out-of-process over the `agent-browser.plugin.v1` stdio JSON protocol and must declare `credential.read`. Use `--confirm-actions plugin:<name>:credential.read` to require explicit approval before a plugin resolves secrets.
+Credential provider plugins run out-of-process over the `agent-browser.plugin.v1` stdio JSON protocol and must declare `credential.read`.
+Use `--confirm-actions plugin:<name>:credential.read` to require explicit approval before a plugin resolves secrets.
 
 Other capabilities use the same protocol:
 - `browser.provider`: `agent-browser --provider <name> open <url>`
@@ -328,9 +338,11 @@ agent-browser mcp --tools all
 agent-browser mcp --tools core,network,react
 ```
 
-Starts a stdio Model Context Protocol server. MCP clients should configure the server command as `agent-browser` with args `["mcp"]`. The server defaults to MCP protocol 2025-11-25 and accepts older supported client protocol versions during initialization.
+Starts a stdio Model Context Protocol server. MCP clients should configure the server command as `agent-browser` with args `["mcp"]`.
+The server defaults to MCP protocol 2025-11-25 and accepts older supported client protocol versions during initialization.
 
-The default tools profile is `core`, which keeps MCP context small for everyday browser automation. Use `--tools all` for the full typed CLI parity surface, or combine profiles with commas, such as `--tools core,network,react`.
+The default tools profile is `core`, which keeps MCP context small for everyday browser automation.
+Use `--tools all` for the full typed CLI parity surface, or combine profiles with commas, such as `--tools core,network,react`.
 
 Profiles:
 
@@ -358,7 +370,10 @@ Common tools include:
 - `agent_browser_eval`
 - `agent_browser_close`
 
-Tool calls use the same config files and environment variables as the CLI. Each tool accepts typed arguments plus `extraArgs` for advanced CLI flags and exact CLI parity. Tool discovery is paginated and includes read-only/open-world annotations so modern MCP clients can load the large typed surface incrementally. Use the `session` tool argument or `AGENT_BROWSER_SESSION` to isolate browser state.
+Tool calls use the same config files and environment variables as the CLI.
+Each tool accepts typed arguments plus `extraArgs` for advanced CLI flags and exact CLI parity.
+Tool discovery is paginated and includes read-only/open-world annotations so modern MCP clients can load the large typed surface incrementally.
+Use the `session` tool argument or `AGENT_BROWSER_SESSION` to isolate browser state.
 
 ## Global Options
 
@@ -432,7 +447,8 @@ agent-browser cookies set --curl <file>                             # Auto-detec
 agent-browser cookies set --curl <file> --domain example.com        # Scope to a domain
 ```
 
-Supported formats: JSON array of `{name, value}`, a cURL dump from DevTools -> Network -> Copy as cURL, or a bare Cookie header. Errors never echo cookie values.
+Supported formats: JSON array of `{name, value}`, a cURL dump from DevTools -> Network -> Copy as cURL, or a bare Cookie header.
+Errors never echo cookie values.
 
 ## Network route by resource type
 

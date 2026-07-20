@@ -2,11 +2,15 @@
 
 Use this route after `/jira breakdown` or `/jira` has confirmed an existing Jira issue should be analyzed for a safer delivery breakdown.
 
-This is an interactive, gated workflow. Work one major step at a time. Refuse a bulk run. If live Jira is unavailable, say so, reconcile from available local hierarchy context, and note that the source may be stale.
+This is an interactive, gated workflow. Work one major step at a time. Refuse a bulk run.
+If live Jira is unavailable, say so, reconcile from available local hierarchy context, and note that the source may be stale.
 
 ## Purpose
 
-Break any Jira issue into recommended delivery increments and follow-up work. The output may recommend child issues, sibling issues, replacement issues, local drafts, or no split when the existing ticket is already appropriately scoped. Every row is marked `Created`, `Not created`, `Local draft`, `Orphan`, or `Recommendation only` after reconciling related Jira issues. Open questions belong on the owning backlog row. Do not propose Spikes unless the user explicitly requests them.
+Break any Jira issue into recommended delivery increments and follow-up work.
+The output may recommend child issues, sibling issues, replacement issues, local drafts, or no split when the existing ticket is already appropriately scoped.
+Every row is marked `Created`, `Not created`, `Local draft`, `Orphan`, or `Recommendation only` after reconciling related Jira issues.
+Open questions belong on the owning backlog row. Do not propose Spikes unless the user explicitly requests them.
 
 Persist the breakdown using workspace artifact conventions.
 
@@ -14,7 +18,8 @@ Optionally draft child files, then create Jira Tasks, Sub-tasks, or Stories only
 
 ## Pipeline
 
-Use after task context or any Jira issue key is available. Prefer existing local task context when it exists; otherwise fetch the source issue and related Jira issues.
+Use after task context or any Jira issue key is available.
+Prefer existing local task context when it exists, otherwise fetch the source issue and related Jira issues.
 
 Use before per-child ticket drafting through [`../story/story.md`](../story/story.md) or [`../task/task.md`](../task/task.md).
 
@@ -28,7 +33,7 @@ Do not treat this as behavioral scenario extraction. This route recommends the b
 |------|------------|
 | Story | What the user needs: an observable outcome for a designer, engineer, stakeholder, or other actor |
 | Task | What the team needs to do: infra, bounded context, schema, wiring, documentation, or other non-user-facing work |
-| Spike | Only when the user explicitly asks; otherwise never propose |
+| Spike | Only when the user explicitly asks, otherwise never propose |
 
 ### Jira Status
 
@@ -36,19 +41,21 @@ Every backlog row must use one of these values.
 
 | Value | Meaning |
 |-------|---------|
-| Created | Issue exists in Jira; record key, issue type, workflow status, and parent |
+| Created | Issue exists in Jira, record key, issue type, workflow status, and parent |
 | Not created | Agreed breakdown item with no Jira issue yet |
 | Local draft | Local draft exists with `Jira: _(pending)_` |
-| Orphan | Issue exists but has the wrong or missing parent; record a hygiene action |
+| Orphan | Issue exists but has the wrong or missing parent, record a hygiene action |
 | Recommendation only | Advice for restructuring, reclassifying, linking, or leaving as-is, with no draft yet |
 
 ### Open Questions
 
-Discovery questions, TBDs, and unresolved architecture details go on the owning backlog row. Use `-` when none. Do not create a detached discovery section or standalone spike list.
+Discovery questions, TBDs, and unresolved architecture details go on the owning backlog row. Use `-` when none.
+Do not create a detached discovery section or standalone spike list.
 
 ### Metrics Rule
 
-For metrics or platform work, milestones such as kickoff, publish, and handover belong in the ticket that owns the producer flow. Do not create one story per milestone when the same delivery slice owns the flow.
+For metrics or platform work, milestones such as kickoff, publish, and handover belong in the ticket that owns the producer flow.
+Do not create one story per milestone when the same delivery slice owns the flow.
 
 ### Breakdown Shape
 
@@ -69,7 +76,8 @@ Choose the shape from the source issue type and scope:
 - Local task context when present.
 - Local hierarchy context.
 - Initiative or architecture docs with open-question tables, when referenced.
-- Access to the source issue and related issues in Jira. For issue types that can have children, query child relationships and paginate until the result is complete.
+- Access to the source issue and related issues in Jira.
+For issue types that can have children, query child relationships and paginate until the result is complete.
 
 ## Progress Checklist
 
@@ -84,16 +92,30 @@ Choose the shape from the source issue type and scope:
 ## Workflow
 
 1. Prerequisites, read only. Confirm the source issue key. Read task context, Jira hierarchy, and relevant architecture. Stop.
-2. Reconcile related Jira issues, read only. Fetch the source issue, children when supported, linked issues, parent, and obvious siblings. For each related issue, capture key, summary, issue type, workflow status, and parent. Cross-check orphans from task context. Match by key first, then summary and intent. Merge duplicates. Never re-propose an existing issue as `Not created`. Source order: live Jira, then local hierarchy context, then task-context Jira intelligence. Stop.
-3. Classify and map, read only. Decide whether the source should stay as-is, become a parent, split into siblings, receive child Tasks, or be reclassified. Map reconciled issues to the recommended shape, increment, and Jira status. Rows without a Jira key become `Not created` or `Recommendation only`. Stop.
+2. Reconcile related Jira issues, read only. Fetch the source issue, children when supported, linked issues, parent, and obvious siblings.
+For each related issue, capture key, summary, issue type, workflow status, and parent. Cross-check orphans from task context.
+Match by key first, then summary and intent. Merge duplicates. Never re-propose an existing issue as `Not created`.
+Source order: live Jira, then local hierarchy context, then task-context Jira intelligence. Stop.
+3. Classify and map, read only. Decide whether the source should stay as-is, become a parent, split into siblings, receive child Tasks, or be reclassified.
+Map reconciled issues to the recommended shape, increment, and Jira status. Rows without a Jira key become `Not created` or `Recommendation only`. Stop.
 4. Draft increments, read only. Draft 1-7 increments with a progress signal for each and counts for `Created`, `Not created`, and `Recommendation only`. Stop.
-5. Complete unified recommendation backlog, read only. Produce one backlog table: `Created` rows by increment, then `Not created` and `Recommendation only` rows. Add `Not created` only where no related issue matches. Put open questions on each owning row. Apply the metrics rule. Stop.
+5. Complete unified recommendation backlog, read only.
+Produce one backlog table: `Created` rows by increment, then `Not created` and `Recommendation only` rows.
+Add `Not created` only where no related issue matches. Put open questions on each owning row. Apply the metrics rule. Stop.
 6. Spikes, read only. Only include Spikes if the user explicitly requested them. Otherwise omit. Stop.
-7. Write. Save the breakdown using the Breakdown Template in [`template.md`](template.md) and workspace artifact conventions. Optionally update local indexes, task-context links, or hierarchy pointers. Stop.
-8. Stop gate 1. Confirm reconcile results, increments, classifications, and open-question placement. Do not continue to local drafts until explicit confirmation.
-9. Optional local drafts. Convert user-selected `Not created` rows into local draft files via [`../story/story.md`](../story/story.md) or [`../task/task.md`](../task/task.md). Sub-tasks use [`../task/task.md`](../task/task.md) and the same Goal / Acceptance Criteria / Notes format as Tasks. Set `Jira: _(pending)_` and flip the breakdown row to `Local draft`. Stop.
+7. Write. Save the breakdown using the Breakdown Template in [`template.md`](template.md) and workspace artifact conventions.
+Optionally update local indexes, task-context links, or hierarchy pointers. Stop.
+8. Stop gate 1. Confirm reconcile results, increments, classifications, and open-question placement.
+Do not continue to local drafts until explicit confirmation.
+9. Optional local drafts.
+Convert user-selected `Not created` rows into local draft files via [`../story/story.md`](../story/story.md) or [`../task/task.md`](../task/task.md).
+Sub-tasks use [`../task/task.md`](../task/task.md) and the same Goal / Acceptance Criteria / Notes format as Tasks.
+Set `Jira: _(pending)_` and flip the breakdown row to `Local draft`. Stop.
 10. Stop gate 2. Ask which `Not created` or `Local draft` items to file in Jira.
-11. Optional Jira create. Run the **Jira Write Approval Gate** in `SKILL.md` for the stop gate 2 selected rows. Create only rows answered `Approve`. Prefer Tasks and Sub-tasks through [`../task/task.md`](../task/task.md); create Stories only when the user explicitly requests Story creation. For broader new parent work, route through [`../epic/epic.md`](../epic/epic.md) instead of creating it inside this route. Flip rows to `Created` and record keys. Stop.
+11. Optional Jira create. Run the **Jira Write Approval Gate** in `SKILL.md` for the stop gate 2 selected rows. Create only rows answered `Approve`.
+Prefer Tasks and Sub-tasks through [`../task/task.md`](../task/task.md); create Stories only when the user explicitly requests Story creation.
+For broader new parent work, route through [`../epic/epic.md`](../epic/epic.md) instead of creating it inside this route.
+Flip rows to `Created` and record keys. Stop.
 12. Post-create. Refresh the breakdown from live Jira workflow status. Update local hierarchy context only after Jira creation or confirmed hygiene corrections.
 
 ## Reconcile Rules
@@ -105,14 +127,17 @@ Choose the shape from the source issue type and scope:
 
 ## Plan Mode
 
-- Steps 1-6 are read-only research. Do not emit per-step chat gates when working in plan mode; fold them into one plan gate.
+- Steps 1-6 are read-only research. Do not emit per-step chat gates when working in plan mode, fold them into one plan gate.
 - Fold stop gate 1 into the plan: present reconcile results and backlog design together.
 - Step 7 onward is execution. Write breakdown and registry artifacts only after plan approval.
 - Stop gate 2 and Jira create remain explicit post-execution gates. Never Jira-create or write local hierarchy context during research.
 - Use structured questions for scope clarifications during research, not as a substitute for the plan gate.
-- Parallelize independent file reads and independent Jira issue lookups. Serialize shared artifact updates such as hierarchy context and breakdown `Created` flips.
-- Step 7 may write the breakdown, indexes, and task-context links in parallel when they are distinct artifacts. Do not parallel-edit hierarchy context or the same backlog table.
-- After stop gate 2, create approved Tasks in parallel when safe. Then perform one serialized post-create pass to flip `Created` rows and update local hierarchy context.
+- Parallelize independent file reads and independent Jira issue lookups.
+Serialize shared artifact updates such as hierarchy context and breakdown `Created` flips.
+- Step 7 may write the breakdown, indexes, and task-context links in parallel when they are distinct artifacts.
+Do not parallel-edit hierarchy context or the same backlog table.
+- After stop gate 2, create approved Tasks in parallel when safe.
+Then perform one serialized post-create pass to flip `Created` rows and update local hierarchy context.
 
 ## Breakdown Template
 

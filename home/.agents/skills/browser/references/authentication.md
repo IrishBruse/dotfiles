@@ -39,7 +39,8 @@ google-chrome --remote-debugging-port=9222
 
 Log in to your target site(s) in this Chrome window as you normally would.
 
-> **Security note:** `--remote-debugging-port` exposes full browser control on localhost. Any local process can connect and read cookies, execute JS, etc. Only use on trusted machines and close Chrome when done.
+> **Security note:** `--remote-debugging-port` exposes full browser control on localhost. Any local process can connect and read cookies, execute JS, etc.
+Only use on trusted machines and close Chrome when done.
 
 **Step 2: Grab the auth state**
 
@@ -62,7 +63,9 @@ agent-browser open https://app.example.com/dashboard
 
 This works for any site, including those with complex OAuth flows, SSO, or 2FA, as long as Chrome already has valid session cookies.
 
-> **Security note:** State files contain session tokens in plaintext. Add them to `.gitignore`, delete when no longer needed, and set `AGENT_BROWSER_ENCRYPTION_KEY` for encryption at rest. See [Security Best Practices](#security-best-practices).
+> **Security note:** State files contain session tokens in plaintext.
+Add them to `.gitignore`, delete when no longer needed, and set `AGENT_BROWSER_ENCRYPTION_KEY` for encryption at rest.
+See [Security Best Practices](#security-best-practices).
 
 **Tip:** Combine with `--session <id> --restore` so the imported auth auto-persists across restarts:
 
@@ -74,7 +77,8 @@ agent-browser --session "$SESSION" --restore --state ./my-auth.json open https:/
 
 ## Persistent Profiles
 
-Use `--profile` to point agent-browser at a Chrome user data directory. This persists everything (cookies, IndexedDB, service workers, cache) across browser restarts without explicit save/load:
+Use `--profile` to point agent-browser at a Chrome user data directory.
+This persists everything (cookies, IndexedDB, service workers, cache) across browser restarts without explicit save/load:
 
 ```bash
 # First run: login once
@@ -146,7 +150,8 @@ agent-browser get url  # Should be dashboard, not login
 
 ## Plugins
 
-Use credential provider plugins when credentials live in external vault software. Plugins are configured in `agent-browser.json` and run as external executables over the `agent-browser.plugin.v1` stdio JSON protocol.
+Use credential provider plugins when credentials live in external vault software.
+Plugins are configured in `agent-browser.json` and run as external executables over the `agent-browser.plugin.v1` stdio JSON protocol.
 
 Add a plugin with `plugin add`. A plain `name` or `@scope/name` resolves from npm; `owner/repo` resolves from GitHub:
 

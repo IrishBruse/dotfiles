@@ -23,7 +23,8 @@ SESSION="$(agent-browser session id --scope worktree --prefix my-skill)"
 agent-browser --session "$SESSION" --restore open https://app.example.com/login
 ```
 
-`--scope worktree` uses the Git worktree root when available, then the Git root, then the canonical current directory. This is the recommended default for agents because worktrees are commonly used for parallel agent runs.
+`--scope worktree` uses the Git worktree root when available, then the Git root, then the canonical current directory.
+This is the recommended default for agents because worktrees are commonly used for parallel agent runs.
 
 ```bash
 # Session 1: Authentication flow
@@ -57,7 +58,8 @@ SESSION="$(agent-browser session id --scope worktree --prefix next-dev-loop)"
 agent-browser --session "$SESSION" --restore open https://app.example.com/dashboard
 ```
 
-State is loaded before navigation and saved on close, daemon shutdown, idle timeout, and compatible relaunch. It is also saved periodically while the browser is open (after commands settle, at most once per `AGENT_BROWSER_AUTOSAVE_INTERVAL_MS`, default 30000; set to `0` to save only on close), so a browser window the user closes by hand still leaves a recent save behind. Idle sessions keep saving on the same interval, capturing changes the page makes on its own such as token refreshes. The default save policy is `--restore-save auto`, which skips auto-save if restore failed or validation failed; `never` disables periodic autosave too.
+State is loaded before navigation and saved on close, daemon shutdown, idle timeout, and compatible relaunch.
+It is also saved periodically while the browser is open (after commands settle, at most once per `AGENT_BROWSER_AUTOSAVE_INTERVAL_MS`, default 30000; set to `0` to save only on close), so a browser window the user closes by hand still leaves a recent save behind. Idle sessions keep saving on the same interval, capturing changes the page makes on its own such as token refreshes. The default save policy is `--restore-save auto`, which skips auto-save if restore failed or validation failed; `never` disables periodic autosave too.
 
 ```bash
 agent-browser --session "$SESSION" --restore --restore-check-url "**/dashboard" open https://app.example.com/dashboard
@@ -73,7 +75,8 @@ agent-browser --session "$SESSION" session info --json
 
 ### Manual State Files
 
-Use `state save`, `state load`, and `--state <path>` when you need an explicit portable JSON file. Do not make agents construct paths under `~/.agent-browser/sessions/`; prefer `--restore` for reusable agent sessions.
+Use `state save`, `state load`, and `--state <path>` when you need an explicit portable JSON file.
+Do not make agents construct paths under `~/.agent-browser/sessions/`; prefer `--restore` for reusable agent sessions.
 
 ## Common Patterns
 

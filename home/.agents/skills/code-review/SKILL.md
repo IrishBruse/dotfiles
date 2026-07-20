@@ -1,6 +1,7 @@
 ---
 name: code-review
-description: Runs an extremely strict maintainability review for abstraction quality, giant files, and spaghetti conditions. Use for a thermo-nuclear or especially harsh code-quality review.
+description: Runs an extremely strict maintainability review for abstraction quality, giant files, and spaghetti conditions.
+Use for a thermo-nuclear or especially harsh code-quality review.
 ---
 
 # Thermo-Nuclear Code Quality Review
@@ -46,7 +47,8 @@ Push to extract helpers, subcomponents, or modules first. Waive only for a compe
 Look for new ad-hoc conditionals, scattered special cases, one-off booleans, nullable modes, or flags bolted into unrelated flows, and repeated conditionals that signal a missing model.
 Also flag stored state that can be derived from source state, which invites stale-state bugs.
 
-Push the logic into a dedicated abstraction, helper, state machine, or typed dispatcher instead of tangling an existing path. Treat "weird if statements in random places" as a design problem, not a nit.
+Push the logic into a dedicated abstraction, helper, state machine, or typed dispatcher instead of tangling an existing path.
+Treat "weird if statements in random places" as a design problem, not a nit.
 
 ### Magic and thin abstractions
 
@@ -60,7 +62,8 @@ Push for direct, boring, maintainable code. Delete wrappers that do not clarify 
 Look for unnecessary optionality, `unknown`, `any`, or cast-heavy code, nullable values that proliferate defensive checks, and silent fallbacks that paper over an unclear invariant.
 Flag catch-all `try`/`catch` blocks that swallow errors without naming which exceptions are expected.
 
-Push for explicit typed models or shared contracts so the control flow gets simpler, and make the invariant explicit at the boundary. Let unexpected errors surface instead of being swallowed.
+Push for explicit typed models or shared contracts so the control flow gets simpler, and make the invariant explicit at the boundary.
+Let unexpected errors surface instead of being swallowed.
 
 ### Comments and dead code
 
@@ -93,7 +96,8 @@ Keep feature-specific behavior beside the component that uses it instead of prom
 
 Look for independent work serialized for no good reason, and related updates that can leave state half-applied.
 
-Push to parallelize independent work when it also simplifies the flow, and to restructure related updates into a more atomic flow. Do not over-index on micro-optimizations.
+Push to parallelize independent work when it also simplifies the flow, and to restructure related updates into a more atomic flow.
+Do not over-index on micro-optimizations.
 
 ## Output
 
@@ -107,11 +111,13 @@ Prioritize findings in this order:
 6. File-size and decomposition
 7. Dead code, low-information comments, and remaining legibility concerns
 
-Prefer a small number of high-conviction comments over a long list of cosmetic nits. Do not flood the review with low-value notes when larger structural issues exist.
+Prefer a small number of high-conviction comments over a long list of cosmetic nits.
+Do not flood the review with low-value notes when larger structural issues exist.
 
 ## Tone
 
-Be direct, serious, and demanding. Do not be rude, but do not soften major maintainability issues into mild suggestions. If the code makes the codebase messier, say so. If it missed a dramatic simplification, say that too.
+Be direct, serious, and demanding. Do not be rude, but do not soften major maintainability issues into mild suggestions.
+If the code makes the codebase messier, say so. If it missed a dramatic simplification, say that too.
 
 Good phrases:
 

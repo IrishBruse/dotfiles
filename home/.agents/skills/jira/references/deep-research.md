@@ -16,7 +16,8 @@ Each specialist subagent must:
 - Include source references with keys, titles, URLs, file paths, or commands used where available.
 - Report confidence, duplicate or parentage risks, ticket hygiene findings, and open questions relevant to its lane.
 
-Use the specialist findings as evidence for the investigation report. If a lane is blocked by credentials or access, continue with available context and surface the gap in the report.
+Use the specialist findings as evidence for the investigation report.
+If a lane is blocked by credentials or access, continue with available context and surface the gap in the report.
 
 ## Prompt Shape
 

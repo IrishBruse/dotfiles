@@ -36,7 +36,8 @@ Public behavior in the repo defines what user docs should say.
 5. **Leakage guard** - Ensure internal file paths, variable names, or internal architectural terms do not leak into user-facing guides.
 6. **Coverage notes** - Implemented paths with no matching test (or skipped).
   No test churn unless asked.
-7. **Consumer pass** (only if requested) - Rewrite user docs for external readers: no repo-internal paths, no dev-only commands in end-user guides, tone matches existing style.
+7.
+**Consumer pass** (only if requested) - Rewrite user docs for external readers: no repo-internal paths, no dev-only commands in end-user guides, tone matches existing style.
 
 ## Output format
 

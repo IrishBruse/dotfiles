@@ -11,7 +11,7 @@ Pick a mode from what follows `/walkthrough`.
 | ---------------------- | ------------------------------------------------------------------------ |
 | (none)                 | **Breakdown** - pace the last assistant reply                            |
 | File or directory path | **Document review** - one section at a time                              |
-| Other text             | Breakdown if pacing a prior reply; otherwise treat as a path or ask once |
+| Other text             | Breakdown if pacing a prior reply, otherwise treat as a path or ask once |
 
 If the mode is unclear, ask once: pace the last reply, or walk through a file?
 
@@ -25,7 +25,7 @@ Keep the original tone, structure, and wording.
 
 1. **Source** - Last full assistant message before this skill, unless the user named another.
 2. **Chunks** - Split on headings, lists, topic shifts, or code blocks.
-  One idea per chunk (~3-6 sentences when it fits; prefer idea boundaries over a fixed sentence count).
+  One idea per chunk (~3-6 sentences when it fits, prefer idea boundaries over a fixed sentence count).
 3. **First reply** - Output only chunk 1.
   On `next`, `continue`, `more`, or clear approval, output only the next chunk.
 4. **Between chunks** - End with: `Ready for more? Say next or continue.`

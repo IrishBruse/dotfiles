@@ -1,6 +1,7 @@
 # WebGPU
 
-Screenshots and video of WebGPU pages (three.js `WebGPURenderer`, Babylon.js, raw WebGPU) in headless Chrome. Without setup this is a silent failure: the page loads, the screenshot succeeds, and the canvas is black.
+Screenshots and video of WebGPU pages (three.js `WebGPURenderer`, Babylon.js, raw WebGPU) in headless Chrome.
+Without setup this is a silent failure: the page loads, the screenshot succeeds, and the canvas is black.
 
 ## Quick start
 
@@ -44,20 +45,24 @@ agent-browser doctor --webgpu
 
 This launches a scratch session with the preset and pixel-checks two stages separately:
 
-1. **render** - requests an adapter (with retries; a cold Chrome returns null while the GPU process starts), clears an offscreen texture to red through a real render pass, and reads the buffer back. Proves WebGPU works at all, and reports the adapter (e.g. `nvidia ampere`, `apple metal-3`, `google swiftshader`).
-2. **screenshot** - decodes an actual screenshot of a presenting canvas. Proves the capture path. Expected to fail headless on Windows/Linux (see matrix); the failure message says so and points at `--headed`.
+1.
+**render** - requests an adapter (with retries, a cold Chrome returns null while the GPU process starts), clears an offscreen texture to red through a real render pass, and reads the buffer back. Proves WebGPU works at all, and reports the adapter (e.g. `nvidia ampere`, `apple metal-3`, `google swiftshader`).
+2. **screenshot** - decodes an actual screenshot of a presenting canvas. Proves the capture path.
+Expected to fail headless on Windows/Linux (see matrix); the failure message says so and points at `--headed`.
 
 Add `--headed` (`agent-browser doctor --webgpu --headed`) to validate the capture path itself - on displayless Linux the probe starts its own Xvfb, so both checks should pass.
 
 ## Linux / containers / CI
 
-The SwiftShader Vulkan path needs the system Vulkan loader and Mesa ICD. Without them `requestAdapter()` returns null (or fails with "A valid external Instance reference no longer exists"):
+The SwiftShader Vulkan path needs the system Vulkan loader and Mesa ICD.
+Without them `requestAdapter()` returns null (or fails with "A valid external Instance reference no longer exists"):
 
 ```bash
 apt-get install -y libvulkan1 mesa-vulkan-drivers
 ```
 
-Container recipe (Debian/Ubuntu base; xvfb needed only for the screenshot path). Verified with both Chrome for Testing and Debian's `chromium` package (set `AGENT_BROWSER_EXECUTABLE_PATH=/usr/bin/chromium` for the latter - useful on ARM64, where Chrome for Testing has no Linux builds):
+Container recipe (Debian/Ubuntu base, xvfb needed only for the screenshot path).
+Verified with both Chrome for Testing and Debian's `chromium` package (set `AGENT_BROWSER_EXECUTABLE_PATH=/usr/bin/chromium` for the latter - useful on ARM64, where Chrome for Testing has no Linux builds):
 
 ```dockerfile
 FROM node:22-bookworm-slim
@@ -68,7 +73,8 @@ RUN npm install -g agent-browser \
     && agent-browser install   # downloads Chrome for Testing
 ```
 
-No real GPU or `/dev/dri` is required. To prefer a real GPU on a Linux machine that has working hardware Vulkan, override both the Vulkan driver and the adapter - the preset pins `--use-vulkan=swiftshader`, so overriding only the adapter still enumerates SwiftShader (user `--args` win over the preset):
+No real GPU or `/dev/dri` is required.
+To prefer a real GPU on a Linux machine that has working hardware Vulkan, override both the Vulkan driver and the adapter - the preset pins `--use-vulkan=swiftshader`, so overriding only the adapter still enumerates SwiftShader (user `--args` win over the preset):
 
 ```bash
 agent-browser --webgpu --args "--use-vulkan=native,--use-webgpu-adapter=default" open ...
@@ -76,13 +82,14 @@ agent-browser --webgpu --args "--use-vulkan=native,--use-webgpu-adapter=default"
 
 ## Secure contexts
 
-`navigator.gpu` only exists in secure contexts. `https://`, `http://localhost`, and `file://` qualify; a plain `http://` LAN address or `data:` URL does not - WebGPU will be `undefined` there no matter which flags are set.
+`navigator.gpu` only exists in secure contexts. `https://`, `http://localhost`, and `file://` qualify, a plain `http://` LAN address or `data:` URL does not - WebGPU will be `undefined` there no matter which flags are set.
 
 ## Timing: don't screenshot too early
 
 WebGPU apps initialize asynchronously. A screenshot taken at `load` captures a blank canvas with no error anywhere. In particular:
 
-- **three.js `WebGPURenderer`**: `renderer.init()` is async; the first frame lands only after it resolves. Also note three.js **silently falls back to WebGL2** when it can't get a WebGPU adapter - the page "works" but you're not testing WebGPU (and on old setups the WebGL fallback itself may be black).
+- **three.js `WebGPURenderer`**: `renderer.init()` is async, the first frame lands only after it resolves.
+Also note three.js **silently falls back to WebGL2** when it can't get a WebGPU adapter - the page "works" but you're not testing WebGPU (and on old setups the WebGL fallback itself may be black).
 - Wait for an app-specific signal before capturing: a canvas with content, a "ready" DOM marker, or simply a rendered-frame check:
 
 ```bash
@@ -115,4 +122,5 @@ This works headless on every platform (it's how `doctor --webgpu` proves renderi
 
 ## Performance expectations
 
-SwiftShader is a CPU rasterizer. Simple scenes render fine; heavy three.js scenes are single-digit FPS. For screenshots that's usually irrelevant; for smooth video capture of complex scenes, use hardware (macOS/Windows, or Linux with `--use-vulkan=native,--use-webgpu-adapter=default` and real Vulkan drivers).
+SwiftShader is a CPU rasterizer. Simple scenes render fine, heavy three.js scenes are single-digit FPS.
+For screenshots that's usually irrelevant, for smooth video capture of complex scenes, use hardware (macOS/Windows, or Linux with `--use-vulkan=native,--use-webgpu-adapter=default` and real Vulkan drivers).

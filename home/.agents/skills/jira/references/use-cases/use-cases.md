@@ -2,7 +2,8 @@
 
 Use this route after `/jira use-cases` or `/jira` has confirmed an existing Epic needs agreed actor/action use cases before child Stories, Specs, or implementation planning.
 
-This route is for Jira-first Epic discovery. Persist agreed use cases using workspace artifact conventions when keeping them local. Posting to Jira is optional and requires an `Approve` answer from the **Jira Write Approval Gate** in `SKILL.md`.
+This route is for Jira-first Epic discovery. Persist agreed use cases using workspace artifact conventions when keeping them local.
+Posting to Jira is optional and requires an `Approve` answer from the **Jira Write Approval Gate** in `SKILL.md`.
 
 Pipeline position: Epic -> Use Cases -> Stories -> Spec -> Plan -> Implement.
 
@@ -18,13 +19,16 @@ Do not use `&lt;`, `&gt;`, `&amp;lt;`, or `&amp;gt;`.
 
 Do not draft Spine, Outcomes, Extensions, Preconditions, or Key Rules until the human has supplied an initial actor and action roster and the agent supplement pass is complete.
 
-Exception: if the human explicitly asks the agent to propose actors first, suggest only a short actor and one-line action list. Still do not produce full use cases until they confirm or edit that roster.
+Exception: if the human explicitly asks the agent to propose actors first, suggest only a short actor and one-line action list.
+Still do not produce full use cases until they confirm or edit that roster.
 
 ## Operating Stance
 
-Act as a strategic requirements architect. Deconstruct the Epic into use cases to prepare for Example Mapping, not to specify implementation. Prefer explicit metrics and traceability from actor goals to outcomes.
+Act as a strategic requirements architect. Deconstruct the Epic into use cases to prepare for Example Mapping, not to specify implementation.
+Prefer explicit metrics and traceability from actor goals to outcomes.
 
-A Red Card is a blocking gap: missing goal, business value, explicit metric, or an actor goal that cannot trace to a metric. Flag Red Cards for the human or product before pretending the value frame is settled. The human may answer, defer, or waive. Record the decision.
+A Red Card is a blocking gap: missing goal, business value, explicit metric, or an actor goal that cannot trace to a metric.
+Flag Red Cards for the human or product before pretending the value frame is settled. The human may answer, defer, or waive. Record the decision.
 
 ## When To Use
 
@@ -72,7 +76,8 @@ Metric and spine rules:
 
 ### 1. Load Epic Context
 
-Do not display full Epic detail at the start. Keep full description, AC, labels, and linked issues in working notes unless the human explicitly asks to see them.
+Do not display full Epic detail at the start.
+Keep full description, AC, labels, and linked issues in working notes unless the human explicitly asks to see them.
 
 1. Collect the Epic key.
 2. Fetch the Epic from Jira.
@@ -141,7 +146,8 @@ Introduce the review in plain chat (no code fence): tell the user these are the 
 
 ### 6. Collaborative Refinement
 
-Walk through each use case with the human via the `AskQuestion` tool. This describes tool input, so never print the labels or any fence as chat text. Use these `options`:
+Walk through each use case with the human via the `AskQuestion` tool. This describes tool input, so never print the labels or any fence as chat text.
+Use these `options`:
 
 - `Accept as-is`
 - `Modify - tell me what to change`

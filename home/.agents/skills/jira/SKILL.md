@@ -1,6 +1,7 @@
 ---
 name: jira
-description: Jira router that gates before any write. Use when a ticket idea, key, epic, or PR needs classification, duplicate and parentage checks, or routing to task/story/epic/update/search.
+description: Jira router that gates before any write.
+Use when a ticket idea, key, epic, or PR needs classification, duplicate and parentage checks, or routing to task/story/epic/update/search.
 ---
 
 # Jira
@@ -42,8 +43,8 @@ Read the matching reference file before continuing from a selected route:
 | Breakdown | [`references/breakdown/breakdown.md`](references/breakdown/breakdown.md) | Split, child-ticket plan, or no-split |
 | Update | [`references/update/update.md`](references/update/update.md) | Hygiene that preserves issue type |
 | Clean Up Ticket | [`references/update/update.md`](references/update/update.md) | Alias for Update |
-| Search More | — | Continue investigation |
-| Do Nothing | — | Stop |
+| Search More | - | Continue investigation |
+| Do Nothing | - | Stop |
 
 ### Help And No Usable Input
 
@@ -150,7 +151,8 @@ For `update`, read [`references/update/update.md`](references/update/update.md),
 
 5. **Assess breakdown need**
    - Recommend breakdown when the work has multiple actors, multiple repos, multiple measurable outcomes, multiple lifecycle phases, or more than one implementation stream.
-   - Sizing detail in [`references/breakdown/breakdown.md`](references/breakdown/breakdown.md). Prefer 3-8 child tickets for a normal epic. If more than 10 are likely, recommend initiative-to-epic shaping first.
+   - Sizing detail in [`references/breakdown/breakdown.md`](references/breakdown/breakdown.md). Prefer 3-8 child tickets for a normal epic.
+If more than 10 are likely, recommend initiative-to-epic shaping first.
    - Separate actor-facing stories from internal tasks.
    - **Done when:** breakdown yes/no stated with one-line reason. Mark N/A for narrow Task-shaped work.
 
@@ -170,7 +172,8 @@ For `update`, read [`references/update/update.md`](references/update/update.md),
 
 ## Required Route Prompt
 
-After every investigation report, use the `AskQuestion` tool to guide where to go next. This is the main interaction model for the skill. The prompt must reflect the recommendation and only include options that are valid for the current situation.
+After every investigation report, use the `AskQuestion` tool to guide where to go next. This is the main interaction model for the skill.
+The prompt must reflect the recommendation and only include options that are valid for the current situation.
 
 Populate the `AskQuestion` tool with these fields. This describes tool input, so never print the fields, labels, option text, or any fence as chat text:
 
@@ -186,7 +189,8 @@ Route prompt rules:
 - Include `Search More` when duplicate risk, parentage, ownership, repo state, PR state, or delivery scope is uncertain.
 - Include `Do Nothing` unless the user explicitly asked to create or update something and the next gate is already clear.
 - When the recommendation depends on missing information, include an option to provide or search for that missing information instead of offering a Jira write as the primary path.
-- When a route needs a new Jira ticket title, use `AskQuestion` before finalizing the title. Offer 3-5 recommended title options from the investigation context, put the strongest recommendation first, and include a custom-title option when the wording is not obvious. Do not silently invent the final ticket title.
+- When a route needs a new Jira ticket title, use `AskQuestion` before finalizing the title.
+Offer 3-5 recommended title options from the investigation context, put the strongest recommendation first, and include a custom-title option when the wording is not obvious. Do not silently invent the final ticket title.
 - If the user selects a route and that route reveals another decision, use `AskQuestion` again with the new, narrower fork.
 - Omit empty report sections.
 
@@ -217,9 +221,11 @@ Steps, in order:
 
 Rules:
 
-- One approval covers one described change set. To write several tickets, either list the full set in a single gate or run the gate per write. Never reuse an approval for a different change.
+- One approval covers one described change set. To write several tickets, either list the full set in a single gate or run the gate per write.
+Never reuse an approval for a different change.
 - If the change shown differs in any way from what you are about to write, stop and run the gate again with the corrected proposal.
-- Never infer approval from an earlier route choice, a title selection, a prior gate, or the absence of objection. Only the `Approve` option in this gate counts.
+- Never infer approval from an earlier route choice, a title selection, a prior gate, or the absence of objection.
+Only the `Approve` option in this gate counts.
 - The `prompt` must use plain markdown so labels and values render for the user.
   Use `**Label:**` for field names and separate fields with blank lines.
   Never wrap the proposal in a code fence in chat or inside the `prompt`.

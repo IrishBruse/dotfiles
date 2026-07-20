@@ -1,6 +1,7 @@
 ---
 name: jira-cli
 description: "jira CLI for board context, `jira/` pull-edit-push, and gated writes. Use for `jira info`/`jira board`, keys/JQL, or when `jira` needs the CLI."
+user-invocable: false
 ---
 
 # Jira CLI

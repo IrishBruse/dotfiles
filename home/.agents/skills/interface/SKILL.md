@@ -1,6 +1,8 @@
 ---
 name: interface
-description: Produces a structured code interface breakdown (exports, props, types, API) for a feature, module, component, or service path. Use when asked for an interface breakdown or API explanation of a path.
+description:
+  Produces a structured code interface breakdown (exports, props, types, API) for a feature, module, component, or service path.
+  Use when asked for an interface breakdown or API explanation of a path.
 disable-model-invocation: true
 ---
 
@@ -55,7 +57,7 @@ Within the resolved directory, check for these files in priority order:
 | `CONFIG.ts` | Configuration constants |
 
 Read only files that exist.
-Start with index/type files; read implementation files only if the public surface is not clear from those.
+Start with index/type files, read implementation files only if the public surface is not clear from those.
 
 **Ambiguity**: if the path resolves to multiple distinct modules, scope to the barrel/index and note sub-exports.
 Ask the user to narrow down if needed.
@@ -152,9 +154,9 @@ Methods:
 
 | Situation | Handling |
 |-----------|----------|
-| No files found | Say so clearly; suggest alternative search terms or ask the user to confirm the path |
+| No files found | Say so clearly, suggest alternative search terms or ask the user to confirm the path |
 | Directory with no index | Summarise all exported symbols across top-level files in the directory |
 | Private / internal symbols | Omit anything prefixed `_`, marked `@internal`, or not exported |
-| Untyped source | Document parameters and return values as inferred from usage; note the absence of types |
+| Untyped source | Document parameters and return values as inferred from usage, note the absence of types |
 | Docs + types split across comments | Treat JSDoc, XML docs, and inline annotations as part of the type surface |
-| Very large files | Focus on the public surface only; do not read private implementation bodies unless needed to infer types |
+| Very large files | Focus on the public surface only, do not read private implementation bodies unless needed to infer types |

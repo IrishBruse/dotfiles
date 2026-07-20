@@ -7,12 +7,18 @@ Sub-tasks use the same Goal / Acceptance Criteria / Notes format as Tasks, the o
 
 ## Workflow
 
-1. Collect inputs: project key, task intent, optional epic key, optional parent issue key for Sub-tasks, optional Feature Team, optional labels, priority, components, and references.
-2. Clarify if vague. Read [`../clarify-vague.md`](../clarify-vague.md). If intent is too thin to write a clear Goal and testable AC, ask targeted questions before drafting.
+1.
+Collect inputs: project key, task intent, optional epic key, optional parent issue key for Sub-tasks, optional Feature Team, optional labels, priority, components, and references.
+2. Clarify if vague. Read [`../clarify-vague.md`](../clarify-vague.md).
+If intent is too thin to write a clear Goal and testable AC, ask targeted questions before drafting.
 3. Parentage gate.
-   **Tasks:** If no epic key is in context, ask once: "Which epic should this task belong to? (e.g. NOVACORE-12345, or say skip)." Proceed without a parent if the user skips. When known, set the parent to the epic key.
-   **Sub-tasks:** Require a parent Story, Task, or Bug key before drafting or creating. Create as a Sub-task issue type with a parent. Do not create an unparented Sub-task. Record the parent in draft frontmatter or metadata. If the parent is unknown, ask for it or route back to investigation.
-4. Feature Team. When an epic key or parent issue is known, fetch it and copy Feature Team if set. If absent, ask once for the team or accept a reference issue key to copy from. See [`../jira-fields.md`](../jira-fields.md) for Feature Team, assignee, and create parameters.
+   **Tasks:** If no epic key is in context, ask once: "Which epic should this task belong to? (e.g.
+NOVACORE-12345, or say skip)." Proceed without a parent if the user skips. When known, set the parent to the epic key.
+   **Sub-tasks:** Require a parent Story, Task, or Bug key before drafting or creating. Create as a Sub-task issue type with a parent.
+Do not create an unparented Sub-task. Record the parent in draft frontmatter or metadata. If the parent is unknown, ask for it or route back to investigation.
+4. Feature Team. When an epic key or parent issue is known, fetch it and copy Feature Team if set.
+If absent, ask once for the team or accept a reference issue key to copy from.
+See [`../jira-fields.md`](../jira-fields.md) for Feature Team, assignee, and create parameters.
 5. Confirm the target Jira site from a Jira URL or prior context.
 6. Optional epic lookup. If the user gives an epic title instead of a key, search Jira and confirm the key before drafting.
 7. Draft locally before any Jira create. Read [`../local-draft.md`](../local-draft.md) and use the ticket template in [`template.md`](template.md).
