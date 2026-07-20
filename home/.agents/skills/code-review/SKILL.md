@@ -1,7 +1,7 @@
 ---
 name: code-review
-description: 'Runs an extremely strict maintainability review for abstraction quality, giant files, and spaghetti conditions.
-  Use when the user wants a thermo-nuclear or especially harsh code-quality review.'
+description: 'Runs an extremely strict maintainability review for abstraction quality, giant files, and spaghetti conditions. Use when the user wants a
+  thermo-nuclear or especially harsh code-quality review.'
 ---
 
 # Thermo-Nuclear Code Quality Review
