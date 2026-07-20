@@ -1,7 +1,6 @@
 ---
 name: skills-linting
 description: "Lints agent skills with the `skills` CLI. Use when validating with `skills lint`, after editing a SKILL.md, or listing skills with `skills ls`."
-user-invocable: false
 ---
 
 # Skills linting
