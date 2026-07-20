@@ -126,7 +126,7 @@ Convert user-selected `Not created` rows into local draft files via `../story/st
 Sub-tasks use `../task/task.md` and the same Goal / Acceptance Criteria / Notes format as Tasks.
 Set `Jira: _(pending)_` and flip the breakdown row to `Local draft`. Stop.
 10. Stop gate 2. Ask which `Not created` or `Local draft` items to file in Jira.
-11. Optional Jira create. Run the **Jira Write Approval Gate** in `SKILL.md` for the stop gate 2 selected rows. Create only rows answered `Approve`.
+11. Optional Jira create. Run the **Jira Write Approval Gate** for the stop gate 2 selected rows. Create only rows answered `Approve`.
 Prefer Tasks and Sub-tasks through `../task/task.md`, create Stories only when the user explicitly requests Story creation.
 For broader new parent work, route through `../epic/epic.md` instead of creating it inside this route.
 Flip rows to `Created` and record keys. Stop.

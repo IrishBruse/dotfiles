@@ -24,7 +24,7 @@ See `../jira-fields.md` for Feature Team, assignee, and create parameters.
 5. Confirm the target Jira site from a Jira URL or prior context.
 6. Optional epic lookup. If the user gives an epic title instead of a key, search Jira and confirm the key before drafting.
 7. Draft locally before any Jira create. Read `../local-draft.md` and use the ticket template in `template.md`.
-8. Run the **Jira Write Approval Gate** in `SKILL.md`.
+8. Run the **Jira Write Approval Gate**.
    Include the local draft path and summary in the gate `prompt`.
 9. Promote only when the gate is answered `Approve` by creating the ticket with issue type `Task`, or `Sub-task` when the user confirmed a Sub-task.
 10. Reply with issue key, browse URL, epic, Feature Team, and summary. Update the local draft with the Jira key and link.

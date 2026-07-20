@@ -4,7 +4,7 @@ Use this route after `/jira use-cases` or `/jira` has confirmed an existing Epic
 before child Stories, Specs, or implementation planning.
 
 This route is for Jira-first Epic discovery. Persist agreed use cases using workspace artifact conventions when keeping them local.
-Posting to Jira is optional and requires an `Approve` answer from the **Jira Write Approval Gate** in `SKILL.md`.
+Posting to Jira is optional and requires an `Approve` answer from the **Jira Write Approval Gate**.
 
 Pipeline position: Epic -> Use Cases -> Stories -> Spec -> Plan -> Implement.
 
@@ -205,7 +205,7 @@ If replacement is not possible, post a superseding comment that states it replac
 
 Format the Jira comment with the header shown in `template.md`.
 
-Post the comment only after an `Approve` answer from the **Jira Write Approval Gate** in `SKILL.md`.
+Post the comment only after an `Approve` answer from the **Jira Write Approval Gate**.
 
 ## Important Notes
 

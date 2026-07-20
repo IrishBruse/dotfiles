@@ -32,7 +32,7 @@ Accept an issue key (e.g. NOVACORE-12345) or a full Jira URL.
 7. Feature Team. Resolve in order: copy from the Initiative, copy from a sibling Epic, ask once.
 See `../jira-fields.md` for Feature Team, Capitalizable, assignee, and create parameters.
 8. Draft locally before Jira create. See `../local-draft.md` and use the ticket template in `template.md`.
-9. Run the **Jira Write Approval Gate** in `SKILL.md`.
+9. Run the **Jira Write Approval Gate**.
    Include the local draft path and summary in the gate `prompt`.
 10. Promote only when the gate is answered `Approve` by creating the ticket with issue type `Epic`.
 11. Reply with issue key, browse URL, parent Initiative, Feature Team, and summary. Update the local draft and hierarchy context.
