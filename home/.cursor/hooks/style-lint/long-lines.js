@@ -20,7 +20,7 @@ function lint(content) {
   const long = findLongLines(content);
   if (long.length === 0) return [];
   return [
-    `Line(s) over ${MAX_LINE} chars: ${long.join(", ")}. Add a newline after "." instead of one long line.`,
+    `Line(s) over ${MAX_LINE} chars: ${long.join(", ")}. Wrap or split into shorter lines.`,
   ];
 }
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// postToolUse hook: warn the agent about global.mdc style issues after markdown writes.
+// postToolUse hook: warn about prose style issues after markdown writes.
 
 const { lint: lintProseSemicolons } = require("./style-lint/prose-semicolons");
 const { lint: lintLongLines } = require("./style-lint/long-lines");
