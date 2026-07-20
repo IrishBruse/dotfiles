@@ -1774,9 +1774,9 @@
     {
       "id": "babysit",
       "label": "Babysit",
-      "type": "agent",
+      "type": "terminal",
       "icon": "eye-watch",
-      "prompt": "/babysit ${repoRoot}"
+      "command": "agent --model composer-2.5 \"/babysit ${repoRoot}\""
     },
     {
       "id": "jiraBoard",
