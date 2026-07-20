@@ -2,6 +2,36 @@
 
 Complete reference for all agent-browser commands. For quick start and common patterns, see SKILL.md.
 
+## Contents
+
+- [Navigation](#navigation)
+- [Snapshot (page analysis)](#snapshot-page-analysis)
+- [Interactions (use @refs from snapshot)](#interactions-use-refs-from-snapshot)
+- [Get Information](#get-information)
+- [Check State](#check-state)
+- [Screenshots and PDF](#screenshots-and-pdf)
+- [Video Recording](#video-recording)
+- [Wait](#wait)
+- [Mouse Control](#mouse-control)
+- [Semantic Locators (alternative to refs)](#semantic-locators-alternative-to-refs)
+- [Browser Settings](#browser-settings)
+- [Cookies and Storage](#cookies-and-storage)
+- [Network](#network)
+- [Tabs and Windows](#tabs-and-windows)
+- [Frames](#frames)
+- [Dialogs](#dialogs)
+- [JavaScript](#javascript)
+- [Authentication and Plugins](#authentication-and-plugins)
+- [State Management](#state-management)
+- [MCP Server](#mcp-server)
+- [Global Options](#global-options)
+- [Debugging](#debugging)
+- [React / Web Vitals](#react--web-vitals)
+- [Init scripts](#init-scripts)
+- [cURL cookie import](#curl-cookie-import)
+- [Network route by resource type](#network-route-by-resource-type)
+- [Environment Variables](#environment-variables)
+
 ## Navigation
 
 ```bash
@@ -228,7 +258,8 @@ agent-browser tab close docs             # close by label
 ```
 
 Labels are never auto-generated, never rewritten on navigation, and must be unique within a session.
-To interact with another tab, switch to it first: the daemon maintains a single active tab, so refs (`@eN`) belong to the tab that was active when the snapshot ran.
+To interact with another tab, switch to it first: the daemon maintains a single active tab,
+so refs (`@eN`) belong to the tab that was active when the snapshot ran.
 
 ## Frames
 
@@ -241,7 +272,8 @@ agent-browser frame main          # Back to main frame
 ### Iframe support
 
 Iframes are detected automatically during snapshots.
-When the main-frame snapshot runs, `Iframe` nodes are resolved and their content is inlined beneath the iframe element in the output (one level of nesting, iframes within iframes are not expanded).
+When the main-frame snapshot runs, `Iframe` nodes are resolved and their content is inlined beneath the iframe element in the output
+(one level of nesting, iframes within iframes are not expanded).
 
 ```bash
 agent-browser snapshot -i

@@ -65,7 +65,7 @@ Configure the MCP client to launch `agent-browser` with `["mcp"]`.
 The server defaults to MCP protocol 2025-11-25 and accepts older supported client protocol versions during initialization.
 The default tools profile is `core`, which keeps MCP context small for everyday browser automation.
 Use `--tools all` for the full typed CLI parity surface, or combine profiles with commas, such as `--tools core,network,react`.
-Profiles are `core`, `network`, `state`, `debug`, `tabs`, `react`, `mobile`, and `all`; the `debug` profile includes plugin registry and command.run tools.
+Profiles are `core`, `network`, `state`, `debug`, `tabs`, `react`, `mobile`, and `all`, and the `debug` profile includes plugin registry and command.run tools.
 Each tool accepts typed arguments plus `extraArgs` for advanced CLI flags and exact CLI parity.
 Tool discovery is paginated and includes read-only/open-world annotations so modern MCP clients can load the large typed surface incrementally.
 Use the tool `session` argument or `AGENT_BROWSER_SESSION` to isolate browser sessions.
@@ -113,9 +113,8 @@ agent-browser get url                     # current URL
 agent-browser get count ".item"           # count matching elements
 ```
 
-Use `read [url]` when you need to consume documentation or other text pages rather than interact with a rendered UI.
-Omit the URL to read the rendered DOM of the active tab in the current browser session, including browser auth state and client-side updates.
-Explicit URL reads send `Accept: text/markdown`, try the same URL with `.md` appended when the first response is not markdown, walk ancestor paths toward `/` to find the nearest `llms.txt` for a matching docs link, print markdown/plain text when available, and fall back to readable text extracted from HTML without launching Chrome. Add `--filter <text>` to narrow a page to matching heading sections, `--outline` for compact headings on one page, `--llms index` for a compact nearest-ancestor `llms.txt` link list, and `--llms full` only when you explicitly need `llms-full.txt`. With `--llms` or `--require-md`, omitting the URL uses the active tab URL because those modes depend on HTTP resources. With `--llms` or `--outline`, `--filter <text>` narrows links, sections, or headings. Add `--require-md` when you specifically want to verify markdown negotiation, `--raw` when you need the response body unchanged, and `--json` when you need metadata such as `source` and `contentType`. Global safeguards such as `--allowed-domains`, `--content-boundaries`, and `--max-output` also apply to read fetches and output.
+Use `read [url]` for documentation and text pages. Omit the URL to read the active tab DOM (includes auth state).
+See [references/commands.md](references/commands.md#get-information) for `--filter`, `--outline`, `--llms`, and fetch options.
 
 ## Interacting
 
@@ -243,7 +242,9 @@ agent-browser --session "$SESSION" --restore open https://app.example.com
 
 `--restore` with no value uses the current `--session` as the persistence key. Agent skills should prefer this over hand-built state file paths.
 Use `--restore-save auto` by default so a failed restore does not overwrite the previous known-good state.
-State is saved on close and also periodically while the browser is open (at most once per `AGENT_BROWSER_AUTOSAVE_INTERVAL_MS`, default 30000), so state survives even if the user closes the browser window by hand.
+State is saved on close and also periodically while the browser is open
+(at most once per `AGENT_BROWSER_AUTOSAVE_INTERVAL_MS`, default 30000),
+so state survives even if the user closes the browser window by hand.
 
 ```bash
 agent-browser --session "$SESSION" --restore --restore-check-text Dashboard open https://app.example.com
@@ -373,7 +374,8 @@ agent-browser dialog dismiss          # cancel
 
 ## Diagnosing install issues
 
-If a command fails unexpectedly (`Unknown command`, `Failed to connect`, stale daemons, version mismatches after `upgrade`, missing Chrome, etc.) run `doctor` before anything else:
+If a command fails unexpectedly (`Unknown command`, `Failed to connect`, stale daemons, version mismatches after `upgrade`,
+missing Chrome, etc.) run `doctor` before anything else:
 
 ```bash
 agent-browser doctor                     # full diagnosis (env, Chrome, daemons, config, providers, network, launch test)
@@ -422,9 +424,17 @@ EOF
 ```
 
 **Cross-origin iframe not accessible** Cross-origin iframes that block accessibility tree access are silently skipped.
-Use `frame "#iframe"` to switch into them explicitly if the parent opts in, otherwise the iframe's contents aren't available via snapshot - fall back to `eval` in the iframe's origin or use the `--headers` flag to satisfy CORS.
+Use `frame "#iframe"` to switch into them explicitly if the parent opts in,
+otherwise the iframe's contents aren't available via snapshot - fall back to `eval` in the iframe's origin or use the `--headers` flag to satisfy CORS.
 
-**WebGPU page renders black in screenshots** Headless Chrome doesn't expose WebGPU by default, three.js `WebGPURenderer` then silently falls back or renders nothing. Relaunch with the `--webgpu` flag, wait for the app's first rendered frame, then screenshot. On Linux install `libvulkan1 mesa-vulkan-drivers` first. If it's still black on Windows/Linux, that's an upstream headless-capture limitation: add `--headed` (needs a logged-in desktop on Windows, on Linux agent-browser starts a private virtual display automatically when Xvfb is installed - never wrap in `xvfb-run`, which kills the display when the CLI exits while the browser lives on). Verify with `agent-browser doctor --webgpu`. See [references/webgpu.md](references/webgpu.md).
+**WebGPU page renders black in screenshots** Headless Chrome doesn't expose WebGPU by default,
+three.js `WebGPURenderer` then silently falls back or renders nothing.
+Relaunch with the `--webgpu` flag, wait for the app's first rendered frame, then screenshot.
+On Linux install `libvulkan1 mesa-vulkan-drivers` first.
+If it's still black on Windows/Linux, that's an upstream headless-capture limitation:
+add `--headed` (needs a logged-in desktop on Windows, on Linux agent-browser starts a private virtual display automatically when Xvfb is installed -
+never wrap in `xvfb-run`, which kills the display when the CLI exits while the browser lives on).
+Verify with `agent-browser doctor --webgpu`. See [references/webgpu.md](references/webgpu.md).
 
 **Authentication expires mid-workflow** Use `--session <id> --restore` so your session survives browser restarts.
 Check `agent-browser session info --json` if restore fails.
@@ -458,22 +468,8 @@ See [references/session-management.md](references/session-management.md) and [re
 
 ## React / Web Vitals (built-in, any React app)
 
-agent-browser ships with first-class React introspection. Works on any React app - Next.js, Remix, Vite+React, CRA, TanStack Start, React Native Web, etc.
-The `react ...` commands require the React DevTools hook to be installed at launch via `--enable react-devtools`:
-
-```bash
-agent-browser open --enable react-devtools http://localhost:3000
-agent-browser react tree                         # component tree
-agent-browser react inspect <fiberId>            # props, hooks, state, source
-agent-browser react renders start                # begin re-render recording
-agent-browser react renders stop                 # print render profile
-agent-browser react suspense [--only-dynamic]    # Suspense boundaries + classifier
-agent-browser vitals [url]                       # LCP/CLS/TTFB/FCP/INP + hydration
-agent-browser pushstate <url>                    # SPA navigation (auto-detects Next router)
-```
-
-Without `--enable react-devtools`, the `react ...` commands error. `vitals` and `pushstate` work on any site regardless of framework.
-`vitals` prints a summary by default, use `--json` for the full structured payload.
+Ships with React introspection on any React app. Launch with `--enable react-devtools` for `react tree`, `react inspect`, and render profiling.
+`vitals` and `pushstate` work without it. See [references/commands.md](references/commands.md#react--web-vitals).
 
 ## Working safely
 
@@ -485,7 +481,6 @@ See [references/trust-boundaries.md](references/trust-boundaries.md) for the ful
 ## Bundled reference
 
 Detailed docs and starter scripts ship with this skill:
-
 - [references/commands.md](references/commands.md) - every command, flag, alias
 - [references/snapshot-refs.md](references/snapshot-refs.md) - deep dive on the snapshot + ref model
 - [references/authentication.md](references/authentication.md) - auth vault, credential plugins, credential handling

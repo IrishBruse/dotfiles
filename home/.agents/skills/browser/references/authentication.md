@@ -2,7 +2,7 @@
 
 Login flows, session persistence, OAuth, 2FA, and authenticated browsing.
 
-**Related**: [session-management.md](session-management.md) for state persistence details, [SKILL.md](../SKILL.md) for quick start.
+**Related**: `session-management.md` for state persistence details, [SKILL.md](../SKILL.md) for quick start.
 
 ## Contents
 
@@ -153,7 +153,7 @@ agent-browser get url  # Should be dashboard, not login
 Use credential provider plugins when credentials live in external vault software.
 Plugins are configured in `agent-browser.json` and run as external executables over the `agent-browser.plugin.v1` stdio JSON protocol.
 
-Add a plugin with `plugin add`. A plain `name` or `@scope/name` resolves from npm; `owner/repo` resolves from GitHub:
+Add a plugin with `plugin add`. A plain `name` or `@scope/name` resolves from npm, `owner/repo` resolves from GitHub:
 
 ```bash
 agent-browser plugin add agent-browser-plugin-vault --name vault
@@ -210,7 +210,8 @@ agent-browser plugin run captcha captcha.solve --payload '{"siteKey":"...","url"
 
 `plugin run` is for `command.run` and custom capabilities. Core capabilities and protocol request types use their dedicated command paths.
 
-Use `--url`, `--username-selector`, `--password-selector`, and `--submit-selector` on `auth login` to override plugin-provided metadata for the current login only.
+Use `--url`, `--username-selector`, `--password-selector`, and `--submit-selector` on `auth login`
+to override plugin-provided metadata for the current login only.
 
 Gate plugin secret access separately from normal login automation:
 
