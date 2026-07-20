@@ -1,6 +1,6 @@
 # Update Recommendation Template
 
-Template for the Update route. See [`update.md`](update.md) for the workflow, hygiene checks, and gates.
+Template for the Update route. See `update.md` for the workflow, hygiene checks, and gates.
 
 ```markdown
 ## Recommendation

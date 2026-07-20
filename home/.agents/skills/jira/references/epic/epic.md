@@ -4,6 +4,16 @@ Use this route after `/jira epic` or `/jira` has confirmed the work should becom
 
 Epics must be parented to a verified Jira Initiative. They group related stories under a larger goal and usually span multiple sprints.
 
+## Contents
+
+- [Hard Requirement](#hard-requirement)
+- [Workflow](#workflow)
+- [Writing Rules](#writing-rules)
+- [No Implementation Detail](#no-implementation-detail)
+- [Gherkin formatting for Jira](#gherkin-formatting-for-jira)
+- [Initiative Fit Check](#initiative-fit-check)
+- [Do Not](#do-not)
+
 ## Hard Requirement
 
 A Jira Initiative is mandatory. Do not draft or create an Epic without an Initiative issue key or URL.
@@ -18,10 +28,10 @@ Accept an issue key (e.g. NOVACORE-12345) or a full Jira URL.
 3. Fetch the Initiative. Verify `issuetype.name == "Initiative"`. If not, stop and ask for a corrected key.
 4. Optional workspace anchor. If the Initiative maps to local context artifacts, read the relevant context when present.
 5. Fit check. Decide whether the proposed Epic belongs to this Initiative. If it does not fit, stop and propose a better route.
-6. Clarify if vague. See [`../clarify-vague.md`](../clarify-vague.md) (Epic row: expectations, scenarios, Initiative tie-in).
+6. Clarify if vague. See `../clarify-vague.md` (Epic row: expectations, scenarios, Initiative tie-in).
 7. Feature Team. Resolve in order: copy from the Initiative, copy from a sibling Epic, ask once.
-See [`../jira-fields.md`](../jira-fields.md) for Feature Team, Capitalizable, assignee, and create parameters.
-8. Draft locally before Jira create. See [`../local-draft.md`](../local-draft.md) and use the ticket template in [`template.md`](template.md).
+See `../jira-fields.md` for Feature Team, Capitalizable, assignee, and create parameters.
+8. Draft locally before Jira create. See `../local-draft.md` and use the ticket template in `template.md`.
 9. Run the **Jira Write Approval Gate** in `SKILL.md`.
    Include the local draft path and summary in the gate `prompt`.
 10. Promote only when the gate is answered `Approve` by creating the ticket with issue type `Epic`.

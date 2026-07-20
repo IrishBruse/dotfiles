@@ -1,6 +1,6 @@
 # Task Templates
 
-Templates for the Task and Sub-task route. See [`task.md`](task.md) for the workflow and rules.
+Templates for the Task and Sub-task route. See `task.md` for the workflow and rules.
 
 ## Ticket Template
 

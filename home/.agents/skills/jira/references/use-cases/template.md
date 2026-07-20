@@ -1,6 +1,6 @@
 # Use Case Templates
 
-Templates for the Use Cases route. See [`use-cases.md`](use-cases.md) for the workflow, rules, and gates.
+Templates for the Use Cases route. See `use-cases.md` for the workflow, rules, and gates.
 
 ## Use Case Template
 

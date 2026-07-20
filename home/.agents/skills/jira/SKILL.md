@@ -1,7 +1,7 @@
 ---
 name: jira
-description: Jira router that gates before any write.
-Use when a ticket idea, key, epic, or PR needs classification, duplicate and parentage checks, or routing to task/story/epic/update/search.
+description: 'Jira router that gates before any write.
+  Use when a ticket idea, key, epic, or PR needs classification, duplicate and parentage checks, or routing to task/story/epic/update/search.'
 ---
 
 # Jira
@@ -237,7 +237,8 @@ Populate the `AskQuestion` tool with these exact fields and no other options.
 This describes tool input, so never print the fields, labels, option text, or any fence as chat text:
 
 - `title`: `<KEY or new ticket> - Approve Jira write`
-- `prompt`: open with `I will <create | update | reparent | transition | close | link | comment> <what>.`, then list every field on its own line with `**Label:** value`.
+- `prompt`: open with `I will <create | update | reparent | transition | close | link | comment> <what>.`,
+  then list every field on its own line with `**Label:** value`.
   For edits, show `before -> after` per changed field.
   End with `Apply this exact change?`
 

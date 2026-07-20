@@ -1,6 +1,6 @@
 # Story Templates
 
-Templates for the Story route. See [`story.md`](story.md) for the workflow and rules.
+Templates for the Story route. See `story.md` for the workflow and rules.
 
 ## Ticket Template
 

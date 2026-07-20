@@ -1,8 +1,10 @@
 # Jira Update
 
-Use this route after `/jira update` or `/jira` has confirmed an existing issue needs cleanup, reformatting, splitting, parentage cleanup, or other hygiene edits that preserve the current issue type.
+Use this route after `/jira update` or `/jira` has confirmed an existing issue needs cleanup, reformatting, splitting,
+parentage cleanup, or other hygiene edits that preserve the current issue type.
 
-This route updates existing Jira issues only after investigation, an exact proposed change, and an `Approve` answer from the **Jira Write Approval Gate** in `SKILL.md`.
+This route updates existing Jira issues only after investigation, an exact proposed change,
+and an `Approve` answer from the **Jira Write Approval Gate** in `SKILL.md`.
 
 Issue type changes are out of scope for this route.
 The update route may report an issue type mismatch as hygiene, but it must never propose or perform a Jira write that changes `issuetype`.
@@ -29,21 +31,21 @@ Do not use when:
 3. Fetch the ticket from Jira, including issue type, status, parent, children, linked issues, labels, Feature Team, summary, and description.
 4. Search local workspace context and artifacts for the key and nearby terms.
 5. Identify the ticket's real issue type and compare it to the matching reference:
-   - Task: [`../task/task.md`](../task/task.md).
-   - Story: [`../story/story.md`](../story/story.md).
-   - Epic: [`../epic/epic.md`](../epic/epic.md).
+   - Task: `../task/task.md`.
+   - Story: `../story/story.md`.
+   - Epic: `../epic/epic.md`.
 6. Return a short recommendation and a precise proposed Jira change that preserves the current issue type. Steps 1-6 are investigation only.
 Do not perform any Jira write during investigation.
 7. Run the **Jira Write Approval Gate** in `SKILL.md` with the exact proposed change.
 8.
-Only when the gate is answered `Approve`, apply that exact change: summary/description by editing the local file then publishing it, other fields by the usual Jira update path (fields, transition,
-comment, link, ...).
+Only when the gate is answered `Approve`, apply that exact change: summary/description by editing the local file then publishing it,
+other fields by the usual Jira update path (fields, transition, comment, link, ...).
 9. Refresh the local file after writes that did not come from publishing the local file.
 10. Reply with the issue key, browse URL, fields changed, and any follow-up hygiene still recommended.
 
 ## Update Recommendation Template
 
-Use the Update Recommendation Template in [`template.md`](template.md).
+Use the Update Recommendation Template in `template.md`.
 
 ## Hygiene Checks
 

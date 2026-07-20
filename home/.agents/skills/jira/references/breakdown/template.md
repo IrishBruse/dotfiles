@@ -1,6 +1,6 @@
 # Breakdown Template
 
-Template for the Breakdown route. See [`breakdown.md`](breakdown.md) for the workflow, definitions, and gates.
+Template for the Breakdown route. See `breakdown.md` for the workflow, definitions, and gates.
 
 ```markdown
 ---

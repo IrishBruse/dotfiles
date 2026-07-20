@@ -5,6 +5,20 @@ Use this route after `/jira breakdown` or `/jira` has confirmed an existing Jira
 This is an interactive, gated workflow. Work one major step at a time. Refuse a bulk run.
 If live Jira is unavailable, say so, reconcile from available local hierarchy context, and note that the source may be stale.
 
+## Contents
+
+- [Purpose](#purpose)
+- [Pipeline](#pipeline)
+- [Definitions](#definitions)
+- [Prerequisites](#prerequisites)
+- [Progress Checklist](#progress-checklist)
+- [Workflow](#workflow)
+- [Reconcile Rules](#reconcile-rules)
+- [Plan Mode](#plan-mode)
+- [Breakdown Template](#breakdown-template)
+- [Draft Child Ticket Rules](#draft-child-ticket-rules)
+- [Anti-Patterns](#anti-patterns)
+
 ## Purpose
 
 Break any Jira issue into recommended delivery increments and follow-up work.
@@ -21,7 +35,7 @@ Optionally draft child files, then create Jira Tasks, Sub-tasks, or Stories only
 Use after task context or any Jira issue key is available.
 Prefer existing local task context when it exists, otherwise fetch the source issue and related Jira issues.
 
-Use before per-child ticket drafting through [`../story/story.md`](../story/story.md) or [`../task/task.md`](../task/task.md).
+Use before per-child ticket drafting through `../story/story.md` or `../task/task.md`.
 
 Do not treat this as behavioral scenario extraction. This route recommends the best ticket structure and Jira hygiene for the source issue.
 
@@ -103,18 +117,18 @@ Map reconciled issues to the recommended shape, increment, and Jira status. Rows
 Produce one backlog table: `Created` rows by increment, then `Not created` and `Recommendation only` rows.
 Add `Not created` only where no related issue matches. Put open questions on each owning row. Apply the metrics rule. Stop.
 6. Spikes, read only. Only include Spikes if the user explicitly requested them. Otherwise omit. Stop.
-7. Write. Save the breakdown using the Breakdown Template in [`template.md`](template.md) and workspace artifact conventions.
+7. Write. Save the breakdown using the Breakdown Template in `template.md` and workspace artifact conventions.
 Optionally update local indexes, task-context links, or hierarchy pointers. Stop.
 8. Stop gate 1. Confirm reconcile results, increments, classifications, and open-question placement.
 Do not continue to local drafts until explicit confirmation.
 9. Optional local drafts.
-Convert user-selected `Not created` rows into local draft files via [`../story/story.md`](../story/story.md) or [`../task/task.md`](../task/task.md).
-Sub-tasks use [`../task/task.md`](../task/task.md) and the same Goal / Acceptance Criteria / Notes format as Tasks.
+Convert user-selected `Not created` rows into local draft files via `../story/story.md` or `../task/task.md`.
+Sub-tasks use `../task/task.md` and the same Goal / Acceptance Criteria / Notes format as Tasks.
 Set `Jira: _(pending)_` and flip the breakdown row to `Local draft`. Stop.
 10. Stop gate 2. Ask which `Not created` or `Local draft` items to file in Jira.
 11. Optional Jira create. Run the **Jira Write Approval Gate** in `SKILL.md` for the stop gate 2 selected rows. Create only rows answered `Approve`.
-Prefer Tasks and Sub-tasks through [`../task/task.md`](../task/task.md); create Stories only when the user explicitly requests Story creation.
-For broader new parent work, route through [`../epic/epic.md`](../epic/epic.md) instead of creating it inside this route.
+Prefer Tasks and Sub-tasks through `../task/task.md`, create Stories only when the user explicitly requests Story creation.
+For broader new parent work, route through `../epic/epic.md` instead of creating it inside this route.
 Flip rows to `Created` and record keys. Stop.
 12. Post-create. Refresh the breakdown from live Jira workflow status. Update local hierarchy context only after Jira creation or confirmed hygiene corrections.
 
@@ -141,11 +155,11 @@ Then perform one serialized post-create pass to flip `Created` rows and update l
 
 ## Breakdown Template
 
-Use the Breakdown Template in [`template.md`](template.md).
+Use the Breakdown Template in `template.md`.
 
 ## Draft Child Ticket Rules
 
-Draft child tickets per workflow steps 9 and 11; obey route refs [`../story/story.md`](../story/story.md) and [`../task/task.md`](../task/task.md).
+Draft child tickets per workflow steps 9 and 11, obey route refs `../story/story.md` and `../task/task.md`.
 
 ## Anti-Patterns
 

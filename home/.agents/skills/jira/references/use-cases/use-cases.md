@@ -1,11 +1,24 @@
 # Jira Use Cases
 
-Use this route after `/jira use-cases` or `/jira` has confirmed an existing Epic needs agreed actor/action use cases before child Stories, Specs, or implementation planning.
+Use this route after `/jira use-cases` or `/jira` has confirmed an existing Epic needs agreed actor/action use cases
+before child Stories, Specs, or implementation planning.
 
 This route is for Jira-first Epic discovery. Persist agreed use cases using workspace artifact conventions when keeping them local.
 Posting to Jira is optional and requires an `Approve` answer from the **Jira Write Approval Gate** in `SKILL.md`.
 
 Pipeline position: Epic -> Use Cases -> Stories -> Spec -> Plan -> Implement.
+
+## Contents
+
+- [Output Rule](#output-rule)
+- [Human-First Elicitation](#human-first-elicitation)
+- [Operating Stance](#operating-stance)
+- [When To Use](#when-to-use)
+- [Use Case Rules](#use-case-rules)
+- [Validation Checklist](#validation-checklist)
+- [Workflow](#workflow)
+- [AI-DLC: Agreed Use Cases](#ai-dlc-agreed-use-cases)
+- [Important Notes](#important-notes)
 
 ## Output Rule
 
@@ -42,7 +55,7 @@ Use when:
 Do not use when:
 
 - The Epic is too vague to extract use cases from. Escalate to product refinement.
-- The work is a single tiny change. Route to [`../story/story.md`](../story/story.md) or [`../task/task.md`](../task/task.md).
+- The work is a single tiny change. Route to `../story/story.md` or `../task/task.md`.
 
 ## Use Case Rules
 
@@ -141,7 +154,7 @@ For each agreed actor/action line, draft:
 - Extensions: alternates or errors from decision diamonds.
 - Outcomes, Preconditions, and Key Rules.
 
-Use the Use Case Template in [`template.md`](template.md).
+Use the Use Case Template in `template.md`.
 
 Introduce the review in plain chat (no code fence): tell the user these are the use cases expanded from the agreed actor/action roster,
 and invite them to review together.
@@ -190,7 +203,7 @@ If found, ask whether to:
 
 If replacement is not possible, post a superseding comment that states it replaces the prior agreed-use-cases comment.
 
-Format the Jira comment with the header shown in [`template.md`](template.md).
+Format the Jira comment with the header shown in `template.md`.
 
 Post the comment only after an `Approve` answer from the **Jira Write Approval Gate** in `SKILL.md`.
 

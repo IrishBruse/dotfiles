@@ -1,6 +1,6 @@
 # Epic Templates
 
-Templates for the Epic route. See [`epic.md`](epic.md) for the workflow, writing rules, and Gherkin formatting requirements.
+Templates for the Epic route. See `epic.md` for the workflow, writing rules, and Gherkin formatting requirements.
 
 ## Ticket Template
 
