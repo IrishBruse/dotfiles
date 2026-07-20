@@ -111,10 +111,20 @@ If all lanes report clean, state that the swarm found no high-conviction maintai
 
 ### With findings
 
-Print:
+Print with headings only (no tables):
 
-1. **Verdict**: Approve or Request changes (never approve if any unjustified concern remains).
-2. **Findings table**: one row per deduped finding, columns Severity, Location, Finding, Remedy. Sort per priority above.
-3. **Summary**: 2-4 sentences on the largest structural risks.
+## Verdict
+
+Approve or Request changes (never approve if any unjustified concern remains).
+
+## Findings
+
+One `###` heading per deduped finding, sorted per priority above.
+Heading text: severity and short location (for example `### Blocker: path/to/file.ts`).
+Under each heading, cover location, finding, why it matters, and remedy.
+
+## Summary
+
+2-4 sentences on the largest structural risks.
 
 Do not fix code or rerun the swarm unless the user asks.
