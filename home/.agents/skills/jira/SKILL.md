@@ -1,7 +1,7 @@
 ---
 name: jira
-description: 'Jira router that gates before any write.
-  Use when a ticket idea, key, epic, or PR needs classification, duplicate and parentage checks, or routing to task/story/epic/update/search.'
+description: 'Jira router that gates before any write. Use when a ticket idea, key, epic, or PR needs classification, duplicate and parentage checks, or routing
+  to task/story/epic/update/search.'
 ---
 
 # Jira
