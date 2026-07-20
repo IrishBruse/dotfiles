@@ -123,6 +123,7 @@ Budget:
 Progressive disclosure:
 
 - `nested-reference` - reference files link only from `SKILL.md`, not from each other
+- `skill-backlink` - reference files must not link or point back to `SKILL.md`
 - `reference-toc` - long reference files need a Contents section near the top
 - `orphan-reference` - every `references/*.md` file must be linked from `SKILL.md`
 - `vague-pointer` - name the specific reference file and when to load it
