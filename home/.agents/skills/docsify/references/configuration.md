@@ -1,5 +1,13 @@
 # Configuration
 
+## Contents
+
+- [index.html setup](#indexhtml-setup)
+- [Options](#options)
+- [Common options](#common-options)
+- [routerMode](#routermode)
+- [Virtual routes](#virtual-routes)
+
 ## index.html setup
 
 The single entry point.

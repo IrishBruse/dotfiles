@@ -2,6 +2,17 @@
 
 Docsify uses marked and adds extra syntax.
 
+## Contents
+
+- [Callouts](#callouts)
+- [Link attributes](#link-attributes)
+- [Image attributes](#image-attributes)
+- [Heading IDs](#heading-ids)
+- [Task lists](#task-lists)
+- [Markdown inside HTML](#markdown-inside-html)
+- [Embed files](#embed-files)
+- [Mermaid](#mermaid)
+
 ## Callouts
 
 GitHub-style alerts:
