@@ -73,8 +73,10 @@ Lint enforces structure, resolvable paths, and known anti-patterns.
 It cannot judge whether a description fires on real prompts, whether the
 domain advice is correct, or whether a section is the right level of detail.
 
-For authoring principles beyond what lint can enforce, see `writing-great-skills`
-and the Agent Skills docs:
+For authoring principles beyond what lint can enforce, see `writing-great-skills`.
+For running the CLI, see `skills-linting`.
+
+Agent Skills docs:
 
 - [Specification](https://agentskills.io/specification): `name`, `description`,
   progressive disclosure, file references
