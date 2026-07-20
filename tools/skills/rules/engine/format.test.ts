@@ -4,6 +4,7 @@ import path from "node:path";
 import { describe, it } from "node:test";
 
 import { displayPath } from "../../discover.ts";
+import { stripAnsi } from "./color.ts";
 import { formatDiagnostic, formatFileDiagnostics, formatFixedFiles } from "./format.ts";
 
 describe("formatDiagnostic", () => {
@@ -84,6 +85,30 @@ describe("formatFileDiagnostics", () => {
     ]);
     assert.match(output, /^~\/\.agents\/skills\/jira\/SKILL\.md$/m);
     assert.match(output, /^\s+3:1\s+warning\s+Line exceeds.*@skills\/long-line/m);
+  });
+
+  it("aligns columns across diagnostics in a file", () => {
+    const output = formatFileDiagnostics("/tmp/SKILL.md", [
+      {
+        line: 2,
+        column: 15,
+        code: "prose-semicolon",
+        message: "Missing semicolon",
+      },
+      {
+        line: 6,
+        column: 7,
+        code: "negation-steering",
+        severity: "error",
+        message: "'result' is assigned a value but never used",
+      },
+    ]);
+    const detailLines = output.split("\n").slice(1).map(stripAnsi);
+    const ruleStarts = detailLines.map((line) => line.indexOf("@skills/"));
+    assert.equal(ruleStarts.length, 2);
+    assert.equal(ruleStarts[0], ruleStarts[1]);
+    assert.match(detailLines[0] ?? "", /^\s+2:15\s+warning\s+Missing semicolon\s+@skills\/prose-semicolon$/);
+    assert.match(detailLines[1] ?? "", /^\s+6:7\s+error\s+'result' is assigned/);
   });
 });
 

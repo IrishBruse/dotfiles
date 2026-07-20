@@ -1,27 +1,62 @@
 import process from "node:process";
 
 import { displayPath } from "../../discover.ts";
-import { formatOutput, paintOutput } from "./color.ts";
+import { formatOutput, paintOutput, stripAnsi } from "./color.ts";
 import { diagnosticSeverity, type Diagnostic } from "../core/types.ts";
 
 export function formatRuleId(code: string): string {
   return `@skills/${code}`;
 }
 
+function padVisible(
+  text: string,
+  width: number,
+  align: "left" | "right"
+): string {
+  const pad = Math.max(0, width - stripAnsi(text).length);
+  if (pad === 0) return text;
+  return align === "right"
+    ? `${" ".repeat(pad)}${text}`
+    : `${text}${" ".repeat(pad)}`;
+}
+
+function formatAlignedDiagnosticLines(diagnostics: Diagnostic[]): string[] {
+  if (diagnostics.length === 0) return [];
+
+  const rows = diagnostics.map((diagnostic) => ({
+    location: `${diagnostic.line}:${diagnostic.column}`,
+    severity: diagnosticSeverity(diagnostic),
+    severityRole:
+      diagnosticSeverity(diagnostic) === "error"
+        ? ("bad" as const)
+        : ("warn" as const),
+    message: diagnostic.message,
+    ruleId: formatRuleId(diagnostic.code),
+  }));
+
+  const locationWidth = Math.max(...rows.map((row) => row.location.length));
+  const severityWidth = Math.max(...rows.map((row) => row.severity.length));
+  const messageWidth = Math.max(...rows.map((row) => row.message.length));
+
+  return rows.map((row) => {
+    const location = paintOutput(
+      "label",
+      padVisible(row.location, locationWidth, "left")
+    );
+    const severity = paintOutput(
+      row.severityRole,
+      padVisible(row.severity, severityWidth, "left")
+    );
+    const message = padVisible(row.message, messageWidth, "left");
+    const ruleId = paintOutput("dim", row.ruleId);
+    return formatOutput(
+      `  ${location}  ${severity}  ${message}  ${ruleId}`
+    );
+  });
+}
+
 export function formatDiagnosticLine(diagnostic: Diagnostic): string {
-  const location = paintOutput(
-    "label",
-    `${diagnostic.line}:${diagnostic.column}`
-  );
-  const severity = diagnosticSeverity(diagnostic);
-  const severityLabel = paintOutput(
-    severity === "error" ? "bad" : "warn",
-    severity
-  );
-  const ruleId = paintOutput("dim", formatRuleId(diagnostic.code));
-  return formatOutput(
-    `  ${location}  ${severityLabel}  ${diagnostic.message}  ${ruleId}`
-  );
+  return formatAlignedDiagnosticLines([diagnostic])[0] ?? "";
 }
 
 /** One file path header plus indented diagnostics (line:col only). */
@@ -30,7 +65,7 @@ export function formatFileDiagnostics(
   diagnostics: Diagnostic[]
 ): string {
   const header = formatOutput(paintOutput("label", displayPath(filePath)));
-  return [header, ...diagnostics.map(formatDiagnosticLine)].join("\n");
+  return [header, ...formatAlignedDiagnosticLines(diagnostics)].join("\n");
 }
 
 /** ESLint-style single line (path:line:col, message, @rule at end). */
