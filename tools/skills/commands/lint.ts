@@ -9,7 +9,7 @@ import {
   resolveLintScopes,
 } from "../lint/discover.ts";
 import { fixSkillContent } from "../lint/fix.ts";
-import { printFileDiagnostics, printFixed, printSummary } from "../lint/format.ts";
+import { printFileDiagnostics, printFixedFiles, printSummary } from "../lint/format.ts";
 import { lintSkillContent } from "../lint/run.ts";
 import { diagnosticSeverity, type Diagnostic } from "../lint/types.ts";
 import { parseLintArgs } from "./argv.ts";
@@ -61,6 +61,7 @@ export async function runLint(argv: string[]): Promise<number> {
   let errorCount = 0;
   let filesWithIssues = 0;
   let filesChecked = 0;
+  const fixedFiles: string[] = [];
 
   for (const filePath of files) {
     if (!isMarkdownPath(filePath)) {
@@ -81,13 +82,15 @@ export async function runLint(argv: string[]): Promise<number> {
       continue;
     }
 
+    let wasFixed = false;
+
     if (parsed.fix) {
       const fixed = fixSkillContent(content);
       if (fixed !== content) {
         try {
           await writeFile(filePath, fixed, "utf8");
-          printFixed(filePath);
           content = fixed;
+          wasFixed = true;
         } catch (err) {
           const message = err instanceof Error ? err.message : String(err);
           printError(`${displayPath(filePath)}: ${message}`);
@@ -98,6 +101,9 @@ export async function runLint(argv: string[]): Promise<number> {
     }
 
     const diagnostics = lintSkillContent(content, filePath);
+    if (wasFixed && diagnostics.length === 0) {
+      fixedFiles.push(filePath);
+    }
     if (diagnostics.length === 0) continue;
 
     filesWithIssues++;
@@ -112,6 +118,7 @@ export async function runLint(argv: string[]): Promise<number> {
   }
 
   printSummary(warningCount, errorCount, filesWithIssues, filesChecked);
+  printFixedFiles(fixedFiles);
 
   return warningCount > 0 || errorCount > 0 ? 1 : 0;
 }

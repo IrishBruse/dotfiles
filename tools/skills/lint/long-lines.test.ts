@@ -11,6 +11,10 @@ describe("long-lines lint", () => {
     assert.equal(diagnostics.length, 1);
     assert.equal(diagnostics[0].code, "long-line");
     assert.equal(diagnostics[0].line, 1);
+    assert.match(
+      diagnostics[0].message,
+      /Wrap or split into shorter lines/
+    );
   });
 
   it("ignores long URLs", () => {

@@ -21,7 +21,7 @@ export function lint(content: string): Diagnostic[] {
       line: i + 1,
       column: 1,
       code: "long-line",
-      message: `Line exceeds ${MAX_LINE} characters (${line.length}). Add a newline after "." instead of one long line.`,
+      message: `Line exceeds ${MAX_LINE} characters (${line.length}). Wrap or split into shorter lines.`,
     });
     if (diagnostics.length >= 3) break;
   }

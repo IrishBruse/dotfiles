@@ -95,8 +95,20 @@ export function printSummary(
   );
 }
 
-export function printFixed(filePath: string): void {
-  process.stderr.write(
-    `${formatOutput(`${paintOutput("ok", "fixed")} ${paintOutput("label", displayPath(filePath))}`)}\n`
+export function formatFixedFiles(filePaths: string[]): string {
+  if (filePaths.length === 0) return "";
+  const count = filePaths.length;
+  const header = formatOutput(
+    paintOutput("ok", `fixed (${count} file${count === 1 ? "" : "s"})`)
   );
+  const lines = filePaths.map((filePath) =>
+    formatOutput(`  ${paintOutput("label", displayPath(filePath))}`)
+  );
+  return [header, ...lines].join("\n");
+}
+
+export function printFixedFiles(filePaths: string[]): void {
+  const output = formatFixedFiles(filePaths);
+  if (output.length === 0) return;
+  process.stderr.write(`${output}\n`);
 }

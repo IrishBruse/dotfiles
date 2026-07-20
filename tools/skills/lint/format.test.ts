@@ -4,7 +4,7 @@ import path from "node:path";
 import { describe, it } from "node:test";
 
 import { displayPath } from "../discover.ts";
-import { formatDiagnostic, formatFileDiagnostics } from "./format.ts";
+import { formatDiagnostic, formatFileDiagnostics, formatFixedFiles } from "./format.ts";
 
 describe("formatDiagnostic", () => {
   it("uses compiler-style location and code", () => {
@@ -82,5 +82,19 @@ describe("formatFileDiagnostics", () => {
     ]);
     assert.match(output, /^~\/\.agents\/skills\/jira\/SKILL\.md$/m);
     assert.match(output, /^\s+3:1 warning long-line:/m);
+  });
+});
+
+describe("formatFixedFiles", () => {
+  it("lists fixed files under a single header", () => {
+    const output = formatFixedFiles(["/tmp/a.md", "/tmp/b.md"]);
+    assert.equal(output.split("\n").length, 3);
+    assert.match(output, /^fixed \(2 files\)/m);
+    assert.match(output, /^\s+\/tmp\/a\.md$/m);
+    assert.match(output, /^\s+\/tmp\/b\.md$/m);
+  });
+
+  it("returns empty output when nothing was fixed", () => {
+    assert.equal(formatFixedFiles([]), "");
   });
 });
