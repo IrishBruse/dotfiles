@@ -1,7 +1,7 @@
 ---
 name: docsify
-description: 'Writes and structures markdown for a docsify site.
-  Use when authoring docsify content or mentioning docsify, _sidebar.md, _navbar.md, or _coverpage.md.'
+description: 'Docsify site files and markdown extensions (`_sidebar.md`, `_navbar.md`, `_coverpage.md`, docsify-cli). Use when the user mentions docsify or
+  docsify-cli, or is editing those docsify site files.'
 ---
 
 # Docsify
