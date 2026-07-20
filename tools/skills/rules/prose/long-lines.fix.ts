@@ -1,30 +1,26 @@
 import { MAX_LINE } from "../core/shared.ts";
 import { fixInlineCodeParts, mapDocumentLines } from "../core/fix-shared.ts";
 
-const BREAK_AFTER = [". ", "? ", "! ", ", "] as const;
+/** Plain paragraph prose, not list items, headings, or other block markdown. */
+export function isSimpleProseLine(line: string): boolean {
+  const trimmed = line.trimStart();
+  if (trimmed === "") return false;
+  if (/^#{1,6}\s/.test(trimmed)) return false;
+  if (/^[-*+]\s/.test(trimmed)) return false;
+  if (/^\d+\.\s/.test(trimmed)) return false;
+  if (/^>\s?/.test(trimmed)) return false;
+  if (/^\|/.test(trimmed)) return false;
+  if (/^```/.test(trimmed)) return false;
+  if (/^<[/!?a-zA-Z]/.test(trimmed)) return false;
+  if (/^(-{3,}|\*{3,}|_{3,})\s*$/.test(trimmed)) return false;
+  return true;
+}
 
-function findBreak(slice: string): { splitAt: number; nextAt: number } | null {
-  let bestAt = -1;
-  let bestDelim = "";
-
-  for (const delim of BREAK_AFTER) {
-    const at = slice.lastIndexOf(delim);
-    if (at > bestAt) {
-      bestAt = at;
-      bestDelim = delim;
-    }
-  }
-
-  if (bestAt !== -1) {
-    return { splitAt: bestAt + 1, nextAt: bestAt + bestDelim.length };
-  }
-
-  const spaceAt = slice.lastIndexOf(" ");
-  if (spaceAt > 0) {
-    return { splitAt: spaceAt, nextAt: spaceAt + 1 };
-  }
-
-  return null;
+function findSpaceBreak(slice: string): { splitAt: number; nextAt: number } | null {
+  const window = slice.slice(0, MAX_LINE + 1);
+  const spaceAt = window.lastIndexOf(" ");
+  if (spaceAt <= 0) return null;
+  return { splitAt: spaceAt, nextAt: spaceAt + 1 };
 }
 
 export function wrapProse(line: string): string {
@@ -36,11 +32,15 @@ export function wrapProse(line: string): string {
   let remaining = line;
 
   while (remaining.length > MAX_LINE) {
-    const br = findBreak(remaining.slice(0, MAX_LINE + 1));
+    const br = findSpaceBreak(remaining);
     if (!br) break;
 
-    chunks.push(remaining.slice(0, br.splitAt));
-    remaining = remaining.slice(br.nextAt);
+    const head = remaining.slice(0, br.splitAt);
+    const tail = remaining.slice(br.nextAt);
+    if (head.trim() === "" || tail.trim() === "") break;
+
+    chunks.push(head);
+    remaining = tail;
   }
 
   if (remaining.length > 0) {
@@ -53,7 +53,12 @@ export function wrapProse(line: string): string {
 export function fix(content: string): string {
   return mapDocumentLines(content, (rawLine, _lineNumber, inCodeBlock) => {
     if (inCodeBlock) return rawLine;
-    if (rawLine.length <= MAX_LINE || rawLine.includes("://") || /^\s*\|/.test(rawLine)) {
+    if (
+      rawLine.length <= MAX_LINE ||
+      rawLine.includes("://") ||
+      /^\s*\|/.test(rawLine) ||
+      !isSimpleProseLine(rawLine)
+    ) {
       return rawLine;
     }
     return fixInlineCodeParts(rawLine, wrapProse);
