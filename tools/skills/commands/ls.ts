@@ -84,7 +84,7 @@ async function printSkills(skills: SkillEntry[]): Promise<void> {
     firstGroup = false;
 
     process.stdout.write(
-      `${paintStdout("dim", root.scope)} ${paintStdout("label", displayPath(root.path))}\n\n`
+      `${paintStdout("warn", displayPath(root.path))} ${paintStdout("label", root.scope)}\n\n`
     );
 
     let index = 0;

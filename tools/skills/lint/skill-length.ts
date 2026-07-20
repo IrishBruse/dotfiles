@@ -1,11 +1,10 @@
-import path from "node:path";
-
+import { isSkillMd } from "./shared.ts";
 import type { Diagnostic } from "./types.ts";
 
 export const MAX_SKILL_LINES = 500;
 
 export function lint(content: string, filePath?: string): Diagnostic[] {
-  if (filePath === undefined || path.basename(filePath) !== "SKILL.md") {
+  if (!isSkillMd(filePath)) {
     return [];
   }
 
