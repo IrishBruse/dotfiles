@@ -48,7 +48,8 @@ not "produce a change list") - a vague criterion invites **premature completion*
 2. **In-skill reference** - a definition, rule, or fact in `SKILL.md`, consulted on demand.
 Often a legitimately flat peer-set (every rule of a review on one rung) - a fine arrangement, not a smell. _This skill is all reference._
 3. **External reference** - reference pushed out of `SKILL.md` into a separate file, reached by a **context pointer**, loaded only when the pointer fires.
-(Spans _disclosed_ reference - a sibling file like `GLOSSARY.md`, still part of the skill - through fully **external reference** that lives outside the skill system and any skill can point at.)
+(Spans _disclosed_ reference - a sibling file like `GLOSSARY.md`, still part of the skill -
+through fully **external reference** that lives outside the skill system and any skill can point at.)
 
 A demanding completion criterion drives thorough **legwork** - the digging the agent does within the work - whether the skill has steps or not,
 since "every rule applied" binds flat reference just as "every step done" binds a sequence.
@@ -101,6 +102,43 @@ delete the whole sentence rather than trim words from it. Be aggressive - most p
 After editing skill markdown, run `skills lint path/to/skills/skill-folder/ --fix`.
 It scopes to that skill's folder, auto-fixes, and lints every `.md` and `.mdc` file there (a folder path scopes the same way).
 Exit code 1 means warnings remain.
+
+`--fix` auto-applies: block-scalar descriptions to plain strings, orphan/indented frontmatter lines merged into quoted descriptions
+(wrapped when over 160 chars), nested reference links converted to backtick paths, Contents sections inserted in long reference files,
+long prose wrapped, prose semicolons, non-ASCII, and `home/` repo paths.
+
+### Lint rules
+
+Structural errors:
+
+- `name-folder-mismatch` - frontmatter `name` must match the skill folder name
+- `broken-link` - relative markdown/script links must resolve in the skill folder
+- `missing-script` - `scripts/...` references must exist
+
+Budget:
+
+- `skill-length` - `SKILL.md` over 500 lines
+- `skill-token-budget` - `SKILL.md` body over ~5000 estimated tokens
+
+Progressive disclosure:
+
+- `nested-reference` - reference files link only from `SKILL.md`, not from each other
+- `reference-toc` - long reference files need a Contents section near the top
+- `orphan-reference` - every `references/*.md` file must be linked from `SKILL.md`
+- `vague-pointer` - name the specific reference file and when to load it
+
+Description and frontmatter:
+
+- `description-triggers`, `description-voice`, `frontmatter-*`, `vague-skill-name`
+
+Prose and style:
+
+- `generic-advice` - cut vague filler and no-op guidance
+- `tool-menu` - pick one default tool, not a list of equals
+- `negation-steering` - on `SKILL.md` only: pair "Do not..." guardrails with what to do instead
+- `skill-by-path` - reference other skills by `` `skill-name` ``, not file path
+- `time-sensitive` - dated guidance goes stale, move to a deprecated section
+- `home-repo-path`, `windows-path`, `non-ascii`, `em-dash`, `prose-semicolon`, `long-line`
 
 ## Leading words
 

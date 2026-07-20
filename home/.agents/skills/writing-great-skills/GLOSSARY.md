@@ -10,6 +10,14 @@ tagged _failure mode_.
 
 **Bold terms** in any definition are themselves defined in this glossary, find them by their heading.
 
+## Contents
+
+- [Predictability](#predictability)
+- [Invocation](#invocation)
+- [Information Hierarchy](#information-hierarchy)
+- [Steering](#steering)
+- [Pruning](#pruning)
+
 ## Predictability
 
 The degree to which a skill makes the agent behave the same _way_ on every run - the same process,
