@@ -2,6 +2,13 @@
 
 Body layout for the `pr` skill.
 
+## Contents
+
+- [Readability standard](#readability-standard)
+- [Body Layout](#body-layout)
+- [Eligibility review panel](#eligibility-review-panel)
+- [Eligibility review API](#eligibility-review-api)
+
 ## Readability standard
 
 Write for an end user scanning the PR page, not for an implementation log.
