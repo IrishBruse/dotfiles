@@ -99,16 +99,12 @@ delete the whole sentence rather than trim words from it. Be aggressive - most p
 
 ## Skills CLI
 
-### Lint after edits
-
 Run `skills lint <skill-folder>/ --fix` once. Invoke the `skills` cli directly.
 
 `<skill-folder>` is the directory of the `SKILL.md` you edited. The command scopes to every `.md` and `.mdc` file there.
 Exit 0: clean. Exit 1: report every stderr warning before finishing.
 
-`--fix` auto-applies: block-scalar descriptions to plain strings, orphan/indented frontmatter lines merged into quoted descriptions
-(wrapped when over 160 chars), nested reference links converted to backtick paths, Contents sections inserted in long reference files,
-long prose wrapped, prose semicolons, and non-ASCII.
+`--fix` auto-applies fixes that can be done anything left has to be manually fixed.
 
 ## Leading words
 
