@@ -58,6 +58,11 @@ A **context pointer**'s _wording_, not its target, decides when and how reliably
 Where the ladder decides _how far down_ a piece sits, **co-location** decides _what sits beside it_ once there: keep a concept's definition, rules,
 and caveats under one heading rather than scattered, so reading one part brings its neighbours with it.
 
+### Step formatting
+
+Use `1.`, `2.`, ... only for short sequences where each **step** fits on one line.
+When items wrap or the list grows, break into `### Step 1` headings with detail in paragraphs underneath.
+
 ## When to split
 
 **Granularity** is how finely you divide skills, and each cut spends one of the two loads, so split only when the cut earns it. Two cuts:
