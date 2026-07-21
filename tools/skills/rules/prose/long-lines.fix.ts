@@ -58,10 +58,12 @@ function splitProseAtSpace(prose: string, maxLength: number): [string, string] |
 
 function wrapTokens(
   tokens: LineToken[],
-  options?: { firstLinePrefix?: string }
+  options?: { firstLinePrefix?: string; continuationLinePrefix?: string }
 ): string[] {
-  const prefix = options?.firstLinePrefix ?? "";
-  const lines: string[] = [prefix];
+  const firstLinePrefix = options?.firstLinePrefix ?? "";
+  const continuationLinePrefix = options?.continuationLinePrefix ?? "";
+
+  const lines: string[] = [firstLinePrefix];
 
   function currentLine(): string {
     return lines[lines.length - 1] ?? "";
@@ -71,8 +73,14 @@ function wrapTokens(
     lines[lines.length - 1] = value;
   }
 
+  function activePrefixLength(): number {
+    return lines.length === 1
+      ? firstLinePrefix.length
+      : continuationLinePrefix.length;
+  }
+
   function startNewLine(): void {
-    lines.push("");
+    lines.push(continuationLinePrefix);
   }
 
   function remainingRoom(): number {
@@ -104,7 +112,7 @@ function wrapTokens(
 
       const split = splitProseAtSpace(prose, room);
       if (!split) {
-        if (currentLine().length > prefix.length) {
+        if (currentLine().length > activePrefixLength()) {
           startNewLine();
           continue;
         }
@@ -115,7 +123,7 @@ function wrapTokens(
 
       const [head, tail] = split;
       if (head.trim() === "" || tail.trim() === "") {
-        if (currentLine().length > prefix.length) {
+        if (currentLine().length > activePrefixLength()) {
           startNewLine();
           continue;
         }
@@ -135,17 +143,19 @@ function wrapTokens(
 
 export function wrapLinePreservingInlineCode(
   line: string,
-  options?: { firstLinePrefix?: string }
+  options?: { firstLinePrefix?: string; continuationLinePrefix?: string }
 ): string {
-  const prefix = options?.firstLinePrefix ?? "";
-  if (prefix.length + line.length <= MAX_LINE) {
-    return prefix + line;
+  const firstLinePrefix = options?.firstLinePrefix ?? "";
+  const continuationLinePrefix = options?.continuationLinePrefix ?? "";
+  if (firstLinePrefix.length + line.length <= MAX_LINE) {
+    return firstLinePrefix + line;
   }
 
   const wrapped = wrapTokens(tokenizeInlineCode(line), {
-    firstLinePrefix: prefix,
+    firstLinePrefix,
+    continuationLinePrefix,
   }).join("\n");
-  return wrapped.includes("\n") ? wrapped : prefix + line;
+  return wrapped.includes("\n") ? wrapped : firstLinePrefix + line;
 }
 
 /** @deprecated Use wrapLinePreservingInlineCode. */
@@ -179,6 +189,7 @@ function wrapLine(line: string): string {
 
   return wrapLinePreservingInlineCode(list.body, {
     firstLinePrefix: list.prefix,
+    continuationLinePrefix: " ".repeat(list.prefix.length),
   });
 }
 

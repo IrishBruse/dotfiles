@@ -139,14 +139,9 @@ export function formatSummary(
   ].join("");
 
   return formatOutput(
-    [
-      paintOutput("dim", "skills lint: found "),
-      issueText,
-      paintOutput("dim", " "),
-      fileText,
-      paintOutput("dim", " "),
-      checkedText,
-    ].join("")
+    [issueText, paintOutput("dim", " "), fileText, paintOutput("dim", " "), checkedText].join(
+      ""
+    )
   );
 }
 

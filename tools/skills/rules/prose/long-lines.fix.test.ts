@@ -136,6 +136,25 @@ describe("long-lines fix", () => {
     }
   });
 
+  it("indents wrapped numbered and bullet list continuations", () => {
+    const line =
+      "1. **`/grill-with-docs`** - sharpen the idea by interview. Start here when you **have a codebase**: it's stateful, retaining what it learns in `CONTEXT.md` and " +
+      "ADRs. (No codebase? Use `/grill-me` - see Standalone. Both run the same `/grilling` primitive; `grill-with-docs` is the one that leaves a paper trail.)";
+    assert.ok(line.length > MAX_LINE);
+
+    const fixed = fix(`${line}\n`);
+    const wrappedLines = fixed.trimEnd().split("\n");
+    assert.ok(wrappedLines.length >= 2);
+    assert.match(wrappedLines[0] ?? "", /^1\. /);
+    assert.match(wrappedLines[1] ?? "", /^ {3}\S/);
+
+    const bullet =
+      `- ${"item ".repeat(45).trimEnd()} and more text that keeps going past the limit.`;
+    assert.ok(bullet.length > MAX_LINE);
+    const bulletFixed = fix(`${bullet}\n`).trimEnd().split("\n");
+    assert.ok((bulletFixed[1] ?? "").startsWith("  "));
+  });
+
   it("wraps long lines over multiple passes when needed", () => {
     const long = `${"segment ".repeat(45).trim()} ${"tail ".repeat(45).trim()}`;
     assert.ok(long.length > MAX_LINE);

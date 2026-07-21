@@ -13,4 +13,9 @@ describe("prose-semicolons fix", () => {
     const content = "```js\nfoo(); bar\n```\n";
     assert.equal(fix(content), content);
   });
+
+  it("fixes semicolons with extra spaces before the next word", () => {
+    const fixed = fix("Handle user requests;  retry later.\n");
+    assert.equal(fixed, "Handle user requests, retry later.\n");
+  });
 });

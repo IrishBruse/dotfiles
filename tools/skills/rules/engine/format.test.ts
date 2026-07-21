@@ -159,7 +159,6 @@ describe("formatSummary", () => {
   it("colors warnings, errors, and file counts", () => {
     const output = formatSummary(34, 2, 12, 22, 68);
     if (outputColorEnabled()) {
-      assert.match(output, /\u001b\[2mskills lint: found \u001b\[0m/);
       assert.match(output, /\u001b\[33m34 warnings\u001b\[0m/);
       assert.match(output, /\u001b\[31m2 errors\u001b\[0m/);
       assert.match(output, /\u001b\[32m12 fixable\u001b\[0m/);
@@ -168,7 +167,7 @@ describe("formatSummary", () => {
     } else {
       assert.equal(
         output,
-        "skills lint: found 34 warnings, 2 errors, 12 fixable in 22 files (checked 68 files)"
+        "34 warnings, 2 errors, 12 fixable in 22 files (checked 68 files)"
       );
     }
   });

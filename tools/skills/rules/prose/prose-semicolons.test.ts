@@ -19,4 +19,17 @@ describe("prose-semicolons lint", () => {
   it("ignores import lines", () => {
     assert.deepEqual(lint("import foo; bar from 'x'\n"), []);
   });
+
+  it("does not flag semicolons split across inline code markers", () => {
+    const diagnostics = lint("prefix request`s`;  retry suffix\n");
+    assert.deepEqual(diagnostics, []);
+  });
+
+  it("marks only segments the fixer can change as fixable", () => {
+    const diagnostics = lint("First idea; second idea.\n");
+    assert.equal(diagnostics[0]?.fixable, true);
+
+    const phantom = lint("prefix request`s`;  retry suffix\n");
+    assert.equal(phantom.length, 0);
+  });
 });
