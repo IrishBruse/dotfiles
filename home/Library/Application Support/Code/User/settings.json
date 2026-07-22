@@ -1750,10 +1750,6 @@
   "search.exclude": {
     "**/.git": true
   },
-  "mermaidChart.showGenerateDiagramCodeLens": false,
-  "mermaidChart.preCommitSync.enabled": false,
-  "mermaid.vscode.maxZoom": 20,
-  "mermaid.vscode.aiExportName": false,
   "workbench.experimental.modernUI": true,
   "workbench.colorTheme": "Empty Dark Theme",
   "ib-utilities.actionPanel.actions": [
