@@ -14,4 +14,11 @@ describe("non-ascii lint", () => {
   it("ignores non-ascii inside inline code", () => {
     assert.deepEqual(lint("Use `😀` in a code span.\n"), []);
   });
+
+  it("flags curly quotes in prose", () => {
+    const diagnostics = lint("Don\u2019t edit the \u201clegacy\u201d path.\n");
+    assert.equal(diagnostics.length, 1);
+    assert.equal(diagnostics[0].code, "non-ascii");
+  });
 });
+

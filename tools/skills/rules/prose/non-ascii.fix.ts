@@ -1,6 +1,14 @@
 import { fixInlineCodeParts, mapDocumentLines } from "../core/fix-shared.ts";
 
 const REPLACEMENTS: [string, string][] = [
+  ["\u2018", "'"],
+  ["\u2019", "'"],
+  ["\u201a", "'"],
+  ["\u201b", "'"],
+  ["\u201c", '"'],
+  ["\u201d", '"'],
+  ["\u201e", '"'],
+  ["\u201f", '"'],
   ["\u2014", "-"],
   ["\u2013", "-"],
   ["\u2192", "->"],
