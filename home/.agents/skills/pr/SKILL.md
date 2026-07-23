@@ -1,6 +1,6 @@
 ---
 name: pr
-description: 'Create, update, or ready the current GitHub pull request. Use when composing title and body, or running the merge-ready pass.'
+description: 'Create, update, or ready the current GitHub pull request. Use when asked to create or update a PR.'
 ---
 
 # PR
