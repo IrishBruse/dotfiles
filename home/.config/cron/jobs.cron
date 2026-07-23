@@ -1,0 +1,4 @@
+# Managed by ~/dotfiles. Apply with: dotfiles cron
+
+# Jira sync runs as a LaunchAgent so acli can use the logged-in user session.
+# See ~/Library/LaunchAgents/com.econneely.jira-sync.plist (macOS only).
