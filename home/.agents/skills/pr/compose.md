@@ -21,6 +21,7 @@ Capture reviewer evidence for behavior that ships in the diff: API curls and UI 
 Follow `evidence-api.md` when the diff changes API behavior.
 Follow `evidence-ui.md` when the diff includes reviewer-visible UI behavior.
 UI **prototype proof** must come from `gh image` URLs in the body.
+Include error-state screenshots whenever the diff adds or changes reviewer-visible error UI.
 
 Put evidence in the PR body on create and update.
 

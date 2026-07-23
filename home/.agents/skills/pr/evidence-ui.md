@@ -14,8 +14,14 @@ Stop and report a blocker instead of faking evidence when:
 - login, MFA, consent, or account choice blocks access
 - a screenshot is blank, stale, or not from this session
 
-Capture one screenshot for each new feature's main reviewer-visible state.
-For reviewer-visible minor UI changes, capture enough screenshots to show the changed state.
+Capture **prototype proof** screenshots for each new feature's reviewer-visible states:
+
+- the main success / default state
+- every reviewer-visible **error state** the diff adds or changes
+  (validation failure, load failure, empty-after-error, access denied,
+  switch/action failure, and similar)
+
+For reviewer-visible minor UI changes, capture enough screenshots to show the changed state, including any new or changed error UI.
 
 Save PNGs under a temp directory outside the git working tree, for example `/tmp/pr-ui-evidence/`.
 
@@ -33,7 +39,8 @@ Skip local paths, repo-relative assets, base64, manual uploads, and other hosts.
 
 Add screenshots directly under the `##` section for the changed feature, immediately after the heading.
 Use the feature name as the heading.
-Put a short caption directly below each screenshot.
+Put success-state proof first, then error-state proof for the same feature.
+Put a short caption directly below each screenshot (name the state, for example `Error: unknown prototype id`).
 Follow the caption with a paragraph and 1-3 bullets explaining the visible behavior.
 For minor UI changes, include them under the related feature section or a specific heading such as
 `## Account header review badge`.
@@ -41,7 +48,8 @@ Prefer visible behavior over file paths or invented UI.
 
 ## Done when
 
-Every new reviewer-visible feature has a real screenshot captured in this session.
+Every new reviewer-visible feature has real success-state and error-state screenshots captured in this session when those states exist in the diff.
 Each image in the body is **prototype proof** from `gh image` (not a local or alternate URL).
 Each image sits under the section for the changed feature and has a caption directly below it.
 Skip UI evidence only when the diff has no reviewer-visible UI behavior.
+Skip error-state proof only when the diff has no reviewer-visible error UI.

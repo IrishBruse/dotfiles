@@ -59,7 +59,10 @@ Layout shape:
 ## Eligibility review panel
 
 ![<alt text>](<gh image URL>)
-<short caption>
+Success: review panel with approve and reject actions
+
+![<alt text>](<gh image URL>)
+Error: save failed with inline message
 
 The panel lets reviewers approve or reject flagged accounts without leaving the account workflow.
 
