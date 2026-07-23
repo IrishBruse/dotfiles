@@ -1,23 +1,21 @@
 ---
 name: pr
-description: 'Create, update, or ready the current GitHub pull request. Use when asked to create or update a PR.'
+description: "Create or update the current GitHub pull request. Use when asked to open, draft, edit, or refresh a PR."
 ---
 
 # PR
 
 Work on the current branch pull request.
 
-Run `gh pr view` first. No open PR routes **compose** **create**; an open PR routes **compose** **update** or **ready**.
+Run `gh pr view` first. No open PR routes **compose** **create**; an open PR routes **compose** **update**.
 
 ## Branches
 
-- **compose**: draft PR title and body.
-- **ready**: merge-ready pass: PR proper, simplify code, description accuracy, reviewer evidence, documented checks, push, babysit CI, PR link response.
+- **compose**: draft PR title and body, plus reviewer evidence when the diff warrants it.
 
-Follow `~/.agents/skills/pr/compose.md` for **compose**.
-Follow `~/.agents/skills/pr/ready.md` for **ready**.
+Follow `compose.md` for **compose**.
 
 ## Context
 
-- **compose**: `git diff origin/main`, `.github/PULL_REQUEST_TEMPLATE.md`. For update, `gh pr view --json number,title,body`.
-- **ready**: `git diff origin/main`, `gh pr view --json number,title,body,url,isDraft`, PR template when present.
+- **compose**: `git diff origin/main`, `.github/PULL_REQUEST_TEMPLATE.md`.
+  For update, `gh pr view --json number,title,body`.

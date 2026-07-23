@@ -5,20 +5,18 @@ Use API evidence only when the diff changes API behavior.
 Run real `curl` calls, or equivalent HTTP requests, against the changed endpoints.
 Capture request and response output from this session.
 
-Do not put CI logs, test output, lint or build commands, dev-server logs, or other local check output in the PR body.
+Prefer live request/response captures over CI logs, test output, lint or build commands,
+or other local check output.
 
 ## Body placement
 
 Add API examples directly under the `##` section for the changed API surface, immediately after the heading.
-Use the API surface name as the heading, not `## API details`.
-Do not create a separate verification section.
+Use the API surface name as the heading.
 
 Use one `<details><summary>curl ...</summary>` block per request.
 Put the captured response inside a fenced code block.
 Follow the request/response examples with a paragraph and 1-3 bullets explaining the behavior.
 Keep `Contract changes` text-only and brief.
-
-Apply the updated body with `gh pr edit`.
 
 ## Done when
 
