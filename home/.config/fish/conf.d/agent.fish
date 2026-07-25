@@ -23,7 +23,7 @@ function at
 end
 
 function ao
-    agent --model claude-opus-4-8-thinking-medium "$argv"
+    agent --model claude-opus-5-thinking-medium "$argv"
 end
 
 # Fish autoloads completions/COMMAND.fish only for that command name, not aliases.
