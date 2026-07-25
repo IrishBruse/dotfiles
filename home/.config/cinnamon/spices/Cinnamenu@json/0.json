@@ -177,9 +177,9 @@
         "type": "generic",
         "default": [],
         "value": [
-            "chrome-hnpfjngllnobngcgfapefoaidbinmjnm-Default.desktop",
             "cinnamon-settings-display.desktop",
             "nemo.desktop",
+            "chrome-hnpfjngllnobngcgfapefoaidbinmjnm-Default.desktop",
             "mintupdate.desktop",
             "cinnamon-settings-keyboard.desktop",
             "cinnamon-settings-startup.desktop",
