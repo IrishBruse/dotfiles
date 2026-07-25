@@ -67,6 +67,8 @@ filesExplorerFocus
 findWidgetVisible
 focusedView != ''
 focusedView == 'workbench.explorer.fileView'
+focusedView == 'workbench.scm'
+focusedView == 'ib-utilities.gitHelpers'
 focusedView == 'workbench.panel.comments'
 focusedView == 'workbench.panel.markers.view'
 focusedView == 'workbench.panel.repl.view'

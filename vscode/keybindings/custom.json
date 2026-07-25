@@ -216,8 +216,18 @@
     },
     {
       "key": "ctrl+r",
+      "command": "git.refresh",
+      "when": "focusedView == 'workbench.scm' && !operationInProgress"
+    },
+    {
+      "key": "ctrl+r",
+      "command": "ib-utilities.refreshGitHelpers",
+      "when": "focusedView == 'ib-utilities.gitHelpers' && !operationInProgress"
+    },
+    {
+      "key": "ctrl+r",
       "command": "workbench.files.action.showActiveFileInExplorer",
-      "when": "!terminalFocus"
+      "when": "!terminalFocus && focusedView != 'workbench.scm' && focusedView != 'ib-utilities.gitHelpers'"
     },
     {
       "key": "ctrl+shift+r",
