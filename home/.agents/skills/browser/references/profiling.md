@@ -4,16 +4,6 @@ Capture Chrome DevTools performance profiles during browser automation for perfo
 
 **Related**: `commands.md` for full command reference.
 
-## Contents
-
-- [Basic Profiling](#basic-profiling)
-- [Profiler Commands](#profiler-commands)
-- [Categories](#categories)
-- [Use Cases](#use-cases)
-- [Output Format](#output-format)
-- [Viewing Profiles](#viewing-profiles)
-- [Limitations](#limitations)
-
 ## Basic Profiling
 
 ```bash

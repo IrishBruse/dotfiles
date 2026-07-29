@@ -19,6 +19,14 @@ export function extractFrontmatter(content: string): string {
   return content.slice(3, end);
 }
 
+export function isInFrontmatter(content: string, lineNumber: number): boolean {
+  if (!content.startsWith("---")) return false;
+  const closeMarker = content.indexOf("\n---", 3);
+  if (closeMarker === -1) return false;
+  const closeLine = content.slice(0, closeMarker).split("\n").length + 1;
+  return lineNumber >= 1 && lineNumber <= closeLine;
+}
+
 export function lineNumberAt(content: string, index: number): number {
   return content.slice(0, index).split("\n").length;
 }

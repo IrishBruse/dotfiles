@@ -22,6 +22,17 @@ describe("long-lines lint", () => {
     assert.deepEqual(lint(content), []);
   });
 
+  it("ignores long frontmatter description lines", () => {
+    const content = `---
+name: demo-skill
+description: ${"word ".repeat(40).trim()} Use when the user mentions demos.
+---
+
+# Demo
+`;
+    assert.deepEqual(lint(content), []);
+  });
+
   it("marks only auto-wrappable lines as fixable", () => {
     const wrappable = `${"word ".repeat(70).trim()}\n`;
     const heading = `## ${"heading ".repeat(40)}\n`;

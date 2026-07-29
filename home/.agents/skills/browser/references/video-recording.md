@@ -4,15 +4,6 @@ Capture browser automation as video for debugging, documentation, or verificatio
 
 **Related**: `commands.md` for full command reference.
 
-## Contents
-
-- [Basic Recording](#basic-recording)
-- [Recording Commands](#recording-commands)
-- [Use Cases](#use-cases)
-- [Best Practices](#best-practices)
-- [Output Format](#output-format)
-- [Limitations](#limitations)
-
 ## Basic Recording
 
 ```bash

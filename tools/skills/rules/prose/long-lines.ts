@@ -1,4 +1,4 @@
-import { MAX_LINE } from "../core/shared.ts";
+import { MAX_LINE, isInFrontmatter } from "../core/shared.ts";
 import type { Diagnostic } from "../core/types.ts";
 import { canAutoFixLongLine } from "./long-lines.fix.ts";
 
@@ -15,6 +15,7 @@ export function lint(content: string): Diagnostic[] {
       continue;
     }
     if (inCodeBlock) continue;
+    if (isInFrontmatter(content, i + 1)) continue;
     if (line.includes("://")) continue;
     if (/^\s*\|/.test(line)) continue;
     if (line.length <= MAX_LINE) continue;

@@ -86,31 +86,6 @@ Or point from `SKILL.md` instead:
 For status codes, read [API errors](references/api-errors.md).
 ```
 
-## `reference-toc`
-
-Require a contents list on long reference files.
-
-Files longer than 100 lines need a `## Contents` section in the first
-30 lines so the agent can jump to the right heading. `--fix` inserts one
-from the existing `##` headings.
-
-### Incorrect
-
-A 120-line reference file that starts straight into `## Overview`.
-
-### Correct
-
-```markdown
-## Contents
-
-- [Overview](#overview)
-- [Error codes](#error-codes)
-
-## Overview
-
-...
-```
-
 ## `skill-backlink`
 
 Disallow reference files pointing back at `SKILL.md`.

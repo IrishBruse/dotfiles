@@ -34,7 +34,7 @@ First idea; second idea. Use an em dash — here.
     assert.match(fixed, /This is the second sentence\./);
   });
 
-  it("fixes frontmatter orphans, nested references, and reference toc", () => {
+  it("fixes frontmatter orphans and nested references", () => {
     const body = Array.from({ length: 100 }, () => "detail").join("\n");
     const content = `---
 name: demo-skill
@@ -53,7 +53,6 @@ ${body}
     const fixed = fixSkillContent(content, "/tmp/demo/reference.md");
     assert.match(fixed, /description: 'First sentence only\./);
     assert.match(fixed, /`child\.md`/);
-    assert.match(fixed, /## Contents/);
     assert.deepEqual(lintSkillContent(fixed, "/tmp/demo/reference.md"), []);
   });
 
@@ -77,9 +76,8 @@ ${body}
     const fixed = fixSkillContent(content, "/tmp/demo/reference.md");
     const fenced = fixed.match(/```markdown\n([\s\S]*?)\n```/)?.[1] ?? "";
     assert.match(fenced, /idea; second —/);
-    assert.doesNotMatch(fenced, /## Contents/);
     assert.doesNotMatch(fenced, /idea, second/);
-    assert.match(fixed, /## Contents[\s\S]*Real Section/);
+    assert.match(fixed, /## Real Section/);
     assert.doesNotMatch(fixed, /Heading Inside Code\]\(#heading-inside-code\)/);
   });
 });

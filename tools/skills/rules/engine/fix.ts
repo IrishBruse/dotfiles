@@ -5,7 +5,6 @@ import { fix as fixLongLines } from "../prose/long-lines.fix.ts";
 import { fix as fixNonAscii } from "../prose/non-ascii.fix.ts";
 import { fix as fixProseSemicolons } from "../prose/prose-semicolons.fix.ts";
 import { fix as fixNestedReferences } from "../reference/nested-references.fix.ts";
-import { fix as fixReferenceToc } from "../reference/reference-toc.fix.ts";
 
 export function fixSkillContent(content: string, filePath?: string): string {
   let result = content;
@@ -15,7 +14,6 @@ export function fixSkillContent(content: string, filePath?: string): string {
   result = fixEmDash(result);
   result = fixNonAscii(result);
   result = fixNestedReferences(result, filePath);
-  result = fixReferenceToc(result, filePath);
   result = fixLongLines(result);
   return result;
 }

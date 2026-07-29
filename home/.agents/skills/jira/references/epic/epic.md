@@ -4,16 +4,6 @@ Use this route after `/jira epic` or `/jira` has confirmed the work should becom
 
 Epics must be parented to a verified Jira Initiative. They group related stories under a larger goal and usually span multiple sprints.
 
-## Contents
-
-- [Hard Requirement](#hard-requirement)
-- [Workflow](#workflow)
-- [Writing Rules](#writing-rules)
-- [No Implementation Detail](#no-implementation-detail)
-- [Gherkin formatting for Jira](#gherkin-formatting-for-jira)
-- [Initiative Fit Check](#initiative-fit-check)
-- [Do Not](#do-not)
-
 ## Hard Requirement
 
 A Jira Initiative is mandatory. Do not draft or create an Epic without an Initiative issue key or URL.

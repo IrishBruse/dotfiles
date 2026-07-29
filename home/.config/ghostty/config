@@ -62,6 +62,8 @@ keybind = ctrl+w=close_surface
 keybind = performable:ctrl+v=paste_from_clipboard
 # Copy if there is a selection
 keybind = performable:ctrl+c=copy_to_clipboard
+# macOS default cmd+c is copy; send interrupt instead (ctrl+c still copies when selected)
+keybind = cmd+c=text:\x03
 keybind = ctrl+k=clear_screen
 
 keybind = ctrl+\=new_split:right

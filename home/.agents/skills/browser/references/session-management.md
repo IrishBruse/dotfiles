@@ -4,16 +4,6 @@ Multiple isolated browser sessions with state persistence and concurrent browsin
 
 **Related**: `authentication.md` for login patterns.
 
-## Contents
-
-- [Named Sessions](#named-sessions)
-- [Session Isolation Properties](#session-isolation-properties)
-- [Session State Persistence](#session-state-persistence)
-- [Common Patterns](#common-patterns)
-- [Default Session](#default-session)
-- [Session Cleanup](#session-cleanup)
-- [Best Practices](#best-practices)
-
 ## Named Sessions
 
 Use `--session` to isolate browser contexts. Agent skills should derive one stable id and reuse it on every command:

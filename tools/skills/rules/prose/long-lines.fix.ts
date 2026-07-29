@@ -1,4 +1,4 @@
-import { MAX_LINE } from "../core/shared.ts";
+import { MAX_LINE, isInFrontmatter } from "../core/shared.ts";
 import { isCodeFenceLine } from "../core/fix-shared.ts";
 
 type LineToken =
@@ -225,13 +225,14 @@ function fixLongLinesOnce(content: string): string {
   let inCodeBlock = false;
   const out: string[] = [];
 
-  for (const rawLine of lines) {
+  for (let index = 0; index < lines.length; index++) {
+    const rawLine = lines[index] ?? "";
     if (isCodeFenceLine(rawLine)) {
       inCodeBlock = !inCodeBlock;
       out.push(rawLine);
       continue;
     }
-    if (inCodeBlock) {
+    if (inCodeBlock || isInFrontmatter(content, index + 1)) {
       out.push(rawLine);
       continue;
     }

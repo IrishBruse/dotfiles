@@ -43,22 +43,34 @@ disable-model-invocation: true
     assert.deepEqual(lint(fixed, SKILL_PATH), []);
   });
 
-  it("wraps long descriptions across physical lines", () => {
+  it("keeps long descriptions on one line", () => {
+    const longDescription = `${"word ".repeat(40).trim()} Use when the user mentions demos.`;
     const content = `---
 name: demo-skill
-description: ${"word ".repeat(40).trim()} Use when the user mentions demos.
+description: ${longDescription}
 ---
 
 # Demo
 `;
     const fixed = fix(content);
-    assert.match(fixed, /description: 'word/);
-    assert.ok(fixed.includes("\n  "));
-    for (const line of fixed.split("\n")) {
-      if (line.startsWith("description:") || line.startsWith("  ")) {
-        assert.ok(line.length <= 160, `line too long: ${line.length}`);
-      }
-    }
+    assert.equal(fixed, content);
+    assert.match(fixed, new RegExp(`description: ${longDescription}`));
+    assert.doesNotMatch(fixed, /\n  /);
+  });
+
+  it("merges long orphan lines onto one description line", () => {
+    const longDescription = `${"word ".repeat(40).trim()} Use when the user mentions demos.`;
+    const content = `---
+name: demo-skill
+description: ${longDescription.split(" ").slice(0, 20).join(" ")}
+${longDescription.split(" ").slice(20).join(" ")}
+---
+
+# Demo
+`;
+    const fixed = fix(content);
+    assert.match(fixed, new RegExp(`description: '${longDescription.replace(/'/g, "''")}'`));
+    assert.doesNotMatch(fixed, /\n  /);
   });
 
   it("leaves valid short descriptions unchanged", () => {

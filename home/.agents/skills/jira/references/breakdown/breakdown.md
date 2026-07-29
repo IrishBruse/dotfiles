@@ -5,20 +5,6 @@ Use this route after `/jira breakdown` or `/jira` has confirmed an existing Jira
 This is an interactive, gated workflow. Work one major step at a time. Refuse a bulk run.
 If live Jira is unavailable, say so, reconcile from available local hierarchy context, and note that the source may be stale.
 
-## Contents
-
-- [Purpose](#purpose)
-- [Pipeline](#pipeline)
-- [Definitions](#definitions)
-- [Prerequisites](#prerequisites)
-- [Progress Checklist](#progress-checklist)
-- [Workflow](#workflow)
-- [Reconcile Rules](#reconcile-rules)
-- [Plan Mode](#plan-mode)
-- [Breakdown Template](#breakdown-template)
-- [Draft Child Ticket Rules](#draft-child-ticket-rules)
-- [Anti-Patterns](#anti-patterns)
-
 ## Purpose
 
 Break any Jira issue into recommended delivery increments and follow-up work.

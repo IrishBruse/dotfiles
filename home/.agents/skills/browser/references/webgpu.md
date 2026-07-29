@@ -3,17 +3,6 @@
 Screenshots and video of WebGPU pages (three.js `WebGPURenderer`, Babylon.js, raw WebGPU) in headless Chrome.
 Without setup this is a silent failure: the page loads, the screenshot succeeds, and the canvas is black.
 
-## Contents
-
-- [Quick start](#quick-start)
-- [Platform matrix (verified)](#platform-matrix-verified)
-- [Verify the pipeline](#verify-the-pipeline)
-- [Linux / containers / CI](#linux--containers--ci)
-- [Secure contexts](#secure-contexts)
-- [Timing: don't screenshot too early](#timing-dont-screenshot-too-early)
-- [Reading pixels back inside the page](#reading-pixels-back-inside-the-page)
-- [Performance expectations](#performance-expectations)
-
 ## Quick start
 
 ```bash
