@@ -1165,6 +1165,10 @@
   "markdownInlineEditor.colors.heading6": "#C678DD",
   "markdownInlineEditor.colors.inlineCode": "#C678DD",
   "markdownInlineEditor.colors.inlineCodeBackground": "#21252bA0",
+  "markdown.styles": ["vscode/markdown-preview.css"],
+  "markdown.preview.doubleClickToSwitchToEditor": true,
+  "markdown.preview.fontFamily": "Cascadia Code, Symbols Nerd Font",
+  "markdown.preview.fontSize": 12,
   //
   // File Associations
   //
@@ -1173,7 +1177,8 @@
     "*.bin": "hexEditor.hexedit",
     "*.gb": "hexEditor.hexedit",
     "*.gbm": "hexEditor.hexedit",
-    "*.gbr": "hexEditor.hexedit"
+    "*.gbr": "hexEditor.hexedit",
+    "*.mmd": "ib-utilities.mermaidPreview"
   },
   "files.associations": {
     ".air.toml": "ini",
@@ -1761,9 +1766,10 @@
     {
       "id": "updatePR",
       "label": "Update PR",
-      "type": "agent",
+      "type": "terminal",
       "icon": "git-pull-request",
-      "prompt": "/pr update for ${repoRoot}"
+      "command": "agent \"/pr update for ${repoRoot}\"",
+      "terminalMode": "background"
     },
     {
       "id": "babysit",
@@ -1780,5 +1786,6 @@
       "command": "jira board",
       "terminalMode": "editor"
     }
-  ]
+  ],
+  "ib-utilities.github.ghPath": "/opt/homebrew/bin/gh"
 }
