@@ -19,7 +19,6 @@ import { lint as lintBrokenLink } from "../reference/broken-link.ts";
 import { lint as lintMissingScript } from "../reference/missing-script.ts";
 import { lint as lintNestedReferences } from "../reference/nested-references.ts";
 import { lint as lintOrphanReference } from "../reference/orphan-reference.ts";
-import { lint as lintReferenceToc } from "../reference/reference-toc.ts";
 import { lint as lintSkillBacklink } from "../reference/skill-backlink.ts";
 import { lint as lintVaguePointer } from "../reference/vague-pointer.ts";
 
@@ -39,7 +38,6 @@ export function lintSkillContent(
     ...lintEmDash(content),
     ...lintWindowsPaths(content),
     ...lintNestedReferences(content, filePath),
-    ...lintReferenceToc(content, filePath),
     ...lintSkillLength(content, filePath),
     ...lintSkillBacklink(content, filePathOrContext),
     ...lintSkillTokenBudget(content, filePathOrContext),

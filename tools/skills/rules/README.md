@@ -60,7 +60,6 @@ Exit code is `1` when any warning or error remains.
 | `windows-path` | warning | | paths | Backslash paths in prose |
 | `skill-by-path` | warning | | paths | Skill referenced by filesystem path |
 | `nested-reference` | warning | yes | reference | Reference file linking to another reference |
-| `reference-toc` | warning | yes | reference | Long reference file without a contents list |
 | `skill-backlink` | warning | | reference | Reference file pointing back at `SKILL.md` |
 | `orphan-reference` | warning | | reference | Reference file never linked from the skill |
 | `vague-pointer` | warning | | reference | Vague "see references" without a file or trigger |

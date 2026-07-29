@@ -14,8 +14,7 @@ describe("fixable rules", () => {
 
   it("includes every fixable code in the registry", () => {
     assert.ok(FIXABLE_RULE_CODES.has("frontmatter-description"));
-    assert.ok(FIXABLE_RULE_CODES.has("reference-toc"));
-    assert.equal(FIXABLE_RULE_CODES.size, 9);
+    assert.equal(FIXABLE_RULE_CODES.size, 8);
   });
 });
 

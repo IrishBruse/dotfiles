@@ -105,7 +105,7 @@ Require a non-empty, well-formed `description`.
 
 An indented continuation after `description:` (instead of a quoted string)
 or an empty value is an error. `--fix` can merge stray lines into a quoted
-string and wrap long values.
+string on one line.
 
 Spec: [description field](https://agentskills.io/specification#description-field).
 

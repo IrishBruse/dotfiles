@@ -10,7 +10,6 @@ export const FIXABLE_RULE_CODES = new Set([
   "nested-reference",
   "non-ascii",
   "prose-semicolon",
-  "reference-toc",
 ]);
 
 export function isFixableRule(code: string): boolean {

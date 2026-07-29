@@ -1,4 +1,3 @@
-import { MAX_LINE } from "../core/shared.ts";
 import { yamlSingleQuote } from "../core/fix-shared.ts";
 
 const KEY_LINE = /^([A-Za-z0-9_.-]+):\s*(.*)$/;
@@ -7,50 +6,8 @@ function isKeyLine(line: string): boolean {
   return KEY_LINE.test(line);
 }
 
-function findWrapBreak(slice: string): { splitAt: number; nextAt: number } | null {
-  const spaceAt = slice.lastIndexOf(" ");
-  if (spaceAt > 0) {
-    return { splitAt: spaceAt, nextAt: spaceAt + 1 };
-  }
-  return null;
-}
-
 function formatDescriptionLines(text: string): string[] {
-  const quoted = yamlSingleQuote(text);
-  const single = `description: ${quoted}`;
-  if (single.length <= MAX_LINE) {
-    return [single];
-  }
-
-  const prefix = "description: '";
-  const indent = "  ";
-  const lines: string[] = [];
-  let remaining = text.replace(/'/g, "''");
-  let first = true;
-
-  while (remaining.length > 0) {
-    const budget = first ? MAX_LINE - prefix.length : MAX_LINE - indent.length - 1;
-    if (remaining.length <= budget) {
-      lines.push(first ? `${prefix}${remaining}'` : `${indent}${remaining}'`);
-      break;
-    }
-
-    const br = findWrapBreak(remaining.slice(0, budget + 1));
-    if (!br) {
-      lines.push(first ? `${prefix}${remaining}'` : `${indent}${remaining}'`);
-      break;
-    }
-
-    lines.push(
-      first
-        ? `${prefix}${remaining.slice(0, br.splitAt)}`
-        : `${indent}${remaining.slice(0, br.splitAt)}`
-    );
-    remaining = remaining.slice(br.nextAt);
-    first = false;
-  }
-
-  return lines;
+  return [`description: ${yamlSingleQuote(text)}`];
 }
 
 function collectDescription(
@@ -139,10 +96,7 @@ function collectDescription(
 function shouldRewrite(lines: string[], start: number, end: number): boolean {
   if (end > start + 1) return true;
 
-  const line = lines[start] ?? "";
-  if (line.length > MAX_LINE) return true;
-
-  const rest = line.replace(/^description:\s*/, "").trim();
+  const rest = (lines[start] ?? "").replace(/^description:\s*/, "").trim();
   if (rest === "") return true;
   if (/^[>|]/.test(rest)) return false;
 
