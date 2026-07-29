@@ -2,16 +2,6 @@
 
 Body layout for the `pr` skill.
 
-## Contents
-
-- [Readability standard](#readability-standard)
-- [Body layout](#body-layout)
-- [Summary](#summary)
-- [Feature and API sections](#feature-and-api-sections)
-- [Explanatory sections](#explanatory-sections)
-- [Contract changes](#contract-changes-optional)
-- [Exclusions](#exclusions)
-
 ## Readability standard
 
 Write for an end user scanning the PR page, not for an implementation log.
