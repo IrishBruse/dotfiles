@@ -30,7 +30,7 @@ Auto-applies fixes that can be done safely.
 Anything left has to be fixed by hand, then re-run lint.
 
 Typical auto-fixes: block-scalar descriptions, orphan frontmatter lines,
-nested reference links, reference TOCs, long prose lines, prose semicolons,
+nested reference links, long prose lines, prose semicolons,
 and non-ASCII.
 
 ### Exit and diagnostics
