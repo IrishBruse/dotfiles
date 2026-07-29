@@ -177,6 +177,7 @@
         "type": "generic",
         "default": [],
         "value": [
+            "steam.desktop",
             "cinnamon-settings-display.desktop",
             "nemo.desktop",
             "chrome-hnpfjngllnobngcgfapefoaidbinmjnm-Default.desktop",
