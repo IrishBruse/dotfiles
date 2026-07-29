@@ -8,18 +8,6 @@ Posting to Jira is optional and requires an `Approve` answer from the **Jira Wri
 
 Pipeline position: Epic -> Use Cases -> Stories -> Spec -> Plan -> Implement.
 
-## Contents
-
-- [Output Rule](#output-rule)
-- [Human-First Elicitation](#human-first-elicitation)
-- [Operating Stance](#operating-stance)
-- [When To Use](#when-to-use)
-- [Use Case Rules](#use-case-rules)
-- [Validation Checklist](#validation-checklist)
-- [Workflow](#workflow)
-- [AI-DLC: Agreed Use Cases](#ai-dlc-agreed-use-cases)
-- [Important Notes](#important-notes)
-
 ## Output Rule
 
 Every assistant reply and Jira comment produced by this workflow must use the literal characters `<` and `>` wherever a comparison or threshold is meant.
