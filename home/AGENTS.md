@@ -7,6 +7,8 @@ Never use:
 - emojis 😀.
 - §
 
+`fnm` is defaulted to node 24.
+
 If you run into an auth issue dont try and get around it stop and ask.
 
 All subagents must use `composer-2.5` for the model.
