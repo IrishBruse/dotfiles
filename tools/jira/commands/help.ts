@@ -23,9 +23,12 @@ Workspace:
 
 Read:
   jira show KEY|URL    Local copy when present, else live
-  jira search <jql>    Search issues (JSON)
+  jira search <jql>    Search issues (JSON). Bare words are rewritten
+                       to project + text ~ JQL for the configured project.
   jira projects        List projects (JSON)
   jira types           List issue types (JSON)
+
+  Alias: jira issue KEY  →  jira show KEY
 
 Write:
   jira create          Create an issue

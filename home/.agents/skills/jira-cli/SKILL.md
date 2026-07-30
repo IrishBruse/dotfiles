@@ -110,6 +110,9 @@ If acli rejects custom fields on edit, use Atlassian MCP `editJiraIssue` with th
 
 ## Common JQL
 
+`jira search` prefers **JQL**. Bare words are rewritten to
+`project = <config> AND text ~ "\"...\""` so agents do not hit parse errors.
+
 ```sh
 # Open sprint for the configured Feature Team (name from jira info)
 jira search 'project = NOVACORE AND sprint in openSprints() AND "Feature Team" = dynaFormRaptors'
@@ -119,7 +122,17 @@ jira search 'parent = NOVACORE-12345'
 
 # Recent team ticket to reuse a parent
 jira search 'project = NOVACORE AND sprint in openSprints() AND "Feature Team" = dynaFormRaptors ORDER BY updated DESC' --fields key,summary,parent
+
+# Summary / text contains (quoted phrase + ~)
+jira search 'project = NOVACORE AND summary ~ "\"white label\""'
+jira search 'project = NOVACORE AND text ~ "\"design governance\""'
+
+# Bare words (rewritten by CLI)
+jira search "design governance"
 ```
+
+For a known key, use `jira show KEY` or `jira KEY` / `jira pull KEY`.
+`jira issue KEY` is accepted as an alias for `jira show KEY`.
 
 ## Commands
 

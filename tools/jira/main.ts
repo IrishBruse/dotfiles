@@ -44,6 +44,8 @@ export async function main(argv: string[] = process.argv): Promise<void> {
     pull: () => runPullCommand(cleaned, { outputMode }),
     push: () => runPushCommand(cleaned, { outputMode }),
     show: () => runShowCommand(cleaned, opts),
+    // Common agent mistake: `jira issue KEY` (not a command). Alias to show.
+    issue: () => runShowCommand(rewriteIssueAliasArgv(cleaned), opts),
     search: () => runSearchCommand(cleaned, opts),
     batch: () => runBatchCommand(cleaned, opts),
     doctor: () => runDoctorCommand(opts),
@@ -60,6 +62,11 @@ export async function main(argv: string[] = process.argv): Promise<void> {
 
   const handler = subcommands[arg];
   if (handler) {
+    if (arg === "issue" && outputMode === "human") {
+      process.stderr.write(
+        "note: `jira issue` is not a command, using `jira show` instead\n"
+      );
+    }
     process.exit(await handler());
     return;
   }
@@ -70,11 +77,21 @@ export async function main(argv: string[] = process.argv): Promise<void> {
     return;
   }
 
-  failCommand(`unknown command or invalid ticket: ${arg}`, outputMode);
+  failCommand(
+    `unknown command or invalid ticket: ${arg} (try jira show KEY, or jira -h)`,
+    outputMode
+  );
   if (outputMode === "human") {
     printHelp();
   }
   process.exit(1);
+}
+
+/** `jira issue KEY ...` → argv shaped like `jira show KEY ...`. */
+function rewriteIssueAliasArgv(argv: string[]): string[] {
+  const next = argv.slice();
+  if (next[2] === "issue") next[2] = "show";
+  return next;
 }
 
 main().catch((e) => {

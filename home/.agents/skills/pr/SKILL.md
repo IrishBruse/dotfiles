@@ -7,15 +7,46 @@ description: "Create or update the current GitHub pull request. Use when asked t
 
 Work on the current branch pull request.
 
-Run `gh pr view` first. No open PR routes **compose** **create**; an open PR routes **compose** **update**.
+## Route
 
-## Branches
+1. Run `gh pr view` (current branch).
+2. **Open PR** → **compose** then **update**.
+3. **No open PR** → **compose** then **create**.
+   User wording like "update" or `/pr update` still means **create** when none exists.
+   Say that once in the final reply. Do not thrash looking for a closed/other-branch PR.
 
-- **compose**: draft PR title and body, plus reviewer evidence when the diff warrants it.
+Follow `compose.md` for **compose**, **create**, and **update**.
 
-Follow `compose.md` for **compose**.
+## Preflight (before compose)
+
+Run in the repo the user named (or cwd):
+
+```bash
+git status -sb
+git branch -vv
+gh pr view --json number,title,url,state,baseRefName,headRefName,body
+git diff origin/main...HEAD --stat
+```
+
+If `gh pr view` fails with no PR, continue to create. Do not search PR history or agent transcripts for a ticket.
+
+### Uncommitted local work
+
+`git diff origin/main...HEAD` is what ships on the PR.
+If `git status` shows modified or untracked files that belong in this change:
+
+1. Tell the user what is local-only and not on the branch yet.
+2. Ask whether to commit and push before create/update.
+3. Do not silently omit that work, and do not commit unless they confirm.
+
+## Title
+
+Titles must start with an open-or-recent NOVACORE key. Follow `title.md`.
+If the key is still ambiguous after the short lookup there, stop and ask once.
+Do not invent a key. Do not mine chat transcripts or run broad Jira text searches.
 
 ## Context
 
-- **compose**: `git diff origin/main`, `.github/PULL_REQUEST_TEMPLATE.md`.
-  For update, `gh pr view --json number,title,body`.
+- Diff truth: `git diff origin/main...HEAD` (and the repo `.github/PULL_REQUEST_TEMPLATE.md` when present).
+- Update body baseline: `gh pr view --json number,title,body`.
+- Ticket lookup: `jira info`, then `jira show KEY` / local `jira/` only as in `title.md`. Prefer `jira` CLI over Atlassian MCP. Never `acli`.

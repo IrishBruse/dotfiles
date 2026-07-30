@@ -40,7 +40,12 @@ import {
 import { runAcliPassthroughCommand } from "./commands/other/acli.ts";
 import { runInfoCommand } from "./commands/workspace/info.ts";
 import { printHelp } from "./commands/help.ts";
-import { runSearchCommand } from "./commands/read/search.ts";
+import {
+  freeTextToJql,
+  looksLikeJql,
+  normalizeSearchJql,
+  runSearchCommand
+} from "./commands/read/search.ts";
 import {
   injectPathIntoFrontmatter,
   runShowCommand,
@@ -1781,6 +1786,23 @@ Local body.
       "key,summary"
     ]);
     assert.equal(code, 1);
+  });
+
+  it("detects JQL vs free text", () => {
+    assert.equal(looksLikeJql('project = NOVACORE AND summary ~ "x"'), true);
+    assert.equal(looksLikeJql("design governance"), false);
+    assert.equal(looksLikeJql("key = NOVACORE-1"), true);
+  });
+
+  it("rewrites free text to project-scoped text search", () => {
+    assert.equal(
+      freeTextToJql("design governance", "NOVACORE"),
+      'project = NOVACORE AND text ~ "\\"design governance\\""'
+    );
+    assert.deepEqual(normalizeSearchJql("key = NOVACORE-1"), {
+      jql: "key = NOVACORE-1",
+      rewritten: false
+    });
   });
 
   it("rejects comment without a body", () => {

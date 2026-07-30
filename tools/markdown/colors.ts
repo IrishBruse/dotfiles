@@ -6,7 +6,7 @@ export const ghostFaintOpacity = 0.5;
 export const theme = {
   body: "#ABB2BF",
   border: "#3E4451",
-  link: "#61AFEF",
+  link: "#35A854",
   inlineCode: "#C678DD",
   inlineCodeBackground: "#23282f",
   frontmatterDelimiter: "#5C6370",
