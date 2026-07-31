@@ -62,6 +62,7 @@
     "editorSuggestWidget.selectedBackground": "#2c313a",
     "editorWidget.background": "#21252b",
     "editorWidget.border": "#3a3f4b",
+    "widget.border": "#3a3f4b00",
 
     // Activity Bar
     "activityBar.background": "#282c34",
@@ -1165,7 +1166,7 @@
   "markdownInlineEditor.colors.heading6": "#C678DD",
   "markdownInlineEditor.colors.inlineCode": "#C678DD",
   "markdownInlineEditor.colors.inlineCodeBackground": "#21252bA0",
-  "markdown.styles": ["vscode/markdown-preview.css"],
+  "markdown.preview.doubleClickToSwitchToEditor": true,
   "markdown.preview.fontFamily": "Cascadia Code, Symbols Nerd Font",
   "markdown.preview.fontSize": 12,
   //
@@ -1700,7 +1701,6 @@
   "emmet.useInlineCompletions": true,
   "zenMode.fullScreen": false,
   "explorer.fileNesting.expand": false,
-  "editor.experimental.preferTreeSitter.css": true,
   "accessibility.voice.speechLanguage": "en-IE",
   "task.allowAutomaticTasks": "on",
   "scm.alwaysShowRepositories": true,
@@ -1755,7 +1755,6 @@
     "**/.git": true
   },
   "workbench.experimental.modernUI": true,
-  "workbench.colorTheme": "Empty Dark Theme",
   "ib-utilities.actionPanel.actions": [
     {
       "id": "createPr",
@@ -1788,5 +1787,8 @@
       "terminalMode": "editor"
     }
   ],
-  "ib-utilities.github.ghPath": "/opt/homebrew/bin/gh"
+  "ib-utilities.github.ghPath": "/opt/homebrew/bin/gh",
+  "markdownInlineEditor.tables.style": "wrapped",
+  "markdownInlineEditor.tables.maxColumnWidth": 160,
+  "workbench.colorTheme": "Empty Dark Theme"
 }
