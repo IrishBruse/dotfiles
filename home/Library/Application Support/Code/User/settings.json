@@ -1167,6 +1167,7 @@
   "markdownInlineEditor.colors.inlineCode": "#C678DD",
   "markdownInlineEditor.colors.inlineCodeBackground": "#21252bA0",
   "markdown.preview.doubleClickToSwitchToEditor": true,
+  "markdown.styles": ["/Users/econneely/dotfiles/vscode/markdown-preview.css"],
   "markdown.preview.fontFamily": "Cascadia Code, Symbols Nerd Font",
   "markdown.preview.fontSize": 12,
   //
