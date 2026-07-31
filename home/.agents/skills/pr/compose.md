@@ -51,6 +51,8 @@ Create:
 gh pr create --draft --base main --title "<title>" --body "<body>"
 ```
 
+On a stacked branch, leave `--base` alone and let the `gh-stack` skill chain the bases.
+
 Update:
 
 ```bash

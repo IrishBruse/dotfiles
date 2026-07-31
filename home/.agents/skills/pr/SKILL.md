@@ -10,12 +10,15 @@ Work on the current branch pull request.
 ## Route
 
 1. Run `gh pr view` (current branch).
-2. **Open PR** → **compose** then **update**.
-3. **No open PR** → **compose** then **create**.
+2. **Open PR** -> **compose** then **update**.
+3. **No open PR** -> **compose** then **create**.
    User wording like "update" or `/pr update` still means **create** when none exists.
    Say that once in the final reply. Do not thrash looking for a closed/other-branch PR.
 
 Follow `compose.md` for **compose**, **create**, and **update**.
+
+When the branch belongs to a stack (`gh stack view --short` succeeds), `gh stack` owns the base and
+the PR already exists, so take the **update** path and follow the `gh-stack` skill for the chain.
 
 ## Preflight (before compose)
 
@@ -38,6 +41,16 @@ If `git status` shows modified or untracked files that belong in this change:
 1. Tell the user what is local-only and not on the branch yet.
 2. Ask whether to commit and push before create/update.
 3. Do not silently omit that work, and do not commit unless they confirm.
+
+### Size
+
+Read the preflight `--stat` as a review budget, weighing lines by how hard they are to review:
+
+- Around **500** lines of dense implementation is a full PR.
+- Up to around **1000** is fine when most of it reviews fast, scaffolding, templates, config, generated files, or fixtures.
+
+Past that budget, name the natural seam you see in the diff and offer the `split-to-prs` skill before composing.
+The user decides, carry on with the single PR on their word.
 
 ## Title
 
