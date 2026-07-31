@@ -1,4 +1,4 @@
 {
-  "window.title": "DOTFILES",
-  "Lua.workspace.library": ["/usr/share/hypr/stubs"]
+  // Dont add anything to this update the global settings.json instead
+  "window.title": "DOTFILES"
 }
