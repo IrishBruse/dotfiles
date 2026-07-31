@@ -9,8 +9,7 @@ When there is no open PR, **create** one, even if the user said "update".
 When `.github/PULL_REQUEST_TEMPLATE.md` exists, fill it for the body.
 On update, start from the current PR body and drop stale sections.
 
-If local uncommitted work belongs in the PR, resolve that with the user before apply
-(see preflight in `SKILL.md`).
+If local uncommitted work belongs in the PR, resolve that with the user before apply.
 
 ## Title
 
