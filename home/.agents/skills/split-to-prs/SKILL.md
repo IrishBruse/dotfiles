@@ -35,6 +35,7 @@ Split independent owners or concerns, keep tightly coupled changes together.
 When stacking is necessary, order foundations before consumers.
 
 Default to independent PRs off the default branch. Stack PRs only when the dependency is real.
+Say in the plan which slices stack, so the user approves the shape before any branch exists.
 
 Ask for approval before starting.
 
@@ -51,7 +52,7 @@ if [ -n "$SHA" ]; then
 fi
 ```
 
-For each approved slice, in plan order:
+For **independent** slices, in plan order:
 
 1. Create a branch from the right base.
 2. Stage and commit only the planned files or hunks.
@@ -60,6 +61,9 @@ For each approved slice, in plan order:
 
 Each slice is a new branch with no open PR, so always use **create**, not update.
 Do not hand-compose `gh pr create` flags outside the `pr` skill.
+
+For **stacked** slices, load the `gh-stack` skill and build the chain with it.
+It pushes the branches and opens the draft PRs itself, then routes back to `pr` for titles and bodies.
 
 Done when every approved slice has a pushed branch and a draft PR URL.
 
