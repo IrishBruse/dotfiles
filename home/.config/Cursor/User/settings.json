@@ -3,6 +3,7 @@
   "extensions.supportAgentsWindow": {
     "irishbruse.ib-utilities": true
   },
+  "markdownInlineEditor.colors.inlineCodeBackground": "#3c3c3c1a",
   "terminal.integrated.profiles.linux": {
     "agent": {
       "path": "agent",
