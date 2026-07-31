@@ -52,6 +52,8 @@ gtk-titlebar = false
 
 auto-update-channel = stable
 
+link-previews = true
+
 config-file = ?local
 
 ### Keybinds ###
@@ -60,10 +62,10 @@ config-file = ?local
 
 keybind = ctrl+w=close_surface
 keybind = performable:ctrl+v=paste_from_clipboard
-# Copy if there is a selection
+# Copy if there is a selection, else pass through as SIGINT (only works on ctrl+c)
 keybind = performable:ctrl+c=copy_to_clipboard
-# macOS default cmd+c is copy; send interrupt instead (ctrl+c still copies when selected)
-keybind = cmd+c=text:\x03
+# Cmd+C: copy when selected. No selection does nothing (cannot fall through to SIGINT)
+keybind = performable:cmd+c=copy_to_clipboard
 keybind = ctrl+k=clear_screen
 
 keybind = ctrl+\=new_split:right
