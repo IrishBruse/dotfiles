@@ -177,6 +177,7 @@
         "type": "generic",
         "default": [],
         "value": [
+            "dev.lizardbyte.app.Sunshine.desktop",
             "steam.desktop",
             "cinnamon-settings-display.desktop",
             "nemo.desktop",
