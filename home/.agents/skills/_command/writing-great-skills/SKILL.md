@@ -7,7 +7,7 @@ disable-model-invocation: true
 A skill exists to wrangle determinism out of a stochastic system. **Predictability** ,  the agent taking the same _process_ every run,
 not producing the same output ,  is the root virtue, every lever below serves it.
 
-**Bold terms** are defined in [`GLOSSARY.md`](GLOSSARY.md); look them up there for the full meaning.
+**Bold terms** are defined in [`references/GLOSSARY.md`](references/GLOSSARY.md); look them up there for the full meaning.
 
 ## Invocation
 
@@ -49,7 +49,7 @@ not "produce a change list") ,  a vague criterion invites **premature completion
 Often a legitimately flat peer-set (every rule of a review on one rung) ,  a fine arrangement, not a smell.
 _This skill is all reference._
 3. **External reference** ,  reference pushed out of `SKILL.md` into a separate file, reached by a **context pointer**, loaded only when the pointer fires.
-(Spans _disclosed_ reference ,  a sibling file like `GLOSSARY.md`, still part of the skill ,
+(Spans _disclosed_ reference ,  a linked file like `references/GLOSSARY.md`, still part of the skill ,
 through fully **external reference** that lives outside the skill system and any skill can point at.)
 
 A demanding completion criterion drives thorough **legwork** ,  the digging the agent does within the work ,  whether the skill has steps or not,
@@ -58,7 +58,7 @@ since "every rule applied" binds flat reference just as "every step done" binds 
 Push too little down and the top bloats, push too much and you hide material the agent actually needs. That tension is the whole decision.
 
 **Progressive disclosure** is the move down the ladder ,  out of `SKILL.md` into a linked file ,  so the top stays legible.
-Mechanics: a linked `.md` file in the skill folder, named for what it holds (this skill discloses its full definitions to `GLOSSARY.md`).
+Mechanics: a linked `.md` file in the skill folder, named for what it holds (this skill discloses its full definitions to `references/GLOSSARY.md`).
 Some skills are used in more than one way, and each distinct way is a **branch** ,  different runs taking different paths through the skill.
 Branching is the cleanest disclosure test: inline what every branch needs, and push behind a pointer what only some branches reach.
 A **context pointer**'s _wording_, not its target, decides when and how reliably the agent reaches the material.
@@ -116,6 +116,11 @@ Write rules directly, skip provenance or mirroring labels on sections.
 
 Reference other skills by name in backticks (`skill-name-here`), not by file path.
 In repo skills, reference only skills that ship with that repo, not personal global skills other teammates may lack.
+
+## Skills linting
+
+After editing a skill, validate with the `skills` CLI (`skills lint <skill-folder>/ --fix`).
+Full CLI usage (lint, `--fix`, `skills ls`, exit codes) is in [`references/skills-linting.md`](references/skills-linting.md).
 
 ## Failure modes
 

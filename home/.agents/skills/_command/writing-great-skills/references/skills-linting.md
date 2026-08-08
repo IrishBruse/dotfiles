@@ -1,13 +1,6 @@
----
-name: skills-linting
-description: "Lints agent skills with the `skills` CLI. Use when validating with `skills lint`, after editing a SKILL.md, or listing skills with `skills ls`."
----
-
 # Skills linting
 
 Invoke the `skills` CLI directly. Prefer it over hand-checking the same rules.
-
-Authoring principles live in `writing-great-skills`. This skill is the lint CLI.
 
 ## Lint after edits
 

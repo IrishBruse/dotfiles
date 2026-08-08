@@ -51,6 +51,40 @@ describe("discover", () => {
     });
   });
 
+  it("finds skills nested under category folders", async () => {
+    await withTempDir(async (dir) => {
+      const root = path.join(dir, ".agents", "skills");
+      const nested = path.join(root, "github", "pr");
+      const manual = path.join(root, "github", "_command", "commits");
+      const flat = path.join(root, "browser");
+      await mkdir(nested, { recursive: true });
+      await mkdir(path.join(nested, "references"), { recursive: true });
+      await mkdir(manual, { recursive: true });
+      await mkdir(flat, { recursive: true });
+      await writeFile(path.join(nested, "SKILL.md"), "# PR\n");
+      await writeFile(path.join(nested, "references", "guide.md"), "# Guide\n");
+      await writeFile(path.join(manual, "SKILL.md"), "# Commits\n");
+      await writeFile(path.join(flat, "SKILL.md"), "# Browser\n");
+
+      const skills = await discoverSkillsInRoot({
+        scope: "global",
+        path: root,
+      });
+
+      assert.deepEqual(
+        skills.map((skill) => ({
+          name: skill.name,
+          rel: path.relative(root, path.dirname(skill.skillPath)),
+        })),
+        [
+          { name: "browser", rel: "browser" },
+          { name: "commits", rel: path.join("github", "_command", "commits") },
+          { name: "pr", rel: path.join("github", "pr") },
+        ]
+      );
+    });
+  });
+
   it("walks parent directories for project roots", async () => {
     await withTempDir(async (dir) => {
       const nested = path.join(dir, "apps", "demo");

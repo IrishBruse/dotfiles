@@ -26,4 +26,10 @@ Agent skills live in two stowed locations under `home/`, mirrored to `~/`.
 - `home/.agents/skills/` -> `~/.agents/skills/` - general-purpose, cross-project skills
 - `home/.cursor/skills/` -> `~/.cursor/skills/` - **Work only skills**
 
+Group related skills under category folders.
+User-invoked skills (`disable-model-invocation: true`) live under a `_command/`
+folder: top-level `_command/<skill>` for meta skills, or
+`<category>/_command/<skill>` when they belong to a domain category.
+Nesting can be deeper, discovery walks until it finds a `SKILL.md`.
+
 `jira` skill should not reference mcp or clis keep it generic in its content.

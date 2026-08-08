@@ -11,6 +11,13 @@ describe("skill-by-path lint", () => {
     assert.equal(diagnostics[0]?.code, "skill-by-path");
   });
 
+  it("flags nested category skill paths", () => {
+    const content =
+      "Follow ~/.agents/skills/_command/writing-great-skills/SKILL.md for style.\n";
+    const diagnostics = lint(content);
+    assert.equal(diagnostics[0]?.code, "skill-by-path");
+  });
+
   it("allows skill names in backticks", () => {
     const content = "Follow `writing-great-skills` for style.\n";
     assert.deepEqual(lint(content), []);

@@ -108,34 +108,51 @@ async function pathExists(target: string): Promise<boolean> {
   }
 }
 
+/**
+ * Recursively find skill packages under a root.
+ * A skill is a directory that contains `SKILL.md`. Category folders are
+ * organizational only and may nest skills (Cursor walks the same way).
+ * Once a skill package is found, its children are not scanned.
+ */
 export async function discoverSkillsInRoot(
   root: SkillRoot
 ): Promise<SkillEntry[]> {
   if (!(await pathExists(root.path))) return [];
 
+  const skills: SkillEntry[] = [];
+  await walkSkillPackages(root.path, root, skills);
+  return skills.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+async function walkSkillPackages(
+  dir: string,
+  root: SkillRoot,
+  out: SkillEntry[]
+): Promise<void> {
+  const skillPath = path.join(dir, "SKILL.md");
+  if (dir !== root.path && (await pathExists(skillPath))) {
+    out.push({
+      scope: root.scope,
+      root: root.path,
+      name: path.basename(dir),
+      skillPath,
+    });
+    return;
+  }
+
   let entries;
   try {
-    entries = await readdir(root.path, { withFileTypes: true });
+    entries = await readdir(dir, { withFileTypes: true });
   } catch (err) {
     const code = (err as NodeJS.ErrnoException).code;
-    if (code === "ENOENT") return [];
+    if (code === "ENOENT") return;
     throw err;
   }
 
-  const skills: SkillEntry[] = [];
   for (const ent of entries) {
-    if (!ent.isDirectory()) continue;
-    const skillPath = path.join(root.path, ent.name, "SKILL.md");
-    if (!(await pathExists(skillPath))) continue;
-    skills.push({
-      scope: root.scope,
-      root: root.path,
-      name: ent.name,
-      skillPath,
-    });
+    if (!ent.isDirectory() || ent.name.startsWith(".")) continue;
+    await walkSkillPackages(path.join(dir, ent.name), root, out);
   }
-
-  return skills.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function discoverSkills(roots: SkillRoot[]): Promise<SkillEntry[]> {
@@ -144,9 +161,8 @@ export async function discoverSkills(roots: SkillRoot[]): Promise<SkillEntry[]> 
 
   for (const root of roots) {
     for (const skill of await discoverSkillsInRoot(root)) {
-      const key = `${skill.root}${path.sep}${skill.name}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
+      if (seen.has(skill.skillPath)) continue;
+      seen.add(skill.skillPath);
       skills.push(skill);
     }
   }

@@ -15,7 +15,7 @@ function workJiraSkillDest(): string {
 
 /** Mirror dotfiles jira skill into ui-platform-workspace. */
 export function syncJiraSkill(repo: string): void {
-  const source = join(repo, "home/.agents/skills/jira");
+  const source = join(repo, "home/.agents/skills/atlassian/jira");
   if (!existsSync(source)) return;
 
   const dest = workJiraSkillDest();

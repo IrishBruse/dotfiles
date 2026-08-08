@@ -23,7 +23,15 @@
       "scope": "config"
     },
     {
-      "paths": "home/.agents/skills/:scope/**",
+      "paths": "home/.agents/skills/*/_command/:scope/**",
+      "prefix": "skill"
+    },
+    {
+      "paths": "home/.agents/skills/_command/:scope/**",
+      "prefix": "skill"
+    },
+    {
+      "paths": "home/.agents/skills/*/:scope/**",
       "prefix": "skill"
     },
     {

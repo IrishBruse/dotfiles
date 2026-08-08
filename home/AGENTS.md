@@ -12,5 +12,6 @@ Never use:
 If you run into an auth issue dont try and get around it stop and ask.
 
 All subagents must use `composer-2.5` for the model.
-Use the AskQuestion tool regularly.
 Only use markdown tables for very small table widths.
+
+Dont use bash python scripts to execute stuff.

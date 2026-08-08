@@ -28,7 +28,7 @@ Reference other skills by name, not by filesystem path.
 
 Paths like `~/.agents/skills/foo/SKILL.md` or `.cursor/skills/foo` tie the
 skill to one machine layout. Backtick the skill name instead so any
-checkout can resolve it.
+checkout can resolve it (category folders do not change the skill name).
 
 ### Incorrect
 
