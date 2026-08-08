@@ -85,10 +85,16 @@
     "panel.border": "#3a3f4b",
 
     // Tab
-    "tab.activeBackground": "#282c34",
+    // "tab.activeBackground": "#282c34",
+    // "tab.activeForeground": "#d7dae0",
+    // "tab.border": "#0000",
+    // "tab.inactiveBackground": "#21252b",
+    // "tab.inactiveForeground": "#696969",
+
+    "tab.activeBackground": "#f0f",
     "tab.activeForeground": "#d7dae0",
     "tab.border": "#0000",
-    "tab.inactiveBackground": "#21252b",
+    "tab.inactiveBackground": "#f0f",
     "tab.inactiveForeground": "#696969",
 
     // Title Bar
@@ -1665,7 +1671,6 @@
   "chat.viewSessions.enabled": false,
   "http.systemCertificatesNode": true,
   "settingsSync.ignoredExtensions": ["fireblast.hyprlang-vscode"],
-  "editor.experimental.preferTreeSitter.ini": true,
   "http.proxyStrictSSL": false,
   "csharp.suppressBuildAssetsNotification": true,
   "debug.onTaskErrors": "debugAnyway",
