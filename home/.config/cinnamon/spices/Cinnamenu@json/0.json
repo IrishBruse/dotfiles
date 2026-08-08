@@ -160,7 +160,8 @@
             "recents",
             "emoji:",
             "/home/econn",
-            "chrome-apps"
+            "chrome-apps",
+            "wine-wine"
         ]
     },
     "custom-menu-width": {
@@ -177,14 +178,18 @@
         "type": "generic",
         "default": [],
         "value": [
+            "org.DolphinEmu.dolphin-emu.desktop:flatpak",
+            "cinnamon-settings-startup.desktop",
+            "discord.desktop",
             "dev.lizardbyte.app.Sunshine.desktop",
+            "PlateUp!.desktop",
+            "mintinstall.desktop",
             "steam.desktop",
             "cinnamon-settings-display.desktop",
             "nemo.desktop",
             "chrome-hnpfjngllnobngcgfapefoaidbinmjnm-Default.desktop",
             "mintupdate.desktop",
             "cinnamon-settings-keyboard.desktop",
-            "cinnamon-settings-startup.desktop",
             "cinnamon-settings-fonts.desktop",
             "org.gnome.font-viewer.desktop",
             "cinnamon-settings-windows.desktop",
