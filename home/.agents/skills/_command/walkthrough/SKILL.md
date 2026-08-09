@@ -1,6 +1,7 @@
 ---
 name: walkthrough
 description: Walks through a response, file, or feature section by section. Use when asked to walk through or break down something, or on /walkthrough.
+disable-model-invocation: true
 ---
 
 # Walkthrough
