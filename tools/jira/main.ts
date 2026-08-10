@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Jira CLI -- pull tickets to local markdown under `jira/`.
+ * Jira CLI -- pull tickets to local markdown under `~/jira`.
  */
 import process from "node:process";
 import { runAcliPassthroughCommand } from "./commands/other/acli.ts";
@@ -55,7 +55,7 @@ export async function main(argv: string[] = process.argv): Promise<void> {
     transition: () => runTransitionCommand(cleaned, opts),
     comment: () => runCommentCommand(cleaned, opts),
     link: () => runLinkCommand(cleaned, opts),
-    info: () => runInfoCommand(),
+    info: () => runInfoCommand(opts),
     projects: () => runProjectsCommand(cleaned, opts),
     types: () => runTypesCommand(cleaned, opts)
   };

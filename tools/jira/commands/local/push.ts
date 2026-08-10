@@ -2,6 +2,7 @@
  * `jira push` -- push local ticket markdown back to Jira.
  */
 import fs from "node:fs";
+import { homedir } from "node:os";
 import process from "node:process";
 
 import { editWorkitem } from "../../lib/acli-jira.ts";
@@ -61,7 +62,7 @@ function pushTicketFile(
 /** Push one local ticket to Jira, then refresh the file from Jira. */
 export function pushTicket(
   key: string,
-  cwd = process.cwd(),
+  cwd = homedir(),
   options: { quiet?: boolean; outputMode?: OutputMode } = {}
 ): number {
   try {
@@ -84,14 +85,14 @@ export function pushTicket(
   }
 }
 
-/** Push every local ticket under `jira/` to Jira. */
+/** Push every local ticket under `~/jira` to Jira. */
 export async function pushAll(
-  cwd = process.cwd(),
+  cwd = homedir(),
   options: { quiet?: boolean; outputMode?: OutputMode } = {}
 ): Promise<number> {
   const tickets = listLocalTickets(cwd);
   if (tickets.length === 0) {
-    return failCommand("no tickets under jira/", options.outputMode ?? "human");
+    return failCommand("no tickets under ~/jira", options.outputMode ?? "human");
   }
 
   const ticketIndex = buildLocalTicketIndex(cwd);

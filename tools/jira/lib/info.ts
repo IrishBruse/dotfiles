@@ -1,7 +1,11 @@
-import process from "node:process";
+import { homedir } from "node:os";
 
 import { CONFIG, configuredProject } from "./CONFIG.ts";
-import { readBoardInfoCache, type CachedIssueType } from "./board-cache.ts";
+import {
+  readBoardCache,
+  readBoardInfoCache,
+  type CachedIssueType
+} from "./board-cache.ts";
 import {
   AGENT_LINK_TYPES,
   JIRA_SPRINT_FIELD,
@@ -9,7 +13,7 @@ import {
 } from "./custom-fields.ts";
 import { assigneeRecord } from "./format.ts";
 import { summarizeLocalTickets, type LocalTicketsSummary } from "./local.ts";
-import type { BoardSprint } from "./types.ts";
+import type { BoardContent, BoardSprint } from "./types.ts";
 
 /**
  * Agent workspace context for MCP and `jira` CLI.
@@ -36,6 +40,11 @@ export type JiraInfo = {
   statuses: string[];
   sprints: BoardSprint[];
   localTickets: LocalTicketsSummary;
+};
+
+/** `jira info --json` / batch info: workspace fields plus full board cache. */
+export type JiraInfoJson = JiraInfo & {
+  board: BoardContent | null;
 };
 
 /** Extract issue type names from `jira project view` JSON. */
@@ -172,8 +181,8 @@ function normalizeFeatureTeamOptions(
 }
 
 /** Collect flat config + cached board values for agents (no nested duplicates). */
-export function gatherJiraInfo(cwd = process.cwd()): JiraInfo {
-  const cache = readBoardInfoCache();
+export function gatherJiraInfo(baseDir = homedir()): JiraInfo {
+  const cache = readBoardInfoCache(baseDir);
   const featureTeamName =
     cache?.featureTeamName.trim() ||
     CONFIG.featureTeam.trim() ||
@@ -202,7 +211,15 @@ export function gatherJiraInfo(cwd = process.cwd()): JiraInfo {
     issueTypes: cache?.issueTypeDetails ?? [],
     statuses: cache?.statuses ?? [],
     sprints: cache?.retainedSprints ?? [],
-    localTickets: summarizeLocalTickets(cwd)
+    localTickets: summarizeLocalTickets(baseDir)
+  };
+}
+
+/** Workspace context plus board.json so agents can skip a separate `jira board`. */
+export function gatherJiraInfoJson(baseDir = homedir()): JiraInfoJson {
+  return {
+    ...gatherJiraInfo(baseDir),
+    board: readBoardCache(baseDir)
   };
 }
 
@@ -265,8 +282,19 @@ export function formatJiraInfoPlainText(info: JiraInfo): string {
     ),
     formatScalar("epicLinkField", info.epicLinkField),
     formatScalar("sprintField", info.sprintField),
-    formatScalar("storyPointsField", info.storyPointsField)
+    formatScalar("storyPointsField", info.storyPointsField),
+    ...formatLocalTicketLines(info.localTickets)
   ];
 
   return `${lines.join("\n")}\n`;
+}
+
+function formatLocalTicketLines(
+  localTickets: LocalTicketsSummary
+): string[] {
+  const lines = [formatScalar("localTickets", localTickets.count)];
+  for (const group of localTickets.byType) {
+    lines.push(`${group.typeDir}: ${group.keys.join(" ")}`);
+  }
+  return lines;
 }

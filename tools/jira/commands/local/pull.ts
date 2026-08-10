@@ -1,8 +1,9 @@
 /**
- * `jira pull` -- fetch tickets into `jira/<type>/<title> - <KEY>.md`.
+ * `jira pull` -- fetch tickets into `~/jira/<type>/<title> - <KEY>.md`.
  */
 import fs from "node:fs";
 import path from "node:path";
+import { homedir } from "node:os";
 import process from "node:process";
 
 import { viewWorkitem, viewWorkitemAsync } from "../../lib/acli-jira.ts";
@@ -25,6 +26,7 @@ import type { OutputMode } from "../../lib/output-mode.ts";
 import { isJsonMode } from "../../lib/output-mode.ts";
 import {
   buildLocalTicketIndex,
+  jiraRootDir,
   listLocalTickets,
   localTicketPath
 } from "../../lib/local.ts";
@@ -41,7 +43,7 @@ import { confirm } from "../../lib/prompt.ts";
 
 const PULL_CONCURRENCY = 4;
 
-/** Lowercase slug for `jira/<type>/` paths (e.g. `Epic` -> `epic`). */
+/** Lowercase slug for `~/jira/<type>/` paths (e.g. `Epic` -> `epic`). */
 export function issueTypeSlug(name: string): string {
   return name.trim().toLowerCase().replace(/\s+/g, "-");
 }
@@ -68,25 +70,26 @@ export function ticketMarkdownFilename(
   return `${title}${keySuffix}.md`;
 }
 
-/** On-disk path for `jira pull` under a working directory. */
+/** On-disk path for `jira pull` under `~/jira` (override `baseDir` in tests). */
 export function pulledTicketPath(
-  cwd: string,
+  baseDir: string,
   fields: Record<string, unknown>,
   key: string,
   parent?: { key: string; fields: Record<string, unknown> } | null
 ): string {
   const typeSlug = issueTypeSlug(issueTypeName(fields));
   const filename = ticketMarkdownFilename(fields, key);
+  const root = jiraRootDir(baseDir);
 
   if (typeSlug === "story" && parent?.key) {
     const parentFolder = ticketMarkdownFilename(
       parent.fields,
       parent.key
     ).replace(/\.md$/, "");
-    return path.join(cwd, "jira", typeSlug, parentFolder, filename);
+    return path.join(root, typeSlug, parentFolder, filename);
   }
 
-  return path.join(cwd, "jira", typeSlug, filename);
+  return path.join(root, typeSlug, filename);
 }
 
 function resolveStoryParent(
@@ -168,7 +171,7 @@ function writePulledIssue(
   ticketKey: string,
   options: PullOptions
 ): PullWriteResult {
-  const cwd = options.cwd ?? process.cwd();
+  const cwd = options.cwd ?? homedir();
   const quiet = options.quiet ?? false;
   const meAccountId = CONFIG.meAccountId;
   const siteHost = normalizeSiteHost(CONFIG.site);
@@ -264,7 +267,7 @@ async function runPullFlow(
   ticketKey: string,
   options: PullOptions
 ): Promise<number> {
-  const cwd = options.cwd ?? process.cwd();
+  const cwd = options.cwd ?? homedir();
   const ticketIndex = options.ticketIndex ?? buildLocalTicketIndex(cwd);
   const pullOptions = { ...options, cwd, ticketIndex };
   const jsonMode = isJsonMode({ outputMode: options.outputMode ?? "human" });
@@ -368,14 +371,14 @@ function finishPull(
   return 0;
 }
 
-/** Re-pull every ticket already present under `jira/`. */
+/** Re-pull every ticket already present under `~/jira`. */
 export async function pullAll(
-  cwd = process.cwd(),
+  cwd = homedir(),
   options: Omit<PullOptions, "cwd"> = {}
 ): Promise<number> {
   const tickets = listLocalTickets(cwd);
   if (tickets.length === 0) {
-    return failCommand("no tickets under jira/", options.outputMode ?? "human");
+    return failCommand("no tickets under ~/jira", options.outputMode ?? "human");
   }
 
   const ticketIndex = buildLocalTicketIndex(cwd);

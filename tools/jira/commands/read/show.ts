@@ -1,8 +1,9 @@
 /**
- * `jira show` -- print one issue as markdown (local `jira/` copy when present).
+ * `jira show` -- print one issue as markdown (local `~/jira` copy when present).
  */
 import fs from "node:fs";
 import path from "node:path";
+import { homedir } from "node:os";
 import process from "node:process";
 
 import { viewWorkitem } from "../../lib/acli-jira.ts";
@@ -49,13 +50,33 @@ export function readLocalShowMarkdown(
   } = {}
 ): { path: string; markdown: string } | null {
   if (options.remote || options.fieldsExplicit) return null;
-  const filePath = localTicketPath(key, options.cwd ?? process.cwd());
+  const filePath = localTicketPath(key, options.cwd ?? homedir());
   if (!filePath) return null;
   const resolved = path.resolve(filePath);
   const raw = fs.readFileSync(filePath, "utf-8");
   return {
     path: resolved,
     markdown: injectPathIntoFrontmatter(raw, resolved)
+  };
+}
+
+/** Format a live workitem view into the same markdown shape as `jira show`. */
+export function formatRemoteShowMarkdown(
+  key: string,
+  data: unknown
+): { key: string; markdown: string } | null {
+  if (!data || typeof data !== "object") return null;
+  const issue = data as { key?: string; fields?: Record<string, unknown> };
+  const issueKey = issue.key ?? key;
+  const body = formatTicketMarkdown(
+    issueKey,
+    issue.fields ?? {},
+    normalizeSiteHost(CONFIG.site),
+    CONFIG.meAccountId
+  ).body;
+  return {
+    key: issueKey,
+    markdown: body.endsWith("\n") ? body : `${body}\n`
   };
 }
 
@@ -104,27 +125,22 @@ export function runShowCommand(
 
   try {
     const data = viewWorkitem(key, { fields });
-    if (isJsonMode(options)) {
-      printJsonSuccess(data);
-      return 0;
-    }
-
-    if (!data || typeof data !== "object") {
+    const formatted = formatRemoteShowMarkdown(key, data);
+    if (!formatted) {
       return failCommand(
         `show ${key}: no data returned`,
         options.outputMode
       );
     }
-
-    const issue = data as { key?: string; fields?: Record<string, unknown> };
-    const issueKey = issue.key ?? key;
-    const body = formatTicketMarkdown(
-      issueKey,
-      issue.fields ?? {},
-      normalizeSiteHost(CONFIG.site),
-      CONFIG.meAccountId
-    ).body;
-    process.stdout.write(body.endsWith("\n") ? body : `${body}\n`);
+    if (isJsonMode(options)) {
+      printJsonSuccess({
+        source: "remote",
+        key: formatted.key,
+        markdown: formatted.markdown
+      });
+      return 0;
+    }
+    process.stdout.write(formatted.markdown);
     return 0;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);

@@ -9,7 +9,7 @@ export type StatusBucket =
   | "inTest"
   | "done";
 
-/** Parsed local ticket markdown under ./jira/. */
+/** Parsed local ticket markdown under ~/jira. */
 export type LocalTicket = {
   key: string;
   path: string;

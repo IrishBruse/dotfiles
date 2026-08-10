@@ -47,6 +47,7 @@ import {
   runSearchCommand
 } from "./commands/read/search.ts";
 import {
+  formatRemoteShowMarkdown,
   injectPathIntoFrontmatter,
   runShowCommand,
   readLocalShowMarkdown
@@ -125,7 +126,7 @@ import {
   parseProjectName,
   statusNamesFromIssues
 } from "./lib/info.ts";
-import { parseGlobalFlags } from "./lib/output-mode.ts";
+import { HUMAN_OUTPUT, parseGlobalFlags } from "./lib/output-mode.ts";
 import {
   blockedAcliJiraReason,
   buildAcliJiraArgs
@@ -1475,7 +1476,10 @@ describe("jira info", () => {
     assert.match(text, /^sprintId: 99$/m);
     assert.match(text, /^sprintName: Sprint 12$/m);
     assert.match(text, /^sprintDates: 2026-07-01 to 2026-07-14$/m);
-    assert.doesNotMatch(text, /^local/m);
+    assert.match(text, /^storyPointsField: customfield_10023$/m);
+    assert.match(text, /^localTickets: 4$/m);
+    assert.match(text, /^story: TEAM-1 TEAM-2$/m);
+    assert.match(text, /^task: TEAM-3 TEAM-4$/m);
     assert.doesNotMatch(text, /^statuses:/m);
     assert.doesNotMatch(text, /^linkTypes:/m);
     assert.match(text, /^boardId: 42$/m);
@@ -1513,7 +1517,8 @@ describe("jira info", () => {
       sprints: [],
       localTickets: { count: 0, byType: [] }
     });
-    assert.doesNotMatch(text, /^local/m);
+    assert.match(text, /^localTickets: 0$/m);
+    assert.doesNotMatch(text, /^story:/m);
     assert.match(text, /^storyPointsField: customfield_10023$/m);
   });
 
@@ -1611,16 +1616,90 @@ describe("jira info", () => {
     withTempDir((dir) => {
       const home = path.join(dir, "home");
       fs.mkdirSync(home, { recursive: true });
-      const out = captureStdout(() => runInfoCommand(home));
+      const out = captureStdout(() => runInfoCommand(HUMAN_OUTPUT, home));
       assert.match(out, /^site: /m);
       assert.match(out, /^accountId: /m);
       assert.match(out, /^featureTeamField: /m);
       assert.match(out, /^cloudId: /m);
       assert.match(out, /^boardId: /m);
+      assert.match(out, /^localTickets: 0$/m);
       assert.match(out, /^board: \(run jira sync\)$/m);
       assert.doesNotMatch(out, /Jira workspace/);
       assert.doesNotMatch(out, /\n\nBoard:\n/);
       assert.doesNotMatch(out, /Config \(~\/\.config\/jira\/config\.json\):/);
+    });
+  });
+
+  it("prints JiraInfo JSON from runInfoCommand --json", () => {
+    withTempDir((dir) => {
+      const home = path.join(dir, "home");
+      fs.mkdirSync(home, { recursive: true });
+      const out = captureStdout(() =>
+        runInfoCommand({ outputMode: "json" }, home)
+      );
+      const parsed = JSON.parse(out) as {
+        success: boolean;
+        data: {
+          project: string;
+          localTickets: { count: number };
+          board: null;
+        };
+      };
+      assert.equal(parsed.success, true);
+      assert.equal(parsed.data.project, "PROJ");
+      assert.equal(parsed.data.localTickets.count, 0);
+      assert.equal(parsed.data.board, null);
+    });
+  });
+
+  it("includes board cache in info --json when present", () => {
+    withTempDir((dir) => {
+      const home = path.join(dir, "home");
+      fs.mkdirSync(home, { recursive: true });
+      const content = buildBoardContent(
+        [
+          {
+            key: "PROJ-1",
+            fields: issueFields("Mine", { accountId: ME, displayName: "Me" })
+          },
+          {
+            key: "PROJ-2",
+            fields: issueFields("Theirs", {
+              accountId: "other",
+              displayName: "Bob"
+            })
+          }
+        ],
+        ME,
+        "2026-07-17T12:00:00.000Z"
+      );
+      writeBoardCache(content, home);
+      const out = captureStdout(() =>
+        runInfoCommand({ outputMode: "json" }, home)
+      );
+      const parsed = JSON.parse(out) as {
+        success: boolean;
+        data: {
+          board: {
+            syncedAt: string;
+            sections: {
+              myTickets: { statuses: { todo: Array<{ key: string }> } };
+              teammates: { statuses: { todo: Array<{ key: string }> } };
+            };
+          } | null;
+        };
+      };
+      assert.equal(parsed.success, true);
+      assert.ok(parsed.data.board);
+      assert.equal(parsed.data.board!.syncedAt, "2026-07-17T12:00:00.000Z");
+      assert.equal(
+        parsed.data.board!.sections.myTickets.statuses.todo[0]?.key,
+        "PROJ-1"
+      );
+      assert.equal(
+        parsed.data.board!.sections.teammates.statuses.todo[0]?.key,
+        "PROJ-2"
+      );
     });
   });
 
@@ -1646,7 +1725,7 @@ describe("jira info", () => {
         "2026-07-17T12:00:00.000Z"
       );
       writeBoardCache(content, home);
-      const out = captureStdout(() => runInfoCommand(home));
+      const out = captureStdout(() => runInfoCommand(HUMAN_OUTPUT, home));
       assert.match(out, /^cloudId: /m);
       assert.match(out, /PROJ-1  Todo         -   Mine/);
       assert.doesNotMatch(out, /PROJ-2/);
@@ -1666,7 +1745,7 @@ describe("show and search command validation", () => {
     assert.equal(code, 1);
   });
 
-  it("prints local markdown when a jira/ copy exists", () => {
+  it("prints local markdown when a ~/jira copy exists", () => {
     withTempDir((cwd) => {
       const body = `---
 title: "Alpha"
@@ -1682,14 +1761,9 @@ updated: ""
 Local body.
 `;
       writeTicket(cwd, "task", "Alpha - PROJ-1.md", body);
-      const prev = process.cwd();
-      process.chdir(cwd);
-      const ticketPath = path.resolve(
-        process.cwd(),
-        "jira",
-        "task",
-        "Alpha - PROJ-1.md"
-      );
+      const prevHome = process.env.HOME;
+      process.env.HOME = cwd;
+      const ticketPath = path.resolve(cwd, "jira", "task", "Alpha - PROJ-1.md");
       try {
         const stdout = captureStdout(() =>
           runShowCommand(["node", "jira", "show", "PROJ-1"])
@@ -1704,7 +1778,11 @@ Local body.
         assert.match(stdout, /Local body/);
         assert.match(stdout, /title: "Alpha"/);
       } finally {
-        process.chdir(prev);
+        if (prevHome === undefined) {
+          delete process.env.HOME;
+        } else {
+          process.env.HOME = prevHome;
+        }
       }
     });
   });
@@ -1732,6 +1810,24 @@ url: https://example.atlassian.net/browse/PROJ-1
 Body.
 `
     );
+  });
+
+  it("formatRemoteShowMarkdown converts live issue fields to markdown", () => {
+    const out = formatRemoteShowMarkdown("PROJ-1", {
+      key: "PROJ-1",
+      fields: {
+        summary: "Remote title",
+        issuetype: { name: "Task" },
+        assignee: null,
+        status: { name: "To Do", statusCategory: { key: "new" } },
+        description: "Remote body"
+      }
+    });
+    assert.ok(out);
+    assert.equal(out!.key, "PROJ-1");
+    assert.match(out!.markdown, /title: "Remote title"/);
+    assert.match(out!.markdown, /Remote body/);
+    assert.doesNotMatch(out!.markdown, /"type":"doc"/);
   });
 
   it("readLocalShowMarkdown skips local when remote or fields are set", () => {

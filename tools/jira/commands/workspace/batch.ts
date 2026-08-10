@@ -14,12 +14,12 @@ import { flagBool, flagString, parseSubcommandArgv } from "../../lib/argv.ts";
 import { configuredProject } from "../../lib/CONFIG.ts";
 import { jiraPullFields, JIRA_SEARCH_FIELDS } from "../../lib/format.ts";
 import { gatherBoardCache } from "./board.ts";
-import { gatherJiraInfo } from "../../lib/info.ts";
+import { gatherJiraInfoJson } from "../../lib/info.ts";
 import { parseJiraKey } from "../../lib/jiraInput.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { failCommand, printJsonSuccess } from "../../lib/output.ts";
-import { readLocalShowMarkdown } from "../read/show.ts";
+import { readLocalShowMarkdown, formatRemoteShowMarkdown } from "../read/show.ts";
 
 const ALLOWED_BATCH_COMMANDS = new Set([
   "show",
@@ -82,7 +82,7 @@ function runBatchItem(itemArgv: string[]): {
   try {
     switch (cmd) {
       case "info":
-        return { success: true, data: gatherJiraInfo(), error: null };
+        return { success: true, data: gatherJiraInfoJson(), error: null };
       case "board": {
         const cache = gatherBoardCache();
         if (!cache) {
@@ -142,7 +142,24 @@ function runBatchItem(itemArgv: string[]): {
             error: null
           };
         }
-        return { success: true, data: viewWorkitem(key, { fields }), error: null };
+        const data = viewWorkitem(key, { fields });
+        const formatted = formatRemoteShowMarkdown(key, data);
+        if (!formatted) {
+          return {
+            success: false,
+            data: null,
+            error: `show ${key}: no data returned`
+          };
+        }
+        return {
+          success: true,
+          data: {
+            source: "remote",
+            key: formatted.key,
+            markdown: formatted.markdown
+          },
+          error: null
+        };
       }
       case "search": {
         const fullArgv = ["node", "jira", ...itemArgv];

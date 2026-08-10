@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import process from "node:process";
+import { homedir } from "node:os";
 
 import { parseJiraKey } from "./jiraInput.ts";
 import type { LocalTicket } from "./types.ts";
@@ -51,7 +51,7 @@ export function parseDraftFrontmatter(content: string): {
 export function parseTicketMarkdown(
   content: string,
   filePath: string,
-  cwd = process.cwd()
+  baseDir = homedir()
 ): LocalTicket | null {
   const m = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/.exec(content);
   if (!m) return null;
@@ -66,8 +66,8 @@ export function parseTicketMarkdown(
   return {
     key,
     path: filePath,
-    relPath: path.relative(cwd, filePath) || filePath,
-    typeDir: jiraTypeDirFromPath(filePath, cwd),
+    relPath: path.relative(baseDir, filePath) || filePath,
+    typeDir: jiraTypeDirFromPath(filePath, baseDir),
     title,
     assigned: parseFrontmatterScalar(fm, "assigned"),
     featureTeam: parseFrontmatterScalar(fm, "feature_team") || "None",
@@ -80,8 +80,8 @@ export function parseTicketMarkdown(
   };
 }
 
-function jiraTypeDirFromPath(filePath: string, cwd: string): string {
-  const rel = path.relative(jiraRootDir(cwd), filePath);
+function jiraTypeDirFromPath(filePath: string, baseDir: string): string {
+  const rel = path.relative(jiraRootDir(baseDir), filePath);
   const segment = rel.split(path.sep)[0];
   return segment || path.basename(path.dirname(filePath));
 }
@@ -104,7 +104,7 @@ function countTicketFiles(dir: string): number {
 
 function collectTicketFiles(
   dir: string,
-  cwd: string,
+  baseDir: string,
   tickets: LocalTicket[]
 ): void {
   if (!fs.existsSync(dir)) return;
@@ -112,30 +112,31 @@ function collectTicketFiles(
   for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
     const fullPath = path.join(dir, ent.name);
     if (ent.isDirectory()) {
-      collectTicketFiles(fullPath, cwd, tickets);
+      collectTicketFiles(fullPath, baseDir, tickets);
       continue;
     }
     if (!ent.isFile() || !ent.name.endsWith(".md")) continue;
 
     const content = fs.readFileSync(fullPath, "utf-8");
-    const parsed = parseTicketMarkdown(content, fullPath, cwd);
+    const parsed = parseTicketMarkdown(content, fullPath, baseDir);
     if (parsed) tickets.push(parsed);
   }
 }
 
-export function jiraRootDir(cwd = process.cwd()): string {
-  return path.join(cwd, "jira");
+/** Local ticket root: `~/jira` (override `baseDir` in tests). */
+export function jiraRootDir(baseDir = homedir()): string {
+  return path.join(baseDir, "jira");
 }
 
-/** All ticket markdown files under `jira/<type>/`, sorted by type then key. */
-export function listLocalTickets(cwd = process.cwd()): LocalTicket[] {
-  const root = jiraRootDir(cwd);
+/** All ticket markdown files under `~/jira/<type>/`, sorted by type then key. */
+export function listLocalTickets(baseDir = homedir()): LocalTicket[] {
+  const root = jiraRootDir(baseDir);
   if (!fs.existsSync(root)) return [];
 
   const tickets: LocalTicket[] = [];
   for (const ent of fs.readdirSync(root, { withFileTypes: true })) {
     if (!ent.isDirectory()) continue;
-    collectTicketFiles(path.join(root, ent.name), cwd, tickets);
+    collectTicketFiles(path.join(root, ent.name), baseDir, tickets);
   }
 
   tickets.sort((a, b) => {
@@ -149,12 +150,12 @@ export function listLocalTickets(cwd = process.cwd()): LocalTicket[] {
 }
 
 /**
- * Count ticket markdown files under `jira/<type>/` without reading file contents.
- * @param cwd - Working directory containing the `jira/` folder.
+ * Count ticket markdown files under `~/jira/<type>/` without reading file contents.
+ * @param baseDir - Parent of the `jira/` folder (default: home).
  * @return Number of `*.md` files found.
  */
-export function countLocalTickets(cwd = process.cwd()): number {
-  const root = jiraRootDir(cwd);
+export function countLocalTickets(baseDir = homedir()): number {
+  const root = jiraRootDir(baseDir);
   if (!fs.existsSync(root)) return 0;
 
   let count = 0;
@@ -165,16 +166,18 @@ export function countLocalTickets(cwd = process.cwd()): number {
   return count;
 }
 
-/** Grouped local ticket keys under `jira/<type>/`. */
+/** Grouped local ticket keys under `~/jira/<type>/`. */
 export type LocalTicketsSummary = {
   count: number;
   byType: Array<{ typeDir: string; keys: string[] }>;
 };
 
-/** Summarize pulled tickets under `jira/` for workspace context. */
-export function summarizeLocalTickets(cwd = process.cwd()): LocalTicketsSummary {
+/** Summarize pulled tickets under `~/jira` for workspace context. */
+export function summarizeLocalTickets(
+  baseDir = homedir()
+): LocalTicketsSummary {
   const groups = new Map<string, string[]>();
-  for (const ticket of listLocalTickets(cwd)) {
+  for (const ticket of listLocalTickets(baseDir)) {
     const keys = groups.get(ticket.typeDir) ?? [];
     keys.push(ticket.key);
     groups.set(ticket.typeDir, keys);
@@ -192,25 +195,25 @@ export function summarizeLocalTickets(cwd = process.cwd()): LocalTicketsSummary 
 
 /** Key -> absolute path index for fast lookups within one command. */
 export function buildLocalTicketIndex(
-  cwd = process.cwd()
+  baseDir = homedir()
 ): Map<string, string> {
   const index = new Map<string, string>();
-  for (const ticket of listLocalTickets(cwd)) {
+  for (const ticket of listLocalTickets(baseDir)) {
     index.set(ticket.key, ticket.path);
   }
   return index;
 }
 
-/** Resolve a ticket key to its on-disk markdown path under cwd. */
+/** Resolve a ticket key to its on-disk markdown path under `~/jira`. */
 export function localTicketPath(
   key: string,
-  cwd = process.cwd(),
+  baseDir = homedir(),
   index?: Map<string, string>
 ): string | null {
   if (index) {
     return index.get(key) ?? null;
   }
 
-  const built = buildLocalTicketIndex(cwd);
+  const built = buildLocalTicketIndex(baseDir);
   return built.get(key) ?? null;
 }

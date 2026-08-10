@@ -122,7 +122,7 @@ function localTicketsCheck(): DoctorCheck {
   return {
     name: "local-tickets",
     ok: true,
-    message: `${count} ticket(s) under jira/`
+    message: `${count} ticket(s) under ~/jira`
   };
 }
 

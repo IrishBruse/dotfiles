@@ -1,18 +1,18 @@
 import process from "node:process";
 
 export function printHelp(): void {
-  process.stdout.write(`jira - Jira tickets and local jira/ markdown
+  process.stdout.write(`jira - Jira tickets and local ~/jira markdown
 
 Usage:
   jira <KEY|URL>
   jira <command> [args]
 
 Local tickets:
-  jira <KEY|URL>       Fetch one ticket into jira/
-  jira pull KEY|URL    Fetch or refresh one ticket
-  jira pull            Refresh every ticket under jira/
+  jira <KEY|URL>       Fetch one ticket into ~/jira (cache, not a view)
+  jira pull KEY|URL    Fetch or refresh one ticket under ~/jira
+  jira pull            Refresh every ticket under ~/jira
   jira push KEY|URL    Push one local ticket
-  jira push            Push every ticket under jira/
+  jira push            Push every ticket under ~/jira
 
 Workspace:
   jira sync            Refresh board.json and info.json
@@ -22,7 +22,7 @@ Workspace:
   jira batch           Run read-only commands from JSON
 
 Read:
-  jira show KEY|URL    Local copy when present, else live
+  jira show KEY|URL    Local copy when present, else live markdown
   jira search <jql>    Search issues (JSON). Bare words are rewritten
                        to project + text ~ JQL for the configured project.
   jira projects        List projects (JSON)
@@ -58,6 +58,8 @@ Flags:
 
 Config: ~/.config/jira/config.json
 Caches: ~/.config/jira/board.json, info.json
-Tickets: jira/<type>/<title> - <KEY>.md
+Tickets: ~/jira/<type>/<title> - <KEY>.md
+info --json: JiraInfo + board cache (same board as jira board --json)
+batch show: { source, key, markdown } (not raw ADF)
 `);
 }
