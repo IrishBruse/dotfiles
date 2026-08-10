@@ -7,7 +7,7 @@ When there is no open PR, **create** one, even if the user said "update".
 
 `git diff origin/main...HEAD` is the source of truth for what ships.
 When `.github/PULL_REQUEST_TEMPLATE.md` exists, fill it for the body.
-On update, start from the current PR body and drop stale sections.
+On update, start from the current PR body.
 
 If local uncommitted work belongs in the PR, resolve that with the user before apply.
 
@@ -19,17 +19,21 @@ Compose the summary half from the diff and branch, not invented scope.
 ## Body
 
 Compose the body using the layout in `body-format.md`.
+This skill owns format, Summary, and descriptions only.
+Do not capture UI screenshots, run API curls, or upload `gh image` proof.
 
-## Evidence
+### Preserve proof on update
 
-Capture reviewer evidence for behavior that ships in the diff: API curls and UI screenshots only.
+When updating an existing PR body:
 
-Follow `evidence-api.md` when the diff changes API behavior.
-Follow `evidence-ui.md` when the diff includes reviewer-visible UI behavior.
-UI **prototype proof** must come from `gh image` URLs in the body.
-Include error-state screenshots whenever the diff adds or changes reviewer-visible error UI.
+1. Start from the current body returned by `gh pr view`.
+2. Refresh Summary and descriptive text from the branch diff.
+3. Keep every existing proof block unchanged:
+   - markdown images (`![...](...)`), including `gh image` URLs
+   - captions directly under those images
+   - `<details><summary>curl ...</summary> ... </details>` blocks
+4. Do not delete, rewrite, reorder, or regenerate those proof blocks once present.
 
-Put evidence in the PR body on create and update.
 
 ## Snyk (create only)
 
@@ -58,13 +62,11 @@ Update:
 gh pr edit --title "<title>" --body "<body>"
 ```
 
-When evidence needs a second pass after create (for example uploaded screenshot URLs), apply it with `gh pr edit`.
-
 ## Done when
 
 **Create:** draft PR URL exists, title starts with a valid NOVACORE key from `title.md`,
-body matches the branch diff, required evidence is in the body or correctly skipped,
+body matches the branch diff layout in `body-format.md`,
 and any local-only files were either included after user confirm or explicitly called out.
 
-**Update:** existing PR title and body match the branch diff, title still satisfies `title.md`,
-required evidence is in the body or correctly skipped, and no duplicate PR was created.
+**Update:** existing PR title and descriptions match the branch diff, title still satisfies `title.md`,
+existing proof blocks were preserved unchanged, and no duplicate PR was created.

@@ -38,21 +38,15 @@ Examples:
 
 After `Summary`, create one `##` section per changed feature, workflow, or API surface.
 Title each section by what changed, for example `## Prototype panel API` or `## Developer mode`.
-Lead each section with the best reviewer evidence for that change, then explain it.
+Lead with a short explanation of the change, then 1-3 bullets.
 
-For UI changes, follow `evidence-ui.md` for capture and placement.
-For API changes, follow `evidence-api.md` for capture and placement.
+Do not capture or embed screenshots or curl proof here.
+On update, if proof already sits under a section, leave that proof untouched and only refresh the descriptive text around it when needed.
 
-Layout shape:
+Layout shape (descriptions only):
 
 ```markdown
 ## Eligibility review panel
-
-![<alt text>](<gh image URL>)
-Success: review panel with approve and reject actions
-
-![<alt text>](<gh image URL>)
-Error: save failed with inline message
 
 The panel lets reviewers approve or reject flagged accounts without leaving the account workflow.
 
@@ -61,26 +55,20 @@ The panel lets reviewers approve or reject flagged accounts without leaving the 
 - Updates the account header after save.
 ```
 
-````markdown
+```markdown
 ## Eligibility review API
-
-<details><summary>curl ...</summary>
-
-```json
-<captured response>
-```
-
-</details>
 
 The API records the review decision and exposes the latest review status to account workflows.
 
 - `POST` creates the latest decision.
 - `GET` returns the current review state.
-````
+```
+
+If the body already contains proof under a heading (images or curl details), keep it immediately under that `##` heading and above the explanatory paragraph.
 
 ### Explanatory sections
 
-Create 0 to 3 extra sections when the summary and evidence-led sections do not explain the change fully.
+Create 0 to 3 extra sections when the summary and feature sections do not explain the change fully.
 Skip them when the summary already explains the change well.
 
 - Start each section with a short, single lead sentence.
@@ -96,9 +84,9 @@ persisted data, deployment output, or externally consumed metadata. Otherwise om
 - One lead sentence naming the external surface that changed.
 - 1-3 bullets: inputs, outputs, compatibility, defaults, migrations, or generated artifacts.
 - Text-only and brief.
-  Put request/response examples in the API section, not here.
 
 ### Exclusions
 
 Keep these out of the body: test checklists, TODOs, Jira metadata, generic `## Screenshots`
 or `## API details` dump sections, and conversational filler.
+Do not strip existing proof blocks while editing descriptions.

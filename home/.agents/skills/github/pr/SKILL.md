@@ -6,6 +6,8 @@ description: "Create or update the current GitHub pull request. Use when asked t
 # PR
 
 Work on the current branch pull request.
+This skill formats the title and body (Summary and descriptions).
+On update, preserve any reviewer proof already in the body.
 
 ## Route
 
@@ -62,4 +64,4 @@ Do not invent a key. Do not mine chat transcripts or run broad Jira text searche
 
 - Diff truth: `git diff origin/main...HEAD` (and the repo `.github/PULL_REQUEST_TEMPLATE.md` when present).
 - Update body baseline: `gh pr view --json number,title,body`.
-- Ticket lookup: `jira info`, then `jira show KEY` / local `jira/` only as in `title.md`. Prefer `jira` CLI over Atlassian MCP. Never `acli`.
+- Ticket lookup: `jira info`, then `jira show KEY` / local `~/jira` only as in `title.md`. Prefer `jira` CLI over Atlassian MCP. Never `acli`.
