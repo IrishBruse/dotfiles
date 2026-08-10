@@ -1,21 +1,34 @@
 ---
 name: jira-cli
-description: "jira CLI for board context, `jira/` pull-edit-push, and gated writes. Use for `jira info`/`jira board`, keys/JQL, or when `jira` needs the CLI."
+description: "jira CLI for board context, `~/jira` pull-edit-push, and gated writes. Use for `jira info`/`jira board`, keys/JQL, or when `jira` needs the CLI."
 user-invocable: false
 ---
 
 # Jira CLI
 
 Run Jira through the `jira` CLI.
-Ticket routing and the write approval **gate** live in the `jira` skill.
+**Never write to Jira without the `jira` skill Write Approval Gate.**
+The CLI does not enforce the gate.
+Create, edit, push, transition, comment, and link only after that gate returns Approve for the exact change.
+
 Prefer `jira` over raw `acli` and over Atlassian MCP when the CLI covers the need.
 On auth failure, stop and ask.
 
-## Local-first (when `jira/` exists)
+## Read vs cache
 
-When the workspace has a `jira/` folder, local markdown is the ticket surface:
+| Intent | Command |
+| --- | --- |
+| Read only (print markdown) | `jira show KEY` |
+| Cache to disk under `~/jira` | `jira pull KEY` or bare `jira KEY` |
+| Publish local summary/description | `jira push KEY` (after gate Approve) |
 
-1. `jira show KEY` (uses the local file when present) or `jira pull KEY` when missing
+Bare `jira KEY` **writes** the ticket under `~/jira`. It is not a view alias. Use `jira show KEY` to read.
+
+## Local-first (when `~/jira` exists)
+
+When `~/jira` has pulled tickets, local markdown is the ticket surface:
+
+1. `jira pull KEY` when missing or stale (see below), else `jira show KEY`
    **Done when:** the ticket markdown is in hand for this turn.
 2. Edit summary/description in that file (`title` in frontmatter + body).
    **Done when:** the file matches the intended change.
@@ -23,19 +36,32 @@ When the workspace has a `jira/` folder, local markdown is the ticket surface:
    **Done when:** push succeeds (push refreshes the file from Jira).
 
 `jira show` prints the local copy when it exists.
-Use `jira show KEY --remote` (or `--fields`) for a live fetch.
+Use `jira show KEY --remote` (or `--fields`) for a live fetch without writing disk.
 `jira push` syncs **summary** and **description** only.
 Status, comments, links, labels, and custom fields use the CLI writes below, then `jira pull KEY`.
 
-Without `jira/`, `jira show` fetches live, or `jira pull KEY` first to start this loop.
+Without `~/jira`, `jira show` fetches live, or `jira pull KEY` first to start this loop.
+
+### Stale local files
+
+`~/jira` is a global cache. Before trusting a local copy for edits or decisions:
+
+1. Read frontmatter `updated`.
+2. If `updated` is missing, unparseable, or older than **1 day**, run `jira pull KEY` and use the refreshed file.
+3. If you already know the remote changed (comment, transition, someone else edited), pull even when younger than 1 day.
 
 ## Orientation (every Jira session)
 
-1. `jira info`
+1. `jira info` (or `jira info --json` for fields + `localTickets` + full `board` cache)
    **Done when:** cloudId, project, featureTeamOptionId, sprintId(s), field ids,
-   and my/unassigned tickets are in hand (run `jira sync` first if board is missing).
+   local keys, and my/unassigned (plus teammates/misc in `--json` `board`) are in hand
+   (run `jira sync` first if board is missing).
 2. `jira board` (optional)
-   **Done when:** full board including teammates/misc is needed.
+   **Done when:** you only want the human full-board text dump (`info --json` already includes `board`).
+
+One-shot structured reads: `jira info --json`, or `jira batch --json` with `[["info"],["show","KEY"],...]`.
+Batch `info` matches `jira info --json` (includes `board`).
+Batch `show` returns `{ source, key, markdown }` (same markdown as `jira show`), not raw ADF.
 
 Verify with `jira doctor --json` when setup looks wrong.
 
@@ -43,13 +69,13 @@ Verify with `jira doctor --json` when setup looks wrong.
 
 | Need | Use |
 | --- | --- |
-| One issue | `jira show KEY` (local `jira/` copy when present, else live) |
+| One issue | `jira show KEY` (local `~/jira` copy when present, else live markdown) |
 | Refresh one issue | `jira show KEY --remote` or `jira pull KEY` |
-| One issue to disk | `jira pull KEY` |
+| One issue to disk | `jira pull KEY` (or bare `jira KEY`) |
 | JQL | `jira search "..."` |
-| My tickets / unassigned | `jira info` (included) |
-| Full board | `jira board` / `jira sync` |
-| cloudId / field ids | `jira info` |
+| My tickets / unassigned | `jira info` (plain) or `jira info --json` → `board.sections` |
+| Full board | `jira info --json` → `board` (or `jira board` for human text) |
+| cloudId / field ids / local keys | `jira info` / `jira info --json` |
 | Available statuses | `jira transition KEY` (lists current + known) |
 
 Use Atlassian MCP only when the CLI cannot cover the need (for example worklog, or edit custom fields if `jira edit --field` is rejected by acli).
@@ -60,6 +86,9 @@ After the `jira` skill write gate Approve:
 
 ```sh
 jira info   # featureTeamOptionId, sprintId, storyPointsField, project
+
+# Prefer draft promote
+jira create --from-draft ~/jira/story/...md
 
 # Typical Task/Story (Feature Team applied automatically; add sprint explicitly when needed)
 jira create --type Task --summary "..." --parent KEY --story-points 1 --sprint 27857
@@ -131,7 +160,7 @@ jira search 'project = NOVACORE AND text ~ "\"design governance\""'
 jira search "design governance"
 ```
 
-For a known key, use `jira show KEY` or `jira KEY` / `jira pull KEY`.
+For a known key, use `jira show KEY` to read, or `jira pull KEY` / `jira KEY` to cache.
 `jira issue KEY` is accepted as an alias for `jira show KEY`.
 
 ## Commands
@@ -148,16 +177,16 @@ jira link --out KEY --in KEY --type Relates
 jira acli <args...>   # reads / other projects; gated writes blocked
 ```
 
-Global: `--json` for `{success, data, error}` (not used by `jira info`).
+Global: `--json` for `{success, data, error}` (including `jira info --json`).
 
 Config: `~/.config/jira/config.json`. Caches: `~/.config/jira/board.json`, `info.json`.
-Pulled tickets: `jira/<type>/<title> - <KEY>.md`.
+Pulled tickets: `~/jira/<type>/<title> - <KEY>.md`.
 
 ## Writes
 
-1. Complete the `jira` skill **Jira Write Approval Gate** (Approve only).
+1. Complete the `jira` skill **Jira Write Approval Gate** (Approve only). Never skip this.
 2. Apply the write:
-   - summary/description with `jira/` present: edit the local file, then `jira push KEY`
+   - summary/description with `~/jira` present: edit the local file, then `jira push KEY`
    - otherwise: `jira create|edit|transition|comment|link`
 3. After CLI writes (not push), refresh with `jira pull KEY`.
 
