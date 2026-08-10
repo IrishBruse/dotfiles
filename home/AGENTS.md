@@ -15,3 +15,4 @@ All subagents must use `composer-2.5` for the model.
 Only use markdown tables for very small table widths.
 
 Dont use bash python scripts to execute stuff.
+Dont put jira keys in commit messages or branch names.
