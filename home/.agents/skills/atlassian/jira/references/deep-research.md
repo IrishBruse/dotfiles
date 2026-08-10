@@ -20,6 +20,14 @@ and the specific research lane.
 Use the specialist findings as evidence for the investigation report.
 If a lane is blocked by credentials or access, continue with available context and surface the gap in the report.
 
+## Jira Search lane (CLI)
+
+Prefer the `jira` CLI over Atlassian MCP and over raw `acli`:
+
+- `jira search "<jql>"` for duplicates, parents, siblings, and text matches (prefer real JQL).
+- `jira show KEY` to read one issue as markdown (`jira pull KEY` only when caching under `~/jira` is needed).
+- On auth failure, stop and report the gap. Do not invent workarounds.
+
 ## Prompt Shape
 
 Use this shape for each lane:
@@ -42,4 +50,13 @@ Return:
 
 Mutation rule:
 Do not create, update, publish, reparent, close, comment on, or otherwise mutate anything.
+```
+
+For the **Jira Search** lane, append:
+
+```text
+CLI:
+- Use jira search / jira show (not MCP, not acli) unless the CLI cannot cover the need.
+- jira show KEY reads; jira pull KEY / bare jira KEY writes ~/jira.
+- Stop on auth failure.
 ```

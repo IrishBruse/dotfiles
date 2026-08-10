@@ -1,6 +1,6 @@
 # Local Draft
 
-Save drafts using workspace artifact conventions.
+Save drafts under `~/jira/<type>/` (same layout as `jira pull`).
 
 ## Persist rules
 

@@ -19,11 +19,11 @@ Refresh sprint and board data when it is missing or stale.
 
 ## Pull The Ticket Locally First
 
-Whenever the input includes a Jira key or URL that you will inspect, work on, or update, ensure a local copy exists under `jira/<type>/`.
+Whenever the input includes a Jira key or URL that you will inspect, work on, or update, ensure a local copy exists under `~/jira/<type>/`.
 This is your **first step**.
 
 - Read the local markdown file when it is already present.
-- When it is missing, inspect the live ticket, then ensure a local copy is pulled into the repo.
+- When it is missing, inspect the live ticket, then ensure a local copy is pulled into `~/jira`.
 - For summary/description edits: change the local file, then publish it back to Jira after the write gate.
 
 This applies to every route, including subcommands and `/jira update`.
@@ -248,7 +248,7 @@ This describes tool input, so never print the fields, labels, option text, or an
 
   **Summary:** [DTC] Display prototype versions deterministically
   **Parent:** NOVACORE-52213 ([DTC] Make repeatable operations deterministic)
-  **Local draft:** jira/story/.../Display ... - ....md
+  **Local draft:** ~/jira/story/.../Display ... - ....md
 
   Apply this exact change?
 - `options` (exactly these three, in order):
