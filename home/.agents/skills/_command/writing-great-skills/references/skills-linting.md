@@ -23,7 +23,7 @@ Auto-applies fixes that can be done safely.
 Anything left has to be fixed by hand, then re-run lint.
 
 Typical auto-fixes: block-scalar descriptions, orphan frontmatter lines,
-nested reference links, long prose lines, prose semicolons,
+nested reference links, prose semicolons,
 and non-ASCII.
 
 ### Exit and diagnostics
@@ -35,7 +35,6 @@ Diagnostics look like:
 
 ```text
 ~/skills/demo/SKILL.md
-  12:1     warning  Line exceeds 160 characters (201).  @skills/long-line(fixable)
   3:14     warning  Model-invoked descriptions should include when to use the skill.  @skills/description-triggers
 ```
 
