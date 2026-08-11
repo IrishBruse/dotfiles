@@ -19,7 +19,6 @@ Diagnostics look like ESLint:
 
 ```text
 ~/skills/demo/SKILL.md
-  12:1     warning  Line exceeds 160 characters (201).  @skills/long-line(fixable)
   3:14     warning  Model-invoked descriptions should include when to use the skill.  @skills/description-triggers
 ```
 
@@ -30,7 +29,7 @@ Exit code is `1` when any warning or error remains.
 | Category | What it covers |
 | --- | --- |
 | [frontmatter](frontmatter/README.md) | `SKILL.md` YAML: `name`, `description`, shape |
-| [prose](prose/README.md) | Body text: line length, punctuation, filler |
+| [prose](prose/README.md) | Body text: punctuation, filler |
 | [paths](paths/README.md) | How file and skill paths are written |
 | [reference](reference/README.md) | Linked reference files, scripts, orphans |
 | [budget](budget/README.md) | `SKILL.md` length and token limits |
@@ -49,7 +48,6 @@ Exit code is `1` when any warning or error remains.
 | `description-voice` | warning | | frontmatter | Second-person phrasing in the description |
 | `vague-skill-name` | warning | | frontmatter | Generic names like `helper` or `utils` |
 | `name-folder-mismatch` | error | | frontmatter | `name` does not match the skill folder |
-| `long-line` | warning | yes | prose | Prose line longer than 160 characters |
 | `prose-semicolon` | warning | yes | prose | Semicolon joining English clauses |
 | `non-ascii` | warning | yes | prose | Non-ASCII characters in prose |
 | `em-dash` | warning | yes | prose | Em or en dashes in prose |

@@ -34,7 +34,6 @@ Rules that need other files in the skill receive a `LintContext` built by
 4. `prose/em-dash.fix`
 5. `prose/non-ascii.fix`
 6. `reference/nested-references.fix`
-7. `prose/long-lines.fix`
 
 Fixers must be idempotent: running `--fix` twice should not keep changing
 the file.

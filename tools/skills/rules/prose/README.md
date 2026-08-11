@@ -4,31 +4,8 @@ Rules for the body text of skill markdown (`.md` / `.mdc`).
 Fenced code blocks are ignored. Most rules also skip content inside
 inline `` `code` `` spans.
 
-These rules keep skill prose short, ASCII-friendly, and specific enough
+These rules keep skill prose ASCII-friendly and specific enough
 for an agent to follow.
-
-## `long-line`
-
-Keep prose lines at or under 160 characters.
-
-Long lines are hard to review in diffs and in narrow terminals.
-URL-only lines and table rows are allowed. `--fix` wraps prose paragraphs
-and list items at the nearest space before 160 characters, including lines
-with inline `` `code` `` spans. Headings, blockquotes, and other block
-markdown are left unchanged.
-
-### Incorrect
-
-A single prose line longer than 160 characters (URL-only lines and table
-rows are exempt).
-
-### Correct
-
-```markdown
-Always gather the full list of affected services from the deployment
-manifest before making any change, including nested dependencies that
-are not listed at the top level of the file.
-```
 
 ## `prose-semicolon`
 

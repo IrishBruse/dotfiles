@@ -13,14 +13,14 @@ describe("formatDiagnostic", () => {
     const line = formatDiagnostic("/tmp/SKILL.md", {
       line: 8,
       column: 12,
-      code: "long-line",
-      message: "Line exceeds 160 characters (201).",
+      code: "prose-semicolon",
+      message: "Prefer a comma over a semicolon in prose.",
     });
     assert.match(line, /\/tmp\/SKILL\.md:8:12/);
     assert.match(line, /warning/);
-    assert.match(line, /@skills\/long-line\(fixable\)/);
-    assert.match(line, /Line exceeds 160 characters/);
-    assert.doesNotMatch(line, /long-line:/);
+    assert.match(line, /@skills\/prose-semicolon\(fixable\)/);
+    assert.match(line, /Prefer a comma over a semicolon in prose/);
+    assert.doesNotMatch(line, /prose-semicolon:/);
   });
 
   it("shortens home paths to ~/", () => {
@@ -29,8 +29,8 @@ describe("formatDiagnostic", () => {
     const line = formatDiagnostic(filePath, {
       line: 3,
       column: 1,
-      code: "long-line",
-      message: "Line exceeds 160 characters (193).",
+      code: "prose-semicolon",
+      message: "Prefer a comma over a semicolon in prose.",
     });
     assert.match(line, /~\/\.agents\/skills\/jira\/SKILL\.md:3:1/);
     assert.equal(displayPath(filePath), "~/.agents/skills/jira/SKILL.md");
@@ -48,29 +48,17 @@ describe("formatDiagnostic", () => {
     assert.match(line, /@skills\/skill-length/);
   });
 
-  it("omits fixable for long lines that cannot be auto-wrapped", () => {
-    const line = formatDiagnostic("/tmp/SKILL.md", {
-      line: 2,
-      column: 1,
-      code: "long-line",
-      message: "Line exceeds 160 characters (344). Wrap or split into shorter lines.",
-      fixable: false,
-    });
-    assert.match(line, /@skills\/long-line$/);
-    assert.doesNotMatch(line, /\(fixable\)/);
-  });
-
   it("styles fixable suffix in green when color is enabled", () => {
     const line = formatDiagnostic("/tmp/SKILL.md", {
       line: 8,
       column: 12,
-      code: "long-line",
-      message: "Line exceeds 160 characters (201).",
+      code: "prose-semicolon",
+      message: "Prefer a comma over a semicolon in prose.",
     });
     if (outputColorEnabled()) {
-      assert.match(line, /\u001b\[2m@skills\/long-line\u001b\[0m\u001b\[32m\(fixable\)/);
+      assert.match(line, /\u001b\[2m@skills\/prose-semicolon\u001b\[0m\u001b\[32m\(fixable\)/);
     } else {
-      assert.match(line, /@skills\/long-line\(fixable\)/);
+      assert.match(line, /@skills\/prose-semicolon\(fixable\)/);
     }
   });
 });
@@ -81,8 +69,8 @@ describe("formatFileDiagnostics", () => {
       {
         line: 8,
         column: 12,
-        code: "long-line",
-        message: "Line exceeds 160 characters (201).",
+        code: "prose-semicolon",
+        message: "Prefer a comma over a semicolon in prose.",
       },
       {
         line: 1,
@@ -94,7 +82,7 @@ describe("formatFileDiagnostics", () => {
     ]);
     assert.equal(output.split("\n").length, 3);
     assert.match(output, /^\/tmp\/SKILL\.md$/m);
-    assert.match(output, /^\s+8:12\s+warning\s+Line exceeds.*@skills\/long-line\(fixable\)/m);
+    assert.match(output, /^\s+8:12\s+warning\s+Prefer a comma.*@skills\/prose-semicolon\(fixable\)/m);
     assert.match(output, /^\s+1:1\s+error  \s+SKILL\.md exceeds.*@skills\/skill-length$/m);
     assert.doesNotMatch(output, /skill-length\(fixable\)/);
     assert.doesNotMatch(output, /\/tmp\/SKILL\.md:8:12/);
@@ -107,12 +95,12 @@ describe("formatFileDiagnostics", () => {
       {
         line: 3,
         column: 1,
-        code: "long-line",
-        message: "Line exceeds 160 characters (193).",
+        code: "prose-semicolon",
+        message: "Prefer a comma over a semicolon in prose.",
       },
     ]);
     assert.match(output, /^~\/\.agents\/skills\/jira\/SKILL\.md$/m);
-    assert.match(output, /^\s+3:1\s+warning\s+Line exceeds.*@skills\/long-line/m);
+    assert.match(output, /^\s+3:1\s+warning\s+Prefer a comma.*@skills\/prose-semicolon/m);
   });
 
   it("aligns columns across diagnostics in a file", () => {
@@ -147,8 +135,8 @@ describe("formatFileDiagnostics", () => {
       {
         line: 1,
         column: 1,
-        code: "long-line",
-        message: "Line exceeds 160 characters (201).",
+        code: "prose-semicolon",
+        message: "Prefer a comma over a semicolon in prose.",
       },
     ])}\n\n`;
     assert.ok(block.endsWith("\n\n"));

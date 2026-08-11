@@ -26,8 +26,8 @@ Lint options:
   --fix              Apply safe auto-fixes, then report remaining warnings
                      (typical: skills lint path/to/SKILL.md --fix)
                      Auto-fixes: block-scalar descriptions, orphan frontmatter
-                     lines, nested reference links, long prose
-                     lines, prose semicolons, and non-ASCII
+                     lines, nested reference links, prose semicolons,
+                     and non-ASCII
 
 Options:
   -h, --help   Show help

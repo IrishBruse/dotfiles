@@ -6,21 +6,21 @@ import { formatRuleId } from "./format.ts";
 
 describe("fixable rules", () => {
   it("marks registered auto-fix rules", () => {
-    assert.equal(isFixableRule("long-line"), true);
     assert.equal(isFixableRule("prose-semicolon"), true);
+    assert.equal(isFixableRule("description-block"), true);
     assert.equal(isFixableRule("description-triggers"), false);
     assert.equal(isFixableRule("skill-length"), false);
   });
 
   it("includes every fixable code in the registry", () => {
     assert.ok(FIXABLE_RULE_CODES.has("frontmatter-description"));
-    assert.equal(FIXABLE_RULE_CODES.size, 8);
+    assert.equal(FIXABLE_RULE_CODES.size, 7);
   });
 });
 
 describe("formatRuleId", () => {
   it("appends (fixable) for auto-fix rules", () => {
-    assert.equal(formatRuleId("long-line"), "@skills/long-line(fixable)");
+    assert.equal(formatRuleId("prose-semicolon"), "@skills/prose-semicolon(fixable)");
     assert.equal(formatRuleId("description-triggers"), "@skills/description-triggers");
   });
 });
@@ -31,8 +31,8 @@ describe("isFixableDiagnostic", () => {
       isFixableDiagnostic({
         line: 1,
         column: 1,
-        code: "long-line",
-        message: "too long",
+        code: "prose-semicolon",
+        message: "Prefer a comma",
         fixable: false,
       }),
       false

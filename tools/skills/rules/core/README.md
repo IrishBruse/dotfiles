@@ -26,7 +26,6 @@ Common utilities for line-based checks:
 
 | Helper | Use it when |
 | --- | --- |
-| `MAX_LINE` (160) | Enforcing or wrapping line length |
 | `isSkillMd(filePath)` | The rule only applies to `SKILL.md` |
 | `extractFrontmatter(content)` | You need the YAML between `---` fences |
 | `stripCodeSections(text)` | Matching patterns outside code |

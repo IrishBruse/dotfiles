@@ -9,7 +9,6 @@ import { lint as lintSkillByPath } from "../paths/skill-by-path.ts";
 import { lint as lintWindowsPaths } from "../paths/windows-paths.ts";
 import { lint as lintEmDash } from "../prose/em-dash.ts";
 import { lint as lintGenericAdvice } from "../prose/generic-advice.ts";
-import { lint as lintLongLines } from "../prose/long-lines.ts";
 import { lint as lintNegationSteering } from "../prose/negation-steering.ts";
 import { lint as lintNonAscii } from "../prose/non-ascii.ts";
 import { lint as lintProseSemicolons } from "../prose/prose-semicolons.ts";
@@ -31,7 +30,6 @@ export function lintSkillContent(
   const filePath = filePathFromContext(filePathOrContext);
   const diagnostics: Diagnostic[] = [
     ...lintProseSemicolons(content),
-    ...lintLongLines(content),
     ...lintDescriptionBlock(content),
     ...lintFrontmatterFields(content, filePath),
     ...lintNonAscii(content),

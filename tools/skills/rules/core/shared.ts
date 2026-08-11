@@ -1,7 +1,5 @@
 import path from "node:path";
 
-export const MAX_LINE = 160;
-
 export function isSkillMd(filePath?: string): boolean {
   return filePath !== undefined && path.basename(filePath) === "SKILL.md";
 }

@@ -6,7 +6,6 @@ export const FIXABLE_RULE_CODES = new Set([
   "em-dash",
   "frontmatter-description",
   "frontmatter-orphan",
-  "long-line",
   "nested-reference",
   "non-ascii",
   "prose-semicolon",
