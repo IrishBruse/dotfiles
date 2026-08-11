@@ -79,3 +79,49 @@ First idea; second idea.
     );
   });
 });
+
+describe("runLint --show-fixable", () => {
+  let tempDir = "";
+
+  before(async () => {
+    tempDir = await mkdtemp(path.join(os.tmpdir(), "skills-lint-show-fixable-"));
+    await mkdir(path.join(tempDir, "fixable-only"), { recursive: true });
+  });
+
+  after(async () => {
+    if (tempDir) {
+      await rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it("hides fixable diagnostics by default", async () => {
+    await writeFile(
+      path.join(tempDir, "fixable-only", "SKILL.md"),
+      `---
+name: fixable-only
+description: Use when testing fixable output.
+---
+First idea; second idea.
+`
+    );
+
+    const { code, output } = await captureStderr(() =>
+      runLint([path.join(tempDir, "fixable-only")])
+    );
+
+    assert.equal(code, 0);
+    assert.doesNotMatch(output, /prose-semicolon/);
+    assert.doesNotMatch(output, /fixable-only\/SKILL\.md/);
+  });
+
+  it("shows fixable diagnostics with --show-fixable", async () => {
+    const { code, output } = await captureStderr(() =>
+      runLint(["--show-fixable", path.join(tempDir, "fixable-only")])
+    );
+
+    assert.equal(code, 1);
+    assert.match(output, /fixable-only\/SKILL\.md/);
+    assert.match(output, /prose-semicolon/);
+    assert.match(output, /\(fixable\)/);
+  });
+});

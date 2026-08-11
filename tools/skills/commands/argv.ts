@@ -24,12 +24,14 @@ export function parseSkillsArgs(
 
 export interface LintCommandOptions extends SkillsCommandOptions {
   fix: boolean;
+  showFixable: boolean;
 }
 
 export function parseLintArgs(
   argv: string[]
 ): LintCommandOptions | "help" | "error" {
   let fix = false;
+  let showFixable = false;
   let cursorBuiltin = false;
   const positional: string[] = [];
 
@@ -37,6 +39,10 @@ export function parseLintArgs(
     if (arg === "-h" || arg === "--help") return "help";
     if (arg === "--fix") {
       fix = true;
+      continue;
+    }
+    if (arg === "--show-fixable") {
+      showFixable = true;
       continue;
     }
     if (arg === "--cursor-builtin") {
@@ -47,5 +53,5 @@ export function parseLintArgs(
     positional.push(arg);
   }
 
-  return { fix, cursorBuiltin, positional };
+  return { fix, showFixable, cursorBuiltin, positional };
 }

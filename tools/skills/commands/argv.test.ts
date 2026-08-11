@@ -20,7 +20,17 @@ describe("parseLintArgs", () => {
   it("parses --fix and --cursor-builtin together", () => {
     assert.deepEqual(parseLintArgs(["--fix", "--cursor-builtin", "foo.md"]), {
       fix: true,
+      showFixable: false,
       cursorBuiltin: true,
+      positional: ["foo.md"],
+    });
+  });
+
+  it("parses --show-fixable", () => {
+    assert.deepEqual(parseLintArgs(["--show-fixable", "foo.md"]), {
+      fix: false,
+      showFixable: true,
+      cursorBuiltin: false,
       positional: ["foo.md"],
     });
   });

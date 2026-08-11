@@ -13,6 +13,7 @@ incorrect / correct examples for every rule.
 skills lint                         # scan default skill roots under ~
 skills lint path/to/skill-folder/   # one skill tree
 skills lint path/to/SKILL.md --fix  # apply safe fixes, then report the rest
+skills lint path/to/SKILL.md --show-fixable  # include auto-fixable warnings
 ```
 
 Diagnostics look like ESLint:

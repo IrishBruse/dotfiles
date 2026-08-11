@@ -28,6 +28,7 @@ Lint options:
                      Auto-fixes: block-scalar descriptions, orphan frontmatter
                      lines, nested reference links, prose semicolons,
                      and non-ASCII
+  --show-fixable     Include auto-fixable warnings in output (hidden by default)
 
 Options:
   -h, --help   Show help

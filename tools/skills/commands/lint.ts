@@ -17,6 +17,14 @@ import { diagnosticSeverity, type Diagnostic } from "../rules/core/types.ts";
 import { parseLintArgs } from "./argv.ts";
 import { printHelp } from "./help.ts";
 
+function visibleDiagnostics(
+  diagnostics: Diagnostic[],
+  showFixable: boolean
+): Diagnostic[] {
+  if (showFixable) return diagnostics;
+  return diagnostics.filter((diagnostic) => !isFixableDiagnostic(diagnostic));
+}
+
 function printError(message: string): void {
   process.stderr.write(`skills: ${message}\n`);
 }
@@ -105,13 +113,14 @@ export async function runLint(argv: string[]): Promise<number> {
       content,
       context ?? filePath
     );
+    const reported = visibleDiagnostics(diagnostics, parsed.showFixable);
     if (wasFixed && diagnostics.length === 0) {
       fixedFiles.push(filePath);
     }
-    if (diagnostics.length === 0) continue;
+    if (reported.length === 0) continue;
 
     filesWithIssues++;
-    for (const diagnostic of diagnostics) {
+    for (const diagnostic of reported) {
       if (isFixableDiagnostic(diagnostic)) {
         fixableCount++;
       }
@@ -121,7 +130,7 @@ export async function runLint(argv: string[]): Promise<number> {
         warningCount++;
       }
     }
-    printFileDiagnostics(filePath, diagnostics);
+    printFileDiagnostics(filePath, reported);
   }
 
   printSummary(warningCount, errorCount, fixableCount, filesWithIssues, filesChecked);
