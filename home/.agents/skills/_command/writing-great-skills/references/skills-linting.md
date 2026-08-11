@@ -26,6 +26,12 @@ Typical auto-fixes: block-scalar descriptions, orphan frontmatter lines,
 nested reference links, prose semicolons,
 and non-ASCII.
 
+### `--show-fixable`
+
+By default, auto-fixable warnings are hidden from lint output.
+Pass `--show-fixable` to include them.
+Use `skills lint --fix` to apply those fixes instead of only listing them.
+
 ### Exit and diagnostics
 
 - Exit `0`: clean.
