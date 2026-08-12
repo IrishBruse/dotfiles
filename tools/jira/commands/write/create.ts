@@ -41,11 +41,27 @@ function tryCreate(
   }
 }
 
+/** Print the acli payload instead of creating, for `--dry-run`. */
+function printDryRun(
+  json: ReturnType<typeof buildCreateWorkitemJson>,
+  options: CommandOptions
+): number {
+  if (isJsonMode(options)) {
+    printJsonSuccess({ action: "create", dryRun: true, workitem: json });
+  } else {
+    process.stdout.write(`${JSON.stringify(json, null, 2)}\n`);
+  }
+  return 0;
+}
+
 function createViaJsonTemp(
   json: ReturnType<typeof buildCreateWorkitemJson>,
   pullAfter: boolean,
-  options: CommandOptions
+  options: CommandOptions,
+  dryRun: boolean
 ): number {
+  if (dryRun) return printDryRun(json, options);
+
   const { dir, filePath } = writeCreateJsonTemp(json);
   try {
     return tryCreate(() => createWorkitem({ fromJson: filePath }), pullAfter, options);
@@ -103,15 +119,24 @@ export function runCreateCommand(
   options: CommandOptions = HUMAN_OUTPUT
 ): number {
   const parsed = parseSubcommandArgv(argv, 3);
+  if (flagBool(parsed.flags, "help") || flagBool(parsed.flags, "h")) {
+    printCreateHelp();
+    return 0;
+  }
   const pullAfter = !flagBool(parsed.flags, "no-pull");
+  const dryRun = flagBool(parsed.flags, "dry-run");
   const fromJson = flagString(parsed.flags, "from-json");
   const fromDraft = flagString(parsed.flags, "from-draft");
 
   if (fromJson) {
+    if (dryRun) {
+      process.stdout.write(fs.readFileSync(fromJson, "utf-8"));
+      return 0;
+    }
     return tryCreate(() => createWorkitem({ fromJson }), pullAfter, options);
   }
   if (fromDraft) {
-    return createFromDraft(fromDraft, parsed, argv, pullAfter, options);
+    return createFromDraft(fromDraft, parsed, argv, pullAfter, options, dryRun);
   }
 
   const project = configuredProject();
@@ -149,7 +174,7 @@ export function runCreateCommand(
     ? fs.readFileSync(descriptionFile, "utf-8")
     : undefined;
 
-  if (Object.keys(customFields).length > 0) {
+  if (dryRun || Object.keys(customFields).length > 0) {
     return createViaJsonTemp(
       buildCreateWorkitemJson({
         project,
@@ -161,7 +186,8 @@ export function runCreateCommand(
         customFields
       }),
       pullAfter,
-      options
+      options,
+      dryRun
     );
   }
 
@@ -199,7 +225,8 @@ function createFromDraft(
   parsed: ReturnType<typeof parseSubcommandArgv>,
   argv: string[],
   pullAfter: boolean,
-  options: CommandOptions
+  options: CommandOptions,
+  dryRun: boolean
 ): number {
   if (!fs.existsSync(draftPath)) {
     return failCommand(`create: draft not found: ${draftPath}`, options.outputMode);
@@ -243,8 +270,37 @@ function createFromDraft(
       customFields
     }),
     pullAfter,
-    options
+    options,
+    dryRun
   );
+}
+
+function printCreateHelp(): void {
+  process.stdout.write(`jira create - create a work item
+
+Usage:
+  jira create --type T --summary TEXT [flags]
+  jira create --from-draft PATH [flags]
+  jira create --from-json PATH [flags]
+
+Flags:
+  --type T                 Issue type (Task, Story, Epic, Sub-task)
+  --summary TEXT           Summary line
+  --parent KEY             Parent epic, story, or initiative key
+  --description-file PATH  Markdown or ADF description
+  --label a,b              Comma-separated labels
+  --field id=value         Custom field, repeatable
+  --sprint ID              Sprint id (never inferred from the board)
+  --story-points N         Story points
+  --from-draft PATH        Promote a ~/jira markdown draft (frontmatter wins)
+  --from-json PATH         Raw acli workitem JSON
+  --dry-run                Print the acli payload, write nothing
+  --no-pull                Skip pulling the new ticket into ~/jira
+  --json                   JSON {success, data, error} on stdout
+
+Project comes from ~/.config/jira/config.json.
+Feature Team is applied automatically when the option id is known.
+`);
 }
 
 function finishCreate(

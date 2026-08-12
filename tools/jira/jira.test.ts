@@ -103,6 +103,8 @@ import {
   collectFieldFlags,
   JIRA_SPRINT_FIELD,
   JIRA_STORY_POINTS_FIELD,
+  NOVACORE_CAPITALIZABLE_FIELD,
+  NOVACORE_CAPITALIZABLE_YES_ID,
   NOVACORE_FEATURE_TEAM_FIELD,
   parseFieldFlags,
   pickCurrentSprintId
@@ -495,12 +497,8 @@ describe("markdown to ADF", () => {
       summary: "Title",
       description: "## Notes\n\n**Important**"
     });
-    const description = json.fields.description as {
-      type?: string;
-      content?: Array<{ type?: string }>;
-    };
-    assert.equal(description.type, "doc");
-    assert.equal(description.content?.[0]?.type, "heading");
+    assert.equal(json.description?.type, "doc");
+    assert.equal(json.description?.content?.[0]?.type, "heading");
   });
 });
 
@@ -1300,18 +1298,35 @@ describe("argv and custom fields", () => {
     assert.equal(fields[JIRA_STORY_POINTS_FIELD], 3);
   });
 
-  it("builds create JSON with parent and custom fields", () => {
+  it("builds create JSON in the acli flat schema", () => {
     const json = buildCreateWorkitemJson({
       project: "NOVACORE",
       issueType: "Epic",
       summary: "Test epic",
       description: "Body",
       parent: "NOVACORE-1",
+      labels: ["a"],
       customFields: capitalizableYesField()
     });
-    assert.equal((json.fields.project as { key: string }).key, "NOVACORE");
-    assert.equal((json.fields.issuetype as { name: string }).name, "Epic");
-    assert.equal((json.fields.parent as { key: string }).key, "NOVACORE-1");
+    assert.equal(json.projectKey, "NOVACORE");
+    assert.equal(json.type, "Epic");
+    assert.equal(json.summary, "Test epic");
+    assert.equal(json.parentIssueId, "NOVACORE-1");
+    assert.deepEqual(json.labels, ["a"]);
+    assert.deepEqual(json.additionalAttributes?.[NOVACORE_CAPITALIZABLE_FIELD], [
+      { id: NOVACORE_CAPITALIZABLE_YES_ID }
+    ]);
+    assert.equal("fields" in json, false);
+  });
+
+  it("omits additionalAttributes when no custom fields are set", () => {
+    const json = buildCreateWorkitemJson({
+      project: "NOVACORE",
+      issueType: "Task",
+      summary: "Plain"
+    });
+    assert.equal(json.additionalAttributes, undefined);
+    assert.equal(json.parentIssueId, undefined);
   });
 
   it("builds edit JSON with custom fields as top-level keys", () => {

@@ -38,8 +38,18 @@ export type CustomFieldValue =
   | { id: string }
   | Array<{ id: string }>;
 
+/**
+ * acli `workitem create --from-json` body.
+ * Flat schema from `acli jira workitem create --generate-json`, not Jira REST `fields`.
+ */
 export type CreateWorkitemJson = {
-  fields: Record<string, unknown>;
+  projectKey: string;
+  type: string;
+  summary: string;
+  description?: AdfDoc;
+  parentIssueId?: string;
+  labels?: string[];
+  additionalAttributes?: Record<string, unknown>;
 };
 
 /** acli `workitem edit --from-json` body (flat keys + issues list). */
@@ -70,26 +80,30 @@ export function buildCreateWorkitemJson(options: {
   labels?: string[];
   customFields?: Record<string, CustomFieldValue>;
 }): CreateWorkitemJson {
-  const fields: Record<string, unknown> = {
-    project: { key: options.project },
-    issuetype: { name: options.issueType },
+  const json: CreateWorkitemJson = {
+    projectKey: options.project,
+    type: options.issueType,
     summary: options.summary
   };
   if (options.description) {
-    fields.description = descriptionToAdf(options.description);
+    json.description = descriptionToAdf(options.description);
   }
   if (options.parent) {
-    fields.parent = { key: options.parent };
+    json.parentIssueId = options.parent;
   }
   if (options.labels?.length) {
-    fields.labels = options.labels;
+    json.labels = options.labels;
   }
-  if (options.customFields) {
-    for (const [fieldId, value] of Object.entries(options.customFields)) {
-      fields[fieldId] = formatCustomFieldValue(fieldId, value);
-    }
+  const entries = Object.entries(options.customFields ?? {});
+  if (entries.length > 0) {
+    json.additionalAttributes = Object.fromEntries(
+      entries.map(([fieldId, value]) => [
+        fieldId,
+        formatCustomFieldValue(fieldId, value)
+      ])
+    );
   }
-  return { fields };
+  return json;
 }
 
 /** Build acli edit JSON with optional custom fields as top-level keys. */
