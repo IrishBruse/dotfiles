@@ -178,6 +178,7 @@
         "type": "generic",
         "default": [],
         "value": [
+            "mintsysadm.desktop",
             "org.DolphinEmu.dolphin-emu.desktop:flatpak",
             "cinnamon-settings-startup.desktop",
             "discord.desktop",

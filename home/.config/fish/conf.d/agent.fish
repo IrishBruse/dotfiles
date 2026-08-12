@@ -11,11 +11,11 @@ function ap
 end
 
 function ac
-    agent --continue --model composer-2.5 "$argv"
+    agent --continue "$argv"
 end
 
 function ag
-    agent --model cursor-grok-4.5-high "$argv"
+    agent --model cursor-grok-4.6-high "$argv"
 end
 
 function at
