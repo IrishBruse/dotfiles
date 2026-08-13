@@ -7,19 +7,17 @@ import process from "node:process";
 import {
   listProjectIssueTypes,
   listProjects,
-  searchWorkitems,
-  viewWorkitem
+  searchWorkitems
 } from "../../lib/acli-jira.ts";
 import { flagBool, flagString, parseSubcommandArgv } from "../../lib/argv.ts";
 import { configuredProject } from "../../lib/CONFIG.ts";
-import { jiraPullFields, JIRA_SEARCH_FIELDS } from "../../lib/format.ts";
+import { JIRA_SEARCH_FIELDS } from "../../lib/format.ts";
 import { gatherBoardCache } from "./board.ts";
 import { gatherJiraInfoJson } from "../../lib/info.ts";
-import { parseJiraKey } from "../../lib/jiraInput.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { failCommand, printJsonSuccess } from "../../lib/output.ts";
-import { readLocalShowMarkdown, formatRemoteShowMarkdown } from "../read/show.ts";
+import { resolveShow } from "../read/show.ts";
 
 const ALLOWED_BATCH_COMMANDS = new Set([
   "show",
@@ -37,11 +35,18 @@ export type BatchItemResult = {
   error: string | null;
 };
 
-function readBatchInput(argv: string[]): string | null {
+/** Read batch commands from `--file`, a positional JSON array or path, or stdin. */
+export function readBatchInput(argv: string[]): string | null {
   const parsed = parseSubcommandArgv(argv, 3);
   const file = flagString(parsed.flags, "file");
   if (file) {
     return fs.readFileSync(file, "utf-8");
+  }
+  const positional = parsed.positional[0]?.trim();
+  if (positional) {
+    return positional.startsWith("[")
+      ? positional
+      : fs.readFileSync(positional, "utf-8");
   }
   if (!process.stdin.isTTY) {
     return fs.readFileSync(0, "utf-8");
@@ -111,56 +116,12 @@ function runBatchItem(itemArgv: string[]): {
           error: null
         };
       }
-      case "show": {
-        const fullArgv = ["node", "jira", ...itemArgv];
-        const parsed = parseSubcommandArgv(fullArgv, 3);
-        const input = parsed.positional[0];
-        if (!input) {
-          return { success: false, data: null, error: "show: missing Jira key or URL" };
-        }
-        const key = parseJiraKey(input);
-        if (!key) {
-          return {
-            success: false,
-            data: null,
-            error: `show: not a valid Jira key or URL: ${input}`
-          };
-        }
-        const fieldsExplicit = parsed.flags.has("fields");
-        const fields = fieldsExplicit
-          ? String(parsed.flags.get("fields"))
-          : jiraPullFields();
-        const remote = flagBool(parsed.flags, "remote");
-        const local = readLocalShowMarkdown(key, { remote, fieldsExplicit });
-        if (local) {
-          const markdown = local.markdown.endsWith("\n")
-            ? local.markdown
-            : `${local.markdown}\n`;
-          return {
-            success: true,
-            data: { source: "local", key, path: local.path, markdown },
-            error: null
-          };
-        }
-        const data = viewWorkitem(key, { fields });
-        const formatted = formatRemoteShowMarkdown(key, data);
-        if (!formatted) {
-          return {
-            success: false,
-            data: null,
-            error: `show ${key}: no data returned`
-          };
-        }
+      case "show":
         return {
           success: true,
-          data: {
-            source: "remote",
-            key: formatted.key,
-            markdown: formatted.markdown
-          },
+          data: resolveShow(["node", "jira", ...itemArgv]),
           error: null
         };
-      }
       case "search": {
         const fullArgv = ["node", "jira", ...itemArgv];
         const parsed = parseSubcommandArgv(fullArgv, 3);
@@ -201,7 +162,7 @@ export function runBatchCommand(
     const raw = readBatchInput(argv);
     if (!raw?.trim()) {
       return failCommand(
-        "batch: pass JSON array on stdin or use --file",
+        "batch: pass a JSON array as an argument, on stdin, or with --file",
         options.outputMode
       );
     }

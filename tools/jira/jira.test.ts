@@ -23,7 +23,7 @@ import {
   formatBoardPlainText
 } from "./commands/workspace/board-content.ts";
 import { runBoardCommand } from "./commands/workspace/board.ts";
-import { runBatchCommand } from "./commands/workspace/batch.ts";
+import { readBatchInput, runBatchCommand } from "./commands/workspace/batch.ts";
 import {
   buildSyncSummary,
   formatSyncSummaryHuman
@@ -49,6 +49,7 @@ import {
 import {
   formatRemoteShowMarkdown,
   injectPathIntoFrontmatter,
+  localShowAgeMs,
   runShowCommand,
   readLocalShowMarkdown
 } from "./commands/read/show.ts";
@@ -1883,6 +1884,48 @@ Local body.
     });
   });
 
+  it("readLocalShowMarkdown marks copies older than a day as stale", () => {
+    withTempDir((cwd) => {
+      const now = Date.parse("2026-08-13T12:00:00.000Z");
+      const body = (updated: string) => `---
+title: "Alpha"
+assigned: "Ada"
+feature_team: "None"
+type: "Task"
+url: https://example.atlassian.net/browse/PROJ-1
+status: todo
+created: ""
+updated: ${updated}
+---
+
+Local body.
+`;
+      writeTicket(cwd, "task", "Alpha - PROJ-1.md", body('"2026-08-13T10:00:00.000Z"'));
+      assert.equal(readLocalShowMarkdown("PROJ-1", { cwd, now })?.stale, false);
+
+      writeTicket(cwd, "task", "Alpha - PROJ-1.md", body('"2026-08-01T10:00:00.000Z"'));
+      assert.equal(readLocalShowMarkdown("PROJ-1", { cwd, now })?.stale, true);
+
+      writeTicket(cwd, "task", "Alpha - PROJ-1.md", body('""'));
+      const missing = readLocalShowMarkdown("PROJ-1", { cwd, now });
+      assert.equal(missing?.ageMs, null);
+      assert.equal(missing?.stale, true);
+    });
+  });
+
+  it("localShowAgeMs reads quoted and bare updated values", () => {
+    const now = Date.parse("2026-08-13T12:00:00.000Z");
+    const markdown = (updated: string) =>
+      `---\ntitle: "Alpha"\nupdated: ${updated}\n---\n\nBody.\n`;
+    assert.equal(
+      localShowAgeMs(markdown('"2026-08-13T11:00:00.000Z"'), now),
+      3600000
+    );
+    assert.equal(localShowAgeMs(markdown("2026-08-13T11:00:00.000Z"), now), 3600000);
+    assert.equal(localShowAgeMs(markdown("not-a-date"), now), null);
+    assert.equal(localShowAgeMs("no frontmatter", now), null);
+  });
+
   it("rejects search without jql", () => {
     const code = runSearchCommand(["node", "jira", "search"]);
     assert.equal(code, 1);
@@ -1993,6 +2036,19 @@ describe("jira batch", () => {
         { outputMode: "json" }
       );
       assert.equal(code, 1);
+    });
+  });
+
+  it("reads a JSON array passed as an argument", () => {
+    const raw = readBatchInput(["node", "jira", "batch", '[["info"]]']);
+    assert.equal(raw, '[["info"]]');
+  });
+
+  it("reads a file path passed as an argument", () => {
+    withTempDir((dir) => {
+      const filePath = path.join(dir, "batch.json");
+      fs.writeFileSync(filePath, JSON.stringify([["info"]]), "utf-8");
+      assert.equal(readBatchInput(["node", "jira", "batch", filePath]), '[["info"]]');
     });
   });
 

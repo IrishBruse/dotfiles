@@ -19,10 +19,10 @@ Workspace:
   jira board           Print cached board
   jira info            Context + my/unassigned tickets
   jira doctor          Verify acli, auth, config, caches
-  jira batch           Run read-only commands from JSON
+  jira batch [JSON]    Run read-only commands from JSON
 
 Read:
-  jira show KEY|URL    Local copy when present, else live markdown
+  jira show KEY|URL    Fresh local copy, else live markdown
   jira search <jql>    Search issues (JSON). Bare words are rewritten
                        to project + text ~ JQL for the configured project.
   jira projects        List projects (JSON)
@@ -46,6 +46,7 @@ Other:
 
 Flags:
   show --remote              Force live fetch
+  show --local               Use the local copy even when stale
   show --fields LIST         Live fetch with selected fields
   create --type T --summary TEXT
                              [--parent KEY] [--sprint ID]
@@ -54,12 +55,15 @@ Flags:
   edit --summary TEXT        [--description-file PATH]
                              [--labels ...] [--field id=value]
   link --out KEY --in KEY --type NAME
-  batch --file PATH [--stop-on-error]
+  batch '[["info"],["show","KEY"]]'
+                             [--file PATH] [--stop-on-error]
 
 Config: ~/.config/jira/config.json
 Caches: ~/.config/jira/board.json, info.json
 Tickets: ~/jira/<type>/<title> - <KEY>.md
 info --json: JiraInfo + board cache (same board as jira board --json)
+show: local copy older than 1 day is refetched; stale copy is used only
+      when the fetch fails
 batch show: { source, key, markdown } (not raw ADF)
 `);
 }

@@ -40,6 +40,29 @@ export function injectPathIntoFrontmatter(
   return `${open}${newFm}${after}`;
 }
 
+/** Local copies older than this are refetched by `jira show`. */
+export const LOCAL_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+
+export type LocalShow = {
+  path: string;
+  markdown: string;
+  ageMs: number | null;
+  stale: boolean;
+};
+
+/**
+ * Age of a pulled ticket from its frontmatter `updated` field.
+ * @return Milliseconds since `updated`, or null when it is missing or unparseable.
+ */
+export function localShowAgeMs(markdown: string, now = Date.now()): number | null {
+  const fm = /^---\n([\s\S]*?)\n---/.exec(markdown);
+  if (!fm?.[1]) return null;
+  const updated = /^updated:\s*(.+)$/m.exec(fm[1])?.[1]?.trim() ?? "";
+  const value = /^".*"$/.test(updated) ? updated.slice(1, -1) : updated;
+  const ts = Date.parse(value);
+  return Number.isNaN(ts) ? null : now - ts;
+}
+
 /** Load local ticket markdown when present and remote was not requested. */
 export function readLocalShowMarkdown(
   key: string,
@@ -47,16 +70,20 @@ export function readLocalShowMarkdown(
     cwd?: string;
     remote?: boolean;
     fieldsExplicit?: boolean;
+    now?: number;
   } = {}
-): { path: string; markdown: string } | null {
+): LocalShow | null {
   if (options.remote || options.fieldsExplicit) return null;
   const filePath = localTicketPath(key, options.cwd ?? homedir());
   if (!filePath) return null;
   const resolved = path.resolve(filePath);
   const raw = fs.readFileSync(filePath, "utf-8");
+  const ageMs = localShowAgeMs(raw, options.now);
   return {
     path: resolved,
-    markdown: injectPathIntoFrontmatter(raw, resolved)
+    markdown: injectPathIntoFrontmatter(raw, resolved),
+    ageMs,
+    stale: ageMs === null || ageMs > LOCAL_MAX_AGE_MS
   };
 }
 
@@ -80,23 +107,35 @@ export function formatRemoteShowMarkdown(
   };
 }
 
-/** Run `jira show <KEY|URL> [--fields ...] [--remote]`. */
-export function runShowCommand(
-  argv: string[],
-  options: CommandOptions = HUMAN_OUTPUT
-): number {
-  const parsed = parseSubcommandArgv(argv, 3);
+export type ShowResult = {
+  source: "local" | "remote";
+  key: string;
+  path?: string;
+  stale?: boolean;
+  markdown: string;
+};
+
+function withTrailingNewline(markdown: string): string {
+  return markdown.endsWith("\n") ? markdown : `${markdown}\n`;
+}
+
+/**
+ * Resolve `show` arguments to ticket markdown.
+ * A fresh local copy wins. A missing or stale copy is fetched live, and the
+ * stale copy is only used when that fetch fails.
+ * @param argv - Full argv (`show` at `startIndex - 1`).
+ * @return Markdown plus the source it came from.
+ */
+export function resolveShow(argv: string[], startIndex = 3): ShowResult {
+  const parsed = parseSubcommandArgv(argv, startIndex);
   const input = parsed.positional[0];
   if (!input) {
-    return failCommand("show: missing Jira key or URL", options.outputMode);
+    throw new Error("show: missing Jira key or URL");
   }
 
   const key = parseJiraKey(input);
   if (!key) {
-    return failCommand(
-      `show: not a valid Jira key or URL: ${input}`,
-      options.outputMode
-    );
+    throw new Error(`show: not a valid Jira key or URL: ${input}`);
   }
 
   const fieldsExplicit = parsed.flags.has("fields");
@@ -104,46 +143,55 @@ export function runShowCommand(
     ? String(parsed.flags.get("fields"))
     : jiraPullFields();
   const remote = flagBool(parsed.flags, "remote");
-
+  const localOnly = flagBool(parsed.flags, "local");
   const local = readLocalShowMarkdown(key, { remote, fieldsExplicit });
-  if (local) {
-    const body = local.markdown.endsWith("\n")
-      ? local.markdown
-      : `${local.markdown}\n`;
-    if (isJsonMode(options)) {
-      printJsonSuccess({
-        source: "local",
-        key,
-        path: local.path,
-        markdown: body
-      });
-      return 0;
-    }
-    process.stdout.write(body);
-    return 0;
+
+  const asLocal = (entry: LocalShow): ShowResult => ({
+    source: "local",
+    key,
+    path: entry.path,
+    stale: entry.stale,
+    markdown: withTrailingNewline(entry.markdown)
+  });
+
+  if (local && (localOnly || !local.stale)) {
+    return asLocal(local);
   }
 
   try {
-    const data = viewWorkitem(key, { fields });
-    const formatted = formatRemoteShowMarkdown(key, data);
+    const formatted = formatRemoteShowMarkdown(key, viewWorkitem(key, { fields }));
     if (!formatted) {
-      return failCommand(
-        `show ${key}: no data returned`,
-        options.outputMode
-      );
+      throw new Error("no data returned");
     }
-    if (isJsonMode(options)) {
-      printJsonSuccess({
-        source: "remote",
-        key: formatted.key,
-        markdown: formatted.markdown
-      });
-      return 0;
-    }
-    process.stdout.write(formatted.markdown);
-    return 0;
+    return {
+      source: "remote",
+      key: formatted.key,
+      markdown: withTrailingNewline(formatted.markdown)
+    };
+  } catch (e) {
+    if (local) return asLocal(local);
+    const msg = e instanceof Error ? e.message : String(e);
+    throw new Error(`show ${key}: ${msg}`);
+  }
+}
+
+/** Run `jira show <KEY|URL> [--fields ...] [--remote] [--local]`. */
+export function runShowCommand(
+  argv: string[],
+  options: CommandOptions = HUMAN_OUTPUT
+): number {
+  let result: ShowResult;
+  try {
+    result = resolveShow(argv);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    return failCommand(`show ${key}: ${msg}`, options.outputMode);
+    return failCommand(msg, options.outputMode);
   }
+
+  if (isJsonMode(options)) {
+    printJsonSuccess(result);
+    return 0;
+  }
+  process.stdout.write(result.markdown);
+  return 0;
 }
