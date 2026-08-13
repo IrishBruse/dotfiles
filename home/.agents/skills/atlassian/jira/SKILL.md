@@ -17,6 +17,26 @@ It recommends a path, asks the user to choose a route with `AskQuestion`, then r
 Before Jira legwork, read the workspace context: configured project, board data (current sprints, ticket counts), and local ticket count.
 Refresh sprint and board data when it is missing or stale.
 
+## CLI Call Optimization
+
+Prefer the `jira` CLI. Minimize round trips and payload size.
+
+- Run `jira info` (or `jira info --json`) **once** per session unless sprint or board data is missing or stale.
+  Do not re-run it before every create or show.
+- Read a known key with one `jira show KEY`. It prints a fresh local `~/jira` file and
+  fetches live when that file is missing or stale, so never retry the same key with `--remote`.
+- Prefer `jira batch --json` for multiple independent reads in one process
+  (for example `jira batch --json '[["info"],["show","KEY"],["search","JQL"]]'`).
+  Do not issue a chain of separate `jira show` / `jira search` calls when one batch covers them.
+- Prefer `jira show KEY` markdown for a single known key.
+  Do not fetch full search JSON and parse it for one ticket.
+- Keep JQL narrow and use `--limit`. Prefer `--fields` when only a few fields are needed.
+  Do not dump large ADF or search payloads into context.
+- After `jira create --from-draft` or `jira push`, use the pulled local file.
+  Do not immediately re-show or re-pull unless the write left fields that still need a live check.
+- Parallel Shell is fine for non-CLI work (GitHub, local files).
+  For Jira reads, prefer batch over parallel CLI processes.
+
 ## Pull The Ticket Locally First
 
 Whenever the input includes a Jira key or URL that you will inspect, work on, or update, ensure a local copy exists under `~/jira/<type>/`.
@@ -215,42 +235,44 @@ If this gate has not been answered with its approve option for the exact change 
 
 Steps, in order:
 
-1. Call `AskQuestion` immediately before the write, using the fixed shape below and no other options.
-   Put the full proposed change in the `prompt` field only.
-   Do not echo the proposal in chat before or after the tool call.
-2. Perform the write **only** when the user selects `Approve`.
-3. If the user selects `Edit first`, revise the proposal and run this gate again.
-4. If the user selects `Cancel`, stop and make no Jira write.
+1. Write the full proposed change as a **normal chat response** immediately before the AskQuestion call.
+   Open with `I will <create | update | reparent | transition | close | link | comment> <what>.`
+   List every field on its own line with `**Label:** value`.
+   For edits, show `before -> after` per changed field.
+   End with `Apply this exact change?`
+   Use plain markdown. Never wrap the proposal in a code fence.
+2. Call `AskQuestion` in the **same turn**, using the fixed shape below and no other options.
+   Do **not** put the proposal summary or field list in the AskQuestion `prompt`.
+   The AskQuestion is approval only. The chat response above is the source of truth for what will be written.
+3. Perform the write **only** when the user selects `Approve`.
+4. If the user selects `Edit first`, revise the proposal in chat and run this gate again (chat proposal + short AskQuestion).
+5. If the user selects `Cancel`, stop and make no Jira write.
 
 Rules:
 
 - One approval covers one described change set. To write several tickets, either list the full set in a single gate or run the gate per write.
 Never reuse an approval for a different change.
-- If the change shown differs in any way from what you are about to write, stop and run the gate again with the corrected proposal.
+- If the change shown in chat differs in any way from what you are about to write, stop and run this gate again with the corrected proposal.
 - Never infer approval from an earlier route choice, a title selection, a prior gate, or the absence of objection.
 Only the `Approve` option in this gate counts.
-- The `prompt` must use plain markdown so labels and values render for the user.
-  Use `**Label:**` for field names and separate fields with blank lines.
-  Never wrap the proposal in a code fence in chat or inside the `prompt`.
+
+Example chat proposal for a create (normal response text, not an AskQuestion prompt):
+
+I will create a Story under NOVACORE-52213.
+
+**Summary:** [DTC] Display prototype versions deterministically
+
+**Parent:** NOVACORE-52213 ([DTC] Make repeatable operations deterministic)
+
+**Local draft:** ~/jira/story/.../Display ... - ....md
+
+Apply this exact change?
 
 Populate the `AskQuestion` tool with these exact fields and no other options.
 This describes tool input, so never print the fields, labels, option text, or any fence as chat text:
 
 - `title`: `<KEY or new ticket> - Approve Jira write`
-- `prompt`: open with `I will <create | update | reparent | transition | close | link | comment> <what>.`,
-  then list every field on its own line with `**Label:** value`.
-  For edits, show `before -> after` per changed field.
-  End with `Apply this exact change?`
-
-  Example `prompt` for a create (pass this as one multiline string, not a chat code block):
-
-  I will create a Story under NOVACORE-52213.
-
-  **Summary:** [DTC] Display prototype versions deterministically
-  **Parent:** NOVACORE-52213 ([DTC] Make repeatable operations deterministic)
-  **Local draft:** ~/jira/story/.../Display ... - ....md
-
-  Apply this exact change?
+- `prompt`: `Apply the proposed Jira write shown above?`
 - `options` (exactly these three, in order):
   - `Approve - apply this exact change`
   - `Edit first - change something before applying`
