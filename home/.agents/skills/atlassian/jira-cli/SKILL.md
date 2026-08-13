@@ -4,221 +4,143 @@ description: "jira CLI for board context, `~/jira` pull-edit-push, and gated wri
 user-invocable: false
 ---
 
-# Jira CLI
+# jira-cli
 
-Run Jira through the `jira` CLI.
+Agent-facing Jira CLI. Prefer compact reads that stay in hundreds of tokens, not raw acli or ADF blobs.
+
 **Never write to Jira without the `jira` skill Write Approval Gate.**
 The CLI does not enforce the gate.
-Create, edit, push, transition, comment, and link only after that gate returns Approve for the exact change.
-
-Prefer `jira` over raw `acli` and over Atlassian MCP when the CLI covers the need.
 On auth failure, stop and ask.
 
-## Read vs cache
+Prefer `jira` over Atlassian MCP when the CLI covers the need.
 
-| Intent | Command |
-| --- | --- |
-| Read markdown and refresh `~/jira` when stale | `jira show KEY` |
-| Force refresh under `~/jira` without printing | `jira pull KEY` or bare `jira KEY` |
-| Publish local summary/description | `jira push KEY` (after gate Approve) |
+## The core loop
 
-`jira show KEY` prints markdown and writes or refreshes the `~/jira` copy when it is missing or older than one day.
-Bare `jira KEY` only refreshes the cache and does not print the ticket body.
+```bash
+jira info                          # 1. Session context (once)
+jira search "module-load error"    # 2. Discover (compact hits)
+jira show KEY                      # 3. Read one ticket body
+# edit ~/jira/... then after gate: jira push KEY
+```
 
-## Local-first (when `~/jira` exists)
+Search is for discovery. `show` is for bodies.
+Do not parse search JSON to read one ticket.
 
-When `~/jira` has pulled tickets, local markdown is the ticket surface:
+## Progressive disclosure
 
-1. `jira show KEY` to read. Use `jira pull KEY` only when you must edit the file on disk.
-   **Done when:** the ticket markdown is in hand for this turn.
-2. Edit summary/description in that file (`title` in frontmatter + body).
-   **Done when:** the file matches the intended change.
-3. After the `jira` skill gate Approve: `jira push KEY`
-   **Done when:** push succeeds (push refreshes the file from Jira).
+| Intent | Preferred | Avoid |
+| --- | --- | --- |
+| Session context | `jira info` once | Re-running `info` / `doctor` every turn |
+| Structured fields | `jira info --json` (slim) | `info --json --board` unless board is needed |
+| Full board | `jira board` / `jira board --json` | Expecting board inside slim `info --json` |
+| Find tickets | `jira search "..."` | `search --raw`, `jira workitem search` |
+| Read one ticket | `jira show KEY` | `jira workitem view`, `show` then `show --remote` |
+| Cache only | `jira pull KEY` / `jira KEY` | Using bare `jira KEY` as a view |
+| Publish summary/body | edit `~/jira/...`, then `jira push KEY` | `edit --description-file` when a local file exists |
+| Status / comment / link | `jira transition` / `comment` / `link` after gate | Skipping the write gate / `jira workitem *` |
 
-`jira push` syncs **summary** and **description** only.
-Status, comments, links, labels, and custom fields use the CLI writes below, then `jira pull KEY`.
+### Search output (default)
 
-### One call per read
+Compact hits only. Default `--limit 20`. No description field.
 
-`jira show KEY` picks the source itself, so one call is always enough:
+```text
+NOVACORE-123	Bug	To Do	Ada	Module load error on bootstrap
+1 issue(s). Use jira show KEY for full ticket markdown.
+```
 
-- Local copy newer than **1 day**: printed from `~/jira`.
-- Local copy missing or older than 1 day: fetched live and written to `~/jira`.
-- Live fetch fails: the stale local copy is printed as a fallback.
+`--json` returns `{ jql, count, limit, issues[{key,summary,type,status,assignee}], hint }`.
+Use `jira show KEY` for AC, description, and local cache refresh.
+Use `search --raw` only when you truly need full acli JSON.
 
-Do not follow a `show` with a second `show --remote`.
-Add `--remote` only to force a live fetch when you know the remote changed this turn.
-Add `--local` to accept a stale local copy without any fetch.
-`--json` output carries `source` (`local` or `remote`) and `stale`.
+### Show output
 
-Before editing a pulled file, run `jira pull KEY` so the file on disk matches Jira.
+One markdown ticket with frontmatter. Refreshes `~/jira` when missing or older than 1 day.
+One call is enough. Do not follow with `--remote` unless you know the remote changed this turn.
 
-## Orientation (every Jira session)
+### Info output
 
-1. `jira info` (or `jira info --json` for fields + `localTickets` + full `board` cache)
-   **Done when:** cloudId, project, featureTeamOptionId, sprintId(s), field ids,
-   local keys, and my/unassigned (plus teammates/misc in `--json` `board`) are in hand
-   (run `jira sync` first if board is missing).
-2. `jira board` (optional)
-   **Done when:** you only want the human full-board text dump (`info --json` already includes `board`).
+- `jira info`: plain fields + my/unassigned summary (~small)
+- `jira info --json`: slim fields + hint (no board sections)
+- `jira info --json --board` or `jira board --json`: full board when needed
 
-One-shot structured reads: `jira info --json`, or
-`jira batch --json '[["info"],["show","KEY"]]'` (JSON array as an argument, a file path, `--file`, or stdin).
-Batch `info` matches `jira info --json` (includes `board`).
-Batch `show` returns `{ source, key, markdown }` (same markdown as `jira show`), not raw ADF.
+Do not use `jira workitem ...` or `jira acli ...`. The CLI redirects those mistakes to `show`/`search`/`create`/`edit`.
 
-### Optimize calls
+## Token rules
 
-- Prefer one `jira info` / `info --json` per session, then reuse it.
-- Prefer `jira batch --json` over a chain of separate `show` / `search` processes.
-- Prefer one `jira show KEY` per ticket. It already falls back to a live fetch, so do not retry with `--remote`.
-- Prefer `jira show KEY` for a known key. Do not parse a large search payload to read one ticket.
-- Prefer `jira search` for discovery only. Default output is a compact hit list (no description ADF).
-  Then `jira show KEY` for bodies. Avoid `search --raw`.
+- One `jira info` per session. Reuse it. Do not spam `doctor`.
+- Prefer `jira batch --json '[["info"],["show","KEY"]]'` over a chain of processes.
+- Prefer `jira show KEY` for a known key. Prefer `jira search` only to discover keys.
 - Prefer narrow JQL and `--limit`. Default search limit is 20.
-- After create/push (which refresh local files), do not immediately re-show unless needed.
+- After create/push, do not immediately re-show unless fields still need a live check.
+- Command history: `~/jira/logs/YYYY-MM-DD.log` (args and errors only).
 
-Verify with `jira doctor --json` when setup looks wrong.
+## Common workflows
 
-Command history is appended to `~/jira/logs/YYYY-MM-DD.log` (args and errors only, not stdout).
+### Orient
 
-### PR title lookup
-
-The `pr` skill resolves title keys with bounded reads:
-
-1. Use `jira info` only to select a candidate from My tickets or Unassigned.
-2. Use `jira show KEY` once to validate the selected ticket and its status.
-3. Do not use `jira pull`, bare `jira KEY`, `acli`, or Atlassian MCP for this lookup.
-
-`jira show KEY` fetches live when no fresh local mirror exists. Do not retry it with `--remote`.
-
-## Reads
-
-| Need | Use |
-| --- | --- |
-| One issue | `jira show KEY` (fresh local copy, else live markdown) |
-| Force a live read | `jira show KEY --remote` |
-| Refresh the file on disk | `jira pull KEY` |
-| One issue to disk | `jira pull KEY` (or bare `jira KEY`) |
-| JQL discovery (compact list) | `jira search "..."` |
-| One issue body | `jira show KEY` |
-| My tickets / unassigned | `jira info` (plain) or `jira info --json` → `board.sections` |
-| Full board | `jira info --json` → `board` (or `jira board` for human text) |
-| cloudId / field ids / local keys | `jira info` / `jira info --json` |
-| Available statuses | `jira transition KEY` (lists current + known) |
-
-Use Atlassian MCP only when the CLI cannot cover the need (for example worklog, or edit custom fields if `jira edit --field` is rejected by acli).
-
-## Create recipe
-
-After the `jira` skill write gate Approve:
-
-```sh
-jira info   # featureTeamOptionId, sprintId, storyPointsField, project
-
-# Prefer draft promote
-jira create --from-draft ~/jira/story/...md
-
-# Typical Task/Story (Feature Team applied automatically; add sprint explicitly when needed)
-jira create --type Task --summary "..." --parent KEY --story-points 1 --sprint 27857
-
-# Explicit fields (override defaults)
-jira create --type Story --summary "..." --parent KEY \
-  --field customfield_10354=16409 \
-  --field customfield_10021=27857 \
-  --field customfield_10023=1
+```bash
+jira info                 # plain: me / unassigned / localTickets
+jira info --json          # slim fields (no board dump)
+jira board --json         # full board only when needed
+jira doctor --json        # only when setup looks wrong
 ```
 
-Defaults:
+### Discover then read
 
-- Feature Team from `jira info` is applied on every create when the option id is known.
-- Sprint is not inferred from the board (avoids polluting sprint metrics).
-  Use `--sprint <id>` or `--field customfield_10021=<id>` when the ticket belongs in a sprint.
-- `--story-points <n>` sets story points when provided.
-- `--field id=value` always wins over defaults.
-- NOVACORE Epic creates get Capitalizable=Yes when unset.
-- `--from-json` skips defaults (full payload). `--from-draft` still applies defaults.
-
-## Transition and comment
-
-```sh
-# List current status + known board statuses (no write)
-jira transition KEY
-
-# Transition (positional status; --status still works)
-jira transition KEY Cancelled
-
-# Comment (positional body; --body / --body-file still work)
-jira comment KEY "Cancellation reason..."
-```
-
-`jira show KEY` frontmatter uses the real status name (`status: Cancelled`) plus `status_bucket`.
-
-## Custom fields and non-markdown edits
-
-Prefer local-first for summary/description.
-Use `jira edit` only for fields `jira push` cannot sync:
-
-```sh
-jira edit KEY --field customfield_10023=2
-jira edit KEY --labels a,b --field customfield_10354=16409
-```
-
-If acli rejects custom fields on edit, use Atlassian MCP `editJiraIssue` with the same field ids from `jira info`, then `jira pull KEY`.
-
-## Common JQL
-
-`jira search` prefers **JQL**. Bare words are rewritten to
-`project = <config> AND text ~ "\"...\""` so agents do not hit parse errors.
-
-```sh
-# Open sprint for the configured Feature Team (name from jira info)
-jira search 'project = NOVACORE AND sprint in openSprints() AND "Feature Team" = dynaFormRaptors'
-
-# Children of a parent
-jira search 'parent = NOVACORE-12345'
-
-# Recent team ticket to reuse a parent
-jira search 'project = NOVACORE AND sprint in openSprints() AND "Feature Team" = dynaFormRaptors ORDER BY updated DESC' --fields key,summary,parent
-
-# Summary / text contains (quoted phrase + ~)
-jira search 'project = NOVACORE AND summary ~ "\"white label\""'
-jira search 'project = NOVACORE AND text ~ "\"design governance\""'
-
-# Bare words (rewritten by CLI)
+```bash
 jira search "design governance"
+jira search 'parent = NOVACORE-12345' --limit 10
+jira show NOVACORE-12345
 ```
 
-For a known key, use `jira show KEY` to read, or `jira pull KEY` / `jira KEY` to cache.
-`jira issue KEY` is accepted as an alias for `jira show KEY`.
+Bare words become `project = <config> AND text ~ "\"...\""`.
 
-## Commands
+### Local-first edit
 
-```sh
-jira <KEY|URL> | jira pull [KEY] | jira push [KEY]
-jira sync | jira board | jira info | jira doctor
-jira batch '[["info"],["show","KEY"]]' [--file PATH] [--stop-on-error]
-jira show KEY [--remote] [--local] | jira search "..." | jira projects | jira types
-jira create --type T --summary "..." [--parent KEY] [--sprint ID] [--story-points N] [--field id=value] [--from-draft path]
-jira edit KEY [--summary ...] [--description-file ...] [--labels ...] [--field id=value]
-jira transition KEY [Status]
-jira comment KEY "body"
+1. `jira show KEY` (ensures `~/jira` copy)
+2. Edit `title` + body in that file
+3. After `jira` skill gate Approve: `jira push KEY`
+
+`jira push` syncs summary and description only.
+Other fields use `jira edit|transition|comment|link`, then `jira pull KEY`.
+
+### Writes (after gate Approve)
+
+```bash
+jira create --from-draft ~/jira/story/...md
+jira create --type Task --summary "..." --parent KEY --story-points 1 --sprint ID
+jira transition KEY Cancelled
+jira comment KEY "reason..."
 jira link --out KEY --in KEY --type Relates
-jira acli <args...>   # reads / other projects; gated writes blocked
 ```
 
-Global: `--json` for `{success, data, error}` (including `jira info --json`).
+See [references/writes.md](references/writes.md) for create defaults, edit fields, and gate rules.
 
-Config: `~/.config/jira/config.json`. Caches: `~/.config/jira/board.json`, `info.json`.
-Pulled tickets: `~/jira/<type>/<title> - <KEY>.md`.
+## Command map
 
-## Writes
+```bash
+jira info | jira info --json | jira info --json --board | jira board | jira sync | jira doctor
+jira search "..." [--limit N] [--fields LIST] [--paginate] [--raw]
+jira show KEY [--remote|--local] | jira pull [KEY] | jira push [KEY]
+jira batch --json '[["info"],["show","KEY"],["search","JQL"]]'
+jira create|edit|transition|comment|link   # after write gate
+```
 
-1. Complete the `jira` skill **Jira Write Approval Gate** (Approve only). Never skip this.
-2. Apply the write:
-   - summary/description with `~/jira` present: edit the local file, then `jira push KEY`
-   - otherwise: `jira create|edit|transition|comment|link`
-3. After CLI writes (not push), refresh with `jira pull KEY`.
+Alias: `jira issue KEY` → `jira show KEY`.
+Global: `--json` → `{success, data, error}`.
 
-One Approve covers one described change set.
+Paths: config `~/.config/jira/config.json`, board `~/jira/board.json`,
+info cache `~/.config/jira/info.json`, tickets `~/jira/<type>/...`,
+logs `~/jira/logs/YYYY-MM-DD.log`.
+
+## When to load another skill
+
+- Ticket classification, drafts, or write approval UX: `jira` skill
+- Confluence pages: `confluence-cli` skill
+- PR title key selection: `pr` skill (`jira info` → one `jira show KEY`)
+
+## Bundled reference
+
+- [references/search.md](references/search.md) - JQL patterns and search flags
+- [references/writes.md](references/writes.md) - create/edit/push/transition recipes and gate rules
+- [references/commands.md](references/commands.md) - full command and flag list
