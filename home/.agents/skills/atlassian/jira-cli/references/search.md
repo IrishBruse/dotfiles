@@ -3,7 +3,7 @@
 Default `jira search` is discovery-only: compact plain-text hits, limit 20, no description ADF.
 Use `jira show KEY` for ticket bodies.
 
-Prefer plain output. Do not add `--json` unless you must parse the hit list programmatically.
+Prefer plain output for agent reads. Do not add `--json` unless chaining with other commands.
 
 ## Flags
 
@@ -13,7 +13,7 @@ jira search "..." --limit 5       # tighter bound
 jira search "..." --paginate      # all matches (use sparingly)
 jira search "..." --fields LIST   # override fields (default omits description)
 jira search "..." --raw           # full acli JSON (large; avoid for agents)
-# jira search "..." --json        # same hits in {success,data,error}; prefer plain
+jira search "..." --json          # same hits in envelope; use when chaining
 ```
 
 ## Output shape
@@ -25,7 +25,7 @@ KEY	type	status	assignee	summary
 N issue(s). Use jira show KEY for full ticket markdown.
 ```
 
-JSON (`--json`, larger envelope, use only when needed):
+JSON (`--json`, for chaining):
 
 ```json
 {

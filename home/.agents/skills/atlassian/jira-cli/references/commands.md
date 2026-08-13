@@ -20,22 +20,20 @@ jira doctor             # acli, auth, config, caches
 jira batch [JSON]       # read-only commands in one process (prefer plain commands)
 ```
 
-Prefer plain output. Add `--json` only when you must parse structured fields.
+Prefer plain output for agent reads. Use `--json` when chaining with other commands.
 
-Optional JSON:
+Optional JSON (chaining / scripting):
 
 ```bash
 jira board --json
 jira info --json
 jira info --json --board
 jira doctor --json
+jira batch --json '[["info"],["show","KEY"]]'
 ```
 
-Batch example (prefer separate plain commands when possible):
-
-```bash
-jira batch '[["info"],["show","KEY"],["search","parent = KEY"]]'
-```
+Batch example without global `--json` prints ok/FAIL lines only.
+Prefer plain `jira show` / `jira search` for agent context.
 
 Batch `show` → `{ source, key, markdown }`.
 Batch `search` → compact search envelope unless item includes `--raw`.
@@ -83,7 +81,7 @@ jira link --out KEY --in KEY --type NAME
 
 ```bash
 jira -h | --help
---json                  # optional {success, data, error} envelope (prefer plain output)
+--json                  # {success, data, error} for chaining (prefer plain for reads)
 ```
 
 ## Paths
