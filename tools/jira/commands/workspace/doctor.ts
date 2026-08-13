@@ -5,7 +5,6 @@ import { spawnSync } from "node:child_process";
 import process from "node:process";
 
 import { listProjects } from "../../lib/acli-jira.ts";
-import { blockedAcliJiraReason } from "../../lib/acli-policy.ts";
 import { readBoardInfoCache, readBoardCache } from "../../lib/board-cache.ts";
 import { CONFIG, configuredProject } from "../../lib/CONFIG.ts";
 import { countLocalTickets } from "../../lib/local.ts";
@@ -49,7 +48,7 @@ function authCheck(): DoctorCheck {
       name: "auth",
       ok: false,
       message: `Jira auth failed: ${msg}`,
-      fix: "Run: jira acli auth login"
+      fix: "Run: acli jira auth login"
     };
   }
 }
@@ -126,28 +125,6 @@ function localTicketsCheck(): DoctorCheck {
   };
 }
 
-function acliPolicyCheck(): DoctorCheck {
-  const blocked = blockedAcliJiraReason([
-    "jira",
-    "workitem",
-    "create",
-    "--summary",
-    "x"
-  ]);
-  if (!blocked) {
-    return {
-      name: "acli-policy",
-      ok: false,
-      message: "acli policy did not block workitem create"
-    };
-  }
-  return {
-    name: "acli-policy",
-    ok: true,
-    message: "acli write gate active"
-  };
-}
-
 export function gatherDoctorChecks(): DoctorCheck[] {
   const checks: DoctorCheck[] = [acliOnPath()];
   if (checks[0]?.ok) {
@@ -160,7 +137,7 @@ export function gatherDoctorChecks(): DoctorCheck[] {
       fix: "Install acli first"
     });
   }
-  checks.push(configCheck(), boardCacheCheck(), localTicketsCheck(), acliPolicyCheck());
+  checks.push(configCheck(), boardCacheCheck(), localTicketsCheck());
   return checks;
 }
 
@@ -207,8 +184,7 @@ export function gatherDoctorChecksForTest(): DoctorCheck[] {
       },
       configCheck(),
       boardCacheCheck(),
-      localTicketsCheck(),
-      acliPolicyCheck()
+      localTicketsCheck()
     ];
   }
   return gatherDoctorChecks();

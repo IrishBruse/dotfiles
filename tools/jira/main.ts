@@ -3,7 +3,6 @@
  * Jira CLI -- pull tickets to local markdown under `~/jira`.
  */
 import process from "node:process";
-import { runAcliPassthroughCommand } from "./commands/other/acli.ts";
 import { runBatchCommand } from "./commands/workspace/batch.ts";
 import { runDoctorCommand } from "./commands/workspace/doctor.ts";
 import { runInfoCommand } from "./commands/workspace/info.ts";
@@ -28,6 +27,10 @@ import {
 import { parseJiraKey } from "./lib/jiraInput.ts";
 import { parseGlobalFlags, type CommandOptions } from "./lib/output-mode.ts";
 import { failCommand } from "./lib/output.ts";
+import {
+  boardExtraArgsHint,
+  mistakenCommandHint
+} from "./lib/redirects.ts";
 
 /** Run one jira CLI invocation and return its exit code. */
 export async function runJiraCli(argv: string[]): Promise<number> {
@@ -40,6 +43,10 @@ export async function runJiraCli(argv: string[]): Promise<number> {
   }
 
   if (arg === "board") {
+    const boardHint = boardExtraArgsHint(cleaned);
+    if (boardHint) {
+      return failCommand(boardHint, outputMode);
+    }
     return runBoardCommand(opts);
   }
 
@@ -53,13 +60,12 @@ export async function runJiraCli(argv: string[]): Promise<number> {
     search: () => runSearchCommand(cleaned, opts),
     batch: () => runBatchCommand(cleaned, opts),
     doctor: () => runDoctorCommand(opts),
-    acli: () => runAcliPassthroughCommand(cleaned),
     create: () => runCreateCommand(cleaned, opts),
     edit: () => runEditCommand(cleaned, opts),
     transition: () => runTransitionCommand(cleaned, opts),
     comment: () => runCommentCommand(cleaned, opts),
     link: () => runLinkCommand(cleaned, opts),
-    info: () => runInfoCommand(opts),
+    info: () => runInfoCommand({ ...opts, argv: cleaned }),
     projects: () => runProjectsCommand(cleaned, opts),
     types: () => runTypesCommand(cleaned, opts)
   };
@@ -72,6 +78,11 @@ export async function runJiraCli(argv: string[]): Promise<number> {
       );
     }
     return handler();
+  }
+
+  const mistake = mistakenCommandHint(cleaned);
+  if (mistake) {
+    return failCommand(mistake, outputMode);
   }
 
   const key = parseJiraKey(arg);

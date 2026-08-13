@@ -3,6 +3,7 @@ import path from "node:path";
 import { homedir } from "node:os";
 
 import { parseBoardSprintRows } from "./board-sprint.ts";
+import { jiraRootDir } from "./local.ts";
 import type {
   BoardContent,
   BoardSection,
@@ -18,9 +19,14 @@ export function boardInfoCachePath(baseDir = homedir()): string {
   return path.join(baseDir, ".config", "jira", "info.json");
 }
 
-/** Cached board state written by `jira sync`. */
-export function boardCachePath(baseDir = homedir()): string {
+/** Legacy board cache path (pre `~/jira/board.json`). */
+export function legacyBoardCachePath(baseDir = homedir()): string {
   return path.join(baseDir, ".config", "jira", "board.json");
+}
+
+/** Cached board state written by `jira sync` (`~/jira/board.json`). */
+export function boardCachePath(baseDir = homedir()): string {
+  return path.join(jiraRootDir(baseDir), "board.json");
 }
 
 /** One project issue type from `jira project view`. */
@@ -261,11 +267,17 @@ export function readBoardInfoCache(baseDir = homedir()): BoardInfoCache | null {
 /** Read cached board state when present. */
 export function readBoardCache(baseDir = homedir()): BoardContent | null {
   const filePath = boardCachePath(baseDir);
-  if (!fs.existsSync(filePath)) return null;
+  const legacyPath = legacyBoardCachePath(baseDir);
+  const pathToRead = fs.existsSync(filePath)
+    ? filePath
+    : fs.existsSync(legacyPath)
+      ? legacyPath
+      : null;
+  if (!pathToRead) return null;
 
   let parsed: unknown;
   try {
-    parsed = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    parsed = JSON.parse(fs.readFileSync(pathToRead, "utf-8"));
   } catch (err) {
     if (err instanceof SyntaxError) return null;
     throw err;

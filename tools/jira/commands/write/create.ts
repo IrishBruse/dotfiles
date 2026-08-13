@@ -147,7 +147,7 @@ export function runCreateCommand(
   }
   if (!project) {
     return failCommand(
-      "create: set project in ~/.config/jira/config.json (or use jira acli)",
+      "create: set project in ~/.config/jira/config.json",
       options.outputMode
     );
   }

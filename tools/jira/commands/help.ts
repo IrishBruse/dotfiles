@@ -18,6 +18,7 @@ Workspace:
   jira sync            Refresh board.json and info.json
   jira board           Print cached board
   jira info            Context + my/unassigned tickets
+                       --json slim fields; add --board for board sections
   jira doctor          Verify acli, auth, config, caches
   jira batch [JSON]    Run read-only commands from JSON
 
@@ -41,7 +42,6 @@ Write:
   jira link            Link two work items
 
 Other:
-  jira acli <args...>  Pass through to acli jira (gated)
   jira -h, --help      Print this help
   --json               JSON {success, data, error} on stdout
 
@@ -53,6 +53,7 @@ Flags:
   search --paginate          Fetch all matching issues
   search --fields LIST       Override list fields (default omits description)
   search --raw               Full acli JSON (large; avoid for agents)
+  info --board               Include board sections in info --json
   create --type T --summary TEXT
                              [--parent KEY] [--sprint ID]
                              [--story-points N] [--field id=value]
@@ -64,14 +65,15 @@ Flags:
                              [--file PATH] [--stop-on-error]
 
 Config: ~/.config/jira/config.json
-Caches: ~/.config/jira/board.json, info.json
+Caches: ~/jira/board.json, ~/.config/jira/info.json
 Logs: ~/jira/logs/YYYY-MM-DD.log (command args and errors)
 Tickets: ~/jira/<type>/<title> - <KEY>.md
-info --json: JiraInfo + board cache (same board as jira board --json)
+info --json: slim JiraInfo (add --board for board sections)
 show: local copy older than 1 day is refetched into ~/jira; stale copy is
       used only when the fetch fails
 search: compact hits by default; jira show KEY for description/AC
 batch show: { source, key, markdown } (not raw ADF)
 batch search: compact { jql, count, limit, issues, hint } unless --raw
+batch info: slim like jira info --json (pass --board on the info item)
 `);
 }

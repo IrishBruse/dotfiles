@@ -67,7 +67,7 @@ export function jiraPullFields(): string {
 export const SPRINT_RETENTION_BUFFER_MS: number = sprintRetentionBufferMs;
 
 /**
- * Sync Jira board into `~/.config/jira/board.json`.
+ * Sync Jira board into `~/jira/board.json`.
  * @return Exit code (0 on success).
  */
 export function runBoardSync(): Promise<number> {

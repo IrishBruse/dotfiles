@@ -46,7 +46,6 @@ import {
   SPRINT_RETENTION_BUFFER_MS,
   writeBoard
 } from "./commands/workspace/write.ts";
-import { runAcliPassthroughCommand } from "./commands/other/acli.ts";
 import { runInfoCommand } from "./commands/workspace/info.ts";
 import { printHelp } from "./commands/help.ts";
 import {
@@ -142,12 +141,12 @@ import {
   statusNamesFromIssues
 } from "./lib/info.ts";
 import { HUMAN_OUTPUT, parseGlobalFlags } from "./lib/output-mode.ts";
-import {
-  blockedAcliJiraReason,
-  buildAcliJiraArgs
-} from "./lib/acli-policy.ts";
 import { parseCreatedIssueKey } from "./lib/acli-jira.ts";
 import { parseJiraKey } from "./lib/jiraInput.ts";
+import {
+  boardExtraArgsHint,
+  mistakenCommandHint
+} from "./lib/redirects.ts";
 import {
   buildLocalTicketIndex,
   jiraRootDir,
@@ -589,7 +588,7 @@ describe("format helpers continued", () => {
     assert.match(body, /title: "Hello"/);
     assert.match(body, /url: https:\/\/example\.atlassian\.net\/browse\/PROJ-1/);
     assert.match(body, /status: "In Progress"/);
-    assert.match(body, /status_bucket: inProgress/);
+    assert.doesNotMatch(body, /status_bucket:/);
     assert.match(body, /Body text/);
   });
 });
@@ -602,7 +601,6 @@ feature_team: "None"
 type: "Story"
 url: https://example.atlassian.net/browse/PROJ-7
 status: "To Do"
-status_bucket: todo
 created: ""
 updated: ""
 ---
@@ -992,7 +990,7 @@ describe("writeBoard", () => {
 });
 
 describe("writeBoardCache", () => {
-  it("writes board.json under the home config dir", () => {
+  it("writes board.json under ~/jira", () => {
     withTempDir((dir) => {
       const home = path.join(dir, "home");
       fs.mkdirSync(home, { recursive: true });
@@ -1010,10 +1008,40 @@ describe("writeBoardCache", () => {
         "2026-07-17T12:00:00.000Z"
       );
       writeBoardCache(content, home);
+      assert.equal(
+        boardCachePath(home),
+        path.join(home, "jira", "board.json")
+      );
+      assert.equal(fs.existsSync(boardCachePath(home)), true);
+      assert.deepEqual(readBoardCache(home)?.syncedAt, "2026-07-17T12:00:00.000Z");
       const md = formatBoardPlainText(content);
       assert.doesNotMatch(md, /Last synced:/);
       assert.match(md, /PROJ-1  Todo         -   Alpha/);
       assert.doesNotMatch(md, /references\//);
+    });
+  });
+
+  it("reads legacy ~/.config/jira/board.json when ~/jira/board.json is missing", () => {
+    withTempDir((dir) => {
+      const home = path.join(dir, "home");
+      const legacy = path.join(home, ".config", "jira", "board.json");
+      fs.mkdirSync(path.dirname(legacy), { recursive: true });
+      const content = buildBoardContent(
+        [
+          {
+            key: "PROJ-9",
+            fields: issueFields("Legacy", {
+              accountId: "account-me",
+              displayName: "Me"
+            })
+          }
+        ],
+        "account-me",
+        "2026-07-17T12:00:00.000Z"
+      );
+      fs.writeFileSync(legacy, `${JSON.stringify(content, null, 2)}\n`, "utf-8");
+      assert.equal(fs.existsSync(boardCachePath(home)), false);
+      assert.equal(readBoardCache(home)?.sections.myTickets.statuses.todo[0]?.key, "PROJ-9");
     });
   });
 });
@@ -1101,9 +1129,9 @@ describe("cli output", () => {
     assert.match(help, /Local tickets:/);
     assert.match(help, /Workspace:/);
     assert.match(help, /jira show/);
-    assert.match(help, /jira acli/);
     assert.match(help, /jira info/);
     assert.match(help, /jira board/);
+    assert.doesNotMatch(help, /jira acli/);
 
     assert.equal(pullChangeMark("added"), "+ ");
     assert.equal(pullChangeMark("updated"), "~ ");
@@ -1129,56 +1157,6 @@ describe("cli output", () => {
     );
     assert.match(out, /PROJ-2/);
     assert.match(out, /Child/);
-  });
-});
-
-describe("acli passthrough argv", () => {
-  it("builds acli jira argv from jira acli", () => {
-    assert.deepEqual(
-      buildAcliJiraArgs(["node", "jira", "acli", "workitem", "view", "KEY-1"]),
-      ["jira", "workitem", "view", "KEY-1"]
-    );
-    assert.deepEqual(
-      buildAcliJiraArgs(["node", "jira", "acli", "jira", "project", "list"]),
-      ["jira", "project", "list"]
-    );
-    assert.deepEqual(buildAcliJiraArgs(["node", "jira", "acli"]), ["jira"]);
-  });
-
-  it("blocks unsafe auth and destructive commands", () => {
-    assert.match(
-      blockedAcliJiraReason(["jira", "auth", "login"]) ?? "",
-      /blocked for agents: auth login/
-    );
-    assert.match(
-      blockedAcliJiraReason(["jira", "workitem", "delete", "KEY-1"]) ?? "",
-      /blocked for agents: workitem delete/
-    );
-    assert.match(
-      blockedAcliJiraReason(["jira", "workitem", "create", "--summary", "x"]) ?? "",
-      /use jira create/
-    );
-    assert.equal(blockedAcliJiraReason(["jira", "auth", "status"]), null);
-    assert.equal(
-      blockedAcliJiraReason(["jira", "workitem", "view", "KEY-1", "--json"]),
-      null
-    );
-    assert.match(
-      blockedAcliJiraReason(["jira", "--json", "workitem", "create"]) ?? "",
-      /blocked for agents: workitem create/
-    );
-  });
-
-  it("rejects blocked commands before spawning acli", () => {
-    const code = runAcliPassthroughCommand([
-      "node",
-      "jira",
-      "acli",
-      "workitem",
-      "delete",
-      "KEY-1"
-    ]);
-    assert.equal(code, 1);
   });
 });
 
@@ -1670,17 +1648,19 @@ describe("jira info", () => {
         data: {
           project: string;
           localTickets: { count: number };
-          board: null;
+          board?: unknown;
+          hint?: string;
         };
       };
       assert.equal(parsed.success, true);
       assert.equal(parsed.data.project, "PROJ");
       assert.equal(parsed.data.localTickets.count, 0);
-      assert.equal(parsed.data.board, null);
+      assert.equal(parsed.data.board, undefined);
+      assert.match(String(parsed.data.hint), /jira board --json/);
     });
   });
 
-  it("includes board cache in info --json when present", () => {
+  it("omits board from info --json unless --board is set", () => {
     withTempDir((dir) => {
       const home = path.join(dir, "home");
       fs.mkdirSync(home, { recursive: true });
@@ -1702,10 +1682,25 @@ describe("jira info", () => {
         "2026-07-17T12:00:00.000Z"
       );
       writeBoardCache(content, home);
-      const out = captureStdout(() =>
+      const slim = captureStdout(() =>
         runInfoCommand({ outputMode: "json" }, home)
       );
-      const parsed = JSON.parse(out) as {
+      const slimParsed = JSON.parse(slim) as {
+        data: { board?: unknown; hint?: string };
+      };
+      assert.equal(slimParsed.data.board, undefined);
+      assert.match(String(slimParsed.data.hint), /--board/);
+
+      const full = captureStdout(() =>
+        runInfoCommand(
+          {
+            outputMode: "json",
+            argv: ["node", "jira", "info", "--board"]
+          },
+          home
+        )
+      );
+      const parsed = JSON.parse(full) as {
         success: boolean;
         data: {
           board: {
@@ -1715,10 +1710,12 @@ describe("jira info", () => {
               teammates: { statuses: { todo: Array<{ key: string }> } };
             };
           } | null;
+          hint?: string;
         };
       };
       assert.equal(parsed.success, true);
       assert.ok(parsed.data.board);
+      assert.equal(parsed.data.hint, undefined);
       assert.equal(parsed.data.board!.syncedAt, "2026-07-17T12:00:00.000Z");
       assert.equal(
         parsed.data.board!.sections.myTickets.statuses.todo[0]?.key,
@@ -2085,14 +2082,18 @@ describe("jira doctor", () => {
       data: { checks: Array<{ name: string; ok: boolean }> };
     };
     assert.ok(Array.isArray(parsed.data.checks));
-    assert.ok(parsed.data.checks.some((c) => c.name === "acli-policy"));
+    assert.ok(parsed.data.checks.some((c) => c.name === "acli"));
+    assert.ok(parsed.data.checks.some((c) => c.name === "config"));
+    assert.doesNotMatch(
+      JSON.stringify(parsed.data.checks),
+      /acli-policy/
+    );
   });
 
-  it("includes acli policy sanity check", () => {
+  it("includes config and local ticket checks", () => {
     const checks = gatherDoctorChecksForTest();
-    const policy = checks.find((c) => c.name === "acli-policy");
-    assert.ok(policy);
-    assert.equal(policy?.ok, true);
+    assert.ok(checks.some((c) => c.name === "config"));
+    assert.ok(checks.some((c) => c.name === "local-tickets"));
   });
 });
 
@@ -2208,6 +2209,38 @@ describe("sync summary formatting", () => {
     const text = formatSyncSummaryHuman(summary);
     assert.match(text, /Fetched 3 issue/);
     assert.match(text, /Cache: \/tmp\/board\.json/);
+  });
+});
+
+describe("command redirects", () => {
+  it("steers workitem view/search to show/search", () => {
+    assert.match(
+      String(mistakenCommandHint(["node", "jira", "workitem", "view", "PROJ-1"])),
+      /jira show PROJ-1/
+    );
+    assert.match(
+      String(mistakenCommandHint(["node", "jira", "workitem", "search"])),
+      /jira search/
+    );
+    assert.match(
+      String(mistakenCommandHint(["node", "jira", "workitem", "create"])),
+      /jira create/
+    );
+  });
+
+  it("steers auth and board list-sprints mistakes", () => {
+    assert.match(
+      String(mistakenCommandHint(["node", "jira", "auth", "status"])),
+      /jira doctor/
+    );
+    assert.match(
+      String(mistakenCommandHint(["node", "jira", "acli", "workitem", "view", "PROJ-1"])),
+      /not jira acli/
+    );
+    assert.match(
+      String(boardExtraArgsHint(["node", "jira", "board", "list-sprints", "--id", "691"])),
+      /jira info/
+    );
   });
 });
 

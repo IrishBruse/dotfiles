@@ -1,5 +1,5 @@
 /**
- * `jira board` -- print full cached board from ~/.config/jira/board.json.
+ * `jira board` -- print full cached board from ~/jira/board.json.
  */
 import process from "node:process";
 

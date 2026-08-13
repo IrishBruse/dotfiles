@@ -338,7 +338,6 @@ export function formatTicketMarkdown(
   const site = normalizeSiteHost(siteHost);
   const url = `https://${site}/browse/${key}`;
   const statusName = statusNameFromFields(fields);
-  const statusBucket = statusBucketFromFields(fields);
   const created = typeof fields.created === "string" ? fields.created : "";
   const updated = typeof fields.updated === "string" ? fields.updated : "";
 
@@ -349,7 +348,6 @@ feature_team: ${yamlScalar(featureTeam)}
 type: ${yamlScalar(itype)}
 url: ${url}
 status: ${yamlScalar(statusName)}
-status_bucket: ${statusBucket}
 created: ${yamlScalar(created)}
 updated: ${yamlScalar(updated)}
 ---

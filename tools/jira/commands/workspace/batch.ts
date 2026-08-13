@@ -90,8 +90,18 @@ function runBatchItem(itemArgv: string[]): {
 
   try {
     switch (cmd) {
-      case "info":
-        return { success: true, data: gatherJiraInfoJson(), error: null };
+      case "info": {
+        const fullArgv = ["node", "jira", ...itemArgv];
+        const includeBoard = flagBool(
+          parseSubcommandArgv(fullArgv, 3).flags,
+          "board"
+        );
+        return {
+          success: true,
+          data: gatherJiraInfoJson(undefined, { includeBoard }),
+          error: null
+        };
+      }
       case "board": {
         const cache = gatherBoardCache();
         if (!cache) {
@@ -111,7 +121,7 @@ function runBatchItem(itemArgv: string[]): {
           return {
             success: false,
             data: null,
-            error: "types: set project in ~/.config/jira/config.json (or use jira acli)"
+            error: "types: set project in ~/.config/jira/config.json"
           };
         }
         return {

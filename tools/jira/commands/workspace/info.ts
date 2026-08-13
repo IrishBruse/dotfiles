@@ -1,30 +1,53 @@
 /**
  * `jira info` -- print agent workspace context + my/unassigned board slice.
+ *
+ * Progressive disclosure for JSON:
+ * - `jira info --json` → slim fields (no board sections)
+ * - `jira info --json --board` → include full board cache
  */
 import { homedir } from "node:os";
 import process from "node:process";
 
+import { flagBool, parseSubcommandArgv } from "../../lib/argv.ts";
+import { readBoardCache } from "../../lib/board-cache.ts";
 import { formatJiraInfoPlainText, gatherJiraInfoJson } from "../../lib/info.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { printJsonSuccess } from "../../lib/output.ts";
 import { formatBoardSummaryPlainText } from "./board-content.ts";
 
-/** Run `jira info` (plain text) or `jira info --json` (JiraInfo + board cache). */
+export type InfoCommandOptions = CommandOptions & {
+  /** Include full board cache in JSON output. */
+  includeBoard?: boolean;
+  argv?: string[];
+};
+
+/** Resolve whether board should be included from argv flags. */
+export function infoIncludesBoard(argv: string[] = []): boolean {
+  const parsed = parseSubcommandArgv(argv, 3);
+  return flagBool(parsed.flags, "board");
+}
+
+/** Run `jira info` (plain text) or `jira info --json` (slim JiraInfo). */
 export function runInfoCommand(
-  options: CommandOptions = HUMAN_OUTPUT,
+  options: InfoCommandOptions = HUMAN_OUTPUT,
   baseDir = homedir()
 ): number {
-  const payload = gatherJiraInfoJson(baseDir);
+  const includeBoard =
+    options.includeBoard === true ||
+    (options.argv ? infoIncludesBoard(options.argv) : false);
+
   if (isJsonMode(options)) {
-    printJsonSuccess(payload);
+    printJsonSuccess(gatherJiraInfoJson(baseDir, { includeBoard }));
     return 0;
   }
 
-  const { board, ...info } = payload;
-  let out = formatJiraInfoPlainText(info);
-  if (board) {
-    out += `\n${formatBoardSummaryPlainText(board)}`;
+  const info = gatherJiraInfoJson(baseDir, { includeBoard: false });
+  const { hint: _hint, ...fields } = info;
+  let out = formatJiraInfoPlainText(fields);
+  const boardCache = readBoardCache(baseDir);
+  if (boardCache) {
+    out += `\n${formatBoardSummaryPlainText(boardCache)}`;
   } else {
     out += "\nboard: (run jira sync)\n";
   }

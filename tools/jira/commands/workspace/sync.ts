@@ -1,5 +1,5 @@
 /**
- * Sync Jira workspace into ~/.config/jira/board.json via `acli jira workitem search`.
+ * Sync Jira workspace into ~/jira/board.json via `acli jira workitem search`.
  */
 import process from "node:process";
 

@@ -42,10 +42,19 @@ export type JiraInfo = {
   localTickets: LocalTicketsSummary;
 };
 
-/** `jira info --json` / batch info: workspace fields plus full board cache. */
+/** `jira info --json`: slim by default. Add board only with `--board`. */
 export type JiraInfoJson = JiraInfo & {
-  board: BoardContent | null;
+  board?: BoardContent | null;
+  hint?: string;
 };
+
+export type GatherJiraInfoJsonOptions = {
+  /** Include full board.json sections (large). Default false. */
+  includeBoard?: boolean;
+};
+
+const INFO_BOARD_HINT =
+  "Use jira board --json or jira info --json --board for board sections";
 
 /** Extract issue type names from `jira project view` JSON. */
 export function parseProjectIssueTypeNames(data: unknown): string[] {
@@ -215,10 +224,21 @@ export function gatherJiraInfo(baseDir = homedir()): JiraInfo {
   };
 }
 
-/** Workspace context plus board.json so agents can skip a separate `jira board`. */
-export function gatherJiraInfoJson(baseDir = homedir()): JiraInfoJson {
+/** Workspace context for agents. Board is opt-in (progressive disclosure). */
+export function gatherJiraInfoJson(
+  baseDir = homedir(),
+  options: GatherJiraInfoJsonOptions = {}
+): JiraInfoJson {
+  const includeBoard = options.includeBoard === true;
+  const info = gatherJiraInfo(baseDir);
+  if (!includeBoard) {
+    return {
+      ...info,
+      hint: INFO_BOARD_HINT
+    };
+  }
   return {
-    ...gatherJiraInfo(baseDir),
+    ...info,
     board: readBoardCache(baseDir)
   };
 }
