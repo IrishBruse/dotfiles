@@ -21,24 +21,24 @@ Refresh sprint and board data when it is missing or stale.
 
 Prefer the `jira` CLI. Minimize round trips and payload size.
 
-- Run `jira info` (or `jira info --json`) **once** per session unless sprint or board data is missing or stale.
+- Prefer plain CLI output over `--json`. Default text is smaller than the `{success, data, error}` envelope.
+- Run `jira info` **once** per session unless sprint or board data is missing or stale.
   Do not re-run it before every create or show.
-  Use `jira board --json` or `jira info --json --board` only when board sections are needed.
+  Use `jira board` for the full cached board. Use `--json` only when you must parse structured fields.
 - Read a known key with one `jira show KEY`. It prints a fresh local `~/jira` file and
   fetches live when that file is missing or stale, so never retry the same key with `--remote`.
-- Prefer `jira batch --json` for multiple independent reads in one process
-  (for example `jira batch --json '[["info"],["show","KEY"],["search","JQL"]]'`).
-  Do not issue a chain of separate `jira show` / `jira search` calls when one batch covers them.
+- Prefer separate plain commands (`jira info`, `jira show KEY`, `jira search "..."`) over `jira batch --json`.
+  Use batch only when many reads in one process are worth the JSON envelope.
 - Prefer `jira show KEY` markdown for a single known key.
   Do not fetch full search JSON and parse it for one ticket.
 - Prefer `jira search` for discovery only. It returns a compact hit list by default.
-  Use `jira show KEY` for ticket bodies. Avoid `search --raw`.
+  Use `jira show KEY` for ticket bodies. Avoid `search --raw` and `search --json`.
 - Keep JQL narrow and use `--limit` (default 20). Prefer `--fields` only when needed.
   Do not dump large ADF or search payloads into context.
 - After `jira create --from-draft` or `jira push`, use the pulled local file.
   Do not immediately re-show or re-pull unless the write left fields that still need a live check.
 - Parallel Shell is fine for non-CLI work (GitHub, local files).
-  For Jira reads, prefer batch over parallel CLI processes.
+  For Jira reads, prefer plain CLI commands over batch `--json`.
 
 ## Pull The Ticket Locally First
 
