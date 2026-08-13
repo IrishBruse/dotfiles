@@ -80,6 +80,7 @@ Usage:
   /jira help
 
 Subcommands:
+  auto        Skip user gates and proceed with the agent's best guess
   story       Draft an actor-facing Story
   task        Draft an internal Task or Sub-task
   epic        Draft a multi-story outcome under an Initiative
@@ -99,11 +100,21 @@ Inputs:
 
 Examples:
   /jira NOVACORE-34567 should this be split?
+  /jira auto task add observability for shell bootstrap failures
   /jira story payroll admin can review sync failures before retrying
   /jira task add observability for shell bootstrap failures
   /jira breakdown NOVACORE-23456
   /jira update NOVACORE-34567 to match the current story template
 ```
+
+## Auto Mode
+
+When the user invokes `/jira auto ...`, read [`references/auto/auto.md`](references/auto/auto.md) first.
+Auto mode skips `AskQuestion` route prompts, the **Jira Write Approval Gate**, and other user confirmation gates.
+The agent still does legwork, then proceeds with its best guess and performs writes without waiting for approval.
+
+Auto mode can prefix any other subcommand, for example `/jira auto story ...` or `/jira auto update KEY`.
+When only `/jira auto <input>` is given, run **Workflow** steps 1-6, skip step 7 `AskQuestion`, and continue on the strongest route using auto overrides.
 
 ## Research Depth
 
@@ -136,9 +147,11 @@ Read and follow [`references/deep-research.md`](references/deep-research.md) for
 
 ## Workflow
 
-**Branch:** a subcommand (`story`, `task`, `epic`, `use-cases`, `breakdown`, `update`, `search`) skips steps 1-7.
-Read the matching reference workflow and follow its **gates**.
-For `update`, read [`references/update/update.md`](references/update/update.md), obey **Pull The Ticket Locally First**, and **Jira Write Approval Gate**.
+**Branch:** a subcommand (`auto`, `story`, `task`, `epic`, `use-cases`, `breakdown`, `update`, `search`) skips steps 1-7.
+For `auto`, read [`references/auto/auto.md`](references/auto/auto.md) first, then the matching route reference when one is named.
+Read the matching reference workflow and follow its **gates**, except in auto mode where [`references/auto/auto.md`](references/auto/auto.md) overrides them.
+For `update`, read [`references/update/update.md`](references/update/update.md), obey **Pull The Ticket Locally First**,
+and **Jira Write Approval Gate** unless auto mode is active.
 
 1. **Normalize the input**
    - Extract Jira keys, repo names, PR links, feature names, actors, and likely initiative or epic references.
@@ -193,6 +206,8 @@ If more than 10 are likely, recommend initiative-to-epic shaping first.
 
 ## Required Route Prompt
 
+Skip this section in auto mode. Read [`references/auto/auto.md`](references/auto/auto.md) and continue on the strongest route.
+
 After every investigation report, use the `AskQuestion` tool to guide where to go next. This is the main interaction model for the skill.
 The prompt must reflect the recommendation and only include options that are valid for the current situation.
 
@@ -227,6 +242,8 @@ After route confirmation, read the matching Reference Workflow file before conti
 - If the user selects `Do Nothing`, stop cleanly.
 
 ## Jira Write Approval Gate
+
+Skip this section in auto mode. Read [`references/auto/auto.md`](references/auto/auto.md) for the auto write flow.
 
 This gate is the **only** way to perform any remote Jira write in this skill.
 A remote Jira write is any create, edit, reparent, transition, close, link, comment, or publish action against Jira.
@@ -280,7 +297,9 @@ This describes tool input, so never print the fields, labels, option text, or an
 
 ## Stop Gates
 
-**Invariant:** Every remote Jira write goes through the **Jira Write Approval Gate** above. Downstream reference workflows inherit this rule.
+**Invariant:** Every remote Jira write goes through the **Jira Write Approval Gate** above,
+except in auto mode where [`references/auto/auto.md`](references/auto/auto.md) applies.
+Downstream reference workflows inherit this rule unless auto mode overrides them.
 
 | Gate | When | Action |
 |------|------|--------|
