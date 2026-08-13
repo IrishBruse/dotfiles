@@ -1,7 +1,8 @@
 /**
  * `jira info` -- print agent workspace context + my/unassigned board slice.
  *
- * Progressive disclosure for JSON:
+ * Prefer plain output. Use `--json` only when structured fields are required.
+ * JSON progressive disclosure:
  * - `jira info --json` → slim fields (no board sections)
  * - `jira info --json --board` → include full board cache
  */

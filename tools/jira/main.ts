@@ -10,6 +10,7 @@ import { runBoardCommand } from "./commands/workspace/board.ts";
 import { runSyncCommand } from "./commands/workspace/sync.ts";
 import { runPullCommand, runPullTicket } from "./commands/local/pull.ts";
 import { runPushCommand } from "./commands/local/push.ts";
+import { runViewCommand } from "./commands/local/view.ts";
 import { runProjectsCommand } from "./commands/read/projects.ts";
 import { runSearchCommand } from "./commands/read/search.ts";
 import { runShowCommand } from "./commands/read/show.ts";
@@ -54,6 +55,7 @@ export async function runJiraCli(argv: string[]): Promise<number> {
     sync: () => runSyncCommand(opts),
     pull: () => runPullCommand(cleaned, { outputMode }),
     push: () => runPushCommand(cleaned, { outputMode }),
+    view: () => runViewCommand(cleaned, { outputMode }),
     show: () => runShowCommand(cleaned, opts),
     // Common agent mistake: `jira issue KEY` (not a command). Alias to show.
     issue: () => runShowCommand(rewriteIssueAliasArgv(cleaned), opts),

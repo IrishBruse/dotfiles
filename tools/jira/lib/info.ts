@@ -54,7 +54,7 @@ export type GatherJiraInfoJsonOptions = {
 };
 
 const INFO_BOARD_HINT =
-  "Use jira board --json or jira info --json --board for board sections";
+  "Use jira board or jira info --json --board for full board cache JSON";
 
 /** Extract issue type names from `jira project view` JSON. */
 export function parseProjectIssueTypeNames(data: unknown): string[] {

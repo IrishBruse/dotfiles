@@ -14,6 +14,9 @@ Local tickets:
   jira push KEY|URL    Push one local ticket
   jira push            Push every ticket under ~/jira
 
+User (not for agents):
+  jira view KEY|URL    Open the local ticket in VS Code
+
 Workspace:
   jira sync            Refresh board.json and info.json
   jira board           Print cached board
@@ -43,7 +46,7 @@ Write:
 
 Other:
   jira -h, --help      Print this help
-  --json               JSON {success, data, error} on stdout
+  --json               Optional JSON {success, data, error} (prefer plain output)
 
 Flags:
   show --remote              Force live fetch

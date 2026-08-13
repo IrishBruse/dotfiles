@@ -68,6 +68,7 @@ import { runCommentCommand } from "./commands/write/comment.ts";
 import { runTransitionCommand } from "./commands/write/transition.ts";
 import { runPullCommand } from "./commands/local/pull.ts";
 import { runPushCommand } from "./commands/local/push.ts";
+import { resolveViewPath, runViewCommand } from "./commands/local/view.ts";
 import { runSyncCommand } from "./commands/workspace/sync.ts";
 import {
   classifyPullChange,
@@ -1656,7 +1657,7 @@ describe("jira info", () => {
       assert.equal(parsed.data.project, "PROJ");
       assert.equal(parsed.data.localTickets.count, 0);
       assert.equal(parsed.data.board, undefined);
-      assert.match(String(parsed.data.hint), /jira board --json/);
+      assert.match(String(parsed.data.hint), /jira board/);
     });
   });
 
@@ -1755,6 +1756,100 @@ describe("jira info", () => {
       assert.match(out, /PROJ-1  Todo         -   Mine/);
       assert.doesNotMatch(out, /PROJ-2/);
       assert.doesNotMatch(out, /^Teammates$/m);
+    });
+  });
+});
+
+describe("view command", () => {
+  it("rejects view without a key", () => {
+    const code = runViewCommand(["node", "jira", "view"]);
+    assert.equal(code, 1);
+  });
+
+  it("rejects view with an invalid key", () => {
+    const code = runViewCommand(["node", "jira", "view", "not-a-key"]);
+    assert.equal(code, 1);
+  });
+
+  it("opens an existing local ticket in VS Code", () => {
+    withTempDir((cwd) => {
+      const body = `---
+title: "Alpha"
+assigned: "Ada"
+feature_team: "None"
+type: "Task"
+url: https://example.atlassian.net/browse/PROJ-1
+status: todo
+created: ""
+updated: ""
+---
+
+Local body.
+`;
+      const ticketPath = writeTicket(cwd, "task", "Alpha - PROJ-1.md", body);
+      const opened: string[] = [];
+      const code = runViewCommand(["node", "jira", "view", "PROJ-1"], {
+        cwd,
+        openEditor: (filePath) => {
+          opened.push(filePath);
+          return 0;
+        }
+      });
+      assert.equal(code, 0);
+      assert.deepEqual(opened, [ticketPath]);
+    });
+  });
+
+  it("accepts a browse URL and resolves the local path", () => {
+    withTempDir((cwd) => {
+      const body = `---
+title: "Beta"
+assigned: "Bob"
+feature_team: "None"
+type: "Task"
+url: https://example.atlassian.net/browse/PROJ-2
+status: todo
+created: ""
+updated: ""
+---
+
+Body.
+`;
+      const ticketPath = writeTicket(cwd, "task", "Beta - PROJ-2.md", body);
+      const resolved = resolveViewPath("PROJ-2", { cwd });
+      assert.equal(resolved, ticketPath);
+      const code = runViewCommand(
+        ["node", "jira", "view", "https://example.atlassian.net/browse/PROJ-2"],
+        {
+          cwd,
+          openEditor: () => 0
+        }
+      );
+      assert.equal(code, 0);
+    });
+  });
+
+  it("rejects json mode because view is user-only", () => {
+    withTempDir((cwd) => {
+      const body = `---
+title: "Gamma"
+assigned: "Ada"
+feature_team: "None"
+type: "Task"
+url: https://example.atlassian.net/browse/PROJ-3
+status: todo
+created: ""
+updated: ""
+---
+
+Body.
+`;
+      writeTicket(cwd, "task", "Gamma - PROJ-3.md", body);
+      const code = runViewCommand(["node", "jira", "view", "PROJ-3"], {
+        cwd,
+        outputMode: "json"
+      });
+      assert.equal(code, 1);
     });
   });
 });
