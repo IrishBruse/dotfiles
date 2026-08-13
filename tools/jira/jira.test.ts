@@ -765,10 +765,9 @@ describe("board content", () => {
       content.sections.myTickets.statuses.todo[0]?.stageSince,
       "2026-07-14T12:00:00.000Z"
     );
-    const nowMs = Date.parse("2026-07-17T12:00:00.000Z");
-    const md = formatBoardPlainText(content, nowMs);
-    assert.match(md, /PROJ-1  Todo         3d  Mine/);
-    assert.match(md, /PROJ-2  In progress  16d  Bob  Theirs/);
+    const md = formatBoardPlainText(content);
+    assert.match(md, /PROJ-1\tTodo\tMine/);
+    assert.match(md, /PROJ-2\tIn progress\tBob\tTheirs/);
     assert.match(md, /^Teammates$/m);
   });
 
@@ -1017,7 +1016,7 @@ describe("writeBoardCache", () => {
       assert.deepEqual(readBoardCache(home)?.syncedAt, "2026-07-17T12:00:00.000Z");
       const md = formatBoardPlainText(content);
       assert.doesNotMatch(md, /Last synced:/);
-      assert.match(md, /PROJ-1  Todo         -   Alpha/);
+      assert.match(md, /PROJ-1\tTodo\tAlpha/);
       assert.doesNotMatch(md, /references\//);
     });
   });
@@ -1484,9 +1483,9 @@ describe("jira info", () => {
     assert.match(text, /^sprintName: Sprint 12$/m);
     assert.match(text, /^sprintDates: 2026-07-01 to 2026-07-14$/m);
     assert.match(text, /^storyPointsField: customfield_10023$/m);
-    assert.match(text, /^localTickets: 4$/m);
-    assert.match(text, /^story: TEAM-1 TEAM-2$/m);
-    assert.match(text, /^task: TEAM-3 TEAM-4$/m);
+    assert.doesNotMatch(text, /^localTickets:/m);
+    assert.doesNotMatch(text, /^story:/m);
+    assert.doesNotMatch(text, /^task:/m);
     assert.doesNotMatch(text, /^statuses:/m);
     assert.doesNotMatch(text, /^linkTypes:/m);
     assert.match(text, /^boardId: 42$/m);
@@ -1524,7 +1523,7 @@ describe("jira info", () => {
       sprints: [],
       localTickets: { count: 0, byType: [] }
     });
-    assert.match(text, /^localTickets: 0$/m);
+    assert.doesNotMatch(text, /^localTickets:/m);
     assert.doesNotMatch(text, /^story:/m);
     assert.match(text, /^storyPointsField: customfield_10023$/m);
   });
@@ -1629,7 +1628,7 @@ describe("jira info", () => {
       assert.match(out, /^featureTeamField: /m);
       assert.match(out, /^cloudId: /m);
       assert.match(out, /^boardId: /m);
-      assert.match(out, /^localTickets: 0$/m);
+      assert.doesNotMatch(out, /^localTickets:/m);
       assert.match(out, /^board: \(run jira sync\)$/m);
       assert.doesNotMatch(out, /Jira workspace/);
       assert.doesNotMatch(out, /\n\nBoard:\n/);
@@ -1753,7 +1752,7 @@ describe("jira info", () => {
       writeBoardCache(content, home);
       const out = captureStdout(() => runInfoCommand(HUMAN_OUTPUT, home));
       assert.match(out, /^cloudId: /m);
-      assert.match(out, /PROJ-1  Todo         -   Mine/);
+      assert.match(out, /PROJ-1\tTodo\tMine/);
       assert.doesNotMatch(out, /PROJ-2/);
       assert.doesNotMatch(out, /^Teammates$/m);
     });
@@ -2272,8 +2271,8 @@ describe("jira board command", () => {
       const out = captureStdout(() =>
         runBoardCommand({ outputMode: "human" }, home)
       );
-      assert.match(out, /PROJ-1  Todo         -   Mine/);
-      assert.match(out, /PROJ-2  Todo         -   Bob  Theirs/);
+      assert.match(out, /PROJ-1\tTodo\tMine/);
+      assert.match(out, /PROJ-2\tTodo\tBob\tTheirs/);
       assert.match(out, /^Teammates$/m);
     });
   });

@@ -46,7 +46,7 @@ Write:
 
 Other:
   jira -h, --help      Print this help
-  --json               Optional JSON {success, data, error} (prefer plain output)
+  --json               JSON {success, data, error} for chaining (prefer plain for reads)
 
 Flags:
   show --remote              Force live fetch

@@ -302,19 +302,8 @@ export function formatJiraInfoPlainText(info: JiraInfo): string {
     ),
     formatScalar("epicLinkField", info.epicLinkField),
     formatScalar("sprintField", info.sprintField),
-    formatScalar("storyPointsField", info.storyPointsField),
-    ...formatLocalTicketLines(info.localTickets)
+    formatScalar("storyPointsField", info.storyPointsField)
   ];
 
   return `${lines.join("\n")}\n`;
-}
-
-function formatLocalTicketLines(
-  localTickets: LocalTicketsSummary
-): string[] {
-  const lines = [formatScalar("localTickets", localTickets.count)];
-  for (const group of localTickets.byType) {
-    lines.push(`${group.typeDir}: ${group.keys.join(" ")}`);
-  }
-  return lines;
 }
