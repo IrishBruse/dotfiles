@@ -6,6 +6,15 @@ import process from "node:process";
 import { before, describe, it } from "node:test";
 
 import { setJiraConfigPathForTests } from "./lib/CONFIG.ts";
+import {
+  appendJiraCommandLog,
+  formatJiraCommandLine,
+  formatJiraCommandLogEntry,
+  jiraCommandLogPath,
+  localDateYmd,
+  noteJiraCommandError,
+  resetJiraCommandLogSession
+} from "./lib/command-log.ts";
 
 const FIXTURE_CONFIG = path.join(
   path.dirname(new URL(import.meta.url).pathname),
@@ -41,6 +50,9 @@ import { runAcliPassthroughCommand } from "./commands/other/acli.ts";
 import { runInfoCommand } from "./commands/workspace/info.ts";
 import { printHelp } from "./commands/help.ts";
 import {
+  buildSearchResult,
+  compactSearchHits,
+  formatSearchPlainText,
   freeTextToJql,
   looksLikeJql,
   normalizeSearchJql,
@@ -1959,6 +1971,64 @@ Local body.
     });
   });
 
+  it("compacts search hits without description ADF", () => {
+    const hits = compactSearchHits([
+      {
+        key: "PROJ-1",
+        fields: {
+          summary: "Module load error",
+          issuetype: { name: "Bug" },
+          status: { name: "To Do" },
+          assignee: { displayName: "Ada" },
+          description: {
+            type: "doc",
+            content: [{ type: "paragraph", content: [{ type: "text", text: "huge" }] }]
+          }
+        }
+      },
+      { key: "PROJ-2", fields: { summary: "Unassigned task", issuetype: { name: "Task" } } }
+    ]);
+    assert.deepEqual(hits, [
+      {
+        key: "PROJ-1",
+        summary: "Module load error",
+        type: "Bug",
+        status: "To Do",
+        assignee: "Ada"
+      },
+      {
+        key: "PROJ-2",
+        summary: "Unassigned task",
+        type: "Task",
+        status: "Unknown",
+        assignee: "Unassigned"
+      }
+    ]);
+    assert.equal(JSON.stringify(hits).includes("huge"), false);
+  });
+
+  it("formats compact search plain text with progressive disclosure hint", () => {
+    const result = buildSearchResult({
+      jql: "project = PROJ",
+      limit: 20,
+      data: [
+        {
+          key: "PROJ-1",
+          fields: {
+            summary: "Fix load",
+            issuetype: { name: "Bug" },
+            status: { name: "In Progress" },
+            assignee: null
+          }
+        }
+      ]
+    });
+    const text = formatSearchPlainText(result);
+    assert.match(text, /^PROJ-1\tBug\tIn Progress\tUnassigned\tFix load$/m);
+    assert.match(text, /1 issue\(s\)\. Use jira show KEY for full ticket markdown/);
+    assert.equal(result.hint.includes("jira show KEY"), true);
+  });
+
   it("rejects comment without a body", () => {
     const code = runCommentCommand(["node", "jira", "comment", "PROJ-1"]);
     assert.equal(code, 1);
@@ -2138,5 +2208,70 @@ describe("sync summary formatting", () => {
     const text = formatSyncSummaryHuman(summary);
     assert.match(text, /Fetched 3 issue/);
     assert.match(text, /Cache: \/tmp\/board\.json/);
+  });
+});
+
+describe("command log", () => {
+  it("formats argv as a jira command line", () => {
+    assert.equal(
+      formatJiraCommandLine(["node", "jira", "show", "PROJ-1", "--json"]),
+      "jira show PROJ-1 --json"
+    );
+    assert.equal(
+      formatJiraCommandLine(["node", "/bin/jira", "search", "project = X"]),
+      'jira search "project = X"'
+    );
+  });
+
+  it("formats log entries with command args and errors only", () => {
+    const at = new Date("2026-08-13T12:34:56.789Z");
+    assert.equal(
+      formatJiraCommandLogEntry({
+        argv: ["node", "jira", "show", "PROJ-1"],
+        exitCode: 0,
+        at
+      }),
+      "2026-08-13T12:34:56.789Z\texit=0\tjira show PROJ-1\n"
+    );
+    assert.equal(
+      formatJiraCommandLogEntry({
+        argv: ["node", "jira", "search"],
+        exitCode: 1,
+        errors: ["search: missing JQL query"],
+        at
+      }),
+      "2026-08-13T12:34:56.789Z\texit=1\tjira search\n  error: search: missing JQL query\n"
+    );
+  });
+
+  it("appends to daily files under ~/jira/logs", () => {
+    withTempDir((cwd) => {
+      const at = new Date(2026, 7, 13, 12, 0, 0);
+      assert.equal(localDateYmd(at), "2026-08-13");
+      assert.equal(
+        jiraCommandLogPath(cwd, at),
+        path.join(cwd, "jira", "logs", "2026-08-13.log")
+      );
+
+      appendJiraCommandLog({
+        argv: ["node", "jira", "info"],
+        exitCode: 0,
+        at,
+        baseDir: cwd
+      });
+      resetJiraCommandLogSession();
+      noteJiraCommandError("search: missing JQL query");
+      appendJiraCommandLog({
+        argv: ["node", "jira", "search"],
+        exitCode: 1,
+        at,
+        baseDir: cwd
+      });
+
+      const logPath = jiraCommandLogPath(cwd, at);
+      const text = fs.readFileSync(logPath, "utf-8");
+      assert.match(text, /\texit=0\tjira info\n/);
+      assert.match(text, /\texit=1\tjira search\n  error: search: missing JQL query\n$/);
+    });
   });
 });

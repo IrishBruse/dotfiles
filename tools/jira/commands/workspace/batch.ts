@@ -11,13 +11,17 @@ import {
 } from "../../lib/acli-jira.ts";
 import { flagBool, flagString, parseSubcommandArgv } from "../../lib/argv.ts";
 import { configuredProject } from "../../lib/CONFIG.ts";
-import { JIRA_SEARCH_FIELDS } from "../../lib/format.ts";
+import {
+  JIRA_SEARCH_DEFAULT_LIMIT,
+  JIRA_SEARCH_LIST_FIELDS
+} from "../../lib/format.ts";
 import { gatherBoardCache } from "./board.ts";
 import { gatherJiraInfoJson } from "../../lib/info.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { failCommand, printJsonSuccess } from "../../lib/output.ts";
 import { resolveShow } from "../read/show.ts";
+import { buildSearchResult, normalizeSearchJql } from "../read/search.ts";
 
 const ALLOWED_BATCH_COMMANDS = new Set([
   "show",
@@ -125,15 +129,36 @@ function runBatchItem(itemArgv: string[]): {
       case "search": {
         const fullArgv = ["node", "jira", ...itemArgv];
         const parsed = parseSubcommandArgv(fullArgv, 3);
-        const jql = parsed.positional[0]?.trim() ?? "";
-        if (!jql) {
+        const raw = parsed.positional[0]?.trim() ?? "";
+        if (!raw) {
           return { success: false, data: null, error: "search: missing JQL query" };
         }
-        const fields = flagString(parsed.flags, "fields", JIRA_SEARCH_FIELDS);
-        const paginate = !flagBool(parsed.flags, "no-paginate");
+        const { jql } = normalizeSearchJql(raw);
+        const fields = flagString(parsed.flags, "fields", JIRA_SEARCH_LIST_FIELDS);
+        const rawOutput = flagBool(parsed.flags, "raw");
+        const paginate = flagBool(parsed.flags, "paginate");
+        const limitRaw = flagString(parsed.flags, "limit");
+        let limit: number | null = paginate ? null : JIRA_SEARCH_DEFAULT_LIMIT;
+        if (limitRaw) {
+          const n = Number.parseInt(limitRaw, 10);
+          if (!Number.isFinite(n) || n <= 0) {
+            return {
+              success: false,
+              data: null,
+              error: "search: --limit must be a positive integer"
+            };
+          }
+          limit = n;
+        }
+        const data = searchWorkitems({
+          jql,
+          fields,
+          paginate,
+          limit: limit ?? undefined
+        });
         return {
           success: true,
-          data: searchWorkitems({ jql, fields, paginate }),
+          data: rawOutput ? data : buildSearchResult({ jql, data, limit }),
           error: null
         };
       }

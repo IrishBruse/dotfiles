@@ -23,8 +23,9 @@ Workspace:
 
 Read:
   jira show KEY|URL    Print markdown and refresh ~/jira when needed
-  jira search <jql>    Search issues (JSON). Bare words are rewritten
-                       to project + text ~ JQL for the configured project.
+  jira search <jql>    Compact issue list (key/type/status/assignee/summary).
+                       Bare words become project + text ~ JQL.
+                       Use jira show KEY for full ticket bodies.
   jira projects        List projects (JSON)
   jira types           List issue types (JSON)
 
@@ -48,6 +49,10 @@ Flags:
   show --remote              Force live fetch
   show --local               Use the local copy even when stale
   show --fields LIST         Live fetch with selected fields
+  search --limit N           Max issues (default 20)
+  search --paginate          Fetch all matching issues
+  search --fields LIST       Override list fields (default omits description)
+  search --raw               Full acli JSON (large; avoid for agents)
   create --type T --summary TEXT
                              [--parent KEY] [--sprint ID]
                              [--story-points N] [--field id=value]
@@ -60,10 +65,13 @@ Flags:
 
 Config: ~/.config/jira/config.json
 Caches: ~/.config/jira/board.json, info.json
+Logs: ~/jira/logs/YYYY-MM-DD.log (command args and errors)
 Tickets: ~/jira/<type>/<title> - <KEY>.md
 info --json: JiraInfo + board cache (same board as jira board --json)
 show: local copy older than 1 day is refetched into ~/jira; stale copy is
       used only when the fetch fails
+search: compact hits by default; jira show KEY for description/AC
 batch show: { source, key, markdown } (not raw ADF)
+batch search: compact { jql, count, limit, issues, hint } unless --raw
 `);
 }

@@ -21,22 +21,26 @@ import { runEditCommand } from "./commands/write/edit.ts";
 import { runLinkCommand } from "./commands/write/link.ts";
 import { runTransitionCommand } from "./commands/write/transition.ts";
 import { printHelp } from "./commands/help.ts";
+import {
+  appendJiraCommandLog,
+  resetJiraCommandLogSession
+} from "./lib/command-log.ts";
 import { parseJiraKey } from "./lib/jiraInput.ts";
 import { parseGlobalFlags, type CommandOptions } from "./lib/output-mode.ts";
 import { failCommand } from "./lib/output.ts";
 
-export async function main(argv: string[] = process.argv): Promise<void> {
+/** Run one jira CLI invocation and return its exit code. */
+export async function runJiraCli(argv: string[]): Promise<number> {
   const { argv: cleaned, outputMode } = parseGlobalFlags(argv);
   const opts: CommandOptions = { outputMode };
   const arg = cleaned[2];
   if (arg === "-h" || arg === "--help" || !arg) {
     printHelp();
-    return;
+    return 0;
   }
 
   if (arg === "board") {
-    process.exit(runBoardCommand(opts));
-    return;
+    return runBoardCommand(opts);
   }
 
   const subcommands: Record<string, () => number | Promise<number>> = {
@@ -67,14 +71,12 @@ export async function main(argv: string[] = process.argv): Promise<void> {
         "note: `jira issue` is not a command, using `jira show` instead\n"
       );
     }
-    process.exit(await handler());
-    return;
+    return handler();
   }
 
   const key = parseJiraKey(arg);
   if (key) {
-    process.exit(await runPullTicket(key, { outputMode }));
-    return;
+    return runPullTicket(key, { outputMode });
   }
 
   failCommand(
@@ -84,7 +86,22 @@ export async function main(argv: string[] = process.argv): Promise<void> {
   if (outputMode === "human") {
     printHelp();
   }
-  process.exit(1);
+  return 1;
+}
+
+export async function main(argv: string[] = process.argv): Promise<void> {
+  resetJiraCommandLogSession();
+  let exitCode = 0;
+  try {
+    exitCode = await runJiraCli(argv);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    failCommand(msg, "human");
+    exitCode = 1;
+  } finally {
+    appendJiraCommandLog({ argv, exitCode });
+  }
+  process.exit(exitCode);
 }
 
 /** `jira issue KEY ...` → argv shaped like `jira show KEY ...`. */
@@ -94,8 +111,4 @@ function rewriteIssueAliasArgv(argv: string[]): string[] {
   return next;
 }
 
-main().catch((e) => {
-  const msg = e instanceof Error ? e.message : String(e);
-  failCommand(msg, "human");
-  process.exit(1);
-});
+main();

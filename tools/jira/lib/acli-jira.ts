@@ -75,11 +75,12 @@ export type SearchWorkitemsOptions = {
   jql: string;
   fields: string;
   paginate?: boolean;
+  /** Max issues to fetch. Ignored when `paginate` is true unless acli still accepts both. */
+  limit?: number;
   acli?: string;
 };
 
-/** Search work items via `jira workitem search`. */
-export function searchWorkitems(options: SearchWorkitemsOptions): unknown {
+function searchWorkitemArgs(options: SearchWorkitemsOptions): string[] {
   const args = [
     "workitem",
     "search",
@@ -91,27 +92,22 @@ export function searchWorkitems(options: SearchWorkitemsOptions): unknown {
   ];
   if (options.paginate) {
     args.push("--paginate");
+  } else if (options.limit != null && options.limit > 0) {
+    args.push("--limit", String(options.limit));
   }
-  return runJiraAcliJson(args, options.acli);
+  return args;
+}
+
+/** Search work items via `jira workitem search`. */
+export function searchWorkitems(options: SearchWorkitemsOptions): unknown {
+  return runJiraAcliJson(searchWorkitemArgs(options), options.acli);
 }
 
 /** Async `searchWorkitems`. */
 export async function searchWorkitemsAsync(
   options: SearchWorkitemsOptions
 ): Promise<unknown> {
-  const args = [
-    "workitem",
-    "search",
-    "--jql",
-    options.jql,
-    "--fields",
-    options.fields,
-    "--json"
-  ];
-  if (options.paginate) {
-    args.push("--paginate");
-  }
-  return runJiraAcliJsonAsync(args, options.acli);
+  return runJiraAcliJsonAsync(searchWorkitemArgs(options), options.acli);
 }
 
 export type CreateWorkitemOptions = {

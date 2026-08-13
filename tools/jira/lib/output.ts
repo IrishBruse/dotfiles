@@ -8,6 +8,7 @@ import {
 import type { ChildIssue, PullChangeStatus } from "./types.ts";
 import type { JiraResult, OutputMode } from "./output-mode.ts";
 import type { PaintRole } from "../../dotfiles/api.ts";
+import { noteJiraCommandError } from "./command-log.ts";
 
 export function printJsonSuccess<T>(data: T): void {
   const envelope: JiraResult<T> = {
@@ -34,17 +35,23 @@ export function failCommand(
   mode: OutputMode,
   code?: string
 ): number {
+  noteJiraCommandError(msg);
   if (mode === "json") {
     printJsonError(msg, code);
   } else {
-    printError(msg);
+    writeError(msg);
   }
   return 1;
 }
 
-export function printError(msg: string): void {
+function writeError(msg: string): void {
   const c = stderrColorEnabled();
   process.stderr.write(`${paint(c, "bad", "error")}: ${msg}\n`);
+}
+
+export function printError(msg: string): void {
+  noteJiraCommandError(msg);
+  writeError(msg);
 }
 
 const PULL_STATUS_MARK: Record<

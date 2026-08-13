@@ -1,12 +1,22 @@
 /**
- * `jira search` -- JQL search with JSON output.
+ * `jira search` -- JQL search with compact agent-friendly output.
+ *
+ * Progressive disclosure: list key/summary/type/status/assignee here.
+ * Use `jira show KEY` for full ticket markdown (description, AC, etc.).
  */
 import process from "node:process";
 
 import { searchWorkitems } from "../../lib/acli-jira.ts";
 import { flagBool, flagString, parseSubcommandArgv } from "../../lib/argv.ts";
 import { configuredProject } from "../../lib/CONFIG.ts";
-import { JIRA_SEARCH_FIELDS } from "../../lib/format.ts";
+import {
+  assigneeLabel,
+  assigneeRecord,
+  issueTypeName,
+  JIRA_SEARCH_DEFAULT_LIMIT,
+  JIRA_SEARCH_LIST_FIELDS,
+  statusNameFromFields
+} from "../../lib/format.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { failCommand, printJsonSuccess } from "../../lib/output.ts";
@@ -38,7 +48,106 @@ export function normalizeSearchJql(query: string): {
   return { jql: freeTextToJql(query), rewritten: true };
 }
 
-/** Run `jira search "<jql>" [--fields ...] [--format text]`. */
+/** One compact search hit for agents (no ADF description). */
+export type SearchHit = {
+  key: string;
+  summary: string;
+  type: string;
+  status: string;
+  assignee: string;
+};
+
+/** Compact search payload returned by default and `--json`. */
+export type SearchResult = {
+  jql: string;
+  count: number;
+  limit: number | null;
+  issues: SearchHit[];
+  hint: string;
+};
+
+const SEARCH_HINT = "Use jira show KEY for full ticket markdown";
+
+function issueFields(issue: unknown): Record<string, unknown> {
+  if (!issue || typeof issue !== "object") return {};
+  const fields = (issue as { fields?: unknown }).fields;
+  return fields && typeof fields === "object" && !Array.isArray(fields)
+    ? (fields as Record<string, unknown>)
+    : {};
+}
+
+/** Flatten raw acli search rows into compact hits. */
+export function compactSearchHits(data: unknown): SearchHit[] {
+  if (!Array.isArray(data)) return [];
+  const hits: SearchHit[] = [];
+  for (const issue of data) {
+    if (!issue || typeof issue !== "object") continue;
+    const key = (issue as { key?: unknown }).key;
+    if (typeof key !== "string" || !key) continue;
+    const fields = issueFields(issue);
+    const summary =
+      typeof fields.summary === "string" ? fields.summary.trim() : key;
+    hits.push({
+      key,
+      summary,
+      type: issueTypeName(fields),
+      status: statusNameFromFields(fields) || "Unknown",
+      assignee: assigneeLabel(assigneeRecord(fields.assignee))
+    });
+  }
+  return hits;
+}
+
+/** Build the compact search result envelope. */
+export function buildSearchResult(options: {
+  jql: string;
+  data: unknown;
+  limit: number | null;
+}): SearchResult {
+  const issues = compactSearchHits(options.data);
+  return {
+    jql: options.jql,
+    count: issues.length,
+    limit: options.limit,
+    issues,
+    hint: SEARCH_HINT
+  };
+}
+
+/** Human one-line listing for progressive disclosure. */
+export function formatSearchPlainText(result: SearchResult): string {
+  if (result.count === 0) {
+    return `0 issue(s) for: ${result.jql}\n`;
+  }
+  const lines = result.issues.map(
+    (hit) =>
+      `${hit.key}\t${hit.type}\t${hit.status}\t${hit.assignee}\t${hit.summary}`
+  );
+  lines.push(`${result.count} issue(s). ${result.hint}.`);
+  return `${lines.join("\n")}\n`;
+}
+
+function resolveSearchLimit(flags: Map<string, string | boolean>): {
+  limit: number | null;
+  paginate: boolean;
+} {
+  const paginate = flagBool(flags, "paginate");
+  if (paginate) {
+    return { limit: null, paginate: true };
+  }
+  const raw = flagString(flags, "limit");
+  if (raw) {
+    const n = Number.parseInt(raw, 10);
+    if (!Number.isFinite(n) || n <= 0) {
+      throw new Error("search: --limit must be a positive integer");
+    }
+    return { limit: n, paginate: false };
+  }
+  // Default: bounded list. --no-paginate alone still uses the default limit.
+  return { limit: JIRA_SEARCH_DEFAULT_LIMIT, paginate: false };
+}
+
+/** Run `jira search "<jql>" [--limit N] [--fields ...] [--raw] [--paginate]`. */
 export function runSearchCommand(
   argv: string[],
   options: CommandOptions = HUMAN_OUTPUT
@@ -59,21 +168,39 @@ export function runSearchCommand(
     );
   }
 
-  const fields = flagString(parsed.flags, "fields", JIRA_SEARCH_FIELDS);
-  const paginate = !flagBool(parsed.flags, "no-paginate");
-  const formatText = parsed.flags.get("format") === "text";
+  const fields = flagString(parsed.flags, "fields", JIRA_SEARCH_LIST_FIELDS);
+  const rawOutput = flagBool(parsed.flags, "raw");
+  let limit: number | null;
+  let paginate: boolean;
+  try {
+    ({ limit, paginate } = resolveSearchLimit(parsed.flags));
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return failCommand(msg, options.outputMode);
+  }
 
   try {
-    const data = searchWorkitems({ jql, fields, paginate });
-    if (isJsonMode(options)) {
-      printJsonSuccess(data);
+    const data = searchWorkitems({
+      jql,
+      fields,
+      paginate,
+      limit: limit ?? undefined
+    });
+    if (rawOutput) {
+      if (isJsonMode(options)) {
+        printJsonSuccess(data);
+      } else {
+        process.stdout.write(`${JSON.stringify(data)}\n`);
+      }
       return 0;
     }
-    if (formatText) {
-      process.stdout.write(`${JSON.stringify(data, null, 2)}\n`);
-    } else {
-      process.stdout.write(`${JSON.stringify(data)}\n`);
+
+    const result = buildSearchResult({ jql, data, limit });
+    if (isJsonMode(options)) {
+      printJsonSuccess(result);
+      return 0;
     }
+    process.stdout.write(formatSearchPlainText(result));
     return 0;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);

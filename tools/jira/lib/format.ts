@@ -18,6 +18,16 @@ export function epicLinkFieldId(): string {
 export const JIRA_SEARCH_FIELDS =
   "key,summary,assignee,issuetype,description,status";
 
+/**
+ * Default fields for `jira search` list output.
+ * Omits description (ADF) so agents stay on progressive disclosure: list here, `jira show KEY` for body.
+ */
+export const JIRA_SEARCH_LIST_FIELDS =
+  "key,summary,assignee,issuetype,status";
+
+/** Default max issues for `jira search` unless `--limit` or `--paginate` is set. */
+export const JIRA_SEARCH_DEFAULT_LIMIT = 20;
+
 /** Fields returned by `acli jira workitem view` but not search. */
 export function jiraViewExtraFields(): string {
   const config = loadJiraConfig();
