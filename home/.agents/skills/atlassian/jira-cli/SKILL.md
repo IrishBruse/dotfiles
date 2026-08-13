@@ -18,7 +18,7 @@ On auth failure, stop and ask.
 
 | Intent | Command |
 | --- | --- |
-| Read only (print markdown) | `jira show KEY` |
+| Read only (print markdown, auto-refreshes) | `jira show KEY` |
 | Cache to disk under `~/jira` | `jira pull KEY` or bare `jira KEY` |
 | Publish local summary/description | `jira push KEY` (after gate Approve) |
 
@@ -28,27 +28,30 @@ Bare `jira KEY` **writes** the ticket under `~/jira`. It is not a view alias. Us
 
 When `~/jira` has pulled tickets, local markdown is the ticket surface:
 
-1. `jira pull KEY` when missing or stale (see below), else `jira show KEY`
+1. `jira show KEY` to read. Use `jira pull KEY` only when you must edit the file on disk.
    **Done when:** the ticket markdown is in hand for this turn.
 2. Edit summary/description in that file (`title` in frontmatter + body).
    **Done when:** the file matches the intended change.
 3. After the `jira` skill gate Approve: `jira push KEY`
    **Done when:** push succeeds (push refreshes the file from Jira).
 
-`jira show` prints the local copy when it exists.
-Use `jira show KEY --remote` (or `--fields`) for a live fetch without writing disk.
 `jira push` syncs **summary** and **description** only.
 Status, comments, links, labels, and custom fields use the CLI writes below, then `jira pull KEY`.
 
-Without `~/jira`, `jira show` fetches live, or `jira pull KEY` first to start this loop.
+### One call per read
 
-### Stale local files
+`jira show KEY` picks the source itself, so one call is always enough:
 
-`~/jira` is a global cache. Before trusting a local copy for edits or decisions:
+- Local copy newer than **1 day**: printed from `~/jira`.
+- Local copy missing or older than 1 day: fetched live.
+- Live fetch fails: the stale local copy is printed as a fallback.
 
-1. Read frontmatter `updated`.
-2. If `updated` is missing, unparseable, or older than **1 day**, run `jira pull KEY` and use the refreshed file.
-3. If you already know the remote changed (comment, transition, someone else edited), pull even when younger than 1 day.
+Do not follow a `show` with a second `show --remote`.
+Add `--remote` only to force a live fetch when you know the remote changed this turn.
+Add `--local` to accept a stale local copy without any fetch.
+`--json` output carries `source` (`local` or `remote`) and `stale`.
+
+Before editing a pulled file, run `jira pull KEY` so the file on disk matches Jira.
 
 ## Orientation (every Jira session)
 
@@ -59,9 +62,19 @@ Without `~/jira`, `jira show` fetches live, or `jira pull KEY` first to start th
 2. `jira board` (optional)
    **Done when:** you only want the human full-board text dump (`info --json` already includes `board`).
 
-One-shot structured reads: `jira info --json`, or `jira batch --json` with `[["info"],["show","KEY"],...]`.
+One-shot structured reads: `jira info --json`, or
+`jira batch --json '[["info"],["show","KEY"]]'` (JSON array as an argument, a file path, `--file`, or stdin).
 Batch `info` matches `jira info --json` (includes `board`).
 Batch `show` returns `{ source, key, markdown }` (same markdown as `jira show`), not raw ADF.
+
+### Optimize calls
+
+- Prefer one `jira info` / `info --json` per session, then reuse it.
+- Prefer `jira batch --json` over a chain of separate `show` / `search` processes.
+- Prefer one `jira show KEY` per ticket. It already falls back to a live fetch, so do not retry with `--remote`.
+- Prefer `jira show KEY` for a known key. Do not parse a large search payload to read one ticket.
+- Prefer narrow JQL, `--limit`, and `--fields`. Avoid dumping full ADF into context.
+- After create/push (which refresh local files), do not immediately re-show unless needed.
 
 Verify with `jira doctor --json` when setup looks wrong.
 
@@ -69,8 +82,9 @@ Verify with `jira doctor --json` when setup looks wrong.
 
 | Need | Use |
 | --- | --- |
-| One issue | `jira show KEY` (local `~/jira` copy when present, else live markdown) |
-| Refresh one issue | `jira show KEY --remote` or `jira pull KEY` |
+| One issue | `jira show KEY` (fresh local copy, else live markdown) |
+| Force a live read | `jira show KEY --remote` |
+| Refresh the file on disk | `jira pull KEY` |
 | One issue to disk | `jira pull KEY` (or bare `jira KEY`) |
 | JQL | `jira search "..."` |
 | My tickets / unassigned | `jira info` (plain) or `jira info --json` → `board.sections` |
@@ -167,8 +181,9 @@ For a known key, use `jira show KEY` to read, or `jira pull KEY` / `jira KEY` to
 
 ```sh
 jira <KEY|URL> | jira pull [KEY] | jira push [KEY]
-jira sync | jira board | jira info | jira doctor | jira batch
-jira show KEY [--remote] | jira search "..." | jira projects | jira types
+jira sync | jira board | jira info | jira doctor
+jira batch '[["info"],["show","KEY"]]' [--file PATH] [--stop-on-error]
+jira show KEY [--remote] [--local] | jira search "..." | jira projects | jira types
 jira create --type T --summary "..." [--parent KEY] [--sprint ID] [--story-points N] [--field id=value] [--from-draft path]
 jira edit KEY [--summary ...] [--description-file ...] [--labels ...] [--field id=value]
 jira transition KEY [Status]
