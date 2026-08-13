@@ -32,4 +32,6 @@ folder: top-level `_command/<skill>` for meta skills, or
 `<category>/_command/<skill>` when they belong to a domain category.
 Nesting can be deeper, discovery walks until it finds a `SKILL.md`.
 
-`jira` skill should not reference mcp or clis keep it generic in its content.
+**Hard rule:** the `jira` skill (`home/.agents/skills/atlassian/jira/`) must stay generic.
+Do not mention the `jira` CLI, `acli`, Atlassian MCP, or any other CLI or MCP in that skill or its references.
+CLI and MCP usage belongs in other skills and rules (`jira-cli`, workspace rules). Keep `/jira` skill routes and `~/jira` local paths.
