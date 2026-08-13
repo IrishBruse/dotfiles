@@ -37,7 +37,6 @@ State assumptions in chat when the best guess is uncertain.
 
 - **Pull The Ticket Locally First**
 - Research depth appropriate to the request
-- `jira` CLI conventions from the parent skill
 - Route writing rules and templates
 - Stop on auth failure
 - Do not create Spikes unless the user explicitly requests them, even in auto mode

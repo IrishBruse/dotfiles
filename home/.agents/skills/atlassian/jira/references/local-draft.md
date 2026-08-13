@@ -1,6 +1,6 @@
 # Local Draft
 
-Save drafts under `~/jira/<type>/` (same layout as `jira pull`).
+Save drafts under `~/jira/<type>/`.
 
 ## Persist rules
 

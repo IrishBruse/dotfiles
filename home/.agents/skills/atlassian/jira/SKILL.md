@@ -17,29 +17,6 @@ It recommends a path, asks the user to choose a route with `AskQuestion`, then r
 Before Jira legwork, read the workspace context: configured project, board data (current sprints, ticket counts), and local ticket count.
 Refresh sprint and board data when it is missing or stale.
 
-## CLI Call Optimization
-
-Prefer the `jira` CLI. Minimize round trips and payload size.
-
-- Prefer plain CLI output over `--json`. Default text is smaller than the `{success, data, error}` envelope.
-- Run `jira info` **once** per session unless sprint or board data is missing or stale.
-  Do not re-run it before every create or show.
-  Use `jira board` for the full cached board. Use `--json` only when you must parse structured fields.
-- Read a known key with one `jira show KEY`. It prints a fresh local `~/jira` file and
-  fetches live when that file is missing or stale, so never retry the same key with `--remote`.
-- Prefer separate plain commands (`jira info`, `jira show KEY`, `jira search "..."`) over `jira batch --json`.
-  Use batch only when many reads in one process are worth the JSON envelope.
-- Prefer `jira show KEY` markdown for a single known key.
-  Do not fetch full search JSON and parse it for one ticket.
-- Prefer `jira search` for discovery only. It returns a compact hit list by default.
-  Use `jira show KEY` for ticket bodies. Avoid `search --raw` and `search --json`.
-- Keep JQL narrow and use `--limit` (default 20). Prefer `--fields` only when needed.
-  Do not dump large ADF or search payloads into context.
-- After `jira create --from-draft` or `jira push`, use the pulled local file.
-  Do not immediately re-show or re-pull unless the write left fields that still need a live check.
-- Parallel Shell is fine for non-CLI work (GitHub, local files).
-  For Jira reads, prefer plain CLI commands over batch `--json`.
-
 ## Pull The Ticket Locally First
 
 Whenever the input includes a Jira key or URL that you will inspect, work on, or update, ensure a local copy exists under `~/jira/<type>/`.
@@ -251,7 +228,7 @@ Skip this section in auto mode. Read [`references/auto/auto.md`](references/auto
 This gate is the **only** way to perform any remote Jira write in this skill.
 A remote Jira write is any create, edit, reparent, transition, close, link, comment, or publish action against Jira.
 No route, subcommand, prior message, selected option, or silence may substitute for it.
-If this gate has not been answered with its approve option for the exact change shown, do not call any Jira write tool.
+If this gate has not been answered with its approve option for the exact change shown, do not perform any remote Jira write.
 
 Steps, in order:
 
