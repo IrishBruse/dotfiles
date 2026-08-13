@@ -78,6 +78,16 @@ Batch `show` returns `{ source, key, markdown }` (same markdown as `jira show`),
 
 Verify with `jira doctor --json` when setup looks wrong.
 
+### PR title lookup
+
+The `pr` skill resolves title keys with bounded reads:
+
+1. Use `jira info` only to select a candidate from My tickets or Unassigned.
+2. Use `jira show KEY` once to validate the selected ticket and its status.
+3. Do not use `jira pull`, bare `jira KEY`, `acli`, or Atlassian MCP for this lookup.
+
+`jira show KEY` fetches live when no fresh local mirror exists. Do not retry it with `--remote`.
+
 ## Reads
 
 | Need | Use |
