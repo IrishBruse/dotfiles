@@ -22,7 +22,7 @@ Workspace:
   jira batch [JSON]    Run read-only commands from JSON
 
 Read:
-  jira show KEY|URL    Fresh local copy, else live markdown
+  jira show KEY|URL    Print markdown and refresh ~/jira when needed
   jira search <jql>    Search issues (JSON). Bare words are rewritten
                        to project + text ~ JQL for the configured project.
   jira projects        List projects (JSON)
@@ -62,8 +62,8 @@ Config: ~/.config/jira/config.json
 Caches: ~/.config/jira/board.json, info.json
 Tickets: ~/jira/<type>/<title> - <KEY>.md
 info --json: JiraInfo + board cache (same board as jira board --json)
-show: local copy older than 1 day is refetched; stale copy is used only
-      when the fetch fails
+show: local copy older than 1 day is refetched into ~/jira; stale copy is
+      used only when the fetch fails
 batch show: { source, key, markdown } (not raw ADF)
 `);
 }

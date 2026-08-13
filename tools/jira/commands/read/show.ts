@@ -1,5 +1,5 @@
 /**
- * `jira show` -- print one issue as markdown (local `~/jira` copy when present).
+ * `jira show` -- print one issue as markdown and keep a `~/jira` copy current.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -12,6 +12,7 @@ import { CONFIG } from "../../lib/CONFIG.ts";
 import { formatTicketMarkdown, jiraPullFields, normalizeSiteHost } from "../../lib/format.ts";
 import { parseJiraKey } from "../../lib/jiraInput.ts";
 import { localTicketPath } from "../../lib/local.ts";
+import { pullTicketWrite } from "../local/pull.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { failCommand, printJsonSuccess } from "../../lib/output.ts";
@@ -121,8 +122,8 @@ function withTrailingNewline(markdown: string): string {
 
 /**
  * Resolve `show` arguments to ticket markdown.
- * A fresh local copy wins. A missing or stale copy is fetched live, and the
- * stale copy is only used when that fetch fails.
+ * A fresh local copy wins. A missing or stale copy is fetched live, written to
+ * `~/jira`, and the stale copy is only used when that fetch fails.
  * @param argv - Full argv (`show` at `startIndex - 1`).
  * @return Markdown plus the source it came from.
  */
@@ -138,13 +139,14 @@ export function resolveShow(argv: string[], startIndex = 3): ShowResult {
     throw new Error(`show: not a valid Jira key or URL: ${input}`);
   }
 
+  const cwd = homedir();
   const fieldsExplicit = parsed.flags.has("fields");
   const fields = fieldsExplicit
     ? String(parsed.flags.get("fields"))
     : jiraPullFields();
   const remote = flagBool(parsed.flags, "remote");
   const localOnly = flagBool(parsed.flags, "local");
-  const local = readLocalShowMarkdown(key, { remote, fieldsExplicit });
+  const local = readLocalShowMarkdown(key, { cwd, remote, fieldsExplicit });
 
   const asLocal = (entry: LocalShow): ShowResult => ({
     source: "local",
@@ -159,6 +161,24 @@ export function resolveShow(argv: string[], startIndex = 3): ShowResult {
   }
 
   try {
+    let cachePath: string | undefined;
+    if (!localOnly) {
+      pullTicketWrite(key, { quiet: true, cwd });
+      cachePath = localTicketPath(key, cwd) ?? undefined;
+    }
+
+    if (!fieldsExplicit) {
+      const cached = readLocalShowMarkdown(key, { cwd, now: Date.now() });
+      if (cached) {
+        return {
+          source: "remote",
+          key,
+          path: cached.path,
+          markdown: withTrailingNewline(cached.markdown)
+        };
+      }
+    }
+
     const formatted = formatRemoteShowMarkdown(key, viewWorkitem(key, { fields }));
     if (!formatted) {
       throw new Error("no data returned");
@@ -166,6 +186,7 @@ export function resolveShow(argv: string[], startIndex = 3): ShowResult {
     return {
       source: "remote",
       key: formatted.key,
+      path: cachePath,
       markdown: withTrailingNewline(formatted.markdown)
     };
   } catch (e) {
