@@ -18,11 +18,12 @@ On auth failure, stop and ask.
 
 | Intent | Command |
 | --- | --- |
-| Read only (print markdown, auto-refreshes) | `jira show KEY` |
-| Cache to disk under `~/jira` | `jira pull KEY` or bare `jira KEY` |
+| Read markdown and refresh `~/jira` when stale | `jira show KEY` |
+| Force refresh under `~/jira` without printing | `jira pull KEY` or bare `jira KEY` |
 | Publish local summary/description | `jira push KEY` (after gate Approve) |
 
-Bare `jira KEY` **writes** the ticket under `~/jira`. It is not a view alias. Use `jira show KEY` to read.
+`jira show KEY` prints markdown and writes or refreshes the `~/jira` copy when it is missing or older than one day.
+Bare `jira KEY` only refreshes the cache and does not print the ticket body.
 
 ## Local-first (when `~/jira` exists)
 
@@ -43,7 +44,7 @@ Status, comments, links, labels, and custom fields use the CLI writes below, the
 `jira show KEY` picks the source itself, so one call is always enough:
 
 - Local copy newer than **1 day**: printed from `~/jira`.
-- Local copy missing or older than 1 day: fetched live.
+- Local copy missing or older than 1 day: fetched live and written to `~/jira`.
 - Live fetch fails: the stale local copy is printed as a fallback.
 
 Do not follow a `show` with a second `show --remote`.
