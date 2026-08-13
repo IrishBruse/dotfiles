@@ -61,6 +61,8 @@ For **independent** slices, in plan order:
 
 Each slice is a new branch with no open PR, so always use **create**, not update.
 Do not hand-compose `gh pr create` flags outside the `pr` skill.
+The approved split plan authorizes this commit, push, and create sequence for every slice.
+Do not ask again between slices unless a safety rule blocks progress.
 
 For **stacked** slices, load the `gh-stack` skill and build the chain with it.
 It pushes the branches and opens the draft PRs itself, then routes back to `pr` for titles and bodies.
