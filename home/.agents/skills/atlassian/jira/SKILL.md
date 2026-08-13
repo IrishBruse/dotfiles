@@ -30,7 +30,9 @@ Prefer the `jira` CLI. Minimize round trips and payload size.
   Do not issue a chain of separate `jira show` / `jira search` calls when one batch covers them.
 - Prefer `jira show KEY` markdown for a single known key.
   Do not fetch full search JSON and parse it for one ticket.
-- Keep JQL narrow and use `--limit`. Prefer `--fields` when only a few fields are needed.
+- Prefer `jira search` for discovery only. It returns a compact hit list by default.
+  Use `jira show KEY` for ticket bodies. Avoid `search --raw`.
+- Keep JQL narrow and use `--limit` (default 20). Prefer `--fields` only when needed.
   Do not dump large ADF or search payloads into context.
 - After `jira create --from-draft` or `jira push`, use the pulled local file.
   Do not immediately re-show or re-pull unless the write left fields that still need a live check.
