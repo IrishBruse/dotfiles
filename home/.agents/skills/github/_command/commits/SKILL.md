@@ -9,6 +9,7 @@ disable-model-invocation: true
 Turn the dirty tree into a short stack of **atomic** commits.
 
 Invoking this skill is approval to commit. Push only when the user asked in the same request.
+When that same request also asks to create or update a PR, complete the commits, then load `pr`.
 
 ## Hard rules
 
@@ -72,3 +73,9 @@ git log -<N> --oneline
 Use `N` = number of new commits. Reply with each new subject and anything still dirty.
 
 Done when the user can see every new subject and knows what remains unstaged.
+
+### PR handoff
+
+If the same request asks to create or update a PR, do not stop after the commit report.
+Load `pr` and complete its workflow. A request to create a PR authorizes the required standard push.
+For a commit-only request, do not push or offer a PR menu.
