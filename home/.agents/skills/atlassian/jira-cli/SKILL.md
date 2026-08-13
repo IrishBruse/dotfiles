@@ -74,10 +74,14 @@ Batch `show` returns `{ source, key, markdown }` (same markdown as `jira show`),
 - Prefer `jira batch --json` over a chain of separate `show` / `search` processes.
 - Prefer one `jira show KEY` per ticket. It already falls back to a live fetch, so do not retry with `--remote`.
 - Prefer `jira show KEY` for a known key. Do not parse a large search payload to read one ticket.
-- Prefer narrow JQL, `--limit`, and `--fields`. Avoid dumping full ADF into context.
+- Prefer `jira search` for discovery only. Default output is a compact hit list (no description ADF).
+  Then `jira show KEY` for bodies. Avoid `search --raw`.
+- Prefer narrow JQL and `--limit`. Default search limit is 20.
 - After create/push (which refresh local files), do not immediately re-show unless needed.
 
 Verify with `jira doctor --json` when setup looks wrong.
+
+Command history is appended to `~/jira/logs/YYYY-MM-DD.log` (args and errors only, not stdout).
 
 ### PR title lookup
 
@@ -97,7 +101,8 @@ The `pr` skill resolves title keys with bounded reads:
 | Force a live read | `jira show KEY --remote` |
 | Refresh the file on disk | `jira pull KEY` |
 | One issue to disk | `jira pull KEY` (or bare `jira KEY`) |
-| JQL | `jira search "..."` |
+| JQL discovery (compact list) | `jira search "..."` |
+| One issue body | `jira show KEY` |
 | My tickets / unassigned | `jira info` (plain) or `jira info --json` → `board.sections` |
 | Full board | `jira info --json` → `board` (or `jira board` for human text) |
 | cloudId / field ids / local keys | `jira info` / `jira info --json` |
