@@ -1,12 +1,18 @@
 ---
 name: jira-cli
-description: "jira CLI for board context, `~/jira` pull-edit-push, and gated writes. Use for `jira info`/`jira board`, keys/JQL, or when `jira` needs the CLI."
+description: >-
+  jira CLI for board context, `~/jira` pull-edit-push, and gated writes.
+  Prefer plain output over `--json`. Use for `jira info`/`jira board`, keys/JQL,
+  or when `jira` needs the CLI.
 user-invocable: false
 ---
 
 # jira-cli
 
 Agent-facing Jira CLI. Prefer compact reads that stay in hundreds of tokens, not raw acli or ADF blobs.
+
+**Prefer plain output over `--json`.** Default human output is smaller than the `{success, data, error}` envelope.
+Use `--json` only when you must parse structured fields programmatically and plain text is not enough.
 
 **Never write to Jira without the `jira` skill Write Approval Gate.**
 The CLI does not enforce the gate.
@@ -30,11 +36,11 @@ Do not parse search JSON to read one ticket.
 
 | Intent | Preferred | Avoid |
 | --- | --- | --- |
-| Session context | `jira info` once | Re-running `info` / `doctor` every turn |
-| Structured fields | `jira info --json` (slim) | `info --json --board` unless board is needed |
-| Full board | `jira board` / `jira board --json` | Expecting board inside slim `info --json` |
-| Find tickets | `jira search "..."` | `search --raw`, `jira workitem search` |
-| Read one ticket | `jira show KEY` | `jira workitem view`, `show` then `show --remote` |
+| Session context | `jira info` once | `info --json`, re-running `info` / `doctor` every turn |
+| Structured fields | `jira info` plain fields | `info --json` unless you must parse JSON |
+| Full board | `jira board` | `board --json`, `info --json --board` unless you need raw cache JSON |
+| Find tickets | `jira search "..."` | `search --json`, `search --raw`, `jira workitem search` |
+| Read one ticket | `jira show KEY` | `jira workitem view`, `show` then `show --remote`, `jira view` |
 | Cache only | `jira pull KEY` / `jira KEY` | Using bare `jira KEY` as a view |
 | Publish summary/body | edit `~/jira/...`, then `jira push KEY` | `edit --description-file` when a local file exists |
 | Status / comment / link | `jira transition` / `comment` / `link` after gate | Skipping the write gate / `jira workitem *` |
@@ -48,7 +54,7 @@ NOVACORE-123	Bug	To Do	Ada	Module load error on bootstrap
 1 issue(s). Use jira show KEY for full ticket markdown.
 ```
 
-`--json` returns `{ jql, count, limit, issues[{key,summary,type,status,assignee}], hint }`.
+`--json` wraps the same compact hits in `{success, data, error}` and costs more tokens.
 Use `jira show KEY` for AC, description, and local cache refresh.
 Use `search --raw` only when you truly need full acli JSON.
 
@@ -59,16 +65,19 @@ One call is enough. Do not follow with `--remote` unless you know the remote cha
 
 ### Info output
 
-- `jira info`: plain fields + my/unassigned summary (~small)
-- `jira info --json`: slim fields + hint (no board sections)
-- `jira info --json --board` or `jira board --json`: full board when needed
+- `jira info`: plain fields + my/unassigned summary (~small, preferred)
+- `jira info --json`: structured fields when plain text is not enough
+- `jira board`: full cached board as plain text (preferred over `--json`)
+- `jira board --json` / `jira info --json --board`: raw board cache JSON only when required
 
 Do not use `jira workitem ...` or `jira acli ...`. The CLI redirects those mistakes to `show`/`search`/`create`/`edit`.
+**Never run `jira view`.** It opens VS Code for the user. Use `jira show KEY` to read a ticket.
 
 ## Token rules
 
+- Prefer plain output. Do not add `--json` unless you need machine-parseable fields.
 - One `jira info` per session. Reuse it. Do not spam `doctor`.
-- Prefer `jira batch --json '[["info"],["show","KEY"]]'` over a chain of processes.
+- Prefer separate plain commands (`jira info`, `jira show KEY`, `jira search "..."`) over `jira batch --json`.
 - Prefer `jira show KEY` for a known key. Prefer `jira search` only to discover keys.
 - Prefer narrow JQL and `--limit`. Default search limit is 20.
 - After create/push, do not immediately re-show unless fields still need a live check.
@@ -79,11 +88,12 @@ Do not use `jira workitem ...` or `jira acli ...`. The CLI redirects those mista
 ### Orient
 
 ```bash
-jira info                 # plain: me / unassigned / localTickets
-jira info --json          # slim fields (no board dump)
-jira board --json         # full board only when needed
-jira doctor --json        # only when setup looks wrong
+jira info                 # plain: me / unassigned / localTickets (preferred)
+jira board                # full board plain text when needed
+jira doctor               # only when setup looks wrong
 ```
+
+Use `jira info --json` or `jira board --json` only when plain output cannot answer the question.
 
 ### Discover then read
 
@@ -119,15 +129,15 @@ See [references/writes.md](references/writes.md) for create defaults, edit field
 ## Command map
 
 ```bash
-jira info | jira info --json | jira info --json --board | jira board | jira sync | jira doctor
+jira info | jira board | jira sync | jira doctor
 jira search "..." [--limit N] [--fields LIST] [--paginate] [--raw]
 jira show KEY [--remote|--local] | jira pull [KEY] | jira push [KEY]
-jira batch --json '[["info"],["show","KEY"],["search","JQL"]]'
+jira batch '[["info"],["show","KEY"],["search","JQL"]]'   # prefer plain commands instead
 jira create|edit|transition|comment|link   # after write gate
 ```
 
 Alias: `jira issue KEY` → `jira show KEY`.
-Global: `--json` → `{success, data, error}`.
+`--json`: optional `{success, data, error}` envelope. Prefer plain output.
 
 Paths: config `~/.config/jira/config.json`, board `~/jira/board.json`,
 info cache `~/.config/jira/info.json`, tickets `~/jira/<type>/...`,

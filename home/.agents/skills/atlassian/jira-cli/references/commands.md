@@ -14,20 +14,27 @@ jira push [KEY|URL]     # publish one, or every local ticket
 
 ```bash
 jira sync               # refresh board.json and info.json
-jira board              # print cached board (human)
-jira board --json       # full board cache
-jira info               # context + my/unassigned
-jira info --json        # slim JiraInfo (no board sections)
-jira info --json --board
-                        # slim fields + full board cache
-jira doctor [--json]    # acli, auth, config, caches
-jira batch [JSON]       # read-only commands in one process
+jira board              # print cached board (plain text, preferred)
+jira info               # context + my/unassigned (plain text, preferred)
+jira doctor             # acli, auth, config, caches
+jira batch [JSON]       # read-only commands in one process (prefer plain commands)
 ```
 
-Batch example:
+Prefer plain output. Add `--json` only when you must parse structured fields.
+
+Optional JSON:
 
 ```bash
-jira batch --json '[["info"],["show","KEY"],["search","parent = KEY"]]'
+jira board --json
+jira info --json
+jira info --json --board
+jira doctor --json
+```
+
+Batch example (prefer separate plain commands when possible):
+
+```bash
+jira batch '[["info"],["show","KEY"],["search","parent = KEY"]]'
 ```
 
 Batch `show` → `{ source, key, markdown }`.
@@ -76,7 +83,7 @@ jira link --out KEY --in KEY --type NAME
 
 ```bash
 jira -h | --help
---json                  # {success, data, error} on stdout
+--json                  # optional {success, data, error} envelope (prefer plain output)
 ```
 
 ## Paths
