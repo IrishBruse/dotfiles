@@ -74,6 +74,8 @@ brew "ruby", link: false
 brew "scrcpy"
 # Organize software neatly under a single directory tree (e.g. /usr/local)
 brew "stow"
+# Process YAML, JSON, XML, CSV and properties documents from the CLI
+brew "yq"
 # Shell extension to navigate your filesystem faster
 brew "zoxide"
 # Command-line interface for the Databricks platform
