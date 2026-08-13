@@ -37,16 +37,20 @@ When updating an existing PR body:
 
 ## Snyk (create only)
 
-Before the first `gh pr create`, run a local snyk test when the repo uses it.
+Before the first `gh pr create`, look for a Snyk footprint: `.snyk`, a `snyk` package script,
+or a documented repo Snyk command. Run `snyk test` when one exists.
 If findings block the PR, add a 1-day ignore entry to the repo ignore file and note that in the reply.
-Skip on update unless the user asks or new dependency changes landed since the last create.
+Skip only when the repo has no Snyk footprint. On update, skip unless the user asks or new
+dependency changes landed since the last create.
 
 ## Apply
 
 Always create new PRs as **drafts**.
 Leave draft status unchanged on update unless the user asks.
 
-Push the branch first when it is ahead of or missing on the remote.
+Before create, push the branch when it is ahead of or missing on the remote. A request to create
+the PR authorizes this standard push.
+Before update, push branch commits only when the user asked to publish them.
 
 Create:
 
@@ -69,4 +73,4 @@ body matches the branch diff layout in `body-format.md`,
 and any local-only files were either included after user confirm or explicitly called out.
 
 **Update:** existing PR title and descriptions match the branch diff, title still satisfies `title.md`,
-existing proof blocks were preserved unchanged, and no duplicate PR was created.
+existing proof blocks were preserved unchanged, no duplicate PR was created, and the PR URL was returned.

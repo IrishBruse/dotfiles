@@ -15,10 +15,14 @@ Try only this order. Stop at the first clear hit.
 1. **Existing open PR title** on this branch (`gh pr view`) when updating.
 2. **Branch name** when it embeds `NOVACORE-\d+`.
 3. **Recent commits on this branch** (`git log origin/main..HEAD --oneline`) when a commit message embeds a key.
-4. **Local `~/jira` mirrors** that clearly match this change (path or frontmatter `title` / summary).
+4. **Local `~/jira` mirrors** that clearly match this change. Use a file glob for
+   `**/*NOVACORE-12345*.md`, then inspect its path or frontmatter `title` / summary.
+   No match means continue to step 5.
 5. **`jira info`** My tickets / Unassigned that clearly match this change.
 6. **Ask the user once** with the short candidate list (or say none found).
    Prefer the `AskQuestion` tool when it is available. Otherwise ask in chat.
+
+After a key is selected, read it with `jira show KEY` before create or retitle.
 
 Do not:
 
@@ -30,7 +34,7 @@ Do not:
 
 ## Closed-ticket rule
 
-Before create or retitle, check the target with `jira show KEY` (or local `~/jira` frontmatter).
+The selected key must be checked with `jira show KEY` (or its fresh local `~/jira` frontmatter).
 
 If status is Done/Cancelled/Closed (or equivalent) and closed more than 14 days ago:
 
