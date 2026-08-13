@@ -48,6 +48,7 @@ gh stack submit --auto
 
 Its generated titles carry no NOVACORE key, so walk the stack bottom to top afterwards and load the `pr` skill per branch.
 Each branch has an open PR by then, so that is the **update** path.
+Update every branch in one pass. Do not ask for confirmation between branches.
 
 `gh stack` owns every base, `submit` and `sync` set them, so `gh pr` commands on a stacked branch leave `--base` alone.
 
