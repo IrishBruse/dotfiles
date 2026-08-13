@@ -23,6 +23,7 @@ Prefer the `jira` CLI. Minimize round trips and payload size.
 
 - Run `jira info` (or `jira info --json`) **once** per session unless sprint or board data is missing or stale.
   Do not re-run it before every create or show.
+  Use `jira board --json` or `jira info --json --board` only when board sections are needed.
 - Read a known key with one `jira show KEY`. It prints a fresh local `~/jira` file and
   fetches live when that file is missing or stale, so never retry the same key with `--remote`.
 - Prefer `jira batch --json` for multiple independent reads in one process
