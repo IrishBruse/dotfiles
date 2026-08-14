@@ -6,13 +6,13 @@ import path from "node:path";
 import { homedir } from "node:os";
 import process from "node:process";
 
-import { viewWorkitem } from "../../lib/acli-jira.ts";
+import { viewWorkitem, viewWorkitemAsync } from "../../lib/acli-jira.ts";
 import { flagBool, parseSubcommandArgv } from "../../lib/argv.ts";
 import { CONFIG } from "../../lib/CONFIG.ts";
 import { formatTicketMarkdown, jiraPullFields, normalizeSiteHost } from "../../lib/format.ts";
 import { parseJiraKey } from "../../lib/jiraInput.ts";
 import { localTicketPath } from "../../lib/local.ts";
-import { pullTicketWrite } from "../local/pull.ts";
+import { pullTicketWrite, pullTicketWriteAsync } from "../local/pull.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { failCommand, printJsonSuccess } from "../../lib/output.ts";
@@ -120,14 +120,19 @@ function withTrailingNewline(markdown: string): string {
   return markdown.endsWith("\n") ? markdown : `${markdown}\n`;
 }
 
-/**
- * Resolve `show` arguments to ticket markdown.
- * A fresh local copy wins. A missing or stale copy is fetched live, written to
- * `~/jira`, and the stale copy is only used when that fetch fails.
- * @param argv - Full argv (`show` at `startIndex - 1`).
- * @return Markdown plus the source it came from.
- */
-export function resolveShow(argv: string[], startIndex = 3): ShowResult {
+type ShowResolveContext = {
+  key: string;
+  cwd: string;
+  fieldsExplicit: boolean;
+  fields: string;
+  localOnly: boolean;
+  local: LocalShow | null;
+};
+
+function parseShowResolve(
+  argv: string[],
+  startIndex: number
+): ShowResolveContext {
   const parsed = parseSubcommandArgv(argv, startIndex);
   const input = parsed.positional[0];
   if (!input) {
@@ -148,16 +153,63 @@ export function resolveShow(argv: string[], startIndex = 3): ShowResult {
   const localOnly = flagBool(parsed.flags, "local");
   const local = readLocalShowMarkdown(key, { cwd, remote, fieldsExplicit });
 
-  const asLocal = (entry: LocalShow): ShowResult => ({
+  return { key, cwd, fieldsExplicit, fields, localOnly, local };
+}
+
+function asLocalShow(key: string, entry: LocalShow): ShowResult {
+  return {
     source: "local",
     key,
     path: entry.path,
     stale: entry.stale,
     markdown: withTrailingNewline(entry.markdown)
-  });
+  };
+}
+
+function remoteShowFromCache(
+  key: string,
+  cwd: string
+): ShowResult | null {
+  const cached = readLocalShowMarkdown(key, { cwd, now: Date.now() });
+  if (!cached) return null;
+  return {
+    source: "remote",
+    key,
+    path: cached.path,
+    markdown: withTrailingNewline(cached.markdown)
+  };
+}
+
+function remoteShowFromView(
+  key: string,
+  data: unknown,
+  cachePath: string | undefined
+): ShowResult {
+  const formatted = formatRemoteShowMarkdown(key, data);
+  if (!formatted) {
+    throw new Error("no data returned");
+  }
+  return {
+    source: "remote",
+    key: formatted.key,
+    path: cachePath,
+    markdown: withTrailingNewline(formatted.markdown)
+  };
+}
+
+/**
+ * Resolve `show` arguments to ticket markdown.
+ * A fresh local copy wins. A missing or stale copy is fetched live, written to
+ * `~/jira`, and the stale copy is only used when that fetch fails.
+ * @param argv - Full argv (`show` at `startIndex - 1`).
+ * @return Markdown plus the source it came from.
+ */
+export function resolveShow(argv: string[], startIndex = 3): ShowResult {
+  const ctx = parseShowResolve(argv, startIndex);
+  const { key, cwd, fieldsExplicit, fields, localOnly, local } = ctx;
 
   if (local && (localOnly || !local.stale)) {
-    return asLocal(local);
+    return asLocalShow(key, local);
   }
 
   try {
@@ -168,29 +220,56 @@ export function resolveShow(argv: string[], startIndex = 3): ShowResult {
     }
 
     if (!fieldsExplicit) {
-      const cached = readLocalShowMarkdown(key, { cwd, now: Date.now() });
-      if (cached) {
-        return {
-          source: "remote",
-          key,
-          path: cached.path,
-          markdown: withTrailingNewline(cached.markdown)
-        };
-      }
+      const cached = remoteShowFromCache(key, cwd);
+      if (cached) return cached;
     }
 
-    const formatted = formatRemoteShowMarkdown(key, viewWorkitem(key, { fields }));
-    if (!formatted) {
-      throw new Error("no data returned");
-    }
-    return {
-      source: "remote",
-      key: formatted.key,
-      path: cachePath,
-      markdown: withTrailingNewline(formatted.markdown)
-    };
+    return remoteShowFromView(
+      key,
+      viewWorkitem(key, { fields }),
+      cachePath
+    );
   } catch (e) {
-    if (local) return asLocal(local);
+    if (local) return asLocalShow(key, local);
+    const msg = e instanceof Error ? e.message : String(e);
+    throw new Error(`show ${key}: ${msg}`);
+  }
+}
+
+/**
+ * Async `resolveShow` for batch and other concurrent callers.
+ * Same local-first rules as `resolveShow`.
+ */
+export async function resolveShowAsync(
+  argv: string[],
+  startIndex = 3
+): Promise<ShowResult> {
+  const ctx = parseShowResolve(argv, startIndex);
+  const { key, cwd, fieldsExplicit, fields, localOnly, local } = ctx;
+
+  if (local && (localOnly || !local.stale)) {
+    return asLocalShow(key, local);
+  }
+
+  try {
+    let cachePath: string | undefined;
+    if (!localOnly) {
+      await pullTicketWriteAsync(key, { quiet: true, cwd });
+      cachePath = localTicketPath(key, cwd) ?? undefined;
+    }
+
+    if (!fieldsExplicit) {
+      const cached = remoteShowFromCache(key, cwd);
+      if (cached) return cached;
+    }
+
+    return remoteShowFromView(
+      key,
+      await viewWorkitemAsync(key, { fields }),
+      cachePath
+    );
+  } catch (e) {
+    if (local) return asLocalShow(key, local);
     const msg = e instanceof Error ? e.message : String(e);
     throw new Error(`show ${key}: ${msg}`);
   }

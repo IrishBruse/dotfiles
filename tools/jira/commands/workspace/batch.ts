@@ -4,10 +4,11 @@
 import fs from "node:fs";
 import process from "node:process";
 
+import { createConcurrencyLimiter } from "../../../.lib/concurrency.ts";
 import {
-  listProjectIssueTypes,
-  listProjects,
-  searchWorkitems
+  listProjectIssueTypesAsync,
+  listProjectsAsync,
+  searchWorkitemsAsync
 } from "../../lib/acli-jira.ts";
 import { flagBool, flagString, parseSubcommandArgv } from "../../lib/argv.ts";
 import { configuredProject } from "../../lib/CONFIG.ts";
@@ -20,7 +21,7 @@ import { gatherJiraInfoJson } from "../../lib/info.ts";
 import type { CommandOptions } from "../../lib/output-mode.ts";
 import { HUMAN_OUTPUT, isJsonMode } from "../../lib/output-mode.ts";
 import { failCommand, printJsonSuccess } from "../../lib/output.ts";
-import { resolveShow } from "../read/show.ts";
+import { resolveShowAsync } from "../read/show.ts";
 import { buildSearchResult, normalizeSearchJql } from "../read/search.ts";
 
 const ALLOWED_BATCH_COMMANDS = new Set([
@@ -32,8 +33,17 @@ const ALLOWED_BATCH_COMMANDS = new Set([
   "board"
 ]);
 
+/** Match sync/pull/push: overlap acli calls without flooding the API. */
+const BATCH_CONCURRENCY = 4;
+
 export type BatchItemResult = {
   index: number;
+  success: boolean;
+  data: unknown | null;
+  error: string | null;
+};
+
+type BatchItemOutcome = {
   success: boolean;
   data: unknown | null;
   error: string | null;
@@ -71,11 +81,18 @@ function parseBatchCommands(raw: string): string[][] {
   });
 }
 
-function runBatchItem(itemArgv: string[]): {
-  success: boolean;
-  data: unknown | null;
-  error: string | null;
-} {
+/** Stable key for coalescing identical show/search work in one batch. */
+export function coalesceKey(itemArgv: string[]): string | null {
+  const cmd = itemArgv[0];
+  if (cmd === "show" || cmd === "search") {
+    return itemArgv.join("\0");
+  }
+  return null;
+}
+
+export async function executeBatchItem(
+  itemArgv: string[]
+): Promise<BatchItemOutcome> {
   const cmd = itemArgv[0];
   if (!cmd) {
     return { success: false, data: null, error: "batch item missing command" };
@@ -114,7 +131,7 @@ function runBatchItem(itemArgv: string[]): {
         return { success: true, data: cache, error: null };
       }
       case "projects":
-        return { success: true, data: listProjects(), error: null };
+        return { success: true, data: await listProjectsAsync(), error: null };
       case "types": {
         const project = configuredProject();
         if (!project) {
@@ -126,14 +143,14 @@ function runBatchItem(itemArgv: string[]): {
         }
         return {
           success: true,
-          data: listProjectIssueTypes(project),
+          data: await listProjectIssueTypesAsync(project),
           error: null
         };
       }
       case "show":
         return {
           success: true,
-          data: resolveShow(["node", "jira", ...itemArgv]),
+          data: await resolveShowAsync(["node", "jira", ...itemArgv]),
           error: null
         };
       case "search": {
@@ -160,7 +177,7 @@ function runBatchItem(itemArgv: string[]): {
           }
           limit = n;
         }
-        const data = searchWorkitems({
+        const data = await searchWorkitemsAsync({
           jql,
           fields,
           paginate,
@@ -185,34 +202,88 @@ function runBatchItem(itemArgv: string[]): {
   }
 }
 
+/** Coalesce identical show/search argv while a call is in flight. */
+export function createBatchRunner(
+  execute: (itemArgv: string[]) => Promise<BatchItemOutcome> = executeBatchItem
+): (itemArgv: string[]) => Promise<BatchItemOutcome> {
+  const inflight = new Map<string, Promise<BatchItemOutcome>>();
+  return (itemArgv: string[]) => {
+    const key = coalesceKey(itemArgv);
+    if (!key) {
+      return execute(itemArgv);
+    }
+    const existing = inflight.get(key);
+    if (existing) return existing;
+    const promise = execute(itemArgv).finally(() => {
+      inflight.delete(key);
+    });
+    inflight.set(key, promise);
+    return promise;
+  };
+}
+
+async function runBatchSequential(
+  commands: string[][],
+  stopOnError: boolean,
+  runItem: (itemArgv: string[]) => Promise<BatchItemOutcome>
+): Promise<{ results: BatchItemResult[]; exitCode: number }> {
+  const results: BatchItemResult[] = [];
+  let exitCode = 0;
+  for (let index = 0; index < commands.length; index++) {
+    const item = await runItem(commands[index]!);
+    results.push({ index, ...item });
+    if (!item.success) {
+      exitCode = 1;
+      if (stopOnError) break;
+    }
+  }
+  return { results, exitCode };
+}
+
+async function runBatchParallel(
+  commands: string[][],
+  runItem: (itemArgv: string[]) => Promise<BatchItemOutcome>
+): Promise<{ results: BatchItemResult[]; exitCode: number }> {
+  const limit = createConcurrencyLimiter(BATCH_CONCURRENCY);
+  const results = await Promise.all(
+    commands.map((itemArgv, index) =>
+      limit(async (): Promise<BatchItemResult> => {
+        const item = await runItem(itemArgv);
+        return { index, ...item };
+      })
+    )
+  );
+  const exitCode = results.some((r) => !r.success) ? 1 : 0;
+  return { results, exitCode };
+}
+
+async function collectBatchResults(
+  argv: string[],
+  stopOnError: boolean
+): Promise<{ results: BatchItemResult[]; exitCode: number }> {
+  const raw = readBatchInput(argv);
+  if (!raw?.trim()) {
+    throw new Error(
+      "pass a JSON array as an argument, on stdin, or with --file"
+    );
+  }
+  const commands = parseBatchCommands(raw);
+  const runItem = createBatchRunner();
+  return stopOnError
+    ? runBatchSequential(commands, true, runItem)
+    : runBatchParallel(commands, runItem);
+}
+
 /** Run `jira batch [--file path] [--stop-on-error]`. */
-export function runBatchCommand(
+export async function runBatchCommand(
   argv: string[],
   options: CommandOptions = HUMAN_OUTPUT
-): number {
+): Promise<number> {
   const parsed = parseSubcommandArgv(argv, 3);
   const stopOnError = flagBool(parsed.flags, "stop-on-error");
 
   try {
-    const raw = readBatchInput(argv);
-    if (!raw?.trim()) {
-      return failCommand(
-        "batch: pass a JSON array as an argument, on stdin, or with --file",
-        options.outputMode
-      );
-    }
-    const commands = parseBatchCommands(raw);
-    const results: BatchItemResult[] = [];
-    let exitCode = 0;
-
-    for (let index = 0; index < commands.length; index++) {
-      const item = runBatchItem(commands[index]!);
-      results.push({ index, ...item });
-      if (!item.success) {
-        exitCode = 1;
-        if (stopOnError) break;
-      }
-    }
+    const { results, exitCode } = await collectBatchResults(argv, stopOnError);
 
     if (isJsonMode(options)) {
       printJsonSuccess(results);
@@ -230,4 +301,13 @@ export function runBatchCommand(
     const msg = e instanceof Error ? e.message : String(e);
     return failCommand(`batch: ${msg}`, options.outputMode);
   }
+}
+
+/** Test helper: run batch and return indexed results without printing. */
+export async function runBatchForTest(
+  argv: string[]
+): Promise<{ results: BatchItemResult[]; exitCode: number }> {
+  const parsed = parseSubcommandArgv(argv, 3);
+  const stopOnError = flagBool(parsed.flags, "stop-on-error");
+  return collectBatchResults(argv, stopOnError);
 }

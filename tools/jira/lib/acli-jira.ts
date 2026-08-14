@@ -281,6 +281,14 @@ export function listProjects(acli = DEFAULT_ACLI): unknown {
   return runJiraAcliJson(["project", "list", "--json", "--paginate"], acli);
 }
 
+/** Async `listProjects`. */
+export async function listProjectsAsync(acli = DEFAULT_ACLI): Promise<unknown> {
+  return runJiraAcliJsonAsync(
+    ["project", "list", "--json", "--paginate"],
+    acli
+  );
+}
+
 /** Fetch a project via `jira project view --key`. */
 export function viewProject(
   projectKey: string,
@@ -292,12 +300,31 @@ export function viewProject(
   );
 }
 
+/** Async `viewProject`. */
+export async function viewProjectAsync(
+  projectKey: string,
+  acli = DEFAULT_ACLI
+): Promise<unknown> {
+  return runJiraAcliJsonAsync(
+    ["project", "view", "--key", projectKey, "--json"],
+    acli
+  );
+}
+
 /** List issue types for a project via `jira project view`. */
 export function listProjectIssueTypes(
   projectKey: string,
   acli = DEFAULT_ACLI
 ): unknown {
   return viewProject(projectKey, acli);
+}
+
+/** Async `listProjectIssueTypes`. */
+export async function listProjectIssueTypesAsync(
+  projectKey: string,
+  acli = DEFAULT_ACLI
+): Promise<unknown> {
+  return viewProjectAsync(projectKey, acli);
 }
 
 /** Extract created issue key from acli create JSON stdout. */

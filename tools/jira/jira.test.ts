@@ -32,7 +32,13 @@ import {
   formatBoardPlainText
 } from "./commands/workspace/board-content.ts";
 import { runBoardCommand } from "./commands/workspace/board.ts";
-import { readBatchInput, runBatchCommand } from "./commands/workspace/batch.ts";
+import {
+  coalesceKey,
+  createBatchRunner,
+  readBatchInput,
+  runBatchCommand,
+  runBatchForTest
+} from "./commands/workspace/batch.ts";
 import {
   buildSyncSummary,
   formatSyncSummaryHuman
@@ -177,6 +183,15 @@ function withTempDir(run: (dir: string) => void): void {
   }
 }
 
+async function withTempDirAsync(run: (dir: string) => Promise<void>): Promise<void> {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "jira-test-"));
+  try {
+    await run(dir);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
+
 function writeTicket(
   cwd: string,
   typeDir: string,
@@ -198,6 +213,21 @@ function captureStdout(run: () => void): string {
   }) as typeof process.stdout.write;
   try {
     run();
+  } finally {
+    process.stdout.write = original;
+  }
+  return out;
+}
+
+async function captureStdoutAsync(run: () => Promise<void>): Promise<string> {
+  const original = process.stdout.write.bind(process.stdout);
+  let out = "";
+  process.stdout.write = ((chunk: string | Uint8Array) => {
+    out += String(chunk);
+    return true;
+  }) as typeof process.stdout.write;
+  try {
+    await run();
   } finally {
     process.stdout.write = original;
   }
@@ -2192,15 +2222,19 @@ describe("jira doctor", () => {
 });
 
 describe("jira batch", () => {
-  it("rejects disallowed commands", () => {
-    withTempDir((dir) => {
+  it("rejects disallowed commands", async () => {
+    await withTempDirAsync(async (dir) => {
       const filePath = path.join(dir, "batch.json");
       fs.writeFileSync(filePath, JSON.stringify([["create"]]), "utf-8");
-      const code = runBatchCommand(
-        ["node", "jira", "batch", "--file", filePath],
-        { outputMode: "json" }
-      );
-      assert.equal(code, 1);
+      const { results, exitCode } = await runBatchForTest([
+        "node",
+        "jira",
+        "batch",
+        "--file",
+        filePath
+      ]);
+      assert.equal(exitCode, 1);
+      assert.equal(results[0]?.success, false);
     });
   });
 
@@ -2217,16 +2251,156 @@ describe("jira batch", () => {
     });
   });
 
-  it("runs info in batch json mode", () => {
-    withTempDir((dir) => {
+  it("runs info in batch json mode", async () => {
+    await withTempDirAsync(async (dir) => {
       const filePath = path.join(dir, "batch.json");
       fs.writeFileSync(filePath, JSON.stringify([["info"]]), "utf-8");
-      const out = captureStdout(() =>
-        runBatchCommand(
+      const { results, exitCode } = await runBatchForTest([
+        "node",
+        "jira",
+        "batch",
+        "--file",
+        filePath
+      ]);
+      assert.equal(exitCode, 0);
+      assert.equal(results[0]?.success, true);
+    });
+  });
+
+  it("returns indexed results for parallel mixed local reads", async () => {
+    await withTempDirAsync(async (dir) => {
+      const home = path.join(dir, "home");
+      fs.mkdirSync(home, { recursive: true });
+      const content = buildBoardContent(
+        [
+          {
+            key: "PROJ-1",
+            fields: issueFields("Mine", { accountId: ME, displayName: "Me" })
+          }
+        ],
+        ME,
+        "2026-07-17T12:00:00.000Z"
+      );
+      writeBoardCache(content, home);
+      writeTicket(
+        home,
+        "task",
+        "Alpha - PROJ-1.md",
+        `---
+title: "Alpha"
+type: "Task"
+url: https://example.atlassian.net/browse/PROJ-1
+status: todo
+updated: "2026-07-17T12:00:00.000Z"
+---
+
+Local body.
+`
+      );
+      const filePath = path.join(dir, "batch.json");
+      fs.writeFileSync(
+        filePath,
+        JSON.stringify([
+          ["info"],
+          ["board"],
+          ["show", "PROJ-1", "--local"]
+        ]),
+        "utf-8"
+      );
+      const prevHome = process.env.HOME;
+      process.env.HOME = home;
+      try {
+        const { results, exitCode } = await runBatchForTest([
+          "node",
+          "jira",
+          "batch",
+          "--file",
+          filePath
+        ]);
+        assert.equal(exitCode, 0);
+        assert.equal(results.length, 3);
+        assert.equal(results[0]?.index, 0);
+        assert.equal(results[0]?.success, true);
+        assert.equal(results[1]?.index, 1);
+        assert.equal(results[1]?.success, true);
+        assert.equal(results[2]?.index, 2);
+        assert.equal(results[2]?.success, true);
+        const show = results[2]?.data as {
+          source: string;
+          key: string;
+          markdown: string;
+        };
+        assert.equal(show.source, "local");
+        assert.equal(show.key, "PROJ-1");
+        assert.match(show.markdown, /Local body/);
+      } finally {
+        if (prevHome === undefined) {
+          delete process.env.HOME;
+        } else {
+          process.env.HOME = prevHome;
+        }
+      }
+    });
+  });
+
+  it("stop-on-error skips later items", async () => {
+    await withTempDirAsync(async (dir) => {
+      const filePath = path.join(dir, "batch.json");
+      fs.writeFileSync(
+        filePath,
+        JSON.stringify([["create"], ["info"]]),
+        "utf-8"
+      );
+      const { results, exitCode } = await runBatchForTest([
+        "node",
+        "jira",
+        "batch",
+        "--file",
+        filePath,
+        "--stop-on-error"
+      ]);
+      assert.equal(exitCode, 1);
+      assert.equal(results.length, 1);
+      assert.equal(results[0]?.index, 0);
+      assert.equal(results[0]?.success, false);
+    });
+  });
+
+  it("coalesceKey only applies to show and search", () => {
+    assert.equal(coalesceKey(["show", "PROJ-1"]), "show\0PROJ-1");
+    assert.equal(
+      coalesceKey(["search", "project = PROJ", "--limit", "5"]),
+      ["search", "project = PROJ", "--limit", "5"].join("\0")
+    );
+    assert.equal(coalesceKey(["info"]), null);
+    assert.equal(coalesceKey(["board"]), null);
+  });
+
+  it("coalesces identical show argv to one execute call", async () => {
+    let calls = 0;
+    const run = createBatchRunner(async () => {
+      calls += 1;
+      await new Promise((resolve) => setTimeout(resolve, 30));
+      return { success: true, data: { key: "PROJ-1" }, error: null };
+    });
+    const p1 = run(["show", "PROJ-1"]);
+    const p2 = run(["show", "PROJ-1"]);
+    assert.equal(p1, p2);
+    const [a, b] = await Promise.all([p1, p2]);
+    assert.equal(calls, 1);
+    assert.deepEqual(a, b);
+  });
+
+  it("prints json envelope via runBatchCommand", async () => {
+    await withTempDirAsync(async (dir) => {
+      const filePath = path.join(dir, "batch.json");
+      fs.writeFileSync(filePath, JSON.stringify([["info"]]), "utf-8");
+      const out = await captureStdoutAsync(async () => {
+        await runBatchCommand(
           ["node", "jira", "batch", "--file", filePath],
           { outputMode: "json" }
-        )
-      );
+        );
+      });
       const parsed = JSON.parse(out) as {
         success: boolean;
         data: Array<{ index: number; success: boolean }>;

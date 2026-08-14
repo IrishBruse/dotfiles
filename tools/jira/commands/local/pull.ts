@@ -239,7 +239,7 @@ export function pullTicketWrite(
   return writePulledIssue(data, ticketKey, options);
 }
 
-async function pullTicketWriteAsync(
+export async function pullTicketWriteAsync(
   ticketKey: string,
   options: PullOptions
 ): Promise<PullWriteResult> {
