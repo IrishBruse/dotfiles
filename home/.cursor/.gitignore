@@ -46,7 +46,6 @@ projects/*/*
 
 # Above is cursor auto generated config only add to below
 
-skills/
 plans/
 skills-cursor/
 projects/
@@ -54,8 +53,3 @@ projects/
 plugins/
 
 rules/gp-rules.mdc
-
-# User-level cursor hooks (lint markdown and cursor rule files)
-!hooks.json
-!hooks/
-!hooks/**
