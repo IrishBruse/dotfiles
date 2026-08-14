@@ -24,7 +24,8 @@ TypeScript and JSON used to generate VS Code keybindings.
 Agent skills live in two stowed locations under `home/`, mirrored to `~/`.
 
 - `home/.agents/skills/` -> `~/.agents/skills/` - general-purpose, cross-project skills
-- `home/.cursor/skills/` -> `~/.cursor/skills/` - **Work only skills**
+- `home/.agents/skills/gp/` -> work-only G-P skills (gitignored)
+- `home/.cursor/rules/` -> `~/.cursor/rules/` - Cursor rules (work-only `gp-rules.mdc` is gitignored)
 
 Group related skills under category folders.
 User-invoked skills (`disable-model-invocation: true`) live under a `_command/`

@@ -46,6 +46,8 @@ projects/*/*
 
 # Above is cursor auto generated config only add to below
 
+!statusline.jq
+
 plans/
 skills-cursor/
 projects/
