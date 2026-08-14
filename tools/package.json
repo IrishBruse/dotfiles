@@ -15,7 +15,7 @@
     "jira": "./.bin/jira.js",
     "md": "./.bin/md.js",
     "start": "./.bin/start",
-    "skills": "./.bin/skills.js",
+    "skill": "./.bin/skill.js",
     "sprint": "./.bin/sprint.js"
   },
   "scripts": {
