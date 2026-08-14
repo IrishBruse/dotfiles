@@ -85,17 +85,17 @@
     "panel.border": "#3a3f4b",
 
     // Tab
-    // "tab.activeBackground": "#282c34",
-    // "tab.activeForeground": "#d7dae0",
-    // "tab.border": "#0000",
-    // "tab.inactiveBackground": "#21252b",
-    // "tab.inactiveForeground": "#696969",
-
-    "tab.activeBackground": "#f0f",
+    "tab.activeBackground": "#282c34",
     "tab.activeForeground": "#d7dae0",
     "tab.border": "#0000",
-    "tab.inactiveBackground": "#f0f",
+    "tab.inactiveBackground": "#21252b",
     "tab.inactiveForeground": "#696969",
+
+    // "tab.activeBackground": "#f0f",
+    // "tab.activeForeground": "#d7dae0",
+    // "tab.border": "#0000",
+    // "tab.inactiveBackground": "#f0f",
+    // "tab.inactiveForeground": "#696969",
 
     // Title Bar
     "titleBar.activeBackground": "#21252b",
@@ -1435,7 +1435,7 @@
   "git.openRepositoryInParentFolders": "always",
   "git.pruneOnFetch": true,
   "git.replaceTagsWhenPull": true,
-  "git.blame.editorDecoration.enabled": true,
+  "git.blame.editorDecoration.enabled": false,
   "git.blame.statusBarItem.enabled": false,
   "git.discardUntrackedChangesToTrash": false,
   "git.ignoreRebaseWarning": true,
