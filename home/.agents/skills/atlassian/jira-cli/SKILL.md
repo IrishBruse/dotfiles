@@ -80,6 +80,7 @@ Do not use `jira workitem ...` or `jira acli ...`. The CLI redirects those mista
 - One `jira info` per session. Reuse it. Do not spam `doctor`.
 - Prefer separate plain commands (`jira info`, `jira show KEY`, `jira search "..."`) for reads.
   Use `jira batch --json` when one process must return structured results for chaining.
+  Batch runs independent reads concurrently (cap 4). Identical show/search items share one call.
 - Prefer `jira show KEY` for a known key. Prefer `jira search` only to discover keys.
 - Prefer narrow JQL and `--limit`. Default search limit is 20.
 - After create/push, do not immediately re-show unless fields still need a live check.
