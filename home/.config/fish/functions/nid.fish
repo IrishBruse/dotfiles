@@ -1,3 +1,3 @@
 function nid --wraps "npm install"
-    npm install --save-dev $argv
+    __npm_auth_retry install --save-dev $argv
 end

@@ -4,5 +4,5 @@ function nu
     if jq -e --arg p $pkg '.devDependencies? | has($p)' package.json >/dev/null 2>&1
         set save_flag --save-dev
     end
-    npm install $save_flag $pkg"@latest" $argv[2..]
+    __npm_auth_retry install $save_flag $pkg"@latest" $argv[2..]
 end
