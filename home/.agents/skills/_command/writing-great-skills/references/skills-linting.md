@@ -22,10 +22,10 @@ skill lint path/to/skill-folder/ --fix
 skill lint path/to/SKILL.md --fix
 ```
 
-`<skill-folder>` is the directory of the `SKILL.md` you edited.
+`<skill-folder>` is the skill directory you edited.
 The command scopes to every `.md` and `.mdc` file there.
 
-Passing a `SKILL.md` path lints every markdown file in that skill directory.
+Passing the skill entry path lints every markdown file in that skill directory.
 A directory path lints that tree.
 With no argument, lint scans default skill roots under `~`.
 
