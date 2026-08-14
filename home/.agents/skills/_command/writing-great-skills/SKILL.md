@@ -119,8 +119,8 @@ In repo skills, reference only skills that ship with that repo, not personal glo
 
 ## Skills linting
 
-After editing a skill, validate with the `skills` CLI (`skills lint <skill-folder>/ --fix`).
-Full CLI usage (lint, `--fix`, `skills ls`, exit codes) is in [`references/skills-linting.md`](references/skills-linting.md).
+After editing a skill, validate with the `skill` CLI (`skill lint <skill-id> --fix`, or a path when not under a standard root).
+Full CLI usage (lint, `--fix`, `skill ls`, exit codes) is in [`references/skills-linting.md`](references/skills-linting.md).
 
 ## Failure modes
 

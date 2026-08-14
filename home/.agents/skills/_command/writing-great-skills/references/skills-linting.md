@@ -1,13 +1,25 @@
 # Skills linting
 
-Invoke the `skills` CLI directly. Prefer it over hand-checking the same rules.
+Invoke the `skill` CLI directly. Prefer it over hand-checking the same rules.
 
 ## Lint after edits
 
-Run once against the skill folder you changed:
+Run once against the skill you changed:
 
 ```bash
-skills lint <skill-folder>/ --fix
+skill lint <skill-id> --fix
+```
+
+Prefer a skill id or name when the skill lives under a standard root
+(for example `~/.agents/skills`, `~/.cursor/skills`, or project skill paths).
+Ids match `skill ls` entries: nested ids use slashes (`github/pr`), and a
+short name matches when it is unique (`jira`).
+
+Use a folder or file path when the skill is not under a standard root:
+
+```bash
+skill lint path/to/skill-folder/ --fix
+skill lint path/to/SKILL.md --fix
 ```
 
 `<skill-folder>` is the directory of the `SKILL.md` you edited.
@@ -15,7 +27,7 @@ The command scopes to every `.md` and `.mdc` file there.
 
 Passing a `SKILL.md` path lints every markdown file in that skill directory.
 A directory path lints that tree.
-With no path, lint scans default skill roots under `~`.
+With no argument, lint scans default skill roots under `~`.
 
 ### `--fix`
 
@@ -30,7 +42,7 @@ and non-ASCII.
 
 By default, auto-fixable warnings are hidden from lint output.
 Pass `--show-fixable` to include them.
-Use `skills lint --fix` to apply those fixes instead of only listing them.
+Use `skill lint --fix` to apply those fixes instead of only listing them.
 
 ### Exit and diagnostics
 
@@ -41,13 +53,13 @@ Diagnostics look like:
 
 ```text
 ~/skills/demo/SKILL.md
-  3:14     warning  Model-invoked descriptions should include when to use the skill.  @skills/description-triggers
+  3:14     warning  Model-invoked descriptions should include when to use the skill.  @skill/description-triggers
 ```
 
 ## List skills
 
 ```bash
-skills ls
+skill ls
 ```
 
 Scans global roots under `~` (for example `~/.agents/skills`, `~/.cursor/skills`)
@@ -59,6 +71,6 @@ Exit `1` when no skills are found.
 ## Help
 
 ```bash
-skills --help
-skills lint --help
+skill --help
+skill lint --help
 ```
