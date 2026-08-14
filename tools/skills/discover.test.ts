@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
@@ -78,8 +78,11 @@ describe("discover", () => {
         })),
         [
           { name: "browser", rel: "browser" },
-          { name: "commits", rel: path.join("github", "_command", "commits") },
-          { name: "pr", rel: path.join("github", "pr") },
+          {
+            name: "github/_command/commits",
+            rel: path.join("github", "_command", "commits"),
+          },
+          { name: "github/pr", rel: path.join("github", "pr") },
         ]
       );
     });
@@ -155,6 +158,52 @@ describe("discover", () => {
 
       assert.equal(skills.length, 1);
       assert.equal(skills[0]?.name, "solo");
+    });
+  });
+
+  it("uses nested relative names and skips symlink roots under another root", async () => {
+    await withTempDir(async (dir) => {
+      const agents = path.join(dir, ".agents", "skills");
+      const gpAuth = path.join(agents, "gp", "authentication");
+      const cursor = path.join(dir, ".cursor", "skills");
+      await mkdir(gpAuth, { recursive: true });
+      await mkdir(path.dirname(cursor), { recursive: true });
+      await writeFile(path.join(gpAuth, "SKILL.md"), "# Auth\n");
+      await symlink(path.join(agents, "gp"), cursor);
+
+      const skills = await discoverSkills([
+        { scope: "global", path: agents },
+        { scope: "global", path: cursor },
+      ]);
+
+      assert.deepEqual(
+        skills.map((skill) => ({
+          name: skill.name,
+          root: path.basename(path.dirname(skill.root)),
+        })),
+        [{ name: "gp/authentication", root: ".agents" }]
+      );
+    });
+  });
+
+  it("follows directory symlinks when walking nested skill trees", async () => {
+    await withTempDir(async (dir) => {
+      const root = path.join(dir, ".agents", "skills");
+      const realSkill = path.join(dir, "external", "shared-skill");
+      await mkdir(realSkill, { recursive: true });
+      await mkdir(root, { recursive: true });
+      await writeFile(path.join(realSkill, "SKILL.md"), "# Shared\n");
+      await symlink(realSkill, path.join(root, "shared-skill"));
+
+      const skills = await discoverSkillsInRoot({
+        scope: "global",
+        path: root,
+      });
+
+      assert.deepEqual(
+        skills.map((skill) => skill.name),
+        ["shared-skill"]
+      );
     });
   });
 

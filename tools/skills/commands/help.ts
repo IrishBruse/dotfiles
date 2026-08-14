@@ -13,6 +13,9 @@ Commands:
 skills ls scans standard agent skill roots under ~ (for example ~/.agents/skills,
 ~/.cursor/skills, ~/.claude/skills, ~/.config/opencode/skills) and skills.sh-
 compatible project paths under the current directory and its parents.
+Nested category folders are listed with relative paths (for example github/pr,
+gp/authentication). Symlink roots that resolve under another scanned root are
+skipped so the same skill is not listed twice.
 ~/.cursor/skills-cursor is omitted unless you pass --cursor-builtin.
 
 With no paths, skills lint scans the same skill roots for .md and .mdc
