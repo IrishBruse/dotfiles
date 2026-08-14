@@ -7,7 +7,7 @@ import {
   discoverSkillFiles,
   displayPath,
   isMarkdownPath,
-  resolveLintScopes,
+  resolveLintTargets,
 } from "../rules/engine/discover.ts";
 import { fixSkillContent } from "../rules/engine/fix.ts";
 import { isFixableDiagnostic } from "../rules/engine/fixable.ts";
@@ -45,7 +45,10 @@ export async function runLint(argv: string[]): Promise<number> {
   try {
     files =
       parsed.positional.length > 0
-        ? await resolveLintScopes(parsed.positional)
+        ? await resolveLintTargets(parsed.positional, {
+            cwd: process.cwd(),
+            includeCursorBuiltin: parsed.cursorBuiltin,
+          })
         : await discoverSkillFiles(
             defaultSkillRoots({
               includeCursorBuiltin: parsed.cursorBuiltin,

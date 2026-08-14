@@ -1,7 +1,9 @@
-import { access, readdir, realpath, stat } from "node:fs/promises";
+import { access, readdir, readFile, realpath, stat } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 
+import { parseSkillFrontmatter } from "./frontmatter.ts";
+import { extractFrontmatter } from "./rules/core/shared.ts";
 import {
   globalSkillRootSuffixes,
   projectSkillRootSuffixes,
@@ -286,6 +288,143 @@ export async function resolveLintScopes(targets: string[]): Promise<string[]> {
     }
 
     await walkMarkdownFiles(path.dirname(resolved), files);
+  }
+
+  return [...new Set(files)].sort();
+}
+
+export interface ResolveLintTargetsOptions extends SkillDiscoveryOptions {
+  cwd?: string;
+}
+
+interface IndexedSkill {
+  skill: SkillEntry;
+  frontmatterName?: string;
+}
+
+function skillBasename(skillId: string): string {
+  const slash = skillId.lastIndexOf("/");
+  return slash === -1 ? skillId : skillId.slice(slash + 1);
+}
+
+async function indexDiscoveredSkills(roots: SkillRoot[]): Promise<IndexedSkill[]> {
+  const skills = await discoverSkills(roots);
+  return Promise.all(
+    skills.map(async (skill) => {
+      let frontmatterName: string | undefined;
+      try {
+        const content = await readFile(skill.skillPath, "utf8");
+        const raw = extractFrontmatter(content).trim();
+        if (raw) {
+          const parsed = parseSkillFrontmatter(raw);
+          const nameEntry = parsed.entries.find((entry) => entry.key === "name");
+          if (typeof nameEntry?.value === "string" && nameEntry.value.length > 0) {
+            frontmatterName = nameEntry.value;
+          }
+        }
+      } catch {
+        // Skill folder may be unreadable; match by id only.
+      }
+      return { skill, frontmatterName };
+    })
+  );
+}
+
+function matchSkillsByQuery(query: string, indexed: IndexedSkill[]): SkillEntry[] {
+  const matches = new Map<string, SkillEntry>();
+
+  for (const { skill, frontmatterName } of indexed) {
+    if (skill.name === query) {
+      matches.set(skill.skillPath, skill);
+      continue;
+    }
+    if (skillBasename(skill.name) === query) {
+      matches.set(skill.skillPath, skill);
+      continue;
+    }
+    if (frontmatterName === query) {
+      matches.set(skill.skillPath, skill);
+    }
+  }
+
+  return [...matches.values()];
+}
+
+async function resolveSkillQuery(
+  query: string,
+  options: ResolveLintTargetsOptions
+): Promise<string[]> {
+  const cwd = options.cwd ?? process.cwd();
+  const roots = allSkillRoots(cwd, options);
+  const indexed = await indexDiscoveredSkills(roots);
+  const matches = preferProjectSkillMatches(
+    matchSkillsByQuery(query, indexed),
+    cwd
+  );
+
+  if (matches.length === 0) {
+    throw new Error(`skill not found: ${query}`);
+  }
+
+  if (matches.length > 1) {
+    const locations = matches
+      .map((skill) => displayPath(path.dirname(skill.skillPath)))
+      .sort()
+      .join(", ");
+    throw new Error(`ambiguous skill id "${query}" (${locations})`);
+  }
+
+  return [path.dirname(matches[0]!.skillPath)];
+}
+
+function preferProjectSkillMatches(matches: SkillEntry[], cwd: string): SkillEntry[] {
+  if (matches.length <= 1) return matches;
+
+  const resolvedCwd = path.resolve(cwd);
+  const projectMatches = matches.filter((skill) => skill.scope === "project");
+  if (projectMatches.length === 0) return matches;
+
+  const underCwd = projectMatches.filter((skill) => {
+    const skillDir = path.dirname(skill.skillPath);
+    const root = path.resolve(skill.root);
+    return (
+      skillDir === resolvedCwd ||
+      skillDir.startsWith(`${resolvedCwd}${path.sep}`) ||
+      resolvedCwd === root ||
+      resolvedCwd.startsWith(`${root}${path.sep}`)
+    );
+  });
+
+  if (underCwd.length === 1) return underCwd;
+  if (underCwd.length > 1) return underCwd;
+  if (projectMatches.length === 1) return projectMatches;
+
+  return matches;
+}
+
+async function resolveLintTarget(
+  target: string,
+  options: ResolveLintTargetsOptions
+): Promise<string[]> {
+  const resolved = path.resolve(target);
+  if (await pathExists(resolved)) {
+    return resolveLintScopes([target]);
+  }
+  const skillDirs = await resolveSkillQuery(target, options);
+  return resolveLintScopes(skillDirs);
+}
+
+export async function resolveLintTargets(
+  targets: string[],
+  options: ResolveLintTargetsOptions = {}
+): Promise<string[]> {
+  const files: string[] = [];
+
+  for (const target of targets) {
+    const scoped = await resolveLintTarget(target, options);
+    for (const filePath of scoped) {
+      files.push(filePath);
+    }
   }
 
   return [...new Set(files)].sort();

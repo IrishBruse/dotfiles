@@ -21,13 +21,16 @@ skipped so the same skill is not listed twice.
 With no paths, skill lint scans the same skill roots for .md and .mdc
 files. With a path, lint scopes to that skill folder: a SKILL.md file lints
 every markdown file in its directory, and a directory path lints that tree.
+With a skill id or name (for example jira or github/pr), lint finds the skill
+in global and project skill roots before linting that folder. Use a path when
+the skill is not under a standard root.
 
 Shared options:
   --cursor-builtin   Include ~/.cursor/skills-cursor and project skills-cursor
 
 Lint options:
   --fix              Apply safe auto-fixes, then report remaining warnings
-                     (typical: skill lint path/to/SKILL.md --fix)
+                     (typical: skill lint jira --fix or skill lint path/to/SKILL.md --fix)
                      Auto-fixes: block-scalar descriptions, orphan frontmatter
                      lines, nested reference links, prose semicolons,
                      and non-ASCII

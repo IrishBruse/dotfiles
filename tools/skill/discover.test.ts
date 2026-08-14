@@ -11,6 +11,7 @@ import {
   displayPath,
   projectSkillRoots,
   resolveLintScopes,
+  resolveLintTargets,
 } from "./discover.ts";
 import {
   globalSkillRootSuffixes,
@@ -233,6 +234,53 @@ describe("discover", () => {
       assert.deepEqual(
         files.map((file) => path.basename(file)).sort(),
         ["NOTES.md", "SKILL.md"]
+      );
+    });
+  });
+
+  it("resolves lint targets by skill id under project roots", async () => {
+    await withTempDir(async (dir) => {
+      const root = path.join(dir, ".agents", "skills");
+      const nested = path.join(root, "github", "pr");
+      await mkdir(nested, { recursive: true });
+      await mkdir(path.join(nested, "references"), { recursive: true });
+      await writeFile(
+        path.join(nested, "SKILL.md"),
+        `---
+name: pr
+description: Use when opening pull requests.
+---
+# PR
+`
+      );
+      await writeFile(path.join(nested, "references", "guide.md"), "# Guide\n");
+
+      const byShortName = await resolveLintTargets(["pr"], { cwd: dir });
+      assert.deepEqual(
+        byShortName.map((file) => path.relative(nested, file)).sort(),
+        ["SKILL.md", path.join("references", "guide.md")].sort()
+      );
+
+      const byNestedId = await resolveLintTargets(["github/pr"], { cwd: dir });
+      assert.deepEqual(byNestedId, byShortName);
+    });
+  });
+
+  it("reports ambiguous and missing skill ids", async () => {
+    await withTempDir(async (dir) => {
+      const root = path.join(dir, ".agents", "skills");
+      await mkdir(path.join(root, "alpha", "pr"), { recursive: true });
+      await mkdir(path.join(root, "beta", "pr"), { recursive: true });
+      await writeFile(path.join(root, "alpha", "pr", "SKILL.md"), "# Alpha PR\n");
+      await writeFile(path.join(root, "beta", "pr", "SKILL.md"), "# Beta PR\n");
+
+      await assert.rejects(
+        () => resolveLintTargets(["pr"], { cwd: dir }),
+        /ambiguous skill id "pr"/
+      );
+      await assert.rejects(
+        () => resolveLintTargets(["missing-skill"], { cwd: dir }),
+        /skill not found: missing-skill/
       );
     });
   });

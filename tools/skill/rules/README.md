@@ -11,8 +11,10 @@ incorrect / correct examples for every rule.
 
 ```bash
 skill lint                         # scan default skill roots under ~
-skill lint path/to/skill-folder/   # one skill tree
-skill lint path/to/SKILL.md --fix  # apply safe fixes, then report the rest
+skill lint jira                      # one skill by id or name
+skill lint github/pr --fix           # nested id with auto-fix
+skill lint path/to/skill-folder/     # non-standard path
+skill lint path/to/SKILL.md --fix    # apply safe fixes, then report the rest
 skill lint path/to/SKILL.md --show-fixable  # include auto-fixable warnings
 ```
 
