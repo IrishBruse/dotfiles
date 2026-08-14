@@ -7,12 +7,10 @@
 .remap non_us_backslash [device steelseries]: grave
 .remap grave [device steelseries]: non_us_backslash
 
-.define editor_apps ["Code", "Cursor"]
+.define editor_apps ["Code", "Cursor", "Ghostty"]
 
-ctrl - c : open -a "Google Chrome"
 ctrl - t : open -na /Applications/Ghostty.app
 ctrl - e : open -a /Applications/Marta.app
-ctrl - j : open -a "Jira"
 shift + ctrl - s : screencapture -i -c
 cmd + shift - escape : open -a "Activity Monitor"
 

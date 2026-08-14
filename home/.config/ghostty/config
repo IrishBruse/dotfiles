@@ -63,10 +63,11 @@ config-file = ?local
 
 keybind = ctrl+w=close_surface
 keybind = performable:ctrl+v=paste_from_clipboard
-# Copy if there is a selection, else pass through as SIGINT (only works on ctrl+c)
+# Copy when selected, else pass through as SIGINT
 keybind = performable:ctrl+c=copy_to_clipboard
-# Cmd+C: copy when selected. No selection does nothing (cannot fall through to SIGINT)
-keybind = performable:cmd+c=copy_to_clipboard
+# Cmd+C: copy selection (if any), then always send SIGINT
+keybind = cmd+c=copy_to_clipboard
+keybind = chain=text:\x03
 keybind = ctrl+k=clear_screen
 
 keybind = ctrl+\=new_split:right
