@@ -16,3 +16,6 @@ home/dot-zshrc
 !tools/confluence
 home/dot-npmrc
 home/.config/jira/
+
+linux/cinnamon-github-release/
+linux/mintsysadm-github-release/
