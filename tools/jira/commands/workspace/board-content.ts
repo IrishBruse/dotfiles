@@ -41,6 +41,10 @@ const STATUS_ORDER: StatusBucket[] = [
   "done"
 ];
 
+const STATUS_LABEL_WIDTH = Math.max(
+  ...Object.values(STATUS_LABELS).map((label) => label.length)
+);
+
 /** Sections where assignee is implied (me / unassigned) and omitted from lines. */
 const SECTIONS_OMIT_ASSIGNEE = new Set<keyof BoardSections>([
   "myTickets",
@@ -93,20 +97,20 @@ function ticketsInOrder(section: BoardSection): Array<{
 }
 
 /**
- * One ticket per line for humans and agents (tab-separated, no padding):
- *   KEY	Status	Summary
- *   KEY	Status	Assignee	Summary   (teammates / misc)
+ * One ticket per line for humans and agents (tab-separated):
+ *   Status  KEY  Summary
+ *   Status  KEY  Assignee  Summary   (teammates / misc)
  */
 function formatTicketLine(
   ticket: BoardTicket,
   bucket: StatusBucket,
   includeAssignee: boolean
 ): string {
-  const status = STATUS_LABELS[bucket];
+  const status = STATUS_LABELS[bucket].padEnd(STATUS_LABEL_WIDTH);
   if (includeAssignee) {
-    return `${ticket.key}\t${status}\t${ticket.assignee}\t${ticket.summary}`;
+    return `${status}\t${ticket.key}\t${ticket.assignee}\t${ticket.summary}`;
   }
-  return `${ticket.key}\t${status}\t${ticket.summary}`;
+  return `${status}\t${ticket.key}\t${ticket.summary}`;
 }
 
 function formatBoardSectionPlain(
