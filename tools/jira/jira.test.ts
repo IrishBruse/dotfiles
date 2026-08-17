@@ -796,8 +796,8 @@ describe("board content", () => {
       "2026-07-14T12:00:00.000Z"
     );
     const md = formatBoardPlainText(content);
-    assert.match(md, /PROJ-1\tTodo\tMine/);
-    assert.match(md, /PROJ-2\tIn progress\tBob\tTheirs/);
+    assert.match(md, /Todo       \tPROJ-1\tMine/);
+    assert.match(md, /In progress\tPROJ-2\tBob\tTheirs/);
     assert.match(md, /^Teammates$/m);
   });
 
@@ -1046,7 +1046,7 @@ describe("writeBoardCache", () => {
       assert.deepEqual(readBoardCache(home)?.syncedAt, "2026-07-17T12:00:00.000Z");
       const md = formatBoardPlainText(content);
       assert.doesNotMatch(md, /Last synced:/);
-      assert.match(md, /PROJ-1\tTodo\tAlpha/);
+      assert.match(md, /Todo       \tPROJ-1\tAlpha/);
       assert.doesNotMatch(md, /references\//);
     });
   });
@@ -1782,7 +1782,7 @@ describe("jira info", () => {
       writeBoardCache(content, home);
       const out = captureStdout(() => runInfoCommand(HUMAN_OUTPUT, home));
       assert.match(out, /^cloudId: /m);
-      assert.match(out, /PROJ-1\tTodo\tMine/);
+      assert.match(out, /Todo       \tPROJ-1\tMine/);
       assert.doesNotMatch(out, /PROJ-2/);
       assert.doesNotMatch(out, /^Teammates$/m);
     });
@@ -2445,8 +2445,8 @@ describe("jira board command", () => {
       const out = captureStdout(() =>
         runBoardCommand({ outputMode: "human" }, home)
       );
-      assert.match(out, /PROJ-1\tTodo\tMine/);
-      assert.match(out, /PROJ-2\tTodo\tBob\tTheirs/);
+      assert.match(out, /Todo       \tPROJ-1\tMine/);
+      assert.match(out, /Todo       \tPROJ-2\tBob\tTheirs/);
       assert.match(out, /^Teammates$/m);
     });
   });

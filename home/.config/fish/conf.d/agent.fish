@@ -1,13 +1,13 @@
 function a
-    agent --model composer-2.5 "$argv"
+    agent --model auto "$argv"
 end
 
 function aa
-    agent --mode ask --model composer-2.5 "$argv"
+    agent --ask --model auto "$argv"
 end
 
 function ap
-    agent --plan --model composer-2.5 "$argv"
+    agent --plan --model auto "$argv"
 end
 
 function ac
