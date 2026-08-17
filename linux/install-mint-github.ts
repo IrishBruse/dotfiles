@@ -13,6 +13,40 @@ const CMD = "install-mint-github";
 const LINUX_DIR = path.dirname(fileURLToPath(import.meta.url));
 const SCRIPT_PATH = fileURLToPath(import.meta.url);
 
+const RESET = "\x1b[0m";
+const stdoutColor = process.stdout.isTTY === true;
+const stderrColor = process.stderr.isTTY === true;
+
+function paintStdout(code: string, text: string): string {
+  return stdoutColor ? `${code}${text}${RESET}` : text;
+}
+
+function paintStderr(code: string, text: string): string {
+  return stderrColor ? `${code}${text}${RESET}` : text;
+}
+
+const bold = (text: string) => paintStdout("\x1b[1m", text);
+const cyan = (text: string) => paintStdout("\x1b[36m", text);
+const green = (text: string) => paintStdout("\x1b[32m", text);
+const yellow = (text: string) => paintStdout("\x1b[33m", text);
+const red = (text: string) => paintStderr("\x1b[31m", text);
+const dim = (text: string) => paintStdout("\x1b[2m", text);
+
+function kindLabel(kind: ChangeKind): string {
+  switch (kind) {
+    case "upgraded":
+      return green("upgraded");
+    case "new":
+      return cyan("new");
+    case "downgraded":
+      return red("downgraded");
+    case "same":
+      return dim("same");
+    default:
+      return yellow("changed");
+  }
+}
+
 const CINNAMON_REPOS = [
   "cinnamon-desktop",
   "cjs",
@@ -69,7 +103,7 @@ type ReportRow = {
 };
 
 function die(message: string): void {
-  console.error(`${CMD}: ${message}`);
+  console.error(`${red(CMD)}: ${message}`);
   process.exit(1);
 }
 
@@ -77,15 +111,42 @@ function run(cmd: string, args: string[]): string {
   return execFileSync(cmd, args, { encoding: "utf8" }).trimEnd();
 }
 
+function runQuiet(cmd: string, args: string[]): string {
+  const result = spawnSync(cmd, args, {
+    encoding: "utf8",
+    env: { ...process.env, DEBIAN_FRONTEND: "noninteractive" }
+  });
+  if (result.status !== 0) {
+    if (result.stderr) {
+      console.error(result.stderr.trimEnd());
+    }
+    if (result.stdout) {
+      console.error(result.stdout.trimEnd());
+    }
+    process.exit(result.status ?? 1);
+  }
+  return result.stdout.trimEnd();
+}
+
+function runShQuiet(command: string): string {
+  const result = spawnSync("sh", ["-c", command], {
+    encoding: "utf8",
+    env: { ...process.env, DEBIAN_FRONTEND: "noninteractive" }
+  });
+  if (result.status !== 0) {
+    if (result.stderr) {
+      console.error(result.stderr.trimEnd());
+    }
+    process.exit(result.status ?? 1);
+  }
+  return result.stdout.trimEnd();
+}
+
 function runInherit(cmd: string, args: string[]): void {
   const result = spawnSync(cmd, args, { stdio: "inherit" });
   if (result.status !== 0) {
     process.exit(result.status ?? 1);
   }
-}
-
-function runShInherit(command: string): void {
-  execFileSync("sh", ["-c", command], { stdio: "inherit" });
 }
 
 function commandExists(name: string): boolean {
@@ -113,12 +174,21 @@ function requireRoot(): void {
   process.exit(result.status ?? 1);
 }
 
+function logSection(title: string): void {
+  console.log();
+  console.log(cyan(`── ${title} ──`));
+}
+
 function logStep(message: string): void {
-  console.log(`==> ${message}`);
+  console.log(`${cyan("▸")} ${message}`);
+}
+
+function logOk(message: string): void {
+  console.log(`${green("✓")} ${message}`);
 }
 
 function logDetail(message: string): void {
-  console.log(`    ${message}`);
+  console.log(`  ${dim(message)}`);
 }
 
 function defaultReleaseTag(): string {
@@ -231,39 +301,65 @@ function countKind(rows: ReportRow[], kind: ChangeKind): number {
 
 function printReport(title: string, rows: ReportRow[]): void {
   const sorted = [...rows].sort((a, b) => a.package.localeCompare(b.package, "en"));
+  const changed = sorted.filter((row) => row.kind !== "same");
+  const sameCount = countKind(sorted, "same");
+
+  console.log();
+  console.log(bold(` ${title}`));
+
+  if (changed.length === 0) {
+    console.log(green("  All packages already up to date"));
+    if (sameCount > 0) {
+      console.log(dim(`  (${sameCount} checked)`));
+    }
+    console.log();
+    return;
+  }
+
   let widthPkg = 8;
   let widthBefore = 6;
   let widthAfter = 5;
 
-  for (const row of sorted) {
+  for (const row of changed) {
     widthPkg = Math.max(widthPkg, row.package.length);
     const beforeLabel = row.before || "not installed";
     widthBefore = Math.max(widthBefore, beforeLabel.length);
     widthAfter = Math.max(widthAfter, row.after.length);
   }
 
-  const rule = "-".repeat(widthPkg + widthBefore + widthAfter + 6);
-
-  console.log();
-  console.log("================================================================");
-  console.log(` ${title}`);
-  console.log("================================================================");
+  const rule = dim("-".repeat(widthPkg + widthBefore + widthAfter + 6));
   console.log(
-    ` ${"package".padEnd(widthPkg)}  ${"before".padEnd(widthBefore)}  ${"after".padEnd(widthAfter)}  change`
+    dim(
+      `  ${"package".padEnd(widthPkg)}  ${"before".padEnd(widthBefore)}  ${"after".padEnd(widthAfter)}  change`
+    )
   );
-  console.log(` ${rule}`);
+  console.log(`  ${rule}`);
 
-  for (const row of sorted) {
+  for (const row of changed) {
     const beforeLabel = row.before || "not installed";
     console.log(
-      ` ${row.package.padEnd(widthPkg)}  ${beforeLabel.padEnd(widthBefore)}  ${row.after.padEnd(widthAfter)}  ${row.kind}`
+      `  ${row.package.padEnd(widthPkg)}  ${dim(beforeLabel.padEnd(widthBefore))}  ${bold(row.after.padEnd(widthAfter))}  ${kindLabel(row.kind)}`
     );
   }
 
   console.log();
-  console.log(
-    ` Summary: ${countKind(sorted, "new")} new, ${countKind(sorted, "upgraded")} upgraded, ${countKind(sorted, "same")} same, ${countKind(sorted, "downgraded")} downgraded`
-  );
+  const parts: string[] = [];
+  const newCount = countKind(sorted, "new");
+  const upgradedCount = countKind(sorted, "upgraded");
+  const downgradedCount = countKind(sorted, "downgraded");
+  if (newCount > 0) {
+    parts.push(cyan(`${newCount} new`));
+  }
+  if (upgradedCount > 0) {
+    parts.push(green(`${upgradedCount} upgraded`));
+  }
+  if (sameCount > 0) {
+    parts.push(dim(`${sameCount} same`));
+  }
+  if (downgradedCount > 0) {
+    parts.push(red(`${downgradedCount} downgraded`));
+  }
+  console.log(`  ${parts.join(dim(" · "))}`);
   console.log();
 }
 
@@ -343,17 +439,16 @@ function downloadCinnamonArchives(workDir: string, tag: string): void {
     const repo = CINNAMON_REPOS[index];
     const dest = path.join(workDir, repo);
     const url = `https://github.com/linuxmint/${repo}/releases/download/${tag}/packages.tar.gz`;
-    logStep(`[${index + 1}/${total}] Download ${repo} (${tag})`);
+    logStep(`[${index + 1}/${total}] ${repo}`);
     fs.mkdirSync(dest, { recursive: true });
-    runInherit("curl", ["-fsSL", "-o", path.join(dest, "packages.tar.gz"), url]);
+    runQuiet("curl", ["-fsSL", "-o", path.join(dest, "packages.tar.gz"), url]);
     removePath(path.join(dest, "packages"));
-    runInherit("tar", ["-xzf", path.join(dest, "packages.tar.gz"), "-C", dest]);
+    runQuiet("tar", ["-xzf", path.join(dest, "packages.tar.gz"), "-C", dest]);
     fs.rmSync(path.join(dest, "packages.tar.gz"), { force: true });
-    const names = fs
+    const count = fs
       .readdirSync(path.join(dest, "packages"))
-      .filter((name) => name.endsWith(".deb"))
-      .join(", ");
-    logDetail(names);
+      .filter((name) => name.endsWith(".deb")).length;
+    logOk(`${count} packages from ${dim(tag)}`);
   }
 }
 
@@ -366,21 +461,42 @@ function removeStaleLocalMuffin(): void {
     return;
   }
   logStep("Remove stale /usr/local muffin libraries");
-  runShInherit(`rm -f ${q(libdir)}/libmuffin.so*`);
-  runShInherit(`rm -rf ${q(path.join(libdir, "muffin"))}`);
-  runInherit("ldconfig", []);
+  runShQuiet(`rm -f ${q(libdir)}/libmuffin.so*`);
+  runShQuiet(`rm -rf ${q(path.join(libdir, "muffin"))}`);
+  runQuiet("ldconfig", []);
 }
 
 function installDebs(debs: string[]): Map<string, string> {
   const beforeVersions = snapshotBefore(debs);
   logStep(`Install ${debs.length} packages`);
-  runInherit("dpkg", ["-i", ...debs]);
-  runInherit("apt-get", ["check"]);
+
+  for (const deb of debs) {
+    const pkg = debField(deb, "Package");
+    const target = debField(deb, "Version");
+    const before = beforeVersions.get(pkg) ?? "";
+    process.stdout.write(`  ${dim(pkg)} `);
+    runQuiet("dpkg", ["-i", deb]);
+    const after = installedVersion(pkg);
+    const kind = changeKind(before, after);
+    if (kind === "same") {
+      console.log(dim(`${target} (same)`));
+    } else if (kind === "upgraded") {
+      console.log(`${dim(before)} ${yellow("→")} ${green(after)}`);
+    } else if (kind === "new") {
+      console.log(cyan(after));
+    } else if (kind === "downgraded") {
+      console.log(`${dim(before)} ${yellow("→")} ${red(after)}`);
+    } else {
+      console.log(yellow(after));
+    }
+  }
+
+  runQuiet("apt-get", ["check"]);
   return beforeVersions;
 }
 
 function verifyCinnamonInstall(): void {
-  logStep("Verify install");
+  logStep("Verify Cinnamon");
   const result = spawnSync(
     "gsettings",
     ["get", "org.cinnamon.desktop.wm.preferences", "prevent-focus-stealing"],
@@ -391,15 +507,15 @@ function verifyCinnamonInstall(): void {
       "missing GSettings key prevent-focus-stealing (cinnamon-desktop schemas may be mismatched)"
     );
   }
-  logDetail(run("cinnamon", ["--version"]));
+  logOk(run("cinnamon", ["--version"]));
   console.log();
-  console.log("Log out and back in, or run: cinnamon --replace &");
+  console.log(dim("  Log out and back in, or run: cinnamon --replace &"));
 }
 
 function installCinnamonFromWorkDir(workDir: string, tag: string): void {
   const debs = collectCinnamonDebs(workDir);
   const beforeVersions = installDebs(debs);
-  printInstalledReport(`Update report: Cinnamon stack (${tag})`, debs, beforeVersions);
+  printInstalledReport(`Cinnamon stack (${tag})`, debs, beforeVersions);
   removeStaleLocalMuffin();
   verifyCinnamonInstall();
 }
@@ -410,9 +526,10 @@ function installMintsysadmDeb(pkgDir: string, ref: string): void {
     die(`no mintsysadm .deb in ${pkgDir}`);
   }
   const beforeVersions = snapshotBefore([deb]);
-  logStep(`Install ${path.basename(deb)}`);
-  runInherit("apt-get", ["install", "-y", deb]);
-  printInstalledReport(`Update report: mintsysadm (${ref})`, [deb], beforeVersions);
+  const pkg = debField(deb, "Package");
+  logStep(`Install ${pkg}`);
+  runQuiet("apt-get", ["install", "-y", "-qq", deb]);
+  printInstalledReport(`mintsysadm (${ref})`, [deb], beforeVersions);
 }
 
 function latestMintsysadmDeb(pkgDir: string): string | undefined {
@@ -443,28 +560,29 @@ function latestMintsysadmDeb(pkgDir: string): string | undefined {
 
 function cloneOrUpdateMintsysadm(srcDir: string, ref: string): void {
   if (fs.existsSync(path.join(srcDir, ".git"))) {
-    logStep(`Update mintsysadm source (${ref})`);
-    runInherit("git", ["-C", srcDir, "fetch", "--depth", "1", "origin", ref]);
-    runInherit("git", ["-C", srcDir, "checkout", "FETCH_HEAD"]);
+    logStep(`Update source (${ref})`);
+    runQuiet("git", ["-C", srcDir, "fetch", "--depth", "1", "--quiet", "origin", ref]);
+    runQuiet("git", ["-C", srcDir, "checkout", "--quiet", "FETCH_HEAD"]);
   } else {
-    logStep(`Clone mintsysadm (${ref})`);
+    logStep(`Clone (${ref})`);
     fs.rmSync(srcDir, { recursive: true, force: true });
-    runInherit("git", [
+    runQuiet("git", [
       "clone",
       "--depth",
       "1",
+      "--quiet",
       "--branch",
       ref,
       "https://github.com/linuxmint/mintsysadm.git",
       srcDir
     ]);
   }
-  logDetail(`commit ${run("git", ["-C", srcDir, "rev-parse", "--short", "HEAD"])}`);
+  logOk(`commit ${run("git", ["-C", srcDir, "rev-parse", "--short", "HEAD"])}`);
 }
 
 function buildMintsysadm(workDir: string, srcDir: string, pkgDir: string): string {
-  logStep("Build mintsysadm");
-  runInherit("make", ["-C", srcDir]);
+  logStep("Build package");
+  runQuiet("make", ["-C", srcDir]);
   for (const name of fs.readdirSync(workDir)) {
     if (
       name.startsWith("mintsysadm_") &&
@@ -473,7 +591,7 @@ function buildMintsysadm(workDir: string, srcDir: string, pkgDir: string): strin
       fs.rmSync(path.join(workDir, name), { force: true });
     }
   }
-  runShInherit(`cd ${q(srcDir)} && dpkg-buildpackage -us -uc -b`);
+  runShQuiet(`cd ${q(srcDir)} && dpkg-buildpackage -us -uc -b`);
   const built = fs
     .readdirSync(workDir)
     .find((name) => name.startsWith("mintsysadm_") && name.endsWith(".deb"));
@@ -483,7 +601,7 @@ function buildMintsysadm(workDir: string, srcDir: string, pkgDir: string): strin
   const deb = path.join(workDir, built);
   fs.mkdirSync(pkgDir, { recursive: true });
   fs.copyFileSync(deb, path.join(pkgDir, built));
-  logDetail(`built ${built}`);
+  logOk(built);
   return path.join(pkgDir, built);
 }
 
@@ -503,24 +621,30 @@ function runInstall(): void {
   if (!isRoot) {
     requireCommands(["curl", "tar", "git", "make", "dpkg-buildpackage"]);
 
-    logStep(`Release tag: ${tag}`);
-    logStep(`Cinnamon work dir: ${cinnamonWorkDir}`);
+    console.log(bold("Mint GitHub install"));
+    logDetail(`tag ${tag} · ref ${ref}`);
+
+    logSection("Cinnamon stack");
+    logDetail(cinnamonWorkDir);
     fs.mkdirSync(cinnamonWorkDir, { recursive: true });
     downloadCinnamonArchives(cinnamonWorkDir, tag);
 
-    logStep(`Git ref: ${ref}`);
-    logStep(`mintsysadm work dir: ${mintsysadmWorkDir}`);
+    logSection("mintsysadm");
+    logDetail(mintsysadmWorkDir);
     fs.mkdirSync(mintsysadmWorkDir, { recursive: true });
     cloneOrUpdateMintsysadm(mintsysadmSrcDir, ref);
     buildMintsysadm(mintsysadmWorkDir, mintsysadmSrcDir, mintsysadmPkgDir);
 
+    logSection("Install (sudo)");
     requireRoot();
     return;
   }
 
-  requireCommands(["dpkg"]);
+  logSection("Cinnamon stack");
   installCinnamonFromWorkDir(cinnamonWorkDir, tag);
+  logSection("mintsysadm");
   installMintsysadmDeb(mintsysadmPkgDir, ref);
+  console.log(green("Done."));
 }
 
 runInstall();
