@@ -1,9 +1,27 @@
 import fs from "node:fs";
 import path from "node:path";
 import { homedir } from "node:os";
+import process from "node:process";
 
 import { parseJiraKey } from "./jiraInput.ts";
 import type { LocalTicket } from "./types.ts";
+
+/** Known ticket-type folder names under a mirror root. */
+const TICKET_TYPE_DIRS = new Set([
+  "bug",
+  "bugs",
+  "epic",
+  "epics",
+  "initiative",
+  "initiatives",
+  "pulse-team",
+  "story",
+  "stories",
+  "task",
+  "tasks",
+  "sub-task",
+  "sub-tasks"
+]);
 
 /** True when markdown frontmatter links to a Jira issue key. */
 export function jiraTicketKeyInMarkdown(content: string, key: string): boolean {
@@ -76,8 +94,22 @@ export function parseTicketMarkdown(
     status: parseFrontmatterScalar(fm, "status"),
     created: parseFrontmatterScalar(fm, "created"),
     updated: parseFrontmatterScalar(fm, "updated"),
+    labels: parseFrontmatterLabels(fm),
     description: m[2].trim()
   };
+}
+
+/** Parse optional `labels:` JSON array from frontmatter. */
+function parseFrontmatterLabels(fm: string): string[] {
+  const m = /^labels:\s*(.+)$/m.exec(fm);
+  if (!m) return [];
+  try {
+    const parsed = JSON.parse(m[1]) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((item): item is string => typeof item === "string");
+  } catch {
+    return [];
+  }
 }
 
 function jiraTypeDirFromPath(filePath: string, baseDir: string): string {
@@ -123,9 +155,110 @@ function collectTicketFiles(
   }
 }
 
-/** Local ticket root: `~/jira` (override `baseDir` in tests). */
+/** Local ticket root: `<baseDir>/jira` (override `baseDir` in tests). */
 export function jiraRootDir(baseDir = homedir()): string {
   return path.join(baseDir, "jira");
+}
+
+/**
+ * True when `jiraDir` looks like a ticket mirror (type folders, markdown, or pull-sets).
+ * Empty placeholder dirs are ignored so a walk-up does not stop early.
+ */
+export function looksLikeTicketMirrorRoot(jiraDir: string): boolean {
+  if (!fs.existsSync(jiraDir)) return false;
+  let st: fs.Stats;
+  try {
+    st = fs.statSync(jiraDir);
+  } catch {
+    return false;
+  }
+  if (!st.isDirectory()) return false;
+
+  if (fs.existsSync(path.join(jiraDir, "pull-sets.json"))) return true;
+
+  let entries: fs.Dirent[];
+  try {
+    entries = fs.readdirSync(jiraDir, { withFileTypes: true });
+  } catch {
+    return false;
+  }
+
+  for (const ent of entries) {
+    if (ent.name.startsWith(".")) continue;
+    if (ent.isFile() && ent.name.endsWith(".md")) return true;
+    if (ent.isDirectory() && TICKET_TYPE_DIRS.has(ent.name.toLowerCase())) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Resolve the base directory that owns `jira/` ticket mirrors.
+ * Walks up from `startDir` for a mirror root; falls back to the home directory.
+ * Board/info caches still use the home directory.
+ */
+export function resolveTicketBaseDir(startDir = process.cwd()): string {
+  let dir = path.resolve(startDir);
+  for (;;) {
+    const jiraDir = path.join(dir, "jira");
+    if (looksLikeTicketMirrorRoot(jiraDir)) {
+      return dir;
+    }
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return homedir();
+}
+
+/** Workspace pull-set file beside mirrors: `<baseDir>/jira/pull-sets.json`. */
+export function pullSetsPath(baseDir = resolveTicketBaseDir()): string {
+  return path.join(jiraRootDir(baseDir), "pull-sets.json");
+}
+
+export type PullSetsFile = {
+  /** Set name used by bare `jira pull` when no key is given. */
+  default?: string;
+  /** Named JQL queries for `jira pull --set NAME`. */
+  sets?: Record<string, string>;
+};
+
+/** Read workspace pull sets when the file exists. */
+export function readPullSetsFile(baseDir = resolveTicketBaseDir()): PullSetsFile {
+  const filePath = pullSetsPath(baseDir);
+  if (!fs.existsSync(filePath)) return {};
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    throw new Error(`pull-sets.json is not valid JSON (${filePath}): ${msg}`);
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error(`pull-sets.json must be a JSON object: ${filePath}`);
+  }
+  const record = parsed as Record<string, unknown>;
+  const out: PullSetsFile = {};
+  if (typeof record.default === "string" && record.default.trim()) {
+    out.default = record.default.trim();
+  }
+  if (record.sets != null) {
+    if (typeof record.sets !== "object" || Array.isArray(record.sets)) {
+      throw new Error(`pull-sets.json "sets" must be an object: ${filePath}`);
+    }
+    const sets: Record<string, string> = {};
+    for (const [name, jql] of Object.entries(record.sets)) {
+      if (typeof jql !== "string" || !jql.trim()) {
+        throw new Error(
+          `pull-sets.json sets.${name} must be a non-empty string: ${filePath}`
+        );
+      }
+      sets[name] = jql.trim();
+    }
+    out.sets = sets;
+  }
+  return out;
 }
 
 /** All ticket markdown files under `~/jira/<type>/`, sorted by type then key. */

@@ -1,6 +1,6 @@
 function __npm_auth_retry --description "Run an npm install, refreshing ARTIFACT_AUTH_TOKEN once on a registry auth failure"
     set -l err (mktemp)
-    command npm $argv 2>&1 | tee $err
+    command npm --color=always $argv 2>&1 | tee $err
     set -l code $pipestatus[1]
 
     if test $code -eq 0

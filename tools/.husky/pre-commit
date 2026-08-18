@@ -1,0 +1,5 @@
+[ -n "$CI" ] && exit 0
+
+cd tools
+PATH="$(pwd)/node_modules/.bin:$PATH"
+lint-staged --cwd .
