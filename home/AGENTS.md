@@ -9,7 +9,7 @@ Use markdown tables when the table will not be wide. Prefer lists otherwise.
 
 `fnm` defaults to Node 24.
 If auth or a required tool fails, stop and ask. Do not bypass auth or switch to a substitute tool.
-All subagents must use model `composer-2.5`.
+Prefer `composer-2.5` for subagents model if possible.
 Do not add configurable env vars unless asked.
 Do not create one-off Python script files to run a task. Use direct Shell commands.
 Do not look at transcripts just do the work fresh.

@@ -62,6 +62,8 @@ config-file = ?local
 # keybind = clear
 
 keybind = ctrl+w=close_surface
+# Linux GTK does not send fish's ctrl-backspace sequence; Alt+Backspace deletes a word.
+keybind = ctrl+backspace=text:\x1b\x7f
 keybind = performable:ctrl+v=paste_from_clipboard
 # Copy when selected, else pass through as SIGINT
 keybind = performable:ctrl+c=copy_to_clipboard
