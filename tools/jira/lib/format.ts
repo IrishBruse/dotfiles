@@ -35,6 +35,7 @@ export function jiraViewExtraFields(): string {
     "created",
     "updated",
     "parent",
+    "labels",
     config.epicLinkField,
     config.featureTeamField
   ]
@@ -322,6 +323,19 @@ export function formatStageAge(
   return days === undefined ? "-" : `${days}d`;
 }
 
+/** Sorted label names from Jira fields. */
+export function labelsFromFields(fields: Record<string, unknown>): string[] {
+  const raw = fields.labels;
+  if (!Array.isArray(raw)) return [];
+  const labels: string[] = [];
+  for (const item of raw) {
+    if (typeof item === "string" && item.trim()) {
+      labels.push(item.trim());
+    }
+  }
+  return labels.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+}
+
 export function formatTicketMarkdown(
   key: string,
   fields: Record<string, unknown>,
@@ -334,6 +348,7 @@ export function formatTicketMarkdown(
   const folder = classifyFolder(assignee, meAccountId);
   const assigned = assigneeLabel(assignee);
   const featureTeam = featureTeamLabel(fields);
+  const labels = labelsFromFields(fields);
   const descriptionMd = issueDescriptionMarkdown(fields);
   const site = normalizeSiteHost(siteHost);
   const url = `https://${site}/browse/${key}`;
@@ -350,6 +365,7 @@ url: ${url}
 status: ${yamlScalar(statusName)}
 created: ${yamlScalar(created)}
 updated: ${yamlScalar(updated)}
+labels: ${JSON.stringify(labels)}
 ---
 
 ${descriptionMd}

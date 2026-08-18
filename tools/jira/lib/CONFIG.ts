@@ -21,6 +21,10 @@ export type JiraConfig = {
   featureTeam: string;
   /** Feature Team option id for creates (optional, cache may override). */
   featureTeamOptionId: string;
+  /** Named JQL queries for `jira pull --set NAME` (optional). */
+  pullSets: Record<string, string>;
+  /** Default pull-set name for bare `jira pull` (optional). */
+  defaultPullSet: string;
 };
 
 const REQUIRED_STRING_KEYS = [
@@ -92,6 +96,36 @@ function parseJiraConfig(raw: unknown, filePath: string): JiraConfig {
     );
   }
   out.boardCacheMaxAgeDays = boardCacheMaxAgeDays;
+
+  out.pullSets = {};
+  if (record.pullSets !== undefined) {
+    if (
+      typeof record.pullSets !== "object" ||
+      record.pullSets === null ||
+      Array.isArray(record.pullSets)
+    ) {
+      throw new Error(`Jira config "pullSets" must be an object: ${filePath}`);
+    }
+    for (const [name, jql] of Object.entries(
+      record.pullSets as Record<string, unknown>
+    )) {
+      if (typeof jql !== "string" || !jql.trim()) {
+        throw new Error(
+          `Jira config pullSets.${name} must be a non-empty string: ${filePath}`
+        );
+      }
+      out.pullSets[name] = jql.trim();
+    }
+  }
+
+  const defaultPullSet = record.defaultPullSet;
+  if (defaultPullSet === undefined) {
+    out.defaultPullSet = "";
+  } else if (typeof defaultPullSet !== "string") {
+    throw new Error(`Jira config "defaultPullSet" must be a string: ${filePath}`);
+  } else {
+    out.defaultPullSet = defaultPullSet.trim();
+  }
 
   return out;
 }
