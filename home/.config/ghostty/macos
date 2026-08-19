@@ -1,0 +1,7 @@
+macos-titlebar-proxy-icon = hidden
+
+# Undo the Linux ctrl+backspace remap from `linux` (that file also loads on macOS).
+keybind = ctrl+backspace=unbind
+
+# Copy when selected. No selection does nothing (cannot fall through to SIGINT).
+keybind = performable:cmd+c=copy_to_clipboard

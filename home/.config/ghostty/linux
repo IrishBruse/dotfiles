@@ -1,0 +1,5 @@
+adw-toolbar-style = flat
+gtk-titlebar = false
+
+# Linux GTK does not send fish's ctrl-backspace sequence; Alt+Backspace deletes a word.
+keybind = ctrl+backspace=text:\x1b\x7f
