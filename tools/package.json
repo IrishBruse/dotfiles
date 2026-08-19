@@ -20,7 +20,7 @@
   },
   "scripts": {
     "build": "make -C start",
-    "prepare": "npm run build && ([ -n \"$CI\" ] || (cd .. && husky tools/.husky))",
+    "prepare": "npm run build",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint -c .lib/eslint.config.js .",
@@ -36,15 +36,8 @@
     "@types/node": "^24.0.0",
     "@types/turndown": "5.0.6",
     "eslint": "^9.39.2",
-    "husky": "9.1.7",
-    "lint-staged": "15.2.7",
     "prettier": "3.8.3",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.60.0"
-  },
-  "lint-staged": {
-    "*.{js,json,ts,md,yml,yaml}": [
-      "prettier --write"
-    ]
   }
 }
