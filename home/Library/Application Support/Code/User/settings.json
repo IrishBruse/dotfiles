@@ -1796,5 +1796,6 @@
   "ib-utilities.github.ghPath": "/opt/homebrew/bin/gh",
   "markdownInlineEditor.tables.style": "wrapped",
   "markdownInlineEditor.tables.maxColumnWidth": 160,
-  "workbench.colorTheme": "Empty Dark Theme"
+  "workbench.colorTheme": "Empty Dark Theme",
+  "terminal.integrated.enableImages": true
 }
