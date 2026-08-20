@@ -1,7 +1,10 @@
 ---
 name: confluence-cli
-description: 'Runs the `confluence` CLI (plus Confluence MCP for what the CLI cannot do) for local `confluence/` markdown and live pages. Use when working on
-  Confluence pull/push/sync, page URLs, or CQL search.'
+description: >-
+  Runs the `confluence` CLI (plus Confluence MCP for what the CLI cannot do)
+  for local `confluence/` markdown and live pages. Use when working on
+  Confluence pull/push/sync, page URLs, or CQL search. This skill covers CLI
+  and MCP — do not also load `jira` or `jira-cli` for Confluence work.
 user-invocable: false
 ---
 
@@ -9,7 +12,10 @@ user-invocable: false
 
 Use the `confluence` CLI to sync local markdown against live Confluence pages.
 Use **Confluence MCP** when the CLI is not enough for reads or writes.
-For Jira, use the `jira-cli` skill.
+
+## Read exactly one skill for this work
+
+This skill is enough. Pick CLI **or** MCP from the table below. Do not load a second skill for that choice, and do not also read `jira` or `jira-cli` for Confluence work.
 
 Read existing files under `./confluence/` before editing them.
 

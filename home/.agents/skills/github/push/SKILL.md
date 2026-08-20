@@ -5,7 +5,7 @@ description: Lint, Snyk when relevant, commit, and push the current work.
 
 # Push
 
-Lint, Snyk when relevant, commit, then push. Invoking this skill is approval for all four.
+Lint, Snyk when relevant, then commit and push. Invoking this skill is approval for all of that.
 
 Stop if `HEAD` is `main` or `master` unless the user named that branch.
 
@@ -25,22 +25,19 @@ If findings block, add a 1-day ignore to the repo ignore file and include it in 
 
 Done when `snyk test` has run, or when there is no footprint.
 
-### Step 3: Commit
+### Step 3: Commit and push
 
-Skip when the tree is already clean.
+Run `just push` when the repo Justfile has a `push` recipe. Otherwise run `push`.
+
+That CLI splits commits with `commit.config.json`, writes subjects from the diff and recent `git log` (action, not file lists), then `git push -u origin HEAD`.
+
+If neither command exists:
 
 1. Survey: `git status -sb`, `git diff`, `git diff --cached`, `git log -8 --oneline`
 2. Stage named paths only. Leave secrets unstaged and warn once.
 3. Commit with a HEREDOC subject that matches recent `git log` (why, not what).
 4. On hook failure: fix, then a new commit.
-
-Done when the current work is on `HEAD`.
-
-### Step 4: Push
-
-```bash
-git push -u origin HEAD
-```
+5. `git push -u origin HEAD`
 
 Done when `git status -sb` shows the branch is up to date with origin.
 

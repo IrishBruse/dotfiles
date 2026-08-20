@@ -1,7 +1,7 @@
 ---
 name: jira
 description: 'Jira router that gates before any write. Use when a ticket idea, key, epic, or PR needs classification, duplicate and parentage checks, or routing
-  to task/story/epic/update/search.'
+  to task/story/epic/update/search. Do not also load a second Jira skill in the same turn.'
 ---
 
 # Jira
@@ -9,6 +9,8 @@ description: 'Jira router that gates before any write. Use when a ticket idea, k
 Use this as the safe front door for Jira work.
 `/jira` is a **router**: **legwork** before route selection, **gate** before any Jira write.
 It answers: **what should this become, what is it related to, and what should happen next?**
+
+Read **either** this skill **or** the other Jira skill. Never both in the same turn.
 
 It recommends a path, asks the user to choose a route with `AskQuestion`, then reads and follows the matching reference workflow only after the user confirms.
 

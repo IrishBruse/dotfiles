@@ -14,3 +14,7 @@ install-all: install
 link:
     npm run build
     npm link
+
+# Commit split work with history-matched subjects, then push.
+push *args:
+    ./tools/.bin/push.js {{args}}

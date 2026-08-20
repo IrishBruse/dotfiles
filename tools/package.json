@@ -8,7 +8,7 @@
   "bin": {
     "ansii": "./.bin/ansii.js",
     "dotfiles": "./.bin/dotfiles.js",
-    "commit": "./.bin/commit.js",
+    "push": "./.bin/push.js",
     "confluence": "./.bin/confluence.js",
     "endpoint": "./.bin/endpoint.js",
     "interpolate": "./.bin/interpolate.js",

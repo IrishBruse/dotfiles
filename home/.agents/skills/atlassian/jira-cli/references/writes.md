@@ -1,7 +1,7 @@
 # Writes
 
-Every remote Jira write requires an `Approve` answer from the `jira` skill **Jira Write Approval Gate**.
-The CLI does not enforce the gate.
+Every remote Jira write requires an `Approve` answer for the exact change.
+The CLI does not enforce the gate. Do not also read the `jira` skill for that gate when this skill is already loaded. If you need `/jira` routing or the full write-approval UX, read `jira` **instead of** this skill.
 
 One Approve covers one described change set.
 

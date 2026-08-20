@@ -89,13 +89,7 @@
     "tab.activeForeground": "#d7dae0",
     "tab.border": "#0000",
     "tab.inactiveBackground": "#21252b",
-    "tab.inactiveForeground": "#696969",
-
-    // "tab.activeBackground": "#f0f",
-    // "tab.activeForeground": "#d7dae0",
-    // "tab.border": "#0000",
-    // "tab.inactiveBackground": "#f0f",
-    // "tab.inactiveForeground": "#696969",
+    "tab.inactiveForeground": "#abaeb2",
 
     // Title Bar
     "titleBar.activeBackground": "#21252b",
@@ -1725,7 +1719,6 @@
   "fish.path.fish_indent": "/opt/homebrew/bin/fish_indent",
   "editor.allowVariableFontsInAccessibilityMode": true,
   "workbench.layoutControl.enabled": false,
-  "terminal.integrated.gpuAcceleration": "on",
   "git.repositoryScanMaxDepth": 2,
   "markdown-mermaid.darkModeTheme": "dark",
   "workbench.activityBar.location": "top",
@@ -1797,5 +1790,6 @@
   "markdownInlineEditor.tables.style": "wrapped",
   "markdownInlineEditor.tables.maxColumnWidth": 160,
   "workbench.colorTheme": "Empty Dark Theme",
-  "terminal.integrated.enableImages": true
+  "terminal.integrated.enableImages": true,
+  "terminal.integrated.gpuAcceleration": "on"
 }

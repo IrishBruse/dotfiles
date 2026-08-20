@@ -1,9 +1,10 @@
 ---
 name: jira-cli
 description: >-
-  jira CLI for board context, `~/jira` pull-edit-push, and gated writes.
-  Prefer plain output for reads. Use `--json` when chaining. Use for
-  `jira info`/`jira board`, keys/JQL, or when `jira` needs the CLI.
+  jira CLI for board context, `~/jira` pull-edit-push, and CLI reads/writes
+  (`jira info`, `jira board`, search, show, pull, push). Prefer plain output
+  for reads. Use `--json` when chaining. Do not load together with the `jira`
+  skill — read exactly one of `jira` or `jira-cli`.
 user-invocable: false
 ---
 
@@ -11,14 +12,25 @@ user-invocable: false
 
 Agent-facing Jira CLI. Prefer compact reads that stay in hundreds of tokens, not raw acli or ADF blobs.
 
+## Read exactly one Jira skill
+
+Read **either** this skill **or** the `jira` skill. Never both in the same turn.
+
+| Need | Read |
+| --- | --- |
+| CLI commands, output modes, JQL, `~/jira` pull/push | this skill only |
+| `/jira` routing, classification, drafts, write approval UX | `jira` only |
+
+If `jira` is already loaded, do not read this skill. If this skill is already loaded, do not read `jira`.
+
 **Prefer plain output for agent reads.** Default text is smaller than the `{success, data, error}` envelope.
 Use `--json` when chaining with other commands (pipes, `jq`, scripts) that need structured fields.
 
-**Never write to Jira without the `jira` skill Write Approval Gate.**
-The CLI does not enforce the gate.
+**Never write to Jira without user Approve for the exact change.**
+The CLI does not enforce that gate. Do not also read the `jira` skill to get the gate — if you need `/jira` routing or the full write-approval UX, read `jira` **instead of** this skill.
 On auth failure, stop and ask.
 
-Prefer `jira` over Atlassian MCP when the CLI covers the need.
+Prefer the `jira` CLI over Atlassian MCP when the CLI covers the need.
 
 ## The core loop
 
@@ -112,7 +124,7 @@ Bare words become `project = <config> AND text ~ "\"...\""`.
 
 1. `jira show KEY` (ensures `~/jira` copy)
 2. Edit `title` + body in that file
-3. After `jira` skill gate Approve: `jira push KEY`
+3. After user Approve for the exact change: `jira push KEY`
 
 `jira push` syncs summary and description only.
 Other fields use `jira edit|transition|comment|link`, then `jira pull KEY`.
@@ -146,10 +158,10 @@ Paths: config `~/.config/jira/config.json`, board `~/jira/board.json`,
 info cache `~/.config/jira/info.json`, tickets `~/jira/<type>/...`,
 logs `~/jira/logs/YYYY-MM-DD.log`.
 
-## When to load another skill
+## Other skills (instead of this one, never in addition)
 
-- Ticket classification, drafts, or write approval UX: `jira` skill
-- Confluence pages: `confluence-cli` skill
+- `/jira` routing, classification, drafts, or write-approval UX: `jira` only
+- Confluence pages: `confluence-cli` only
 - PR title key selection: `pr` skill (`jira info` → one `jira show KEY`)
 
 ## Bundled reference
