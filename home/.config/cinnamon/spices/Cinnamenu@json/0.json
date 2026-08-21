@@ -178,8 +178,12 @@
         "type": "generic",
         "default": [],
         "value": [
-            "nwg-displays.desktop",
             "steam.desktop",
+            "mpv.desktop",
+            "com.obsproject.Studio.desktop",
+            "code.desktop",
+            "cinnamon-settings-display.desktop",
+            "nwg-displays.desktop",
             "mintsysadm.desktop",
             "org.DolphinEmu.dolphin-emu.desktop:flatpak",
             "cinnamon-settings-startup.desktop",
@@ -187,16 +191,13 @@
             "dev.lizardbyte.app.Sunshine.desktop",
             "PlateUp!.desktop",
             "mintinstall.desktop",
-            "cinnamon-settings-display.desktop",
             "nemo.desktop",
             "chrome-hnpfjngllnobngcgfapefoaidbinmjnm-Default.desktop",
             "mintupdate.desktop",
             "cinnamon-settings-keyboard.desktop",
             "cinnamon-settings-fonts.desktop",
             "org.gnome.font-viewer.desktop",
-            "cinnamon-settings-windows.desktop",
-            "org.gnome.DiskUtility.desktop",
-            "gnome-session-properties.desktop"
+            "cinnamon-settings-windows.desktop"
         ]
     },
     "search-start-folder": {
