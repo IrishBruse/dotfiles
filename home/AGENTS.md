@@ -14,6 +14,8 @@ Do not add configurable env vars unless asked.
 Do not create one-off Python script files to run a task. Use direct Shell commands.
 Do not look at transcripts just do the work fresh.
 
+Put temp file into the local `.tmp/` instead of global `/tmp`
+
 ## Git / PR
 
 Always use the `pr` skill for PR titles and bodies.

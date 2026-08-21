@@ -2,3 +2,4 @@ HANDOFF.md
 endpoint.jsonl
 commit.config.json
 confluence/
+/.tmp/
